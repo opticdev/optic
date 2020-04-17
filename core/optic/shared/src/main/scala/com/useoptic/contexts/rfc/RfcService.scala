@@ -3,6 +3,7 @@ package com.useoptic.contexts.rfc
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.ddd._
+import com.useoptic.logging.Logger
 import com.useoptic.serialization.CommandSerialization
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -41,8 +42,8 @@ object RfcServiceJSFacade {
     commands.foreach(command => {
       val result = Try(service.handleCommand(aggregateId, command, commandContext))
       if (result.isFailure) {
-                println(command)
-        //        println(result)
+        Logger.log(command)
+        //        Logger.log(result)
         throw result.failed.get
       }
     })

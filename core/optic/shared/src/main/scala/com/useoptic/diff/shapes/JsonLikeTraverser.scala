@@ -3,15 +3,16 @@ package com.useoptic.diff.shapes
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapesHelper.ListKind
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
 class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
 
   def traverse(body: Option[JsonLike], bodyTrail: JsonTrail, resolvedTrail: Option[ShapeTrail]): Unit = {
-    println("traversing...")
-    println(body)
-    println(resolvedTrail)
+    Logger.log("traversing...")
+    Logger.log(body)
+    Logger.log(resolvedTrail)
     if (resolvedTrail.isEmpty && body.isEmpty) {
       return
     }
@@ -33,7 +34,6 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
       } else {
         visitors.primitiveVisitor.visitUnknown(Some(bodyJson), bodyTrail)
       }
-
       return
     }
 
@@ -75,7 +75,7 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
         })
         val jsonTrail = bodyTrail.withChild(JsonObjectKey(key))
 
-        visitors.objectVisitor.visit(key, value, bodyTrail, resolvedTrail, resolved.bindings)
+        visitors.objectVisitor.visit(key, value, jsonTrail, resolvedTrail, resolved.bindings)
 
         traverse(Some(value), jsonTrail, resolvedTrail)
       })

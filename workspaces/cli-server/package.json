@@ -2,7 +2,7 @@
   "name": "@useoptic/cli-server",
   "version": "0.1.4",
   "scripts": {
-    "ws:build": "yarn run tsc -b",
+    "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo cli-server"
   },
   "main": "build/index.js",
@@ -19,8 +19,12 @@
     "find-process": "^1.4.3",
     "fs-extra": "^8.1.0",
     "get-port": "^5.1.0",
+    "jwt-decode": "^2.2.0",
+    "keytar": "^5.4.0",
     "lodash.sortby": "^4.7.0",
+    "nice-try": "^2.0.1",
     "proper-lockfile": "^4.1.1",
+    "uuid": "^3.4.0",
     "wait-on": "^4.0.0"
   },
   "devDependencies": {

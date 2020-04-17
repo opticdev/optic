@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react';
 import {GenericContextFactory} from './GenericContextFactory';
 
 const {
@@ -8,20 +8,15 @@ const {
 
 class SpecServiceStore extends React.Component {
 
-  state = {
-    apiName: ''
-  }
-
   componentDidMount() {
     const {specService, specServiceEvents} = this.props;
-    specService.getConfig().then(({config}) => this.setState({apiName: config.name}))
     if (!specServiceEvents) {
-      console.warn('I need specServiceEvents')
+      console.warn('I need specServiceEvents');
       debugger
     } else {
       specServiceEvents.on('events-updated', () => {
-        this.forceUpdate()
-      })
+        this.forceUpdate();
+      });
     }
   }
 
@@ -29,15 +24,21 @@ class SpecServiceStore extends React.Component {
     const {specService} = this.props;
 
     return (
-      <SpecServiceContext.Provider value={{specService, apiName: this.state.apiName}}>
+      <SpecServiceContext.Provider value={{specService}}>
         {this.props.children}
       </SpecServiceContext.Provider>
     );
   }
 }
 
+function useSpecService() {
+  const {specService} = useContext(SpecServiceContext);
+  return specService;
+}
+
 export {
   withSpecServiceContext,
   SpecServiceContext,
-  SpecServiceStore
+  SpecServiceStore,
+  useSpecService
 };

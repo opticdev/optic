@@ -79,6 +79,7 @@ function BaseRfcStore(props) {
   useEffect(function () {
     try {
       const eventStore = Facade.makeEventStore();
+      global.eventStore = eventStore
       if (initialEventsString) {
         eventStore.bulkAdd(rfcId, initialEventsString);
       }
@@ -97,7 +98,6 @@ function BaseRfcStore(props) {
 
   if (error) {
     console.error(error);
-    debugger
     return (
       <div>Error! :(</div>
     );
@@ -169,15 +169,27 @@ function LocalRfcStore(props) {
   }
 
   return (
-    <RfcStore onChange={debounce(handleChange, 4000, {leading: true, trailing: true})}/>
+    <RfcStore onChange={debounce(handleChange, 4000, {leading: true, trailing: true})}>
+      {props.children}
+    </RfcStore>
   );
 }
+
+function ImmutableRfcStore(props) {
+  return (
+    <RfcStore onChange={() => console.log('not mutable')}>
+      {props.children}
+    </RfcStore>
+  );
+}
+
 
 
 const LocalDiffRfcStore = BaseRfcStore;
 
 export {
   RfcStore,
+  ImmutableRfcStore,
   LocalRfcStore,
   LocalDiffRfcStore,
   RfcContext,

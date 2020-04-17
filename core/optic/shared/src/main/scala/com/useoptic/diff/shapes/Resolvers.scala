@@ -117,6 +117,10 @@ object Resolvers {
     }
   }
 
+  def resolveToBaseShapeId(shapeId: ShapeId)(implicit shapesState: ShapesState): ShapeId = {
+    resolveToBaseShape(shapeId).shapeId
+  }
+
   def resolveFieldToShape(shapesState: ShapesState, fieldId: FieldId, bindings: ParameterBindings): Option[ResolvedTrail] = {
     val flattenedField = shapesState.flattenedField(fieldId)
     val resolvedShape = flattenedField.fieldShapeDescriptor match {

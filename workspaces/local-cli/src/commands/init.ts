@@ -10,6 +10,7 @@ import {Client} from '@useoptic/cli-client';
 import openBrowser = require('react-dev-utils/openBrowser.js');
 import * as fs from "fs-extra";
 import * as path from "path";
+import {track} from "../shared/analytics";
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';
@@ -30,6 +31,8 @@ export default class Init extends Command {
 
     const name = await cli.prompt('What is this API named?')
 
+    await track('New API Created', {name})
+
     const config = `
 name: ${name}
 tasks:
@@ -47,8 +50,7 @@ ignoreRequests:
     const {configPath} = await createFileTree(config, token, cwd);
     cli.log(fromOptic(`Added Optic configuration to ${configPath}`));
     cli.log(fromOptic(`Open that file to finish adding Optic to your API`));
-
-    process.exit();
+    process.exit()
   }
 
 }

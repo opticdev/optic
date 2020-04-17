@@ -1,0 +1,399 @@
+import React, {useContext} from 'react';
+import {Typography} from '@material-ui/core';
+import classNames from 'classnames';
+import WarningIcon from '@material-ui/icons/Warning';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground, secondary} from '../../../../theme';
+import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
+import CheckIcon from '@material-ui/icons/Check';
+import {
+  getOrUndefined,
+  getOrUndefinedJson,
+  headOrUndefined,
+  JsonHelper,
+  lengthScala,
+  mapScala,
+  getJson,
+  toOption
+} from '@useoptic/domain';
+import {withDiffContext} from '../DiffContext';
+import {DepthContext, Indent, IndentIncrement} from './Indent';
+import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
+
+export const DiffViewer = ({shape}) => {
+  const classes = useShapeViewerStyles();
+  return (
+    <div className={classes.root}>
+      <DepthContext.Provider value={{depth: 0}}>
+        {renderShape(shape)}
+      </DepthContext.Provider>
+    </div>
+  );
+};
+
+function renderShape(shape, nested) {
+
+  if (!shape) {
+    return null;
+  }
+
+  switch (shape.baseShapeId) {
+    case '$object':
+      return (
+        <ObjectRender shape={shape} nested={Boolean(nested)}/>
+      );
+    case '$list':
+      return <ListRender shape={shape} nested={Boolean(nested)}/>;
+  }
+}
+
+export const Row = withShapeRenderContext((props) => {
+  const classes = useShapeViewerStyles();
+
+  const {exampleOnly, onLeftClick} = props;
+
+  const rowHighlightColor = (() => {
+    if (props.highlight === 'Addition') {
+      return AddedGreenBackground;
+    } else if (props.highlight === 'Update') {
+      return ChangedYellowBackground;
+    } else if (props.highlight === 'Removal') {
+      return RemovedRedBackground;
+    }
+  })();
+
+  return (
+    <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
+         style={{backgroundColor: rowHighlightColor}}>
+      <div className={classes.left} onClick={onLeftClick}>{props.left}</div>
+      {!exampleOnly && <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>}
+      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
+    </div>
+  );
+});
+
+export const ObjectRender = withShapeRenderContext((props) => {
+  const {shapeRender, shape, nested} = props;
+  const fields = shape.fields
+
+  return (
+    <>
+      {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
+      {mapScala(fields)(field => <FieldRow field={field} parent={shape}/>)}
+      <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
+    </>
+  );
+});
+
+export const ListRender = withShapeRenderContext((props) => {
+  const classes = useShapeViewerStyles();
+  const {shapeRender, shape, nested} = props;
+  const {showAllLists} = useContext(ShapeExpandedContext);
+
+  const listId = shape.id
+
+  const items = shape.itemsWithHidden(showAllLists.includes(listId))
+
+  return (
+    <>
+      {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
+      {mapScala(items)((item, index) => {
+        return <ItemRow item={item}
+                        listId={listId}
+                        isLast={index - 1 === lengthScala(items)}/>;
+      })}
+      <IndentIncrement><Row left={<Symbols withIndent>{']'}</Symbols>} noHover/></IndentIncrement>
+    </>
+  );
+});
+
+function FieldName({children, missing}) {
+  const classes = useShapeViewerStyles();
+  return (
+    <Typography variant="caption" className={classes.fieldName}
+                style={{opacity: missing ? .4 : 1}}>{children}:</Typography>
+  );
+}
+
+function IndexMarker({children}) {
+  const classes = useShapeViewerStyles();
+  return (
+    <Typography variant="caption" className={classes.indexMarker}>{children}:</Typography>
+  );
+}
+
+function ValueRows({value, shape}) {
+  const classes = useShapeViewerStyles();
+  const {shapeRender} = useContext(ShapeRenderContext);
+  const jsTypeString = Object.prototype.toString.call(value);
+
+  if (!shape) {
+    return null
+  }
+
+  if (shape.isOptional || shape.isNullable) {
+    return <ValueRows value={value} shape={shape.innerShape}/>
+  }
+
+  if (jsTypeString === '[object Array]' || jsTypeString === '[object Object]') {
+    return <IndentIncrement add={1}>{renderShape(shape, true)}</IndentIncrement>;
+  }
+
+  return null;
+}
+
+function ValueContents({value, shape}) {
+  const classes = useShapeViewerStyles();
+  const {shapeRender} = useContext(ShapeRenderContext);
+
+  if (typeof value === 'undefined') {
+    return null;
+  }
+
+  if (!shape) {
+    return null
+  }
+
+  const jsTypeString = Object.prototype.toString.call(value);
+
+  if (shape.isOptional || shape.isNullable) {
+    return <ValueContents value={value} shape={shape.innerShape}/>
+  }
+
+
+  if (jsTypeString === '[object Null]') {
+    return <Symbols>{'null'}</Symbols>;
+  }
+
+  if (jsTypeString === '[object Array]') {
+    return <Symbols>{'['}</Symbols>;
+  }
+
+  if (jsTypeString === '[object Object]') {
+    return <Symbols>{'{'}</Symbols>;
+  }
+
+  if (jsTypeString === '[object String]') {
+    return <Typography variant="caption"
+                       component="pre"
+                       style={{
+                         fontWeight: 600,
+                         whiteSpace: 'pre-line',
+                         fontFamily: '\'Source Code Pro\', monospace',
+                         color: useColor.StringColor
+                       }}>"{value}"</Typography>;
+  }
+
+  if (jsTypeString === '[object Boolean]') {
+    return <Typography variant="caption"
+                       style={{
+                         fontWeight: 600,
+                         fontFamily: '\'Source Code Pro\', monospace',
+                         color: useColor.BooleanColor
+                       }}>{value ? 'true' : 'false'}</Typography>;
+  }
+
+  if (jsTypeString === '[object Number]') {
+    return <Typography variant="caption"
+                       style={{
+                         fontWeight: 600,
+                         fontFamily: '\'Source Code Pro\', monospace',
+                         color: useColor.NumberColor
+                       }}>{value.toString()}</Typography>;
+  }
+
+
+  return null;
+  // return <Typography variant="caption"
+  //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
+}
+
+
+const AssertionMetTypeName = ({typeName, style}) => {
+  const classes = useShapeViewerStyles();
+
+  const {shapeRender} = useContext(ShapeRenderContext);
+
+  if (!typeName) {
+    return null;
+  }
+
+  const coloredComponents = typeName.asColoredString(shapeRender.specShapes);
+
+  return (<div className={classes.assertionMet}>
+    <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
+    {mapScala(coloredComponents)((i) => {
+      if (i.text) {
+        return <span style={{whiteSpace: 'pre'}}>{i.text}</span>;
+      }
+    })}
+  </div>);
+};
+
+function Symbols({children, withIndent}) {
+  const classes = useShapeViewerStyles();
+
+  const symbol = <Typography variant="caption" className={classes.symbols}>{children}</Typography>;
+
+  if (withIndent) {
+    return (
+      <Indent add={-1}>
+        {symbol}
+      </Indent>
+    );
+  } else {
+    return symbol;
+  }
+
+}
+
+
+export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
+  const classes = useShapeViewerStyles();
+  const {diffDescription} = props;
+
+  return (
+    <span className={classes.diffAssertion}>
+      <WarningIcon style={{color: secondary, height: 10, width: 10}}/>
+      <span style={{marginLeft: 6}}>{diffDescription.assertion}</span>
+    </span>
+  );
+
+}));
+
+export const FieldRow = withShapeRenderContext((props) => {
+  const classes = useShapeViewerStyles();
+  const {field, parent, shapeRender, diffDescription, suggestion} = props;
+
+  const missing = field.display === 'missing';
+  //
+  const fieldShape = getOrUndefined(field.exampleShape)
+  const specShape = getOrUndefined(field.specShape)
+
+  const example = getOrUndefinedJson(field.example)
+
+  const diff = headOrUndefined(field.diffs)
+
+  // spec shape for assertion
+
+  const diffNotif = diff && (
+    <DiffNotif/>
+  );
+
+  return (
+    <>
+      <Row
+        highlight={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
+
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
+        left={(
+          <Indent>
+            <div className={classes.rowContents}>
+              <div>
+                <FieldName missing={missing}>{field.fieldName}</FieldName>
+              </div>
+              <div style={{flex: 1, paddingLeft: 4}}>
+                <ValueContents value={example} shape={fieldShape}/>
+              </div>
+            </div>
+          </Indent>
+        )}
+        right={(() => {
+          if (diffNotif && suggestion) {
+
+            return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
+              {suggestion.changeTypeAsString !== 'Removal' &&
+              <TypeName style={{marginRight: 9}} typeName={specShape && specShape.name}/>}
+              <Typography variant="caption" className={classes.suggestion}
+                          style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
+                ({suggestion.changeTypeAsString})
+              </Typography>
+            </div>;
+          }
+
+          if (diffNotif) {
+            return diffNotif;
+          }
+
+          if (fieldShape) {
+            return <AssertionMetTypeName typeName={specShape && specShape.name}/>;
+          }
+        })()}
+      />
+      {/* this will insert nested rows */}
+      <ValueRows value={example} shape={fieldShape}/>
+    </>
+  );
+});
+
+
+export const ItemRow = withShapeRenderContext((props) => {
+  const classes = useShapeViewerStyles();
+  const {item, shapeRender, isLast, listId, diffDescription, suggestion} = props;
+
+  const exampleItemShape = item.exampleShape
+  const listItemShape = getOrUndefined(item.specListItem)
+  const diff = headOrUndefined(item.diffs);
+
+  const diffNotif = diff && (
+    <DiffNotif/>
+  );
+
+  return (
+    <>
+      <Row
+        highlight={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
+
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
+        left={(() => {
+
+          if (item.display === 'hidden') {
+            return <Indent><HiddenItemEllipsis expandId={listId}/></Indent>;
+          }
+
+          return (<Indent>
+              <div className={classes.rowContents}>
+                <IndexMarker>{item.index}</IndexMarker>
+                <div style={{flex: 1, paddingLeft: 4}}>
+                  <ValueContents value={getJson(item.example)} shape={exampleItemShape}/>
+                </div>
+              </div>
+            </Indent>
+          );
+        })()}
+        right={(() => {
+
+          if (diffNotif && suggestion) {
+            return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
+              {suggestion.changeTypeAsString !== 'Removal' &&
+              <TypeName style={{marginRight: 9}} typeName={listItemShape.name}/>}
+              <Typography variant="caption" className={classes.suggestion}
+                          style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
+                ({suggestion.changeTypeAsString})
+              </Typography>
+            </div>;
+          }
+          if (diffNotif) {
+            return diffNotif;
+          }
+          if (listItemShape) {
+            return <AssertionMetTypeName typeName={listItemShape.name}></AssertionMetTypeName>;
+          }
+        })()}
+      />
+      {item.display !== 'hidden' &&
+      <ValueRows value={getJson(item.example)} shape={exampleItemShape}/>}
+    </>
+  );
+});

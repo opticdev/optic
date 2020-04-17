@@ -18,6 +18,6 @@ object CompareEquality {
   def between(a: InteractiveDiffInterpretation, b: InteractiveDiffInterpretation): Boolean = a == b
 
   def betweenWithoutCommands(a: InteractiveDiffInterpretation, b: InteractiveDiffInterpretation): Boolean = {
-    a.description == b.description && a.description == a.description
+    a.action == b.action && a.pastTenseAction == a.pastTenseAction && a.commands.size == b.commands.size
   }
 }

@@ -10,7 +10,6 @@ export async function checkDiffOrUnrecognizedPath(specStorePath: string, samples
   try {
     const differ = opticEngine.com.useoptic.diff.SessionDiffer(specAsBuffer.toString());
     for (const s of samples) {
-      console.log(s);
       if (differ.hasUnrecognizedPath(s) || differ.hasDiff(s)) {
         return Promise.resolve(true);
       }

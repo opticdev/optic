@@ -6,13 +6,18 @@ import com.useoptic.contexts.shapes.{Commands, ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, OneOfKind, OptionalKind}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
-import com.useoptic.diff.{ChangeType, GotoPreview, InteractiveDiffInterpretation}
+import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, Resolvers, ShapeTrail, UnmatchedShape}
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+
+  private val basicInterpretations = new BasicInterpretations(rfcState)
+  private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {
@@ -46,18 +51,18 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
     } else {
       Seq(
         WrapWithOneOf(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
-        new BasicInterpretations(rfcState).ChangeShape(interactionTrail, requestsTrail, shapeTrail, jsonTrail, interaction),
+        basicInterpretations.ChangeShape(interactionTrail, requestsTrail, shapeTrail, jsonTrail, interaction),
       )
     }
   }
 
   def RemoveFromSpec(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
+    val identifier = descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)
     InteractiveDiffInterpretation(
-      "Remove from Spec",
-      "remove x from spec",
+      s"Remove ${identifier}",
+      s"Removed ${identifier}",
       Seq(),
-      ChangeType.Removal,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Removal
     )
   }
 
@@ -89,12 +94,14 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       case _ => Seq.empty
     }
     val commands = baseCommands ++ additionalCommands
+
+    val identifier = descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)
+
     InteractiveDiffInterpretation(
-      "Make Optional",
-      "Make it so x is optional",
+      s"Make ${identifier} optional",
+      s"Made ${identifier} optional",
       commands,
-      ChangeType.Update,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Update
     )
   }
 
@@ -124,28 +131,41 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
         )
       }
       case x => {
-        println(x)
+        Logger.log(x)
         Seq.empty
       }
     }
     val commands = baseCommands ++ additionalCommands
 
+    val identifier = descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)
+
+    val t1 = shapeTrail.path.lastOption match {
+      case Some(pc: ObjectFieldTrail) => descriptionInterpreters.shapeName(pc.fieldShapeId)
+      case Some(pc: ListItemTrail) =>  descriptionInterpreters.shapeName(pc.listShapeId)
+      case x => {
+        Logger.log(x)
+        ""
+      }
+    }
+    val t2 = Resolvers.jsonToCoreKind(resolved.get).name
+
     InteractiveDiffInterpretation(
-      "Make OneOf",
-      "Make it so x can be T1 or T2",
+      s"Allow ${identifier} to be either a ${t1} or ${t2}",
+      s"Allowed ${identifier} to be either a ${t1} or ${t2}",
       commands,
-      ChangeType.Addition,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 
   def AddToOneOf(interactionTrail: InteractionTrail): InteractiveDiffInterpretation = {
+
+    //@todo
+
     InteractiveDiffInterpretation(
       "Add to OneOf",
       "Make it so x can be T1, T2, ..., Tn",
       Seq(),
-      ChangeType.Addition,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 }

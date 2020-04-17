@@ -1,45 +1,31 @@
-import mixpanel from 'mixpanel-browser'
 let isAnalyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS !== 'no'
 
-const init = () => mixpanel.init('78a42ccba0e9a55de00c30b454c5da8e');
-
 const readyPromise = new Promise(resolve => {
-  if (isAnalyticsEnabled) {
-    if (!window.localStorage.getItem('_known_user')) {
-      init()
-      window.localStorage.setItem('_known_user', 'true')
-      const slack = "hNIv7B71oyUuRlczOFGqzRY3/ZFRBVM6NB/XDT4MQLFT".split("").reverse().join("")
-      fetch('https://hooks.slack.com/services/'+slack, {
-        method: 'POST',
-        headers: {},
-        body: JSON.stringify({ text: 'New User with mixpanel ID: ' + mixpanel.persistence.props.distinct_id })
-      })
-      resolve()
-    } else {
-      init()
-      resolve()
-    }
+  // if (isAnalyticsEnabled) {
+  if (true) {
     if (process.env.REACT_APP_CLI_MODE) {
-      fetch(`/cli-api/identity`, {
+      fetch(`/identity`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       })
         .then((res) => res.json())
-        .then(({ distinctId, doNotTrack }) => {
-          if (!doNotTrack) {
-            init()
-            mixpanel.identify(distinctId)
-            window.FS.identify(distinctId);
-            window.FS.identify(distinctId);
-            track('Opened on Local')
-          } else {
-            window.FS.shutdown()
-            isAnalyticsEnabled = false
-          }
+        .then((user) => {
+          resolve(user)
+          window.FS.identify(user.sub, {
+            displayName: user.name,
+            email: user.email
+          });
+          window.analytics.identify(user.sub, {
+            name: user.name,
+            email: user.email
+          });
+        })
+        .catch(() => {
+          console.log('no user')
           resolve()
-        });
+        })
     }
   } else {
     console.warn('Analytics is disabled')
@@ -52,13 +38,18 @@ const readyPromise = new Promise(resolve => {
   }
 })
 
+export function touchAnalytics() {
+  readyPromise.then(() => console.log('analytics loaded'))
+}
 
 export function track(event, props) {
-  readyPromise.then(() => {
-    if (isAnalyticsEnabled) {
-      mixpanel.track(event, props)
-    }
-  })
+  if (isAnalyticsEnabled) {
+    readyPromise.then((user) => {
+      if (isAnalyticsEnabled) {
+        window.analytics.track(event, props);
+      }
+    })
+  }
 }
 
 window.AnalyticsJsStub = {

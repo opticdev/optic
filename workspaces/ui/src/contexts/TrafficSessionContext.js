@@ -1,9 +1,6 @@
 import React from 'react';
 import {GenericContextFactory} from './GenericContextFactory.js';
-import {withRfcContext} from './RfcContext.js';
 import compose from 'lodash.compose';
-import {BaseDiffSessionManager} from '../components/diff/BaseDiffSessionManager.js';
-import LoadingDiff from '../components/diff/LoadingDiff.js';
 import {DiffManagerFacade} from '@useoptic/domain';
 
 const {
@@ -100,7 +97,6 @@ class TrafficSessionStoreBase extends React.Component {
 
   render() {
     const {sessionId, children, renderNoSession} = this.props;
-    const {queries, cachedQueryResults} = this.props;
     const {isLoading, error, session, noSession, diffManager} = this.state;
 
     if (isLoading) {
@@ -130,7 +126,7 @@ class TrafficSessionStoreBase extends React.Component {
   }
 }
 
-const TrafficSessionStore = compose(withRfcContext)(TrafficSessionStoreBase);
+const TrafficSessionStore = compose()(TrafficSessionStoreBase);
 
 export {
   TrafficSessionStore,

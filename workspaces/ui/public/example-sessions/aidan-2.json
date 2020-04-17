@@ -276,6 +276,49 @@
     },
     "samples": [
       {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"MONDAY\", \"novelField\": {\"a\": true}}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
         "uuid": "2",
         "request": {
           "host": "localhost",
@@ -311,49 +354,6 @@
             "contentType": "application/json",
             "value": {
               "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t}",
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "tags": []
-      },
-      {
-        "uuid": "3",
-        "request": {
-          "host": "localhost",
-          "method": "GET",
-          "path": "/todos",
-          "query": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": null,
-            "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": "application/json",
-            "value": {
-              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"MONDAY\"}",
               "asText": null,
               "asShapeHashBytes": null
             }
@@ -446,6 +446,92 @@
           }
         },
         "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "PUT",
+          "path": "/todos/abcdefg",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"WEDNESDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"WEDNESDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "PUT",
+          "path": "/todos/abcdefg",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"WEDNESDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"WEDNESDAY\", \"tags\": [\"Test\"]}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
       }
     ],
     "links": [
@@ -455,5 +541,6 @@
       }
     ]
   },
-  "examples": {}
+  "examples": {},
+  "refs": [{ "rel": "example-reports", "id": "f1-api" }]
 }

@@ -1,6 +1,7 @@
 package com.useoptic.ddd
 
 import com.useoptic.contexts.rfc.Events.RfcEvent
+import com.useoptic.logging.Logger
 import com.useoptic.serialization.EventSerialization
 import io.circe.Json
 import io.circe.parser.parse
@@ -85,7 +86,7 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
     if (events.isRight) {
       _store.put(id, events.right.get.asInstanceOf[Vector[Event]])
     } else {
-      println("could not add events " + events.left.get.getMessage)
+      Logger.log("could not add events " + events.left.get.getMessage)
     }
   }
 

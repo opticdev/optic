@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React from 'react'
 import {withStyles} from '@material-ui/styles';
 import Tooltip from '@material-ui/core/Tooltip';

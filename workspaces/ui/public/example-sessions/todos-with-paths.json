@@ -1,435 +1,95 @@
 {
-  "events": [
-    {
-      "PathComponentAdded": {
-        "pathId": "path_tQrApS1Cr1",
-        "parentPathId": "root",
-        "name": "todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "97a41b2f-a1cb-4ea4-ba1a-1eafe408fbf9",
-          "createdAt": "2020-02-28T14:45:49.794Z"
-        }
-      }
-    },
-    {
-      "RequestAdded": {
-        "requestId": "request_oOK4piNUk9",
-        "pathId": "path_tQrApS1Cr1",
-        "httpMethod": "GET",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
-          "createdAt": "2020-02-28T14:45:51.357Z"
-        }
-      }
-    },
-    {
-      "RequestParameterAdded": {
-        "parameterId": "parameter_2QMSr3rQMZ",
-        "requestId": "request_oOK4piNUk9",
-        "parameterLocation": "query",
-        "name": "queryString",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
-          "createdAt": "2020-02-28T14:45:51.357Z"
-        }
-      }
-    },
-    {
-      "ShapeAdded": {
-        "shapeId": "shape_wgoMnoNi9D",
-        "baseShapeId": "$object",
-        "parameters": {
-          "DynamicParameterList": {
-            "shapeParameterIds": []
-          }
-        },
-        "name": "",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
-          "createdAt": "2020-02-28T14:45:51.357Z"
-        }
-      }
-    },
-    {
-      "RequestParameterShapeSet": {
-        "parameterId": "parameter_2QMSr3rQMZ",
-        "parameterDescriptor": {
-          "shapeId": "shape_wgoMnoNi9D",
-          "isRemoved": false
-        },
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
-          "createdAt": "2020-02-28T14:45:51.357Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "request_oOK4piNUk9",
-        "key": "purpose",
-        "value": "Get Todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
-          "createdAt": "2020-02-28T14:45:51.360Z"
-        }
-      }
-    },
-    {
-      "RequestAdded": {
-        "requestId": "request_dljgiOxl2P",
-        "pathId": "path_tQrApS1Cr1",
-        "httpMethod": "POST",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
-          "createdAt": "2020-02-28T14:46:00.141Z"
-        }
-      }
-    },
-    {
-      "RequestParameterAdded": {
-        "parameterId": "parameter_bLAOG8Iv6H",
-        "requestId": "request_dljgiOxl2P",
-        "parameterLocation": "query",
-        "name": "queryString",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
-          "createdAt": "2020-02-28T14:46:00.141Z"
-        }
-      }
-    },
-    {
-      "ShapeAdded": {
-        "shapeId": "shape_kvn9ys2uai",
-        "baseShapeId": "$object",
-        "parameters": {
-          "DynamicParameterList": {
-            "shapeParameterIds": []
-          }
-        },
-        "name": "",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
-          "createdAt": "2020-02-28T14:46:00.141Z"
-        }
-      }
-    },
-    {
-      "RequestParameterShapeSet": {
-        "parameterId": "parameter_bLAOG8Iv6H",
-        "parameterDescriptor": {
-          "shapeId": "shape_kvn9ys2uai",
-          "isRemoved": false
-        },
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
-          "createdAt": "2020-02-28T14:46:00.141Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "request_dljgiOxl2P",
-        "key": "purpose",
-        "value": "Post Todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
-          "createdAt": "2020-02-28T14:46:00.141Z"
-        }
-      }
-    },
-    {
-      "PathParameterAdded": {
-        "pathId": "path_vdzGo0ZmPg",
-        "parentPathId": "path_tQrApS1Cr1",
-        "name": "todoId",
-        "eventContext": null
-      }
-    },
-    {
-      "ShapeAdded": {
-        "shapeId": "shape_Hu8qlMJlQR",
-        "baseShapeId": "$string",
-        "parameters": {
-          "DynamicParameterList": {
-            "shapeParameterIds": []
-          }
-        },
-        "name": "",
-        "eventContext": null
-      }
-    },
-    {
-      "PathParameterShapeSet": {
-        "pathId": "path_vdzGo0ZmPg",
-        "shapeDescriptor": {
-          "shapeId": "shape_Hu8qlMJlQR",
-          "isRemoved": false
-        },
-        "eventContext": null
-      }
-    },
-    {
-      "RequestAdded": {
-        "requestId": "request_TpiMJZl4Ua",
-        "pathId": "path_vdzGo0ZmPg",
-        "httpMethod": "PATCH",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
-          "createdAt": "2020-02-28T14:46:09.027Z"
-        }
-      }
-    },
-    {
-      "RequestParameterAdded": {
-        "parameterId": "parameter_V9mgu1GlmY",
-        "requestId": "request_TpiMJZl4Ua",
-        "parameterLocation": "query",
-        "name": "queryString",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
-          "createdAt": "2020-02-28T14:46:09.027Z"
-        }
-      }
-    },
-    {
-      "ShapeAdded": {
-        "shapeId": "shape_Ncn3ujjrHT",
-        "baseShapeId": "$object",
-        "parameters": {
-          "DynamicParameterList": {
-            "shapeParameterIds": []
-          }
-        },
-        "name": "",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
-          "createdAt": "2020-02-28T14:46:09.027Z"
-        }
-      }
-    },
-    {
-      "RequestParameterShapeSet": {
-        "parameterId": "parameter_V9mgu1GlmY",
-        "parameterDescriptor": {
-          "shapeId": "shape_Ncn3ujjrHT",
-          "isRemoved": false
-        },
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
-          "createdAt": "2020-02-28T14:46:09.027Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "request_TpiMJZl4Ua",
-        "key": "purpose",
-        "value": "Update Todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
-          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
-          "createdAt": "2020-02-28T14:46:09.028Z"
-        }
-      }
-    }
-  ],
+  "events": [{"PathComponentAdded":{"pathId":"path_jNlbaVZ0Ar","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"ad4c2dd3-feb9-443a-b506-a64603d8185a","createdAt":"2020-04-02T18:52:25.989Z"}}},{"ContributionAdded":{"id":"path_jNlbaVZ0Ar.GET","key":"purpose","value":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"ad4c2dd3-feb9-443a-b506-a64603d8185a","createdAt":"2020-04-02T18:52:25.994Z"}}},{"BatchCommitStarted":{"batchId":"4852cc8a-83cd-4803-b237-d7bf77b0933b","commitMessage":"dsasa","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"860e177a-39ce-4ebf-b6e8-6d7c09247c2b","createdAt":"2020-04-02T18:52:35.863Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_IHN2kDSLbI","pathId":"path_jNlbaVZ0Ar","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"03813f28-d8af-4647-b70a-16c533393098","createdAt":"2020-04-02T18:52:35.864Z"}}},{"ShapeAdded":{"shapeId":"shape_W0JK7E2Z3Z","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"03813f28-d8af-4647-b70a-16c533393098","createdAt":"2020-04-02T18:52:35.864Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_IHN2kDSLbI","parameterDescriptor":{"shapeId":"shape_W0JK7E2Z3Z","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"03813f28-d8af-4647-b70a-16c533393098","createdAt":"2020-04-02T18:52:35.864Z"}}},{"RequestAdded":{"requestId":"request_sQzzwQ8hQB","pathId":"path_jNlbaVZ0Ar","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"03813f28-d8af-4647-b70a-16c533393098","createdAt":"2020-04-02T18:52:35.864Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_ruRhRU7VwB","pathId":"path_jNlbaVZ0Ar","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.865Z"}}},{"ShapeAdded":{"shapeId":"JR1dZS_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.865Z"}}},{"ShapeAdded":{"shapeId":"JR1dZS_2","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.865Z"}}},{"FieldAdded":{"fieldId":"JR1dZS_1","shapeId":"JR1dZS_0","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"JR1dZS_1","shapeId":"JR1dZS_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.865Z"}}},{"ShapeAdded":{"shapeId":"JR1dZS_4","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.866Z"}}},{"FieldAdded":{"fieldId":"JR1dZS_3","shapeId":"JR1dZS_0","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"JR1dZS_3","shapeId":"JR1dZS_4"}},"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.866Z"}}},{"ResponseBodySet":{"responseId":"response_ruRhRU7VwB","bodyDescriptor":{"httpContentType":"application/json","shapeId":"JR1dZS_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"7428db16-89bc-4184-a3bf-d19352ee0c62","createdAt":"2020-04-02T18:52:35.866Z"}}},{"ShapeAdded":{"shapeId":"ESOkbg_0","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"08f37604-bf90-44b4-85f7-b0f466d4b5e4","createdAt":"2020-04-02T18:52:35.867Z"}}},{"FieldAdded":{"fieldId":"field_i0RPTArMFH","shapeId":"JR1dZS_0","name":"dueData","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_i0RPTArMFH","shapeId":"ESOkbg_0"}},"eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"08f37604-bf90-44b4-85f7-b0f466d4b5e4","createdAt":"2020-04-02T18:52:35.867Z"}}},{"BatchCommitEnded":{"batchId":"4852cc8a-83cd-4803-b237-d7bf77b0933b","eventContext":{"clientId":"anonymous","clientSessionId":"bcfad727-81fd-4552-b0fb-82828f7b05f2","clientCommandBatchId":"cc14b1ed-f31d-44d9-950b-2c38277a8648","createdAt":"2020-04-02T18:52:35.868Z"}}},{"PathParameterAdded":{"pathId":"path_4DpQAqvkOA","parentPathId":"path_jNlbaVZ0Ar","name":"todoId","eventContext":null}},{"ShapeAdded":{"shapeId":"shape_4bul4hj0a1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":null}},{"PathParameterShapeSet":{"pathId":"path_4DpQAqvkOA","shapeDescriptor":{"shapeId":"shape_4bul4hj0a1","isRemoved":false},"eventContext":null}},{"ContributionAdded":{"id":"path_4DpQAqvkOA.PUT","key":"purpose","value":"Update todo by ID","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"9baf44da-6593-476a-a58c-49b427fbca8b","createdAt":"2020-04-07T13:07:31.317Z"}}},{"BatchCommitStarted":{"batchId":"0566e48d-ac86-4a91-b148-3dccda573c09","commitMessage":"Added New Endpoint\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"4210fe7a-1f54-49c4-82b9-5f58dddcb8fa","createdAt":"2020-04-07T13:07:41.103Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_fqtP8Twvv9","pathId":"path_4DpQAqvkOA","httpMethod":"PUT","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.104Z"}}},{"ShapeAdded":{"shapeId":"shape_IvrrBkWGV6","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.104Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_fqtP8Twvv9","parameterDescriptor":{"shapeId":"shape_IvrrBkWGV6","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.104Z"}}},{"RequestAdded":{"requestId":"request_58N3sKJep4","pathId":"path_4DpQAqvkOA","httpMethod":"PUT","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.104Z"}}},{"ShapeAdded":{"shapeId":"cmbM7N_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.105Z"}}},{"ShapeAdded":{"shapeId":"cmbM7N_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.105Z"}}},{"FieldAdded":{"fieldId":"cmbM7N_1","shapeId":"cmbM7N_0","name":"dueData","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"cmbM7N_1","shapeId":"cmbM7N_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.105Z"}}},{"ShapeAdded":{"shapeId":"cmbM7N_4","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.105Z"}}},{"FieldAdded":{"fieldId":"cmbM7N_3","shapeId":"cmbM7N_0","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"cmbM7N_3","shapeId":"cmbM7N_4"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.106Z"}}},{"ShapeAdded":{"shapeId":"cmbM7N_6","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.106Z"}}},{"FieldAdded":{"fieldId":"cmbM7N_5","shapeId":"cmbM7N_0","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"cmbM7N_5","shapeId":"cmbM7N_6"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.106Z"}}},{"RequestBodySet":{"requestId":"request_58N3sKJep4","bodyDescriptor":{"httpContentType":"application/json","shapeId":"cmbM7N_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"084adc11-0999-43da-bfb2-db3e49584452","createdAt":"2020-04-07T13:07:41.106Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_LmNq2E73PM","pathId":"path_4DpQAqvkOA","httpMethod":"PUT","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.109Z"}}},{"ShapeAdded":{"shapeId":"Yen51t_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.109Z"}}},{"ShapeAdded":{"shapeId":"Yen51t_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.109Z"}}},{"FieldAdded":{"fieldId":"Yen51t_1","shapeId":"Yen51t_0","name":"dueData","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Yen51t_1","shapeId":"Yen51t_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.109Z"}}},{"ShapeAdded":{"shapeId":"Yen51t_4","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.110Z"}}},{"FieldAdded":{"fieldId":"Yen51t_3","shapeId":"Yen51t_0","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Yen51t_3","shapeId":"Yen51t_4"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.110Z"}}},{"ShapeAdded":{"shapeId":"Yen51t_6","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.110Z"}}},{"FieldAdded":{"fieldId":"Yen51t_5","shapeId":"Yen51t_0","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Yen51t_5","shapeId":"Yen51t_6"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.110Z"}}},{"ResponseBodySet":{"responseId":"response_LmNq2E73PM","bodyDescriptor":{"httpContentType":"application/json","shapeId":"Yen51t_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"bceab60a-3f5b-42c2-85f6-da6bc1a95a2f","createdAt":"2020-04-07T13:07:41.110Z"}}},{"BatchCommitEnded":{"batchId":"0566e48d-ac86-4a91-b148-3dccda573c09","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"ffe789c8-10b6-4717-be9b-89c4fb765d17","createdAt":"2020-04-07T13:07:41.111Z"}}},{"BatchCommitStarted":{"batchId":"0a6d3edd-4ebe-4f2b-84fe-81fbf6e71e25","commitMessage":"Updated Todos Endpoint\n\nChanges:\n- Made field 'dueData' optional","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"079adbab-f9a9-4464-9e8e-b61e09ac9e4f","createdAt":"2020-04-07T13:07:53.653Z"}}},{"ShapeAdded":{"shapeId":"shape_jjqKM2kZXa","baseShapeId":"$optional","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"34f77c80-1d8b-4ba4-8289-261b3732b022","createdAt":"2020-04-07T13:07:53.654Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"shape_jjqKM2kZXa","providerDescriptor":{"ShapeProvider":{"shapeId":"ESOkbg_0"}},"consumingParameterId":"$optionalInner"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"34f77c80-1d8b-4ba4-8289-261b3732b022","createdAt":"2020-04-07T13:07:53.654Z"}}},{"FieldShapeSet":{"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_i0RPTArMFH","shapeId":"shape_jjqKM2kZXa"}},"eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"34f77c80-1d8b-4ba4-8289-261b3732b022","createdAt":"2020-04-07T13:07:53.654Z"}}},{"BatchCommitEnded":{"batchId":"0a6d3edd-4ebe-4f2b-84fe-81fbf6e71e25","eventContext":{"clientId":"anonymous","clientSessionId":"5239c93d-502f-4a89-9cbb-734ace2bfc8e","clientCommandBatchId":"9047d322-0ba7-41f7-85c6-dd1b6d4b063f","createdAt":"2020-04-07T13:07:53.655Z"}}}],
   "session": {
     "metadata": {
       "completed": false
     },
     "samples": [
       {
-        "uuid": "c880a98f-0462-43d8-9a24-23ebc17d50ae",
+        "uuid": "5",
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
-          "queryString": "",
-          "headers": [
-            {
-              "name": "host",
-              "value": "localhost:3306"
-            },
-            {
-              "name": "user-agent",
-              "value": "HTTPie/1.0.2"
-            },
-            {
-              "name": "content-type",
-              "value": "application/json; charset=utf-8"
-            },
-            {
-              "name": "accept-encoding",
-              "value": "gzip, deflate"
-            },
-            {
-              "name": "accept",
-              "value": "*/*"
-            },
-            {
-              "name": "connection",
-              "value": "keep-alive"
-            }
-          ],
+          "path": "/nested",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
           "body": {
-            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}",
-            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}"
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
           }
         },
         "response": {
           "statusCode": 200,
-          "headers": [
-            {
-              "name": "content-length",
-              "value": "40"
-            },
-            {
-              "name": "content-disposition",
-              "value": "inline; filename=\"users.json\""
-            },
-            {
-              "name": "accept-ranges",
-              "value": "bytes"
-            },
-            {
-              "name": "etag",
-              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
-            },
-            {
-              "name": "content-type",
-              "value": "application/json; charset=utf-8"
-            },
-            {
-              "name": "vary",
-              "value": "Accept-Encoding"
-            },
-            {
-              "name": "date",
-              "value": "Tue, 25 Feb 2020 21:12:44 GMT"
-            },
-            {
-              "name": "connection",
-              "value": "keep-alive"
-            }
-          ],
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
           "body": {
-            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}",
-            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}"
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"fieldA\": {\"hello\": {\"n\": 123}}, \"fieldB\": {\"nested\": true}}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
           }
         },
-        "omitted": []
+        "tags": []
       },
       {
-        "uuid": "c880a98f-0462-43d8-9a24-23ebc1ad50ae",
+        "uuid": "5",
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
-          "queryString": "",
-          "headers": [
-            {
-              "name": "host",
-              "value": "localhost:3306"
-            },
-            {
-              "name": "user-agent",
-              "value": "HTTPie/1.0.2"
-            },
-            {
-              "name": "content-type",
-              "value": "application/json; charset=utf-8"
-            },
-            {
-              "name": "accept-encoding",
-              "value": "gzip, deflate"
-            },
-            {
-              "name": "accept",
-              "value": "*/*"
-            },
-            {
-              "name": "connection",
-              "value": "keep-alive"
-            }
-          ],
+          "path": "/nested",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
           "body": {
-            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}",
-            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}"
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
           }
         },
         "response": {
           "statusCode": 200,
-          "headers": [
-            {
-              "name": "content-length",
-              "value": "40"
-            },
-            {
-              "name": "content-disposition",
-              "value": "inline; filename=\"users.json\""
-            },
-            {
-              "name": "accept-ranges",
-              "value": "bytes"
-            },
-            {
-              "name": "etag",
-              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
-            },
-            {
-              "name": "content-type",
-              "value": "application/json; charset=utf-8"
-            },
-            {
-              "name": "vary",
-              "value": "Accept-Encoding"
-            },
-            {
-              "name": "date",
-              "value": "Tue, 25 Feb 2020 21:12:44 GMT"
-            },
-            {
-              "name": "connection",
-              "value": "keep-alive"
-            }
-          ],
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
           "body": {
-            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}",
-            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\", \"aidan\": 134, \"dev\": {\"a\": 1234, \"b\": true}}"
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": {\"hello\": \"abc\"}}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
           }
         },
-        "omitted": []
+        "tags": []
       }
     ],
     "links": [
@@ -439,6 +99,5 @@
       }
     ]
   },
-  "examples": {
-  }
+  "examples": {}
 }
