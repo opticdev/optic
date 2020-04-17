@@ -12,6 +12,7 @@ export default function EndpointReport(props) {
         TODO: add stats about this endpoint specifically, like number of
         interactions, example response, diffs, etc.
       </p>
+      <p>{endpoint.descriptor.endpointPurpose}</p>
       <ul>
         <li>
           Amount of <strong>observed</strong> interactions:{' '}

@@ -17,7 +17,7 @@ import {
   queriesFromEvents,
   useTestingService,
 } from '../../contexts/TestingDashboardContext';
-import ReportsNavigation from '../testing/reports-nav';
+import ReportsNavigation from '../testing/ReportsNav';
 import Page from '../Page';
 import { useRouterPaths } from '../../RouterPaths';
 
@@ -191,14 +191,7 @@ function useSpec(captureId) {
 
 function createSpec(specEvents) {
   const { queries } = queriesFromEvents(specEvents);
-  const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
-    queries
-  );
+  const spec = stuffFromQueries(queries);
 
-  return {
-    apiName,
-    pathsById,
-    requestIdsByPathId,
-    requests,
-  };
+  return spec;
 }

@@ -1,35 +1,35 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import {makeStyles} from '@material-ui/core/styles';
-import {useRouterPaths} from '../../RouterPaths';
-import {Link} from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import { useRouterPaths } from '../../RouterPaths';
+import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
-import {LightTooltip} from '../tooltips/LightTooltip';
+import { LightTooltip } from '../tooltips/LightTooltip';
 
 const drawerWidth = 270;
 
 const useStyles = makeStyles({
   drawer: {
     width: drawerWidth,
-    flexShrink: 0
+    flexShrink: 0,
   },
   miniDrawer: {
     width: 55,
-    flexShrink: 0
+    flexShrink: 0,
   },
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: '#1B2958',
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   miniDrawerPaper: {
     backgroundColor: '#1B2958',
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   topLevel: {
     width: 55,
@@ -38,17 +38,17 @@ const useStyles = makeStyles({
     borderRight: '1px solid #3F5597',
     display: 'flex',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   navButton: {
-    marginTop: 6
+    marginTop: 6,
   },
   opticLogo: {
-    marginTop: 5
+    marginTop: 5,
   },
   mainSection: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default function Navbar(props) {
@@ -60,18 +60,23 @@ export default function Navbar(props) {
       {
         name: 'Review Diff',
         icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.diffsRoot
+        link: routerPaths.diffsRoot,
       },
       {
         name: 'Documentation',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.docsRoot
+        link: routerPaths.docsRoot,
       },
-      {
-        name: 'Live Contract Testing',
-        icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.testingDashboard
-      }
+      ...(process.env.REACT_APP_TESTING_DASHBOARD === 'true' ||
+      process.env.REACT_APP_TESTING_DASHBOARD_TEASER === 'true'
+        ? [
+            {
+              name: 'Live Contract Testing',
+              icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
+              link: routerPaths.testingDashboard,
+            },
+          ]
+        : []),
     ],
     [routerPaths]
   );
@@ -83,7 +88,7 @@ export default function Navbar(props) {
       className={props.mini ? classes.miniDrawer : classes.drawer}
       variant={'permanent'}
       classes={{
-        paper: props.mini ? classes.miniDrawerPaper : classes.drawerPaper
+        paper: props.mini ? classes.miniDrawerPaper : classes.drawerPaper,
       }}
       anchor="left"
     >
