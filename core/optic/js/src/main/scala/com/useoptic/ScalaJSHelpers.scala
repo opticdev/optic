@@ -47,4 +47,6 @@ object ScalaJSHelpers {
     option.map(i => convertJsonToJs(i)).orUndefined
   }
 
+  def getJson(j: Json): js.Any = convertJsonToJs(j)
+
 }

@@ -10,8 +10,8 @@ export class TestingService {}
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
     headers: {
-      accept: 'application/json'
-    }
+      accept: 'application/json',
+    },
   }).then((response) => {
     if (response.ok) {
       return response.json();
@@ -97,7 +97,8 @@ export function queriesFromEvents(events) {
 
   // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
   // parse -> stringify -> parse
-  eventStore.bulkAdd(rfcId, JSON.stringify(events));
+  const stringifiedEvents = JSON.stringify(events);
+  eventStore.bulkAdd(rfcId, stringifiedEvents);
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
   const queries = Queries(eventStore, rfcService, rfcId);
   const rfcState = rfcService.currentState(rfcId);
