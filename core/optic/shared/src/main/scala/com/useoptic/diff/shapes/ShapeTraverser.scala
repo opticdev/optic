@@ -41,7 +41,10 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
         }
         case ListKind.baseShapeId => {
           val listShape = resolved.shapeEntity
-          val resolvedItem = Resolvers.resolveParameterToShape(spec.shapesState, listShape.shapeId, ListKind.innerParam, resolved.bindings)
+          val resolvedItem = {
+            Resolvers.resolveParameterToShape(spec.shapesState, listShape.shapeId, ListKind.innerParam, resolved.bindings)
+              .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
+          }
           assert(resolvedItem.isDefined, "We expect all lists to have a parameter for list item")
           visitors.listVisitor.begin(shapeTrail, listShape, resolvedItem.get)
           val itemTrail = shapeTrail.withChild(ListItemTrail(listShape.shapeId, resolvedItem.get.shapeId))
@@ -58,6 +61,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
 
           val branchShapes = shapeParameterIds.flatMap(paramId =>
             Resolvers.resolveParameterToShape(spec.shapesState, oneOfShape.shapeId, paramId, resolved.bindings))
+            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
 
           visitors.oneOfVisitor.begin(shapeTrail, oneOfShape, branchShapes.map(i => {
             Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState).shapeId
@@ -72,6 +76,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
         case OptionalKind.baseShapeId => {
           val optionalShape = resolved.shapeEntity
           val innerShapeOption = Resolvers.resolveParameterToShape(spec.shapesState, resolved.shapeEntity.shapeId, OptionalKind.innerParam, resolved.bindings)
+            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
 
           visitors.optionalVisitor.begin(shapeTrail, optionalShape, innerShapeOption)
           innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(OptionalTrail(innerShape.shapeId))))
@@ -79,6 +84,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
         case NullableKind.baseShapeId => {
           val nullableShape = resolved.shapeEntity
           val innerShapeOption = Resolvers.resolveParameterToShape(spec.shapesState, resolved.shapeEntity.shapeId, NullableKind.innerParam, resolved.bindings)
+            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
 
           visitors.nullableVisitor.begin(shapeTrail, nullableShape, innerShapeOption)
           innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(NullableTrail(innerShape.shapeId))))

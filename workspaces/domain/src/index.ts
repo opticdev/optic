@@ -79,6 +79,9 @@ export const toOption = (undefOr: any) => {
 export const getIndex = (collection: any) => (index: number) => {
   return ScalaJSHelpers.getIndex(collection, index);
 };
+export const getJson = (j: any) => {
+  return ScalaJSHelpers.getJson(j);
+};
 
 
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
