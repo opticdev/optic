@@ -18,6 +18,8 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
                              val specShapes: Map[SpecShapeId, SpecShape],
                              rootExampleShape: ExampleShapeId) {
 
+  val s = new ShapeOnlyRenderHelper(specShapes, rootExampleShape)
+
   def getRootShape: Option[RenderShape] = getExampleShape(rootExampleShape)
 
   def getExampleShape(exampleShapeId: ExampleShapeId): Option[RenderShape] = exampleShapes.get(exampleShapeId) map {
@@ -30,12 +32,12 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
     val merged =
       exampleObject.knownFieldIds.map(i => {
         exampleFields.getAs[KnownExampleField](i).map { field =>
-          RenderField(field.fieldName, Some(field.example), getExampleShape(field.exampleFieldId), getSpecShape(field.expectedShape), "visible", field.diffs ++ getSpecDiffs(field.specFieldId))
+          RenderField(field.fieldName, Some(field.example), getExampleShape(field.exampleFieldId), s.getSpecShape(field.expectedShape), "visible", field.diffs ++ s.getSpecDiffs(field.specFieldId))
         }
       }) ++
         exampleObject.missingFieldIds.map(i => {
           exampleFields.getAs[MissingExampleField](i).map { field =>
-            RenderField(field.fieldName, None, None, getSpecShape(field.expectedShape), "missing", field.diffs ++ getSpecDiffs(field.specFieldId))
+            RenderField(field.fieldName, None, None, s.getSpecShape(field.expectedShape), "missing", field.diffs ++ s.getSpecDiffs(field.specFieldId))
           }
         }) ++
         exampleObject.unexpectedFieldIds.map(i => {
@@ -48,17 +50,17 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
     //shape diffs in the field shape should show up on the row.
     val withExpectedShapeDiffsMergedIn = merged.flatten.map(i => i.copy(diffs = i.diffs ++ i.exampleShape.map(_.diffs).getOrElse(Set.empty)))
 
-    RenderShape(exampleObject.exampleObjectId, exampleObject.baseShapeId, getSpecShape(exampleObject.specObjectId), withExpectedShapeDiffsMergedIn, Seq.empty, Json.obj(),
-      exampleObject.diffs ++ getSpecDiffs(exampleObject.specObjectId))
+    RenderShape(exampleObject.exampleObjectId, exampleObject.baseShapeId, s.getSpecShape(exampleObject.specObjectId), withExpectedShapeDiffsMergedIn, Seq.empty, Json.obj(),
+      exampleObject.diffs ++ s.getSpecDiffs(exampleObject.specObjectId))
   }
 
   def getExamplePrimitive(value: ExamplePrimitive): RenderShape = {
-    RenderShape(value.exampleId, value.baseShapeId, getSpecShape(value.specId), Seq.empty, Seq.empty, value.example, value.diffs)
+    RenderShape(value.exampleId, value.baseShapeId, s.getSpecShape(value.specId), Seq.empty, Seq.empty, value.example, value.diffs)
   }
 
   def getExampleArray(exampleArray: ExampleArray): RenderShape = {
 
-    val listItemShapeOption = getSpecShape(exampleArray.specArrayItemId)
+    val listItemShapeOption = s.getSpecShape(exampleArray.specArrayItemId)
 
     val items = exampleArray.items.flatMap(i => {
       val exampleItemOption = exampleItems.getAs[ExampleItem](i)
@@ -72,9 +74,15 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
       }
     })
 
-    RenderShape(exampleArray.exampleArrayId, exampleArray.baseShapeId, getSpecShape(exampleArray.specArrayId), Seq.empty, items, Json.arr(), exampleArray.diffs)
+    RenderShape(exampleArray.exampleArrayId, exampleArray.baseShapeId, s.getSpecShape(exampleArray.specArrayId), Seq.empty, items, Json.arr(), exampleArray.diffs)
   }
 
+}
+
+@JSExportAll
+class ShapeOnlyRenderHelper(val specShapes: Map[SpecShapeId, SpecShape], rootShape: SpecFieldId) {
+
+  def getRootShape: Option[RenderSpecBase] = getSpecShape(Some(rootShape))
 
   def getSpecDiffs(o: Option[SpecShapeId]): Set[DiffResult] = o.flatMap(specShapes.get).map(_.diffs).getOrElse(Set.empty)
   def getSpecDiffs(o: SpecShapeId): Set[DiffResult] = specShapes.get(o).map(_.diffs).getOrElse(Set.empty)
@@ -82,7 +90,12 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
   def getSpecShape(specShapeIdOption: Option[SpecShapeId]): Option[RenderSpecBase] = if (specShapeIdOption.isDefined) getSpecShape(specShapeIdOption.get) else None
   def getSpecShape(specShapeId: SpecShapeId): Option[RenderSpecBase] = specShapes.get(specShapeId) map {
     case obj: SpecObject =>{
-      RenderSpecObject(obj.specObjectId, obj.baseShapeId, obj.fields, obj.name, obj.diffs)
+
+      val fields = obj.fields.map(i => {
+        RenderSpecField(i.specFieldId, i.fieldName, getSpecShape(i.expectedShape).get, i.diffs)
+      })
+
+      RenderSpecObject(obj.specObjectId, obj.baseShapeId, fields, obj.name, obj.diffs)
     }
     case field: SpecField => {
       RenderSpecField(field.specFieldId, field.fieldName, getSpecShape(field.expectedShape).get, field.diffs)
@@ -108,10 +121,6 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
     }
   }
 
-}
-
-@JSExportAll
-class ShapeOnlyRenderHelper(val specShapes: Map[SpecShapeId, SpecShape], rootShape: SpecFieldId) {
 
 }
 
@@ -147,7 +156,7 @@ trait RenderSpecBase {
   def diffs: Set[DiffResult]
 }
 @JSExportAll
-case class RenderSpecObject(shapeId: String, baseShapeId: String, fields: Seq[SpecField], name: RenderName, diffs: Set[DiffResult]) extends RenderSpecBase
+case class RenderSpecObject(shapeId: String, baseShapeId: String, fields: Seq[RenderSpecField], name: RenderName, diffs: Set[DiffResult]) extends RenderSpecBase
 @JSExportAll
 case class RenderSpecList(shapeId: String, baseShapeId: String, expectedListItem: RenderSpecBase, name: RenderName, diffs: Set[DiffResult]) extends RenderSpecBase
 @JSExportAll
