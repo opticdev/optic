@@ -8,6 +8,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
+    "@useoptic/cli-config": "0.2.1",
     "cross-fetch": "^3.0.4"
   },
   "devDependencies": {},
