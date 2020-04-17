@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as keytar from 'keytar';
 //@ts-ignore
-import jwtDecode from 'jwt-decode';
+import * as jwtDecode from 'jwt-decode';
 import * as http from 'http';
 import { EventEmitter } from 'events';
 import * as getPort from 'get-port';
@@ -16,7 +16,7 @@ interface ICredentialsServerConfig {
   port: number
 }
 
-export const loginBaseUrl = `https://auth.useoptic.com`;
+export const loginBaseUrl = process.env.OPTIC_AUTH_UI_HOST || `https://auth.useoptic.com`
 export const tokenReceivedEvent: string = 'tokenReceived';
 
 class CredentialsServer {
@@ -37,7 +37,7 @@ class CredentialsServer {
       const { body } = req;
       const { idToken } = body;
       if (typeof idToken === 'string') {
-        this.events.emit(tokenReceivedEvent, { token: idToken });
+        this.events.emit(tokenReceivedEvent, idToken);
         return res.status(202).json({});
       } else {
         return res.status(400).json({});

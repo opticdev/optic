@@ -10,6 +10,7 @@ import * as url from 'url';
 import * as qs from 'querystring';
 import { ensureDaemonStopped } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
+import {cli} from "cli-ux";
 
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';
@@ -26,19 +27,19 @@ export default class Login extends Command {
       const queryString = qs.stringify({
         tokenUrl: `http://localhost:${port}/api/token`
       });
-      const parsedUrl = url.parse(`${loginBaseUrl}/login`);
-      parsedUrl.query = queryString;
-      const launchUrl = url.format(parsedUrl);
+      const launchUrl = `${loginBaseUrl}/login?${queryString}`
       this.log(`Please log in at ${launchUrl}`);
 
-      openBrowser(launchUrl);
+      cli.action.start('Waiting for you to login...')
+
+      cli.open(launchUrl) //reload tab behavior is actually undesirable here
 
       const token = await tokenReceived;
-      await setCredentials({ token });
+      await setCredentials({token});
+      cli.action.stop('Received Credentials')
 
       await server.stop();
       await ensureDaemonStopped(lockFilePath);
-
       this.log(`You are now logged in!`);
     } catch (e) {
       this.error(e);
