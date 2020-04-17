@@ -9,6 +9,7 @@ import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, ShapeRelatedDiff, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.ShapeDiffResult
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.JSExportAll
@@ -59,6 +60,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     }
 
     def checkForEmptyContentType(interactionTrail: InteractionTrail, specTrail: RequestSpecTrail, interactions: Seq[HttpInteraction]) = {
+      Logger.log(specTrail)
       val pathOption = RequestSpecTrailHelpers.pathId(specTrail)
       if (pathOption.isDefined) {
         interactions.flatMap(interaction => {
@@ -96,7 +98,6 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       .groupBy(_._1)
       .mapValues(i => i.map(_._2))
       .filter(_._2.exists(i => i.response.statusCode >= 200 && i.response.statusCode < 300))
-
 
     val allUnmatchedUrls = fromDiff.map { case ((method, path, pathOption), interactions) => UndocumentedURL(method, path, pathOption, interactions.toSeq) }.toSeq
 
@@ -203,6 +204,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       //this makes sure that other methods don't sneak their way
       diffsFiltered.mapValues(_.filter(_.request.method == httpMethod)).filter(_._2.nonEmpty)
     }
+    
     new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterThisEndpoint, _currentRfcState) {
       def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
     }
@@ -242,21 +244,20 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
     val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
 
-    val newRegions = Region("New Regions",
-      interactionsGroupedByDiffs.collect {
-        case (diff: UnmatchedRequestBodyContentType, interactions) => {
-          val description = descriptionInterpreters.interpret(diff, interactions.head)
-          NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None, description)(() => suggestionsForDiff(diff))
-        }
-        case (diff: UnmatchedResponseBodyContentType, interactions) => {
-          val description = descriptionInterpreters.interpret(diff, interactions.head)
-          NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
-        }
-        case (diff: UnmatchedResponseStatusCode, interactions) => {
-          val description = descriptionInterpreters.interpret(diff, interactions.head)
-          NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
-        }
-      }.toVector.sortBy(_.statusCode))
+    val newRegions = interactionsGroupedByDiffs.collect {
+      case (diff: UnmatchedRequestBodyContentType, interactions) => {
+        val description = descriptionInterpreters.interpret(diff, interactions.head)
+        NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None, description)(() => suggestionsForDiff(diff))
+      }
+      case (diff: UnmatchedResponseBodyContentType, interactions) => {
+        val description = descriptionInterpreters.interpret(diff, interactions.head)
+        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
+      }
+      case (diff: UnmatchedResponseStatusCode, interactions) => {
+        val description = descriptionInterpreters.interpret(diff, interactions.head)
+        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
+      }
+    }.toSeq
 
     val requestShapeRegions = interactionsGroupedByDiffs.filter {
       case (a: UnmatchedRequestBodyShape, _) => true
@@ -338,6 +339,8 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
     TopLevelRegions(newRegions, requestShapeRegions ++ responseShapeRegions)
   }
+
+
   def inputStats = {
     s"${interactionsGroupedByDiffs.values.flatten.seq.size} interactions, yielding ${interactionsGroupedByDiffs.keys.size} diffs \n\n ${interactionsGroupedByDiffs.keys.toString()}"
   }

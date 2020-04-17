@@ -7,7 +7,7 @@ import com.useoptic.ux.SharedInterfaces.{ExampleFieldId, ExampleItemId, ExampleS
 import io.circe.Json
 import GetWithTypeExpectation._
 import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, OptionalKind}
-
+import ChildHasDiff._
 import scala.reflect.ClassTag
 import scala.scalajs.js.annotation.JSExportAll
 
@@ -45,7 +45,7 @@ class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
         })
 
 
-    //shape diffs in the field shape should show up on the row. 
+    //shape diffs in the field shape should show up on the row.
     val withExpectedShapeDiffsMergedIn = merged.flatten.map(i => i.copy(diffs = i.diffs ++ i.exampleShape.map(_.diffs).getOrElse(Set.empty)))
 
     RenderShape(exampleObject.exampleObjectId, exampleObject.baseShapeId, getSpecShape(exampleObject.specObjectId), withExpectedShapeDiffsMergedIn, Seq.empty, Json.obj(),
@@ -115,8 +115,10 @@ class ShapeOnlyRenderHelper(val specShapes: Map[SpecShapeId, SpecShape], rootSha
 
 }
 
+trait Renderable
+
 @JSExportAll
-case class RenderShape(id: String, baseShapeId: String, specShape: Option[RenderSpecBase], fields: Seq[RenderField], items: Seq[RenderItem], example: Json, diffs: Set[DiffResult]) {
+case class RenderShape(id: String, baseShapeId: String, specShape: Option[RenderSpecBase], fields: Seq[RenderField], items: Seq[RenderItem], example: Json, diffs: Set[DiffResult]) extends Renderable{
   def isOptional = baseShapeId == OptionalKind.baseShapeId
   def isNullable = baseShapeId == NullableKind.baseShapeId
   def itemsWithHidden(showAll: Boolean) = {
@@ -124,21 +126,25 @@ case class RenderShape(id: String, baseShapeId: String, specShape: Option[Render
       items
     } else {
       items.zipWithIndex.map {
-        case (i, index) => if (index < 5) i else i.copy(display = "hidden")
+        case (i, index) => {
+          //only collapse the row if no children have diffs
+          if (index < 5 && childDiffsFrom(i).isEmpty) i else i.copy(display = "hidden")
+        }
       }
     }
   }
 }
 @JSExportAll
-case class RenderItem(exampleItemId: ExampleItemId, index: Int, exampleShape: RenderShape, specListItem: Option[RenderSpecBase], example: Json, diffs: Set[DiffResult], display: String = "visible")
+case class RenderItem(exampleItemId: ExampleItemId, index: Int, exampleShape: RenderShape, specListItem: Option[RenderSpecBase], example: Json, diffs: Set[DiffResult], display: String = "visible") extends Renderable
 @JSExportAll
-case class RenderField(fieldName: String, example: Option[Json], exampleShape: Option[RenderShape], specShape: Option[RenderSpecBase], display: String, diffs: Set[DiffResult])
+case class RenderField(fieldName: String, example: Option[Json], exampleShape: Option[RenderShape], specShape: Option[RenderSpecBase], display: String, diffs: Set[DiffResult]) extends Renderable
 
 
 trait RenderSpecBase {
   def baseShapeId: String
   def isOptional = baseShapeId == OptionalKind.baseShapeId
   def isNullable = baseShapeId == NullableKind.baseShapeId
+  def diffs: Set[DiffResult]
 }
 @JSExportAll
 case class RenderSpecObject(shapeId: String, baseShapeId: String, fields: Seq[SpecField], name: RenderName, diffs: Set[DiffResult]) extends RenderSpecBase
@@ -164,6 +170,23 @@ object GetWithTypeExpectation {
         case _ => None
       }
 
+  }
+}
+
+object ChildHasDiff {
+  def childDiffsFrom(renderable: Renderable): Set[DiffResult] = {
+    renderable match {
+      case RenderField(_, _, exampleShape, specShape, _, diffs) => {
+        exampleShape.map(_.diffs).getOrElse(Set.empty) ++ specShape.map(_.diffs).getOrElse(Set.empty) ++ diffs
+      }
+      case RenderItem(_, _, exampleShape, specListItem, _, diffs, _) => {
+        (exampleShape.diffs ++ specListItem.map(_.diffs).getOrElse(Set.empty) ++ diffs)
+      }
+      case RenderShape(_, _, specShape, fields, items, _, diffs) => {
+        (specShape.map(_.diffs).getOrElse(Set.empty) ++ fields.flatMap(childDiffsFrom) ++ items.flatMap(childDiffsFrom) ++ diffs).toSet
+      }
+      case _ => Set.empty
+    }
   }
 }
 

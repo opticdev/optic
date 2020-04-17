@@ -10,7 +10,7 @@ object JsonExamples {
 
 
   val stringArray = json"""["string1", "string2", "string3", "string4", "string5"]"""
-  val stringArrayWithNumbers = json"""["string1", "string2", 3, "string4", 5]"""
+  val stringArrayWithNumbers = json"""["string1", "string2", 3, "string4", 5, 6, 7, 8, 9, 10, 11, 12]"""
 
 
   val nestedSimple = json"""{"task": "Build It", "isDone": false,  "dueData": "MONDAY"}"""
