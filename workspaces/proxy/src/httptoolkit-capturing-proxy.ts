@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
-import launcher from '@httptoolkit/browser-launcher';
+import * as launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest, MockRuleData} from 'mockttp';
 import {IHttpInteraction} from '@useoptic/domain';

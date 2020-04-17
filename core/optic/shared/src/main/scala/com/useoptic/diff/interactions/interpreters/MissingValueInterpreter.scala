@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions.interpreters
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.{Commands, ShapesAggregate, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, OneOfKind, OptionalKind}
+import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NullableKind, OneOfKind, OptionalKind}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
@@ -49,19 +49,37 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
         RemoveFromSpec(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
       )
     } else {
-      Seq(
-        WrapWithOneOf(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
-        basicInterpretations.ChangeShape(interactionTrail, requestsTrail, shapeTrail, jsonTrail, interaction),
-      )
+      if (resolved.get.isNull) {
+        Seq(
+          WrapWithNullable(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
+          RemoveFromSpec(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
+        )
+      } else {
+        Seq(
+          WrapWithOneOf(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
+          basicInterpretations.ChangeShape(interactionTrail, requestsTrail, shapeTrail, jsonTrail, interaction),
+        )
+      }
     }
   }
 
   def RemoveFromSpec(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val identifier = descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)
+    val commands = shapeTrail.path.lastOption match {
+      case Some(value) => value match {
+        case t: ObjectFieldTrail => {
+          Seq(
+            Commands.RemoveField(t.fieldId)
+          )
+        }
+        case _ => Seq()
+      }
+      case None => Seq()
+    }
     InteractiveDiffInterpretation(
       s"Remove ${identifier}",
       s"Removed ${identifier}",
-      Seq(),
+      commands,
       ChangeType.Removal
     )
   }
@@ -73,7 +91,22 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
     )
     val additionalCommands = shapeTrail.path.lastOption match {
       case Some(pc: ListItemTrail) => {
-        Seq.empty
+        Seq(
+          SetParameterShape(
+            ProviderInShape(
+              wrapperShapeId,
+              ShapeProvider(pc.itemShapeId),
+              OptionalKind.innerParam
+            )
+          ),
+          SetParameterShape(
+            ProviderInShape(
+              pc.listShapeId,
+              ShapeProvider(wrapperShapeId),
+              ListKind.innerParam
+            )
+          )
+        )
       }
       case Some(pc: ObjectFieldTrail) => {
         val field = rfcState.shapesState.flattenedField(pc.fieldId)
@@ -100,6 +133,60 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
     InteractiveDiffInterpretation(
       s"Make ${identifier} optional",
       s"Made ${identifier} optional",
+      commands,
+      ChangeType.Update
+    )
+  }
+
+  def WrapWithNullable(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
+    val wrapperShapeId = ShapesHelper.newShapeId()
+    val baseCommands = Seq(
+      AddShape(wrapperShapeId, NullableKind.baseShapeId, ""),
+    )
+    val additionalCommands = shapeTrail.path.lastOption match {
+      case Some(pc: ListItemTrail) => {
+        Seq(
+          SetParameterShape(
+            ProviderInShape(
+              wrapperShapeId,
+              ShapeProvider(pc.itemShapeId),
+              NullableKind.innerParam
+            )
+          ),
+          SetParameterShape(
+            ProviderInShape(
+              pc.listShapeId,
+              ShapeProvider(wrapperShapeId),
+              ListKind.innerParam
+            )
+          )
+        )
+      }
+      case Some(pc: ObjectFieldTrail) => {
+        val field = rfcState.shapesState.flattenedField(pc.fieldId)
+        Seq(
+          SetParameterShape(
+            ProviderInShape(
+              wrapperShapeId,
+              field.fieldShapeDescriptor match {
+                case fs: FieldShapeFromShape => ShapeProvider(fs.shapeId)
+                case fs: FieldShapeFromParameter => ParameterProvider(fs.shapeParameterId)
+              },
+              NullableKind.innerParam
+            )
+          ),
+          SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
+        )
+      }
+      case _ => Seq.empty
+    }
+    val commands = baseCommands ++ additionalCommands
+
+    val identifier = descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)
+
+    InteractiveDiffInterpretation(
+      s"Make ${identifier} nullable",
+      s"Made ${identifier} nullable",
       commands,
       ChangeType.Update
     )
@@ -141,7 +228,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
 
     val t1 = shapeTrail.path.lastOption match {
       case Some(pc: ObjectFieldTrail) => descriptionInterpreters.shapeName(pc.fieldShapeId)
-      case Some(pc: ListItemTrail) =>  descriptionInterpreters.shapeName(pc.listShapeId)
+      case Some(pc: ListItemTrail) => descriptionInterpreters.shapeName(pc.listShapeId)
       case x => {
         Logger.log(x)
         ""

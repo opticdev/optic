@@ -10,9 +10,9 @@ import {FileSystemCaptureLoader} from './captures/file-system/avro/file-system-c
 import {FileSystemCaptureSaver} from './captures/file-system/avro/file-system-capture-saver';
 import {makeUiBaseUrl} from './url-builders';
 import {developerDebugLogger} from './logger';
-import waitOn from 'wait-on';
+import * as waitOn from 'wait-on';
 import findProcess = require('find-process');
-import uuidv4 from 'uuid/v4';
+import * as uuid from 'uuid';
 
 export interface ICaptureManifest {
   samples: IHttpInteraction[]
@@ -54,7 +54,7 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
     if (isDebuggingEnabled) {
       developerDebugLogger(`node --inspect debugging enabled. go to chrome://inspect and open the node debugger`);
     }
-    const sentinelFileName = uuidv4();
+    const sentinelFileName = uuid.v4();
     const sentinelFilePath = path.join(path.dirname(lockFilePath), sentinelFileName);
     // fork process
     const child = fork(

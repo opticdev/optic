@@ -62,11 +62,11 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
           val fieldShapeId = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, expected.bindings).flatMap(x => {
             Some(x.shapeEntity.shapeId)
           }).get
-          (field.descriptor.name -> (fieldId, fieldShapeId))
+          (field.descriptor.name -> (fieldId, fieldShapeId, field))
         }).toMap
       fieldNameToId.foreach(entry => {
-        val (fieldName, (fieldId, fieldShapeId)) = entry
-        if (!value.contains(fieldName)) {
+        val (fieldName, (fieldId, fieldShapeId, field)) = entry
+        if (!value.contains(fieldName) && !field.isRemoved) {
           Logger.log(s"object is missing field ${fieldName}")
           primitiveVisitor.visit(None, bodyTrail.withChild(JsonObjectKey(fieldName)), Some(shapeTrail.withChild(ObjectFieldTrail(fieldId, fieldShapeId))))
         }

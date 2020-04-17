@@ -14,6 +14,15 @@ class JsonHttpClient {
     }
   }
 
+  static getJsonWithoutHandlingResponse(url: string) {
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+  }
+
   static postJson(url: string, body: object) {
     return fetch(url, {
       method: 'POST',

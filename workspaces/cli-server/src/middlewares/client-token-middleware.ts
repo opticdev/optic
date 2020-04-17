@@ -1,4 +1,4 @@
-import express from 'express';
+import * as express from 'express';
 
 export function middleware(req: express.Request, res: express.Response, next: express.NextFunction) {
   const tokenHeader = req.headers['Authorization'];

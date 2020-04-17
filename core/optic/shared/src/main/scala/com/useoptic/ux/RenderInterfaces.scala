@@ -1,6 +1,5 @@
 package com.useoptic.ux
 
-import com.sun.corba.se.spi.ior.ObjectKey
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, CoreShapeKind, ListKind, ObjectKind, OneOfKind}
 import com.useoptic.diff.DiffResult

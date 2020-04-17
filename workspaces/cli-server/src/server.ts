@@ -1,19 +1,18 @@
-import {IApiCliConfig, IOpticTaskRunnerConfig, IPathMapping} from '@useoptic/cli-config';
-import {EventEmitter} from 'events';
-import express from 'express';
-import getPort from 'get-port';
-import bodyParser from 'body-parser';
+import { IApiCliConfig, IOpticTaskRunnerConfig, IPathMapping } from '@useoptic/cli-config';
+import { EventEmitter } from 'events';
+import * as express from 'express';
+import * as getPort from 'get-port';
+import * as bodyParser from 'body-parser';
 import * as http from 'http';
-import {Socket} from 'net';
+import { Socket } from 'net';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {CapturesHelpers, ExampleRequestsHelpers, makeRouter} from './routers/spec-router';
-import cors, {CorsOptions} from 'cors'
-import {getUser, makeAuthenticationServer} from "./authentication";
+import { CapturesHelpers, ExampleRequestsHelpers, makeRouter } from './routers/spec-router';
+import { basePath } from '@useoptic/ui';
+
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
 export interface ICliServerConfig {
-  jwtSecret: string
 }
 
 export interface IOpticExpressRequestAdditions {
@@ -49,7 +48,6 @@ export const shutdownRequested = 'cli-server:shutdown-requested';
 
 class CliServer {
   private server!: http.Server;
-  private authServer!: http.Server;
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
 
@@ -57,8 +55,8 @@ class CliServer {
   }
 
   addUiServer(app: express.Application) {
-    const resourceRoot = path.resolve(__dirname, '../resources');
-    const reactRoot = path.join(resourceRoot, 'ui');
+    const resourceRoot = path.resolve(basePath);
+    const reactRoot = path.join(resourceRoot, 'build');
     const indexHtmlPath = path.join(reactRoot, 'index.html');
     app.use(express.static(reactRoot));
     app.get('*', (req, res) => {
@@ -69,16 +67,25 @@ class CliServer {
   makeServer() {
     const app = express();
     const sessions: ICliServerSession[] = [];
+    let user: object | null;
 
-    // share identity with webapp
-    app.get('/identity', async (req, res: express.Response) => {
-      const user = await getUser()
+    app.get('/api/identity', async (req, res: express.Response) => {
       if (user) {
-        res.json(user)
+        res.json({ user });
       } else {
-        res.sendStatus(404)
+        res.sendStatus(404);
       }
-    })
+    });
+    app.put('/api/identity', bodyParser.json({ limit: '5kb' }), async (req, res: express.Response) => {
+      if (req.body.user) {
+        user = req.body.user;
+      }
+      if (user) {
+        res.sendStatus(202).json({});
+      } else {
+        res.sendStatus(404);
+      }
+    });
 
     // @REFACTOR sessionsRouter
     app.get('/api/sessions', (req, res: express.Response) => {
@@ -87,8 +94,8 @@ class CliServer {
       });
     });
 
-    app.post('/api/sessions', bodyParser.json({limit: '5kb'}), async (req, res: express.Response) => {
-      const {path, taskConfig} = req.body;
+    app.post('/api/sessions', bodyParser.json({ limit: '5kb' }), async (req, res: express.Response) => {
+      const { path, taskConfig } = req.body;
       const captureInfo: ICliServerCaptureInfo = {
         taskConfig,
         captureType: 'run',
@@ -119,8 +126,8 @@ class CliServer {
     });
 
     // @REFACTOR adminRouter
-    app.post('/admin-api/commands', bodyParser.json({limit: '1kb'}), async (req, res) => {
-      const {body} = req;
+    app.post('/admin-api/commands', bodyParser.json({ limit: '1kb' }), async (req, res) => {
+      const { body } = req;
 
       if (body.type === 'shutdown') {
         res.sendStatus(204);
@@ -161,14 +168,10 @@ class CliServer {
           this.connections = this.connections.filter(c => c !== connection);
         });
       });
-
-      this.authServer = makeAuthenticationServer()
-
     });
   }
 
   async stop() {
-    this.authServer.close()
     if (this.server) {
       await new Promise((resolve) => {
         log.write(`server closing ${this.connections.length} open\n`);

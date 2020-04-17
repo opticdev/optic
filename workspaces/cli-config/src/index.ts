@@ -2,9 +2,19 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 import * as yaml from 'js-yaml';
-import getPort from 'get-port';
-import findUp from 'find-up';
-import {parseRule, parseIgnore, IIgnoreRunnable} from './helpers/ignore-parser';
+import * as getPort from 'get-port';
+import * as findUp from 'find-up';
+import { parseRule, parseIgnore, IIgnoreRunnable } from './helpers/ignore-parser';
+
+export interface IUserCredentials {
+  token: string
+}
+
+export interface IUser {
+  sub: string,
+  name: string,
+  email: string
+}
 
 export interface IOpticTask {
   command?: string,
@@ -89,7 +99,7 @@ export interface IOpticTaskRunnerConfig {
 export async function TaskToStartConfig(task: IOpticTask, captureId: string): Promise<IOpticTaskRunnerConfig> {
 
   const parsedBaseUrl = url.parse(task.baseUrl);
-  const randomPort = await getPort({port: getPort.makeRange(3300, 3900)});
+  const randomPort = await getPort({ port: getPort.makeRange(3300, 3900) });
   const serviceProtocol = parsedBaseUrl.protocol || 'http:';
   const proxyPort = parsedBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443');
   const parsedProxyBaseUrl = task.proxy && url.parse(task.proxy);
@@ -104,13 +114,13 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
       port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
       host: parsedBaseUrl.hostname || 'localhost',
       protocol: serviceProtocol,
-      basePath: parsedBaseUrl.path || '/',
+      basePath: parsedBaseUrl.path || '/'
     },
     proxyConfig: {
       port: parseInt(parsedProxyBaseUrl ? (parsedProxyBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443')) : proxyPort, 10),
       host: (parsedProxyBaseUrl ? parsedProxyBaseUrl.hostname : parsedBaseUrl.hostname) || 'localhost',
       protocol: (parsedProxyBaseUrl ? parsedProxyBaseUrl.protocol : serviceProtocol) || 'http:',
-      basePath: parsedBaseUrl.path || '/',
+      basePath: parsedBaseUrl.path || '/'
     }
   };
 }
@@ -127,7 +137,7 @@ export interface IPathMapping {
 }
 
 export async function getPathsRelativeToConfig() {
-  const configPath = await findUp('optic.yml', {type: 'file'});
+  const configPath = await findUp('optic.yml', { type: 'file' });
   if (configPath) {
     const configParentDirectory = path.resolve(configPath, '../');
     return await getPathsRelativeToCwd(configParentDirectory);
@@ -160,7 +170,7 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
 }
 
 export async function createFileTree(config: string, token: string, basePath: string) {
-  const {specStorePath, configPath, gitignorePath, capturesPath, tokenStorePath} = await getPathsRelativeToCwd(basePath);
+  const { specStorePath, configPath, gitignorePath, capturesPath, tokenStorePath } = await getPathsRelativeToCwd(basePath);
   const files = [
     {
       path: gitignorePath,
@@ -175,7 +185,7 @@ captures/
     {
       path: tokenStorePath,
       contents: token
-    },
+    }
   ];
   if (config) {
     files.push({
@@ -194,7 +204,7 @@ captures/
     configPath,
     basePath,
     capturesPath
-  }
+  };
 }
 
 export {
@@ -204,8 +214,8 @@ export {
 };
 
 export async function shouldWarnAboutVersion7Compatibility() {
-  const hasVersion6SpecStore = await findUp('.api', {type: 'directory'});
-  const hasVersion7Config = await findUp('optic.yml', {type: 'file'});
+  const hasVersion6SpecStore = await findUp('.api', { type: 'directory' });
+  const hasVersion7Config = await findUp('optic.yml', { type: 'file' });
   if (hasVersion6SpecStore) {
     return true;
   } else if (hasVersion7Config) {

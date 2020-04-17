@@ -1,24 +1,34 @@
-import {JsonHttpClient} from './json-http-client';
-import {IOpticTaskRunnerConfig} from '@useoptic/cli-config';
+import { JsonHttpClient } from './json-http-client';
+import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
 
 class Client {
   constructor(private baseUrl: string) {
   }
 
+  getIdentity() {
+    const url = `${this.baseUrl}/identity`;
+    return JsonHttpClient.getJsonWithoutHandlingResponse(url)
+  }
+
+  setIdentity(user: IUser) {
+    const url = `${this.baseUrl}/identity`;
+    return JsonHttpClient.putJson(url, { user });
+  }
+
   findSession(path: string, taskConfig: IOpticTaskRunnerConfig | null): Promise<{ session: { id: string } }> {
     const url = `${this.baseUrl}/sessions`;
-    return JsonHttpClient.postJson(url, {path, taskConfig});
+    return JsonHttpClient.postJson(url, { path, taskConfig });
   }
 
   markCaptureAsCompleted(specId: string, captureId: string) {
     const url = `${this.baseUrl}/specs/${specId}/captures/${captureId}/status`;
-    return JsonHttpClient.putJson(url, {status: 'completed'});
+    return JsonHttpClient.putJson(url, { status: 'completed' });
   }
 
 
   stopDaemon() {
     const url = `${this.baseUrl}/commands`;
-    return JsonHttpClient.postJson(url, {type: 'shutdown'});
+    return JsonHttpClient.postJson(url, { type: 'shutdown' });
   }
 }
 

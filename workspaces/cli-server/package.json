@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "0.1.4",
+  "version": "0.2.1",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo cli-server"
@@ -8,9 +8,10 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/cli-config": "0.1.2",
-    "@useoptic/domain": "0.1.3",
-    "@useoptic/proxy": "0.1.2",
+    "@useoptic/cli-config": "0.2.1",
+    "@useoptic/domain": "0.2.1",
+    "@useoptic/proxy": "0.2.1",
+    "@useoptic/ui": "0.2.1",
     "avsc": "^5.4.18",
     "body-parser": "^1.19.0",
     "bottleneck": "^2.19.5",
@@ -19,10 +20,7 @@
     "find-process": "^1.4.3",
     "fs-extra": "^8.1.0",
     "get-port": "^5.1.0",
-    "jwt-decode": "^2.2.0",
-    "keytar": "^5.4.0",
     "lodash.sortby": "^4.7.0",
-    "nice-try": "^2.0.1",
     "proper-lockfile": "^4.1.1",
     "uuid": "^3.4.0",
     "wait-on": "^4.0.0"
