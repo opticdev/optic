@@ -3,7 +3,8 @@
   "version": "0.2.1",
   "files": [
     "build",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "dependencies": {
     "@material-ui/core": "4.9.7",
