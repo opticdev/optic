@@ -16,10 +16,7 @@ export default function DiffHunkViewer(props) {
   const classes = useStyles();
 
   const rootShape = preview.rootId;
-  const shape = getOrUndefined(preview.getUnifiedShape(rootShape));
-
-  const exampleKeys = JsonHelper.seqToJsArray(preview.listExampleKeys)
-  const exampleFields = JsonHelper.seqToJsArray(preview.listExampleFieldKeys)
+  const shape = getOrUndefined(preview.getRootShape);
 
   return (
     <ShapeRenderStore shape={preview} diff={diff} diffDescription={diffDescription} suggestion={suggestion} exampleOnly={exampleOnly}>

@@ -9,6 +9,8 @@ object ShapeExamples {
 
   val todoShape: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.basicTodo)
   val stringArray: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.stringArray)
+  val racecar: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.racecar)
+  val nestedSimple: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.nestedSimple)
 
   private
   def buildBasicShapeFrom(json: Json): (ShapeEntity, RfcState) = {

@@ -134,7 +134,8 @@ export default ((props) => {
                 return (
                   <DiffHunkViewer
                     exampleOnly
-                    preview={getOrUndefined(DiffPreviewer.previewBody(currentInteraction.request.body))}/>
+                    // preview={getOrUndefined(DiffPreviewer.previewBody(currentInteraction.request.body))}
+                  />
                 )
               }
             })()}
@@ -183,7 +184,8 @@ export default ((props) => {
                 return (
                   <DiffHunkViewer
                     exampleOnly
-                    preview={getOrUndefined(DiffPreviewer.previewBody(currentInteraction.response.body))}/>
+                    // preview={getOrUndefined(DiffPreviewer.previewBody(currentInteraction.response.body))}
+                  />
                 )
               }
 

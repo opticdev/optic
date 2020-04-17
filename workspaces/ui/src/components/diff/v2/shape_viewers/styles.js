@@ -157,14 +157,13 @@ export const useColor = {
 
 export const TypeName = ({typeName, style}) => {
   const classes = useShapeViewerStyles();
-
   const {shapeRender} = useContext(ShapeRenderContext);
 
   if (!typeName) {
     return null;
   }
 
-  const coloredComponents = typeName.asColoredString(shapeRender);
+  const coloredComponents = typeName.asColoredString(shapeRender.specShapes);
 
   return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
     if (i.text) {

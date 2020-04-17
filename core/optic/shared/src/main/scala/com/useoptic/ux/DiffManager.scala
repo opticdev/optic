@@ -204,7 +204,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       //this makes sure that other methods don't sneak their way
       diffsFiltered.mapValues(_.filter(_.request.method == httpMethod)).filter(_._2.nonEmpty)
     }
-    
+
     new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterThisEndpoint, _currentRfcState) {
       def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
     }
@@ -281,6 +281,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           val responseShapeID = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
           DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, responseShapeID, Set.empty)
         }.toOption
+
 
         BodyShapeDiffBlock(
           diff,
