@@ -4,33 +4,39 @@ import * as url from 'url';
 import * as yaml from 'js-yaml';
 import * as getPort from 'get-port';
 import * as findUp from 'find-up';
-import { parseRule, parseIgnore, IIgnoreRunnable } from './helpers/ignore-parser';
+import {
+  parseRule,
+  parseIgnore,
+  IIgnoreRunnable,
+} from './helpers/ignore-parser';
 
 export interface IUserCredentials {
-  token: string
+  token: string;
 }
 
 export interface IUser {
-  sub: string,
-  name: string,
-  email: string
+  sub: string;
+  name: string;
+  email: string;
 }
 
 export interface IOpticTask {
-  command?: string,
-  baseUrl: string
-  proxy?: string
+  command?: string;
+  baseUrl: string;
+  proxy?: string;
 }
 
 export interface IApiCliConfig {
-  name: string
+  name: string;
   tasks: {
-    [key: string]: IOpticTask
-  }
-  ignoreRequests?: string[]
+    [key: string]: IOpticTask;
+  };
+  ignoreRequests?: string[];
 }
 
-export async function readApiConfig(configPath: string): Promise<IApiCliConfig> {
+export async function readApiConfig(
+  configPath: string
+): Promise<IApiCliConfig> {
   const rawFile = await fs.readFile(configPath);
   let parsed = null;
   try {
@@ -42,66 +48,69 @@ export async function readApiConfig(configPath: string): Promise<IApiCliConfig> 
 }
 
 export interface IOpticCliInitConfig {
-  type: 'init'
+  type: 'init';
 }
 
 export interface IOpticCaptureConfig {
-  persistenceEngine: 'fs' | 's3'
-  captureId: string
-  captureDirectory: string
+  persistenceEngine: 'fs' | 's3';
+  captureId: string;
+  captureDirectory: string;
 }
 
 export interface IOpticApiRunConfig {
-  type: 'run'
-  captureConfig: IOpticCaptureConfig
+  type: 'run';
+  captureConfig: IOpticCaptureConfig;
   // where does the service normally live?
   serviceConfig: {
-    port: number
-    host: string
-    protocol: string
-    basePath: string
-  }
+    port: number;
+    host: string;
+    protocol: string;
+    basePath: string;
+  };
   // where should intercepted requests go?
   proxyConfig: {
-    port: number
-    host: string
-    protocol: string
-    basePath: string
-  }
+    port: number;
+    host: string;
+    protocol: string;
+    basePath: string;
+  };
 }
 
 export interface IOpticApiInterceptConfig {
-  type: 'intercept'
+  type: 'intercept';
 }
 
 export interface IOpticTaskRunnerConfig {
-  command?: string
-  captureId: string
-  startTime: Date,
-  lastUpdateTime: Date,
-  persistenceEngine: 'fs' | 's3'
+  command?: string;
+  captureId: string;
+  startTime: Date;
+  lastUpdateTime: Date;
+  persistenceEngine: 'fs' | 's3';
   // where does the service normally live?
   serviceConfig: {
-    port: number
-    host: string
-    protocol: string
-    basePath: string
-  }
+    port: number;
+    host: string;
+    protocol: string;
+    basePath: string;
+  };
   // where should intercepted requests go?
   proxyConfig: {
-    port: number
-    host: string
-    protocol: string
-    basePath: string
-  }
+    port: number;
+    host: string;
+    protocol: string;
+    basePath: string;
+  };
 }
 
-export async function TaskToStartConfig(task: IOpticTask, captureId: string): Promise<IOpticTaskRunnerConfig> {
-
+export async function TaskToStartConfig(
+  task: IOpticTask,
+  captureId: string
+): Promise<IOpticTaskRunnerConfig> {
   const parsedBaseUrl = url.parse(task.baseUrl);
   const randomPort = await getPort({ port: getPort.makeRange(3300, 3900) });
   const serviceProtocol = parsedBaseUrl.protocol || 'http:';
-  const proxyPort = parsedBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443');
+  const proxyPort =
+    parsedBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443');
   const parsedProxyBaseUrl = task.proxy && url.parse(task.proxy);
 
   return {
@@ -114,26 +123,37 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
       port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
       host: parsedBaseUrl.hostname || 'localhost',
       protocol: serviceProtocol,
-      basePath: parsedBaseUrl.path || '/'
+      basePath: parsedBaseUrl.path || '/',
     },
     proxyConfig: {
-      port: parseInt(parsedProxyBaseUrl ? (parsedProxyBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443')) : proxyPort, 10),
-      host: (parsedProxyBaseUrl ? parsedProxyBaseUrl.hostname : parsedBaseUrl.hostname) || 'localhost',
-      protocol: (parsedProxyBaseUrl ? parsedProxyBaseUrl.protocol : serviceProtocol) || 'http:',
-      basePath: parsedBaseUrl.path || '/'
-    }
+      port: parseInt(
+        parsedProxyBaseUrl
+          ? parsedProxyBaseUrl.port ||
+              (serviceProtocol === 'http:' ? '80' : '443')
+          : proxyPort,
+        10
+      ),
+      host:
+        (parsedProxyBaseUrl
+          ? parsedProxyBaseUrl.hostname
+          : parsedBaseUrl.hostname) || 'localhost',
+      protocol:
+        (parsedProxyBaseUrl ? parsedProxyBaseUrl.protocol : serviceProtocol) ||
+        'http:',
+      basePath: parsedBaseUrl.path || '/',
+    },
   };
 }
 
 export interface IPathMapping {
-  cwd: string
-  basePath: string
-  specStorePath: string
-  configPath: string
-  gitignorePath: string
-  capturesPath: string
-  exampleRequestsPath: string
-  tokenStorePath: string
+  cwd: string;
+  basePath: string;
+  specStorePath: string;
+  configPath: string;
+  gitignorePath: string;
+  capturesPath: string;
+  exampleRequestsPath: string;
+  tokenStorePath: string;
 }
 
 export async function getPathsRelativeToConfig() {
@@ -145,7 +165,9 @@ export async function getPathsRelativeToConfig() {
   throw new Error(`expected to find an optic.yml file`);
 }
 
-export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
+export async function getPathsRelativeToCwd(
+  cwd: string
+): Promise<IPathMapping> {
   const configPath = path.join(cwd, 'optic.yml');
 
   const basePath = path.join(cwd, '.optic');
@@ -165,36 +187,46 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
     gitignorePath,
     capturesPath,
     exampleRequestsPath,
-    tokenStorePath
+    tokenStorePath,
   };
 }
 
-export async function createFileTree(config: string, token: string, basePath: string) {
-  const { specStorePath, configPath, gitignorePath, capturesPath, tokenStorePath } = await getPathsRelativeToCwd(basePath);
+export async function createFileTree(
+  config: string,
+  token: string,
+  basePath: string
+) {
+  const {
+    specStorePath,
+    configPath,
+    gitignorePath,
+    capturesPath,
+    tokenStorePath,
+  } = await getPathsRelativeToCwd(basePath);
   const files = [
     {
       path: gitignorePath,
       contents: `
 captures/
-`
+`,
     },
     {
       path: specStorePath,
-      contents: JSON.stringify([])
+      contents: JSON.stringify([]),
     },
-    {
-      path: tokenStorePath,
-      contents: token
-    }
+    // {
+    //   path: tokenStorePath,
+    //   contents: token
+    // }
   ];
   if (config) {
     files.push({
       path: configPath,
-      contents: config
+      contents: config,
     });
   }
   await Promise.all(
-    files.map(async file => {
+    files.map(async (file) => {
       await fs.ensureFile(file.path);
       await fs.writeFile(file.path, file.contents);
     })
@@ -203,15 +235,11 @@ captures/
   return {
     configPath,
     basePath,
-    capturesPath
+    capturesPath,
   };
 }
 
-export {
-  parseIgnore,
-  parseRule,
-  IIgnoreRunnable
-};
+export { parseIgnore, parseRule, IIgnoreRunnable };
 
 export async function shouldWarnAboutVersion7Compatibility() {
   const hasVersion6SpecStore = await findUp('.api', { type: 'directory' });
@@ -223,4 +251,3 @@ export async function shouldWarnAboutVersion7Compatibility() {
   }
   return false;
 }
-

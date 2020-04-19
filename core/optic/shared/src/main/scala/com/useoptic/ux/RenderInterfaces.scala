@@ -74,19 +74,20 @@ object ExampleRenderInterfaces {
 
 
 
-object ShapaeRenderInterfaces {
+object ShapeRenderInterfaces {
 
   trait SpecShape {
     def specShapeId: ExampleShapeId
     def baseShapeId: String
     def name: RenderName
     def diffs: Set[DiffResult]
+    def isObject = baseShapeId == ObjectKind.baseShapeId
   }
 
   case class SpecObject(specObjectId: SpecShapeId, fields: Seq[SpecField], diffs: Set[DiffResult]) extends SpecShape {
     override def specShapeId: SpecShapeId = specObjectId
     def baseShapeId: ShapeId = ObjectKind.baseShapeId
-    def name: RenderName = RenderName(Seq(NameComponent(ObjectKind.name, ObjectKind.color)))
+    def name: RenderName = RenderName(Seq(NameComponent(ObjectKind.name, ObjectKind.color, link = Some(specObjectId))))
   }
 
   case class SpecField(fieldName: String, specFieldId: SpecFieldId, expectedShape: SpecShapeId, diffs: Set[DiffResult])

@@ -12,7 +12,7 @@ import com.useoptic.diff.interactions.{InteractionDiffResult, UnmatchedRequestBo
 import com.useoptic.diff.interactions.interpreters.DiffDescription
 import com.useoptic.diff.shapes.ShapeDiffResult
 import com.useoptic.types.capture.HttpInteraction
-import com.useoptic.ux.ShapaeRenderInterfaces.SpecShape
+import com.useoptic.ux.ShapeRenderInterfaces.SpecShape
 import com.useoptic.ux.SharedInterfaces.SpecShapeId
 import io.circe.Json
 import io.circe.generic.auto._
@@ -104,7 +104,7 @@ package object ux {
 
 
   @JSExportAll
-  case class ColoredName(text: String, color: String)
+  case class ColoredName(text: String, color: String, link: Option[ShapeId])
 
   @JSExportAll
   case class RenderName(nameComponents: Seq[NameComponent]) {
@@ -112,11 +112,18 @@ package object ux {
       nameComponents.flatMap(_.flatten)
     }
 
-    def asColoredString(implicit specShapes: Map[SpecShapeId, SpecShape]): Seq[ColoredName] = flatten.map(i => ColoredName(i.startText, i.color))
+    def asColoredString(implicit specShapes: Map[SpecShapeId, SpecShape]): Seq[ColoredName] = flatten.map(i => ColoredName(i.startText, i.color, {
+      //no links to primitives
+      if (i.link.isEmpty || ShapesHelper.allCoreShapes.exists(s => i.link.contains(s))) {
+        None
+      } else {
+        i.link
+      }
+    }))
   }
 
   @JSExportAll
-  case class NameComponent(startText: String, color: String, endText: String = "", inner: Option[ShapeId] = None) {
+  case class NameComponent(startText: String, color: String, endText: String = "", inner: Option[ShapeId] = None, link: Option[ShapeId] = None) {
     def flatten(implicit specShapes: Map[SpecShapeId, SpecShape]): Seq[NameComponent] = {
       if (inner.isDefined) {
         Seq(
