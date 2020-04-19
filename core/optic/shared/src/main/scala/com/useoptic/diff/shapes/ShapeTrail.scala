@@ -69,4 +69,10 @@ case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) 
       case None => None
     }
   }
+
+  def parentTrail(): Option[ShapeTrail] = {
+    path.lastOption.flatMap {
+      case x => Some(this.copy(path = this.path.init))
+    }
+  }
 }

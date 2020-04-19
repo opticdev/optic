@@ -116,6 +116,9 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
       Logger.log(resolvedTrail.shapeEntity)
       Logger.log(resolvedTrail.coreShapeKind)
       resolvedTrail.coreShapeKind match {
+        case UnknownKind => {
+          emit(UnspecifiedShape(bodyTrail, trail.get))
+        }
         case OneOfKind => {
           val oneOfShapeId = resolvedTrail.shapeEntity.shapeId
           // there's only a diff if none of the shapes match
