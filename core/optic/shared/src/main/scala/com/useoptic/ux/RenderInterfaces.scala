@@ -19,6 +19,7 @@ object ExampleRenderInterfaces {
   trait ExampleShape {
     def exampleId: ExampleShapeId
     def baseShapeId: String
+    def diffs: Set[DiffResult]
   }
 
   case class ExampleObject(exampleObjectId: ExampleShapeId, specObjectId: Option[SpecShapeId], knownFieldIds: Seq[ExampleFieldId], missingFieldIds: Seq[ExampleFieldId], unexpectedFieldIds: Seq[ExampleFieldId], diffs: Set[DiffResult]) extends ExampleShape {
@@ -26,7 +27,10 @@ object ExampleRenderInterfaces {
     def baseShapeId: ShapeId = ObjectKind.baseShapeId
   }
 
-  trait ExampleField { def exampleFieldId: ExampleFieldId }
+  trait ExampleField {
+    def exampleFieldId: ExampleFieldId
+    def diffs: Set[DiffResult]
+  }
   case class KnownExampleField(exampleFieldId: ExampleFieldId, fieldName: String, specFieldId: SpecFieldId, expectedShape: SpecShapeId, example: Json, diffs: Set[DiffResult]) extends ExampleField
   case class MissingExampleField(exampleFieldId: ExampleFieldId /* what it would be */, fieldName: String, specFieldId: SpecFieldId, expectedShape: SpecShapeId, diffs: Set[DiffResult]) extends ExampleField
   case class UnexpectedExampleField(exampleFieldId: ExampleFieldId, fieldName: String, example: Json, diffs: Set[DiffResult]) extends ExampleField
