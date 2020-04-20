@@ -32,10 +32,21 @@ trait JsonFileFixture {
     EventSerialization.fromJson(json).get
   }
 
+  def universeFromExampleSession(slug: String): Universe = {
+    import better.files._
+    val filePath = ("../workspaces/ui/public/example-sessions/"+slug+".json").toFile
+    val json = parseFile(filePath.toJava).right.get
+    eventsAndInteractionsFrom(json)
+  }
+
   case class Universe(rfcService: RfcService, rfcId: AggregateId, eventStore: EventStore[RfcEvent], interactions: Vector[HttpInteraction])
 
   def eventsAndInteractionsFrom(slug: String): Universe = {
     val json = fromFile(slug)
+    eventsAndInteractionsFrom(json)
+  }
+
+  def eventsAndInteractionsFrom(json: Json): Universe = {
     val jsonInteractions = json.asObject.get.apply("session").get.asObject.get.apply("samples").get.asArray.get
     val interactions = jsonInteractions.map(x => InteractionSerialization.fromJson(x))
 
@@ -49,4 +60,5 @@ trait JsonFileFixture {
     val rfcState = rfcService.currentState(rfcId)
     Universe(rfcService, rfcId, eventStore, interactions)
   }
+
 }
