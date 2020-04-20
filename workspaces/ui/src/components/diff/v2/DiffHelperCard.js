@@ -75,8 +75,9 @@ export const DiffHelperCard = (props) => {
 
         <FormControl component="fieldset" className={classes.formControl}>
           <RadioGroup>
-            {mapScala(suggestions)(suggestion => {
+            {mapScala(suggestions)((suggestion, n) => {
               return <FormControlLabel
+                key={n}
                 onClick={() => setSelectedInterpretation(suggestion)}
                 control={<Radio size="small" color="primary"  value={suggestion} checked={selectedInterpretation && CompareEquality.betweenWithoutCommands(suggestion, selectedInterpretation)}/>}
                 label={<Typography variant="subtitle2" className={classes.suggestion}>{suggestion.action}</Typography>}

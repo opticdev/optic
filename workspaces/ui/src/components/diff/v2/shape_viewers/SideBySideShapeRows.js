@@ -78,7 +78,7 @@ export const ObjectRender = withShapeRenderContext((props) => {
   return (
     <>
       {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
-      {mapScala(fields)(field => <FieldRow field={field} parent={shape}/>)}
+      {mapScala(fields)((field, n) => <FieldRow key={field.fieldName} field={field} parent={shape}/>)}
       <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
@@ -97,7 +97,8 @@ export const ListRender = withShapeRenderContext((props) => {
     <>
       {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
       {mapScala(items)((item, index) => {
-        return <ItemRow item={item}
+        return <ItemRow key={index}
+                        item={item}
                         listId={listId}
                         isLast={index - 1 === lengthScala(items)}/>;
       })}
@@ -226,9 +227,9 @@ const AssertionMetTypeName = ({typeName, style}) => {
 
   return (<div className={classes.assertionMet}>
     <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
-    {mapScala(coloredComponents)((i) => {
+    {mapScala(coloredComponents)((i, n) => {
       if (i.text) {
-        return <span style={{whiteSpace: 'pre'}}>{i.text}</span>;
+        return <span key={n} style={{whiteSpace: 'pre'}}>{i.text}</span>;
       }
     })}
   </div>);
