@@ -99,6 +99,7 @@ export default function Navbar(props) {
         <img src="/optic-logo.svg" width={50} className={classes.opticLogo} />
         {menuItems.map((i) => (
           <LightTooltip
+            key={i.link}
             title={i.name}
             component={Link}
             to={i.link}
