@@ -62,7 +62,10 @@ function AppError() {
         </h4>
 
         <h5>
-          Please feel free to contact us about it: @TODO add contact method
+          Please feel free to{' '}
+          <a href="mailto:hi@useoptic.com?subject=Optic App crash report">
+            contact us about it.
+          </a>
         </h5>
 
         <p>Meanwhile, you could try the following:</p>
