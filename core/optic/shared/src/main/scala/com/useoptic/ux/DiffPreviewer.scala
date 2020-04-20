@@ -52,7 +52,7 @@ object DiffPreviewer {
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, Set.empty)
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
     specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
-    new ShapeOnlyRenderHelper(shapeRenderVisitor.shapes, shapeId)
+    new ShapeOnlyRenderHelper(shapeRenderVisitor.shapes, shapeRenderVisitor.rootShape.specShapeId)
   }
 
 }
@@ -308,10 +308,15 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
   override val listVisitor: ListShapeVisitor = new ListShapeVisitor {
 
     override def begin(shapeTrail: ShapeTrail, listShape: ShapeEntity, itemShape: ShapeEntity): Unit = {
+
+      val baseItem = Resolvers.resolveToBaseShape(itemShape.shapeId)(spec.shapesState)
+
+
       pushShape(
         SpecArray(
           listShape.shapeId,
           itemShape.shapeId,
+          RenderName(Seq(NameComponent("List of ", ListKind.color, inner = Some(baseItem.shapeId)))),
           diffsByTrail(shapeTrail.withChild(ListItemTrail(listShape.shapeId, itemShape.shapeId)))
         )
       )

@@ -17,7 +17,7 @@ import {
 } from '@useoptic/domain';
 import {withDiffContext} from '../DiffContext';
 import {DepthContext, Indent, IndentIncrement} from './Indent';
-import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
+import {HiddenItemEllipsis, Symbols, TypeName, useColor, useShapeViewerStyles} from './styles';
 
 export const DiffViewer = ({shape}) => {
   const classes = useShapeViewerStyles();
@@ -228,24 +228,6 @@ const AssertionMetTypeName = ({typeName, style}) => {
     })}
   </div>);
 };
-
-function Symbols({children, withIndent}) {
-  const classes = useShapeViewerStyles();
-
-  const symbol = <Typography variant="caption" className={classes.symbols}>{children}</Typography>;
-
-  if (withIndent) {
-    return (
-      <Indent add={-1}>
-        {symbol}
-      </Indent>
-    );
-  } else {
-    return symbol;
-  }
-
-}
-
 
 export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
   const classes = useShapeViewerStyles();

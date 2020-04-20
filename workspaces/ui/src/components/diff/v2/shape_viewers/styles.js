@@ -5,6 +5,8 @@ import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from '
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import {mapScala} from '@useoptic/domain';
+import {Typography} from '@material-ui/core';
+import {Indent} from './Indent';
 
 export const useShapeViewerStyles = makeStyles(theme => ({
   root: {
@@ -159,6 +161,7 @@ export const TypeName = ({typeName, style}) => {
   const classes = useShapeViewerStyles();
   const {shapeRender} = useContext(ShapeRenderContext);
 
+
   if (!typeName) {
     return null;
   }
@@ -172,3 +175,20 @@ export const TypeName = ({typeName, style}) => {
   })}
   </div>);
 };
+
+export function Symbols({children, withIndent}) {
+  const classes = useShapeViewerStyles();
+
+  const symbol = <Typography variant="caption" className={classes.symbols}>{children}</Typography>;
+
+  if (withIndent) {
+    return (
+      <Indent add={-1}>
+        {symbol}
+      </Indent>
+    );
+  } else {
+    return symbol;
+  }
+
+}
