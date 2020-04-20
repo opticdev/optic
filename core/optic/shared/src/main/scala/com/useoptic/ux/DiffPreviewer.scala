@@ -1,10 +1,12 @@
 package com.useoptic.ux
 
-import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.contexts.rfc.{Events, RfcCommandContext, RfcService, RfcState}
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldId, ShapeId}
 import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, ListKind, NullableKind, NumberKind, ObjectKind, OneOfKind, OptionalKind, StringKind, UnknownKind}
+import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
+import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.interactions.interpreters.DiffDescription
 import com.useoptic.diff.shapes.{ArrayVisitor, GenericWrapperVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ListItemTrail, ListShapeVisitor, ObjectFieldTrail, ObjectShapeVisitor, ObjectVisitor, OneOfVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
@@ -24,18 +26,19 @@ import scala.util.Try
 @JSExportAll
 object DiffPreviewer {
 
-  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeId: ShapeId, diffs: Set[ShapeDiffResult]): SideBySideRenderHelper = {
+  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult]): SideBySideRenderHelper = {
     import com.useoptic.diff.shapes.JsonLikeTraverser
+
     //    val shapeRenderVisitor = new ShapeRenderVisitor(spec)
     //first traverse the example
     val exampleRenderVisitor = new ExampleRenderVisitor(spec, diffs)
     val jsonLikeTraverser = new JsonLikeTraverser(spec, exampleRenderVisitor)
-    jsonLikeTraverser.traverse(jsonLike, JsonTrail(Seq.empty), Some(ShapeTrail(shapeId, Seq.empty)))
+    jsonLikeTraverser.traverse(jsonLike, JsonTrail(Seq.empty), shapeIdOption.map(i => ShapeTrail(i, Seq.empty)))
 
     //second traversal of spec with examples
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffs)
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
-    specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
+    shapeIdOption.foreach(shapeId => specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq())))
 
 
     new SideBySideRenderHelper(
@@ -53,6 +56,36 @@ object DiffPreviewer {
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
     specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
     new ShapeOnlyRenderHelper(shapeRenderVisitor.shapes, shapeRenderVisitor.rootShape.specShapeId)
+  }
+
+  def previewBody(body: Body): Option[SideBySideRenderHelper] = {
+    val parsedOption = BodyUtilities.parseBody(body)
+    if (parsedOption.isDefined) {
+      Some(previewDiff(parsedOption , RfcState.empty, None, Set.empty))
+    } else None
+  }
+
+  def shapeOnlyFromShapeBuilder(jsonLike: Option[JsonLike]): Option[ShapeOnlyRenderHelper] = jsonLike flatMap { json =>
+    val shapeBuilder = new ShapeBuilder(json)
+    val result = shapeBuilder.run
+
+    val commands = result.commands
+    val shapeId = result.rootShapeId
+
+    val simulatedId = "simulated"
+    val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
+    val service = new RfcService(new InMemoryEventStore[Events.RfcEvent])
+    commands.foreach(command => {
+      val result = Try(service.handleCommand(simulatedId, command, commandContext))
+      if (result.isFailure) {
+        Logger.log(command)
+        //        Logger.log(result)
+        throw result.failed.get
+      }
+    })
+
+    val rfcState = service.currentState(simulatedId)
+    previewShape(rfcState, Some(shapeId))
   }
 
 }

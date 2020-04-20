@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { DocDarkGrey } from '../../docs/DocConstants';
+import { DocDarkGrey, DocDivider } from '../../docs/DocConstants';
 import {
   Button,
   CardActions,
@@ -13,17 +13,20 @@ import Paper from '@material-ui/core/Paper';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import classNames from 'classnames';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   CompareEquality,
   filterScala,
+  getIndex,
   getOrUndefined,
   headOrUndefined,
   JsonHelper,
   lengthScala,
   mapScala,
+  toOption,
 } from '@useoptic/domain';
 import { DiffContext, withDiffContext } from './DiffContext';
 import {
@@ -37,6 +40,12 @@ import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
 import { PulsingOptic } from './DiffHelperCard';
 import { DiffToolTip } from './shape_viewers/styles';
+import Pagination from '@material-ui/lab/Pagination';
+import { RfcContext } from '../../../contexts/RfcContext';
+import DiffHunkViewer from './DiffHunkViewer';
+import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
+import { ShapeBox } from './DiffReviewExpanded';
+import { ShapeOnlyViewer } from './shape_viewers/ShapeOnlyShapeRows';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +61,38 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 10,
     paddingBottom: 5,
     fontWeight: 800,
+  },
+  region: {
+    padding: 18,
+  },
+  regionHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 16,
+  },
+  approveNewRegions: {
+    position: 'sticky',
+    top: 0,
+    width: '100%',
+    height: 55,
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    paddingRight: 20,
+  },
+  newContentPreview: {
+    paddingTop: 16,
+    paddingRight: 8,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  unchecked: {
+    pointerEvents: 'none',
+    opacity: 0.38,
+  },
+  uncheckedText: {
+    pointerEvents: 'none',
+    opacity: 0.68,
   },
   hunkHeader: {
     paddingRight: 10,
@@ -102,9 +143,9 @@ const useStyles = makeStyles((theme) => ({
   },
   diffsNewRegion: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingLeft: 5,
-    maxWidth: 670,
+    justifyContent: 'center',
   },
   diffCursor: {
     position: 'sticky',
@@ -206,7 +247,9 @@ export function DiffCursor(props) {
             Choose a diff to review
           </Typography>
           <List>
-            {mapScala(diffs)((diff, n) => <DiffItem key={n} diff={diff} button={true} />)}
+            {mapScala(diffs)((diff, n) => (
+              <DiffItem key={n} diff={diff} button={true} />
+            ))}
           </List>
         </Collapse>
       </div>
@@ -311,49 +354,120 @@ function _NewRegions(props) {
     acceptSuggestion(...allApproved);
   };
 
-  const newRequests = mapScala(newRegions)((diff) => {
-    if (diff.inRequest) {
-      return (
-        <ListItem>
-          <ListItemAvatar>
-            <Checkbox
-              checked={!isDeselected(diff)}
-              onChange={onChange(diff)}
-              color="primary"
-            />
-          </ListItemAvatar>
+  const ignoreAll = () => {
+    const allIgnored = mapScala(newRegions)((i) => i.diff);
+    ignoreDiff(...allIgnored);
+  };
+
+  const PreviewNewBodyRegion = ({ diff }) => {
+    const isChecked = !isDeselected(diff);
+    const { interactions } = diff;
+    const length = lengthScala(interactions);
+
+    const [interactionIndex, setInteractionIndex] = React.useState(1);
+
+    useEffect(() => {
+      setInteractionIndex(1);
+    }, [diff]);
+
+    const currentInteraction = getIndex(interactions)(interactionIndex - 1);
+    const preview = getOrUndefined(diff.previewRender(currentInteraction));
+    const shapePreview = getOrUndefined(diff.previewShape(currentInteraction));
+
+    return (
+      <>
+        <Card className={classes.regionHeader} elevation={2}>
+          <Checkbox
+            checked={isChecked}
+            onChange={onChange(diff)}
+            color="primary"
+          />
           <ListItemText
-            primary={getOrUndefined(diff.contentType) || 'No Body'}
+            className={classNames({
+              [classes.uncheckedText]: !isChecked,
+            })}
+            primary={
+              diff.inRequest
+                ? getOrUndefined(diff.contentType) || 'No Body'
+                : `${getOrUndefined(diff.statusCode)} Response ${
+                    getOrUndefined(diff.contentType) || 'No Body'
+                  }`
+            }
             secondary={`Observed ${diff.count} times`}
             primaryTypographyProps={{ style: { fontSize: 14 } }}
             secondaryTypographyProps={{ style: { fontSize: 12 } }}
           />
-        </ListItem>
-      );
+
+          <div style={{ flex: 1 }} />
+          {length > 1 && (
+            <Pagination
+              color="primary"
+              className={classNames({ [classes.unchecked]: !isChecked })}
+              style={{ display: 'flex' }}
+              count={length}
+              page={interactionIndex}
+              showLastButton={length > 5}
+              size="small"
+              onChange={(e, pageNumber) => setInteractionIndex(pageNumber)}
+            />
+          )}
+        </Card>
+
+        <div
+          className={classNames(classes.newContentPreview, {
+            [classes.unchecked]: !isChecked,
+          })}
+        >
+          <div style={{ width: '55%', paddingRight: 15 }}>
+            {preview && (
+              <ShapeBox
+                header={
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <BreadcumbX
+                      itemStyles={{ fontSize: 13, color: 'white' }}
+                      location={['Example']}
+                    />
+                    <div style={{ flex: 1 }}></div>
+                    <span style={{ color: 'white' }}>⮕</span>
+                  </div>
+                }
+              >
+                <ShapeExpandedStore>
+                  <DiffHunkViewer preview={preview} exampleOnly />
+                </ShapeExpandedStore>
+              </ShapeBox>
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            {shapePreview && (
+              <ShapeBox
+                header={
+                  <BreadcumbX
+                    itemStyles={{ fontSize: 13, color: 'white' }}
+                    location={['Documented Shape']}
+                  />
+                }
+              >
+                <ShapeExpandedStore>
+                  <ShapeOnlyViewer preview={shapePreview} exampleOnly />
+                </ShapeExpandedStore>
+              </ShapeBox>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const newRequests = mapScala(newRegions)((diff) => {
+    if (diff.inRequest) {
+      return <PreviewNewBodyRegion diff={diff} />;
     }
   }).filter((i) => !!i);
 
   const newResponses = mapScala(newRegions)((diff) => {
     if (diff.inResponse) {
-      return (
-        <ListItem>
-          <ListItemAvatar>
-            <Checkbox
-              checked={!isDeselected(diff)}
-              onChange={onChange(diff)}
-              color="primary"
-            />
-          </ListItemAvatar>
-          <ListItemText
-            primary={`${getOrUndefined(diff.statusCode)} Response ${
-              getOrUndefined(diff.contentType) || 'No Body'
-            }`}
-            secondary={`Observed ${diff.count} times`}
-            primaryTypographyProps={{ style: { fontSize: 14 } }}
-            secondaryTypographyProps={{ style: { fontSize: 12 } }}
-          />
-        </ListItem>
-      );
+      return <PreviewNewBodyRegion diff={diff} />;
     }
   }).filter((i) => !!i);
 
@@ -372,12 +486,12 @@ function _NewRegions(props) {
   return (
     <Card className={classes.wrapper} elevation={2}>
       <div className={classes.header}>
-        <Typography variant="h6" color="primary">
+        <Typography variant="h5" color="primary">
           Generate Initial Documentation
         </Typography>
-        <Typography variant="caption" color="textSecondary">{`New ${
+        <Typography variant="body2" color="textSecondary">{`New ${
           copy || copyFallback
-        } types observed. Click Approve to document them.`}</Typography>
+        } types observed. Review them, then click Document Bodies`}</Typography>
         {/*<div>*/}
         {/*  <Typography variant="h6">{endpointPurpose}</Typography>*/}
         {/*  <PathAndMethod method={method}*/}
@@ -388,43 +502,44 @@ function _NewRegions(props) {
       <div style={{ float: 'right', marginTop: -55 }}>
         <PulsingOptic />
       </div>
-      <div className={classes.diffsNewRegion}>
-        {newRequests.length > 0 && (
-          <List
-            style={{ flex: 1 }}
-            subheader={
-              <ListSubheader className={classes.subheader}>
-                Requests
-              </ListSubheader>
-            }
-          >
-            {newRequests}
-          </List>
-        )}
-        {newResponses.length > 0 && (
-          <List
-            style={{ flex: 1 }}
-            subheader={
-              <ListSubheader className={classes.subheader}>
-                Responses
-              </ListSubheader>
-            }
-          >
-            {newResponses}
-          </List>
-        )}
-      </div>
-      <CardActions style={{ float: 'right', padding: 15 }}>
+
+      <div className={classes.approveNewRegions}>
+        <Button color="default" onClick={ignoreAll} style={{ marginRight: 10 }}>
+          Ignore All
+        </Button>
         <Button
           color="primary"
           variant="contained"
           disabled={approveCount === 0}
           onClick={onApply}
-          autoFocus
         >
-          Approve ({approveCount})
+          Document ({approveCount}) bodies
         </Button>
-      </CardActions>
+      </div>
+
+      <DocDivider style={{ marginTop: 20, marginBottom: 20 }} />
+
+      <div className={classes.diffsNewRegion}>
+        {newRequests.length > 0 && (
+          <div className={classes.region}>
+            <Typography variant="h6" color="primary">
+              Requests
+            </Typography>
+            {newRequests}
+          </div>
+        )}
+
+        <DocDivider style={{ marginTop: 30, marginBottom: 20 }} />
+
+        {newResponses.length > 0 && (
+          <div className={classes.region}>
+            <Typography variant="h6" color="primary">
+              Responses
+            </Typography>
+            {newResponses}
+          </div>
+        )}
+      </div>
     </Card>
   );
 }

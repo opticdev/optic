@@ -1,5 +1,5 @@
 {
-  "events": [{"PathComponentAdded":{"pathId":"path_PN2ee15iMd","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.409Z"}}},{"ContributionAdded":{"id":"path_PN2ee15iMd.GET","key":"purpose","value":"Get Todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.413Z"}}},{"PathParameterAdded":{"pathId":"path_nYD4QHZFq1","parentPathId":"path_PN2ee15iMd","name":"todoId","eventContext":null}},{"ShapeAdded":{"shapeId":"shape_KfHrdDdh2u","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":null}},{"PathParameterShapeSet":{"pathId":"path_nYD4QHZFq1","shapeDescriptor":{"shapeId":"shape_KfHrdDdh2u","isRemoved":false},"eventContext":null}},{"ContributionAdded":{"id":"path_nYD4QHZFq1.GET","key":"purpose","value":"Get Todos by ID","eventContext":{"clientId":"anonymous","clientSessionId":"f3b89014-f3ea-4a40-851f-ad992c98b5a1","clientCommandBatchId":"fa82ecff-8ac9-4452-ae2f-7b41d31a07bc","createdAt":"2020-04-04T19:57:47.310Z"}}}],
+  "events": [{"PathComponentAdded":{"pathId":"path_PN2ee15iMd","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.409Z"}}},{"ContributionAdded":{"id":"path_PN2ee15iMd.GET","key":"purpose","value":"Get Todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.413Z"}}},{"PathParameterAdded":{"pathId":"path_nYD4QHZFq1","parentPathId":"path_PN2ee15iMd","name":"todoId","eventContext":null}},{"ShapeAdded":{"shapeId":"shape_KfHrdDdh2u","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":null}},{"PathParameterShapeSet":{"pathId":"path_nYD4QHZFq1","shapeDescriptor":{"shapeId":"shape_KfHrdDdh2u","isRemoved":false},"eventContext":null}},{"ContributionAdded":{"id":"path_nYD4QHZFq1.GET","key":"purpose","value":"Get Todos by ID","eventContext":{"clientId":"anonymous","clientSessionId":"f3b89014-f3ea-4a40-851f-ad992c98b5a1","clientCommandBatchId":"fa82ecff-8ac9-4452-ae2f-7b41d31a07bc","createdAt":"2020-04-04T19:57:47.310Z"}}},{"ContributionAdded":{"id":"path_nYD4QHZFq1.PUT","key":"purpose","value":"Update todo by id","eventContext":{"clientId":"anonymous","clientSessionId":"7fea2137-e8ae-48b6-949a-b541755e56e3","clientCommandBatchId":"6638b065-9e5c-4cd4-94c7-8c0dd87285ed","createdAt":"2020-04-20T17:19:24.471Z"}}}],
   "session": {
     "metadata": {
       "completed": true
@@ -194,9 +194,9 @@
             "asShapeHashBytes": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "asJsonString": null,
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
               "asText": null,
               "asShapeHashBytes": null
             }
@@ -214,6 +214,134 @@
             "value": {
               "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
               "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "PUT",
+          "path": "/todos/def-todo",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "PUT",
+          "path": "/todos/def-todo",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/string-body",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "text/plain",
+            "value": {
+              "asText": "ABCDEFG",
               "asShapeHashBytes": null
             }
           }

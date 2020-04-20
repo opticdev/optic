@@ -32,7 +32,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       visitor.diffs.toVector
     }
 
-     DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, ShapeExamples.todoShape._1.shapeId, previewDiffs.toSet)
+     DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId), previewDiffs.toSet)
   }
 
   def shapeOnlyPreview(shapeExample: (ShapeEntity, RfcState)) = {
@@ -90,6 +90,11 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
   describe("shape only render") {
     val shapeOnly = shapeOnlyPreview(ShapeExamples.todoShape).getRootShape.get
     assert(shapeOnly.asInstanceOf[RenderSpecObject].fields.size == 2)
+  }
+
+  describe("render simulated spec json") {
+    val shapeOnly = DiffPreviewer.shapeOnlyFromShapeBuilder(JsonLikeFrom.json(JsonExamples.basicTodo))
+    assert(shapeOnly.get.specShapes.size == 3)
   }
 
 }
