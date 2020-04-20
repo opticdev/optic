@@ -116,7 +116,7 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     width: '35%',
     flexGrow: 0,
     flexShrink: 0,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   typeName: {
     display: 'flex',

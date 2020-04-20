@@ -128,7 +128,11 @@ export const Row = withShapeRenderContext((props) => {
           {' '.replace(/ /g, '\u00a0')}
         </div>
       )}
-      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
+      {!exampleOnly && (
+        <div className={classes.right} style={{ width: '50%' }}>
+          {props.right}
+        </div>
+      )}
     </div>
   );
 });
