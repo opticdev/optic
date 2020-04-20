@@ -53,7 +53,7 @@ ignoreRequests:
 
     // const token: string = await Promise.resolve('token-from-backend')
 
-    const { configPath } = await createFileTree(config, 'token', cwd);
+    const { configPath } = await createFileTree(config, cwd);
     cli.log(
       fromOptic(`Added Optic configuration to ${colors.bold(configPath)}`)
     );

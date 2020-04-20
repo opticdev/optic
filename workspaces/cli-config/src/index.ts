@@ -202,11 +202,7 @@ export async function getPathsRelativeToCwd(
   };
 }
 
-export async function createFileTree(
-  config: string,
-  token: string,
-  basePath: string
-) {
+export async function createFileTree(config: string, basePath: string) {
   const {
     specStorePath,
     configPath,
