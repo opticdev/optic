@@ -42,7 +42,9 @@ export async function readApiConfig(
   try {
     parsed = yaml.safeLoad(rawFile.toString());
   } catch (e) {
-    throw Error('`optic.yml` will not parse. Make sure it is valid YAML.');
+    throw new InvalidOpticConfigurationSyntaxError(
+      '`optic.yml` will not parse. Make sure it is valid YAML.'
+    );
   }
   return parsed;
 }
@@ -50,6 +52,16 @@ export async function readApiConfig(
 export interface IOpticCliInitConfig {
   type: 'init';
 }
+
+export class InvalidOpticConfigurationSyntaxError extends Error {}
+
+export class OpticConfigurationLocationFailure extends Error {}
+
+export class CommandExecutionFailure extends Error {}
+
+export class TargetPortUnavailableError extends Error {}
+
+export class TaskNotFoundError extends Error {}
 
 export interface IOpticCaptureConfig {
   persistenceEngine: 'fs' | 's3';
@@ -153,7 +165,6 @@ export interface IPathMapping {
   gitignorePath: string;
   capturesPath: string;
   exampleRequestsPath: string;
-  tokenStorePath: string;
 }
 
 export async function getPathsRelativeToConfig() {
@@ -162,7 +173,9 @@ export async function getPathsRelativeToConfig() {
     const configParentDirectory = path.resolve(configPath, '../');
     return await getPathsRelativeToCwd(configParentDirectory);
   }
-  throw new Error(`expected to find an optic.yml file`);
+  throw new OpticConfigurationLocationFailure(
+    `expected to find an optic.yml file`
+  );
 }
 
 export async function getPathsRelativeToCwd(
@@ -175,7 +188,6 @@ export async function getPathsRelativeToCwd(
   const gitignorePath = path.join(basePath, '.gitignore');
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
-  const tokenStorePath = path.join(basePath, 'api', 'token');
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
 
@@ -187,21 +199,15 @@ export async function getPathsRelativeToCwd(
     gitignorePath,
     capturesPath,
     exampleRequestsPath,
-    tokenStorePath,
   };
 }
 
-export async function createFileTree(
-  config: string,
-  token: string,
-  basePath: string
-) {
+export async function createFileTree(config: string, basePath: string) {
   const {
     specStorePath,
     configPath,
     gitignorePath,
     capturesPath,
-    tokenStorePath,
   } = await getPathsRelativeToCwd(basePath);
   const files = [
     {
@@ -214,10 +220,6 @@ captures/
       path: specStorePath,
       contents: JSON.stringify([]),
     },
-    // {
-    //   path: tokenStorePath,
-    //   contents: token
-    // }
   ];
   if (config) {
     files.push({
@@ -240,14 +242,3 @@ captures/
 }
 
 export { parseIgnore, parseRule, IIgnoreRunnable };
-
-export async function shouldWarnAboutVersion7Compatibility() {
-  const hasVersion6SpecStore = await findUp('.api', { type: 'directory' });
-  const hasVersion7Config = await findUp('optic.yml', { type: 'file' });
-  if (hasVersion6SpecStore) {
-    return true;
-  } else if (hasVersion7Config) {
-    return false;
-  }
-  return false;
-}
