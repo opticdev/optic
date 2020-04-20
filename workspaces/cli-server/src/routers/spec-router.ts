@@ -11,10 +11,13 @@ import { ICliServerSession } from '../server';
 import sortBy = require('lodash.sortby');
 
 export class CapturesHelpers {
-  constructor(private basePath: string) {
-  }
+  constructor(private basePath: string) {}
 
-  async validateCaptureId(req: express.Request, res: express.Response, next: express.NextFunction) {
+  async validateCaptureId(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
     const { captureId } = req.params;
     const captureDirectoryPath = this.captureDirectory(captureId);
     const exists = await fs.pathExists(captureDirectoryPath);
@@ -31,8 +34,7 @@ export class CapturesHelpers {
 }
 
 export class ExampleRequestsHelpers {
-  constructor(private basePath: string) {
-  }
+  constructor(private basePath: string) {}
 
   exampleFile(requestId: string) {
     return path.join(this.basePath, requestId, 'examples.json');
@@ -64,20 +66,21 @@ export class ExampleRequestsHelpers {
   }
 }
 
-
 export function makeRouter(sessions: ICliServerSession[]) {
-
-
   function prepareEvents(events: any): string {
     return `[
 ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 ]`;
   }
 
-  async function ensureValidSpecId(req: express.Request, res: express.Response, next: express.NextFunction) {
+  async function ensureValidSpecId(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
     const { specId } = req.params;
     developerDebugLogger({ specId, sessions });
-    const session = sessions.find(x => x.id === specId);
+    const session = sessions.find((x) => x.id === specId);
     if (!session) {
       res.sendStatus(404);
       return;
@@ -87,17 +90,18 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const { configPath, capturesPath, exampleRequestsPath } = paths;
     const config = await readApiConfig(configPath);
     const capturesHelpers = new CapturesHelpers(capturesPath);
-    const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
+    const exampleRequestsHelpers = new ExampleRequestsHelpers(
+      exampleRequestsPath
+    );
     req.optic = {
       session,
       config,
       paths,
       capturesHelpers,
-      exampleRequestsHelpers
+      exampleRequestsHelpers,
     };
     next();
   }
-
 
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
@@ -111,24 +115,37 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.json([]);
     }
   });
-  router.put('/events', bodyParser.json({ limit: '100mb' }), async (req, res) => {
-    const events = req.body;
-    await fs.writeFile(req.optic.paths.specStorePath, prepareEvents(events));
-    res.sendStatus(204);
-  });
+  router.put(
+    '/events',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const events = req.body;
+      await fs.writeFile(req.optic.paths.specStorePath, prepareEvents(events));
+      res.sendStatus(204);
+    }
+  );
 
   // example requests router
-  router.post('/example-requests/:requestId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
-    const { requestId } = req.params;
-    await req.optic.exampleRequestsHelpers.saveExampleRequest(requestId, req.body);
-    res.sendStatus(204);
-  });
+  router.post(
+    '/example-requests/:requestId',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const { requestId } = req.params;
+      await req.optic.exampleRequestsHelpers.saveExampleRequest(
+        requestId,
+        req.body
+      );
+      res.sendStatus(204);
+    }
+  );
 
   router.get('/example-requests/:requestId', async (req, res) => {
     const { requestId } = req.params;
-    const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(requestId);
+    const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(
+      requestId
+    );
     res.json({
-      examples: currentFileContents
+      examples: currentFileContents,
     });
   });
 
@@ -136,49 +153,63 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.get('/captures', async (req, res) => {
     const { captures } = req.optic.session;
     res.json({
-      captures:
-        sortBy(captures, i => i.taskConfig.startTime)
-          .reverse()
-          .map(i => ({ captureId: i.taskConfig.captureId, lastUpdate: i.taskConfig.startTime, hasDiff: false }))
+      captures: sortBy(captures, (i) => i.taskConfig.startTime)
+        .reverse()
+        .map((i) => ({
+          captureId: i.taskConfig.captureId,
+          status: i.status,
+          lastUpdate: i.taskConfig.startTime,
+          hasDiff: false,
+        })),
     });
   });
-  router.put('/captures/:captureId/status', bodyParser.json({ limit: '1kb' }), async (req, res) => {
+  router.put(
+    '/captures/:captureId/status',
+    bodyParser.json({ limit: '1kb' }),
+    async (req, res) => {
+      const { captureId } = req.params;
+      const captureInfo = req.optic.session.captures.find(
+        (x) => x.taskConfig.captureId === captureId
+      );
+      if (!captureInfo) {
+        return res.sendStatus(400);
+      }
+      const { status } = req.body;
+      if (status !== 'completed') {
+        return res.sendStatus(400);
+      }
+      captureInfo.status = 'completed';
+
+      res.sendStatus(204);
+    }
+  );
+  router.get('/captures/:captureId/status', async (req, res) => {
     const { captureId } = req.params;
-    const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
+    const captureInfo = req.optic.session.captures.find(
+      (x) => x.taskConfig.captureId === captureId
+    );
     if (!captureInfo) {
       return res.sendStatus(400);
     }
-    const { status } = req.body;
-    if (status !== 'completed') {
-      return res.sendStatus(400);
-    }
-    captureInfo.status = 'completed';
 
-    res.sendStatus(204);
+    res.json({
+      status: captureInfo.status,
+    });
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const { captureId } = req.params;
-    const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
-
 
     const loader: ICaptureLoader = new FileSystemCaptureLoader({
-      captureBaseDirectory: req.optic.paths.capturesPath
+      captureBaseDirectory: req.optic.paths.capturesPath,
     });
     try {
       const filter = parseIgnore(req.optic.config.ignoreRequests || []);
       const capture = await loader.loadWithFilter(captureId, filter);
-      res
-        .header('Cache-Control', 'max-age=6000')
-        .header('ETag', `"optic-etag-v1-${capture.samples.length}"`)
-        .json({
-          metadata: {
-            completed: captureInfo ? captureInfo.status === 'completed' : true
-          },
-          samples: capture.samples,
-          links: [
-            { rel: 'next', href: '' }
-          ]
-        });
+      res.json({
+        metadata: {},
+        samples: capture.samples,
+        links: [{ rel: 'next', href: '' }],
+      });
     } catch (e) {
       console.error(e);
       res.sendStatus(500);

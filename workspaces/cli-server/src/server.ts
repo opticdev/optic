@@ -72,6 +72,7 @@ class CliServer {
 
   makeServer() {
     const app = express();
+    app.set('etag', false);
     const sessions: ICliServerSession[] = [];
     let user: object | null;
 

@@ -1,9 +1,9 @@
 package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape}
+import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape, ProviderInShape, SetBaseShape, SetParameterShape, ShapeProvider}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
+import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
@@ -43,6 +43,41 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
     Logger.log(resolved.shapeEntity)
     Logger.log(resolved.coreShapeKind)
     resolved.coreShapeKind match {
+      case UnknownKind => {
+        val parentTrail = shapeDiff.shapeTrail.parentTrail()
+        parentTrail match {
+          case None => Seq.empty
+          case Some(t) => {
+            val resolvedParent = Resolvers.resolveTrailToCoreShape(rfcState, t)
+            println(resolvedParent)
+            resolvedParent.coreShapeKind match {
+              case ListKind => {
+                val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
+                val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
+                val commands = builtShape.commands ++ Seq(
+                  SetParameterShape(
+                    ProviderInShape(
+                      resolvedParent.shapeEntity.shapeId,
+                      ShapeProvider(builtShape.rootShapeId),
+                      ListKind.innerParam
+                    )
+                  )
+                )
+                Seq(
+                  InteractiveDiffInterpretation(
+                    s"Set the shape",
+                    s"Set the shape to ...",
+                    commands,
+                    ChangeType.Addition
+                  )
+                )
+              }
+              case _ => Seq.empty
+            }
+
+          }
+        }
+      }
       case ObjectKind => {
         Logger.log(shapeDiff.jsonTrail)
         val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
