@@ -27,9 +27,9 @@ const jsonHelper = JsonHelper();
 
 const styles = theme => ({
   root: {
-    maxWidth: '90%',
+    // maxWidth: '90%',
     paddingTop: 15,
-    margin: '0 auto',
+    // margin: '0 auto',
     alignItems: 'center',
     paddingBottom: 120
   },
@@ -39,15 +39,11 @@ const styles = theme => ({
     flexGrow: 1, // grow to fill the entire page
   },
   middle: {
-    margin: '0 auto',
-    maxWidth: 1200,
+    maxWidth: theme.breakpoints.values.lg,
+    flex: 1,
+    padding: theme.spacing(3, 0, 3 * 6),
   },
   scroll: {
-    flex: 1,
-    paddingLeft: 40,
-    paddingRight: 40,
-    paddingBottom: 300,
-    paddingTop: 20,
   },
   topContainer: {
     display: 'flex',
@@ -146,53 +142,51 @@ function _DiffPageContent(props) {
     <IgnoreDiffContext.Consumer>
       {({ignoreDiff, ignoredDiffs}) => (
         <div className={classes.container}>
-          <div className={classes.scroll}>
-            <div className={classes.middle}>
+          <div className={classes.middle}>
 
-              <div style={{flex: 1, padding: 0, marginBottom: 55}}>
+            <div style={{flex: 1, padding: 0, marginBottom: 55}}>
 
-                <Typography variant="overline" color="textSecondary">Reviewing Diff For:</Typography>
-                <Typography variant="h6">{endpointPurpose}</Typography>
-                <PathAndMethod method={httpMethod}
-                               path={fullPath}/>
-
-              </div>
-
-
-              <NewRegions ignoreDiff={ignoreDiff}
-                          endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
-                          method={httpMethod}
-                          fullPath={fullPath}
-                          newRegions={diffRegions.newRegions}/>
-
-              <DiffCursor diffs={diffRegions.bodyDiffs}/>
-
-              {selectedDiff && <DiffReviewExpanded diff={selectedDiff}/>}
-
-              {/*<ShapeDiffRegion*/}
-              {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
-              {/*  title="Request Body Diffs"/>*/}
-
-              {/*<ShapeDiffRegion*/}
-              {/*  region={endpointDiffManger.diffRegions.responseRegions}*/}
-              {/*  title="Response Body Diffs"/>*/}
-
-
-              {endpointDiffManger.diffCount !== 0 && <DocDivider style={{marginTop: 60, marginBottom: 60}}/>}
-
-              <CommitCard acceptedSuggestions={acceptedSuggestions}
-                          ignoredDiffs={ignoredDiffs}
-                          diffCount={endpointDiffManger.diffCount}
-                          interactionsWithDiffsCount={endpointDiffManger.interactionsWithDiffsCount}
-                          endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
-                          method={httpMethod}
-                          fullPath={fullPath}
-                          reset={handleDiscard}
-                          apply={handleApply}
-
-              />
+              <Typography variant="overline" color="textSecondary">Reviewing Diff For:</Typography>
+              <Typography variant="h6">{endpointPurpose}</Typography>
+              <PathAndMethod method={httpMethod}
+                             path={fullPath}/>
 
             </div>
+
+
+            <NewRegions ignoreDiff={ignoreDiff}
+                        endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                        method={httpMethod}
+                        fullPath={fullPath}
+                        newRegions={diffRegions.newRegions}/>
+
+            <DiffCursor diffs={diffRegions.bodyDiffs}/>
+
+            {selectedDiff && <DiffReviewExpanded diff={selectedDiff}/>}
+
+            {/*<ShapeDiffRegion*/}
+            {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
+            {/*  title="Request Body Diffs"/>*/}
+
+            {/*<ShapeDiffRegion*/}
+            {/*  region={endpointDiffManger.diffRegions.responseRegions}*/}
+            {/*  title="Response Body Diffs"/>*/}
+
+
+            {endpointDiffManger.diffCount !== 0 && <DocDivider style={{marginTop: 60, marginBottom: 60}}/>}
+
+            <CommitCard acceptedSuggestions={acceptedSuggestions}
+                        ignoredDiffs={ignoredDiffs}
+                        diffCount={endpointDiffManger.diffCount}
+                        interactionsWithDiffsCount={endpointDiffManger.interactionsWithDiffsCount}
+                        endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                        method={httpMethod}
+                        fullPath={fullPath}
+                        reset={handleDiscard}
+                        apply={handleApply}
+
+            />
+
           </div>
         </div>
       )}

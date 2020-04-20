@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1, // grow to fill whole page vertically
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: 1200,
+    maxWidth: theme.breakpoints.values.lg,
     paddingTop: 35,
   },
   chips: {
