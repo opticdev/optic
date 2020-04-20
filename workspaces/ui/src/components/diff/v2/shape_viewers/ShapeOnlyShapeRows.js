@@ -215,9 +215,11 @@ function FieldDescription({ fieldId }) {
   const handleChange = (e) => setStagedContent(e.target.value);
   const displayDescription = description || stagedContent;
   const finalize = () => {
-    handleCommand(
-      commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent)
-    );
+    if (stagedContent !== description) {
+      handleCommand(
+        commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent)
+      );
+    }
     setEditing(false);
   };
 
@@ -231,9 +233,10 @@ function FieldDescription({ fieldId }) {
           value={stagedContent}
           onChange={handleChange}
           onBlur={finalize}
+          autoFocus
           fullWidth={true}
           multiline={true}
-          inputProps={{ style: { color: SymbolColor } }}
+          inputProps={{ onBlur: finalize, style: { color: SymbolColor } }}
           size="small"
         />
       )}
@@ -282,7 +285,6 @@ export const FieldRow = withShapeRenderContext((props) => {
     setRenderChild(link);
   };
 
-  const childShape = renderChild && getOrUndefined(shapeRender.getSpecShape(renderChild);
   return (
     <>
       <Row
