@@ -31,6 +31,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       traverse.traverse(JsonLikeFrom.json(observation), JsonTrail(Seq.empty), Some(ShapeTrail(shapeExample._1.shapeId, Seq.empty)))
       visitor.diffs.toVector
     }
+
      DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, ShapeExamples.todoShape._1.shapeId, previewDiffs.toSet)
   }
 
@@ -75,7 +76,11 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
         .exampleShape.field("Races")
         .exampleShape.get.items.head
         .exampleShape.field("Results")
-        .exampleShape.get.items
+        .exampleShape.get.itemsWithHidden(false)
+
+      val display = races.map(_.display)
+
+      assert(display(14) == "visible")
 
       val givenName = races.map(race => race.exampleShape.field("Driver").exampleShape.field("givenName").exampleShape.get.example)
       assert(givenName.distinct.size == givenName.size) //all are different

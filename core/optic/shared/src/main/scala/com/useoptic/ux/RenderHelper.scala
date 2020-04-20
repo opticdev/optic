@@ -7,15 +7,15 @@ import com.useoptic.ux.SharedInterfaces.{ExampleFieldId, ExampleItemId, ExampleS
 import io.circe.Json
 import GetWithTypeExpectation._
 import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, ObjectKind, OptionalKind}
-import ChildHasDiff._
+import ChildHasDiff.{childDiffsFrom, _}
 
 import scala.reflect.ClassTag
 import scala.scalajs.js.annotation.JSExportAll
 
 @JSExportAll
-class SideBySideRenderHelper(exampleShapes: Map[ExampleShapeId, ExampleShape],
-                             exampleFields: Map[ExampleFieldId, ExampleField],
-                             exampleItems: Map[ExampleItemId, ExampleItem],
+class SideBySideRenderHelper(val exampleShapes: Map[ExampleShapeId, ExampleShape],
+                             val exampleFields: Map[ExampleFieldId, ExampleField],
+                             val exampleItems: Map[ExampleItemId, ExampleItem],
                              val specShapes: Map[SpecShapeId, SpecShape],
                              rootExampleShape: ExampleShapeId) {
 
@@ -135,10 +135,27 @@ case class RenderShape(id: String, baseShapeId: String, specShape: Option[Render
     if (showAll) {
       items
     } else {
-      items.zipWithIndex.map {
-        case (i, index) => {
-          //only collapse the row if no children have diffs
-          if (index < 5 && childDiffsFrom(i).isEmpty) i else i.copy(display = "hidden")
+
+      val atLeastSomeDiffs = items.exists(i => childDiffsFrom(i).nonEmpty)
+
+      if (items.length > 10 && atLeastSomeDiffs) {
+        items.map(i => {
+          if (childDiffsFrom(i).isEmpty) {
+            i.copy(display = "hidden")
+          } else {
+            i
+          }
+        })
+      } else {
+        items.zipWithIndex.map {
+          case (i, index) => {
+            //only collapse the row if no children have diffs
+            if (index > 5 && childDiffsFrom(i).isEmpty) {
+              i.copy(display = "hidden")
+            } else {
+              i
+            }
+          }
         }
       }
     }
@@ -188,10 +205,10 @@ object ChildHasDiff {
   def childDiffsFrom(renderable: Renderable): Set[DiffResult] = {
     renderable match {
       case RenderField(_, _, exampleShape, specShape, _, diffs) => {
-        exampleShape.map(_.diffs).getOrElse(Set.empty) ++ specShape.map(_.diffs).getOrElse(Set.empty) ++ diffs
+        exampleShape.map(childDiffsFrom).getOrElse(Set.empty) ++ specShape.map(_.diffs).getOrElse(Set.empty) ++ diffs
       }
       case RenderItem(_, _, exampleShape, specListItem, _, diffs, _) => {
-        (exampleShape.diffs ++ specListItem.map(_.diffs).getOrElse(Set.empty) ++ diffs)
+        (childDiffsFrom(exampleShape) ++ specListItem.map(_.diffs).getOrElse(Set.empty) ++ diffs)
       }
       case RenderShape(_, _, specShape, fields, items, _, diffs) => {
         (specShape.map(_.diffs).getOrElse(Set.empty) ++ fields.flatMap(childDiffsFrom) ++ items.flatMap(childDiffsFrom) ++ diffs).toSet
