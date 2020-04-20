@@ -11,7 +11,7 @@ export async function checkDiffOrUnrecognizedPath(
   }
   const specAsBuffer = await fs.readFile(specStorePath);
   try {
-    const differ = opticEngine.com.useoptic.SessionDiffer(
+    const differ = new opticEngine.com.useoptic.SessionDiffer(
       specAsBuffer.toString()
     );
     for (const s of samples) {
