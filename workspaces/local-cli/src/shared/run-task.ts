@@ -1,8 +1,12 @@
 import Command from '@oclif/command';
 import { Client } from '@useoptic/cli-client';
 import {
+  InvalidOpticConfigurationSyntaxError,
   IOpticTaskRunnerConfig,
+  OpticConfigurationLocationFailure,
   parseIgnore,
+  TargetPortUnavailableError,
+  TaskNotFoundError,
   TaskToStartConfig,
 } from '@useoptic/cli-config';
 import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
@@ -19,7 +23,7 @@ import { checkDiffOrUnrecognizedPath } from '@useoptic/domain';
 import * as colors from 'colors';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { fromOptic } from './conversation';
+import { errorFromOptic, fromOptic } from './conversation';
 import { developerDebugLogger, userDebugLogger } from './logger';
 import { lockFilePath } from './paths';
 import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
@@ -29,6 +33,7 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
+import { basePath } from '@useoptic/cli-scripts';
 
 async function setupTaskWithConfig(
   cli: Command,
@@ -39,8 +44,8 @@ async function setupTaskWithConfig(
   const { cwd, capturesPath, specStorePath } = paths;
   const task = config.tasks[taskName];
   if (!task) {
-    return cli.log(
-      colors.red(`No task ${colors.bold(taskName)} found in optic.yml`)
+    throw new TaskNotFoundError(
+      `No task ${colors.bold(taskName)} found in optic.yml`
     );
   }
 
@@ -49,10 +54,10 @@ async function setupTaskWithConfig(
 
   const blockers = await findProcess('port', startConfig.proxyConfig.port);
   if (blockers.length > 0) {
-    cli.error(`Optic needs to start a proxy server on port ${
+    throw new TargetPortUnavailableError(`Optic could not start its proxy server on port ${
       startConfig.proxyConfig.port
     }.
-There is something else running on this port:
+There is something else running:
 ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 `);
   }
@@ -84,7 +89,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   try {
     await runTask(startConfig, persistenceManagerFactory);
   } catch (e) {
-    cli.error(e.message);
+    cli.error(colors.red(e.message));
   } finally {
     const loader: ICaptureLoader = new FileSystemCaptureLoader({
       captureBaseDirectory: capturesPath,
@@ -94,25 +99,18 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const filter = parseIgnore(config.ignoreRequests || []);
     const capture = await loader.loadWithFilter(captureId, filter);
 
-    //@todo @Dev is is fork this computation into the notify process we spawn? So CLI can stop right away?
     const hasDiff = await checkDiffOrUnrecognizedPath(
       specStorePath,
       capture.samples
     );
     if (hasDiff) {
-      const shouldBeNodePath = process.argv[0];
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
-      const notifyScriptPath = path.resolve(
-        __dirname,
-        '../../scripts/notify.js'
-      );
-      cp.spawn(shouldBeNodePath, [notifyScriptPath, uiUrl], {
-        detached: true,
-        stdio: ['ignore', null, null],
-      });
+      const notifyScriptPath = path.join(basePath, 'notify');
+      const iconPath = path.join(__dirname, '../../assets/optic-logo-png.png');
+      runStandaloneScript(notifyScriptPath, uiUrl, iconPath);
       cli.log(
         fromOptic(
-          `Observed Unexpected API Behavior. Click here to review diff: ${uiUrl}`
+          `Observed Unexpected API Behavior. Click here to review: ${uiUrl}`
         )
       );
     } else {
@@ -127,6 +125,11 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   }
 }
 
+export function runStandaloneScript(modulePath: string, ...args: string[]) {
+  const child = cp.fork(modulePath, args, { detached: true, stdio: 'ignore' });
+  return child;
+}
+
 export async function setupTask(cli: Command, taskName: string) {
   try {
     const paths = await getPathsRelativeToConfig();
@@ -134,17 +137,27 @@ export async function setupTask(cli: Command, taskName: string) {
     try {
       await setupTaskWithConfig(cli, taskName, paths, config);
     } catch (e) {
-      cli.error(e);
+      if (e instanceof TargetPortUnavailableError) {
+        cli.log(errorFromOptic(e.message));
+      } else if (e instanceof TaskNotFoundError) {
+        cli.log(errorFromOptic(`No task named ${taskName} found in optic.yml`));
+      } else {
+        cli.error(e);
+      }
     }
   } catch (e) {
     userDebugLogger(e);
-    cli.log(
-      fromOptic(
-        `No Optic project found in this directory. Learn to add Optic to your project here ${colors.underline(
-          'https://docs.useoptic.com/setup'
-        )}`
-      )
-    );
+    if (e instanceof OpticConfigurationLocationFailure) {
+      cli.log(
+        fromOptic(
+          `No Optic project found in this directory. Learn to add Optic to your project here ${colors.underline(
+            'https://docs.useoptic.com/setup'
+          )}`
+        )
+      );
+    } else if (e instanceof InvalidOpticConfigurationSyntaxError) {
+      cli.log(fromOptic(`The contents of optic.yml are not valid YAML`));
+    }
 
     process.exit(0);
   }

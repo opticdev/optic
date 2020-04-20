@@ -1,13 +1,8 @@
 import Command from '@oclif/command';
-import { createFileTree, IApiCliConfig } from '@useoptic/cli-config';
+import { createFileTree } from '@useoptic/cli-config';
 import * as colors from 'colors';
 import cli from 'cli-ux';
-import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { fromOptic } from '../shared/conversation';
-import { developerDebugLogger } from '../shared/logger';
-import { lockFilePath } from '../shared/paths';
-import { Client } from '@useoptic/cli-client';
-import openBrowser = require('react-dev-utils/openBrowser.js');
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { track } from '../shared/analytics';
@@ -58,7 +53,7 @@ ignoreRequests:
 
     // const token: string = await Promise.resolve('token-from-backend')
 
-    const { configPath } = await createFileTree(config, 'token', cwd);
+    const { configPath } = await createFileTree(config, cwd);
     cli.log(
       fromOptic(`Added Optic configuration to ${colors.bold(configPath)}`)
     );

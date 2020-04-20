@@ -1,11 +1,11 @@
 import React from 'react';
-import {GenericContextFactory} from './GenericContextFactory.js';
+import { GenericContextFactory } from './GenericContextFactory.js';
 import compose from 'lodash.compose';
-import {DiffManagerFacade} from '@useoptic/domain';
+import { DiffManagerFacade } from '@useoptic/domain';
 
 const {
   Context: TrafficSessionContext,
-  withContext: withTrafficSessionContext
+  withContext: withTrafficSessionContext,
 } = GenericContextFactory(null);
 
 class TrafficSessionStoreBase extends React.Component {
@@ -13,7 +13,7 @@ class TrafficSessionStoreBase extends React.Component {
     isLoading: true,
     session: null,
     error: null,
-    diffManager: null
+    diffManager: null,
   };
 
   componentDidMount() {
@@ -22,22 +22,22 @@ class TrafficSessionStoreBase extends React.Component {
       error: null,
       session: null,
       diffManager: DiffManagerFacade.newFromInteractions([], () => {
-        this.forceUpdate()
-      })
+        this.forceUpdate();
+      }),
     });
-    const {specService, sessionId} = this.props;
+    const { specService, sessionId } = this.props;
 
     if (!sessionId) {
       this.setState({
         noSession: true,
-        isLoading: false
+        isLoading: false,
       });
       return;
     }
 
     specService
       .listCapturedSamples(sessionId)
-      .then(result => {
+      .then((result) => {
         const session = result;
         this.setState({
           session,
@@ -47,31 +47,36 @@ class TrafficSessionStoreBase extends React.Component {
         });
         this.checkForUpdates();
 
-        DiffManagerFacade.updateInteractions(session.samples, this.state.diffManager)
+        DiffManagerFacade.updateInteractions(
+          session.samples,
+          this.state.diffManager
+        );
       })
       .catch((e) => {
         console.error(e);
+        debugger;
         this.setState({
           isLoading: false,
           error: e,
           // diffSessionManager: null
         });
 
-        DiffManagerFacade.updateInteractions([], this.state.diffManager)
+        DiffManagerFacade.updateInteractions([], this.state.diffManager);
       });
   }
 
   checkForUpdates() {
     setTimeout(async () => {
-      const {specService, sessionId} = this.props;
+      const { specService, sessionId } = this.props;
 
       if (!sessionId) {
         return;
       }
 
       try {
+        const { status } = await specService.getCaptureStatus(sessionId);
         const result = await specService.listCapturedSamples(sessionId);
-        const {session} = this.state;
+        const { session } = this.state;
         const latestSession = result;
         if (!session) {
           this.checkForUpdates();
@@ -82,13 +87,17 @@ class TrafficSessionStoreBase extends React.Component {
           this.setState({
             session: latestSession,
           });
-          DiffManagerFacade.updateInteractions(session.samples, this.state.diffManager)
+          DiffManagerFacade.updateInteractions(
+            session.samples,
+            this.state.diffManager
+          );
         }
         //@TODO: add flag prop to disable checking for updates?
-        if (latestSession.metadata.completed !== true) {
+        if (status !== 'completed') {
           this.checkForUpdates();
         }
       } catch (e) {
+        debugger;
         console.error(e);
         //@GOTCHA: server will throw a 400 if capture is no longer active. could change this behavior in server or just update ui state
       }
@@ -96,8 +105,8 @@ class TrafficSessionStoreBase extends React.Component {
   }
 
   render() {
-    const {sessionId, children, renderNoSession} = this.props;
-    const {isLoading, error, session, noSession, diffManager} = this.state;
+    const { sessionId, children, renderNoSession } = this.props;
+    const { isLoading, error, session, noSession, diffManager } = this.state;
 
     if (isLoading) {
       return null;
@@ -115,7 +124,7 @@ class TrafficSessionStoreBase extends React.Component {
     const context = {
       sessionId,
       session,
-      diffManager
+      diffManager,
     };
 
     return (
@@ -131,5 +140,5 @@ const TrafficSessionStore = compose()(TrafficSessionStoreBase);
 export {
   TrafficSessionStore,
   TrafficSessionContext,
-  withTrafficSessionContext
+  withTrafficSessionContext,
 };

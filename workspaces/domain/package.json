@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/domain",
-  "version": "0.2.2",
+  "version": "0.2.1",
   "scripts": {
     "ws:test": "echo domain",
     "ws:build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js && cp -R ./src/domain-types/avro-schemas/ ./build/domain-types/avro-schemas",
