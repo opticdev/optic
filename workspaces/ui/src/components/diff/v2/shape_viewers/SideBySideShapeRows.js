@@ -179,6 +179,8 @@ function ValueContents({value, shape}) {
                        style={{
                          fontWeight: 600,
                          whiteSpace: 'pre-line',
+                         wordBreak: 'break-all',
+                         overflowWrap: 'break-word',
                          fontFamily: '\'Source Code Pro\', monospace',
                          color: useColor.StringColor
                        }}>"{value}"</Typography>;

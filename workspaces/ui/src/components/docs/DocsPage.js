@@ -242,12 +242,7 @@ export const EndpointDocumentationWrapper = (props) => {
       <EndpointsContext.Consumer>
         {({ endpointDescriptor }) => {
           return (
-            <Page title="Documentation">
-              <Page.Navbar mini={true} />
-              <Page.Body>
-                <EndpointDocs />
-              </Page.Body>
-            </Page>
+            <EndpointDocs/>
           );
         }}
       </EndpointsContext.Consumer>
