@@ -10,21 +10,20 @@ const readyPromise = new Promise(async (resolve) => {
       const { user } = await response.json();
       window.FS.identify(user.sub, {
         displayName: user.name,
-        email: user.email
+        email: user.email,
       });
       window.analytics.identify(user.sub, {
         name: user.name,
-        email: user.email
+        email: user.email,
       });
+      window.Intercom('update', { name: user.name, email: user.email });
     }
     resolve();
   } else {
     console.warn('Analytics is disabled');
     try {
       window.FS.shutdown();
-    } catch (e) {
-
-    }
+    } catch (e) {}
     resolve();
   }
 });

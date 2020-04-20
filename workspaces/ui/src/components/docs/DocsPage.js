@@ -25,6 +25,7 @@ import { ShapeOnlyViewer } from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
 import { ShapeBox } from '../diff/v2/DiffReviewExpanded';
 import Paper from '@material-ui/core/Paper';
 import EmptyState from '../support/EmptyState';
+import { AddOpticLink, DocumentingYourApi } from '../support/Links';
 
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
@@ -104,9 +105,9 @@ export const DocumentationToc = () => {
         <EmptyState
           title="Document your First Endpoint"
           content={`
-1. Follow the [Getting Started Tutorial](https://google.com)
+1. Follow the [Getting Started Tutorial](${AddOpticLink})
 2. Run \`api start\` and send the API some traffic
-3. Optic will help write your documentation
+3. Use [Optic to document your API](${DocumentingYourApi})
 `.trim()}
         />
       )}
