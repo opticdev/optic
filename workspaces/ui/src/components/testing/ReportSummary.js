@@ -7,6 +7,7 @@ import Color from 'color';
 import dateFormatRelative from 'date-fns/formatRelative';
 import dateFormatDistance from 'date-fns/formatDistance';
 import { parseISO as dateParseISO } from 'date-fns';
+import { usePageTitle } from '../Page';
 
 import {
   createEndpointDescriptor,
@@ -41,6 +42,12 @@ export default function ReportSummary(props) {
   } = summary;
 
   const now = new Date();
+
+  usePageTitle(
+    summary.buildId && summary.environment
+      ? `Report for '${summary.buildId}' in '${summary.environment}'`
+      : 'Report'
+  );
 
   return (
     <div className={classes.root}>

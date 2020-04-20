@@ -71,7 +71,7 @@ export default function TestingDashboardPage(props) {
 
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
-      <Page title="Optic Live Contracting Dashboard">
+      <Page title="Live Contracting Dashboard">
         <Page.Navbar mini={true} />
 
         <Page.Body padded={false}>
