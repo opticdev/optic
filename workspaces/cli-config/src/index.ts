@@ -42,7 +42,9 @@ export async function readApiConfig(
   try {
     parsed = yaml.safeLoad(rawFile.toString());
   } catch (e) {
-    throw Error('`optic.yml` will not parse. Make sure it is valid YAML.');
+    throw new InvalidOpticConfigurationSyntaxError(
+      '`optic.yml` will not parse. Make sure it is valid YAML.'
+    );
   }
   return parsed;
 }
@@ -50,6 +52,16 @@ export async function readApiConfig(
 export interface IOpticCliInitConfig {
   type: 'init';
 }
+
+export class InvalidOpticConfigurationSyntaxError extends Error {}
+
+export class OpticConfigurationLocationFailure extends Error {}
+
+export class CommandExecutionFailure extends Error {}
+
+export class TargetPortUnavailableError extends Error {}
+
+export class TaskNotFoundError extends Error {}
 
 export interface IOpticCaptureConfig {
   persistenceEngine: 'fs' | 's3';
@@ -162,7 +174,9 @@ export async function getPathsRelativeToConfig() {
     const configParentDirectory = path.resolve(configPath, '../');
     return await getPathsRelativeToCwd(configParentDirectory);
   }
-  throw new Error(`expected to find an optic.yml file`);
+  throw new OpticConfigurationLocationFailure(
+    `expected to find an optic.yml file`
+  );
 }
 
 export async function getPathsRelativeToCwd(
