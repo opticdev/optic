@@ -72,7 +72,8 @@ export const useShapeViewerStyles = makeStyles(theme => ({
     flexDirection: 'row'
   },
   left: {
-    flex: '50%',
+    flexGrow: 1,
+    flexShrink: 1,
     overflow: 'hidden',
     display: 'flex',
     paddingTop: 3,
@@ -81,14 +82,18 @@ export const useShapeViewerStyles = makeStyles(theme => ({
   },
   spacerBorder: {
     maxWidth: 1,
-    backgroundColor: '#4B5A8C'
+    backgroundColor: '#4B5A8C',
+    flexGrow: 0,
+    flexShrink: 0,
   },
   right: {
     display: 'flex',
     paddingLeft: 5,
     paddingTop: 3,
     paddingBottom: 3,
-    flex: '50%',
+    width: '35%',
+    flexGrow: 0,
+    flexShrink: 0,
     overflow: 'hidden'
   },
   typeName: {
