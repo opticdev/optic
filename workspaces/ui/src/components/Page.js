@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
 import { makeStyles } from '@material-ui/core/styles';
+
+const PageContext = React.createContext(null);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,20 +21,46 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Page(props) {
   const classes = useStyles();
-  const title = props.title || 'Optic API Dashboard';
+  const pageContext = useState([]);
+  usePageTitle(props.title, pageContext);
+
+  const [pageTitles] = pageContext;
+  const titles = pageTitles.filter((title) => !!title);
+  const title = titles[titles.length - 1] || '';
 
   useEffect(() => {
-    if (!document) return;
-    document.title = title;
+    if (!document || !title) return;
+    document.title = `${title} - Optic`;
   }, [title]);
 
-  return <div className={classes.root}>{props.children}</div>;
+  return (
+    <PageContext.Provider value={pageContext}>
+      <div className={classes.root}>{props.children}</div>;
+    </PageContext.Provider>
+  );
 }
 
 function PageBody(props) {
   const classes = useStyles(props);
 
   return <div className={classes.content}>{props.children}</div>;
+}
+
+export function usePageTitle(title, injectedContext) {
+  const context = useContext(PageContext) || injectedContext;
+
+  useEffect(() => {
+    if (!context) throw Error('usePageTitle must be used in context of a Page');
+    const [titles, setTitles] = context;
+    setTitles([...titles, title]);
+
+    return () => {
+      const index = titles.indexOf(title);
+      setTitles(titles.slice(index, 1));
+    };
+  }, [title]);
+
+  return title;
 }
 
 // require the use of sub components in context of the Page, to nudge the use of them

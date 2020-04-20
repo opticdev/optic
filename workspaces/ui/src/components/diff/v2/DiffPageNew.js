@@ -20,6 +20,7 @@ import DiffReviewExpanded from './DiffReviewExpanded';
 import {DocDivider} from '../../docs/DocConstants';
 import {PathAndMethod} from './PathAndMethod';
 import {useBaseUrl} from '../../../contexts/BaseUrlContext';
+import {usePageTitle} from '../../Page';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -120,6 +121,7 @@ function _DiffPageContent(props) {
   }
 
   const baseUrl = useBaseUrl();
+  usePageTitle(`Diff Review for ${endpointDescriptor.httpMethod} ${endpointDescriptor.fullPath}`)
 
   async function handleApply(message = 'EMPTY MESSAGE') {
     const newEventStore = initialEventStore.getCopy(rfcId);
