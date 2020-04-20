@@ -29,3 +29,12 @@
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
   }
 }
+
+.app-error-container {
+  max-width: 960;
+  margin: 0 auto;
+}
+
+.app-error li {
+  margin: 12px;
+}
