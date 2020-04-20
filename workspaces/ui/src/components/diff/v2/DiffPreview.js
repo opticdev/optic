@@ -206,9 +206,7 @@ export function DiffCursor(props) {
             Choose a diff to review
           </Typography>
           <List>
-            {mapScala(diffs)((diff) => (
-              <DiffItem diff={diff} button={true} />
-            ))}
+            {mapScala(diffs)((diff, n) => <DiffItem key={n} diff={diff} button={true} />)}
           </List>
         </Collapse>
       </div>
@@ -446,6 +444,7 @@ export const BreadcumbX = (props) => {
         .filter((i) => !!i)
         .map((n) => (
           <Typography
+            key={n}
             style={itemStyles}
             className={classes.crumb}
             color="primary"
