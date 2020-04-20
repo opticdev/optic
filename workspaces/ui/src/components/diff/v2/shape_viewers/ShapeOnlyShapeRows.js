@@ -42,8 +42,12 @@ import {
 import { updateContribution as commandsForUpdatingContribution } from '../../../../engine/routines';
 
 export function ShapeOnlyViewer(props) {
-  const { preview } = props;
+  const { preview, exampleOnly } = props;
   const classes = useShapeViewerStyles();
+
+  if (!preview) {
+    return null;
+  }
 
   const rootShape = preview.rootId;
   const shape = getOrUndefined(preview.getRootShape);
@@ -53,7 +57,11 @@ export function ShapeOnlyViewer(props) {
   }
 
   return (
-    <ShapeRenderStore shape={preview} hideDivider={true}>
+    <ShapeRenderStore
+      shape={preview}
+      hideDivider={true}
+      exampleOnly={exampleOnly}
+    >
       <div className={classes.root}>
         <DepthContext.Provider value={{ depth: 0 }}>
           {renderShape(shape)}

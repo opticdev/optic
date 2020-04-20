@@ -35,7 +35,9 @@ package object ux {
   }
 
   @JSExportAll
-  case class TopLevelRegions(newRegions: Seq[NewRegionDiffBlock], bodyDiffs: Seq[BodyShapeDiffBlock])
+  case class TopLevelRegions(newRegions: Seq[NewRegionDiffBlock], bodyDiffs: Seq[BodyShapeDiffBlock]) {
+    def hasNewRegions = newRegions.nonEmpty
+  }
 
   type ToSuggestions = () => Seq[InteractiveDiffInterpretation]
 
@@ -73,8 +75,11 @@ package object ux {
                                 contentType: Option[String],
                                 statusCode: Option[Int],
                                 description: DiffDescription)
-                               (implicit val toSuggestions: ToSuggestions) extends DiffBlock {
+                               (implicit val toSuggestions: ToSuggestions, _previewDiff: (HttpInteraction) => Option[SideBySideRenderHelper], _previewDiffShape: (HttpInteraction) => Option[ShapeOnlyRenderHelper]) extends DiffBlock {
     def suggestions = toSuggestions()
+    def previewRender(interaction: HttpInteraction = interactions.head): Option[SideBySideRenderHelper] = _previewDiff(interaction)
+    def previewShape(interaction: HttpInteraction = interactions.head): Option[ShapeOnlyRenderHelper] = _previewDiffShape(interaction)
+
   }
 
   @JSExportAll

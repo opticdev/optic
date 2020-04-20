@@ -8,6 +8,7 @@ import io.circe.Json
 import GetWithTypeExpectation._
 import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, ObjectKind, OptionalKind}
 import ChildHasDiff.{childDiffsFrom, _}
+import com.useoptic.contexts.shapes.ShapesHelper
 
 import scala.reflect.ClassTag
 import scala.scalajs.js.annotation.JSExportAll
@@ -50,8 +51,9 @@ class SideBySideRenderHelper(val exampleShapes: Map[ExampleShapeId, ExampleShape
 
     //shape diffs in the field shape should show up on the row.
     val withExpectedShapeDiffsMergedIn = merged.flatten.map(i => i.copy(diffs = i.diffs ++ i.exampleShape.map(_.diffs).getOrElse(Set.empty)))
+    val sortedFields = withExpectedShapeDiffsMergedIn.sortBy(_.fieldName)
 
-    RenderShape(exampleObject.exampleObjectId, exampleObject.baseShapeId, s.getSpecShape(exampleObject.specObjectId), withExpectedShapeDiffsMergedIn, Seq.empty, Json.obj(),
+    RenderShape(exampleObject.exampleObjectId, exampleObject.baseShapeId, s.getSpecShape(exampleObject.specObjectId), sortedFields, Seq.empty, Json.obj(),
       exampleObject.diffs ++ s.getSpecDiffs(exampleObject.specObjectId))
   }
 
