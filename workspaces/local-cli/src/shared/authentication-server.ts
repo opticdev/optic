@@ -13,10 +13,11 @@ const serviceName = 'optic8plus';
 const accountName = 'default';
 
 interface ICredentialsServerConfig {
-  port: number
+  port: number;
 }
 
-export const loginBaseUrl = process.env.OPTIC_AUTH_UI_HOST || `https://auth.useoptic.com`
+export const loginBaseUrl =
+  process.env.OPTIC_AUTH_UI_HOST || `https://auth.useoptic.com`;
 export const tokenReceivedEvent: string = 'tokenReceived';
 
 class CredentialsServer {
@@ -27,7 +28,7 @@ class CredentialsServer {
     const app = express();
     const whitelist = [loginBaseUrl];
     const corsOptions: cors.CorsOptions = {
-      origin: whitelist
+      origin: whitelist,
     };
 
     app.use(bodyParser.json({ limit: '1mb' }));
@@ -65,13 +66,16 @@ export async function ensureCredentialsServerStarted() {
   await server.start({ port });
   return {
     server,
-    port
+    port,
   };
 }
 
-
 export async function setCredentials(credentials: IUserCredentials) {
   await keytar.setPassword(serviceName, accountName, credentials.token);
+}
+
+export async function deleteCredentials() {
+  await keytar.deletePassword(serviceName, accountName);
 }
 
 export async function getCredentials(): Promise<IUserCredentials | null> {
@@ -82,6 +86,8 @@ export async function getCredentials(): Promise<IUserCredentials | null> {
   return null;
 }
 
-export async function getUserFromCredentials(credentials: IUserCredentials): Promise<IUser> {
+export async function getUserFromCredentials(
+  credentials: IUserCredentials
+): Promise<IUser> {
   return jwtDecode(credentials.token);
 }

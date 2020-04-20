@@ -1,12 +1,15 @@
-package com.useoptic.diff
+package com.useoptic
 
 import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.Events._
 import com.useoptic.contexts.rfc._
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.helpers.DiffHelpers
+import com.useoptic.serialization.InteractionSerialization.shapeHashDecoder
 import com.useoptic.types.capture.HttpInteraction
+import com.useoptic.ux.DiffManager
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExport
@@ -35,11 +38,18 @@ class SessionDiffer(rawEvents: String) {
   val rfcState = rfcService.currentState(rfcId)
   val interactionDiffer = new InteractionDiffer(rfcState)
 
-  def hasDiff(interaction: HttpInteraction): Boolean = {
-    interactionDiffer.hasDiff(interaction)
+  private def toInteraction(x: js.Any): Option[HttpInteraction] = {
+    import io.circe.generic.auto._
+    import io.circe.scalajs.convertJsToJson
+    import shapeHashDecoder._
+    convertJsToJson(x).right.get.as[HttpInteraction].right.toOption
   }
 
-  def hasUnrecognizedPath(interaction: HttpInteraction): Boolean = {
-    interactionDiffer.hasUnrecognizedPath(interaction)
+  def hasDiff(x: js.Any): Boolean = {
+    toInteraction(x).exists(interactionDiffer.hasDiff)
+  }
+
+  def hasUnrecognizedPath(x: js.Any): Boolean = {
+    toInteraction(x).exists(interactionDiffer.hasUnrecognizedPath)
   }
 }

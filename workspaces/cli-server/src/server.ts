@@ -1,4 +1,8 @@
-import { IApiCliConfig, IOpticTaskRunnerConfig, IPathMapping } from '@useoptic/cli-config';
+import {
+  IApiCliConfig,
+  IOpticTaskRunnerConfig,
+  IPathMapping,
+} from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
 import * as express from 'express';
 import * as getPort from 'get-port';
@@ -7,41 +11,44 @@ import * as http from 'http';
 import { Socket } from 'net';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { CapturesHelpers, ExampleRequestsHelpers, makeRouter } from './routers/spec-router';
+import {
+  CapturesHelpers,
+  ExampleRequestsHelpers,
+  makeRouter,
+} from './routers/spec-router';
 import { basePath } from '@useoptic/ui';
 
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
-export interface ICliServerConfig {
-}
+export interface ICliServerConfig {}
 
 export interface IOpticExpressRequestAdditions {
-  session: ICliServerSession
-  paths: IPathMapping
-  config: IApiCliConfig
-  capturesHelpers: CapturesHelpers
-  exampleRequestsHelpers: ExampleRequestsHelpers
+  session: ICliServerSession;
+  paths: IPathMapping;
+  config: IApiCliConfig;
+  capturesHelpers: CapturesHelpers;
+  exampleRequestsHelpers: ExampleRequestsHelpers;
 }
 
 declare global {
   namespace Express {
     export interface Request {
-      optic: IOpticExpressRequestAdditions
+      optic: IOpticExpressRequestAdditions;
     }
   }
 }
 
 export interface ICliServerCaptureInfo {
-  captureType: 'run'
-  status: 'started' | 'completed'
-  taskConfig: IOpticTaskRunnerConfig
-  env: { [key: string]: string }
+  captureType: 'run';
+  status: 'started' | 'completed';
+  taskConfig: IOpticTaskRunnerConfig;
+  env: { [key: string]: string };
 }
 
 export interface ICliServerSession {
-  id: string
-  path: string
-  captures: ICliServerCaptureInfo[]
+  id: string;
+  path: string;
+  captures: ICliServerCaptureInfo[];
 }
 
 export const shutdownRequested = 'cli-server:shutdown-requested';
@@ -51,8 +58,7 @@ class CliServer {
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
 
-  constructor(private config: ICliServerConfig) {
-  }
+  constructor(private config: ICliServerConfig) {}
 
   addUiServer(app: express.Application) {
     const resourceRoot = path.resolve(basePath);
@@ -76,67 +82,77 @@ class CliServer {
         res.sendStatus(404);
       }
     });
-    app.put('/api/identity', bodyParser.json({ limit: '5kb' }), async (req, res: express.Response) => {
-      if (req.body.user) {
-        user = req.body.user;
+    app.put(
+      '/api/identity',
+      bodyParser.json({ limit: '5kb' }),
+      async (req, res: express.Response) => {
+        if (req.body.user) {
+          user = req.body.user;
+          res.status(202).json({});
+        } else {
+          res.sendStatus(400);
+        }
       }
-      if (user) {
-        res.sendStatus(202).json({});
-      } else {
-        res.sendStatus(404);
-      }
-    });
+    );
 
     // @REFACTOR sessionsRouter
     app.get('/api/sessions', (req, res: express.Response) => {
       res.json({
-        sessions
+        sessions,
       });
     });
 
-    app.post('/api/sessions', bodyParser.json({ limit: '5kb' }), async (req, res: express.Response) => {
-      const { path, taskConfig } = req.body;
-      const captureInfo: ICliServerCaptureInfo = {
-        taskConfig,
-        captureType: 'run',
-        status: 'started',
-        env: {}
-      };
-      const existingSession = sessions.find(x => x.path === path);
-      if (existingSession) {
-        if (taskConfig) {
-          existingSession.captures.push(captureInfo);
+    app.post(
+      '/api/sessions',
+      bodyParser.json({ limit: '5kb' }),
+      async (req, res: express.Response) => {
+        const { path, taskConfig } = req.body;
+        const captureInfo: ICliServerCaptureInfo = {
+          taskConfig,
+          captureType: 'run',
+          status: 'started',
+          env: {},
+        };
+        const existingSession = sessions.find((x) => x.path === path);
+        if (existingSession) {
+          if (taskConfig) {
+            existingSession.captures.push(captureInfo);
+          }
+          return res.json({
+            session: existingSession,
+          });
         }
+
+        const sessionId = (sessions.length + 1).toString();
+        const session: ICliServerSession = {
+          id: sessionId,
+          path,
+          captures: taskConfig ? [captureInfo] : [],
+        };
+        sessions.push(session);
+
         return res.json({
-          session: existingSession
+          session,
         });
       }
-
-      const sessionId = (sessions.length + 1).toString();
-      const session: ICliServerSession = {
-        id: sessionId,
-        path,
-        captures: taskConfig ? [captureInfo] : []
-      };
-      sessions.push(session);
-
-      return res.json({
-        session
-      });
-    });
+    );
 
     // @REFACTOR adminRouter
-    app.post('/admin-api/commands', bodyParser.json({ limit: '1kb' }), async (req, res) => {
-      const { body } = req;
+    app.post(
+      '/admin-api/commands',
+      bodyParser.json({ limit: '1kb' }),
+      async (req, res) => {
+        const { body } = req;
 
-      if (body.type === 'shutdown') {
-        res.sendStatus(204);
-        this.events.emit(shutdownRequested);
-        return;
+        if (body.type === 'shutdown') {
+          res.sendStatus(204);
+          this.events.emit(shutdownRequested);
+          return;
+        }
+
+        res.sendStatus(400);
       }
-
-      res.sendStatus(400);
-    });
+    );
 
     // specRouter
     const specRouter = makeRouter(sessions);
@@ -151,12 +167,12 @@ class CliServer {
   async start(): Promise<{ port: number }> {
     const app = this.makeServer();
     const port = await getPort({
-      port: [34444]
+      port: [34444],
     });
     return new Promise((resolve, reject) => {
       this.server = app.listen(port, () => {
         resolve({
-          port
+          port,
         });
       });
 
@@ -165,7 +181,7 @@ class CliServer {
         this.connections.push(connection);
         connection.on('close', () => {
           log.write(`removing connection\n`);
-          this.connections = this.connections.filter(c => c !== connection);
+          this.connections = this.connections.filter((c) => c !== connection);
         });
       });
     });
@@ -198,6 +214,4 @@ class CliServer {
   }
 }
 
-export {
-  CliServer
-};
+export { CliServer };

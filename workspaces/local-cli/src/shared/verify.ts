@@ -9,7 +9,7 @@ import {
   getPathsRelativeToConfig,
   IOpticTaskRunnerConfig,
   readApiConfig,
-  TaskToStartConfig
+  TaskToStartConfig,
 } from '@useoptic/cli-config';
 import { CommandSession } from './command-session';
 import * as waitOn from 'wait-on';
@@ -22,7 +22,7 @@ export function verifyTask(cli: Command, taskName: string): void {
   let foundTask;
   let startConfig: IOpticTaskRunnerConfig;
 
-  let fixUrl = 'docs.useoptic.com/idk...yet';
+  let fixUrl = 'https://docs.useoptic.com/';
 
   const tasks = new Listr([
     {
@@ -40,14 +40,16 @@ export function verifyTask(cli: Command, taskName: string): void {
         });
 
         if (!taskExists) {
+          fixUrl = fixUrl + 'common-issues#error-1-task-does-not-exist';
           throw new Error(`Task ${taskName} not found`);
         }
-      }
+      },
     },
     {
-      title: `The command provided starts your API on the ${colors.bold('$OPTIC_API_PORT')}`,
+      title: `The command provided starts your API on the ${colors.bold(
+        '$OPTIC_API_PORT'
+      )}`,
       task: async (cxt: any, task: any) => {
-
         const commandSession = new CommandSession();
 
         const serviceConfig = startConfig.serviceConfig;
@@ -55,26 +57,33 @@ export function verifyTask(cli: Command, taskName: string): void {
         const serviceHost = serviceConfig.host;
         const opticServiceConfig = {
           OPTIC_API_PORT: servicePort.toString(),
-          OPTIC_API_HOST: serviceHost.toString()
+          OPTIC_API_HOST: serviceHost.toString(),
         };
 
         const expected = `${serviceConfig.host}:${serviceConfig.port}`;
 
-        task.title = `Your command, ${colors.bold.blue(startConfig.command!)}, starts your API on the host and port Optic assigns it ${colors.bold(expected)}`;
+        task.title = `Your command, ${colors.bold.blue(
+          startConfig.command!
+        )}, starts your API on the host and port Optic assigns it ${colors.bold(
+          expected
+        )}`;
 
-        await commandSession.start({
-          command: startConfig.command!,
-          // @ts-ignore
-          environmentVariables: {
-            ...process.env,
-            ...opticServiceConfig
-          }
-        }, true);
+        await commandSession.start(
+          {
+            command: startConfig.command!,
+            // @ts-ignore
+            environmentVariables: {
+              ...process.env,
+              ...opticServiceConfig,
+            },
+          },
+          true
+        );
 
         let status = 'running';
         let serviceRunning = false;
 
-        const commandStoppedPromise = new Promise(resolve => {
+        const commandStoppedPromise = new Promise((resolve) => {
           commandSession.events.on('stopped', ({ state }) => {
             status = state;
             resolve();
@@ -83,36 +92,45 @@ export function verifyTask(cli: Command, taskName: string): void {
 
         const serviceRunningPromise = new Promise(async (resolve) => {
           waitOn({
-            resources: [
-              `tcp:${expected}`
-            ],
+            resources: [`tcp:${expected}`],
             delay: 0,
             tcpTimeout: 500,
-            timeout: 15000
-          }).then(() => {
-            serviceRunning = true;
-            resolve(true);
-          }) //if service resolves we assume it's up.
+            timeout: 25000,
+          })
+            .then(() => {
+              serviceRunning = true;
+              resolve(true);
+            }) //if service resolves we assume it's up.
             .catch(() => resolve(false));
         });
 
-        const finished = await Promise.race([commandStoppedPromise, serviceRunningPromise]);
+        const finished = await Promise.race([
+          commandStoppedPromise,
+          serviceRunningPromise,
+        ]);
 
         commandSession.stop();
 
         if (status !== 'running') {
+          fixUrl =
+            fixUrl +
+            'common-issues#error-2-your-command-exited-early-or-was-not-long-running';
           throw new Error('Your command exited early or was not long-running.');
         }
 
         if (!serviceRunning) {
-          throw new Error(`Your API was not started on the expected port ${expected}`);
+          fixUrl =
+            fixUrl +
+            'common-issues#error-3-your-api-did-not-start-on-the-expected-port';
+          throw new Error(
+            `Your API was not started on the expected port ${expected}`
+          );
         }
-      }
+      },
     },
     {
       title: `Optic can start`,
       task: async (cxt: any, task: any) => {
-
         const proxyConfig = startConfig.proxyConfig;
         const proxyPort = proxyConfig.port;
         const proxyHost = proxyConfig.host;
@@ -127,60 +145,83 @@ export function verifyTask(cli: Command, taskName: string): void {
 
         const inboundProxy = new HttpToolkitCapturingProxy();
 
-        const target = require('url')
-          .format({
-            hostname: serviceHost,
-            port: servicePort,
-            protocol: serviceConfig.protocol
-          });
+        const target = require('url').format({
+          hostname: serviceHost,
+          port: servicePort,
+          protocol: serviceConfig.protocol,
+        });
 
         await inboundProxy.start({
           flags: {
             chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
             includeTextBody: true,
             includeJsonBody: true,
-            includeShapeHash: true
+            includeShapeHash: true,
           },
           host: proxyConfig.host,
-          proxyTarget: process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes' ? undefined : target,
-          proxyPort: proxyConfig.port
+          proxyTarget:
+            process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes'
+              ? undefined
+              : target,
+          proxyPort: proxyConfig.port,
         });
 
         const proxyRunningPromise = await new Promise(async (resolve) => {
           waitOn({
-            resources: [
-              `tcp:${expected}`
-            ],
+            resources: [`tcp:${expected}`],
             delay: 0,
             tcpTimeout: 500,
-            timeout: 15000
-          }).then(() => {
-            resolve(true);
-          }) //if service resolves we assume it's up.
+            timeout: 15000,
+          })
+            .then(() => {
+              resolve(true);
+            }) //if service resolves we assume it's up.
             .catch(() => resolve(false));
         });
 
         await inboundProxy.stop();
         if (!proxyRunningPromise) {
+          fixUrl =
+            fixUrl +
+            'common-issues#error-4-could-not-start-optic-proxy-on-baseurl';
           throw new Error(`Optic proxy was unable to start on ${expected}`);
         }
-
-      }
-    }
+      },
+    },
   ]);
 
-
-  tasks.run()
+  tasks
+    .run()
     .then(() => {
-      cli.log('\n\n' + fromOptic(colors.green(`Nice work! Optic is setup properly. Now run ${colors.bold(`api run ${taskName}`)}`)));
+      cli.log(
+        '\n\n' +
+          fromOptic(
+            colors.green(
+              `Nice work! Optic is setup properly. Now run ${colors.bold(
+                `api run ${taskName}`
+              )}`
+            )
+          )
+      );
     })
     .catch((err: any) => {
-
-      cli.log('\n\n' + fromOptic(colors.red('Optic has detected some issues with your setup')));
-      cli.log(fromOptic(colors.red(`Error 4 -- Solution at ${fixUrl}`)));
+      cli.log(
+        '\n\n' +
+          fromOptic(
+            colors.red('Optic has detected some issues with your setup')
+          )
+      );
+      cli.log(
+        fromOptic(
+          colors.red(
+            `Configuration Issue Detected-- Solution at ${colors.underline(
+              fixUrl
+            )}`
+          )
+        )
+      );
 
       process.exit(0);
       // cli.log(colors.red(err.message));
     });
-
 }
