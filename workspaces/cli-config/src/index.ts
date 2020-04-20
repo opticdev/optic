@@ -165,7 +165,6 @@ export interface IPathMapping {
   gitignorePath: string;
   capturesPath: string;
   exampleRequestsPath: string;
-  tokenStorePath: string;
 }
 
 export async function getPathsRelativeToConfig() {
@@ -189,7 +188,6 @@ export async function getPathsRelativeToCwd(
   const gitignorePath = path.join(basePath, '.gitignore');
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
-  const tokenStorePath = path.join(basePath, 'api', 'token');
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
 
@@ -201,7 +199,6 @@ export async function getPathsRelativeToCwd(
     gitignorePath,
     capturesPath,
     exampleRequestsPath,
-    tokenStorePath,
   };
 }
 
@@ -215,7 +212,6 @@ export async function createFileTree(
     configPath,
     gitignorePath,
     capturesPath,
-    tokenStorePath,
   } = await getPathsRelativeToCwd(basePath);
   const files = [
     {
@@ -228,10 +224,6 @@ captures/
       path: specStorePath,
       contents: JSON.stringify([]),
     },
-    // {
-    //   path: tokenStorePath,
-    //   contents: token
-    // }
   ];
   if (config) {
     files.push({
@@ -254,14 +246,3 @@ captures/
 }
 
 export { parseIgnore, parseRule, IIgnoreRunnable };
-
-export async function shouldWarnAboutVersion7Compatibility() {
-  const hasVersion6SpecStore = await findUp('.api', { type: 'directory' });
-  const hasVersion7Config = await findUp('optic.yml', { type: 'file' });
-  if (hasVersion6SpecStore) {
-    return true;
-  } else if (hasVersion7Config) {
-    return false;
-  }
-  return false;
-}
