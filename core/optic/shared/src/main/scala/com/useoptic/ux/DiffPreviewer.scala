@@ -14,7 +14,7 @@ import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{Body, JsonLike}
 import com.useoptic.ux.ExampleRenderInterfaces.{ExampleArray, ExampleItem, ExampleObject, ExamplePrimitive, ExampleRenderVisitorHelper, KnownExampleField, MissingExampleField, UnexpectedExampleField}
-import com.useoptic.ux.ShapaeRenderInterfaces.{SpecArray, SpecField, SpecObject, SpecOneOf, SpecPrimitive, SpecRenderVisitorHelper, WrappedType}
+import com.useoptic.ux.ShapeRenderInterfaces.{SpecArray, SpecField, SpecObject, SpecOneOf, SpecPrimitive, SpecRenderVisitorHelper, WrappedType}
 import io.circe.{Json, JsonObject}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -316,7 +316,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
         SpecArray(
           listShape.shapeId,
           itemShape.shapeId,
-          RenderName(Seq(NameComponent("List of ", ListKind.color, inner = Some(baseItem.shapeId)))),
+          RenderName(Seq(NameComponent("List of ", ListKind.color, inner = Some(baseItem.shapeId), link = Some(baseItem.shapeId)))),
           diffsByTrail(shapeTrail.withChild(ListItemTrail(listShape.shapeId, itemShape.shapeId)))
         )
       )
@@ -352,7 +352,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
     override def begin(shapeTrail: ShapeTrail, oneOfShape: ShapeEntity, branches: Seq[ShapeId]): Unit = {
 
       val nameComponents = branches.map(branch => {
-        NameComponent(if (branches.lastOption.contains(branch) && branches.size > 1) "or " else "", "modifier", endText = if (branches.lastOption.contains(branch)) "" else ", ", inner = Some(branch))
+        NameComponent(if (branches.lastOption.contains(branch) && branches.size > 1) "or " else "", "modifier", endText = if (branches.lastOption.contains(branch)) "" else ", ", inner = Some(branch), link = Some(branch))
       })
 
       pushShape(SpecOneOf(
@@ -375,7 +375,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
         WrappedType(
           shape.shapeId,
           OptionalKind.baseShapeId,
-          RenderName(Seq(NameComponent("", "modifier", "(optional)", innerShape.map(_.shapeId)))),
+          RenderName(Seq(NameComponent("", "modifier", " (optional)", innerShape.map(_.shapeId)))),
           innerShape.get.shapeId,
           diffs = diffsByTrail(shapeTrail)
         )
@@ -388,7 +388,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
         WrappedType(
           shape.shapeId,
           NullableKind.baseShapeId,
-          RenderName(Seq(NameComponent("", "modifier", "(nullable)", innerShape.map(_.shapeId)))),
+          RenderName(Seq(NameComponent("", "modifier", " (nullable)", innerShape.map(_.shapeId)))),
           innerShape.get.shapeId,
           diffs = diffsByTrail(shapeTrail)
         )

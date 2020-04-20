@@ -175,6 +175,7 @@ function ValueContents({value, shape}) {
   if (jsTypeString === '[object String]') {
     return <Typography variant="caption"
                        component="pre"
+                       className={'fs-exclude'}
                        style={{
                          fontWeight: 600,
                          whiteSpace: 'pre-line',
@@ -187,6 +188,7 @@ function ValueContents({value, shape}) {
 
   if (jsTypeString === '[object Boolean]') {
     return <Typography variant="caption"
+                       className={'fs-exclude'}
                        style={{
                          fontWeight: 600,
                          fontFamily: '\'Source Code Pro\', monospace',
@@ -196,6 +198,7 @@ function ValueContents({value, shape}) {
 
   if (jsTypeString === '[object Number]') {
     return <Typography variant="caption"
+                       className={'fs-exclude'}
                        style={{
                          fontWeight: 600,
                          fontFamily: '\'Source Code Pro\', monospace',

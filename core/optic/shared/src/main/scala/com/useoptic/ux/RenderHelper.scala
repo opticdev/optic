@@ -2,12 +2,13 @@ package com.useoptic.ux
 
 import com.useoptic.diff.DiffResult
 import com.useoptic.ux.ExampleRenderInterfaces.{ExampleArray, ExampleField, ExampleItem, ExampleObject, ExamplePrimitive, ExampleShape, KnownExampleField, MissingExampleField, UnexpectedExampleField}
-import com.useoptic.ux.ShapaeRenderInterfaces.{SpecArray, SpecField, SpecObject, SpecOneOf, SpecPrimitive, SpecShape, WrappedType}
+import com.useoptic.ux.ShapeRenderInterfaces.{SpecArray, SpecField, SpecObject, SpecOneOf, SpecPrimitive, SpecShape, WrappedType}
 import com.useoptic.ux.SharedInterfaces.{ExampleFieldId, ExampleItemId, ExampleShapeId, SpecFieldId, SpecShapeId}
 import io.circe.Json
 import GetWithTypeExpectation._
-import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, OptionalKind}
+import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, ObjectKind, OptionalKind}
 import ChildHasDiff._
+
 import scala.reflect.ClassTag
 import scala.scalajs.js.annotation.JSExportAll
 
@@ -148,9 +149,10 @@ case class RenderItem(exampleItemId: ExampleItemId, index: Int, exampleShape: Re
 @JSExportAll
 case class RenderField(fieldName: String, example: Option[Json], exampleShape: Option[RenderShape], specShape: Option[RenderSpecBase], display: String, diffs: Set[DiffResult]) extends Renderable
 
-
+@JSExportAll
 trait RenderSpecBase {
   def baseShapeId: String
+  def isObject = baseShapeId == ObjectKind.baseShapeId
   def isOptional = baseShapeId == OptionalKind.baseShapeId
   def isNullable = baseShapeId == NullableKind.baseShapeId
   def diffs: Set[DiffResult]
