@@ -78,7 +78,7 @@ export const ObjectRender = withShapeRenderContext((props) => {
   return (
     <>
       {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
-      {mapScala(fields)((field, n) => <FieldRow key={n} field={field} parent={shape}/>)}
+      {mapScala(fields)((field, n) => <FieldRow key={field.fieldName} field={field} parent={shape}/>)}
       <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
