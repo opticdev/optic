@@ -4,7 +4,7 @@ import {methodColorsDark} from '../../docs/DocConstants';
 
 export const PathAndMethod = ({path, method}) => {
 
-  const methodRender = <Typography variant="body" component="span" style={{
+  const methodRender = <Typography variant="body1" component="span" style={{
     fontWeight: 400,
     color: '#ffffff',
     padding: 4,
@@ -21,7 +21,7 @@ export const PathAndMethod = ({path, method}) => {
 
 export const PathAndMethodLarge = ({path, method}) => {
 
-  const methodRender = <Typography variant="body" component="span" style={{
+  const methodRender = <Typography variant="body1" component="span" style={{
     fontWeight: 400,
     color: '#ffffff',
     padding: 4,
@@ -38,7 +38,7 @@ export const PathAndMethodLarge = ({path, method}) => {
 
 
 export const SquareChip = ({label, color, bgColor, style}) => {
-  return (<Typography variant="body" component="span" style={{
+  return (<Typography variant="body1" component="span" style={{
       fontWeight: 400,
       color,
       padding: 4,
