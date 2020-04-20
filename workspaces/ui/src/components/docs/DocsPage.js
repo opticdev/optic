@@ -112,7 +112,7 @@ export const DocumentationToc = () => {
       )}
       {endpoints.length > 0 && (
         <>
-          <Typography variant="h5" color="textSecondary">
+          <Typography variant="h5" color="primary">
             Documentation
           </Typography>
           <DocDivider />
@@ -241,9 +241,7 @@ export const EndpointDocumentationWrapper = (props) => {
     <EndpointsContextStore method={method} pathId={pathId}>
       <EndpointsContext.Consumer>
         {({ endpointDescriptor }) => {
-          return (
-            <EndpointDocs/>
-          );
+          return <EndpointDocs />;
         }}
       </EndpointsContext.Consumer>
     </EndpointsContextStore>
