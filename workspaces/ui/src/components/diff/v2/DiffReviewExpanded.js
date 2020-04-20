@@ -81,7 +81,7 @@ export default ((props) => {
 
   return (
     <ShapeExpandedStore>
-    <div style={{padding: 12}}>
+    <div>
       <div className={classes.title}>
         <Typography variant="h6" color="primary">Observation</Typography>
         <div style={{flex: 1}}/>

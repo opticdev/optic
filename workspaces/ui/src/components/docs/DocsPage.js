@@ -186,16 +186,8 @@ export const EndpointDocumentationWrapper = (props) => {
       <EndpointsContext.Consumer>
         {({endpointDescriptor}) => {
           return (
-            <Page title="Optic Live Contract Testing Dashboard">
-              <Page.Navbar
-                mini={true}
-              />
-              <Page.Body>
-
-                <EndpointDocs/>
-
-              </Page.Body>
-            </Page>);
+            <EndpointDocs/>
+          );
         }}
       </EndpointsContext.Consumer>
     </EndpointsContextStore>

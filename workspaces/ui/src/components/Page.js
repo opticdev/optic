@@ -1,20 +1,20 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Navbar from './navigation/Navbar';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    flexGrow: 1
+    flexGrow: 1,
   },
   content: ({ padded = true }) => ({
     display: 'flex',
     flexDirection: 'column', // default to vertical stacking of child elements by default
 
     flexGrow: 1,
-    paddingLeft: padded ? theme.spacing(3) : 0,
-    paddingRight: padded ? theme.spacing(3) : 0
-  })
+    paddingLeft: padded ? theme.spacing(4) : 0,
+    paddingRight: padded ? theme.spacing(4) : 0,
+  }),
 }));
 
 export default function Page(props) {
