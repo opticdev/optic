@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouterPaths } from '../../RouterPaths';
-import Page from '../Page';
+import Page, { usePageTitle } from '../Page';
 import { Link, Route, Switch, useParams } from 'react-router-dom';
 import { RfcContext } from '../../contexts/RfcContext';
 import { DiffPreviewer, getOrUndefined, toOption } from '@useoptic/domain';
@@ -240,18 +240,20 @@ export const EndpointDocumentationWrapper = (props) => {
   return (
     <EndpointsContextStore method={method} pathId={pathId}>
       <EndpointsContext.Consumer>
-        {({ endpointDescriptor }) => {
-          return (
-            <EndpointDocs/>
-          );
-        }}
+        {({ endpointDescriptor }) => (
+          <EndpointDocs endpointDescriptor={endpointDescriptor} />
+        )}
       </EndpointsContext.Consumer>
     </EndpointsContextStore>
   );
 };
 
 export const EndpointDocs = (props) => {
+  const { endpointDescriptor } = props;
   const classes = useStyles();
+  const purpose = endpointDescriptor.endpointPurpose;
+  const fingerPrint = `${endpointDescriptor.httpMethod} ${endpointDescriptor.fullPath}`;
+  usePageTitle(`${purpose || fingerPrint} - API Documentation`);
 
   const { rfcService, rfcId } = useContext(RfcContext);
 
@@ -261,12 +263,7 @@ export const EndpointDocs = (props) => {
     <ShapeExpandedStore>
       <div className={classes.maxWidth} style={{ paddingTop: 30 }}>
         <EndpointsContext.Consumer>
-          {({
-            endpointDescriptor,
-            updateContribution,
-            getContribution,
-            endpointId,
-          }) => {
+          {({ updateContribution, getContribution, endpointId }) => {
             const { requestBodies, responses } = endpointDescriptor;
 
             const responsesGroupedByStatusCode = groupBy(
