@@ -23,7 +23,7 @@ import { checkDiffOrUnrecognizedPath } from '@useoptic/domain';
 import * as colors from 'colors';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { fromOptic } from './conversation';
+import { errorFromOptic, fromOptic } from './conversation';
 import { developerDebugLogger, userDebugLogger } from './logger';
 import { lockFilePath } from './paths';
 import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
@@ -54,10 +54,10 @@ async function setupTaskWithConfig(
 
   const blockers = await findProcess('port', startConfig.proxyConfig.port);
   if (blockers.length > 0) {
-    throw new TargetPortUnavailableError(`Optic needs to start a proxy server on port ${
+    throw new TargetPortUnavailableError(`Optic could not start its proxy server on port ${
       startConfig.proxyConfig.port
     }.
-There is something else running on this port:
+There is something else running:
 ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 `);
   }
@@ -89,7 +89,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   try {
     await runTask(startConfig, persistenceManagerFactory);
   } catch (e) {
-    cli.error(e.message);
+    cli.error(colors.red(e.message));
   } finally {
     const loader: ICaptureLoader = new FileSystemCaptureLoader({
       captureBaseDirectory: capturesPath,
@@ -138,9 +138,9 @@ export async function setupTask(cli: Command, taskName: string) {
       await setupTaskWithConfig(cli, taskName, paths, config);
     } catch (e) {
       if (e instanceof TargetPortUnavailableError) {
-        cli.log(fromOptic(e.message));
+        cli.log(errorFromOptic(e.message));
       } else if (e instanceof TaskNotFoundError) {
-        cli.log(fromOptic(`No task named ${taskName} found in optic.yml`));
+        cli.log(errorFromOptic(`No task named ${taskName} found in optic.yml`));
       } else {
         cli.error(e);
       }
