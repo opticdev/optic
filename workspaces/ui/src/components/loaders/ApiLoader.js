@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {useMockData} from '../../contexts/MockDataContext';
-import {SpecServiceStore} from '../../contexts/SpecServiceContext';
-import {LinearProgress} from '@material-ui/core';
-import {LocalRfcStore, RfcStore} from '../../contexts/RfcContext';
-import {InitialRfcCommandsStore} from '../../contexts/InitialRfcCommandsContext';
+import React, { useEffect, useState } from 'react';
+import { useMockData } from '../../contexts/MockDataContext';
+import { SpecServiceStore } from '../../contexts/SpecServiceContext';
+import { LinearProgress } from '@material-ui/core';
+import { LocalRfcStore, RfcStore } from '../../contexts/RfcContext';
+import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
 import EventEmitter from 'events';
 
 export function ApiSpecServiceLoader(props) {
@@ -14,10 +14,11 @@ export function ApiSpecServiceLoader(props) {
   useEffect(() => {
     if (debugData.available && debugData.loading) return;
 
-    const serviceFactory = () => createExampleSpecServiceFactory(debugData.data)
+    const serviceFactory = () =>
+      createExampleSpecServiceFactory(debugData.data);
 
     const task = async () => {
-      const {specService} = await serviceFactory();
+      const { specService } = await serviceFactory();
       setService(specService);
       specService.eventEmitter.on('events-updated', async () => {
         const events = await specService.listEvents();
@@ -33,29 +34,33 @@ export function ApiSpecServiceLoader(props) {
         const events = await service.listEvents();
         setEvents(events);
       };
-      task()
+      task();
     }
   }, [service]);
 
   if (!service) {
-    return <LinearProgress/>;
+    return <LinearProgress />;
   }
 
   return (
-    <SpecServiceStore specService={service} specServiceEvents={service.eventEmitter}>
-      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in ApiSpecServiceLoader">
-        <RfcStore specService={service}>
-          {props.children}
-        </RfcStore>
+    <SpecServiceStore
+      specService={service}
+      specServiceEvents={service.eventEmitter}
+    >
+      <InitialRfcCommandsStore
+        initialEventsString={events}
+        rfcId="testRfcId"
+        instance="the one in ApiSpecServiceLoader"
+      >
+        <RfcStore specService={service}>{props.children}</RfcStore>
       </InitialRfcCommandsStore>
     </SpecServiceStore>
   );
 }
 
 export function LocalCliSpecServiceLoader(props) {
-
   const [events, setEvents] = useState(null);
-  const {specService} = props
+  const { specService } = props;
   useEffect(() => {
     const task = async () => {
       specService.eventEmitter.on('events-updated', async () => {
@@ -72,17 +77,24 @@ export function LocalCliSpecServiceLoader(props) {
         const events = await specService.listEvents();
         setEvents(events);
       };
-      task()
+      task();
     }
   }, [specService]);
 
   if (!events) {
-    return <LinearProgress/>;
+    return <LinearProgress />;
   }
 
   return (
-    <SpecServiceStore specService={specService} specServiceEvents={specService.eventEmitter}>
-      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in LocalCliSpecServiceLoader">
+    <SpecServiceStore
+      specService={specService}
+      specServiceEvents={specService.eventEmitter}
+    >
+      <InitialRfcCommandsStore
+        initialEventsString={events}
+        rfcId="testRfcId"
+        instance="the one in LocalCliSpecServiceLoader"
+      >
         <LocalRfcStore specService={specService}>
           {props.children}
         </LocalRfcStore>
@@ -104,8 +116,8 @@ async function createExampleSpecServiceFactory(data) {
     getConfig: async function () {
       return Promise.resolve({
         config: {
-          apiName: 'Example API'
-        }
+          apiName: 'Example API',
+        },
       });
     },
     listCapturedSamples: async (captureId) => {
@@ -114,8 +126,17 @@ async function createExampleSpecServiceFactory(data) {
     listEvents() {
       return Promise.resolve(events);
     },
+    getCaptureStatus() {
+      return Promise.resolve({
+        status: 'completed',
+      });
+    },
     listCaptures() {
-      return Promise.resolve({captures: [{captureId, lastUpdate: new Date().toISOString(), hasDiff: true}]});
+      return Promise.resolve({
+        captures: [
+          { captureId, lastUpdate: new Date().toISOString(), hasDiff: true },
+        ],
+      });
     },
     saveEvents: (eventStore, rfcId) => {
       const serializedEvents = eventStore.serializeEvents(rfcId);
@@ -123,7 +144,7 @@ async function createExampleSpecServiceFactory(data) {
       eventEmitter.emit('events-updated');
     },
     listExamples: (requestId) => {
-      return Promise.resolve({examples: examples[requestId] || []});
+      return Promise.resolve({ examples: examples[requestId] || [] });
     },
     saveExample: (interaction, requestId) => {
       const requestExamples = examples[requestId] || [];
@@ -132,5 +153,5 @@ async function createExampleSpecServiceFactory(data) {
     },
   };
 
-  return {specService};
+  return { specService };
 }
