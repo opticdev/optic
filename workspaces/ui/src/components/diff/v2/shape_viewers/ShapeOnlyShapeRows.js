@@ -282,9 +282,7 @@ export const FieldRow = withShapeRenderContext((props) => {
     setRenderChild(link);
   };
 
-  const childShape =
-    renderChild && getOrUndefined(shapeRender.getSpecShape(renderChild));
-
+  const childShape = renderChild && getOrUndefined(shapeRender.getSpecShape(renderChild);
   return (
     <>
       <Row
