@@ -37,19 +37,16 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1, // grow to fill the entire page
-    overflow: 'hidden'
   },
   middle: {
     margin: '0 auto',
     maxWidth: 1200,
   },
   scroll: {
-    overflow: 'scroll',
     flex: 1,
     paddingLeft: 40,
     paddingRight: 40,
     paddingBottom: 300,
-    height: '95vh',
     paddingTop: 20,
   },
   topContainer: {
