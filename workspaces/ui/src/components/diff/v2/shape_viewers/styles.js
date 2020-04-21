@@ -41,6 +41,29 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     },
   },
 
+  rowCompass: {
+    width: '100%', // set at runtime to match $right
+    position: 'fixed',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingLeft: 8,
+
+    animation: '$compassHover 3s ease-in-out infinite',
+    opacity: 0,
+
+    willChange: 'opacity',
+    transition: '0.1s ease-out opacity',
+
+    '&$isAbove': {
+      top: theme.spacing(15),
+      opacity: 1,
+    },
+    '&$isBelow': {
+      bottom: theme.spacing(4),
+      opacity: 1,
+    },
+  },
+
   '@keyframes compassHover': {
     '0%': {
       transform: 'translateY(-2px)',
@@ -52,42 +75,44 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
       transform: 'translateY(-2px)',
     },
   },
-  rowCompass: {
-    width: '100%',
-    position: 'absolute',
-    display: 'flex',
-    top: 350,
-    left: 0,
-    justifyContent: 'flex-end',
 
-    animation: '$compassHover 3s ease-in-out infinite',
-  },
+  isAbove: {},
+  isBelow: {},
 
   rowCompassBody: {
-    width: 'calc(35% - 16px)',
     position: 'relative',
-    // display: 'flex',
     padding: theme.spacing(0.8, 1),
     marginRight: 8,
     flexShrink: 0,
-    flexGrow: 0,
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
+    flexGrow: 1,
 
     borderRadius: 15,
   },
 
   rowCompassDirection: {
     position: 'absolute',
-    bottom: -28,
     left: '50%',
     marginLeft: -10,
     width: theme.typography.pxToRem(20),
     height: theme.typography.pxToRem(20),
-    marginRight: theme.spacing(1),
     flexGrow: 0,
     flexShrink: 0,
     fill: '#f8edf4',
+    opacity: 0,
+  },
+
+  rowCompassDirectionDown: {
+    '$isBelow &': {
+      bottom: -28,
+      opacity: 1,
+    },
+  },
+
+  rowCompassDirectionUp: {
+    '$isAbove &': {
+      top: -28,
+      opacity: 1,
+    },
   },
 
   fieldDescription: {

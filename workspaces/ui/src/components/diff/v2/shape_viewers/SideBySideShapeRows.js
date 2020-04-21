@@ -1,8 +1,9 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Typography } from '@material-ui/core';
 import classNames from 'classnames';
 import WarningIcon from '@material-ui/icons/Warning';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {
   AddedGreenBackground,
   ChangedYellowBackground,
@@ -68,7 +69,39 @@ function renderShape(shape, nested) {
 
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
-  const containerRef = useRef(null);
+  const suggestionRef = useRef(null);
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
+
+  useAnimationFrame(() => {
+    if (!suggestionRef.current || !window) return;
+    const suggestionEl = suggestionRef.current;
+
+    const viewportHeight = window.innerHeight;
+    const boundingRect = suggestionEl.getBoundingClientRect();
+
+    const isAbove = boundingRect.bottom < 100;
+    const isBelow = boundingRect.top - viewportHeight > 0;
+    const { x, width } = boundingRect;
+
+    if (
+      isAbove !== compassState.isAbove ||
+      isBelow !== compassState.isBelow ||
+      x !== compassState.x ||
+      width !== compassState.width
+    ) {
+      setCompassState({
+        isAbove,
+        isBelow,
+        x,
+        width,
+      });
+    }
+  });
 
   const { exampleOnly, onLeftClick } = props;
 
@@ -88,7 +121,6 @@ export const Row = withShapeRenderContext((props) => {
         [classes.rowWithHover]: !props.noHover,
         [classes.isSticky]: !!props.sticky,
       })}
-      ref={containerRef}
       style={{ backgroundColor: rowHighlightColor }}
     >
       <div className={classes.left} onClick={onLeftClick}>
@@ -99,7 +131,14 @@ export const Row = withShapeRenderContext((props) => {
           {' '.replace(/ /g, '\u00a0')}
         </div>
       )}
-      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
+      {!exampleOnly && (
+        <div
+          className={classes.right}
+          {...(!props.sticky ? {} : { ref: suggestionRef })}
+        >
+          {props.right}
+        </div>
+      )}
     </div>
   );
 
@@ -108,7 +147,7 @@ export const Row = withShapeRenderContext((props) => {
       {row}
 
       {props.sticky && (
-        <RowCompass highlightColor={rowHighlightColor}>
+        <RowCompass highlightColor={rowHighlightColor} {...compassState}>
           {!exampleOnly && props.right}
         </RowCompass>
       )}
@@ -117,18 +156,57 @@ export const Row = withShapeRenderContext((props) => {
 });
 Row.displayName = 'ShapeViewer/Row';
 
+function useAnimationFrame(callback) {
+  const requestRef = useRef();
+  const previousTimeRef = useRef();
+
+  const animate = (time) => {
+    if (previousTimeRef.current != undefined) {
+      const deltaTime = time - previousTimeRef.current;
+      callback(deltaTime);
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []); // Make sure the effect runs only once
+}
+
 function RowCompass(props) {
   const classes = useShapeViewerStyles();
-
   const { highlightColor } = props;
+  const { x, width, isAbove, isBelow } = props;
 
   return (
-    <div className={classes.rowCompass}>
+    <div
+      className={classNames(classes.rowCompass, {
+        [classes.isAbove]: isAbove,
+        [classes.isBelow]: isBelow,
+      })}
+      style={{
+        left: x,
+        width,
+      }}
+    >
       <div
         className={classes.rowCompassBody}
         style={{ backgroundColor: highlightColor }}
       >
-        <ArrowDownwardIcon className={classes.rowCompassDirection} />
+        <ArrowDownwardIcon
+          className={classNames(
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionDown
+          )}
+        />
+        <ArrowUpwardIcon
+          className={classNames(
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionUp
+          )}
+        />
         {props.children}
       </div>
     </div>
