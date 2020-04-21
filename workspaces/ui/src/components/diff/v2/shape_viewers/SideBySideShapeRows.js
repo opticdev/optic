@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Typography } from '@material-ui/core';
 import classNames from 'classnames';
 import WarningIcon from '@material-ui/icons/Warning';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import {
   AddedGreenBackground,
   ChangedYellowBackground,
@@ -67,6 +68,7 @@ function renderShape(shape, nested) {
 
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
+  const containerRef = useRef(null);
 
   const { exampleOnly, onLeftClick } = props;
 
@@ -80,11 +82,13 @@ export const Row = withShapeRenderContext((props) => {
     }
   })();
 
-  return (
+  const row = (
     <div
       className={classNames(classes.row, {
         [classes.rowWithHover]: !props.noHover,
+        [classes.isSticky]: !!props.sticky,
       })}
+      ref={containerRef}
       style={{ backgroundColor: rowHighlightColor }}
     >
       <div className={classes.left} onClick={onLeftClick}>
@@ -98,7 +102,38 @@ export const Row = withShapeRenderContext((props) => {
       {!exampleOnly && <div className={classes.right}>{props.right}</div>}
     </div>
   );
+
+  return (
+    <>
+      {row}
+
+      {props.sticky && (
+        <RowCompass highlightColor={rowHighlightColor}>
+          {!exampleOnly && props.right}
+        </RowCompass>
+      )}
+    </>
+  );
 });
+Row.displayName = 'ShapeViewer/Row';
+
+function RowCompass(props) {
+  const classes = useShapeViewerStyles();
+
+  const { highlightColor } = props;
+
+  return (
+    <div className={classes.rowCompass}>
+      <div
+        className={classes.rowCompassBody}
+        style={{ backgroundColor: highlightColor }}
+      >
+        <ArrowDownwardIcon className={classes.rowCompassDirection} />
+        {props.children}
+      </div>
+    </div>
+  );
+}
 
 export const ObjectRender = withShapeRenderContext((props) => {
   const { shapeRender, shape, nested } = props;
@@ -358,6 +393,7 @@ export const FieldRow = withShapeRenderContext((props) => {
   return (
     <>
       <Row
+        sticky={!!diff}
         highlight={(() => {
           if (diff && suggestion) {
             return suggestion.changeTypeAsString;
@@ -419,6 +455,7 @@ export const FieldRow = withShapeRenderContext((props) => {
     </>
   );
 });
+FieldRow.displayName = 'ShapeViewers/FieldRow';
 
 export const ItemRow = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();

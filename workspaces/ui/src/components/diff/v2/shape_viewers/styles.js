@@ -17,6 +17,7 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: '#16203F',
+    position: 'relative',
   },
   nested: {
     paddingTop: 10,
@@ -39,6 +40,56 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
       display: 'inherit !important',
     },
   },
+
+  '@keyframes compassHover': {
+    '0%': {
+      transform: 'translateY(-2px)',
+    },
+    '50%': {
+      transform: 'translateY(2px)',
+    },
+    '100%': {
+      transform: 'translateY(-2px)',
+    },
+  },
+  rowCompass: {
+    width: '100%',
+    position: 'absolute',
+    display: 'flex',
+    top: 350,
+    left: 0,
+    justifyContent: 'flex-end',
+
+    animation: '$compassHover 3s ease-in-out infinite',
+  },
+
+  rowCompassBody: {
+    width: 'calc(35% - 16px)',
+    position: 'relative',
+    // display: 'flex',
+    padding: theme.spacing(0.8, 1),
+    marginRight: 8,
+    flexShrink: 0,
+    flexGrow: 0,
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+
+    borderRadius: 15,
+  },
+
+  rowCompassDirection: {
+    position: 'absolute',
+    bottom: -28,
+    left: '50%',
+    marginLeft: -10,
+    width: theme.typography.pxToRem(20),
+    height: theme.typography.pxToRem(20),
+    marginRight: theme.spacing(1),
+    flexGrow: 0,
+    flexShrink: 0,
+    fill: '#f8edf4',
+  },
+
   fieldDescription: {
     flex: 1,
     alignItems: 'center',
@@ -150,6 +201,8 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     marginLeft: -10,
     color: primary,
   },
+
+  isSticky: {},
 }));
 
 export const HiddenItemEllipsis = withShapeRenderContext((props) => {
