@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Typography } from '@material-ui/core';
 import classNames from 'classnames';
 import WarningIcon from '@material-ui/icons/Warning';
@@ -70,6 +76,7 @@ function renderShape(shape, nested) {
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
   const suggestionRef = useRef(null);
+  const animationRaf = useRef(null);
   const [compassState, setCompassState] = useState({
     isAbove: false,
     isBelow: false,
@@ -77,8 +84,8 @@ export const Row = withShapeRenderContext((props) => {
     width: null,
   });
 
-  useAnimationFrame(() => {
-    if (!suggestionRef.current || !window) return;
+  const onAnimationFrame = useCallback(() => {
+    if (!props.sticky || !suggestionRef.current || !window) return;
     const suggestionEl = suggestionRef.current;
 
     const viewportHeight = window.innerHeight;
@@ -94,6 +101,7 @@ export const Row = withShapeRenderContext((props) => {
       x !== compassState.x ||
       width !== compassState.width
     ) {
+      console.log('updating current state', compassState);
       setCompassState({
         isAbove,
         isBelow,
@@ -101,7 +109,19 @@ export const Row = withShapeRenderContext((props) => {
         width,
       });
     }
-  });
+
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  }, [
+    compassState.isAbove,
+    compassState.isBelow,
+    compassState.x,
+    compassState.width,
+  ]);
+
+  useEffect(() => {
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+    return () => cancelAnimationFrame(animationRaf.current);
+  }, [onAnimationFrame]);
 
   const { exampleOnly, onLeftClick } = props;
 
@@ -132,10 +152,7 @@ export const Row = withShapeRenderContext((props) => {
         </div>
       )}
       {!exampleOnly && (
-        <div
-          className={classes.right}
-          {...(!props.sticky ? {} : { ref: suggestionRef })}
-        >
+        <div className={classes.right} ref={suggestionRef}>
           {props.right}
         </div>
       )}
@@ -155,25 +172,6 @@ export const Row = withShapeRenderContext((props) => {
   );
 });
 Row.displayName = 'ShapeViewer/Row';
-
-function useAnimationFrame(callback) {
-  const requestRef = useRef();
-  const previousTimeRef = useRef();
-
-  const animate = (time) => {
-    if (previousTimeRef.current != undefined) {
-      const deltaTime = time - previousTimeRef.current;
-      callback(deltaTime);
-    }
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, []); // Make sure the effect runs only once
-}
 
 function RowCompass(props) {
   const classes = useShapeViewerStyles();
