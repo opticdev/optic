@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { Typography } from '@material-ui/core';
 import classNames from 'classnames';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import WarningIcon from '@material-ui/icons/Warning';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -63,13 +64,31 @@ export const DiffViewer = ({ shape }) => {
     };
   }, [diff.toString()]);
 
+  const onClickCompass = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!compassTargetRef.current) return;
+
+      scrollIntoView(compassTargetRef.current, {
+        scrollMode: 'always',
+        block: 'center',
+      });
+    },
+    [diff.toString()]
+  );
+
   return (
     <div ref={containerRef} className={classes.root}>
       <DepthContext.Provider value={{ depth: 0 }}>
         {renderShape(shape)}
       </DepthContext.Provider>
 
-      {diff && <RowCompass changeType={diffDescription.changeTypeAsString} />}
+      {diff && (
+        <RowCompass
+          changeType={diffDescription.changeTypeAsString}
+          onClick={onClickCompass}
+        />
+      )}
     </div>
   );
 };
@@ -146,6 +165,7 @@ function RowCompass(props) {
         left: x,
         width,
       }}
+      onClick={props.onClick}
     >
       <div
         className={classes.rowCompassBody}

@@ -48,6 +48,7 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
     paddingLeft: 8,
 
+    cursor: 'pointer',
     animation: '$compassHover 3s ease-in-out infinite',
     opacity: 0,
 
