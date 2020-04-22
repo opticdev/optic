@@ -224,9 +224,11 @@ export const ObjectRender = withShapeRenderContext((props) => {
           noHover
         />
       )}
-      {mapScala(fields)((field, n) => (
-        <FieldRow key={field.fieldName} field={field} parent={shape} />
-      ))}
+      {mapScala(fields)((field) => {
+        const key = [field.fieldName, headOrUndefined(field.diffs)].join('-');
+
+        return <FieldRow key={key} field={field} parent={shape} />;
+      })}
       <IndentIncrement>
         <Row left={<Symbols withIndent>{'}'}</Symbols>} noHover />
       </IndentIncrement>
