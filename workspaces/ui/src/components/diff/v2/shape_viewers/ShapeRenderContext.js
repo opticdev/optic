@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { GenericContextFactory } from '../../../../contexts/GenericContextFactory';
 
 const {
@@ -6,27 +6,46 @@ const {
   withContext: withShapeRenderContext,
 } = GenericContextFactory(null);
 
-class ShapeRenderStore extends React.Component {
-  render() {
-    const context = {
-      shapeRender: this.props.shape,
-      rootId: this.props.shape.rootId,
-      diffDescription: this.props.diffDescription,
-      suggestion: this.props.suggestion,
-      diff: this.props.diff,
-      exampleOnly: this.props.exampleOnly,
-      hideDivider: this.props.hideDivider,
-    };
+function ShapeRenderStore(props) {
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
 
-    return (
-      <ShapeRenderContext.Provider value={context}>
-        {this.props.children}
-      </ShapeRenderContext.Provider>
-    );
-  }
+  const context = {
+    shapeRender: props.shape,
+    rootId: props.shape.rootId,
+    diffDescription: props.diffDescription,
+    suggestion: props.suggestion,
+    diff: props.diff,
+    exampleOnly: props.exampleOnly,
+    hideDivider: props.hideDivider,
+    compassState,
+    setCompassState,
+  };
+
+  return (
+    <ShapeRenderContext.Provider value={context}>
+      {props.children}
+    </ShapeRenderContext.Provider>
+  );
 }
 
 export { ShapeRenderStore, ShapeRenderContext, withShapeRenderContext };
+
+export function useDiff() {
+  const context = useContext(ShapeRenderContext);
+
+  if (!context)
+    throw Error('useDiff can only be used inside provided ShapeRenderContext');
+
+  return {
+    diff: context.diff,
+    diffDescription: context.diffDescription,
+  };
+}
 
 // Expand and Show States
 const {

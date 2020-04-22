@@ -54,7 +54,7 @@ class TrafficSessionStoreBase extends React.Component {
       })
       .catch((e) => {
         console.error(e);
-        debugger;
+        // debugger;
         this.setState({
           isLoading: false,
           error: e,
@@ -97,7 +97,7 @@ class TrafficSessionStoreBase extends React.Component {
           this.checkForUpdates();
         }
       } catch (e) {
-        debugger;
+        // debugger;
         console.error(e);
         //@GOTCHA: server will throw a 400 if capture is no longer active. could change this behavior in server or just update ui state
       }
