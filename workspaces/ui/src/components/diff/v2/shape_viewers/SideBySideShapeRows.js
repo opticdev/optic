@@ -20,6 +20,7 @@ import {
   ShapeExpandedContext,
   ShapeRenderContext,
   withShapeRenderContext,
+  useCompassTargetTracker,
 } from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
 import {
@@ -75,54 +76,7 @@ function renderShape(shape, nested) {
 
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
-  const suggestionRef = useRef(null);
-  const animationRaf = useRef(null);
-  const [compassState, setCompassState] = useState({
-    isAbove: false,
-    isBelow: false,
-    x: null,
-    width: null,
-  });
-
-  const onAnimationFrame = useCallback(() => {
-    if (!props.sticky || !suggestionRef.current || !window) return;
-    const suggestionEl = suggestionRef.current;
-
-    const viewportHeight = window.innerHeight;
-    const boundingRect = suggestionEl.getBoundingClientRect();
-
-    const isAbove = boundingRect.bottom < 100;
-    const isBelow = boundingRect.top - viewportHeight > 0;
-    const { x, width } = boundingRect;
-
-    if (
-      isAbove !== compassState.isAbove ||
-      isBelow !== compassState.isBelow ||
-      x !== compassState.x ||
-      width !== compassState.width
-    ) {
-      console.log('updating current state', compassState);
-      setCompassState({
-        isAbove,
-        isBelow,
-        x,
-        width,
-      });
-    }
-
-    animationRaf.current = requestAnimationFrame(onAnimationFrame);
-  }, [
-    compassState.isAbove,
-    compassState.isBelow,
-    compassState.x,
-    compassState.width,
-  ]);
-
-  useEffect(() => {
-    animationRaf.current = requestAnimationFrame(onAnimationFrame);
-    return () => cancelAnimationFrame(animationRaf.current);
-  }, [onAnimationFrame]);
-
+  const suggestionRef = useCompassTargetTracker(!!props.sticky);
   const { exampleOnly, onLeftClick } = props;
 
   const rowHighlightColor = (() => {
@@ -164,7 +118,7 @@ export const Row = withShapeRenderContext((props) => {
       {row}
 
       {props.sticky && (
-        <RowCompass highlightColor={rowHighlightColor} {...compassState}>
+        <RowCompass highlightColor={rowHighlightColor} {...props.compassState}>
           {!exampleOnly && props.right}
         </RowCompass>
       )}

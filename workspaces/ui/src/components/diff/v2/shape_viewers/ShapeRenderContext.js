@@ -1,4 +1,10 @@
-import React from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { GenericContextFactory } from '../../../../contexts/GenericContextFactory';
 
 const {
@@ -6,27 +12,89 @@ const {
   withContext: withShapeRenderContext,
 } = GenericContextFactory(null);
 
-class ShapeRenderStore extends React.Component {
-  render() {
-    const context = {
-      shapeRender: this.props.shape,
-      rootId: this.props.shape.rootId,
-      diffDescription: this.props.diffDescription,
-      suggestion: this.props.suggestion,
-      diff: this.props.diff,
-      exampleOnly: this.props.exampleOnly,
-      hideDivider: this.props.hideDivider,
-    };
+function ShapeRenderStore(props) {
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
 
-    return (
-      <ShapeRenderContext.Provider value={context}>
-        {this.props.children}
-      </ShapeRenderContext.Provider>
-    );
-  }
+  const context = {
+    shapeRender: props.shape,
+    rootId: props.shape.rootId,
+    diffDescription: props.diffDescription,
+    suggestion: props.suggestion,
+    diff: props.diff,
+    exampleOnly: props.exampleOnly,
+    hideDivider: props.hideDivider,
+    compassState,
+    setCompassState,
+  };
+
+  return (
+    <ShapeRenderContext.Provider value={context}>
+      {props.children}
+    </ShapeRenderContext.Provider>
+  );
 }
 
 export { ShapeRenderStore, ShapeRenderContext, withShapeRenderContext };
+
+export function useCompassTargetTracker(isEnabled) {
+  const elementRef = useRef(null);
+  const animationRaf = useRef(null);
+  const context = useContext(ShapeRenderContext);
+
+  if (!context)
+    throw Error(
+      'useCompassTargetTracker can only be used inside provided ShapeRenderContext'
+    );
+
+  const { compassState, setCompassState } = context;
+
+  const onAnimationFrame = useCallback(() => {
+    if (!isEnabled || !window) return;
+    const trackedEl = elementRef.current;
+
+    if (!trackedEl) return;
+
+    const viewportHeight = window.innerHeight;
+    const boundingRect = trackedEl.getBoundingClientRect();
+
+    const isAbove = boundingRect.bottom < 100;
+    const isBelow = boundingRect.top - viewportHeight > 0;
+    const { x, width } = boundingRect;
+
+    if (
+      isAbove !== compassState.isAbove ||
+      isBelow !== compassState.isBelow ||
+      x !== compassState.x ||
+      width !== compassState.width
+    ) {
+      setCompassState({
+        isAbove,
+        isBelow,
+        x,
+        width,
+      });
+    }
+
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  }, [
+    compassState.isAbove,
+    compassState.isBelow,
+    compassState.x,
+    compassState.width,
+  ]);
+
+  useEffect(() => {
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+    return () => cancelAnimationFrame(animationRaf.current);
+  }, [onAnimationFrame]);
+
+  return elementRef;
+}
 
 // Expand and Show States
 const {
