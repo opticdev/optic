@@ -22,6 +22,7 @@ import {
   withShapeRenderContext,
   useCompassTargetTracker,
   useCompassState,
+  useDiff,
 } from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
 import {
@@ -48,7 +49,8 @@ import { AnyShape } from './ShapeOnlyShapeRows';
 export const DiffViewer = ({ shape }) => {
   const classes = useShapeViewerStyles();
   const containerRef = useRef(null);
-  const { ref: compassTargetRef, diff } = useCompassTargetTracker(true);
+  const compassTargetRef = useCompassTargetTracker(true);
+  const { diff, diffDescription } = useDiff();
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -67,7 +69,7 @@ export const DiffViewer = ({ shape }) => {
         {renderShape(shape)}
       </DepthContext.Provider>
 
-      <RowCompass />
+      {diff && <RowCompass changeType={diffDescription.changeTypeAsString} />}
     </div>
   );
 };
@@ -91,19 +93,21 @@ function renderShape(shape, nested) {
   }
 }
 
+function getHighlightColor(changeType) {
+  if (changeType === 'Addition') {
+    return AddedGreenBackground;
+  } else if (changeType === 'Update') {
+    return ChangedYellowBackground;
+  } else if (changeType === 'Removal') {
+    return RemovedRedBackground;
+  }
+}
+
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
   const { exampleOnly, onLeftClick } = props;
 
-  const rowHighlightColor = (() => {
-    if (props.highlight === 'Addition') {
-      return AddedGreenBackground;
-    } else if (props.highlight === 'Update') {
-      return ChangedYellowBackground;
-    } else if (props.highlight === 'Removal') {
-      return RemovedRedBackground;
-    }
-  })();
+  const rowHighlightColor = getHighlightColor(props.changeType);
 
   return (
     <div
@@ -129,7 +133,7 @@ Row.displayName = 'ShapeViewer/Row';
 
 function RowCompass(props) {
   const classes = useShapeViewerStyles();
-  const highlightColor = 'rgba(125,0,0,0.5)';
+  const highlightColor = getHighlightColor(props.changeType);
   const { x, width, isAbove, isBelow } = useCompassState();
 
   return (
@@ -159,7 +163,8 @@ function RowCompass(props) {
             classes.rowCompassDirectionUp
           )}
         />
-        TODO: render diff properly
+
+        <DiffNotif />
       </div>
     </div>
   );
@@ -426,15 +431,7 @@ export const FieldRow = withShapeRenderContext((props) => {
     <>
       <Row
         tracked={!!diff}
-        highlight={(() => {
-          if (diff && suggestion) {
-            return suggestion.changeTypeAsString;
-          }
-
-          if (diff) {
-            return diffDescription.changeTypeAsString;
-          }
-        })()}
+        changeType={diff && diffDescription.changeTypeAsString}
         left={
           <Indent>
             <div className={classes.rowContents}>
@@ -448,29 +445,6 @@ export const FieldRow = withShapeRenderContext((props) => {
           </Indent>
         }
         right={(() => {
-          if (diffNotif && suggestion) {
-            return (
-              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
-                {suggestion.changeTypeAsString !== 'Removal' && (
-                  <TypeName
-                    style={{ marginRight: 9 }}
-                    typeName={specShape && specShape.name}
-                  />
-                )}
-                <Typography
-                  variant="caption"
-                  className={classes.suggestion}
-                  style={{
-                    marginLeft:
-                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
-                  }}
-                >
-                  ({suggestion.changeTypeAsString})
-                </Typography>
-              </div>
-            );
-          }
-
           if (diffNotif) {
             return diffNotif;
           }
@@ -510,15 +484,7 @@ export const ItemRow = withShapeRenderContext((props) => {
     <>
       <Row
         tracked={!!diff}
-        highlight={(() => {
-          if (diff && suggestion) {
-            return suggestion.changeTypeAsString;
-          }
-
-          if (diff) {
-            return diffDescription.changeTypeAsString;
-          }
-        })()}
+        changeType={diff && diffDescription.changeTypeAsString}
         left={(() => {
           if (item.display === 'hidden') {
             return (
@@ -543,28 +509,6 @@ export const ItemRow = withShapeRenderContext((props) => {
           );
         })()}
         right={(() => {
-          if (diffNotif && suggestion) {
-            return (
-              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
-                {suggestion.changeTypeAsString !== 'Removal' && (
-                  <TypeName
-                    style={{ marginRight: 9 }}
-                    typeName={listItemShape.name}
-                  />
-                )}
-                <Typography
-                  variant="caption"
-                  className={classes.suggestion}
-                  style={{
-                    marginLeft:
-                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
-                  }}
-                >
-                  ({suggestion.changeTypeAsString})
-                </Typography>
-              </div>
-            );
-          }
           if (diffNotif) {
             return diffNotif;
           }

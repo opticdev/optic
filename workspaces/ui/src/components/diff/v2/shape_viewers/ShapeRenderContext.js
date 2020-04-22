@@ -93,10 +93,7 @@ export function useCompassTargetTracker(isEnabled) {
     return () => cancelAnimationFrame(animationRaf.current);
   }, [onAnimationFrame]);
 
-  return {
-    ref: elementRef,
-    diff: context.diff,
-  };
+  return elementRef;
 }
 
 export function useCompassState() {
@@ -104,10 +101,22 @@ export function useCompassState() {
 
   if (!context)
     throw Error(
-      'useCompassTargetTracker can only be used inside provided ShapeRenderContext'
+      'useCompassState can only be used inside provided ShapeRenderContext'
     );
 
   return context.compassState;
+}
+
+export function useDiff() {
+  const context = useContext(ShapeRenderContext);
+
+  if (!context)
+    throw Error('useDiff can only be used inside provided ShapeRenderContext');
+
+  return {
+    diff: context.diff,
+    diffDescription: context.diffDescription,
+  };
 }
 
 // Expand and Show States
