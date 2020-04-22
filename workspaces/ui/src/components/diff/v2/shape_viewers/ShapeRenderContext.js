@@ -93,7 +93,21 @@ export function useCompassTargetTracker(isEnabled) {
     return () => cancelAnimationFrame(animationRaf.current);
   }, [onAnimationFrame]);
 
-  return elementRef;
+  return {
+    ref: elementRef,
+    diff: context.diff,
+  };
+}
+
+export function useCompassState() {
+  const context = useContext(ShapeRenderContext);
+
+  if (!context)
+    throw Error(
+      'useCompassTargetTracker can only be used inside provided ShapeRenderContext'
+    );
+
+  return context.compassState;
 }
 
 // Expand and Show States

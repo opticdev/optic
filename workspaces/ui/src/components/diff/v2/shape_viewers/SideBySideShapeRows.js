@@ -21,6 +21,7 @@ import {
   ShapeRenderContext,
   withShapeRenderContext,
   useCompassTargetTracker,
+  useCompassState,
 } from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
 import {
@@ -46,11 +47,27 @@ import { AnyShape } from './ShapeOnlyShapeRows';
 
 export const DiffViewer = ({ shape }) => {
   const classes = useShapeViewerStyles();
+  const containerRef = useRef(null);
+  const { ref: compassTargetRef, diff } = useCompassTargetTracker(true);
+
+  useEffect(() => {
+    const containerEl = containerRef.current;
+    compassTargetRef.current = containerEl.querySelector(
+      `.${classes.isTracked} .${classes.right}`
+    );
+
+    return () => {
+      compassTargetRef.current = null;
+    };
+  }, [diff.toString()]);
+
   return (
-    <div className={classes.root}>
+    <div ref={containerRef} className={classes.root}>
       <DepthContext.Provider value={{ depth: 0 }}>
         {renderShape(shape)}
       </DepthContext.Provider>
+
+      <RowCompass />
     </div>
   );
 };
@@ -76,7 +93,6 @@ function renderShape(shape, nested) {
 
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
-  const suggestionRef = useCompassTargetTracker(!!props.sticky);
   const { exampleOnly, onLeftClick } = props;
 
   const rowHighlightColor = (() => {
@@ -89,11 +105,11 @@ export const Row = withShapeRenderContext((props) => {
     }
   })();
 
-  const row = (
+  return (
     <div
       className={classNames(classes.row, {
         [classes.rowWithHover]: !props.noHover,
-        [classes.isSticky]: !!props.sticky,
+        [classes.isTracked]: !!props.tracked, // important for the compass to work
       })}
       style={{ backgroundColor: rowHighlightColor }}
     >
@@ -105,32 +121,16 @@ export const Row = withShapeRenderContext((props) => {
           {' '.replace(/ /g, '\u00a0')}
         </div>
       )}
-      {!exampleOnly && (
-        <div className={classes.right} ref={suggestionRef}>
-          {props.right}
-        </div>
-      )}
+      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
     </div>
-  );
-
-  return (
-    <>
-      {row}
-
-      {props.sticky && (
-        <RowCompass highlightColor={rowHighlightColor} {...props.compassState}>
-          {!exampleOnly && props.right}
-        </RowCompass>
-      )}
-    </>
   );
 });
 Row.displayName = 'ShapeViewer/Row';
 
 function RowCompass(props) {
   const classes = useShapeViewerStyles();
-  const { highlightColor } = props;
-  const { x, width, isAbove, isBelow } = props;
+  const highlightColor = 'rgba(125,0,0,0.5)';
+  const { x, width, isAbove, isBelow } = useCompassState();
 
   return (
     <div
@@ -159,7 +159,7 @@ function RowCompass(props) {
             classes.rowCompassDirectionUp
           )}
         />
-        {props.children}
+        TODO: render diff properly
       </div>
     </div>
   );
@@ -425,7 +425,7 @@ export const FieldRow = withShapeRenderContext((props) => {
   return (
     <>
       <Row
-        sticky={!!diff}
+        tracked={!!diff}
         highlight={(() => {
           if (diff && suggestion) {
             return suggestion.changeTypeAsString;
