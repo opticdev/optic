@@ -509,6 +509,7 @@ export const ItemRow = withShapeRenderContext((props) => {
   return (
     <>
       <Row
+        tracked={!!diff}
         highlight={(() => {
           if (diff && suggestion) {
             return suggestion.changeTypeAsString;
