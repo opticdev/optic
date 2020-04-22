@@ -21,8 +21,6 @@ import {
   ShapeExpandedContext,
   ShapeRenderContext,
   withShapeRenderContext,
-  useCompassTargetTracker,
-  useCompassState,
   useDiff,
 } from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
@@ -50,7 +48,7 @@ import { AnyShape } from './ShapeOnlyShapeRows';
 export const DiffViewer = ({ shape }) => {
   const classes = useShapeViewerStyles();
   const containerRef = useRef(null);
-  const compassTargetRef = useCompassTargetTracker(true);
+  const { ref: compassTargetRef, compassState } = useCompassTargetTracker(true);
   const { diff, diffDescription } = useDiff();
 
   useEffect(() => {
@@ -86,6 +84,7 @@ export const DiffViewer = ({ shape }) => {
       {diff && (
         <RowCompass
           changeType={diffDescription.changeTypeAsString}
+          {...compassState}
           onClick={onClickCompass}
         />
       )}
@@ -153,7 +152,7 @@ Row.displayName = 'ShapeViewer/Row';
 function RowCompass(props) {
   const classes = useShapeViewerStyles();
   const highlightColor = getHighlightColor(props.changeType);
-  const { x, width, isAbove, isBelow } = useCompassState();
+  const { x, width, isAbove, isBelow } = props;
 
   return (
     <div
@@ -547,3 +546,59 @@ export const ItemRow = withShapeRenderContext((props) => {
     </>
   );
 });
+
+function useCompassTargetTracker(isEnabled) {
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
+  const elementRef = useRef(null);
+  const animationRaf = useRef(null);
+
+  const onAnimationFrame = useCallback(() => {
+    if (!isEnabled || !window) return;
+    const trackedEl = elementRef.current;
+
+    if (!trackedEl) return;
+
+    const viewportHeight = window.innerHeight;
+    const boundingRect = trackedEl.getBoundingClientRect();
+
+    const isAbove = boundingRect.bottom < 100;
+    const isBelow = boundingRect.top - viewportHeight > 0;
+    const { x, width } = boundingRect;
+
+    if (
+      isAbove !== compassState.isAbove ||
+      isBelow !== compassState.isBelow ||
+      x !== compassState.x ||
+      width !== compassState.width
+    ) {
+      setCompassState({
+        isAbove,
+        isBelow,
+        x,
+        width,
+      });
+    }
+
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  }, [
+    compassState.isAbove,
+    compassState.isBelow,
+    compassState.x,
+    compassState.width,
+  ]);
+
+  useEffect(() => {
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+    return () => cancelAnimationFrame(animationRaf.current);
+  }, [onAnimationFrame]);
+
+  return {
+    ref: elementRef,
+    compassState,
+  };
+}

@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useState } from 'react';
 import { GenericContextFactory } from '../../../../contexts/GenericContextFactory';
 
 const {
@@ -40,72 +34,6 @@ function ShapeRenderStore(props) {
 }
 
 export { ShapeRenderStore, ShapeRenderContext, withShapeRenderContext };
-
-export function useCompassTargetTracker(isEnabled) {
-  const elementRef = useRef(null);
-  const animationRaf = useRef(null);
-  const context = useContext(ShapeRenderContext);
-
-  if (!context)
-    throw Error(
-      'useCompassTargetTracker can only be used inside provided ShapeRenderContext'
-    );
-
-  const { compassState, setCompassState } = context;
-
-  const onAnimationFrame = useCallback(() => {
-    if (!isEnabled || !window) return;
-    const trackedEl = elementRef.current;
-
-    if (!trackedEl) return;
-
-    const viewportHeight = window.innerHeight;
-    const boundingRect = trackedEl.getBoundingClientRect();
-
-    const isAbove = boundingRect.bottom < 100;
-    const isBelow = boundingRect.top - viewportHeight > 0;
-    const { x, width } = boundingRect;
-
-    if (
-      isAbove !== compassState.isAbove ||
-      isBelow !== compassState.isBelow ||
-      x !== compassState.x ||
-      width !== compassState.width
-    ) {
-      setCompassState({
-        isAbove,
-        isBelow,
-        x,
-        width,
-      });
-    }
-
-    animationRaf.current = requestAnimationFrame(onAnimationFrame);
-  }, [
-    compassState.isAbove,
-    compassState.isBelow,
-    compassState.x,
-    compassState.width,
-  ]);
-
-  useEffect(() => {
-    animationRaf.current = requestAnimationFrame(onAnimationFrame);
-    return () => cancelAnimationFrame(animationRaf.current);
-  }, [onAnimationFrame]);
-
-  return elementRef;
-}
-
-export function useCompassState() {
-  const context = useContext(ShapeRenderContext);
-
-  if (!context)
-    throw Error(
-      'useCompassState can only be used inside provided ShapeRenderContext'
-    );
-
-  return context.compassState;
-}
 
 export function useDiff() {
   const context = useContext(ShapeRenderContext);
