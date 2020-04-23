@@ -1,8 +1,12 @@
 import React from 'react';
+import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function EndpointReport(props) {
-  const { endpoint } = props;
+  const { captureId, endpoint } = props;
+  const { loading, result: diffs } = useTestingService((service) =>
+    service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.httpMethod)
+  );
 
   const classes = useStyles();
 

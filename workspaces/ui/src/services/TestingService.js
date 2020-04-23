@@ -82,6 +82,32 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       const serializedReport = converter.toJs(report);
       return serializedReport;
     }
+
+    async loadEndpointDiffs(captureId, pathId, httpMethod) {
+      const events = getSpecEvents(captureId);
+      const samples = getSamples(captureId);
+      const { rfcState } = queriesFromEvents(events);
+
+      const samplesSeq = JsonHelper.jsArrayToSeq(
+        samples.map((x) => JsonHelper.fromInteraction(x))
+      );
+
+      // Problem: this is not grouped by pathId / httpMethod, we'll want PathAndMethodDiffManager for that
+      const interactionsGroupedByDiff = opticEngine.com.useoptic.diff.helpers
+        .DiffHelpers()
+        .groupByDiffs(rfcState, samplesSeq);
+      const diffRegions = opticEngine.com.useoptic.diff.helpers
+        .DiffResultHelpers(interactionsGroupedByDiff)
+        .listRegions();
+
+      const diffResultsByRegion = {
+        unmatchedRequestContentType: diffRegions.unmatchedRequestContentType,
+        unmatchedResponseContentType: diffRegions.unmatchedResponseContentType,
+        statusCodes: diffRegions.statusCodes,
+      };
+
+      console.log(diffResultsByRegion);
+    }
   }
 
   return new ExampleTestingService(orgId);
