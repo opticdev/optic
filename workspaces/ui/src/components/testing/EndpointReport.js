@@ -4,9 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default function EndpointReport(props) {
   const { captureId, endpoint } = props;
-  const { loading, result: diffs } = useTestingService((service) =>
-    service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.httpMethod)
+  const { error, loading, result: diffRegions } = useTestingService((service) =>
+    service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.method)
   );
+
+  if (error) throw error;
 
   const classes = useStyles();
 
@@ -34,8 +36,27 @@ export default function EndpointReport(props) {
           Amount of <strong>diffs</strong>: {endpoint.counts.diffs}
         </li>
       </ul>
+
+      {diffRegions && <EndpointDiffsSummary diffRegions={diffRegions} />}
     </div>
   );
+}
+
+function EndpointDiffsSummary({ diffRegions }) {
+  const { newRegions, bodyDiffs } = diffRegions;
+  const allDiffs = [...newRegions, ...bodyDiffs];
+
+  if (allDiffs.length < 1) {
+    return <div>No diffs!</div>;
+  } else {
+    return (
+      <ul>
+        {allDiffs.map((diff) => (
+          <li key={diff.toString()}>{diff.description.summary}</li>
+        ))}
+      </ul>
+    );
+  }
 }
 
 const useStyles = makeStyles((theme) => ({

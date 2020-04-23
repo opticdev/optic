@@ -3,7 +3,7 @@
 import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
 import { StableHasher } from '../utilities/CoverageUtilities';
-import { JsonHelper } from '@useoptic/domain';
+import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
 
 export class TestingService {}
 
@@ -88,25 +88,30 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       const samples = getSamples(captureId);
       const { rfcState } = queriesFromEvents(events);
 
-      const samplesSeq = JsonHelper.jsArrayToSeq(
-        samples.map((x) => JsonHelper.fromInteraction(x))
+      const interactions = JsonHelper.jsArrayToSeq(
+        samples.map((sample) => JsonHelper.fromInteraction(sample))
       );
 
-      // Problem: this is not grouped by pathId / httpMethod, we'll want PathAndMethodDiffManager for that
-      const interactionsGroupedByDiff = opticEngine.com.useoptic.diff.helpers
-        .DiffHelpers()
-        .groupByDiffs(rfcState, samplesSeq);
-      const diffRegions = opticEngine.com.useoptic.diff.helpers
-        .DiffResultHelpers(interactionsGroupedByDiff)
-        .listRegions();
+      const diffManager = DiffManagerFacade.newFromInteractions(
+        samples,
+        () => {}
+      );
+      diffManager.updatedRfcState(rfcState);
+      const endpointDiffManager = diffManager.managerForPathAndMethod(
+        pathId,
+        httpMethod,
+        JsonHelper.jsArrayToSeq([])
+      );
 
-      const diffResultsByRegion = {
-        unmatchedRequestContentType: diffRegions.unmatchedRequestContentType,
-        unmatchedResponseContentType: diffRegions.unmatchedResponseContentType,
-        statusCodes: diffRegions.statusCodes,
+      const regions = endpointDiffManager.diffRegions;
+
+      // TODO: replace this what the service will _actually_ be returning. Obviously,
+      // this isn't serialised as JSON fully, and I imagine there's other details not
+      // not considered.
+      return {
+        newRegions: JsonHelper.seqToJsArray(regions.newRegions),
+        bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
       };
-
-      console.log(diffResultsByRegion);
     }
   }
 
