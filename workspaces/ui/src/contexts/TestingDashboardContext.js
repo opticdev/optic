@@ -13,7 +13,7 @@ export function createContext({ service, baseUrl }) {
 
 export function useTestingService(
   performRequest, // Note: this is where a TS interface would give some nice safety
-  deps
+  deps = []
 ) {
   const { service } = useContext(TestingDashboardContext);
   const [result, setResult] = useState(null);
