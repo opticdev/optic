@@ -3,7 +3,7 @@
 import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
 import { StableHasher } from '../utilities/CoverageUtilities';
-import { JsonHelper } from '@useoptic/domain';
+import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
 
 export class TestingService {}
 
@@ -81,6 +81,37 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
         .getCoverage(rfcState, samplesSeq);
       const serializedReport = converter.toJs(report);
       return serializedReport;
+    }
+
+    async loadEndpointDiffs(captureId, pathId, httpMethod) {
+      const events = getSpecEvents(captureId);
+      const samples = getSamples(captureId);
+      const { rfcState } = queriesFromEvents(events);
+
+      const interactions = JsonHelper.jsArrayToSeq(
+        samples.map((sample) => JsonHelper.fromInteraction(sample))
+      );
+
+      const diffManager = DiffManagerFacade.newFromInteractions(
+        samples,
+        () => {}
+      );
+      diffManager.updatedRfcState(rfcState);
+      const endpointDiffManager = diffManager.managerForPathAndMethod(
+        pathId,
+        httpMethod,
+        JsonHelper.jsArrayToSeq([])
+      );
+
+      const regions = endpointDiffManager.diffRegions;
+
+      // TODO: replace this what the service will _actually_ be returning. Obviously,
+      // this isn't serialised as JSON fully, and I imagine there's other details not
+      // not considered.
+      return {
+        newRegions: JsonHelper.seqToJsArray(regions.newRegions),
+        bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
+      };
     }
   }
 
