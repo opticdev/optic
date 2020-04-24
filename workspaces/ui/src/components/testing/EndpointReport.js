@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
-import { mapScala } from '@useoptic/domain';
+import { mapScala, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function EndpointReport(props) {
@@ -49,46 +49,76 @@ export default function EndpointReport(props) {
 }
 
 function EndpointDiffsSummary({ diffsSummary }) {
-  const { newRegions, bodyDiffs } = diffsSummary;
+  const { responses, requests } = diffsSummary;
   const classes = useStyles();
 
-  const allDiffs = [...newRegions, ...bodyDiffs];
-
-  if (allDiffs.length < 1) {
+  if (diffsSummary.totalCount < 1) {
     return <div>No diffs!</div>;
   } else {
     return (
       <div className={classes.diffsContainer}>
-        {bodyDiffs.length > 0 && (
-          <div className={classes.bodyRegion}>
-            <h5>Diffs in Response Body</h5>
+        <div className={classes.requestStats}>
+          <h4>Requests</h4>
 
-            <ul>
-              {bodyDiffs.map((diff) => (
-                <li key={diff.toString()}>
-                  {diff.description.summary}{' '}
-                  <small>
-                    {mapScala(diff.location)((location) => location).join(
-                      ' > '
-                    )}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          <ul>
+            <li>
+              Unmatched content types:{' '}
+              {requests.unmatchedContentTypes.length < 1
+                ? 'none'
+                : requests.unmatchedContentTypes.join(',')}
+            </li>
 
-        {newRegions.length > 0 && (
-          <div className={classes.newRegions}>
-            <h5>New responses</h5>
+            <li>
+              Unmatched bodies:{' '}
+              {requests.bodyShapes.length < 1 ? (
+                'none'
+              ) : (
+                <ul>
+                  {requests.bodyShapes.map((diff) => (
+                    <li key={diff.toString()}>
+                      {diff.summary} <small>{diff.location.join(', ')}</small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          </ul>
+        </div>
 
-            <ul>
-              {newRegions.map((diff) => (
-                <li key={diff.toString()}>{diff.description.summary}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className={classes.requestStats}>
+          <h4>Responses</h4>
+
+          <ul>
+            <li>
+              Unmatched content types:{' '}
+              {responses.unmatchedContentTypes.length < 1
+                ? 'none'
+                : responses.unmatchedContentTypes.join(',')}
+            </li>
+
+            <li>
+              Unmatched status codes:{' '}
+              {responses.unmatchedStatusCodes.length < 1
+                ? 'none'
+                : responses.unmatchedStatusCodes.join(',')}
+            </li>
+
+            <li>
+              Unmatched bodies:
+              {responses.bodyShapes.length < 1 ? (
+                'none'
+              ) : (
+                <ul>
+                  {responses.bodyShapes.map((diff) => (
+                    <li key={diff.toString()}>
+                      {diff.summary} <small>{diff.location.join(', ')}</small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }
@@ -104,5 +134,61 @@ const useStyles = makeStyles((theme) => ({
 
 function createEndpointsDiffSummary(diffRegions) {
   const { bodyDiffs, newRegions } = diffRegions;
-  return { bodyDiffs, newRegions };
+
+  const responseNewRegions = newRegions.filter(getInResponse);
+  const responseBodyDiffs = bodyDiffs.filter(getInResponse);
+  const requestNewRegions = newRegions.filter(getInRequest);
+  const requestBodyDiffs = newRegions.filter(getInResponse);
+
+  const requests = {
+    unmatchedContentTypes: requestNewRegions
+      .filter(getContentType)
+      .map(getContentType),
+    bodyShapes: requestNewRegions.map(createBodyShapeDiff),
+  };
+
+  const responses = {
+    unmatchedStatusCodes: responseNewRegions
+      .filter(getStatusCode)
+      .map(getStatusCode),
+    unmatchedContentTypes: responseNewRegions
+      .filter(getContentType)
+      .map(getContentType),
+    bodyShapes: responseBodyDiffs.map(createBodyShapeDiff),
+  };
+
+  return {
+    totalCount: bodyDiffs.length + newRegions.length,
+    responses: {
+      ...responses,
+      count:
+        responses.unmatchedStatusCodes.length +
+        responses.unmatchedContentTypes.length +
+        responses.bodyShapes.length,
+    },
+    requests: {
+      ...requests,
+      count: requests.unmatchedContentTypes.length + requests.bodyShapes.length,
+    },
+  };
+
+  function getInRequest(diff) {
+    return diff.inRequest;
+  }
+  function getInResponse(diff) {
+    return diff.inResponse;
+  }
+  function getStatusCode(diff) {
+    return diff.statusCode;
+  }
+  function getContentType(diff) {
+    return diff.contentType;
+  }
+  function createBodyShapeDiff(diff) {
+    return {
+      location: JsonHelper.seqToJsArray(diff.location),
+      changeType: diff.description.changeTypeAsString,
+      summary: diff.description.summary,
+    };
+  }
 }
