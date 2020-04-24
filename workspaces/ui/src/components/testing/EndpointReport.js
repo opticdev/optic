@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
+import { mapScala } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function EndpointReport(props) {
@@ -44,17 +45,46 @@ export default function EndpointReport(props) {
 
 function EndpointDiffsSummary({ diffRegions }) {
   const { newRegions, bodyDiffs } = diffRegions;
+  const classes = useStyles();
+
   const allDiffs = [...newRegions, ...bodyDiffs];
 
   if (allDiffs.length < 1) {
     return <div>No diffs!</div>;
   } else {
     return (
-      <ul>
-        {allDiffs.map((diff) => (
-          <li key={diff.toString()}>{diff.description.summary}</li>
-        ))}
-      </ul>
+      <div className={classes.diffsContainer}>
+        {bodyDiffs.length > 0 && (
+          <div className={classes.bodyRegion}>
+            <h5>Diffs in Response Body</h5>
+
+            <ul>
+              {bodyDiffs.map((diff) => (
+                <li key={diff.toString()}>
+                  {diff.description.summary}{' '}
+                  <small>
+                    {mapScala(diff.location)((location) => location).join(
+                      ' > '
+                    )}
+                  </small>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {newRegions.length > 0 && (
+          <div className={classes.newRegions}>
+            <h5>New responses</h5>
+
+            <ul>
+              {newRegions.map((diff) => (
+                <li key={diff.toString()}>{diff.description.summary}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     );
   }
 }
@@ -63,4 +93,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(2, 2, 3),
   },
+
+  diffsContainer: {},
 }));
