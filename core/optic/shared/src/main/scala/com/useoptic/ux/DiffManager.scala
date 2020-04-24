@@ -228,8 +228,6 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
   def diffCount: Int = interactionsGroupedByDiffs.keys.size
 
-  def interactionsWithDiffs() : Seq[HttpInteraction] = interactionsGroupedByDiffs.values.flatten.toSeq
-
   def interactionsWithDiffsCount: Int = interactionsGroupedByDiffs.values.flatten.size
 
   def collectRelatedShapeDiffs(diff: InteractionDiffResult): Set[ShapeDiffResult] = {
