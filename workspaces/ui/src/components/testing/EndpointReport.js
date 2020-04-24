@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { mapScala } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +8,11 @@ export default function EndpointReport(props) {
   const { error, loading, result: diffRegions } = useTestingService((service) =>
     service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.method)
   );
+
+  const diffsSummary = useMemo(() => {
+    if (!diffRegions) return null;
+    return createEndpointsDiffSummary(diffRegions);
+  });
 
   if (error) throw error;
 
@@ -38,13 +43,13 @@ export default function EndpointReport(props) {
         </li>
       </ul>
 
-      {diffRegions && <EndpointDiffsSummary diffRegions={diffRegions} />}
+      {diffsSummary && <EndpointDiffsSummary diffsSummary={diffsSummary} />}
     </div>
   );
 }
 
-function EndpointDiffsSummary({ diffRegions }) {
-  const { newRegions, bodyDiffs } = diffRegions;
+function EndpointDiffsSummary({ diffsSummary }) {
+  const { newRegions, bodyDiffs } = diffsSummary;
   const classes = useStyles();
 
   const allDiffs = [...newRegions, ...bodyDiffs];
@@ -96,3 +101,8 @@ const useStyles = makeStyles((theme) => ({
 
   diffsContainer: {},
 }));
+
+function createEndpointsDiffSummary(diffRegions) {
+  const { bodyDiffs, newRegions } = diffRegions;
+  return { bodyDiffs, newRegions };
+}
