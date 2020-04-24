@@ -88,10 +88,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       const samples = getSamples(captureId);
       const { rfcState } = queriesFromEvents(events);
 
-      const interactions = JsonHelper.jsArrayToSeq(
-        samples.map((sample) => JsonHelper.fromInteraction(sample))
-      );
-
+      // bit of a nasty way to fitler the interactions down per endpoint
       const diffManager = DiffManagerFacade.newFromInteractions(
         samples,
         () => {}
@@ -102,16 +99,15 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
         httpMethod,
         JsonHelper.jsArrayToSeq([])
       );
+      const endpointInteractions = endpointDiffManager.interactionsWithDiffs();
 
-      const regions = endpointDiffManager.diffRegions;
+      // diffing things again here, so definitely not efficient, but works for now
+      const interactionsGroupedByDiff = opticEngine.com.useoptic.diff.helpers
+        .DiffHelpers()
+        .groupByDiffs(rfcState, endpointInteractions);
 
-      // TODO: replace this what the service will _actually_ be returning. Obviously,
-      // this isn't serialised as JSON fully, and I imagine there's other details not
-      // not considered.
-      return {
-        newRegions: JsonHelper.seqToJsArray(regions.newRegions),
-        bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
-      };
+      // TODO: replace with something serialised
+      return interactionsGroupedByDiff;
     }
   }
 

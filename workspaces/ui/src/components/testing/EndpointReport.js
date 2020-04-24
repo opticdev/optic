@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
-import { mapScala } from '@useoptic/domain';
+import { opticEngine, mapScala, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function EndpointReport(props) {
   const { captureId, endpoint } = props;
-  const { error, loading, result: diffRegions } = useTestingService((service) =>
+  const {
+    error,
+    loading,
+    result: interactionsByDiff,
+  } = useTestingService((service) =>
     service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.method)
   );
+
+  const endpointSummary = useMemo(() => {
+    if (!interactionsByDiff) return null;
+    return createEndpointSummary(interactionsByDiff);
+  }, [interactionsByDiff]);
 
   if (error) throw error;
 
@@ -38,18 +47,20 @@ export default function EndpointReport(props) {
         </li>
       </ul>
 
-      {diffRegions && <EndpointDiffsSummary diffRegions={diffRegions} />}
+      {endpointSummary && (
+        <EndpointDiffsSummary endpointSummary={endpointSummary} />
+      )}
     </div>
   );
 }
 
-function EndpointDiffsSummary({ diffRegions }) {
-  const { newRegions, bodyDiffs } = diffRegions;
+function EndpointDiffsSummary({ endpointSummary }) {
   const classes = useStyles();
 
-  const allDiffs = [...newRegions, ...bodyDiffs];
+  const bodyDiffs = []; // placeholder
+  const newRegions = []; // placeholder
 
-  if (allDiffs.length < 1) {
+  if (endpointSummary.length < 1) {
     return <div>No diffs!</div>;
   } else {
     return (
@@ -96,3 +107,16 @@ const useStyles = makeStyles((theme) => ({
 
   diffsContainer: {},
 }));
+
+function createEndpointSummary(interactionsByDiff) {
+  const diffRegions = opticEngine.com.useoptic.diff.helpers
+    .DiffResultHelpers(interactionsByDiff)
+    .listRegions();
+
+  const statusCodes = diffRegions.statusCodes;
+
+  return {
+    length: 0,
+    statusCodes: JsonHelper.seqToJsArray(statusCodes),
+  };
+}
