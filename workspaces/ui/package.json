@@ -96,6 +96,7 @@
   "devDependencies": {
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.2.0",
     "@storybook/addon-actions": "^5.0.11",
     "@storybook/addon-links": "^5.0.11",
     "@storybook/addons": "^5.0.11",
@@ -116,6 +117,7 @@
     "eslint-plugin-react-hooks": "^1.5.0",
     "is-wsl": "^1.1.0",
     "react-dev-utils": "^9.0.1",
+    "react-refresh": "^0.8.1",
     "sass-loader": "^8.0.2",
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
