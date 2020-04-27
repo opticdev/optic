@@ -12,9 +12,13 @@
     "@useoptic/domain": "0.2.1",
     "fs-extra": "^8.1.0",
     "mockttp": "^0.19.2",
-    "shape-hash": "^1.0.6"
+    "shape-hash": "^1.0.6",
+    "whatwg-mimetype": "^2.3.0"
   },
   "files": [
     "/build"
-  ]
+  ],
+  "devDependencies": {
+    "@types/whatwg-mimetype": "^2.1.0"
+  }
 }
