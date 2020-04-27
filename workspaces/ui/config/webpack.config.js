@@ -528,7 +528,11 @@ module.exports = function (webpackEnv) {
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
       // Experimental fast refresh for React components
       // See https://github.com/pmmmwh/react-refresh-webpack-plugin
-      isEnvDevelopment && new ReactRefreshWebpackPlugin(),
+      isEnvDevelopment &&
+        new ReactRefreshWebpackPlugin({
+          overlay: false,
+          useLegacyWDSSockets: true,
+        }),
       // Watcher doesn't work well if you mistype casing in a path so we use
       // a plugin that prints an error when you attempt to do this.
       // See https://github.com/facebook/create-react-app/issues/240

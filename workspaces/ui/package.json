@@ -119,6 +119,7 @@
     "react-dev-utils": "^9.0.1",
     "react-refresh": "^0.8.1",
     "sass-loader": "^8.0.2",
+    "sockjs-client": "^1.4.0",
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
