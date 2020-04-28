@@ -201,7 +201,7 @@ export const CaptureManager = ({}) => {
         {captures.length && (
           <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
         )}
-        <Route component={() => <div>Empty state </div>} />
+        <Route component={() => empty} />
       </Switch>
     </div>
   );
@@ -277,6 +277,17 @@ function RequestDiffWrapper(props) {
   );
 }
 
+const empty = (
+  <EmptyState
+    title="Optic has not observed any traffic"
+    content={`
+Run \`api start\` and send the API some traffic
+
+Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
+`.trim()}
+  />
+);
+
 function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;
   const baseUrl = useBaseUrl();
@@ -290,16 +301,7 @@ function CaptureDiffWrapper(props) {
   const { captures } = useContext(AllCapturesContext);
 
   if (captures.length === 0) {
-    return (
-      <EmptyState
-        title="Optic has not observed any traffic"
-        content={`
-Run \`api start\` and send the API some traffic
-
-Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
-`.trim()}
-      />
-    );
+    return empty;
   }
 
   return (

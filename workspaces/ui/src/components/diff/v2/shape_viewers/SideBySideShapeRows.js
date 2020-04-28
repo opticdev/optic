@@ -60,7 +60,7 @@ export const DiffViewer = ({ shape }) => {
     return () => {
       compassTargetRef.current = null;
     };
-  }, [diff.toString()]);
+  }, [diff && diff.toString()]); //may be undefined
 
   const onClickCompass = useCallback(
     (e) => {
@@ -72,7 +72,7 @@ export const DiffViewer = ({ shape }) => {
         block: 'center',
       });
     },
-    [diff.toString()]
+    [diff && diff.toString()] //may be undefined
   );
 
   return (
