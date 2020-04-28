@@ -122,11 +122,15 @@ class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffR
           val o = spec.shapesState.shapes(choice.shapeId)
 
           val keyToField = o.descriptor.fieldOrdering
-            .map(fieldId => {
+            .flatMap(fieldId => {
               val field = spec.shapesState.fields(fieldId)
-              val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
-              val shapeId = fieldShapeEntity.get.shapeId
-              field.descriptor.name -> (fieldId, shapeId)
+              if (field.isRemoved) {
+                None
+              } else {
+                val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
+                val shapeId = fieldShapeEntity.get.shapeId
+                Some(field.descriptor.name -> (fieldId, shapeId))
+              }
             })
             .toMap
 
@@ -198,11 +202,15 @@ class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDi
           val o = spec.shapesState.shapes(choice.shapeId)
 
           val keyToField = o.descriptor.fieldOrdering
-            .map(fieldId => {
+            .flatMap(fieldId => {
               val field = spec.shapesState.fields(fieldId)
-              val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
-              val shapeId = fieldShapeEntity.get.shapeId
-              field.descriptor.name -> (fieldId, shapeId)
+              if (field.isRemoved) {
+                None
+              } else {
+                val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
+                val shapeId = fieldShapeEntity.get.shapeId
+                Some(field.descriptor.name -> (fieldId, shapeId))
+              }
             })
             .toMap
 
