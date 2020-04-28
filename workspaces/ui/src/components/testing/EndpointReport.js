@@ -75,7 +75,7 @@ function EndpointDiffsSummary({ diffsSummary }) {
               ) : (
                 <ul>
                   {requests.bodyShapes.map((diff) => (
-                    <li key={diff.toString()}>
+                    <li key={diff.id}>
                       {diff.summary} <small>{diff.location.join(', ')}</small>
                     </li>
                   ))}
@@ -110,7 +110,7 @@ function EndpointDiffsSummary({ diffsSummary }) {
               ) : (
                 <ul>
                   {responses.bodyShapes.map((diff) => (
-                    <li key={diff.toString()}>
+                    <li key={diff.id}>
                       {diff.summary} <small>{diff.location.join(', ')}</small>
                     </li>
                   ))}
@@ -186,6 +186,7 @@ function createEndpointsDiffSummary(diffRegions) {
   }
   function createBodyShapeDiff(diff) {
     return {
+      id: diff.toString(),
       location: JsonHelper.seqToJsArray(diff.location),
       changeType: diff.description.changeTypeAsString,
       summary: diff.description.summary,
