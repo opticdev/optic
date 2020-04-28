@@ -1,16 +1,24 @@
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import * as keytar from 'keytar';
 //@ts-ignore
 import * as jwtDecode from 'jwt-decode';
 import * as http from 'http';
 import { EventEmitter } from 'events';
 import * as getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs-extra';
 
 const serviceName = 'optic8plus';
 const accountName = 'default';
+
+const opticrcPath = path.resolve(os.homedir(), '.opticrc');
+
+interface IUserStorage {
+  idToken: string;
+}
 
 interface ICredentialsServerConfig {
   port: number;
@@ -71,19 +79,30 @@ export async function ensureCredentialsServerStarted() {
 }
 
 export async function setCredentials(credentials: IUserCredentials) {
-  await keytar.setPassword(serviceName, accountName, credentials.token);
+  const storeValue: IUserStorage = {
+    idToken: credentials.token,
+  };
+
+  await fs.ensureFile(opticrcPath);
+  await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
 }
 
 export async function deleteCredentials() {
-  await keytar.deletePassword(serviceName, accountName);
+  try {
+    await fs.remove(opticrcPath);
+  } catch (e) {}
 }
 
 export async function getCredentials(): Promise<IUserCredentials | null> {
-  const token = await keytar.getPassword(serviceName, accountName);
-  if (token) {
-    return { token };
+  try {
+    const storage: IUserStorage = await fs.readJSON(opticrcPath);
+    if (storage.idToken) {
+      return { token: storage.idToken };
+    }
+    return null;
+  } catch (e) {
+    return null;
   }
-  return null;
 }
 
 export async function getUserFromCredentials(
