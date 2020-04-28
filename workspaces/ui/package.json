@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ui",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "files": [
     "build",
     "index.js",
@@ -16,7 +16,7 @@
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
     "@useoptic/cli-client": "0.2.1",
-    "@useoptic/domain": "0.2.1",
+    "@useoptic/domain": "0.2.2",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",

@@ -2729,13 +2729,6 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
-"@useoptic/cli-scripts@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-scripts/-/cli-scripts-0.2.1.tgz#ad1ca990f1e0871ae3aafb653e4d59dce76afdcf"
-  integrity sha512-W6HQBVDr8nC/CZ+ITE+gSV4fUi+OtXdlA11A73e6gx5606qP0QL6L19jnPte+0mJkynRosbZgc6jNOC9qYYddg==
-  dependencies:
-    node-notifier "^7.0.0"
-
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
