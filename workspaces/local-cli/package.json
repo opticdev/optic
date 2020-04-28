@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "CLI to document your API and generate related artifacts",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
