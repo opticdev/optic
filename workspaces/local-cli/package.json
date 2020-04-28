@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "CLI to document your API and generate related artifacts",
-  "version": "8.0.1",
+  "version": "8.0.3",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -13,15 +13,15 @@
     "@oclif/plugin-help": "^2",
     "@useoptic/cli-client": "0.2.1",
     "@useoptic/cli-config": "0.2.1",
-    "@useoptic/cli-scripts": "0.2.1",
-    "@useoptic/cli-server": "0.2.1",
-    "@useoptic/domain": "0.2.1",
+    "@useoptic/cli-scripts": "0.2.3",
+    "@useoptic/cli-server": "0.2.2",
+    "@useoptic/domain": "0.2.2",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
     "find-process": "^1.4.3",
+    "fs-extra": "^9.0.0",
     "jwt-decode": "^2.2.0",
-    "keytar": "^5.4.0",
     "listr": "^0.14.3",
     "nice-try": "^2.0.1",
     "react-dev-utils": "^10.0.0",

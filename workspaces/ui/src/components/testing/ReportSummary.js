@@ -158,7 +158,7 @@ export default function ReportSummary(props) {
                   </div>
 
                   {currentEndpointId && endpoint.id === currentEndpointId && (
-                    <EndpointReport endpoint={endpoint} />
+                    <EndpointReport endpoint={endpoint} captureId={captureId} />
                   )}
                 </ReportEndpointLink>
               </Card>

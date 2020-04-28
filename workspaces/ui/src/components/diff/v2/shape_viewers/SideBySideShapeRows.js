@@ -1,7 +1,16 @@
-import React, { useContext } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Typography } from '@material-ui/core';
 import classNames from 'classnames';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import WarningIcon from '@material-ui/icons/Warning';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {
   AddedGreenBackground,
   ChangedYellowBackground,
@@ -12,6 +21,7 @@ import {
   ShapeExpandedContext,
   ShapeRenderContext,
   withShapeRenderContext,
+  useDiff,
 } from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
 import {
@@ -37,11 +47,47 @@ import { AnyShape } from './ShapeOnlyShapeRows';
 
 export const DiffViewer = ({ shape }) => {
   const classes = useShapeViewerStyles();
+  const containerRef = useRef(null);
+  const { ref: compassTargetRef, compassState } = useCompassTargetTracker(true);
+  const { diff, diffDescription } = useDiff();
+
+  useEffect(() => {
+    const containerEl = containerRef.current;
+    compassTargetRef.current = containerEl.querySelector(
+      `.${classes.isTracked} .${classes.right}`
+    );
+
+    return () => {
+      compassTargetRef.current = null;
+    };
+  }, [diff && diff.toString()]); //may be undefined
+
+  const onClickCompass = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!compassTargetRef.current) return;
+
+      scrollIntoView(compassTargetRef.current, {
+        scrollMode: 'always',
+        block: 'center',
+      });
+    },
+    [diff && diff.toString()] //may be undefined
+  );
+
   return (
-    <div className={classes.root}>
+    <div ref={containerRef} className={classes.root}>
       <DepthContext.Provider value={{ depth: 0 }}>
         {renderShape(shape)}
       </DepthContext.Provider>
+
+      {diff && (
+        <RowCompass
+          changeType={diffDescription.changeTypeAsString}
+          {...compassState}
+          onClick={onClickCompass}
+        />
+      )}
     </div>
   );
 };
@@ -65,25 +111,27 @@ function renderShape(shape, nested) {
   }
 }
 
+function getHighlightColor(changeType) {
+  if (changeType === 'Addition') {
+    return AddedGreenBackground;
+  } else if (changeType === 'Update') {
+    return ChangedYellowBackground;
+  } else if (changeType === 'Removal') {
+    return RemovedRedBackground;
+  }
+}
+
 export const Row = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
-
   const { exampleOnly, onLeftClick } = props;
 
-  const rowHighlightColor = (() => {
-    if (props.highlight === 'Addition') {
-      return AddedGreenBackground;
-    } else if (props.highlight === 'Update') {
-      return ChangedYellowBackground;
-    } else if (props.highlight === 'Removal') {
-      return RemovedRedBackground;
-    }
-  })();
+  const rowHighlightColor = getHighlightColor(props.changeType);
 
   return (
     <div
       className={classNames(classes.row, {
         [classes.rowWithHover]: !props.noHover,
+        [classes.isTracked]: !!props.tracked, // important for the compass to work
       })}
       style={{ backgroundColor: rowHighlightColor }}
     >
@@ -99,6 +147,47 @@ export const Row = withShapeRenderContext((props) => {
     </div>
   );
 });
+Row.displayName = 'ShapeViewer/Row';
+
+function RowCompass(props) {
+  const classes = useShapeViewerStyles();
+  const highlightColor = getHighlightColor(props.changeType);
+  const { x, width, isAbove, isBelow } = props;
+
+  return (
+    <div
+      className={classNames(classes.rowCompass, {
+        [classes.isAbove]: isAbove,
+        [classes.isBelow]: isBelow,
+      })}
+      style={{
+        left: x,
+        width,
+      }}
+      onClick={props.onClick}
+    >
+      <div
+        className={classes.rowCompassBody}
+        style={{ backgroundColor: highlightColor }}
+      >
+        <ArrowDownwardIcon
+          className={classNames(
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionDown
+          )}
+        />
+        <ArrowUpwardIcon
+          className={classNames(
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionUp
+          )}
+        />
+
+        <DiffNotif />
+      </div>
+    </div>
+  );
+}
 
 export const ObjectRender = withShapeRenderContext((props) => {
   const { shapeRender, shape, nested } = props;
@@ -113,9 +202,11 @@ export const ObjectRender = withShapeRenderContext((props) => {
           noHover
         />
       )}
-      {mapScala(fields)((field, n) => (
-        <FieldRow key={field.fieldName} field={field} parent={shape} />
-      ))}
+      {mapScala(fields)((field) => {
+        const key = [field.fieldName, headOrUndefined(field.diffs)].join('-');
+
+        return <FieldRow key={key} field={field} parent={shape} />;
+      })}
       <IndentIncrement>
         <Row left={<Symbols withIndent>{'}'}</Symbols>} noHover />
       </IndentIncrement>
@@ -358,15 +449,8 @@ export const FieldRow = withShapeRenderContext((props) => {
   return (
     <>
       <Row
-        highlight={(() => {
-          if (diff && suggestion) {
-            return suggestion.changeTypeAsString;
-          }
-
-          if (diff) {
-            return diffDescription.changeTypeAsString;
-          }
-        })()}
+        tracked={!!diff}
+        changeType={diff && diffDescription.changeTypeAsString}
         left={
           <Indent>
             <div className={classes.rowContents}>
@@ -380,29 +464,6 @@ export const FieldRow = withShapeRenderContext((props) => {
           </Indent>
         }
         right={(() => {
-          if (diffNotif && suggestion) {
-            return (
-              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
-                {suggestion.changeTypeAsString !== 'Removal' && (
-                  <TypeName
-                    style={{ marginRight: 9 }}
-                    typeName={specShape && specShape.name}
-                  />
-                )}
-                <Typography
-                  variant="caption"
-                  className={classes.suggestion}
-                  style={{
-                    marginLeft:
-                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
-                  }}
-                >
-                  ({suggestion.changeTypeAsString})
-                </Typography>
-              </div>
-            );
-          }
-
           if (diffNotif) {
             return diffNotif;
           }
@@ -419,6 +480,7 @@ export const FieldRow = withShapeRenderContext((props) => {
     </>
   );
 });
+FieldRow.displayName = 'ShapeViewers/FieldRow';
 
 export const ItemRow = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
@@ -440,15 +502,8 @@ export const ItemRow = withShapeRenderContext((props) => {
   return (
     <>
       <Row
-        highlight={(() => {
-          if (diff && suggestion) {
-            return suggestion.changeTypeAsString;
-          }
-
-          if (diff) {
-            return diffDescription.changeTypeAsString;
-          }
-        })()}
+        tracked={!!diff}
+        changeType={diff && diffDescription.changeTypeAsString}
         left={(() => {
           if (item.display === 'hidden') {
             return (
@@ -473,28 +528,6 @@ export const ItemRow = withShapeRenderContext((props) => {
           );
         })()}
         right={(() => {
-          if (diffNotif && suggestion) {
-            return (
-              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
-                {suggestion.changeTypeAsString !== 'Removal' && (
-                  <TypeName
-                    style={{ marginRight: 9 }}
-                    typeName={listItemShape.name}
-                  />
-                )}
-                <Typography
-                  variant="caption"
-                  className={classes.suggestion}
-                  style={{
-                    marginLeft:
-                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
-                  }}
-                >
-                  ({suggestion.changeTypeAsString})
-                </Typography>
-              </div>
-            );
-          }
           if (diffNotif) {
             return diffNotif;
           }
@@ -513,3 +546,59 @@ export const ItemRow = withShapeRenderContext((props) => {
     </>
   );
 });
+
+function useCompassTargetTracker(isEnabled) {
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
+  const elementRef = useRef(null);
+  const animationRaf = useRef(null);
+
+  const onAnimationFrame = useCallback(() => {
+    if (!isEnabled || !window) return;
+    const trackedEl = elementRef.current;
+
+    if (!trackedEl) return;
+
+    const viewportHeight = window.innerHeight;
+    const boundingRect = trackedEl.getBoundingClientRect();
+
+    const isAbove = boundingRect.bottom < 100;
+    const isBelow = boundingRect.top - viewportHeight > 0;
+    const { x, width } = boundingRect;
+
+    if (
+      isAbove !== compassState.isAbove ||
+      isBelow !== compassState.isBelow ||
+      x !== compassState.x ||
+      width !== compassState.width
+    ) {
+      setCompassState({
+        isAbove,
+        isBelow,
+        x,
+        width,
+      });
+    }
+
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  }, [
+    compassState.isAbove,
+    compassState.isBelow,
+    compassState.x,
+    compassState.width,
+  ]);
+
+  useEffect(() => {
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+    return () => cancelAnimationFrame(animationRaf.current);
+  }, [onAnimationFrame]);
+
+  return {
+    ref: elementRef,
+    compassState,
+  };
+}

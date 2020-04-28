@@ -17,6 +17,7 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: '#16203F',
+    position: 'relative',
   },
   nested: {
     paddingTop: 10,
@@ -39,6 +40,82 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
       display: 'inherit !important',
     },
   },
+
+  rowCompass: {
+    width: '100%', // set at runtime to match $right
+    position: 'fixed',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingLeft: 8,
+
+    cursor: 'pointer',
+    animation: '$compassHover 3s ease-in-out infinite',
+    opacity: 0,
+
+    willChange: 'opacity',
+    transition: '0.1s ease-out opacity',
+
+    '&$isAbove': {
+      top: theme.spacing(15),
+      opacity: 1,
+    },
+    '&$isBelow': {
+      bottom: theme.spacing(4),
+      opacity: 1,
+    },
+  },
+
+  '@keyframes compassHover': {
+    '0%': {
+      transform: 'translateY(-2px)',
+    },
+    '50%': {
+      transform: 'translateY(2px)',
+    },
+    '100%': {
+      transform: 'translateY(-2px)',
+    },
+  },
+
+  isAbove: {},
+  isBelow: {},
+
+  rowCompassBody: {
+    position: 'relative',
+    padding: theme.spacing(0.8, 1),
+    marginRight: 8,
+    flexShrink: 0,
+    flexGrow: 1,
+
+    borderRadius: 15,
+  },
+
+  rowCompassDirection: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -10,
+    width: theme.typography.pxToRem(20),
+    height: theme.typography.pxToRem(20),
+    flexGrow: 0,
+    flexShrink: 0,
+    fill: '#f8edf4',
+    opacity: 0,
+  },
+
+  rowCompassDirectionDown: {
+    '$isBelow &': {
+      bottom: -28,
+      opacity: 1,
+    },
+  },
+
+  rowCompassDirectionUp: {
+    '$isAbove &': {
+      top: -28,
+      opacity: 1,
+    },
+  },
+
   fieldDescription: {
     flex: 1,
     alignItems: 'center',
@@ -150,6 +227,8 @@ export const useShapeViewerStyles = makeStyles((theme) => ({
     marginLeft: -10,
     color: primary,
   },
+
+  isSticky: {},
 }));
 
 export const HiddenItemEllipsis = withShapeRenderContext((props) => {

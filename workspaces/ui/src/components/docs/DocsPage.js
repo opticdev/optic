@@ -273,7 +273,6 @@ export const EndpointDocs = (props) => {
             );
 
             const allResponses = Object.keys(responsesGroupedByStatusCode)
-              .map(parseInt)
               .sort()
               .map((i) => {
                 return {
@@ -390,9 +389,10 @@ export const EndpointDocs = (props) => {
                     renderResponse={(statusCode, contentType) => {
                       const response = responses.find(
                         (i) =>
-                          i.statusCode === statusCode &&
+                          i.statusCode == statusCode &&
                           i.responseBody.httpContentType === contentType
                       );
+
                       const renderedShape =
                         response &&
                         getOrUndefined(
