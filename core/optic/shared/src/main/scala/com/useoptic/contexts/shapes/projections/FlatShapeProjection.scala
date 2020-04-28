@@ -75,7 +75,7 @@ object FlatShapeProjection {
           case DynamicParameterList(shapeParameterIds) => shapeParameterIds
         }
 
-        val innersWithShape = inners.map(i => resolveInner(i, (id) => Seq(OneOfTrail(shapeId), OneOfItemTrail(shapeId, id))))
+        val innersWithShape = inners.map(i => resolveInner(i, (id) => Seq(OneOfTrail(shapeId), OneOfItemTrail(shapeId, i, id))))
 
         innersWithShape.foreach {
           case (innerId, innerFlatShape) => {

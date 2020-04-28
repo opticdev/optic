@@ -1,6 +1,6 @@
 package com.useoptic.diff.shapes
 
-import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId, ShapeParameterId}
 
 sealed trait ShapeTrailPathComponent
 
@@ -14,11 +14,17 @@ case class ListItemTrail(listShapeId: ShapeId, itemShapeId: ShapeId) extends Sha
 
 case class OneOfTrail(shapeId: ShapeId) extends ShapeTrailPathComponent
 
-case class OneOfItemTrail(oneOfId: ShapeId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
+case class OneOfItemTrail(oneOfId: ShapeId, parameterId: ShapeParameterId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
 
-case class OptionalTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
+case class OptionalTrail() extends ShapeTrailPathComponent
 
-case class NullableTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
+case class OptionalItemTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
+
+case class NullableTrail() extends ShapeTrailPathComponent
+
+case class NullableItemTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
+
+case class UnknownTrail() extends ShapeTrailPathComponent
 
 case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) {
 

@@ -27,7 +27,7 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
     }
   }
 
-  class DiffArrayVisitor extends ArrayVisitor {
+  class DiffArrayVisitor(emit: (ShapeDiffResult) => Unit) extends ArrayVisitor {
     override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {
       log(Some(shapeTrail))
       //@TODO: check against the expected shape for fundamental shape mismatch
@@ -47,9 +47,9 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
 
   }
 
-  override val arrayVisitor: ArrayVisitor = new DiffArrayVisitor()
+  override val arrayVisitor: ArrayVisitor = new DiffArrayVisitor(emit)
 
-  class DiffObjectVisitor() extends ObjectVisitor {
+  class DiffObjectVisitor(emit: (ShapeDiffResult) => Unit) extends ObjectVisitor {
 
     override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
       log(Some(shapeTrail))
@@ -88,7 +88,7 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
     }
   }
 
-  override val objectVisitor: ObjectVisitor = new DiffObjectVisitor()
+  override val objectVisitor: ObjectVisitor = new DiffObjectVisitor(emit)
 
   class DiffPrimitiveVisitor(emit: (ShapeDiffResult) => Unit) extends PrimitiveVisitor {
     override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
@@ -133,7 +133,8 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
               val emit = (shapeDiff: ShapeDiffResult) => {
                 oneOfDiffs = oneOfDiffs :+ shapeDiff
               }
-              new DiffPrimitiveVisitor(emit).visit(value, bodyTrail, Some(trail.get.withChildren(OneOfItemTrail(oneOfShapeId, referencedShape.get.shapeId))))
+              new DiffPrimitiveVisitor(emit)
+                .visit(value, bodyTrail, Some(trail.get.withChildren(OneOfItemTrail(oneOfShapeId, shapeParameterId, referencedShape.get.shapeId))))
               Logger.log("oneOf diffs")
               Logger.log(oneOfDiffs)
               oneOfDiffs.isEmpty
@@ -150,12 +151,12 @@ class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
             Logger.log("expected null, got null")
           } else {
             val innerShapeId = Resolvers.resolveParameterToShape(spec.shapesState, resolvedTrail.shapeEntity.shapeId, NullableKind.innerParam, resolvedTrail.bindings)
-            visit(value, bodyTrail, Some(trail.get.withChild(NullableTrail(innerShapeId.get.shapeId))))
+            visit(value, bodyTrail, Some(trail.get.withChild(NullableItemTrail(innerShapeId.get.shapeId))))
           }
         }
         case OptionalKind => {
           val innerShapeId = Resolvers.resolveParameterToShape(spec.shapesState, resolvedTrail.shapeEntity.shapeId, OptionalKind.innerParam, resolvedTrail.bindings)
-          visit(value, bodyTrail, Some(trail.get.withChild(OptionalTrail(innerShapeId.get.shapeId))))
+          visit(value, bodyTrail, Some(trail.get.withChild(OptionalItemTrail(innerShapeId.get.shapeId))))
         }
         case StringKind => {
           if (value.get.isString) {
