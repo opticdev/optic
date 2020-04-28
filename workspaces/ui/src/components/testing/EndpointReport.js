@@ -3,7 +3,7 @@ import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { mapScala, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 
-export default function EndpointReport(props) {
+export default function EndpointReportContainer(props) {
   const { captureId, endpoint } = props;
   const { error, loading, result: diffRegions } = useTestingService((service) =>
     service.loadEndpointDiffs(captureId, endpoint.pathId, endpoint.method)
@@ -16,6 +16,19 @@ export default function EndpointReport(props) {
 
   if (error) throw error;
 
+  return (
+    <EndpointReport
+      endpointCounts={endpoint.counts}
+      endpointPurpose={endpoint.descriptor.endpointPurpose}
+      loadingDiffsSummary={loading}
+      diffsSummary={diffsSummary}
+    />
+  );
+}
+
+export function EndpointReport(props) {
+  const { diffsSummary, endpointPurpose, endpointCounts } = props;
+
   const classes = useStyles();
 
   return (
@@ -24,22 +37,22 @@ export default function EndpointReport(props) {
         TODO: add stats about this endpoint specifically, like number of
         interactions, example response, diffs, etc.
       </p>
-      <p>{endpoint.descriptor.endpointPurpose}</p>
+      <p>{endpointPurpose}</p>
       <ul>
         <li>
           Amount of <strong>observed</strong> interactions:{' '}
-          {endpoint.counts.interactions}
+          {endpointCounts.interactions}
         </li>
         <li>
           Amount of <strong>compliant</strong> interactions:{' '}
-          {endpoint.counts.compliant}
+          {endpointCounts.compliant}
         </li>
         <li>
           Amount of <strong>incompliant</strong> interactions:{' '}
-          {endpoint.counts.incompliant}
+          {endpointCounts.incompliant}
         </li>
         <li>
-          Amount of <strong>diffs</strong>: {endpoint.counts.diffs}
+          Amount of <strong>diffs</strong>: {endpointCounts.diffs}
         </li>
       </ul>
 

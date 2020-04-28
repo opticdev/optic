@@ -61,6 +61,9 @@ module.exports = {
         modules: ['node_modules'],
         plugins: [PnpWebpackPlugin.moduleLoader(module)],
       },
+      node: {
+        fs: 'empty',
+      },
     };
   },
 };
