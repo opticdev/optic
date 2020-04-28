@@ -8,9 +8,10 @@ const {
   processCraConfig,
 } = require('@storybook/preset-create-react-app/dist/helpers/processCraConfig');
 
-// Extracted and adapted from @storybook/preset-create-react-app to work with our ejected CRA setup
-
 module.exports = {
+  stories: ['../src/storybook/stories/**/*.js'],
+
+  // Extracted and adapted from @storybook/preset-create-react-app to work with our ejected CRA setup
   webpackFinal: (storybookConfig, options) => {
     const filteredRules =
       storybookConfig.module &&
