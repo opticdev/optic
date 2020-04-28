@@ -1,36 +1,36 @@
-import {IBody} from '@useoptic/domain';
-import {EventEmitter} from 'events';
+import { IBody } from '@useoptic/domain';
+import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as os from 'os';
 import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
 import * as launcher from '@httptoolkit/browser-launcher';
-import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
-import {CompletedRequest, MockRuleData} from 'mockttp';
-import {IHttpInteraction} from '@useoptic/domain';
-import {developerDebugLogger} from './logger';
+import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
+import { CompletedRequest, MockRuleData } from 'mockttp';
+import { IHttpInteraction } from '@useoptic/domain';
+import { developerDebugLogger } from './logger';
 //@ts-ignore
-import {toBytes} from 'shape-hash';
+import { toBytes } from 'shape-hash';
+import mime = require('whatwg-mimetype');
 
 export interface IHttpToolkitCapturingProxyConfig {
-  proxyTarget?: string
-  proxyPort: number
-  host: string
+  proxyTarget?: string;
+  proxyPort: number;
+  host: string;
   flags: {
-    chrome: boolean
-    includeJsonBody: boolean
-    includeTextBody: boolean
-    includeShapeHash: boolean
-  }
+    chrome: boolean;
+    includeJsonBody: boolean;
+    includeTextBody: boolean;
+    includeShapeHash: boolean;
+  };
 }
 
 export interface IRequestFilter {
-  shouldSkip(request: CompletedRequest): boolean
+  shouldSkip(request: CompletedRequest): boolean;
 }
 
 class HttpToolkitRequestFilter implements IRequestFilter {
-  constructor(private self: string, private target?: string) {
-  }
+  constructor(private self: string, private target?: string) {}
 
   shouldSkip(request: CompletedRequest): boolean {
     if (this.target) {
@@ -42,7 +42,9 @@ class HttpToolkitRequestFilter implements IRequestFilter {
         return false;
       }
 
-      return request.hostname === this.target || request.url.startsWith(this.target);
+      return (
+        request.hostname === this.target || request.url.startsWith(this.target)
+      );
     }
     return false;
   }
@@ -63,7 +65,7 @@ export class HttpToolkitCapturingProxy {
     const configPath = await fs.mkdtemp(tempBasePath);
     const certificateInfo = await mockttp.generateCACertificate({
       bits: 2048,
-      commonName: 'Optic Labs Corp'
+      commonName: 'Optic Labs Corp',
     });
     const certificatePath = path.join(configPath, '.optic', 'certificates');
     await fs.ensureDir(certificatePath);
@@ -73,14 +75,14 @@ export class HttpToolkitCapturingProxy {
     await fs.writeFile(keyPath, certificateInfo.key);
     const https = {
       certPath,
-      keyPath
+      keyPath,
     };
 
     const proxy = mockttp.getLocal({
       cors: false,
       debug: false,
       https,
-      recordTraffic: false
+      recordTraffic: false,
     });
 
     this.proxy = proxy;
@@ -88,44 +90,37 @@ export class HttpToolkitCapturingProxy {
     const rules: MockRuleData[] = [];
     if (config.proxyTarget) {
       developerDebugLogger(`forwarding requests to ${config.proxyTarget}`);
-      rules.push(
-        {
-          matchers: [
-            new mockttp.matchers.WildcardMatcher()
-          ],
-          handler: new mockttp.handlers.PassThroughHandler({
-            forwarding: {
-              targetHost: config.proxyTarget,
-              updateHostHeader: true
-            }
-          })
-        }
-      );
+      rules.push({
+        matchers: [new mockttp.matchers.WildcardMatcher()],
+        handler: new mockttp.handlers.PassThroughHandler({
+          forwarding: {
+            targetHost: config.proxyTarget,
+            updateHostHeader: true,
+          },
+        }),
+      });
     } else {
-      rules.push(
-        {
-          matchers: [
-            new mockttp.matchers.WildcardMatcher()
-          ],
-          handler: new mockttp.handlers.PassThroughHandler()
-        }
-      );
+      rules.push({
+        matchers: [new mockttp.matchers.WildcardMatcher()],
+        handler: new mockttp.handlers.PassThroughHandler(),
+      });
     }
     await proxy.addRules(
       {
-        matchers: [
-          new mockttp.matchers.SimplePathMatcher(opticStatusPath)
-        ],
+        matchers: [new mockttp.matchers.SimplePathMatcher(opticStatusPath)],
         handler: new mockttp.handlers.CallbackHandler(() => {
           const response: CallbackResponseResult = {
             statusCode: 200,
           };
           return response;
-        })
+        }),
       },
       ...rules
     );
-    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.host, config.proxyTarget);
+    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(
+      config.host,
+      config.proxyTarget
+    );
 
     await proxy.on('request', (req: mockttp.CompletedRequest) => {
       const shouldCapture = !requestFilter.shouldSkip(req);
@@ -154,26 +149,26 @@ export class HttpToolkitCapturingProxy {
             headers: {
               asJsonString: null,
               asText: null,
-              asShapeHashBytes: null
+              asShapeHashBytes: null,
             },
             query: {
               asJsonString: null,
               asText: null,
-              asShapeHashBytes: null
+              asShapeHashBytes: null,
             },
-            body: this.extractBody(req)
+            body: this.extractBody(req),
           },
           response: {
             statusCode: res.statusCode,
             headers: {
               asShapeHashBytes: null,
               asJsonString: null,
-              asText: null
+              asText: null,
             },
-            body: this.extractBody(res)
-          }
+            body: this.extractBody(res),
+          },
         };
-        developerDebugLogger({sample});
+        developerDebugLogger({ sample });
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }
@@ -190,11 +185,13 @@ export class HttpToolkitCapturingProxy {
     try {
       await proxy.start({
         startPort: config.proxyPort,
-        endPort: config.proxyPort
+        endPort: config.proxyPort,
       });
       developerDebugLogger(`proxy started on port ${proxy.port}`);
     } catch (e) {
-      throw new Error(`Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`);
+      throw new Error(
+        `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`
+      );
     }
 
     if (config.flags.chrome) {
@@ -205,19 +202,25 @@ export class HttpToolkitCapturingProxy {
             return reject(err);
           }
           const launchUrl = `https://docs.useoptic.com`;
-          const spkiFingerprint = mockttp.generateSPKIFingerprint(certificateInfo.cert);
+          const spkiFingerprint = mockttp.generateSPKIFingerprint(
+            certificateInfo.cert
+          );
           const launchOptions: launcher.LaunchOptions = {
             profile: configPath,
             browser: 'chrome',
             proxy: `https://127.0.0.1:${config.proxyPort}`,
-            noProxy: [
-              '<-loopback>',
-            ],
+            noProxy: ['<-loopback>'],
             options: [
-              `--ignore-certificate-errors-spki-list=${spkiFingerprint}`
-            ]
+              `--ignore-certificate-errors-spki-list=${spkiFingerprint}`,
+            ],
           };
-          launch(launchUrl, launchOptions, function (err: any, instance: launcher.BrowserInstance | PromiseLike<launcher.BrowserInstance> | undefined) {
+          launch(launchUrl, launchOptions, function (
+            err: any,
+            instance:
+              | launcher.BrowserInstance
+              | PromiseLike<launcher.BrowserInstance>
+              | undefined
+          ) {
             if (err) {
               return reject(err);
             }
@@ -228,16 +231,28 @@ export class HttpToolkitCapturingProxy {
     }
   }
 
-  extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse): IBody {
+  extractBody(
+    req: mockttp.CompletedRequest | mockttp.CompletedResponse
+  ): IBody {
     if (req.headers['content-type'] || req.headers['transfer-encoding']) {
+      const contentType = mime.parse(req.headers['content-type'] || '');
       const json = req.body.json || req.body.formData || null;
       return {
-        contentType: req.headers['content-type'] || null,
+        contentType: (req.body.text && contentType?.essence) || null,
         value: {
-          asShapeHashBytes: this.config.flags.includeShapeHash && json ? {bytes: toBytes(json)} : null,
-          asJsonString: this.config.flags.includeJsonBody && json ? JSON.stringify(json) : null,
-          asText: this.config.flags.includeTextBody && json ? null : req.body.text || null
-        }
+          asShapeHashBytes:
+            this.config.flags.includeShapeHash && json
+              ? { bytes: toBytes(json) }
+              : null,
+          asJsonString:
+            this.config.flags.includeJsonBody && json
+              ? JSON.stringify(json)
+              : null,
+          asText:
+            this.config.flags.includeTextBody && json
+              ? null
+              : req.body.text || null,
+        },
       };
     }
     return {
@@ -245,8 +260,8 @@ export class HttpToolkitCapturingProxy {
       value: {
         asText: null,
         asJsonString: null,
-        asShapeHashBytes: null
-      }
+        asShapeHashBytes: null,
+      },
     };
   }
 
@@ -266,4 +281,3 @@ export class HttpToolkitCapturingProxy {
     }
   }
 }
-

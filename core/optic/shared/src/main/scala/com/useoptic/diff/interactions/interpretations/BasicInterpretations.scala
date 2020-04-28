@@ -85,17 +85,28 @@ class BasicInterpretations(rfcState: RfcState) {
     interactionTrail.requestBodyContentTypeOption() match {
       case Some(contentType) => {
         val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
+        val actuallyHasBody = jsonBody.isDefined
+        if (actuallyHasBody) {
         val builtShape = new ShapeBuilder(jsonBody.get).run
         val commands = baseCommands ++ builtShape.commands ++ Seq(
           RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
         )
-
         InteractiveDiffInterpretation(
-          s"Add Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
-          s"Added Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+            s"Add Request with ${contentType} Body",
+            s"Added Request with ${contentType} Body",
+            commands,
+            ChangeType.Addition
+          )
+        } else {
+          val commands = baseCommands
+          InteractiveDiffInterpretation(
+            s"Add Request with ${contentType} Content-Type but no Body",
+            s"Added Request with ${contentType} Content-Type but no Body",
           commands,
           ChangeType.Addition
         )
+      }
+
       }
       case None => {
         val commands = baseCommands
@@ -118,17 +129,29 @@ class BasicInterpretations(rfcState: RfcState) {
     interactionTrail.responseBodyContentTypeOption() match {
       case Some(contentType) => {
         val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
+        val actuallyHasBody = jsonBody.isDefined
+        if (actuallyHasBody) {
         val builtShape = new ShapeBuilder(jsonBody.get).run
         val commands = baseCommands ++ builtShape.commands ++ Seq(
           RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
         )
 
         InteractiveDiffInterpretation(
-          s"Add ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
-          s"Added ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+            s"Add ${interactionTrail.statusCode()} Response with ${contentType} Body",
+            s"Added ${interactionTrail.statusCode()} Response with ${contentType} Body",
           commands,
           ChangeType.Addition
         )
+        } else {
+          val commands = baseCommands
+
+          InteractiveDiffInterpretation(
+            s"Add ${interactionTrail.statusCode()} Response with ${contentType} Content-Type but no Body",
+            s"Added ${interactionTrail.statusCode()} Response with ${contentType} Content-Type but no Body",
+            commands,
+            ChangeType.Addition
+          )
+        }
       }
       case None => {
         val commands = baseCommands
