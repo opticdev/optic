@@ -11,8 +11,9 @@ import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, Resolvers, ShapeTrail, UnknownTrail}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class BasicInterpretations(rfcState: RfcState) {
@@ -87,11 +88,11 @@ class BasicInterpretations(rfcState: RfcState) {
         val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-        val builtShape = new ShapeBuilder(jsonBody.get).run
-        val commands = baseCommands ++ builtShape.commands ++ Seq(
-          RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
-        )
-        InteractiveDiffInterpretation(
+          val builtShape = new ShapeBuilder(jsonBody.get).run
+          val commands = baseCommands ++ builtShape.commands ++ Seq(
+            RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+          )
+          InteractiveDiffInterpretation(
             s"Add Request with ${contentType} Body",
             s"Added Request with ${contentType} Body",
             commands,
@@ -102,10 +103,10 @@ class BasicInterpretations(rfcState: RfcState) {
           InteractiveDiffInterpretation(
             s"Add Request with ${contentType} Content-Type but no Body",
             s"Added Request with ${contentType} Content-Type but no Body",
-          commands,
-          ChangeType.Addition
-        )
-      }
+            commands,
+            ChangeType.Addition
+          )
+        }
 
       }
       case None => {
@@ -131,17 +132,17 @@ class BasicInterpretations(rfcState: RfcState) {
         val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-        val builtShape = new ShapeBuilder(jsonBody.get).run
-        val commands = baseCommands ++ builtShape.commands ++ Seq(
-          RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
-        )
+          val builtShape = new ShapeBuilder(jsonBody.get).run
+          val commands = baseCommands ++ builtShape.commands ++ Seq(
+            RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+          )
 
-        InteractiveDiffInterpretation(
+          InteractiveDiffInterpretation(
             s"Add ${interactionTrail.statusCode()} Response with ${contentType} Body",
             s"Added ${interactionTrail.statusCode()} Response with ${contentType} Body",
-          commands,
-          ChangeType.Addition
-        )
+            commands,
+            ChangeType.Addition
+          )
         } else {
           val commands = baseCommands
 
@@ -187,6 +188,12 @@ class BasicInterpretations(rfcState: RfcState) {
         case t: ListItemTrail => {
           Seq(
             ShapesCommands.SetParameterShape(ProviderInShape(t.listShapeId, ShapeProvider(builtShape.rootShapeId), ListKind.innerParam))
+          )
+        }
+        case t: OneOfItemTrail => {
+          Logger.log("sentinel-ChangeShape-OneOfItemTrail")
+          Seq(
+            ShapesCommands.SetParameterShape(ProviderInShape(t.oneOfId, ShapeProvider(builtShape.rootShapeId), t.parameterId))
           )
         }
       }
