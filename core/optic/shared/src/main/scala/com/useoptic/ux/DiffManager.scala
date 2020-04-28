@@ -97,7 +97,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     }.flatten
       .groupBy(_._1)
       .mapValues(i => i.map(_._2))
-      .filter(_._2.exists(i => i.response.statusCode >= 200 && i.response.statusCode < 300))
+      .filter(_._2.exists(i => i.response.statusCode >= 200 && i.response.statusCode < 400))
 
     val allUnmatchedUrls = fromDiff.map { case ((method, path, pathOption), interactions) => UndocumentedURL(method, path, pathOption, interactions.toSeq) }.toSeq
 
