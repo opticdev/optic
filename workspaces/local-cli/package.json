@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
-  "description": "CLI to document your API and generate related artifacts",
-  "version": "8.0.2",
+  "description": "The Optic CLI",
+  "version": "8.0.3",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -13,9 +13,9 @@
     "@oclif/plugin-help": "^2",
     "@useoptic/cli-client": "0.2.1",
     "@useoptic/cli-config": "0.2.1",
-    "@useoptic/cli-scripts": "0.2.1",
-    "@useoptic/cli-server": "0.2.1",
-    "@useoptic/domain": "0.2.1",
+    "@useoptic/cli-scripts": "0.2.3",
+    "@useoptic/cli-server": "0.2.2",
+    "@useoptic/domain": "0.2.2",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
