@@ -450,7 +450,15 @@ export const FieldRow = withShapeRenderContext((props) => {
     <>
       <Row
         tracked={!!diff}
-        changeType={diff && diffDescription.changeTypeAsString}
+        changeType={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
+
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
         left={
           <Indent>
             <div className={classes.rowContents}>
@@ -464,6 +472,28 @@ export const FieldRow = withShapeRenderContext((props) => {
           </Indent>
         }
         right={(() => {
+          if (diffNotif && suggestion) {
+            return (
+              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
+                {suggestion.changeTypeAsString !== 'Removal' && (
+                  <TypeName
+                    style={{ marginRight: 9 }}
+                    typeName={specShape && specShape.name}
+                  />
+                )}
+                <Typography
+                  variant="caption"
+                  className={classes.suggestion}
+                  style={{
+                    marginLeft:
+                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
+                  }}
+                >
+                  ({suggestion.changeTypeAsString})
+                </Typography>
+              </div>
+            );
+          }
           if (diffNotif) {
             return diffNotif;
           }
@@ -503,7 +533,15 @@ export const ItemRow = withShapeRenderContext((props) => {
     <>
       <Row
         tracked={!!diff}
-        changeType={diff && diffDescription.changeTypeAsString}
+        changeType={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
+
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
         left={(() => {
           if (item.display === 'hidden') {
             return (
@@ -528,6 +566,28 @@ export const ItemRow = withShapeRenderContext((props) => {
           );
         })()}
         right={(() => {
+          if (diffNotif && suggestion) {
+            return (
+              <div style={{ flex: 1, display: 'flex', marginLeft: 16 }}>
+                {suggestion.changeTypeAsString !== 'Removal' && (
+                  <TypeName
+                    style={{ marginRight: 9 }}
+                    typeName={listItemShape.name}
+                  />
+                )}
+                <Typography
+                  variant="caption"
+                  className={classes.suggestion}
+                  style={{
+                    marginLeft:
+                      suggestion.changeTypeAsString !== 'Removal' ? 15 : 0,
+                  }}
+                >
+                  ({suggestion.changeTypeAsString})
+                </Typography>
+              </div>
+            );
+          }
           if (diffNotif) {
             return diffNotif;
           }
