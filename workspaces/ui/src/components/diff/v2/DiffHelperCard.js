@@ -95,13 +95,13 @@ export const DiffHelperCard = (props) => {
                       size="small"
                       color="primary"
                       value={suggestion}
-                      defaultChecked={
+                      checked={Boolean(
                         selectedInterpretation &&
-                        CompareEquality.betweenWithoutCommands(
-                          suggestion,
-                          selectedInterpretation
-                        )
-                      }
+                          CompareEquality.betweenWithoutCommands(
+                            suggestion,
+                            selectedInterpretation
+                          )
+                      )}
                     />
                   }
                   label={
