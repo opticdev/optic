@@ -34,28 +34,7 @@ export function EndpointReport(props) {
 
   return (
     <div className={classes.root}>
-      <p>
-        TODO: add stats about this endpoint specifically, like number of
-        interactions, example response, diffs, etc.
-      </p>
-      <p>{endpointPurpose}</p>
-      <ul>
-        <li>
-          Amount of <strong>observed</strong> interactions:{' '}
-          {endpointCounts.interactions}
-        </li>
-        <li>
-          Amount of <strong>compliant</strong> interactions:{' '}
-          {endpointCounts.compliant}
-        </li>
-        <li>
-          Amount of <strong>incompliant</strong> interactions:{' '}
-          {endpointCounts.incompliant}
-        </li>
-        <li>
-          Amount of <strong>diffs</strong>: {endpointCounts.diffs}
-        </li>
-      </ul>
+      <h6 className={classes.endpointPurpose}>{endpointPurpose}</h6>
 
       {diffsSummary && <EndpointDiffsSummary diffsSummary={diffsSummary} />}
     </div>
@@ -74,22 +53,26 @@ function EndpointDiffsSummary({ diffsSummary }) {
         <div className={classes.requestStats}>
           <h4>Requests</h4>
 
-          {requests.count < 0 ? (
+          {requests.count < 1 ? (
             <div>No diffs!</div>
           ) : (
             <>
               {requests.regionDiffs.length > 0 && (
-                <ul>
+                <ul className={classes.diffsList}>
                   {requests.regionDiffs.map((diff) => (
-                    <li key={diff.id}>{diff.summary}</li>
+                    <li key={diff.id} className={classes.diffsListItem}>
+                      {diff.changeType} {diff.summary}
+                    </li>
                   ))}
                 </ul>
               )}
 
               {requests.bodyDiffs.length > 0 && (
-                <ul>
+                <ul className={classes.diffsList}>
                   {requests.bodyDiffs.map((diff) => (
-                    <li key={diff.id}>{diff.summary}</li>
+                    <li key={diff.id} className={classes.diffsListItem}>
+                      {diff.changeType} {diff.summary}
+                    </li>
                   ))}
                 </ul>
               )}
@@ -100,22 +83,26 @@ function EndpointDiffsSummary({ diffsSummary }) {
         <div className={classes.requestStats}>
           <h4>Responses</h4>
 
-          {responses.count < 0 ? (
+          {responses.count < 1 ? (
             <div>No diffs!</div>
           ) : (
             <>
               {responses.regionDiffs.length > 0 && (
-                <ul>
+                <ul className={classes.diffsList}>
                   {responses.regionDiffs.map((diff) => (
-                    <li key={diff.id}>{diff.summary}</li>
+                    <li key={diff.id} className={classes.diffsList}>
+                      {diff.changeType} {diff.summary}
+                    </li>
                   ))}
                 </ul>
               )}
 
               {responses.bodyDiffs.length > 0 && (
-                <ul>
+                <ul className={classes.diffsList}>
                   {responses.bodyDiffs.map((diff) => (
-                    <li key={diff.id}>{diff.summary}</li>
+                    <li key={diff.id} className={classes.diffsList}>
+                      {diff.changeType} {diff.summary}
+                    </li>
                   ))}
                 </ul>
               )}
@@ -129,10 +116,20 @@ function EndpointDiffsSummary({ diffsSummary }) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(2, 2, 3),
+    padding: theme.spacing(0, 2, 3),
+  },
+
+  endpointPurpose: {
+    ...theme.typography.h6,
+    margin: 0,
   },
 
   diffsContainer: {},
+
+  diffsList: {
+    padding: 0,
+    listStyleType: 'none',
+  },
 }));
 
 function createEndpointsDiffSummary(diffRegions) {
@@ -189,6 +186,7 @@ function createEndpointsDiffSummary(diffRegions) {
   function createShapeDiff(diff) {
     return {
       id: diff.toString(),
+      changeType: diff.changeType,
       count: 1, // replace with actual count
       location: JsonHelper.seqToJsArray(diff.location),
       changeType: diff.description.changeTypeAsString,
@@ -199,6 +197,7 @@ function createEndpointsDiffSummary(diffRegions) {
   function createRegionDiff(diff) {
     return {
       id: diff.toString(),
+      changeType: diff.changeType,
       count: 1, // replace with actual count
       contentType: getOrUndefined(diff.contentType),
       statusCode: getOrUndefined(diff.statusCode),
