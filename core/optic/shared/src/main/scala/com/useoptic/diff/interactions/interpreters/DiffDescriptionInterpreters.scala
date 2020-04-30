@@ -17,17 +17,18 @@ sealed trait InteractionPointerDescription {
   def changeType: ChangeType
   def assertion: String
   def summary: String
+  def path: Seq[String]
 }
 
-case class Unspecified(jsonTrail: JsonTrail, assertion: String, summary: String) extends InteractionPointerDescription {
+case class Unspecified(jsonTrail: JsonTrail, assertion: String, summary: String, path: Seq[String]) extends InteractionPointerDescription {
   def changeType: ChangeType = ChangeType.Addition
 }
 
-case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail, assertion: String, summary: String) extends InteractionPointerDescription {
+case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail, assertion: String, summary: String, path: Seq[String]) extends InteractionPointerDescription {
   def changeType: ChangeType = ChangeType.Update
 }
 
-case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail, assertion: String, summary: String) extends InteractionPointerDescription {
+case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail, assertion: String, summary: String, path: Seq[String]) extends InteractionPointerDescription {
   def changeType: ChangeType = ChangeType.Removal
 }
 
@@ -35,6 +36,7 @@ case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail, as
 case class DiffDescription(title: String, assertion: String, interactionPointerDescription: Option[InteractionPointerDescription], changeType: ChangeType) {
   def changeTypeAsString: String = changeType.toString
   def summary: String = interactionPointerDescription.map(_.summary).getOrElse("")
+  def path: Seq[String] = interactionPointerDescription.map(_.path).getOrElse(Seq.empty)
 }
 
 @JSExport
@@ -47,7 +49,7 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
     diff match {
       case UnspecifiedShape(jsonTrail, shapeTrail) => {
         val title = s"${jsonTrailDescription(jsonTrail)} observed in the ${inLocation}".capitalize
-        val pointer = Unspecified(jsonTrail, jsonTrailAssertion(jsonTrail), s"New ${jsonTrailDetailedDescription(jsonTrail)}")
+        val pointer = Unspecified(jsonTrail, jsonTrailAssertion(jsonTrail), s"New ${jsonTrailDetailedDescription(jsonTrail)}", jsonTrailPathDescription(jsonTrail))
         (title, pointer)
       }
       case UnmatchedShape(jsonTrail, shapeTrail) => {
@@ -57,11 +59,11 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
 
         if (bodyOption.isEmpty) {
           val title = s"${jsonTrailDescription(jsonTrail)} in the ${inLocation} is missing"
-          val pointer = SpecifiedButNotFound(jsonTrail, shapeTrail, s"required field is missing", s"Missing required ${jsonTrailDetailedDescription(jsonTrail)}")
+          val pointer = SpecifiedButNotFound(jsonTrail, shapeTrail, s"required field is missing", s"Missing required ${jsonTrailDetailedDescription(jsonTrail)}",jsonTrailPathDescription(jsonTrail))
           (title, pointer)
         } else {
           val title = s"${jsonTrailDescription(jsonTrail)} in the ${inLocation} was not a ${shapeDescription}"
-          val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail, s"expected a ${shapeDescription}", s"Expected ${jsonTrailDetailedDescription(jsonTrail)} to be ${shapeDescription}")
+          val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail, s"expected a ${shapeDescription}", s"Expected ${jsonTrailDetailedDescription(jsonTrail)} to be ${shapeDescription}", jsonTrailPathDescription((jsonTrail)))
           (title, pointer)
         }
       }
@@ -145,6 +147,16 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
     }
     case None => "shape"
   }
+
+  def jsonTrailPathDescription(jsonTrail: JsonTrail) : Seq[String] = jsonTrail.path.foldLeft(Seq.empty : Seq[String])((acc, pathComponent) => {
+    val componentDescription = pathComponent match {
+      case JsonObjectKey(key) => key
+      case JsonArrayItem(index) => s"[${index}]"
+      case _ => "shape?"
+    }
+
+    acc :+ componentDescription
+  })
 
   def jsonTrailAssertion(jsonTrail: JsonTrail) = jsonTrail.path.lastOption match {
     case Some(value) => value match {
