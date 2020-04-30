@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
-import { getOrUndefined, JsonHelper } from '@useoptic/domain';
+import { getOrUndefined, getIndex, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import { diff } from 'react-ace';
+import upperFirst from 'lodash/upperFirst';
 
 export default function EndpointReportContainer(props) {
   const { captureId, endpoint } = props;
@@ -50,18 +51,21 @@ function EndpointDiffsSummary({ diffsSummary }) {
   } else {
     return (
       <div className={classes.diffsContainer}>
-        <div className={classes.requestStats}>
-          <h4>Requests</h4>
+        {requests.count > 0 && (
+          <div className={classes.requestStats}>
+            <h4>Requests</h4>
 
-          {requests.count < 1 ? (
-            <div>No diffs!</div>
-          ) : (
             <>
               {requests.regionDiffs.length > 0 && (
                 <ul className={classes.diffsList}>
                   {requests.regionDiffs.map((diff) => (
                     <li key={diff.id} className={classes.diffsListItem}>
-                      {diff.changeType} {diff.summary}
+                      <NewRegionDiffDescription
+                        contentType={diff.contentType}
+                        statusCode={diff.statusCode}
+                        count={diff.count}
+                        inResponse={true}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -71,27 +75,35 @@ function EndpointDiffsSummary({ diffsSummary }) {
                 <ul className={classes.diffsList}>
                   {requests.bodyDiffs.map((diff) => (
                     <li key={diff.id} className={classes.diffsListItem}>
-                      {diff.changeType} {diff.summary}
+                      <BodyDiffDescription
+                        assertion={diff.assertion}
+                        changeType={diff.changeType}
+                        count={diff.count}
+                        contentType={diff.contentType}
+                        inRequest={true}
+                      />
                     </li>
                   ))}
                 </ul>
               )}
             </>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className={classes.requestStats}>
-          <h4>Responses</h4>
-
-          {responses.count < 1 ? (
-            <div>No diffs!</div>
-          ) : (
+        {responses.count > 0 && (
+          <div className={classes.requestStats}>
+            <h4>Responses</h4>
             <>
               {responses.regionDiffs.length > 0 && (
                 <ul className={classes.diffsList}>
                   {responses.regionDiffs.map((diff) => (
-                    <li key={diff.id} className={classes.diffsList}>
-                      {diff.changeType} {diff.summary}
+                    <li key={diff.id} className={classes.diffsListItem}>
+                      <NewRegionDiffDescription
+                        contentType={diff.contentType}
+                        statusCode={diff.statusCode}
+                        count={diff.count}
+                        inResponse={true}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -100,18 +112,95 @@ function EndpointDiffsSummary({ diffsSummary }) {
               {responses.bodyDiffs.length > 0 && (
                 <ul className={classes.diffsList}>
                   {responses.bodyDiffs.map((diff) => (
-                    <li key={diff.id} className={classes.diffsList}>
-                      {diff.changeType} {diff.summary}
+                    <li key={diff.id} className={classes.diffsListItem}>
+                      <BodyDiffDescription
+                        assertion={diff.assertion}
+                        changeType={diff.changeType}
+                        count={diff.count}
+                        contentType={diff.contentType}
+                        statusCode={diff.statusCode}
+                        inResponse={true}
+                      />
                     </li>
                   ))}
                 </ul>
               )}
             </>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
+}
+
+function NewRegionDiffDescription({
+  contentType,
+  count,
+  statusCode,
+  inRequest,
+  inResponse,
+}) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.diffContainer}>
+      <div className={classes.diffDescription}>
+        {inRequest && (
+          <>
+            Undocumented Request type (<code>{contentType}</code>)
+          </>
+        )}
+
+        {inResponse && (
+          <>
+            Undocumented <code>{statusCode}</code> Response type (
+            <code>{contentType}</code>)
+          </>
+        )}
+      </div>
+      <small className={classes.diffMeta}>
+        {inResponse
+          ? 'new combination of status code and content type'
+          : 'new content type'}{' '}
+        observed <strong>{count > 1 ? `${count} times` : 'once'}</strong>
+      </small>
+    </div>
+  );
+}
+
+function BodyDiffDescription({
+  assertion,
+  changeType,
+  contentType,
+  count,
+  statusCode,
+  inRequest,
+  inResponse,
+}) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.diffContainer}>
+      <div className={classes.diffDescription}>
+        {inRequest && (
+          <>
+            {upperFirst(assertion)} in Request body (<code>{contentType}</code>)
+          </>
+        )}
+
+        {inResponse && (
+          <>
+            {upperFirst(assertion)} in <code>{statusCode}</code> Response body (
+            <code>{contentType}</code>)
+          </>
+        )}
+      </div>
+      <small className={classes.diffMeta}>
+        new combination of status code and content type observed{' '}
+        <strong>{count > 1 ? `${count} times` : 'once'}</strong>
+      </small>
+    </div>
+  );
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -129,6 +218,10 @@ const useStyles = makeStyles((theme) => ({
   diffsList: {
     padding: 0,
     listStyleType: 'none',
+  },
+
+  diffsListItem: {
+    marginBottom: theme.spacing(3),
   },
 }));
 
@@ -184,23 +277,32 @@ function createEndpointsDiffSummary(diffRegions) {
     return diff.contentType;
   }
   function createShapeDiff(diff) {
+    const interaction = getIndex(diff.interactions)(0);
+    const body = diff.inRequest
+      ? interaction.request.body
+      : interaction.response.body;
+
+    console.log(JsonHelper.seqToJsArray(diff.location));
+
     return {
       id: diff.toString(),
-      changeType: diff.changeType,
+      assertion: diff.description.assertion,
+      contentType: getOrUndefined(body.contentType),
       count: 1, // replace with actual count
       location: JsonHelper.seqToJsArray(diff.location),
       changeType: diff.description.changeTypeAsString,
       summary: diff.description.summary,
+      statusCode: diff.inResponse ? interaction.response.statusCode : null,
     };
   }
 
   function createRegionDiff(diff) {
     return {
       id: diff.toString(),
-      changeType: diff.changeType,
       count: 1, // replace with actual count
       contentType: getOrUndefined(diff.contentType),
       statusCode: getOrUndefined(diff.statusCode),
+      changeType: diff.description.changeTypeAsString,
       summary: diff.description.summary || diff.description.assertion,
     };
   }
