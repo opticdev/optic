@@ -26,7 +26,11 @@ class JsonLikeAndSpecTraverser(spec: RfcState, visitors: JsonLikeAndSpecVisitors
           val (item, index) = entry
           val itemTrail: JsonTrail = bodyTrail.withChild(JsonArrayItem(index))
 
-          traverse(Some(item), itemTrail, trailOrigin, choicesForArrayItems)
+          val newTrailOrigin = choicesForArrayItems.headOption match {
+            case Some(choice) => choice.parentTrail
+            case None => trailOrigin
+          }
+          traverse(Some(item), itemTrail, newTrailOrigin, choicesForArrayItems)
         })
       })
     }
@@ -37,7 +41,12 @@ class JsonLikeAndSpecTraverser(spec: RfcState, visitors: JsonLikeAndSpecVisitors
         bodyJson.fields.foreach(entry => {
           val (key, value) = entry
           val itemTrail: JsonTrail = bodyTrail.withChild(JsonObjectKey(key))
-          traverse(Some(value), itemTrail, trailOrigin, choicesForObjectKey(key))
+          val choices = choicesForObjectKey(key)
+          val newTrailOrigin = choices.headOption match {
+            case Some(choice) => choice.parentTrail
+            case None => trailOrigin
+          }
+          traverse(Some(value), itemTrail, newTrailOrigin, choicesForObjectKey(key))
         })
       })
 
