@@ -196,7 +196,7 @@ function BodyDiffDescription({
         )}
       </div>
       <small className={classes.diffMeta}>
-        new combination of status code and content type observed{' '}
+        difference with documentated shape observed{' '}
         <strong>{count > 1 ? `${count} times` : 'once'}</strong>
       </small>
     </div>
