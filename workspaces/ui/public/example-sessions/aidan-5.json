@@ -1,0 +1,191 @@
+{
+  "events": [],
+  "session": {
+    "metadata": {
+      "status": "completed"
+    },
+    "samples": [
+      {
+        "uuid": "1",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\"}]}",
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\"}]}",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\",\"c\":\"two\"},{\"b\":1},{\"b\":true}]}",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ,
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\",\"c\":\"two\"},{\"b\":1},{\"b\":true}]}",
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ,
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}
