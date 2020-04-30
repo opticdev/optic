@@ -3,6 +3,7 @@ import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { getOrUndefined, getIndex, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import { diff } from 'react-ace';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import upperFirst from 'lodash/upperFirst';
 
 export default function EndpointReportContainer(props) {
@@ -80,6 +81,7 @@ function EndpointDiffsSummary({ diffsSummary }) {
                         changeType={diff.changeType}
                         count={diff.count}
                         contentType={diff.contentType}
+                        path={diff.path}
                         inRequest={true}
                       />
                     </li>
@@ -118,6 +120,7 @@ function EndpointDiffsSummary({ diffsSummary }) {
                         changeType={diff.changeType}
                         count={diff.count}
                         contentType={diff.contentType}
+                        path={diff.path}
                         statusCode={diff.statusCode}
                         inResponse={true}
                       />
@@ -173,9 +176,10 @@ function BodyDiffDescription({
   changeType,
   contentType,
   count,
-  statusCode,
   inRequest,
   inResponse,
+  path,
+  statusCode,
 }) {
   const classes = useStyles();
 
@@ -191,14 +195,30 @@ function BodyDiffDescription({
         {inResponse && (
           <>
             {upperFirst(assertion)} in <code>{statusCode}</code> Response body (
-            <code>{contentType}</code>)
+            <code>{contentType}</code>):
           </>
         )}
       </div>
+
       <small className={classes.diffMeta}>
         difference with documentated shape observed{' '}
         <strong>{count > 1 ? `${count} times` : 'once'}</strong>
       </small>
+
+      <div className={classes.diffFieldTrail}>
+        <div className={classes.diffFieldTrailComponent}>
+          <code>
+            {statusCode} {inResponse ? 'Response' : 'Request'} Body
+          </code>
+        </div>
+
+        {path.map((pathComponent) => (
+          <div className={classes.diffFieldTrailComponent} key={pathComponent}>
+            <ChevronRightIcon className={classes.diffFieldTrailSeparator} />
+            <code>{pathComponent}</code>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -222,6 +242,30 @@ const useStyles = makeStyles((theme) => ({
 
   diffsListItem: {
     marginBottom: theme.spacing(3),
+  },
+
+  diffFieldTrail: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: theme.typography.pxToRem(theme.typography.fontSize - 1),
+  },
+
+  diffFieldTrailComponent: {
+    display: 'flex',
+    flexGrow: 0,
+    flexShrink: 0,
+
+    alignItems: 'center',
+
+    '& code': {
+      padding: theme.spacing(0.5, 1),
+      color: theme.palette.primary.light,
+      background: theme.palette.grey[100],
+    },
+  },
+
+  diffFieldTrailSeparator: {
+    width: theme.typography.pxToRem(theme.typography.fontSize + 2),
   },
 }));
 
@@ -282,15 +326,13 @@ function createEndpointsDiffSummary(diffRegions) {
       ? interaction.request.body
       : interaction.response.body;
 
-    console.log(JsonHelper.seqToJsArray(diff.location));
-
     return {
       id: diff.toString(),
       assertion: diff.description.assertion,
       contentType: getOrUndefined(body.contentType),
       count: 1, // replace with actual count
-      location: JsonHelper.seqToJsArray(diff.location),
       changeType: diff.description.changeTypeAsString,
+      path: JsonHelper.seqToJsArray(diff.description.path),
       summary: diff.description.summary,
       statusCode: diff.inResponse ? interaction.response.statusCode : null,
     };
