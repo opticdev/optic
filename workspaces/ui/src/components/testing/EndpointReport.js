@@ -275,7 +275,7 @@ function createEndpointsDiffSummary(diffRegions) {
   const responseNewRegions = newRegions.filter(getInResponse);
   const responseBodyDiffs = bodyDiffs.filter(getInResponse);
   const requestNewRegions = newRegions.filter(getInRequest);
-  const requestBodyDiffs = bodyDiffs.filter(getInResponse);
+  const requestBodyDiffs = bodyDiffs.filter(getInRequest);
 
   const requests = {
     regionDiffs: requestNewRegions.map(createRegionDiff),
