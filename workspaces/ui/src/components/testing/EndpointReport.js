@@ -3,7 +3,10 @@ import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { getOrUndefined, getIndex, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import { diff } from 'react-ace';
+import Color from 'color';
+import ClassNames from 'classnames';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import WarningIcon from '@material-ui/icons/Warning';
 import upperFirst from 'lodash/upperFirst';
 
 export default function EndpointReportContainer(props) {
@@ -188,13 +191,13 @@ function BodyDiffDescription({
       <div className={classes.diffDescription}>
         {inRequest && (
           <>
-            {upperFirst(assertion)} in Request body (<code>{contentType}</code>)
+            Shape mismatch in Request body (<code>{contentType}</code>)
           </>
         )}
 
         {inResponse && (
           <>
-            {upperFirst(assertion)} in <code>{statusCode}</code> Response body (
+            Shape mismatch in <code>{statusCode}</code> Response body (
             <code>{contentType}</code>):
           </>
         )}
@@ -213,10 +216,17 @@ function BodyDiffDescription({
         </div>
 
         <ul className={classes.diffFieldTrailComponents}>
-          {path.map((pathComponent, i) => (
+          {path.map((pathComponent, i, components) => (
             <li className={classes.diffFieldTrailComponent} key={pathComponent}>
               <ChevronRightIcon className={classes.diffFieldTrailSeparator} />
               <code>{pathComponent}</code>
+
+              {i === components.length - 1 && (
+                <div className={classes.diffFieldTrailAssertion}>
+                  <WarningIcon className={classes.diffFielTrailWarningIcon} />
+                  {assertion}
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -291,8 +301,24 @@ const useStyles = makeStyles((theme) => ({
     },
 
     '&:last-child code': {
-      color: theme.palette.secondary.light,
+      background: Color(theme.palette.error.light).lighten(0.3).hex(),
+      color: Color(theme.palette.error.dark).darken(0.5).hex(),
     },
+  },
+
+  diffFieldTrailAssertion: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0.5, 1),
+
+    color: Color(theme.palette.error.dark).darken(0.2).hex(),
+  },
+
+  diffFielTrailWarningIcon: {
+    width: 20,
+    height: 20,
+    marginRight: theme.spacing(1),
+    color: Color(theme.palette.removed.main).darken(0.3).hex(),
   },
 
   diffFieldTrailSeparator: {
