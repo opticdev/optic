@@ -14,10 +14,14 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 object DiffHelpers {
   def diff(rfcState: RfcState, interaction: HttpInteraction): Seq[InteractionDiffResult] = {
-    val visitors = new DiffVisitors()
-    val traverser = new Traverser(rfcState, visitors)
+    val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
+    def emit(diff: InteractionDiffResult) = {
+      diffs.append(diff)
+    }
+    val diffVisitors = new DiffVisitors(emit)
+    val traverser = new Traverser(rfcState, diffVisitors)
     traverser.traverse(interaction)
-    visitors.diffs.toSeq
+    diffs
   }
 
   def diffAll(rfcState: RfcState, interactions: Seq[HttpInteraction]): Set[InteractionDiffResult] = {

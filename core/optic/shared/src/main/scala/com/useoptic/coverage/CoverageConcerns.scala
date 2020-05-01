@@ -16,6 +16,8 @@ sealed trait CoverageConcerns extends StableHashable
 
 case class TotalInteractions() extends CoverageConcerns
 
+case class TotalInteractionsWithoutDiffs() extends CoverageConcerns
+
 case class TotalUnmatchedPath() extends CoverageConcerns
 
 case class TotalForPath(pathId: PathComponentId) extends CoverageConcerns
@@ -35,6 +37,8 @@ case class TotalForPathAndMethodAndStatusCodeAndContentType(pathId: PathComponen
 case class TotalForRequest(requestId: RequestId) extends CoverageConcerns
 
 case class TotalForResponse(responseId: ResponseId) extends CoverageConcerns
+
+case class TotalForPathAndMethodWithoutDiffs(pathId: PathComponentId, httpMethod: String) extends CoverageConcerns
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 

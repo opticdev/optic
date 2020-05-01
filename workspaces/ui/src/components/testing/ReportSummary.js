@@ -425,6 +425,13 @@ const CoverageConcerns = opticEngine.com.useoptic.coverage;
 function createSummary(capture, spec, report) {
   const { apiName, endpoints: specEndpoints } = spec;
 
+  const totalInteractions = getCoverageCount(
+    CoverageConcerns.TotalInteractions()
+  );
+  const totalUnmatchedPaths = getCoverageCount(
+    CoverageConcerns.TotalUnmatchedPath()
+  );
+
   const endpoints = specEndpoints.map((endpoint, i) => {
     const endpointDescriptor = createEndpointDescriptor(endpoint, spec);
     const endpointId = getEndpointId(endpoint);
@@ -434,9 +441,11 @@ function createSummary(capture, spec, report) {
     const interactionsCounts = getCoverageCount(
       CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
     );
-    const incompliantInteractions = i % 2; // TODO: Hardcoded test value, replace by deriving from report,
+    const compliantCount = getCoverageCount(
+      CoverageConcerns.TotalForPathAndMethodWithoutDiffs(pathId, httpMethod)
+    );
+    const incompliantInteractions = interactionsCounts - compliantCount;
     const diffsCount = incompliantInteractions * (i % 3 === 0 ? 1 : 2); // TODO: Hardcoded test value, replace by deriving from report,
-    const compliantCount = interactionsCounts - incompliantInteractions;
 
     return {
       id: endpointId,
@@ -451,13 +460,6 @@ function createSummary(capture, spec, report) {
       },
     };
   });
-
-  const totalInteractions = getCoverageCount(
-    CoverageConcerns.TotalInteractions()
-  );
-  const totalUnmatchedPaths = getCoverageCount(
-    CoverageConcerns.TotalUnmatchedPath()
-  );
 
   const totalDiffs = endpoints // TODO: Hardcoded test value, replace by deriving from report
     .map((endpoint) => endpoint.counts.diffs)
