@@ -1,48 +1,179 @@
 {
-  "events": [{"PathComponentAdded":{"pathId":"path_IWIvWHLOcR","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"986e70c1-b72b-41c3-bd0e-1570eff56018","createdAt":"2020-04-29T23:26:53.654Z"}}},{"ContributionAdded":{"id":"path_IWIvWHLOcR.GET","key":"purpose","value":"Get Todos","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"986e70c1-b72b-41c3-bd0e-1570eff56018","createdAt":"2020-04-29T23:26:53.658Z"}}},{"BatchCommitStarted":{"batchId":"e09f5682-7b46-4f7b-aa00-a3d5172a743c","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body\n- Made field 'nested' optional","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"474c36b3-3bc8-40ff-b4ca-19a15b0ecc9c","createdAt":"2020-04-29T23:27:11.104Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_LMPqkFahVo","pathId":"path_IWIvWHLOcR","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"3e32b2be-5054-4a52-b451-c167d6154402","createdAt":"2020-04-29T23:27:11.104Z"}}},{"ShapeAdded":{"shapeId":"shape_Mt9eVlYoaz","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"3e32b2be-5054-4a52-b451-c167d6154402","createdAt":"2020-04-29T23:27:11.104Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_LMPqkFahVo","parameterDescriptor":{"shapeId":"shape_Mt9eVlYoaz","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"3e32b2be-5054-4a52-b451-c167d6154402","createdAt":"2020-04-29T23:27:11.104Z"}}},{"RequestAdded":{"requestId":"request_RSzrGOWPWm","pathId":"path_IWIvWHLOcR","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"3e32b2be-5054-4a52-b451-c167d6154402","createdAt":"2020-04-29T23:27:11.104Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_KDn7qBBcIG","pathId":"path_IWIvWHLOcR","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.105Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.105Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_3","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_5","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"FieldAdded":{"fieldId":"X3nC2D_4","shapeId":"X3nC2D_3","name":"field","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"X3nC2D_4","shapeId":"X3nC2D_5"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"FieldAdded":{"fieldId":"X3nC2D_2","shapeId":"X3nC2D_1","name":"nested","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"X3nC2D_2","shapeId":"X3nC2D_3"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_7","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.106Z"}}},{"FieldAdded":{"fieldId":"X3nC2D_6","shapeId":"X3nC2D_1","name":"other","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"X3nC2D_6","shapeId":"X3nC2D_7"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.107Z"}}},{"ShapeAdded":{"shapeId":"X3nC2D_8","baseShapeId":"X3nC2D_1","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.107Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"X3nC2D_0","providerDescriptor":{"ShapeProvider":{"shapeId":"X3nC2D_8"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.107Z"}}},{"ResponseBodySet":{"responseId":"response_KDn7qBBcIG","bodyDescriptor":{"httpContentType":"application/json","shapeId":"X3nC2D_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"9560e233-8fff-452b-b3d4-da0fce42bd8c","createdAt":"2020-04-29T23:27:11.107Z"}}},{"ShapeAdded":{"shapeId":"shape_ME9cYq2m1A","baseShapeId":"$optional","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"63f8120d-58a4-4790-b451-3b478430a69d","createdAt":"2020-04-29T23:27:11.108Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"shape_ME9cYq2m1A","providerDescriptor":{"ShapeProvider":{"shapeId":"X3nC2D_3"}},"consumingParameterId":"$optionalInner"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"63f8120d-58a4-4790-b451-3b478430a69d","createdAt":"2020-04-29T23:27:11.108Z"}}},{"FieldShapeSet":{"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"X3nC2D_2","shapeId":"shape_ME9cYq2m1A"}},"eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"63f8120d-58a4-4790-b451-3b478430a69d","createdAt":"2020-04-29T23:27:11.108Z"}}},{"BatchCommitEnded":{"batchId":"e09f5682-7b46-4f7b-aa00-a3d5172a743c","eventContext":{"clientId":"anonymous","clientSessionId":"df4e4546-fabb-4a58-995e-faf2ef07c99a","clientCommandBatchId":"02aebb31-34c2-4b6c-8ab5-14352a8fb1e8","createdAt":"2020-04-29T23:27:11.110Z"}}}],
+  "events": [],
   "session": {
     "metadata": {
-      "completed": false
+      "status": "completed"
     },
     "samples": [
       {
-        "uuid": "2",
+        "uuid": "1",
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/object-with-array-of-objects.json",
           "query": {
+            "asShapeHashBytes": null,
             "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
+            "asText": null
           },
           "headers": {
+            "asShapeHashBytes": null,
             "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
+            "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\"}]}",
+              "asText": null
             }
           }
         },
         "response": {
           "statusCode": 200,
           "headers": {
+            "asShapeHashBytes": null,
             "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
+            "asText": null
           },
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "[{\n\t\t\"nested\": {\n\t\t\t\"field\": \"is here\"\n\t\t},\n\t\t\"other\": 123\n\t},\n\t{\n\t\t\"other\": 123\n\t}\n]",
-              "asText": null,
-              "asShapeHashBytes": null
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\"}]}",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\",\"c\":\"two\"},{\"b\":1},{\"b\":true}]}",
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ,
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": "{\"a\":[{\"b\":\"one\",\"c\":\"two\"},{\"b\":1},{\"b\":true}]}",
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ,
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/object-with-array-of-objects.json",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null
             }
           }
         },

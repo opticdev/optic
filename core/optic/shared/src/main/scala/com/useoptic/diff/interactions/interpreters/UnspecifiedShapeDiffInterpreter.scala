@@ -40,44 +40,32 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
   def interpretUnspecifiedShape(interactionTrail: InteractionTrail, shapeDiff: UnspecifiedShape, interaction: HttpInteraction) = {
     // if our shapeTrail points to an object and jsonTrail points to a key
     val resolved = Resolvers.resolveTrailToCoreShape(rfcState, shapeDiff.shapeTrail)
+    Logger.log("sentinel-interpretUnspecifiedShape")
     Logger.log(resolved.shapeEntity)
     Logger.log(resolved.coreShapeKind)
     resolved.coreShapeKind match {
-      case UnknownKind => {
-        val parentTrail = shapeDiff.shapeTrail.parentTrail()
-        parentTrail match {
-          case None => Seq.empty
-          case Some(t) => {
-            val resolvedParent = Resolvers.resolveTrailToCoreShape(rfcState, t)
-            println(resolvedParent)
-            resolvedParent.coreShapeKind match {
-              case ListKind => {
-                val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
-                val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
-                val commands = builtShape.commands ++ Seq(
-                  SetParameterShape(
-                    ProviderInShape(
-                      resolvedParent.shapeEntity.shapeId,
-                      ShapeProvider(builtShape.rootShapeId),
-                      ListKind.innerParam
-                    )
-                  )
-                )
-                Seq(
-                  InteractiveDiffInterpretation(
-                    s"Set the shape",
-                    s"Set the shape to ...",
-                    commands,
-                    ChangeType.Addition
-                  )
-                )
-              }
-              case _ => Seq.empty
-            }
-
-          }
-        }
+      case ListKind => {
+        val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
+        val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
+        val commands = builtShape.commands ++ Seq(
+          SetParameterShape(
+            ProviderInShape(
+              resolved.shapeEntity.shapeId,
+              ShapeProvider(builtShape.rootShapeId),
+              ListKind.innerParam
+            )
+          )
+        )
+        Seq(
+          InteractiveDiffInterpretation(
+            s"Set the shape",
+            s"Set the shape to ...",
+            commands,
+            ChangeType.Addition
+          )
+        )
       }
+
       case ObjectKind => {
         Logger.log(shapeDiff.jsonTrail)
         val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
@@ -97,7 +85,8 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
           )
         )
       }
-      case _ => Seq()
+      //@TODO: support Nullable<Unknown> (when you have only seen null and then see something else)
+      case _ => Seq.empty
     }
   }
 }

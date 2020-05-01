@@ -66,9 +66,10 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
           visitors.oneOfVisitor.begin(shapeTrail, oneOfShape, branchShapes.map(i => {
             Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState).shapeId
           }))
-          branchShapes.foreach(i => {
+          branchShapes.zipWithIndex.foreach((item) => {
+            val (i, index) = item
             val branch = Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState)
-            val branchShapeTrail = shapeTrail.withChild(OneOfItemTrail(oneOfShape.shapeId, branch.shapeId))
+            val branchShapeTrail = shapeTrail.withChild(OneOfItemTrail(oneOfShape.shapeId, shapeParameterIds.apply(index), branch.shapeId))
             visitors.oneOfVisitor.visit(branchShapeTrail, oneOfShape, branch)
             traverse(branch.shapeId, branchShapeTrail)
           })
@@ -79,7 +80,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
             .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
 
           visitors.optionalVisitor.begin(shapeTrail, optionalShape, innerShapeOption)
-          innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(OptionalTrail(innerShape.shapeId))))
+          innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(OptionalItemTrail(innerShape.shapeId))))
         }
         case NullableKind.baseShapeId => {
           val nullableShape = resolved.shapeEntity
@@ -87,7 +88,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
             .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
 
           visitors.nullableVisitor.begin(shapeTrail, nullableShape, innerShapeOption)
-          innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(NullableTrail(innerShape.shapeId))))
+          innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(NullableItemTrail(innerShape.shapeId))))
         }
         case _ => {
           visitors.primitiveVisitor.visit(resolved, shapeTrail)
