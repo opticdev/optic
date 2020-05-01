@@ -206,18 +206,20 @@ function BodyDiffDescription({
       </small>
 
       <div className={classes.diffFieldTrail}>
-        <div className={classes.diffFieldTrailComponent}>
+        <div className={classes.diffFieldTrailRoot}>
           <code>
             {statusCode} {inResponse ? 'Response' : 'Request'} Body
           </code>
         </div>
 
-        {path.map((pathComponent) => (
-          <div className={classes.diffFieldTrailComponent} key={pathComponent}>
-            <ChevronRightIcon className={classes.diffFieldTrailSeparator} />
-            <code>{pathComponent}</code>
-          </div>
-        ))}
+        <ul className={classes.diffFieldTrailComponents}>
+          {path.map((pathComponent, i) => (
+            <li className={classes.diffFieldTrailComponent} key={pathComponent}>
+              <ChevronRightIcon className={classes.diffFieldTrailSeparator} />
+              <code>{pathComponent}</code>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -246,11 +248,12 @@ const useStyles = makeStyles((theme) => ({
 
   diffFieldTrail: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    alignContent: 'baseline',
     fontSize: theme.typography.pxToRem(theme.typography.fontSize - 1),
   },
 
-  diffFieldTrailComponent: {
+  diffFieldTrailRoot: {
     display: 'flex',
     flexGrow: 0,
     flexShrink: 0,
@@ -261,6 +264,34 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(0.5, 1),
       color: theme.palette.primary.light,
       background: theme.palette.grey[100],
+    },
+  },
+
+  diffFieldTrailComponents: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: 0,
+    flexWrap: 'wrap',
+
+    listStyleType: 'none',
+  },
+
+  diffFieldTrailComponent: {
+    display: 'flex',
+    flexGrow: 0,
+    flexShrink: 0,
+    marginBottom: theme.spacing(1),
+
+    alignItems: 'center',
+
+    '& code': {
+      padding: theme.spacing(0.5, 1),
+      color: theme.palette.primary.light,
+      background: theme.palette.grey[100],
+    },
+
+    '&:last-child code': {
+      color: theme.palette.secondary.light,
     },
   },
 
