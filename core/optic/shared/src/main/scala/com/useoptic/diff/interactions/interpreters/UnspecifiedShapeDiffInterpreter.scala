@@ -14,7 +14,8 @@ import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
-  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
+    val interaction = interactions.head
     diff match {
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiffResult match {

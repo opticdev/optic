@@ -1,10 +1,10 @@
 package com.useoptic.diff.initial
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.ShapeId
+import com.useoptic.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeId, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper
-import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ObjectKind, OptionalKind}
-import com.useoptic.diff.MutableCommandStream
+import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ListKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, UnknownKind}
+import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.diff.shapes.{ArrayVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ObjectVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail}
@@ -15,6 +15,73 @@ import scala.util.Random
 
 object DistributionAwareShapeBuilder {
 
+  def toCommands(bodies: Vector[JsonLike], seed: String = s"${Random.alphanumeric take 6 mkString}"): (ShapeId, ImmutableCommandStream) = {
+
+    val aggregator = aggregateTrailsAndValues(bodies)
+    val rootShape = toShapes(aggregator, seed)
+
+    var count = 0
+    implicit val idGenerator: () => String = () => {
+      val id = s"${seed}_commands_${count.toString}"
+      count = count + 1
+      id
+    }
+
+    val commands = new MutableCommandStream
+
+    def buildCommandsFor(shape: ShapesToMake, parent: Option[ShapesToMake]): Unit = {
+
+      def inField = parent.isDefined && parent.get.isInstanceOf[FieldWithShape]
+      def inShape = !inField
+
+      shape match {
+        case s: ObjectWithFields => {
+          commands.appendInit(AddShape(s.id, ObjectKind.baseShapeId, ""))
+          s.fields.foreach(field => buildCommandsFor(field, Some(s)))
+        }
+        case s: OptionalShape => {
+          buildCommandsFor(s.shape, Some(s))
+          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), OptionalKind.innerParam)))
+          commands.appendInit(AddShape(s.id, OptionalKind.baseShapeId, ""))
+        }
+        case s: NullableShape => {
+          buildCommandsFor(s.shape, Some(s))
+          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), NullableKind.innerParam)))
+          commands.appendInit(AddShape(s.id, NullableKind.baseShapeId, ""))
+        }
+        case s: FieldWithShape => {
+          assert(parent.isDefined && parent.get.isInstanceOf[ObjectWithFields], "Fields must have a parent")
+          buildCommandsFor(s.shape, Some(s))
+          commands.appendInit(AddField(s.id, parent.get.id, s.key, FieldShapeFromShape(s.id, s.shape.id)))
+        }
+        case s: PrimitiveKind => {
+          commands.appendInit(AddShape(s.id, s.baseShape.baseShapeId, ""))
+        }
+        case s: OneOfShape => {
+          s.branches.foreach(branch => {
+            buildCommandsFor(branch, Some(s))
+            val paramId = idGenerator()
+            commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
+            commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(branch.id), paramId)))
+          })
+
+          commands.appendInit(AddShape(s.id, OneOfKind.baseShapeId, ""))
+        }
+        case s: ListOfShape => {
+          buildCommandsFor(s.shape, Some(s))
+          commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
+          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)))
+        }
+        case s: Unknown => {
+          commands.appendInit(AddShape(s.id, UnknownKind.baseShapeId, ""))
+        }
+      }
+    }
+
+    buildCommandsFor(rootShape, None)
+
+    (rootShape.id, commands.toImmutable)
+  }
 
   def aggregateTrailsAndValues(bodies: Vector[JsonLike]): TrailValueMap = {
 
@@ -30,13 +97,10 @@ object DistributionAwareShapeBuilder {
   }
 
 
-  def toShapes(implicit trailValues: TrailValueMap, seed: String = s"${Random.alphanumeric take 6 mkString}") = {
-    val commands = new MutableCommandStream
-    var count = 0
+  def toShapes(implicit trailValues: TrailValueMap, seed: String = s"${Random.alphanumeric take 6 mkString}"): ShapesToMake = {
     val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
-
     val root = trailValues.getRoot.flatten
-
+    var count = 0
 
     //internal helpers
     implicit val idGenerator: () => String = () => {
@@ -92,7 +156,6 @@ object DistributionAwareShapeBuilder {
               val innerNull = fromJsons(notNullExamples, trail, true, examples.size)
               NullableShape(innerNull, trail, idGenerator())
             }
-            case _ => Nothing(trail, idGenerator())
           }
         }
       }.toSeq
@@ -134,10 +197,8 @@ case class OneOfShape(branches: Seq[ShapesToMake], trail: JsonTrail, id: String)
 case class ObjectWithFields(fields: Seq[FieldWithShape], trail: JsonTrail, id: String) extends ShapesToMake
 case class ListOfShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
 case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
-case class Root(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
 case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake
 case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake
-case class Nothing(trail: JsonTrail, id: String) extends ShapesToMake
 ////
 
 class TrailValueMap(val totalSamples: Int) {

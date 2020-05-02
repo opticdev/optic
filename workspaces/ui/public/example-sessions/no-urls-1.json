@@ -40,7 +40,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "[{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}]",
+              "asJsonString": "{\n\t\"hello\": \"world\",\n\t\"bool\": true\n}",
               "asText": null,
               "asShapeHashBytes": null
             }
@@ -49,7 +49,7 @@
         "tags": []
       },
       {
-        "uuid": "19",
+        "uuid": "4",
         "request": {
           "host": "localhost",
           "method": "GET",
@@ -83,179 +83,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "[{\n\t\"fieldA\": true}]",
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "tags": []
-      },
-      {
-        "uuid": "5",
-        "request": {
-          "host": "localhost",
-          "method": "GET",
-          "path": "/todos/abc-todo",
-          "query": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": null,
-            "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": "application/json",
-            "value": {
-              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "tags": []
-      },
-      {
-        "uuid": "5",
-        "request": {
-          "host": "localhost",
-          "method": "GET",
-          "path": "/todos/abc-todo",
-          "query": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": null,
-            "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": "application/json",
-            "value": {
-              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "tags": []
-      },
-      {
-        "uuid": "5",
-        "request": {
-          "host": "localhost",
-          "method": "GET",
-          "path": "/todos/def-todo",
-          "query": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": null,
-            "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": "application/json",
-            "value": {
-              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "tags": []
-      },
-      {
-        "uuid": "5",
-        "request": {
-          "host": "localhost",
-          "method": "PUT",
-          "path": "/todos/def-todo",
-          "query": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": null,
-            "value": {
-              "asJsonString": null,
-              "asText": null,
-              "asShapeHashBytes": null
-            }
-          }
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "asJsonString": null,
-            "asText": null,
-            "asShapeHashBytes": null
-          },
-          "body": {
-            "contentType": "application/json",
-            "value": {
-              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asJsonString": "{}",
               "asText": null,
               "asShapeHashBytes": null
             }

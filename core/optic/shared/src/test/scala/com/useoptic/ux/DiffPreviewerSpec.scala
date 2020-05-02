@@ -93,8 +93,8 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
   }
 
   describe("render simulated spec json") {
-    val shapeOnly = DiffPreviewer.shapeOnlyFromShapeBuilder(JsonLikeFrom.json(JsonExamples.basicTodo))
-    assert(shapeOnly.get.specShapes.size == 3)
+    val (commands, shapeOnly) = DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get)).get
+    assert(shapeOnly.specShapes.size == 3)
   }
 
 }

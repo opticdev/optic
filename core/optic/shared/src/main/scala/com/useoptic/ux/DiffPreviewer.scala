@@ -1,12 +1,13 @@
 package com.useoptic.ux
 
+import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{Events, RfcCommandContext, RfcService, RfcState}
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldId, ShapeId}
 import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, ListKind, NullableKind, NumberKind, ObjectKind, OneOfKind, OptionalKind, StringKind, UnknownKind}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuilder}
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.interactions.interpreters.DiffDescription
 import com.useoptic.diff.shapes.{ArrayVisitor, GenericWrapperVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ListItemTrail, ListShapeVisitor, ObjectFieldTrail, ObjectShapeVisitor, ObjectVisitor, OneOfVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
@@ -65,17 +66,19 @@ object DiffPreviewer {
     } else None
   }
 
-  def shapeOnlyFromShapeBuilder(jsonLike: Option[JsonLike]): Option[ShapeOnlyRenderHelper] = jsonLike flatMap { json =>
-    val shapeBuilder = new ShapeBuilder(json)
-    val result = shapeBuilder.run
+  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike]): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
 
-    val commands = result.commands
-    val shapeId = result.rootShapeId
+    if (bodies.isEmpty) {
+      return None
+    }
+
+    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)
+    val flattenedCommands = commands.flatten
 
     val simulatedId = "simulated"
     val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
     val service = new RfcService(new InMemoryEventStore[Events.RfcEvent])
-    commands.foreach(command => {
+    flattenedCommands.foreach(command => {
       val result = Try(service.handleCommand(simulatedId, command, commandContext))
       if (result.isFailure) {
         Logger.log(command)
@@ -85,7 +88,7 @@ object DiffPreviewer {
     })
 
     val rfcState = service.currentState(simulatedId)
-    previewShape(rfcState, Some(shapeId))
+    previewShape(rfcState, Some(shapeId)).map(preview => (flattenedCommands, preview))
   }
 
 }

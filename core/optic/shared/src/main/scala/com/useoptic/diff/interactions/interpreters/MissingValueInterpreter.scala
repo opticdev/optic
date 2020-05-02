@@ -18,7 +18,8 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   private val basicInterpretations = new BasicInterpretations(rfcState)
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
 
-  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
+    val interaction = interactions.head
     diff match {
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiffResult match {

@@ -350,7 +350,10 @@ function _NewRegions(props) {
     ignoreDiff(...allIgnored);
     const allApproved = filterScala(newRegions)(
       (diffBlock) => !isDeselected(diffBlock)
-    ).map((i) => i.firstSuggestion);
+    ).map((i) => {
+      debugger;
+      return i.firstSuggestion;
+    });
     acceptSuggestion(...allApproved);
   };
 
