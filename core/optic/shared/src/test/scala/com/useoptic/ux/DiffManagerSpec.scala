@@ -1,15 +1,20 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.rfc.Commands.RfcCommand
-import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.contexts.rfc.{RfcService, RfcServiceJSFacade, RfcState}
+import com.useoptic.contexts.shapes.ShapeEntity
+import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.helpers.SpecHelpers
 import com.useoptic.diff.interactions.TestHelpers
+import com.useoptic.diff.shapes.{JsonLikeTraverser, JsonTrail, ShapeTrail}
+import com.useoptic.diff.shapes.visitors.DiffVisitors
 import com.useoptic.dsa.SequentialIdGenerator
-import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, Request, Response}
+import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
+import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, JsonLikeFrom, Request, Response}
 import io.circe.Json
 import org.scalatest.FunSpec
 
-class DiffManagerSpec extends FunSpec {
+class DiffManagerSpec extends FunSpec with JsonFileFixture {
 
   val interactionIdGenerator = new SequentialIdGenerator("interaction")
 
@@ -56,6 +61,33 @@ class DiffManagerSpec extends FunSpec {
     val urls = diffManager.unmatchedUrls(false, Seq.empty)
     assert(urls.head.path == "/")
     assert(urls.head.method == "post")
+  }
+
+  describe("Groupings are respected by endpoint") {
+    def rfcStateFromEvents(e: String): RfcState = {
+      val events = eventsFrom(e)
+      val rfcId: String = "rfc-1"
+      val eventStore = RfcServiceJSFacade.makeEventStore()
+      eventStore.append(rfcId, events)
+      val rfcService: RfcService = new RfcService(eventStore)
+      rfcService.currentState(rfcId)
+    }
+
+    def shapeDiffsFor(shapeExample: (ShapeEntity, RfcState), observation: Json) = {
+
+      val visitor = new DiffVisitors(shapeExample._2)
+      val traverse = new JsonLikeTraverser(shapeExample._2, visitor)
+      traverse.traverse(JsonLikeFrom.json(observation), JsonTrail(Seq.empty), Some(ShapeTrail(shapeExample._1.shapeId, Seq.empty)))
+      visitor.diffs.toVector
+    }
+
+    it("can group diffs by shapetrail") {
+      import com.useoptic.utilities.DistinctBy._
+      val shapeDiffs = shapeDiffsFor(ShapeExamples.stringArray, JsonExamples.stringArrayWithNumbers)
+      val grouped = shapeDiffs.distinctBy(i => i.shapeTrail)
+      assert(grouped.size == 1)
+    }
+
   }
 
 }
