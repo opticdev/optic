@@ -55,6 +55,86 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       assert(shapesToMake.asInstanceOf[ListOfShape].shape.isInstanceOf[OneOfShape])
       assert(shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[OneOfShape].branches.size == 2)
     }
+
+    it("can stage array with unknown type") {
+
+      lazy val stringArrayMap = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+        JsonLikeFrom.json(JsonExamples.emptyArray).get
+      ))
+
+      val shapesToMake = DistributionAwareShapeBuilder.toShapes(stringArrayMap)
+      assert(shapesToMake.isInstanceOf[ListOfShape])
+      assert(shapesToMake.asInstanceOf[ListOfShape].shape.isInstanceOf[Unknown])
+    }
+
+    describe("nullable") {
+
+      it("can stage a nullable of unknown if all examples were null") {
+        lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+          JsonLikeFrom.json(JsonExamples.objectWithNull).get,
+          JsonLikeFrom.json(JsonExamples.objectWithNull).get,
+        ))
+
+        val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
+
+        val field = shapesToMake.asInstanceOf[ObjectWithFields].fields.head
+        val fieldShapeAsNullable = field.shape.asInstanceOf[NullableShape]
+        assert(fieldShapeAsNullable.shape.isInstanceOf[Unknown])
+      }
+
+      it("can stage a nullable of string") {
+        lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+          JsonLikeFrom.json(JsonExamples.objectWithNull).get,
+          JsonLikeFrom.json(JsonExamples.objectWithNullAsString).get,
+        ))
+
+        val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
+
+        val field = shapesToMake.asInstanceOf[ObjectWithFields].fields.head
+        val fieldShapeAsNullable = field.shape.asInstanceOf[NullableShape]
+        assert(fieldShapeAsNullable.shape.isInstanceOf[PrimitiveKind])
+      }
+
+      it("can stage a nullable of one of string number") {
+        lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+          JsonLikeFrom.json(JsonExamples.objectWithNull).get,
+          JsonLikeFrom.json(JsonExamples.objectWithNullAsString).get,
+          JsonLikeFrom.json(JsonExamples.objectWithNullAsNumber).get,
+        ))
+
+        val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
+
+        val field = shapesToMake.asInstanceOf[ObjectWithFields].fields.head
+        val fieldShapeAsNullable = field.shape.asInstanceOf[NullableShape]
+        assert(fieldShapeAsNullable.shape.isInstanceOf[OneOfShape])
+      }
+
+    }
+
+    describe("lists of objects") {
+      it("can stage a list of the same object shape") {
+        lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+          JsonLikeFrom.json(JsonExamples.objectsWithOptionalsArray).get
+        ))
+
+        val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
+        val fields = shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[ObjectWithFields].fields
+
+        assert(fields.forall(i => i.shape.isInstanceOf[OptionalShape]))
+      }
+
+      it("can stage a list of objects and strings") {
+        lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
+          JsonLikeFrom.json(JsonExamples.objectsAndStringsInArray).get
+        ))
+
+        val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
+        val branches = shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[OneOfShape].branches
+        assert(branches(0).isInstanceOf[ObjectWithFields])
+        assert(branches(1).isInstanceOf[PrimitiveKind])
+      }
+    }
+
   }
 
 }

@@ -46,15 +46,15 @@ object DistributionAwareShapeBuilder {
       id
     }
 
-    fromJsons(root, JsonTrail(Seq.empty), false)
+    fromJsons(root, JsonTrail(Seq.empty), false, trailValues.totalSamples)
   }
 
-  private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean)(implicit trailValues: TrailValueMap, idGenerator: () => String): ShapesToMake = {
-    val isOptional = values.size != trailValues.totalSamples
+  private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean, totalSamples: Int)(implicit trailValues: TrailValueMap, idGenerator: () => String): ShapesToMake = {
+    val isOptional = values.size != totalSamples
     val kinds = values.groupBy(v => Resolvers.jsonToCoreKind(v))
 
     if (isOptional && !inner) {
-      val optionalShape = OptionalShape(fromJsons(values, trail, true), trail, idGenerator())
+      val optionalShape = OptionalShape(fromJsons(values, trail, true, totalSamples), trail, idGenerator())
       optionalShape
     } else {
 
@@ -65,8 +65,8 @@ object DistributionAwareShapeBuilder {
               val fieldIntersection = examples.flatMap(_.fields.keySet).toSet
               val field = fieldIntersection.map(fieldName => {
                 val fieldTrail = trail.withChild(JsonObjectKey(fieldName))
-                val fieldValues = trailValues.valuesForTrail(fieldTrail).flatten
-                val fieldShape = fromJsons(fieldValues, fieldTrail, false)
+                val fieldValues = examples.flatMap(i => i.fields.get(fieldName))
+                val fieldShape = fromJsons(fieldValues, fieldTrail, false, examples.size)
                 FieldWithShape(fieldName, fieldShape, fieldTrail, idGenerator())
               }).toSeq
 
@@ -79,7 +79,7 @@ object DistributionAwareShapeBuilder {
               val listItemKind = if (flattenAllItemsAcrossExamples.isEmpty) {
                 Unknown(listItemTrail, idGenerator())
               } else {
-                fromJsons(flattenAllItemsAcrossExamples, listItemTrail, true)
+                fromJsons(flattenAllItemsAcrossExamples, listItemTrail, true, examples.size)
               }
 
               ListOfShape(listItemKind, trail, idGenerator())
@@ -87,17 +87,33 @@ object DistributionAwareShapeBuilder {
             case ShapesHelper.StringKind => PrimitiveKind(ShapesHelper.StringKind, trail, idGenerator())
             case ShapesHelper.NumberKind => PrimitiveKind(ShapesHelper.NumberKind, trail, idGenerator())
             case ShapesHelper.BooleanKind => PrimitiveKind(ShapesHelper.BooleanKind, trail, idGenerator())
-            case ShapesHelper.NullableKind => PrimitiveKind(ShapesHelper.NullableKind, trail, idGenerator())
+            case ShapesHelper.NullableKind => {
+              val notNullExamples = examples.filterNot(_.isNull)
+              val innerNull = fromJsons(notNullExamples, trail, true, examples.size)
+              NullableShape(innerNull, trail, idGenerator())
+            }
             case _ => Nothing(trail, idGenerator())
           }
         }
       }.toSeq
 
-      if (shapesToMake.size == 1) {
-        shapesToMake.head
-      } else {
-        OneOfShape(shapesToMake, trail, idGenerator())
+      def flattenShapes(shapes: Seq[ShapesToMake]): ShapesToMake = {
+        if (shapes.isEmpty) {
+          Unknown(trail, idGenerator())
+        } else if (shapes.size == 1) {
+          shapes.head
+        } else {
+          if (shapes.exists(_.isInstanceOf[NullableShape])) {
+            //override with nullable
+            val remainingShapes = shapes.filterNot(_.isInstanceOf[NullableShape])
+            NullableShape(flattenShapes(remainingShapes), trail, idGenerator())
+          } else {
+            OneOfShape(shapes, trail, idGenerator())
+          }
+        }
       }
+
+      flattenShapes(shapesToMake)
     }
   }
 
