@@ -56,8 +56,8 @@ function EndpointDiffsSummary({ diffsSummary }) {
     return (
       <div className={classes.diffsContainer}>
         {requests.count > 0 && (
-          <div className={classes.requestStats}>
-            <h4>Requests</h4>
+          <div className={ClassNames(classes.diffs, classes.requestDiffs)}>
+            <h4 className={classes.diffsLocationHeader}>Requests</h4>
 
             <>
               {requests.regionDiffs.length > 0 && (
@@ -96,8 +96,8 @@ function EndpointDiffsSummary({ diffsSummary }) {
         )}
 
         {responses.count > 0 && (
-          <div className={classes.requestStats}>
-            <h4>Responses</h4>
+          <div className={ClassNames(classes.diffs, classes.responseDiffs)}>
+            <h4 className={classes.diffsLocationHeader}>Responses</h4>
             <>
               {responses.regionDiffs.length > 0 && (
                 <ul className={classes.diffsList}>
@@ -237,7 +237,7 @@ function BodyDiffDescription({
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(0, 2, 3),
+    padding: theme.spacing(0, 2),
   },
 
   endpointPurpose: {
@@ -247,16 +247,51 @@ const useStyles = makeStyles((theme) => ({
 
   diffsContainer: {},
 
+  diffs: {
+    marginBottom: theme.spacing(4),
+  },
+
+  diffsLocationHeader: {
+    ...theme.typography.overline,
+    margin: theme.spacing(2, 0, 3),
+    color: Color(theme.palette.primary.main)
+      .desaturate(0.55)
+      .lighten(1.2)
+      .hex(),
+    borderBottom: `1px solid ${Color(theme.palette.primary.main)
+      .desaturate(0.55)
+      .lighten(1.9)
+      .hex()}`,
+  },
+
   diffsList: {
     padding: 0,
     listStyleType: 'none',
   },
 
   diffsListItem: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(4),
+  },
+
+  diffDescription: {
+    fontSize: theme.typography.pxToRem(theme.typography.fontSize + 1),
+
+    '& code': {
+      color: theme.palette.primary.main,
+    },
+  },
+
+  diffMeta: {
+    ...theme.typography.subtitle2,
+    color: theme.palette.grey[600],
+    fontWeight: theme.typography.fontWeightLight,
+    fontSize: theme.typography.pxToRem(12),
   },
 
   diffFieldTrail: {
+    padding: theme.spacing(1.5, 2, 0, 1.5),
+    marginLeft: 2,
+    borderLeft: `8px solid ${theme.palette.grey[50]}`,
     display: 'flex',
     alignItems: 'flex-start',
     alignContent: 'baseline',
