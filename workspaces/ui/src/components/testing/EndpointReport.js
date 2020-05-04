@@ -358,6 +358,7 @@ const useStyles = makeStyles((theme) => ({
 
   diffFieldTrailSeparator: {
     width: theme.typography.pxToRem(theme.typography.fontSize + 2),
+    color: theme.palette.grey[400],
   },
 }));
 
