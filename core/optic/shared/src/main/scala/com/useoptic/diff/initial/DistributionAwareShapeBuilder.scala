@@ -1,16 +1,14 @@
 package com.useoptic.diff.initial
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeId, ShapeProvider}
+import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper
-import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ListKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, UnknownKind}
-import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
+import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
-import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
-import com.useoptic.diff.shapes.{ArrayVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ObjectVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail}
-import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
+import com.useoptic.diff.shapes._
+import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
+import com.useoptic.types.capture.JsonLike
 
-import scala.collection.mutable
 import scala.util.Random
 
 object DistributionAwareShapeBuilder {
@@ -91,7 +89,7 @@ object DistributionAwareShapeBuilder {
 
     val jsonLikeTraverser = new JsonLikeTraverser(RfcState.empty, visitor)
 
-    bodies.foreach(body => jsonLikeTraverser.traverse(Some(body), JsonTrail(Seq.empty), None))
+    bodies.foreach(body => jsonLikeTraverser.traverse(Some(body), JsonTrail(Seq.empty)))
 
     aggregator
   }
@@ -223,43 +221,15 @@ class TrailValueMap(val totalSamples: Int) {
   def hasTrail(trail: JsonTrail) = _internal.contains(trail)
 
 }
-
 class ShapeBuilderVisitor(aggregator: TrailValueMap) extends JsonLikeVisitors {
 
-
   override val objectVisitor: ObjectVisitor = new ObjectVisitor {
-    override def beginUnknown(value: Map[String, JsonLike], bodyTrail: JsonTrail): Unit = {
-      aggregator.putValue(bodyTrail, JsonLikeFrom.map(value))
-    }
-
-    override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {}
-
-    override def visit(key: String, jsonLike: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail], parentBindings: ParameterBindings): Unit = {
-      aggregator.putValue(bodyTrail, jsonLike)
-    }
-
-    override def end(): Unit = {}
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
   }
-  override val arrayVisitor: ArrayVisitor = new ArrayVisitor {
-    override def beginUnknown(value: Vector[JsonLike], bodyTrail: JsonTrail): Unit = {
-      aggregator.putValue(bodyTrail, JsonLikeFrom.array(value))
-    }
-
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {}
-
-    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
-      aggregator.putValue(bodyTrail, value)
-    }
-
-    override def end(): Unit = {}
+  override val arrayVisitor: ArrayVisitor =new ArrayVisitor {
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
   }
   override val primitiveVisitor: PrimitiveVisitor = new PrimitiveVisitor {
-    override def visitUnknown(value: Option[JsonLike], bodyTrail: JsonTrail): Unit = {
-      aggregator.putValueOptional(bodyTrail, value)
-    }
-
-    override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
-      aggregator.putValueOptional(bodyTrail, value)
-    }
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
   }
 }

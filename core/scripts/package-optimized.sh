@@ -7,6 +7,4 @@ mkdir -p $(dirname $OUTPUT_FILE)
 
 cat optic/js/target/scala-2.12/optic-core-opt.js > $OUTPUT_FILE
 
-sbt publishLocal
-
 echo "domain logic written to $OUTPUT_FILE"
