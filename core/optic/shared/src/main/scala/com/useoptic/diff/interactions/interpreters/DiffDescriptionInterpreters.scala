@@ -6,7 +6,7 @@ import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.diff.{ChangeType, DiffResult}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnknownTrail, UnmatchedShape, UnspecifiedShape}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, NullableTrail, NullableItemTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnknownTrail, UnmatchedShape, UnspecifiedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 
@@ -121,6 +121,8 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
       case t: ListTrail => shapeName(t.shapeId)
       case t: ListItemTrail => shapeName(t.itemShapeId)
       case t: OneOfItemTrail => shapeName(t.itemShapeId)
+      case t: NullableTrail => "nullable shape?"
+      case t: NullableItemTrail => shapeName(t.innerShapeId)
       //case UnknownTrail() => "unknown?"
     }
     case None => shapeName(shapeTrail.rootShapeId)
