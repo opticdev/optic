@@ -12,9 +12,9 @@ case class GroupingIdentifiers(agentGroupId: String,
 case class ShapeHashBytes(bytes: Vector[Byte])
 
 @JSExportAll
-case class ArbitraryData(asShapeHashBytes: Option[ShapeHashBytes],
-                         asJsonString: Option[String],
-                         asText: Option[String])
+case class ArbitraryData(asShapeHashBytes: Option[ShapeHashBytes] = None,
+                         asJsonString: Option[String] = None,
+                         asText: Option[String] = None)
 
 case class HttpInteractionTag(name: String, value: String)
 

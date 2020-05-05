@@ -247,9 +247,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       case (diff: UnmatchedRequestBodyContentType, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
 
-        val previewRender = (interaction: HttpInteraction) => BodyUtilities.parseBody(interaction.request.body).map { body =>
-          DiffPreviewer.previewDiff(Some(body), rfcState, None, Set.empty)
-        }
+        val previewRender = (interaction: HttpInteraction) => DiffPreviewer.previewBody(interaction.request.body)
 
         val bodies = interactions.map(_.request.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
@@ -261,9 +259,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       case (diff: UnmatchedResponseBodyContentType, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
 
-        val previewRender = (interaction: HttpInteraction) => BodyUtilities.parseBody(interaction.response.body).map { body =>
-          DiffPreviewer.previewDiff(Some(body), rfcState, None, Set.empty)
-        }
+        val previewRender = (interaction: HttpInteraction) => DiffPreviewer.previewBody(interaction.response.body)
 
         val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
@@ -275,9 +271,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       case (diff: UnmatchedResponseStatusCode, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
 
-        val previewRender = (interaction: HttpInteraction) => BodyUtilities.parseBody(interaction.response.body).map { body =>
-          DiffPreviewer.previewDiff(Some(body), rfcState, None, Set.empty)
-        }
+        val previewRender = (interaction: HttpInteraction) => DiffPreviewer.previewBody(interaction.response.body)
 
         val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
@@ -308,7 +302,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           val innerRfcState = withRfcState.getOrElse(rfcState)
           val responseShapeID = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
           DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, Some(responseShapeID), Set.empty)
-        }.toOption
+        }.toOption.flatten
 
         BodyShapeDiffBlock(
           diff,
@@ -320,8 +314,8 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState).get,
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
-          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState)),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => responseRender(interaction, withRfcState)
         )
       })
@@ -348,7 +342,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           val innerRfcState = withRfcState.getOrElse(rfcState)
           val requestBodyShapeId = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
           DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), innerRfcState, Some(requestBodyShapeId), Set.empty)
-        }.toOption
+        }.toOption.flatten
 
         BodyShapeDiffBlock(
           diff,
@@ -360,9 +354,9 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
-          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState).get,
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => requestRender(interaction, withRfcState),
-          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState))
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState)
         )
       })
       }.toSeq
