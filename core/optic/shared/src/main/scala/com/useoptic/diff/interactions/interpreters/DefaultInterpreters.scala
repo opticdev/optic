@@ -22,4 +22,6 @@ class DefaultInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter
         ++ missingValueInterpreter.interpret(diff, interactions)
       )
   }
+
+  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = interpret(diff, Vector(interaction))
 }

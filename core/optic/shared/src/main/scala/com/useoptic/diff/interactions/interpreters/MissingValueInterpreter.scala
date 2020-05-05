@@ -18,8 +18,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   private val basicInterpretations = new BasicInterpretations(rfcState)
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
 
-  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
-    val interaction = interactions.head
+  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiffResult match {
@@ -41,6 +40,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       case _ => Seq.empty
     }
   }
+
 
   def interpretUnmatchedShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
@@ -265,4 +265,6 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       ChangeType.Addition
     )
   }
+
+  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = interpret(diff, interactions.head)
 }

@@ -32,4 +32,8 @@ class BasicInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[I
       case _ => Seq.empty
     }
   }
+
+  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+    Seq.empty
+  }
 }
