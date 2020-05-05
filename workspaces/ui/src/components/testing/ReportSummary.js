@@ -209,7 +209,9 @@ export default function ReportSummary(props) {
                         classes.endpointIncompliantChip
                       )}
                     >
-                      <strong>{undocumented.count}</strong>
+                      <strong>
+                        {undocumented.count}/{undocumented.count}
+                      </strong>
                       {' incompliant'}
                     </span>
                   </div>
@@ -406,11 +408,20 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
 
     fontWeight: theme.typography.fontWeightRegular,
+
+    '$isUndocumented &': {
+      opacity: 0.5,
+    },
   },
 
   endpointPath: {
     fontSize: theme.typography.pxToRem(13),
     color: theme.palette.primary.main,
+
+    '$isUndocumented &': {
+      opacity: 0.8,
+      fontStyle: 'italic',
+    },
   },
 
   endpointStats: {
@@ -431,6 +442,10 @@ const useStyles = makeStyles((theme) => ({
 
     '& > strong': {
       fontSize: theme.typography.pxToRem(13),
+    },
+
+    '$isUndocumented &': {
+      opacity: 0.6,
     },
   },
 
