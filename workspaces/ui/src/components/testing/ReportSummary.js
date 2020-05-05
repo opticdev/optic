@@ -176,11 +176,45 @@ export default function ReportSummary(props) {
         <p>No endpoints have been documented yet</p>
       )}
 
+      <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
+
       {undocumentedEndpoints.length > 0 && (
-        <ul className={classes.undocumentedEndpointsList}>
+        <ul className={classes.endpointsList}>
           {undocumentedEndpoints.map((undocumented) => (
-            <li key={undocumented.method + undocumented.path}>
-              {undocumented.method} {undocumented.path}
+            <li
+              key={undocumented.method + undocumented.path}
+              className={classNames(
+                classes.endpointsListItem,
+                classes.isUndocumented
+              )}
+            >
+              <Card className={classes.endpointCard}>
+                <div className={classes.endpointHeader}>
+                  <span
+                    className={classNames(
+                      classes.endpointMethod,
+                      classesHttpMethods[undocumented.method]
+                    )}
+                  >
+                    {undocumented.method}
+                  </span>
+                  <code className={classes.endpointPath}>
+                    {undocumented.path}
+                  </code>
+
+                  <div className={classes.endpointStats}>
+                    <span
+                      className={classNames(
+                        classes.endpointChip,
+                        classes.endpointIncompliantChip
+                      )}
+                    >
+                      <strong>{undocumented.count}</strong>
+                      {' incompliant'}
+                    </span>
+                  </div>
+                </div>
+              </Card>
             </li>
           ))}
         </ul>
@@ -300,6 +334,14 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, -2),
     padding: 0,
     listStyleType: 'none',
+  },
+
+  isUndocumented: {}, // for use below
+
+  endpointsListItem: {
+    '&$isUndocumented': {
+      padding: theme.spacing(1, 0),
+    },
   },
 
   endpointCard: {
