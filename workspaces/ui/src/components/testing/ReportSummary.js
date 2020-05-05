@@ -22,7 +22,13 @@ import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
-  const { capture, report, spec, currentEndpointId } = props;
+  const {
+    capture,
+    report,
+    spec,
+    currentEndpointId,
+    undocumentedEndpoints,
+  } = props;
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
@@ -168,6 +174,16 @@ export default function ReportSummary(props) {
       ) : (
         // @TODO: revisit this empty state
         <p>No endpoints have been documented yet</p>
+      )}
+
+      {undocumentedEndpoints.length > 0 && (
+        <ul className={classes.undocumentedEndpointsList}>
+          {undocumentedEndpoints.map((undocumented) => (
+            <li key={undocumented.method + undocumented.path}>
+              {undocumented.method} {undocumented.path}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

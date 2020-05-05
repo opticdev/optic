@@ -148,19 +148,33 @@ export function TestingDashboard(props) {
     captureId,
   ]);
 
-  const error = reportError || specError || captureError;
+  const {
+    loading: loadingUndocumentedEndpoints,
+    result: undocumentedEndpoints,
+    error: undocumentedEndpointsError,
+  } = useTestingService(
+    (service) => service.loadUndocumentedEndpoints(captureId),
+    [captureId]
+  );
+
+  const error =
+    reportError || specError || captureError || undocumentedEndpointsError;
   if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
 
   return (
     <>
-      {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
+      {(loadingReport ||
+        loadingSpec ||
+        loadingCapture ||
+        loadingUndocumentedEndpoints) && <Loading />}
 
-      {report && spec && capture && (
+      {report && spec && capture && undocumentedEndpoints && (
         <ReportSummary
           report={report}
           spec={spec}
           capture={capture}
           currentEndpointId={endpointId}
+          undocumentedEndpoints={undocumentedEndpoints}
         />
       )}
     </>
