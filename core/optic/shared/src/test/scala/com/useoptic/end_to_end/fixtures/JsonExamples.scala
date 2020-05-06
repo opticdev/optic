@@ -8,10 +8,18 @@ object JsonExamples {
   val basicWithDueDate = json"""{ "task": "Build It", "isDone": false , "dueData": "TUESDAY"}"""
   val basicTodoWithoutStatus = json"""{"message": "Hello"}"""
 
+  val emptyObject = json"""{}"""
 
+  val emptyArray = json"""[]"""
   val stringArray = json"""["string1", "string2", "string3", "string4", "string5"]"""
   val stringArrayWithNumbers = json"""["string1", "string2", 3, "string4", 5, 6, 7, 8, 9, 10, 11, 12]"""
 
+  val objectsWithOptionalsArray = json"""[{"field": true}, {"field": false}, {"fieldN": 12}]"""
+  val objectsAndStringsInArray = json"""[{"field": true}, "HELLO"]"""
+
+  val objectWithNull = json"""{"value": null}"""
+  val objectWithNullAsString = json"""{"value": "String"}"""
+  val objectWithNullAsNumber = json"""{"value": 123}"""
 
   val nestedSimple = json"""{"task": "Build It", "isDone": false,  "dueData": "MONDAY"}"""
   val nestedSimpleNew = json"""{"task": "Build It", "isDone": false,  "dueData": "MONDAY", "novelField": {"a": true}}"""

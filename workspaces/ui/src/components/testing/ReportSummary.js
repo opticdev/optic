@@ -156,11 +156,11 @@ export default function ReportSummary(props) {
                       )}
                     </div>
                   </div>
-
-                  {currentEndpointId && endpoint.id === currentEndpointId && (
-                    <EndpointReport endpoint={endpoint} captureId={captureId} />
-                  )}
                 </ReportEndpointLink>
+
+                {currentEndpointId && endpoint.id === currentEndpointId && (
+                  <EndpointReport endpoint={endpoint} captureId={captureId} />
+                )}
               </Card>
             </li>
           ))}
@@ -288,6 +288,7 @@ const useStyles = makeStyles((theme) => ({
 
   endpointCard: {
     display: 'flex',
+    flexDirection: 'column',
     backgroundColor: 'rgba(255,255,255,0)',
     boxShadow: 'none',
 

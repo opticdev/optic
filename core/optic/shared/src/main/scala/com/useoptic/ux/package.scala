@@ -75,10 +75,11 @@ package object ux {
                                 contentType: Option[String],
                                 statusCode: Option[Int],
                                 description: DiffDescription)
-                               (implicit val toSuggestions: ToSuggestions, _previewDiff: (HttpInteraction) => Option[SideBySideRenderHelper], _previewDiffShape: (HttpInteraction) => Option[ShapeOnlyRenderHelper]) extends DiffBlock {
-    def suggestions = toSuggestions()
+                               (implicit val getSuggestion: Boolean => InteractiveDiffInterpretation, _previewDiff: (HttpInteraction) => Option[SideBySideRenderHelper], _previewDiffShape: (HttpInteraction, Boolean) => Option[ShapeOnlyRenderHelper]) extends DiffBlock {
+    def suggestion(inferPolymorphism: Boolean): InteractiveDiffInterpretation = getSuggestion(inferPolymorphism)
+    override def suggestions: Seq[InteractiveDiffInterpretation] = Seq(suggestion(false))
     def previewRender(interaction: HttpInteraction = interactions.head): Option[SideBySideRenderHelper] = _previewDiff(interaction)
-    def previewShape(interaction: HttpInteraction = interactions.head): Option[ShapeOnlyRenderHelper] = _previewDiffShape(interaction)
+    def previewShape(interaction: HttpInteraction, inferPolymorphism: Boolean): Option[ShapeOnlyRenderHelper] = _previewDiffShape(interaction, inferPolymorphism)
 
   }
 
