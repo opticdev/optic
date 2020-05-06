@@ -113,6 +113,32 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
         bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
       };
     }
+
+    async loadUndocumentedEndpoints(captureId) {
+      await new Promise((r) => setTimeout(r, 200));
+      const events = getSpecEvents(captureId);
+      const samples = getSamples(captureId);
+      const { rfcState } = queriesFromEvents(events);
+
+      const diffManager = DiffManagerFacade.newFromInteractions(
+        samples,
+        () => {}
+      );
+      diffManager.updatedRfcState(rfcState);
+
+      const undocumentedUrlsSeq = diffManager.unmatchedUrls(true);
+
+      return JsonHelper.seqToJsArray(undocumentedUrlsSeq).map(
+        ({ method, path, pathId, count }) => {
+          return {
+            method,
+            path,
+            pathId,
+            count,
+          };
+        }
+      );
+    }
   }
 
   return new ExampleTestingService(orgId);

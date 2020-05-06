@@ -22,7 +22,13 @@ import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
-  const { capture, report, spec, currentEndpointId } = props;
+  const {
+    capture,
+    report,
+    spec,
+    currentEndpointId,
+    undocumentedEndpoints,
+  } = props;
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
@@ -169,6 +175,52 @@ export default function ReportSummary(props) {
         // @TODO: revisit this empty state
         <p>No endpoints have been documented yet</p>
       )}
+
+      <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
+
+      {undocumentedEndpoints.length > 0 && (
+        <ul className={classes.endpointsList}>
+          {undocumentedEndpoints.map((undocumented) => (
+            <li
+              key={undocumented.method + undocumented.path}
+              className={classNames(
+                classes.endpointsListItem,
+                classes.isUndocumented
+              )}
+            >
+              <Card className={classes.endpointCard}>
+                <div className={classes.endpointHeader}>
+                  <span
+                    className={classNames(
+                      classes.endpointMethod,
+                      classesHttpMethods[undocumented.method]
+                    )}
+                  >
+                    {undocumented.method}
+                  </span>
+                  <code className={classes.endpointPath}>
+                    {undocumented.path}
+                  </code>
+
+                  <div className={classes.endpointStats}>
+                    <span
+                      className={classNames(
+                        classes.endpointChip,
+                        classes.endpointIncompliantChip
+                      )}
+                    >
+                      <strong>
+                        {undocumented.count}/{undocumented.count}
+                      </strong>
+                      {' incompliant'}
+                    </span>
+                  </div>
+                </div>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -286,6 +338,14 @@ const useStyles = makeStyles((theme) => ({
     listStyleType: 'none',
   },
 
+  isUndocumented: {}, // for use below
+
+  endpointsListItem: {
+    '&$isUndocumented': {
+      padding: theme.spacing(1, 0),
+    },
+  },
+
   endpointCard: {
     display: 'flex',
     flexDirection: 'column',
@@ -348,11 +408,20 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
 
     fontWeight: theme.typography.fontWeightRegular,
+
+    '$isUndocumented &': {
+      opacity: 0.5,
+    },
   },
 
   endpointPath: {
     fontSize: theme.typography.pxToRem(13),
     color: theme.palette.primary.main,
+
+    '$isUndocumented &': {
+      opacity: 0.8,
+      fontStyle: 'italic',
+    },
   },
 
   endpointStats: {
@@ -373,6 +442,10 @@ const useStyles = makeStyles((theme) => ({
 
     '& > strong': {
       fontSize: theme.typography.pxToRem(13),
+    },
+
+    '$isUndocumented &': {
+      opacity: 0.6,
     },
   },
 
