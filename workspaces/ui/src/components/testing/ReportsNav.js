@@ -140,6 +140,12 @@ const useStyles = makeStyles((theme) => ({
   navRoot: {
     padding: theme.spacing(2),
     flexGrow: 1,
+    position: 'fixed',
+    width: 'inherit',
+    height: '100vh',
+    overflowY: 'scroll',
+
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
     background: theme.palette.grey[100],
   },
 
