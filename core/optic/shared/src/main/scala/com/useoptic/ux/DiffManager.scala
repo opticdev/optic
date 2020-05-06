@@ -243,6 +243,14 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
     val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
 
+    def toNewRegionSuggestion(inferPolymorphism: Boolean, diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): InteractiveDiffInterpretation = {
+      if (inferPolymorphism) {
+        suggestionsForDiff(diff, interactions)
+      } else {
+        suggestionsForDiff(diff, Vector(interactions.head))
+      }
+    }.head
+
     val newRegions = interactionsGroupedByDiffs.collect {
       case (diff: UnmatchedRequestBodyContentType, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
@@ -252,9 +260,19 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
         val bodies = interactions.map(_.request.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
 
-        val previewShape = (interaction: HttpInteraction) => preview.map(_._2)
+        val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
+          if (inferPolymorphism) {
+            preview.map(_._2)
+          } else {
+            DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.request.body)).flatten).map(_._2)
+          }
+        }
 
-        NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None, description)(() => suggestionsForDiff(diff, interactions.toVector), previewRender, previewShape)
+        NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None, description)(
+          (inferPolymorphism: Boolean) => toNewRegionSuggestion(inferPolymorphism, diff, interactions.toVector),
+          previewRender,
+          previewShape
+        )
       }
       case (diff: UnmatchedResponseBodyContentType, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
@@ -264,9 +282,19 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
         val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
 
-        val previewShape = (interaction: HttpInteraction) => preview.map(_._2)
+        val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
+          if (inferPolymorphism) {
+            preview.map(_._2)
+          } else {
+            DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
+          }
+        }
 
-        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff, interactions.toVector), previewRender, previewShape)
+        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()), description)(
+          (inferPolymorphism: Boolean) => toNewRegionSuggestion(inferPolymorphism, diff, interactions.toVector),
+          previewRender,
+          previewShape
+        )
       }
       case (diff: UnmatchedResponseStatusCode, interactions) => {
         val description = descriptionInterpreters.interpret(diff, interactions.head)
@@ -275,9 +303,20 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
         val preview = DiffPreviewer.shapeOnlyFromShapeBuilder(bodies)
-        val previewShape = (interaction: HttpInteraction) => preview.map(_._2)
 
-        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff, interactions.toVector), previewRender, previewShape)
+        val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
+          if (inferPolymorphism) {
+            preview.map(_._2)
+          } else {
+            DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
+          }
+        }
+
+        NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()), description)(
+          (inferPolymorphism: Boolean) => toNewRegionSuggestion(inferPolymorphism, diff, interactions.toVector),
+          previewRender,
+          previewShape
+        )
       }
     }.toSeq
 
