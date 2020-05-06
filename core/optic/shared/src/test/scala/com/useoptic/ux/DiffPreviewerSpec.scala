@@ -31,12 +31,14 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       val traverse = new JsonLikeAndSpecTraverser(shapeExample._2, visitor)
 
       traverse.traverseRootShape(JsonLikeFrom.json(observation), shapeExample._1.shapeId)
-      diffList.toSet
+      diffList.toVector
     }
 
-     DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId), previewDiffs)
-  }
+    import com.useoptic.utilities.DistinctBy._
+    val diffs = previewDiffs.distinctBy(i => i.shapeTrail).toSet
 
+    DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId), diffs, previewDiffs.toSet)
+  }
   def shapeOnlyPreview(shapeExample: (ShapeEntity, RfcState)) = {
     DiffPreviewer.previewShape(shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId)).get
   }

@@ -5,6 +5,9 @@ import scala.collection.SeqLike
 object DistinctBy {
 
   implicit class DistinctBySeqLike[A, B](seq: Seq[A]) {
+    def distinctBy(discriminator: A => B): Seq[A] = {
+      distinctByIfDefined((i: A) => Some(discriminator(i)))
+    }
     def distinctByIfDefined(discriminator: A => Option[B]): Seq[A] = {
       val seen = scala.collection.mutable.Set[B]()
       seq.filter(a => {

@@ -1,15 +1,20 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.rfc.Commands.RfcCommand
-import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.contexts.rfc.{RfcService, RfcServiceJSFacade, RfcState}
+import com.useoptic.contexts.shapes.ShapeEntity
+import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.helpers.SpecHelpers
 import com.useoptic.diff.interactions.TestHelpers
+import com.useoptic.diff.interactions.visitors.DiffVisitors
+import com.useoptic.diff.shapes.{JsonLikeTraverser, JsonTrail, ShapeTrail}
 import com.useoptic.dsa.SequentialIdGenerator
-import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, Request, Response}
+import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
+import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, JsonLikeFrom, Request, Response}
 import io.circe.Json
 import org.scalatest.FunSpec
 
-class DiffManagerSpec extends FunSpec {
+class DiffManagerSpec extends FunSpec with JsonFileFixture {
 
   val interactionIdGenerator = new SequentialIdGenerator("interaction")
 
