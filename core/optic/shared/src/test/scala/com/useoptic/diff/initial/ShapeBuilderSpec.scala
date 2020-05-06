@@ -103,4 +103,5 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     println(CommandSerialization.toJson(result.commands))
     rfcService.handleCommandSequence("id", result.commands, commandContext)
   }
+
 }

@@ -46,6 +46,10 @@ import DiffHunkViewer from './DiffHunkViewer';
 import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { ShapeBox } from './DiffReviewExpanded';
 import { ShapeOnlyViewer } from './shape_viewers/ShapeOnlyShapeRows';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import { LightTooltip } from '../../tooltips/LightTooltip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -326,6 +330,7 @@ function _NewRegions(props) {
 
   const [deselected, setDeselected] = useState([]);
   const [showExpanded, setShowExpanded] = useState(false);
+  const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
   if (lengthScala(newRegions) === 0) {
     return null;
@@ -350,7 +355,9 @@ function _NewRegions(props) {
     ignoreDiff(...allIgnored);
     const allApproved = filterScala(newRegions)(
       (diffBlock) => !isDeselected(diffBlock)
-    ).map((i) => i.firstSuggestion);
+    ).map((i) => {
+      return i.suggestion(inferPolymorphism);
+    });
     acceptSuggestion(...allApproved);
   };
 
@@ -359,7 +366,7 @@ function _NewRegions(props) {
     ignoreDiff(...allIgnored);
   };
 
-  const PreviewNewBodyRegion = ({ diff }) => {
+  const PreviewNewBodyRegion = ({ diff, inferPolymorphism }) => {
     const isChecked = !isDeselected(diff);
     const { interactions } = diff;
     const length = lengthScala(interactions);
@@ -372,7 +379,9 @@ function _NewRegions(props) {
 
     const currentInteraction = getIndex(interactions)(interactionIndex - 1);
     const preview = getOrUndefined(diff.previewRender(currentInteraction));
-    const shapePreview = getOrUndefined(diff.previewShape(currentInteraction));
+    const shapePreview = getOrUndefined(
+      diff.previewShape(currentInteraction, inferPolymorphism)
+    );
 
     return (
       <>
@@ -461,13 +470,23 @@ function _NewRegions(props) {
 
   const newRequests = mapScala(newRegions)((diff) => {
     if (diff.inRequest) {
-      return <PreviewNewBodyRegion diff={diff} />;
+      return (
+        <PreviewNewBodyRegion
+          diff={diff}
+          inferPolymorphism={inferPolymorphism}
+        />
+      );
     }
   }).filter((i) => !!i);
 
   const newResponses = mapScala(newRegions)((diff) => {
     if (diff.inResponse) {
-      return <PreviewNewBodyRegion diff={diff} />;
+      return (
+        <PreviewNewBodyRegion
+          diff={diff}
+          inferPolymorphism={inferPolymorphism}
+        />
+      );
     }
   }).filter((i) => !!i);
 
@@ -504,6 +523,24 @@ function _NewRegions(props) {
       </div>
 
       <div className={classes.approveNewRegions}>
+        <LightTooltip title="Use all example requests to infer all the Optional, Nullable and OneOfs in your bodies automatically. If you leave this option disabled, Optic will allow you to review the polymorphism in your API manually.">
+          <FormControlLabel
+            style={{ marginRight: 12 }}
+            control={
+              <Switch
+                checked={inferPolymorphism}
+                onChange={(e) => setInferPolymorphism(e.target.checked)}
+                color="primary"
+              />
+            }
+            labelPlacement="start"
+            label={
+              <Typography variant="body1" color="textSecondary">
+                Infer Polymorphism
+              </Typography>
+            }
+          />
+        </LightTooltip>
         <Button color="default" onClick={ignoreAll} style={{ marginRight: 10 }}>
           Ignore All
         </Button>

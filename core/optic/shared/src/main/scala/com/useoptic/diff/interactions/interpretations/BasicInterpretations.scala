@@ -8,13 +8,13 @@ import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInSha
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuilder}
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, Resolvers, ShapeTrail, UnknownTrail}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.logging.Logger
-import com.useoptic.types.capture.HttpInteraction
+import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 
 class BasicInterpretations(rfcState: RfcState) {
 
@@ -77,21 +77,25 @@ class BasicInterpretations(rfcState: RfcState) {
     )
   }
 
-  def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
+  def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interactions: Vector[HttpInteraction]): InteractiveDiffInterpretation = {
+    val baseInteraction = interactions.head
     val requestId = RequestsServiceHelper.newRequestId()
     val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
     val baseCommands = Seq(
-      RequestsCommands.AddRequest(requestId, pathId, interaction.request.method),
+      RequestsCommands.AddRequest(requestId, pathId, baseInteraction.request.method),
     )
     interactionTrail.requestBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
+        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-          val builtShape = new ShapeBuilder(jsonBody.get).run
-          val commands = baseCommands ++ builtShape.commands ++ Seq(
-            RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+
+          val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.response.body)))
+
+          val commands = baseCommands ++ buildCommands.flatten ++ Seq(
+            RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, rootShapeId, isRemoved = false))
           )
+
           InteractiveDiffInterpretation(
             s"Add Request with ${contentType} Body",
             s"Added Request with ${contentType} Body",
@@ -121,20 +125,23 @@ class BasicInterpretations(rfcState: RfcState) {
     }
   }
 
-  def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction) = {
+  def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interactions: Vector[HttpInteraction]) = {
+    val baseInteraction = interactions.head
     val responseId = RequestsServiceHelper.newResponseId()
     val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
     val baseCommands = Seq(
-      RequestsCommands.AddResponseByPathAndMethod(responseId, pathId, interaction.request.method, interaction.response.statusCode),
+      RequestsCommands.AddResponseByPathAndMethod(responseId, pathId, baseInteraction.request.method, baseInteraction.response.statusCode),
     )
     interactionTrail.responseBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
+        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-          val builtShape = new ShapeBuilder(jsonBody.get).run
-          val commands = baseCommands ++ builtShape.commands ++ Seq(
-            RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+
+          val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.response.body)))
+
+          val commands = baseCommands ++ buildCommands.flatten ++ Seq(
+            RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, rootShapeId, isRemoved = false))
           )
 
           InteractiveDiffInterpretation(

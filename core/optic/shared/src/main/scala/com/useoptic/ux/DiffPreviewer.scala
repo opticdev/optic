@@ -1,23 +1,22 @@
 package com.useoptic.ux
 
+import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{Events, RfcCommandContext, RfcService, RfcState}
-import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldId, ShapeId}
-import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, ListKind, NullableKind, NumberKind, ObjectKind, OneOfKind, OptionalKind, StringKind, UnknownKind}
+import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.shapes.ShapesHelper._
+import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.BodyUtilities
-import com.useoptic.diff.interactions.interpreters.DiffDescription
-import com.useoptic.diff.shapes.{ArrayVisitor, GenericWrapperVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ListItemTrail, ListShapeVisitor, ObjectFieldTrail, ObjectShapeVisitor, ObjectVisitor, OneOfVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
-import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
-import com.useoptic.dsa.SequentialIdGenerator
+import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
+import com.useoptic.diff.shapes.{JsonTrail, _}
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{Body, JsonLike}
-import com.useoptic.ux.ExampleRenderInterfaces.{ExampleArray, ExampleItem, ExampleObject, ExamplePrimitive, ExampleRenderVisitorHelper, KnownExampleField, MissingExampleField, UnexpectedExampleField}
-import com.useoptic.ux.ShapeRenderInterfaces.{SpecArray, SpecField, SpecObject, SpecOneOf, SpecPrimitive, SpecRenderVisitorHelper, WrappedType}
-import io.circe.{Json, JsonObject}
+import com.useoptic.ux.ExampleRenderInterfaces._
+import com.useoptic.ux.ShapeRenderInterfaces._
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
@@ -26,20 +25,17 @@ import scala.util.Try
 @JSExportAll
 object DiffPreviewer {
 
-  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult]): SideBySideRenderHelper = {
-    import com.useoptic.diff.shapes.JsonLikeTraverser
+  ///@todo make return optional
+  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult]): Option[SideBySideRenderHelper] = shapeIdOption map { shapeId =>
 
-    //    val shapeRenderVisitor = new ShapeRenderVisitor(spec)
-    //first traverse the example
-    val exampleRenderVisitor = new ExampleRenderVisitor(spec, diffs)
-    val jsonLikeTraverser = new JsonLikeTraverser(spec, exampleRenderVisitor)
-    jsonLikeTraverser.traverse(jsonLike, JsonTrail(Seq.empty), shapeIdOption.map(i => ShapeTrail(i, Seq.empty)))
-
-    //second traversal of spec with examples
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffs)
-    val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
-    shapeIdOption.foreach(shapeId => specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq())))
+    //first traverse the example
+    val exampleRenderVisitor = new ExampleRenderVisitorNew(spec, diffs)
+    val jsonLikeTraverser = new JsonLikeAndSpecTraverser(spec, exampleRenderVisitor)
+    jsonLikeTraverser.traverseRootShape(jsonLike, shapeId)
 
+    val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
+    specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
 
     new SideBySideRenderHelper(
       exampleRenderVisitor.shapes,
@@ -59,23 +55,34 @@ object DiffPreviewer {
   }
 
   def previewBody(body: Body): Option[SideBySideRenderHelper] = {
-    val parsedOption = BodyUtilities.parseBody(body)
-    if (parsedOption.isDefined) {
-      Some(previewDiff(parsedOption , RfcState.empty, None, Set.empty))
-    } else None
+    BodyUtilities.parseBody(body).map(body => {
+      val exampleRenderVisitor = new ExampleRenderVisitorNew(RfcState.empty, Set.empty)
+      val jsonLikeTraverser = new JsonLikeTraverserWithSpecStubs(RfcState.empty, exampleRenderVisitor)
+      jsonLikeTraverser.traverse(Some(body), JsonTrail(Seq.empty))
+
+      new SideBySideRenderHelper(
+        exampleRenderVisitor.shapes,
+        exampleRenderVisitor.fields,
+        exampleRenderVisitor.items,
+        Map.empty,
+        JsonTrail(Seq.empty).toString
+      )
+    })
   }
 
-  def shapeOnlyFromShapeBuilder(jsonLike: Option[JsonLike]): Option[ShapeOnlyRenderHelper] = jsonLike flatMap { json =>
-    val shapeBuilder = new ShapeBuilder(json)
-    val result = shapeBuilder.run
+  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike]): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
 
-    val commands = result.commands
-    val shapeId = result.rootShapeId
+    if (bodies.isEmpty) {
+      return None
+    }
+
+    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)
+    val flattenedCommands = commands.flatten
 
     val simulatedId = "simulated"
     val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
     val service = new RfcService(new InMemoryEventStore[Events.RfcEvent])
-    commands.foreach(command => {
+    flattenedCommands.foreach(command => {
       val result = Try(service.handleCommand(simulatedId, command, commandContext))
       if (result.isFailure) {
         Logger.log(command)
@@ -85,12 +92,12 @@ object DiffPreviewer {
     })
 
     val rfcState = service.currentState(simulatedId)
-    previewShape(rfcState, Some(shapeId))
+    previewShape(rfcState, Some(shapeId)).map(preview => (flattenedCommands, preview))
   }
 
 }
 
-class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends JsonLikeVisitors with ExampleRenderVisitorHelper {
+class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult]) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
 
   def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
     diffs.collect {
@@ -98,187 +105,233 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
     }
   }
 
-  override val objectVisitor: ObjectVisitor = new ObjectVisitor {
-    override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
+  override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {
+    val diffVisitor = new JsonLikeAndSpecDiffObjectVisitor(spec, (_) => Unit, (_) => Unit)
 
-      def idFromName(name: String) = bodyTrail.withChild(JsonObjectKey(name)).toString
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[Resolvers.ChoiceOutput], itemChoiceCallback: ObjectKeyChoiceCallback): Unit = {
+      diffVisitor.visit(json, jsonTrail, trailOrigin, trailChoices, (matches, getChoicesForKey) => {
+        // assuming one or zero choices
+        if (matches.headOption.isDefined) {
+          val objectMatch = matches.head
 
-      val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
-        .map(fieldId => {
-          val field = spec.shapesState.fields(fieldId)
-          val fieldShape = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, expected.bindings).flatMap(x => {
-            Some(x.shapeEntity)
-          }).get
-          (field.descriptor.name -> (idFromName(field.descriptor.name), field, fieldShape))
-        }).toMap
+          def idFromName(name: String) = jsonTrail.withChild(JsonObjectKey(name)).toString
 
-      val knownFieldsIds = fieldNameToId.values.map(_._1)
+          val expected = Resolvers.resolveTrailToCoreShape(spec, objectMatch.shapeTrail(), Map.empty)
+          val observedFields = json.fields
 
-      val missingFieldIds = fieldNameToId.flatMap(entry => {
-        val (fieldName, (fieldId, field, fieldShape)) = entry
-        val fieldTrail = bodyTrail.withChild(JsonObjectKey(fieldName))
-        if (!value.contains(fieldName)) {
+          val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
+            .map(fieldId => {
+              val field = spec.shapesState.fields(fieldId)
+              val fieldShape = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, expected.bindings).flatMap(x => {
+                Some(x.shapeEntity)
+              }).get
+              (field.descriptor.name -> (idFromName(field.descriptor.name), field, fieldShape))
+            }).toMap
 
-          pushField(
-            MissingExampleField(fieldTrail.toString, fieldName, fieldId, fieldShape.shapeId, diffs = diffsByTrail(fieldTrail))
+          val missingFieldIds = fieldNameToId.flatMap(entry => {
+            val (fieldName, (fieldId, field, fieldShape)) = entry
+            val fieldTrail = jsonTrail.withChild(JsonObjectKey(fieldName))
+            if (!observedFields.contains(fieldName)) {
+              pushField(
+                MissingExampleField(fieldTrail.toString, fieldName, fieldId, fieldShape.shapeId, diffs = diffsByTrail(fieldTrail))
+              )
+              Some(fieldTrail.toString)
+            } else None
+          })
+
+          val knownFieldsIds = fieldNameToId.flatMap(entry => {
+            val (fieldName, (fieldId, field, fieldShape)) = entry
+            if (observedFields.contains(fieldName)) {
+              val fieldTrail = jsonTrail.withChild(JsonObjectKey(fieldName))
+              val jsonValue = observedFields(fieldName)
+              pushField(
+                KnownExampleField(fieldTrail.toString, fieldName, field.fieldId, fieldShape.shapeId, jsonValue.asJson, diffs = diffsByTrail(fieldTrail))
+              )
+              Some(fieldTrail.toString)
+            } else None
+          })
+
+          val extraFieldIds = observedFields.flatMap { case (key, value) => {
+            if (!fieldNameToId.contains(key)) {
+              Logger.log(s"object has extra field ${key}")
+              val fieldTrail = jsonTrail.withChild(JsonObjectKey(key))
+              val extraFieldId = fieldTrail.toString
+
+              pushField(
+                UnexpectedExampleField(fieldTrail.toString, key, value.asJson, diffs = diffsByTrail(fieldTrail))
+              )
+
+              Some(extraFieldId)
+            } else None
+          }
+          }
+
+          pushShape(ExampleObject(
+            jsonTrail.toString,
+            Some(expected.shapeEntity.shapeId),
+            knownFieldsIds.toSeq,
+            missingFieldIds.toSeq,
+            extraFieldIds.toSeq,
+            diffs = diffsByTrail(jsonTrail)
+          ))
+
+        } else {
+          //for unknown
+          val objectId = jsonTrail.toString
+          val objectFields = json.fields
+
+          val fieldIds = objectFields.map { case (key, value) => {
+            val fieldTrail = jsonTrail.withChild(JsonObjectKey(key))
+            val fieldId = fieldTrail.toString
+            pushField(UnexpectedExampleField(fieldId, key, value.asJson, Set.empty))
+            fieldId
+          }
+          }.toSeq
+
+          pushShape(
+            ExampleObject(
+              objectId,
+              None,
+              Seq.empty,
+              Seq.empty,
+              unexpectedFieldIds = fieldIds,
+              Set.empty
+            )
           )
-
-          Some(fieldId)
-        } else None
+        }
+        itemChoiceCallback(matches, getChoicesForKey)
       })
-
-      val extraFieldIds = value.flatMap { case (key, value) => {
-        if (!fieldNameToId.contains(key)) {
-          Logger.log(s"object has extra field ${key}")
-          val fieldTrail = bodyTrail.withChild(JsonObjectKey(key))
-          val extraFieldId = fieldTrail.toString
-
-          pushField(
-            UnexpectedExampleField(fieldTrail.toString, key, value.asJson, diffs = diffsByTrail(fieldTrail))
-          )
-
-          Some(extraFieldId)
-        } else None
-      }
-      }
-
-
-      pushShape(ExampleObject(
-        bodyTrail.toString,
-        Some(expected.shapeEntity.shapeId),
-        knownFieldsIds.toSeq,
-        missingFieldIds.toSeq,
-        extraFieldIds.toSeq,
-        diffs = diffsByTrail(bodyTrail)
-      ))
-
     }
-
-    override def beginUnknown(value: Map[String, JsonLike], bodyTrail: JsonTrail): Unit = {
-      val objectId = bodyTrail.toString
-
-      val fieldIds = value.map { case (key, value) => {
-        val fieldTrail = bodyTrail.withChild(JsonObjectKey(key))
-        val fieldId = fieldTrail.toString
-        pushField(UnexpectedExampleField(fieldId, key, value.asJson, Set.empty))
-        fieldId
-      }
-      }.toSeq
-
-      pushShape(
-        ExampleObject(
-          objectId,
-          None,
-          Seq.empty,
-          Seq.empty,
-          unexpectedFieldIds = fieldIds,
-          Set.empty
-        )
-      )
-    }
-
-    override def visit(key: String, jsonLike: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail], parentBindings: ParameterBindings): Unit = {
-      //only map known fields here
-      if (trail.isDefined) {
-        val fieldEntity = trail.get.lastField().flatMap(i => spec.shapesState.fields.get(i)).get
-        val fieldShape = Resolvers.resolveFieldToShape(spec.shapesState, fieldEntity.fieldId, parentBindings)
-        pushField(KnownExampleField(
-          bodyTrail.toString,
-          key,
-          fieldEntity.fieldId,
-          fieldShape.get.shapeEntity.shapeId,
-          jsonLike.asJson,
-          diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(key)))
-        ))
-      }
-    }
-
-    override def end(): Unit = {}
   }
-  override val arrayVisitor: ArrayVisitor = new ArrayVisitor {
+  override val arrayVisitor: JlasArrayVisitor = new JlasArrayVisitor {
+    val diffVisitor = new JsonLikeAndSpecDiffArrayVisitor(spec, _ => Unit, _ => Unit)
 
-    override def beginUnknown(value: Vector[JsonLike], bodyTrail: JsonTrail): Unit = {
-      val arrayId = bodyTrail.toString
-      val ids = value.zipWithIndex.map {
-        case (i, index) => {
-          val id = bodyTrail.withChild(JsonArrayItem(index)).toString
-          pushItem(ExampleItem(
-            id,
-            index.intValue(),
-            i.asJson,
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[Resolvers.ChoiceOutput], itemChoiceCallback: ArrayItemChoiceCallback): Unit = {
+      diffVisitor.visit(json, jsonTrail, trailOrigin, trailChoices, (matches) => {
+        val wasTheListMatched = matches.nonEmpty
+        if (wasTheListMatched) {
+          val expected = Resolvers.resolveTrailToCoreShape(spec, trailOrigin, Map.empty)
+          val resolvedListItem = Resolvers.resolveParameterToShape(spec.shapesState, expected.shapeEntity.shapeId, ListKind.innerParam, expected.bindings)
+
+          val ids = json.items.zipWithIndex.map {
+            case (i, index) => {
+              val itemTrail = jsonTrail.withChild(JsonArrayItem(index))
+              pushItem(ExampleItem(
+                itemTrail.toString,
+                index.intValue(),
+                i.asJson,
+                diffs = diffsByTrail(itemTrail)
+              ))
+              itemTrail.toString
+            }
+          }
+
+          pushShape(ExampleArray(
+            jsonTrail.toString,
+            Some(expected.shapeEntity.shapeId),
+            resolvedListItem.map(_.shapeId),
+            ids,
+            diffs = diffsByTrail(jsonTrail)
+          ))
+
+        } else {
+          val arrayId = jsonTrail.toString
+          val ids = json.items.zipWithIndex.map {
+            case (i, index) => {
+              val id = jsonTrail.withChild(JsonArrayItem(index)).toString
+              pushItem(ExampleItem(
+                id,
+                index.intValue(),
+                i.asJson,
+                Set.empty
+              ))
+              id
+            }
+          }
+
+          pushShape(ExampleArray(
+            arrayId,
+            None,
+            None,
+            ids,
             Set.empty
           ))
-          id
+
         }
-      }
-
-      pushShape(ExampleArray(
-        arrayId,
-        None,
-        None,
-        ids,
-        Set.empty
-      ))
+        itemChoiceCallback(matches)
+      })
     }
-
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {
-
-
-      val listShapeId = resolvedShapeTrail.shapeEntity.shapeId
-      val resolvedListItem = Resolvers.resolveParameterToShape(spec.shapesState, listShapeId, ListKind.innerParam, resolvedShapeTrail.bindings)
-
-      val ids = value.zipWithIndex.map {
-        case (i, index) => bodyTrail.withChild(JsonArrayItem(index)).toString
-      }
-
-      pushShape(ExampleArray(
-        bodyTrail.toString,
-        Some(resolvedShapeTrail.shapeEntity.shapeId),
-        resolvedListItem.map(_.shapeId),
-        ids,
-        diffs = diffsByTrail(bodyTrail)
-      ))
-    }
-
-    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
-      pushItem(ExampleItem(
-        bodyTrail.toString,
-        index.intValue(),
-        value.asJson,
-        diffs = diffsByTrail(bodyTrail)
-      ))
-    }
-
-    override def end(): Unit = {}
   }
-  override val primitiveVisitor: PrimitiveVisitor = new PrimitiveVisitor {
-    override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
-      val resolvedTrailOption = Try(Resolvers.resolveTrailToCoreShape(spec, trail.get)).toOption
-      if (value.isDefined) {
-        if (resolvedTrailOption.isDefined) {
-          val shape = resolvedTrailOption.get.shapeEntity
-          val baseShapeId = resolvedTrailOption.get.coreShapeKind.baseShapeId
-
-          pushShape(ExamplePrimitive(
-            bodyTrail.toString,
-            baseShapeId,
-            Some(shape.shapeId),
-            value.get.asJson,
-            diffs = diffsByTrail(bodyTrail)
-          ))
-        }
-      }
+  override val objectKeyVisitor: JlasObjectKeyVisitor = new JlasObjectKeyVisitor {
+    override def visit(objectJsonTrail: JsonTrail, objectKeys: Map[String, JsonLike], objectChoices: Seq[Resolvers.ChoiceOutput]): Unit = {
+      //redundant
     }
+  }
+  override val primitiveVisitor: JlasPrimitiveVisitor = new JlasPrimitiveVisitor {
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[Resolvers.ChoiceOutput]): Unit = {
 
-    override def visitUnknown(value: Option[JsonLike], bodyTrail: JsonTrail): Unit = {
-      if (value.isDefined) {
-        val baseShapeId = Resolvers.jsonToCoreKind(value.get).baseShapeId
+      val choicesGroupedByMatch = (
+        if (json.isBoolean) {
+          trailChoices.groupBy(choice => {
+            choice.coreShapeKind match {
+              case BooleanKind => true
+              case _ => false
+            }
+          })
+        }
+        else if (json.isNumber) {
+          trailChoices.groupBy(choice => {
+            choice.coreShapeKind match {
+              case NumberKind => true
+              case _ => false
+            }
+          })
+        }
+        else if (json.isString) {
+          trailChoices.groupBy(choice => {
+            choice.coreShapeKind match {
+              case StringKind => true
+              case _ => false
+            }
+          })
+        }
+        else if (json.isNull) {
+          trailChoices.groupBy(choice => {
+            choice.coreShapeKind match {
+              case NullableKind => true
+              case _ => false
+            }
+          })
+        }
+        else {
+          throw new Error("expected json to be a boolean, number, string, or null")
+        })
+
+      val matched = choicesGroupedByMatch.getOrElse(true, Seq.empty)
+
+      if (matched.nonEmpty) {
+        val firstMatch = matched.head
+        Try(Resolvers.resolveTrailToCoreShape(spec, firstMatch.shapeTrail())).toOption
+          .foreach(resolvedTrail => {
+            val shape = resolvedTrail.shapeEntity
+            val baseShapeId = resolvedTrail.coreShapeKind.baseShapeId
+
+            pushShape(ExamplePrimitive(
+              jsonTrail.toString,
+              baseShapeId,
+              Some(shape.shapeId),
+              json.asJson,
+              diffs = diffsByTrail(jsonTrail)
+            ))
+          })
+      } else {
+        val baseShapeId = Resolvers.jsonToCoreKind(json).baseShapeId
         pushShape(ExamplePrimitive(
-          bodyTrail.toString,
+          jsonTrail.toString,
           baseShapeId,
           None,
-          value.get.asJson,
-          diffs = diffsByTrail(bodyTrail)
+          json.asJson,
+          diffs = diffsByTrail(jsonTrail)
         ))
       }
     }
@@ -307,8 +360,8 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
           Some(
             SpecField(field.descriptor.name, field.fieldId, fieldShape.shapeEntity.shapeId,
               diffsByTrail(
-              shapeTrail.withChild(ObjectFieldTrail(field.fieldId, fieldShape.shapeEntity.shapeId))
-            ))
+                shapeTrail.withChild(ObjectFieldTrail(field.fieldId, fieldShape.shapeEntity.shapeId))
+              ))
           )
         }
       })
@@ -324,15 +377,15 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
     }
 
     override def visit(key: String, fieldId: FieldId, fieldShapeTrail: ResolvedTrail, fieldTrail: ShapeTrail): Unit = {
-//      val example = exampleFields.get(fieldId).flatMap(_.exampleValue)
-//      pushField(RenderField(
-//        fieldId,
-//        None,
-//        key,
-//        Some(fieldShapeTrail.shapeEntity.shapeId),
-//        example,
-//        diffs = diffsByTrail(fieldTrail)
-//      ))
+      //      val example = exampleFields.get(fieldId).flatMap(_.exampleValue)
+      //      pushField(RenderField(
+      //        fieldId,
+      //        None,
+      //        key,
+      //        Some(fieldShapeTrail.shapeEntity.shapeId),
+      //        example,
+      //        diffs = diffsByTrail(fieldTrail)
+      //      ))
     }
 
     override def end(): Unit = ???

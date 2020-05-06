@@ -15,11 +15,13 @@ class DefaultInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter
   val unspecifiedShapeDiffInterpreter = new UnspecifiedShapeDiffInterpreter(rfcState)
   val missingValueInterpreter = new MissingValueInterpreter(rfcState)
 
-  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
     (
-      basicInterpreters.interpret(diff, interaction)
-        ++ unspecifiedShapeDiffInterpreter.interpret(diff, interaction)
-        ++ missingValueInterpreter.interpret(diff, interaction)
+      basicInterpreters.interpret(diff, interactions)
+        ++ unspecifiedShapeDiffInterpreter.interpret(diff, interactions)
+        ++ missingValueInterpreter.interpret(diff, interactions)
       )
   }
+
+  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = interpret(diff, Vector(interaction))
 }

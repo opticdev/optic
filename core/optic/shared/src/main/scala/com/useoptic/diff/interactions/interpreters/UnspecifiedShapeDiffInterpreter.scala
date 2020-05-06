@@ -89,4 +89,6 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
       case _ => Seq.empty
     }
   }
+
+  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = interpret(diff, interactions.head)
 }
