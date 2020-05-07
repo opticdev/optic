@@ -51,6 +51,7 @@ export default function ReportSummary(props) {
     () =>
       _sortBy(
         props.undocumentedEndpoints,
+        (undocumented) => -undocumented.count,
         (undocumented) => undocumented.path,
         (undocumented) => undocumented.method
       ),
@@ -573,6 +574,7 @@ function createSummary(capture, spec, report) {
     environment: (envTag && envTag.value) || '',
     endpoints: _sortBy(
       endpoints,
+      (endpoint) => -endpoint.counts.incompliant,
       (endpoint) => totalDiffs - endpoint.counts.diffs,
       (endpoint) => endpoint.descriptor.fullPath,
       (endpoint) => endpoint.method
