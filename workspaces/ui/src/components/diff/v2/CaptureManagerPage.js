@@ -224,7 +224,7 @@ function CaptureChooserComponent(props) {
       <div className={classes.header}>
         <FiberManualRecordIcon
           color="secondary"
-          fontSize="medium"
+          fontSize="small"
           style={{ marginRight: 10 }}
         />
         <Typography variant="h6" style={{ fontSize: 19 }}>
@@ -232,34 +232,34 @@ function CaptureChooserComponent(props) {
         </Typography>
         <div style={{ flex: 1 }} />
 
-        <FormControl className={classes.formControl}>
-          <Select
-            placeholder="Select Capture"
-            value={captureId}
-            onChange={handleChange}
-          >
-            {captureContext.captures.map((capture, index) => {
-              return (
-                <MenuItem value={capture.captureId}>
-                  <ListItemText
-                    primary={`${time.ago(capture.lastUpdate)} ${
-                      index === 0 ? '(LATEST) ' : ''
-                    } `}
-                  />
-                  <ListItemSecondaryAction>
-                    {capture.hasDiff && (
-                      <WarningIcon
-                        fontSize="small"
-                        color="secondary"
-                        style={{ marginRight: 8, paddingTop: 5 }}
-                      />
-                    )}
-                  </ListItemSecondaryAction>
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
+          <FormControl className={classes.formControl}>
+            <Select
+              placeholder="Select Capture"
+              value={captureId}
+              onChange={handleChange}
+            >
+              {captureContext.captures.map((capture, index) => {
+                return (
+                  <MenuItem value={capture.captureId} key={capture.captureId}>
+                    <ListItemText
+                      primary={`${time.ago(capture.lastUpdate)} ${
+                        index === 0 ? '(LATEST) ' : ''
+                      } `}
+                    />
+                    <ListItemSecondaryAction>
+                      {capture.hasDiff && (
+                        <WarningIcon
+                          fontSize="small"
+                          color="secondary"
+                          style={{ marginRight: 8, paddingTop: 5 }}
+                        />
+                      )}
+                    </ListItemSecondaryAction>
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
       </div>
     </Paper>
   );
@@ -357,11 +357,12 @@ function CaptureDiffWrapper(props) {
                   <DocSubGroup
                     title={`Endpoint Diffs (${lengthScala(endpointDiffs)})`}
                   >
-                    <List fullWidth>
+                    <List>
                       {mapScala(endpointDiffs)((i) => {
                         const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
                         return (
                           <EndpointsContextStore
+                            key={to}
                             pathId={i.pathId}
                             method={i.method}
                           >
@@ -432,10 +433,11 @@ function CaptureDiffWrapper(props) {
                   <DocSubGroup
                     title={`Undocumented URLs (${lengthScala(newUrls)})`}
                   >
-                    <List fullWidth>
+                    <List>
                       {mapScala(newUrls)((i) => {
                         return (
                           <NewUrlModal
+                            key={i}
                             allUnmatchedPaths={allUnmatchedPaths}
                             newUrl={i}
                             onAdd={(result) => {
