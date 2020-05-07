@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Loading from '../navigation/Loading';
+import ClassNames from 'classnames';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'row', // horizontally on larger screens
     },
   },
+
+  isEmpty: {},
+
   navigationContainer: {
     // keep then navigation fixed
     width: '100%',
@@ -41,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
 
     [theme.breakpoints.up('sm')]: {
       width: (theme.breakpoints.values.sm / 3) * 2,
+    },
+
+    '$isEmpty &': {
+      display: 'none',
     },
   },
   reportContainer: {
@@ -72,6 +80,11 @@ export default function TestingDashboardPage(props) {
     baseUrl,
   ]);
 
+  const [hasCaptures, setHasCaptures] = useState(true); // be optimistic
+  const onCapturesFetched = useCallback((captures) => {
+    setHasCaptures(captures && captures.length > 0);
+  });
+
   if (!hasService) {
     return <Loading />;
   }
@@ -82,26 +95,41 @@ export default function TestingDashboardPage(props) {
         <Page.Navbar mini={true} />
 
         <Page.Body padded={false}>
-          <div className={classes.root}>
+          <div
+            className={ClassNames(classes.root, {
+              [classes.isEmpty]: !hasCaptures,
+            })}
+          >
             <div className={classes.navigationContainer}>
-              <ReportsNavigation currentCaptureId={currentCaptureId} />
+              <ReportsNavigation
+                currentCaptureId={currentCaptureId}
+                onCapturesFetched={onCapturesFetched}
+              />
             </div>
 
-            <div className={classes.reportContainer}>
-              <Switch>
-                <Route
-                  strict
-                  path={routerPaths.testingEndpointDetails}
-                  component={TestingDashboard}
-                />
-                <Route
-                  strict
-                  path={routerPaths.testingCapture}
-                  component={TestingDashboard}
-                />
-                <Route component={DefaultReportRedirect} />
-              </Switch>
-            </div>
+            {hasCaptures ? (
+              <div className={classes.reportContainer}>
+                <Switch>
+                  <Route
+                    strict
+                    path={routerPaths.testingEndpointDetails}
+                    component={TestingDashboard}
+                  />
+                  <Route
+                    strict
+                    path={routerPaths.testingCapture}
+                    component={TestingDashboard}
+                  />
+                  <Route component={DefaultReportRedirect} />
+                </Switch>
+              </div>
+            ) : (
+              <div className={classes.setupInstructions}>
+                <h4>You don't have any captures yet</h4>
+
+                <p>You might need to set them up.</p>
+              </div>
+            )}
           </div>
         </Page.Body>
       </Page>
