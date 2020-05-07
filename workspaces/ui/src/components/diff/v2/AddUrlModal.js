@@ -25,6 +25,7 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
+import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -61,6 +62,12 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   const handleCreate = (purpose) => {
+    track('Documented New URL', {
+      purpose,
+      method: newUrl.method,
+      pathExpression,
+    });
+
     let lastParentPathId = knownPathId;
     const commands = [];
     //create path if missing
