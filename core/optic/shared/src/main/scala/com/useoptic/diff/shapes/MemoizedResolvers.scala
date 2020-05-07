@@ -16,63 +16,63 @@ Cache valid when class instance in memory
 
 class MemoizedResolvers(spec: RfcState) {
 
-  val resolveTrailToCoreShape =  Memo.immutableHashMapMemo[(ShapeTrail, ParameterBindings), ResolvedTrail]{
+  val resolveTrailToCoreShape =  Memo.mutableHashMapMemo[(ShapeTrail, ParameterBindings), ResolvedTrail]{
     case ((a,b)) => SpecResolvers.resolveTrailToCoreShape(spec, a,b)
   }
 
-  val resolveTrailToCoreShapeFromParent =  Memo.immutableHashMapMemo[(ResolvedTrail, Seq[ShapeTrailPathComponent]), ResolvedTrail]{
+  val resolveTrailToCoreShapeFromParent =  Memo.mutableHashMapMemo[(ResolvedTrail, Seq[ShapeTrailPathComponent]), ResolvedTrail]{
     case ((a,b)) => SpecResolvers.resolveTrailToCoreShapeFromParent(spec, a,b)
   }
 
-  val flattenChoice =  Memo.immutableHashMapMemo[(ShapeTrail, Seq[ShapeTrailPathComponent], ParameterBindings), Seq[ChoiceOutput]]{
+  val flattenChoice =  Memo.mutableHashMapMemo[(ShapeTrail, Seq[ShapeTrailPathComponent], ParameterBindings), Seq[ChoiceOutput]]{
     case ((a,b, c)) => SpecResolvers.flattenChoice(spec, a, b, c)
   }
 
-  val listTrailChoices =  Memo.immutableHashMapMemo[(ShapeTrail, ParameterBindings), Seq[ChoiceOutput]]{
+  val listTrailChoices =  Memo.mutableHashMapMemo[(ShapeTrail, ParameterBindings), Seq[ChoiceOutput]]{
     case ((a,b)) => SpecResolvers.listTrailChoices(spec, a, b)
   }
 
-  val resolveTrailPath =  Memo.immutableHashMapMemo[(ResolvedTrail, ShapeTrailPathComponent), ResolvedTrail]{
+  val resolveTrailPath =  Memo.mutableHashMapMemo[(ResolvedTrail, ShapeTrailPathComponent), ResolvedTrail]{
     case ((a,b)) => SpecResolvers.resolveTrailPath(spec.shapesState, a, b)
   }
 
-  val resolveParameterToShape =  Memo.immutableHashMapMemo[(ShapeId, ShapeParameterId, ParameterBindings),  Option[ShapeEntity]]{
+  val resolveParameterToShape =  Memo.mutableHashMapMemo[(ShapeId, ShapeParameterId, ParameterBindings),  Option[ShapeEntity]]{
     case ((a,b, c)) => SpecResolvers.resolveParameterToShape(spec.shapesState, a, b, c)
   }
 
-  val resolveBaseObject =  Memo.immutableHashMapMemo[(ShapeId),  ShapeEntity]{
+  val resolveBaseObject =  Memo.mutableHashMapMemo[(ShapeId),  ShapeEntity]{
     case ((a)) => SpecResolvers.resolveBaseObject(a)(spec.shapesState)
   }
 
-  val resolveToBaseShapeId =  Memo.immutableHashMapMemo[(ShapeId),  ShapeId]{
+  val resolveToBaseShapeId =  Memo.mutableHashMapMemo[(ShapeId),  ShapeId]{
     case ((a)) => SpecResolvers.resolveToBaseShapeId(a)(spec.shapesState)
   }
 
-  val resolveFieldToShapeEntity =  Memo.immutableHashMapMemo[(FieldId, ParameterBindings),  (FlattenedField, Option[ShapeEntity])]{
+  val resolveFieldToShapeEntity =  Memo.mutableHashMapMemo[(FieldId, ParameterBindings),  (FlattenedField, Option[ShapeEntity])]{
     case ((a, b)) => SpecResolvers.resolveFieldToShapeEntity(spec.shapesState, a, b)
   }
 
-  val resolveFieldToShape =  Memo.immutableHashMapMemo[(FieldId, ParameterBindings),  (Option[ResolvedTrail])]{
+  val resolveFieldToShape =  Memo.mutableHashMapMemo[(FieldId, ParameterBindings),  (Option[ResolvedTrail])]{
     case ((a, b)) => SpecResolvers.resolveFieldToShape(spec.shapesState, a, b)
   }
 
-  val tryResolveFieldFromKey =  Memo.immutableHashMapMemo[(ShapeEntity, String),  (Option[FieldId])]{
+  val tryResolveFieldFromKey =  Memo.mutableHashMapMemo[(ShapeEntity, String),  (Option[FieldId])]{
     case ((a, b)) => SpecResolvers.tryResolveFieldFromKey(spec.shapesState, a, b)
   }
 
-  val tryResolveJson =  Memo.immutableHashMapMemo[(InteractionTrail, JsonTrail, HttpInteraction),  (Option[Json])]{
+  val tryResolveJson =  Memo.mutableHashMapMemo[(InteractionTrail, JsonTrail, HttpInteraction),  (Option[Json])]{
     case ((a, b, c)) => SpecResolvers.tryResolveJson(a, b, c)
   }
 
-  val tryResolveJsonLike =  Memo.immutableHashMapMemo[(InteractionTrail, JsonTrail, HttpInteraction),  (Option[JsonLike])]{
+  val tryResolveJsonLike =  Memo.mutableHashMapMemo[(InteractionTrail, JsonTrail, HttpInteraction),  (Option[JsonLike])]{
     case ((a, b, c)) => SpecResolvers.tryResolveJsonLike(a, b, c)
   }
 
-  val tryResolveJsonTrail =  Memo.immutableHashMapMemo[(JsonTrail, Option[JsonLike]),  (Option[JsonLike])]{
+  val tryResolveJsonTrail =  Memo.mutableHashMapMemo[(JsonTrail, Option[JsonLike]),  (Option[JsonLike])]{
     case ((a, b)) => SpecResolvers.tryResolveJsonTrail(a, b)
   }
 
-  val jsonToCoreKind =  Memo.immutableHashMapMemo[(JsonLike),  (CoreShapeKind)]{
+  val jsonToCoreKind =  Memo.mutableHashMapMemo[(JsonLike),  (CoreShapeKind)]{
     case ((a)) => SpecResolvers.jsonToCoreKind(a)
   }
 
