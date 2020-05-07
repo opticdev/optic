@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 const TestingDashboardContext = React.createContext(null);
 
@@ -19,18 +19,29 @@ export function useTestingService(
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isUnmounted = useRef(false);
 
   useEffect(() => {
     performRequest(service)
       .then((result) => {
+        if (isUnmounted.current) return;
         setResult(result);
+
+        // TODO: that we have to check here again probably means we'll want to use useReducer
+        if (isUnmounted.current) return;
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        if (isUnmounted.current) return;
         setError(err);
       });
   }, deps);
+
+  useEffect(() => {
+    return () => {
+      isUnmounted.current = true;
+    };
+  }, []);
 
   return { result, loading, error };
 }
