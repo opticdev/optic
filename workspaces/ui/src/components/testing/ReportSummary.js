@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import { opticEngine } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -8,6 +9,8 @@ import dateFormatRelative from 'date-fns/formatRelative';
 import dateFormatDistance from 'date-fns/formatDistance';
 import { parseISO as dateParseISO } from 'date-fns';
 import { usePageTitle } from '../Page';
+import { useReportPath } from '../../contexts/TestingDashboardContext';
+import _sortBy from 'lodash.sortby';
 
 import {
   createEndpointDescriptor,
@@ -22,22 +25,39 @@ import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
-  const {
-    capture,
-    report,
-    spec,
-    currentEndpointId,
-    undocumentedEndpoints,
-  } = props;
+  const { capture, report, spec, currentEndpointId } = props;
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
+  const reportPath = useReportPath(captureId);
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
     spec,
     report,
   ]);
+
+  // closing endpoint upon clicking report outside list
+  const history = useHistory();
+  const onClickList = useCallback((e) => {
+    // clicks inside list don't close the current endpoint
+    e.stopPropagation();
+  });
+  const onClickContainer = useCallback((e) => {
+    history.replace(reportPath);
+  });
+
+  const undocumentedEndpoints = useMemo(
+    () =>
+      _sortBy(
+        props.undocumentedEndpoints,
+        (undocumented) => -undocumented.count,
+        (undocumented) => undocumented.path,
+        (undocumented) => undocumented.method
+      ),
+    [props.undocumentedEndpoints]
+  );
+
   const {
     endpoints,
     isCapturing,
@@ -56,7 +76,7 @@ export default function ReportSummary(props) {
   );
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} onClick={onClickContainer}>
       <div className={classes.reportMeta}>
         <div className={classes.captureTime}>
           {summary.isCapturing ? (
@@ -71,7 +91,7 @@ export default function ReportSummary(props) {
             <>since {dateFormatRelative(summary.createdAt, now)}</>
           ) : (
             <>
-              {dateFormatRelative(summary.createdAt, now)} for{' '}
+              ended {dateFormatRelative(summary.completedAt, now)} after{' '}
               {dateFormatDistance(summary.completedAt, summary.createdAt)}
             </>
           )}
@@ -93,7 +113,7 @@ export default function ReportSummary(props) {
       <h4 className={classes.endpointsHeader}>Endpoints</h4>
 
       {endpoints.length > 0 ? (
-        <ul className={classes.endpointsList}>
+        <ul className={classes.endpointsList} onClick={onClickList}>
           {endpoints.map((endpoint) => (
             <li
               key={endpoint.id}
@@ -104,6 +124,7 @@ export default function ReportSummary(props) {
             >
               <Card className={classes.endpointCard}>
                 <ReportEndpointLink
+                  replace
                   className={classes.endpointLink}
                   captureId={captureId}
                   endpointId={endpoint.id}
@@ -499,6 +520,13 @@ const CoverageConcerns = opticEngine.com.useoptic.coverage;
 function createSummary(capture, spec, report) {
   const { apiName, endpoints: specEndpoints } = spec;
 
+  const totalInteractions = getCoverageCount(
+    CoverageConcerns.TotalInteractions()
+  );
+  const totalUnmatchedPaths = getCoverageCount(
+    CoverageConcerns.TotalUnmatchedPath()
+  );
+
   const endpoints = specEndpoints.map((endpoint, i) => {
     const endpointDescriptor = createEndpointDescriptor(endpoint, spec);
     const endpointId = getEndpointId(endpoint);
@@ -508,9 +536,11 @@ function createSummary(capture, spec, report) {
     const interactionsCounts = getCoverageCount(
       CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
     );
-    const incompliantInteractions = i % 2; // TODO: Hardcoded test value, replace by deriving from report,
+    const compliantCount = getCoverageCount(
+      CoverageConcerns.TotalForPathAndMethodWithoutDiffs(pathId, httpMethod)
+    );
+    const incompliantInteractions = interactionsCounts - compliantCount;
     const diffsCount = incompliantInteractions * (i % 3 === 0 ? 1 : 2); // TODO: Hardcoded test value, replace by deriving from report,
-    const compliantCount = interactionsCounts - incompliantInteractions;
 
     return {
       id: endpointId,
@@ -525,13 +555,6 @@ function createSummary(capture, spec, report) {
       },
     };
   });
-
-  const totalInteractions = getCoverageCount(
-    CoverageConcerns.TotalInteractions()
-  );
-  const totalUnmatchedPaths = getCoverageCount(
-    CoverageConcerns.TotalUnmatchedPath()
-  );
 
   const totalDiffs = endpoints // TODO: Hardcoded test value, replace by deriving from report
     .map((endpoint) => endpoint.counts.diffs)
@@ -549,7 +572,13 @@ function createSummary(capture, spec, report) {
     isCapturing: !capture.completedAt,
     buildId: (buildIdTag && buildIdTag.value) || '',
     environment: (envTag && envTag.value) || '',
-    endpoints,
+    endpoints: _sortBy(
+      endpoints,
+      (endpoint) => -endpoint.counts.incompliant,
+      (endpoint) => totalDiffs - endpoint.counts.diffs,
+      (endpoint) => endpoint.descriptor.fullPath,
+      (endpoint) => endpoint.method
+    ),
     totalInteractions,
     totalUnmatchedPaths,
     totalDiffs,

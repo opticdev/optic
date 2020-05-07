@@ -9,6 +9,8 @@ case class PathTraversalResult(specTraversalContext: Option[PathComponentId])
 
 class Traverser(spec: RfcState, visitors: Visitors) {
   def traverse(interaction: HttpInteraction) {
+    visitors.interactionVisitor.begin()
+
     val resolvedPath = Utilities.resolvePath(interaction.request.path, spec.requestsState.pathComponents)
     visitors.pathVisitor.visit(interaction, PathVisitorContext(spec, resolvedPath))
 
@@ -43,6 +45,8 @@ class Traverser(spec: RfcState, visitors: Visitors) {
       }
     }
     visitors.responseBodyVisitor.end(interaction, PathVisitorContext(spec, resolvedPath))
+
+    visitors.interactionVisitor.end(interaction, PathVisitorContext(spec, resolvedPath))
   }
 
 

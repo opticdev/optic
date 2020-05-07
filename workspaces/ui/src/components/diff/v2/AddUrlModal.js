@@ -25,7 +25,6 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -62,12 +61,6 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   const handleCreate = (purpose) => {
-    track('Documented New URL', {
-      purpose,
-      method: newUrl.method,
-      pathExpression,
-    });
-
     let lastParentPathId = knownPathId;
     const commands = [];
     //create path if missing
@@ -126,41 +119,45 @@ export const NewUrlModal = withRfcContext((props) => {
         maxWidth="md"
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle>Add New Endpoint</DialogTitle>
-        <DialogContent style={{ marginTop: -20 }}>
-          <PathAndMethod method={newUrl.method} path={pathExpression} />
-          <DialogContentText style={{ marginTop: 12 }}>
-            What does this endpoint do?
-          </DialogContentText>
-          <TextField
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
-            autoFocus
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleCreate(purpose);
-              }
-            }}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNaming(false)}>Back</Button>
-          <Button
-            onClick={() => handleCreate(purpose)}
-            color="secondary"
-            disabled={!matches}
-            endIcon={<NavigateNextIcon />}
-          >
-            Finish
-          </Button>
-        </DialogActions>
+        <form>
+          <DialogTitle>Add New Endpoint</DialogTitle>
+          <DialogContent style={{ marginTop: -20 }}>
+            <PathAndMethod method={newUrl.method} path={pathExpression} />
+            <DialogContentText style={{ marginTop: 12 }}>
+              What does this endpoint do?
+            </DialogContentText>
+            <TextField
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              autoFocus
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleCreate(purpose);
+                }
+              }}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNaming(false)}>Back</Button>
+            <Button
+              type="submit"
+              onClick={() => handleCreate(purpose)}
+              color="secondary"
+              disabled={!matches}
+              endIcon={<NavigateNextIcon />}
+            >
+              Finish
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     );
   }
 
   return (
     <>
+      {/*@TODO: investigate this as the cause of broken tabbing */}
       <div onClick={handleClickOpen}>{children}</div>
       {naming ? (
         <NamingDialog />
@@ -172,55 +169,58 @@ export const NewUrlModal = withRfcContext((props) => {
           maxWidth="md"
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle>Add New Endpoint</DialogTitle>
-          <DialogContent style={{ marginTop: -20 }}>
-            <PathAndMethod method={newUrl.method} path={newUrl.path} />
-            <DialogContentText style={{ marginTop: 12 }}>
-              Specify the pattern that matches this URL:
-            </DialogContentText>
+          <form>
+            <DialogTitle>Add New Endpoint</DialogTitle>
+            <DialogContent style={{ marginTop: -20 }}>
+              <PathAndMethod method={newUrl.method} path={newUrl.path} />
+              <DialogContentText style={{ marginTop: 12 }}>
+                Specify the pattern that matches this URL:
+              </DialogContentText>
 
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div style={{ flex: 1.5 }}>
-                <PathMatcher
-                  initialPathString={newUrl.path}
-                  url={newUrl.path}
-                  autoFocus={true}
-                  onChange={handleChange}
-                />
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div style={{ flex: 1.5 }}>
+                  <PathMatcher
+                    initialPathString={newUrl.path}
+                    url={newUrl.path}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className={classes.urls}>
-              <Show when={matchingUrls.length}>
-                <DocSubGroup
-                  title="Other matching URLs:"
-                  innerStyle={{ paddingLeft: 5 }}
-                >
-                  {matchingUrls.map((i) => {
-                    return (
-                      <Typography
-                        variant="subtitle1"
-                        style={{ fontSize: 12, marginBottom: 11 }}
-                      >
-                        {i}
-                      </Typography>
-                    );
-                  })}
-                </DocSubGroup>
-              </Show>
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button
-              onClick={() => setNaming(true)}
-              color="secondary"
-              disabled={!matches}
-              endIcon={<NavigateNextIcon />}
-            >
-              Next
-            </Button>
-          </DialogActions>
+              <div className={classes.urls}>
+                <Show when={matchingUrls.length}>
+                  <DocSubGroup
+                    title="Other matching URLs:"
+                    innerStyle={{ paddingLeft: 5 }}
+                  >
+                    {matchingUrls.map((i) => {
+                      return (
+                        <Typography
+                          variant="subtitle1"
+                          style={{ fontSize: 12, marginBottom: 11 }}
+                        >
+                          {i}
+                        </Typography>
+                      );
+                    })}
+                  </DocSubGroup>
+                </Show>
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button
+                autoFocus={true}
+                type="submit"
+                onClick={() => setNaming(true)}
+                color="secondary"
+                disabled={!matches}
+                endIcon={<NavigateNextIcon />}
+              >
+                Next
+              </Button>
+            </DialogActions>
+          </form>
         </Dialog>
       )}
     </>

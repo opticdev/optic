@@ -12,14 +12,6 @@ abstract class PathVisitor {
   def visit(interaction: HttpInteraction, context: PathVisitorContext)
 }
 
-abstract class OperationVisitor {
-  def begin()
-
-  def visit(interaction: HttpInteraction, context: OperationVisitorContext)
-
-  def end(interaction: HttpInteraction, context: PathVisitorContext)
-}
-
 abstract class RequestBodyVisitor {
   def begin()
 
@@ -36,14 +28,20 @@ abstract class ResponseBodyVisitor {
   def end(interaction: HttpInteraction, context: PathVisitorContext)
 }
 
+abstract class InteractionVisitor {
+  def begin()
+
+  def end(interaction:HttpInteraction, context: PathVisitorContext)
+}
+
 abstract class Visitors {
   val pathVisitor: PathVisitor
-  val operationVisitor: OperationVisitor
   // val requestQueryStringVisitor
   // val requestHeaderVisitor
   val requestBodyVisitor: RequestBodyVisitor
   // val responseHeaderVisitor
   val responseBodyVisitor: ResponseBodyVisitor
+  val interactionVisitor: InteractionVisitor
 }
 
 @JSExport
@@ -66,14 +64,13 @@ object BodyUtilities {
       None
     }
   }
+
   def parseJsonBody(body: Body): Option[Json] = parseBody(body).map(_.asJson)
 
 }
 
 
 case class PathVisitorContext(spec: RfcState, path: Option[PathComponentId])
-
-case class OperationVisitorContext(spec: RfcState, path: Option[PathComponentId], request: Option[HttpRequest])
 
 case class RequestBodyVisitorContext(spec: RfcState, path: Option[PathComponentId], request: Option[HttpRequest])
 

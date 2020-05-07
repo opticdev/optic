@@ -108,7 +108,7 @@ const styles = (theme) => ({
 
 class _MarkdownContribution extends React.Component {
   state = {
-    inputValue: this.props.value,
+    inputValue: this.props.value || '',
     editing: this.props.autoFocus,
   };
 
@@ -116,7 +116,9 @@ class _MarkdownContribution extends React.Component {
   setEditing = (b) => () => {
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
-      this.props.onChange(this.state.inputValue);
+      if (this.state.inputValue !== (this.props.value || '')) {
+        this.props.onChange(this.state.inputValue);
+      }
     }
   };
 
@@ -166,7 +168,7 @@ export const MarkdownContribution = withStyles(styles)(_MarkdownContribution);
 
 class _HeadingContribution extends React.Component {
   state = {
-    inputValue: this.props.value,
+    inputValue: this.props.value || '',
     editing: this.props.autoFocus,
   };
 
@@ -174,7 +176,9 @@ class _HeadingContribution extends React.Component {
   setEditing = (b) => () => {
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
-      this.props.onChange(this.state.inputValue);
+      if (this.state.inputValue !== (this.props.value || '')) {
+        this.props.onChange(this.state.inputValue);
+      }
     }
   };
 

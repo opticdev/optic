@@ -40,9 +40,19 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
   def recomputeDiff() = {
     if (_currentRfcState != null) {
-      _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_currentRfcState, _interactions).map {
-        case (diff, interactions) => (diff, interactions)
+
+      // Never learn from the request body for an interaction that yields a non 2xx-response
+      def filterInteractionsWithErrorResponses(diff: InteractionDiffResult, interactions: Seq[HttpInteraction]) = diff match {
+        case _: UnmatchedRequestBodyContentType => interactions.filter(i => i.response.statusCode >=200 && i.response.statusCode < 400)
+        case _: UnmatchedRequestBodyShape => interactions.filter(i => i.response.statusCode >=200 && i.response.statusCode < 400)
+        case _ => interactions
       }
+
+      _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_currentRfcState, _interactions).collect {
+        case (diff, interactions) => (diff, filterInteractionsWithErrorResponses(diff, interactions))
+      }.filter(_._2.nonEmpty)
+
+
     } else {
       _interactionsGroupedByDiffs = Map.empty
     }
