@@ -9,9 +9,10 @@ import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{HttpInteraction, JsonLike}
 import io.circe.Json
+import scalaz.Memo
 
 
-object Resolvers {
+object SpecResolvers {
 
   case class ResolvedTrail(shapeEntity: ShapeEntity, coreShapeKind: CoreShapeKind, bindings: ParameterBindings)
 
@@ -75,7 +76,7 @@ object Resolvers {
         }
         val oneOfShapeId = resolved.shapeEntity.shapeId
         shapeParameterIds.flatMap(shapeParameterId => {
-          val itemShape = Resolvers.resolveParameterToShape(shapesState, oneOfShapeId, shapeParameterId, resolved.bindings).get
+          val itemShape = SpecResolvers.resolveParameterToShape(shapesState, oneOfShapeId, shapeParameterId, resolved.bindings).get
 
           flattenChoice(spec, trail, Seq(OneOfTrail(oneOfShapeId), OneOfItemTrail(oneOfShapeId, shapeParameterId, itemShape.shapeId)), bindings)
         })
@@ -190,7 +191,7 @@ object Resolvers {
   }
 
 
-  def resolveFieldToShapeEntity(shapesState: ShapesState, fieldId: FieldId, bindings: ParameterBindings) = {
+  def resolveFieldToShapeEntity(shapesState: ShapesState, fieldId: FieldId, bindings: ParameterBindings): (FlattenedField, Option[ShapeEntity]) = {
     val flattenedField = shapesState.flattenedField(fieldId)
     val resolvedShape = flattenedField.fieldShapeDescriptor match {
       case fsd: Commands.FieldShapeFromShape => {

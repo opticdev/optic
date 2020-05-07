@@ -19,6 +19,7 @@ lazy val optic =
       version := "0.1-SNAPSHOT",
       libraryDependencies ++= Seq(
         "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2",
+        "org.scalaz" %%% "scalaz-core" % "7.3.0",
         "io.circe" %%% "circe-core" % circeVersion,
         "io.circe" %%% "circe-generic" % circeVersion,
         "io.circe" %%% "circe-parser" % circeVersion,

@@ -3,14 +3,14 @@ package com.useoptic.diff.shapes
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
-import com.useoptic.diff.shapes.Resolvers.ChoiceOutput
+import com.useoptic.diff.shapes.SpecResolvers.ChoiceOutput
 import com.useoptic.types.capture.JsonLike
 
 
-class JsonLikeAndSpecTraverser(spec: RfcState, visitors: JsonLikeAndSpecVisitors) {
+class JsonLikeAndSpecTraverser(spec: RfcState, visitors: JsonLikeAndSpecVisitors)(implicit Resolvers: MemoizedResolvers = new MemoizedResolvers(spec)) {
   def traverseRootShape(body: Option[JsonLike], shapeId: ShapeId) = {
     val bodyTrail = JsonTrail(Seq.empty)
-    val choices = Resolvers.listTrailChoices(spec, ShapeTrail(shapeId, Seq.empty), Map.empty)
+    val choices = Resolvers.listTrailChoices(ShapeTrail(shapeId, Seq.empty), Map.empty)
     val trailOrigin = ShapeTrail(shapeId, Seq.empty)
     traverse(body, bodyTrail, trailOrigin, choices)
   }

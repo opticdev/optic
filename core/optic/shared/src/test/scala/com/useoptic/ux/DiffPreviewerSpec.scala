@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFac
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
 import com.useoptic.diff.{ChangeType, DiffResult, JsonFileFixture}
-import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, JsonLikeTraverser, JsonTrail, ShapeDiffResult, ShapeTrail, ShapeTraverser}
+import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, JsonLikeTraverser, JsonTrail, MemoizedResolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser}
 import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
 import com.useoptic.types.capture.{ArbitraryData, Body, JsonLikeFrom}
 import io.circe.Json
@@ -27,6 +27,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
 
     val previewDiffs = {
       val diffList = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
+      implicit val Resolvers = new MemoizedResolvers(shapeExample._2)
       val visitor = new JsonLikeAndSpecDiffVisitors(shapeExample._2, (diff) => diffList.append(diff), _ => Unit)
       val traverse = new JsonLikeAndSpecTraverser(shapeExample._2, visitor)
 

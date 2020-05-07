@@ -6,7 +6,7 @@ import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, Resolvers, ShapeTrail, ShapeTrailPathComponent}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, SpecResolvers, ShapeTrail, ShapeTrailPathComponent}
 import com.useoptic.logging.Logger
 
 import scala.collection.mutable
@@ -28,8 +28,8 @@ object FlatShapeProjection {
 
   private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail], shapeRelatedDiffs: Seq[ShapeRelatedDiff]): FlatShape = {
     val shape = shapesState.flattenedShape(shapeId)
-    
-    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = Resolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
+
+    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = SpecResolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
         shapesState.flattenedField(fieldIdOption.get).bindings
       } else {
@@ -108,7 +108,7 @@ object FlatShapeProjection {
         returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$identifierInner" -> innerShapeId))
       }
       case ObjectKind.baseShapeId => {
-        val baseObject = Resolvers.resolveBaseObject(shapeId)(shapesState)
+        val baseObject = SpecResolvers.resolveBaseObject(shapeId)(shapesState)
         val fields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
           val field = shapesState.fields(fieldId)
           if (field.isRemoved) {

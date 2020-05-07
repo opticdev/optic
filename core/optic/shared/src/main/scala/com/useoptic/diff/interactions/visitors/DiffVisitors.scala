@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions.visitors
 import com.useoptic.contexts.requests.Commands._
 import com.useoptic.contexts.requests._
 import com.useoptic.diff.interactions._
-import com.useoptic.diff.shapes.{JsonTrail, ShapeDiffResult, ShapeTrail}
+import com.useoptic.diff.shapes.{JsonTrail, MemoizedResolvers, ShapeDiffResult, ShapeTrail}
 import com.useoptic.dsa.Counter
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
@@ -19,7 +19,7 @@ class DiffPathVisitor(emit: (InteractionDiffResult) => Unit) extends PathVisitor
   }
 }
 
-class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit) extends RequestBodyVisitor {
+class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit)(implicit Resolvers: MemoizedResolvers) extends RequestBodyVisitor {
   var visitedWithUnmatchedContentTypes: Set[RequestId] = Set()
   var visitedWithMatchedContentTypes: Set[RequestId] = Set()
   var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
@@ -120,7 +120,7 @@ class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit) extends Requ
   }
 }
 
-class DiffResponseBodyVisitor(emit: (InteractionDiffResult) => Unit) extends ResponseBodyVisitor {
+class DiffResponseBodyVisitor(emit: (InteractionDiffResult) => Unit)(implicit Resolvers: MemoizedResolvers) extends ResponseBodyVisitor {
   var visitedWithUnmatchedContentTypes: Set[HttpResponse] = Set()
   var visitedWithMatchedContentTypes: Set[ResponseId] = Set()
   var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
@@ -216,7 +216,7 @@ class DiffInteractionVisitor(emit: (InteractionDiffResult) => Unit) extends Inte
   override def end(interaction:HttpInteraction, context: PathVisitorContext): Unit = {}
 }
 
-class DiffVisitors(emit: (InteractionDiffResult) => Unit) extends Visitors {
+class DiffVisitors(emit: (InteractionDiffResult) => Unit)(implicit Resolvers: MemoizedResolvers) extends Visitors {
 
   override val pathVisitor = new DiffPathVisitor(emit)
 

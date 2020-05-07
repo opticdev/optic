@@ -7,7 +7,7 @@ import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpreters.BasicInterpreters
 import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, ResponseBody, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, TestHelpers, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, Url}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, MemoizedResolvers, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture._
 import io.circe.Json

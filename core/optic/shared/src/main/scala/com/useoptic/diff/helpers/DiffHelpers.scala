@@ -4,6 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers.{DiffsGroupedByRegion, InteractionsGroupedByDiff}
 import com.useoptic.diff.interactions.{InteractionDiffResult, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.interactions.visitors.DiffVisitors
+import com.useoptic.diff.shapes.MemoizedResolvers
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.collection.immutable
@@ -13,7 +14,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExport
 @JSExportAll
 object DiffHelpers {
-  def diff(rfcState: RfcState, interaction: HttpInteraction): Seq[InteractionDiffResult] = {
+  def diff(rfcState: RfcState, interaction: HttpInteraction)(implicit Resolvers: MemoizedResolvers = new MemoizedResolvers(rfcState)): Seq[InteractionDiffResult] = {
     val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
     def emit(diff: InteractionDiffResult) = {
       diffs.append(diff)
@@ -25,6 +26,7 @@ object DiffHelpers {
   }
 
   def diffAll(rfcState: RfcState, interactions: Seq[HttpInteraction]): Set[InteractionDiffResult] = {
+    implicit val Resolvers = new MemoizedResolvers(rfcState)
     val diffSet: Set[InteractionDiffResult] = Set.empty
     interactions.foldLeft(diffSet)((diffs, interaction) => {
       diffs ++ diff(rfcState, interaction)
@@ -34,6 +36,8 @@ object DiffHelpers {
   type InteractionsGroupedByDiff = Map[InteractionDiffResult, Seq[HttpInteraction]]
 
   def groupByDiffs(rfcState: RfcState, interactions: Seq[HttpInteraction], initial: InteractionsGroupedByDiff = Map.empty): InteractionsGroupedByDiff = {
+    //all interactions will share a cache
+    implicit val Resolvers = new MemoizedResolvers(rfcState)
     interactions.foldLeft(initial)((acc, interaction) => {
       val diffs = diff(rfcState, interaction)
       val changedItems =

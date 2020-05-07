@@ -3,6 +3,7 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.diff.shapes.MemoizedResolvers
 import com.useoptic.types.capture.{Body, HttpInteraction, JsonLike, JsonLikeFrom}
 import io.circe.Json
 

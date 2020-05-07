@@ -11,7 +11,7 @@ import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuilder}
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, Resolvers, ShapeTrail, UnknownTrail}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, SpecResolvers, ShapeTrail, UnknownTrail}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
@@ -88,7 +88,7 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     interactionTrail.requestBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
+        val jsonBody = SpecResolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
 
@@ -135,7 +135,7 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     interactionTrail.responseBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
+        val jsonBody = SpecResolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
 
@@ -176,7 +176,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   //@GOTCHA: this is not a backwards-compatible change
   def ChangeShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, shapeTrail: ShapeTrail, jsonTrail: JsonTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
+    val resolved = SpecResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
 
     //@TODO: inject real shapesState? for now this will always create a new shape
     val builtShape = new ShapeBuilder(resolved.get)(rfcState.shapesState).run
@@ -211,7 +211,7 @@ class BasicInterpretations(rfcState: RfcState) {
     }
     val commands = builtShape.commands ++ additionalCommands
 
-    val toShape = Resolvers.jsonToCoreKind(resolved.get).name
+    val toShape = SpecResolvers.jsonToCoreKind(resolved.get).name
 
     InteractiveDiffInterpretation(
       s"Change shape to ${toShape}",
@@ -223,7 +223,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   //@GOTCHA: this is not a backwards-compatible change
   def AddFieldToShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, shapeTrail: ShapeTrail, jsonTrail: JsonTrail, interaction: HttpInteraction) = {
-    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
+    val resolved = SpecResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
 
     //@TODO: inject real shapesState? for now this will always create a new shape
     val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run
