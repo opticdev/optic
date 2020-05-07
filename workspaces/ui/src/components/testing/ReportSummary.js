@@ -25,13 +25,7 @@ import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
-  const {
-    capture,
-    report,
-    spec,
-    currentEndpointId,
-    undocumentedEndpoints,
-  } = props;
+  const { capture, report, spec, currentEndpointId } = props;
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
@@ -52,6 +46,16 @@ export default function ReportSummary(props) {
   const onClickContainer = useCallback((e) => {
     history.replace(reportPath);
   });
+
+  const undocumentedEndpoints = useMemo(
+    () =>
+      _sortBy(
+        props.undocumentedEndpoints,
+        (undocumented) => undocumented.path,
+        (undocumented) => undocumented.method
+      ),
+    [props.undocumentedEndpoints]
+  );
 
   const {
     endpoints,
