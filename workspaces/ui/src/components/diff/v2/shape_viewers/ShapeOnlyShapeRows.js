@@ -229,9 +229,7 @@ function FieldDescription({ fieldId }) {
   const finalize = () => {
     if (stagedContent !== description) {
       handleCommands(
-        ...[
-          commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent),
-        ]
+        ...commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent)
       );
     }
     setEditing(false);
