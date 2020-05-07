@@ -558,7 +558,6 @@ function createSummary(capture, spec, report) {
 
   const buildIdTag = capture.tags.find(({ name }) => name === 'buildId');
   const envTag = capture.tags.find(({ name }) => name === 'environment');
-  const diffCountToString = createDiffCountToString(totalDiffs);
 
   return {
     apiName,
@@ -570,10 +569,9 @@ function createSummary(capture, spec, report) {
     environment: (envTag && envTag.value) || '',
     endpoints: _sortBy(
       endpoints,
-      (endpoint) =>
-        `${diffCountToString(totalDiffs - endpoint.counts.diffs)}-${
-          endpoint.descriptor.fullPath
-        }-${endpoint.method}`
+      (endpoint) => totalDiffs - endpoint.counts.diffs,
+      (endpoint) => endpoint.descriptor.fullPath,
+      (endpoint) => endpoint.method
     ),
     totalInteractions,
     totalUnmatchedPaths,
@@ -588,17 +586,5 @@ function createSummary(capture, spec, report) {
 
   function asDate(isoDate) {
     return isoDate && dateParseISO(isoDate);
-  }
-
-  function createDiffCountToString(totalDiffs) {
-    const size = ('' + totalDiffs).length;
-
-    return function (diffCount) {
-      const string = '' + diffCount;
-      const padding = Array(Math.max(0, size - string.length))
-        .fill('0')
-        .join('');
-      return padding + string;
-    };
   }
 }
