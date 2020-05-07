@@ -49,7 +49,7 @@ export default function ReportSummary(props) {
     e.stopPropagation();
   });
   const onClickContainer = useCallback((e) => {
-    history.push(reportPath);
+    history.replace(reportPath);
   });
 
   const {
@@ -124,6 +124,7 @@ export default function ReportSummary(props) {
             >
               <Card className={classes.endpointCard}>
                 <ReportEndpointLink
+                  replace
                   className={classes.endpointLink}
                   captureId={captureId}
                   endpointId={endpoint.id}
