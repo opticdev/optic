@@ -9,6 +9,7 @@ import {
 } from '../../../../theme';
 import {
   ShapeExpandedContext,
+  ShapeRenderContext,
   ShapeRenderStore,
   withShapeRenderContext,
 } from './ShapeRenderContext';
@@ -87,21 +88,47 @@ function renderShape(shape, nested) {
 
 export const AnyShape = (props) => {
   const classes = useShapeViewerStyles();
+  const { shapeRender } = useContext(ShapeRenderContext);
   const { shape } = props;
+
+  const [renderChild, setRenderChild] = useState(null);
+
+  const setType = (link) => {
+    if (link === renderChild) {
+      return setRenderChild(null);
+    }
+    setRenderChild(link);
+  };
+
   return (
-    <Row
-      left={(() => {
-        return (
-          <Indent>
-            <div className={classes.rowContents}>
-              <div style={{ flex: 1, paddingLeft: 4 }}>
-                <TypeName typeName={shape.name} />
+    <>
+      <Row
+        left={(() => {
+          return (
+            <Indent>
+              <div className={classes.rowContents}>
+                <div style={{ flex: 1, paddingLeft: 4 }}>
+                  <TypeName typeName={shape.name} onTypeClick={setType} />
+                </div>
               </div>
-            </div>
+            </Indent>
+          );
+        })()}
+      />
+      <Collapse in={!!renderChild}>
+        {renderChild && (
+          <Indent add={2}>
+            <Paper className={classes.nested} elevation={6}>
+              <DepthContext.Provider value={{ depth: 0 }}>
+                {renderShape(
+                  getOrUndefined(shapeRender.getSpecShape(renderChild))
+                )}
+              </DepthContext.Provider>
+            </Paper>
           </Indent>
-        );
-      })()}
-    />
+        )}
+      </Collapse>
+    </>
   );
 };
 
