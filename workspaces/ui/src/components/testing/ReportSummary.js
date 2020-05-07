@@ -10,6 +10,7 @@ import dateFormatDistance from 'date-fns/formatDistance';
 import { parseISO as dateParseISO } from 'date-fns';
 import { usePageTitle } from '../Page';
 import { useReportPath } from '../../contexts/TestingDashboardContext';
+import _sortBy from 'lodash.sortby';
 
 import {
   createEndpointDescriptor,
@@ -24,13 +25,7 @@ import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
-  const {
-    capture,
-    report,
-    spec,
-    currentEndpointId,
-    undocumentedEndpoints,
-  } = props;
+  const { capture, report, spec, currentEndpointId } = props;
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
@@ -51,6 +46,17 @@ export default function ReportSummary(props) {
   const onClickContainer = useCallback((e) => {
     history.replace(reportPath);
   });
+
+  const undocumentedEndpoints = useMemo(
+    () =>
+      _sortBy(
+        props.undocumentedEndpoints,
+        (undocumented) => -undocumented.count,
+        (undocumented) => undocumented.path,
+        (undocumented) => undocumented.method
+      ),
+    [props.undocumentedEndpoints]
+  );
 
   const {
     endpoints,
@@ -566,7 +572,13 @@ function createSummary(capture, spec, report) {
     isCapturing: !capture.completedAt,
     buildId: (buildIdTag && buildIdTag.value) || '',
     environment: (envTag && envTag.value) || '',
-    endpoints,
+    endpoints: _sortBy(
+      endpoints,
+      (endpoint) => -endpoint.counts.incompliant,
+      (endpoint) => totalDiffs - endpoint.counts.diffs,
+      (endpoint) => endpoint.descriptor.fullPath,
+      (endpoint) => endpoint.method
+    ),
     totalInteractions,
     totalUnmatchedPaths,
     totalDiffs,
