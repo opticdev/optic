@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import { opticEngine } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -8,6 +9,7 @@ import dateFormatRelative from 'date-fns/formatRelative';
 import dateFormatDistance from 'date-fns/formatDistance';
 import { parseISO as dateParseISO } from 'date-fns';
 import { usePageTitle } from '../Page';
+import { useReportPath } from '../../contexts/TestingDashboardContext';
 
 import {
   createEndpointDescriptor,
@@ -32,12 +34,24 @@ export default function ReportSummary(props) {
   const classes = useStyles();
   const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
+  const reportPath = useReportPath(captureId);
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
     spec,
     report,
   ]);
+
+  // closing endpoint upon clicking report outside list
+  const history = useHistory();
+  const onClickList = useCallback((e) => {
+    // clicks inside list don't close the current endpoint
+    e.stopPropagation();
+  });
+  const onClickContainer = useCallback((e) => {
+    history.replace(reportPath);
+  });
+
   const {
     endpoints,
     isCapturing,
@@ -56,7 +70,7 @@ export default function ReportSummary(props) {
   );
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} onClick={onClickContainer}>
       <div className={classes.reportMeta}>
         <div className={classes.captureTime}>
           {summary.isCapturing ? (
@@ -93,7 +107,7 @@ export default function ReportSummary(props) {
       <h4 className={classes.endpointsHeader}>Endpoints</h4>
 
       {endpoints.length > 0 ? (
-        <ul className={classes.endpointsList}>
+        <ul className={classes.endpointsList} onClick={onClickList}>
           {endpoints.map((endpoint) => (
             <li
               key={endpoint.id}
@@ -104,6 +118,7 @@ export default function ReportSummary(props) {
             >
               <Card className={classes.endpointCard}>
                 <ReportEndpointLink
+                  replace
                   className={classes.endpointLink}
                   captureId={captureId}
                   endpointId={endpoint.id}
