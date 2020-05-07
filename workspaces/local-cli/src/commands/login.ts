@@ -25,6 +25,8 @@ export default class Login extends Command {
         });
       });
 
+      trackAndSpawn('Starting login');
+
       const queryString = qs.stringify({
         tokenUrl: `http://localhost:${port}/api/token`,
       });
