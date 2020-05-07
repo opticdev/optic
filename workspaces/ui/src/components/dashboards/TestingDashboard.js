@@ -7,7 +7,7 @@ import { stuffFromQueries } from '../../contexts/RfcContext';
 
 // Components and hooks
 // --------------------
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import ReportSummary from '../testing/ReportSummary';
 
@@ -39,8 +39,6 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
     display: 'flex',
 
-    borderRight: `1px solid ${theme.palette.grey[300]}`,
-
     [theme.breakpoints.up('sm')]: {
       width: (theme.breakpoints.values.sm / 3) * 2,
     },
@@ -60,6 +58,15 @@ export default function TestingDashboardPage(props) {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
 
+  const currentCaptureId = useMemo(() => {
+    const captureMatch = matchPath(
+      props.location.pathname,
+      routerPaths.testingCapture
+    );
+
+    return captureMatch && captureMatch.params.captureId;
+  }, [props.location.pathname, routerPaths.testingCapture]);
+
   const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
     hasService,
     baseUrl,
@@ -77,7 +84,7 @@ export default function TestingDashboardPage(props) {
         <Page.Body padded={false}>
           <div className={classes.root}>
             <div className={classes.navigationContainer}>
-              <ReportsNavigation />
+              <ReportsNavigation currentCaptureId={currentCaptureId} />
             </div>
 
             <div className={classes.reportContainer}>
