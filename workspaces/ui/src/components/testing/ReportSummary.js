@@ -107,13 +107,7 @@ export default function ReportSummary(props) {
       <h4 className={classes.endpointsHeader}>Endpoints</h4>
 
       {endpoints.length > 0 ? (
-        <ul
-          className={classes.endpointsList}
-          onClick={(e) => {
-            // prevent clicks inside endpoint list to navigate away from endpoint
-            e.stopPropagation();
-          }}
-        >
+        <ul className={classes.endpointsList} onClick={onClickList}>
           {endpoints.map((endpoint) => (
             <li
               key={endpoint.id}
