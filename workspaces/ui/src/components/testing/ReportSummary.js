@@ -91,7 +91,7 @@ export default function ReportSummary(props) {
             <>since {dateFormatRelative(summary.createdAt, now)}</>
           ) : (
             <>
-              {dateFormatRelative(summary.createdAt, now)} for{' '}
+              ended {dateFormatRelative(summary.completedAt, now)} after{' '}
               {dateFormatDistance(summary.completedAt, summary.createdAt)}
             </>
           )}

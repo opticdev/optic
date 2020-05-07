@@ -7,6 +7,7 @@ import dateFormatRelative from 'date-fns/formatRelative';
 import dateFormatDistance from 'date-fns/formatDistance';
 import groupBy from 'lodash.groupby';
 import scrollIntoView from 'scroll-into-view-if-needed';
+import _sortBy from 'lodash.sortby';
 
 // Components
 import Loading from '../navigation/Loading';
@@ -125,7 +126,7 @@ function CompletedCapture(props) {
 
         <div className={classes.captureTime}>
           <ScheduleIcon className={classes.historyIcon} />
-          {dateFormatRelative(capture.createdAt, now)} for{' '}
+          ended {dateFormatRelative(capture.completedAt, now)} after{' '}
           {dateFormatDistance(capture.completedAt, capture.createdAt)}
         </div>
       </Card>
@@ -343,8 +344,14 @@ function createCapturesLists(rawCaptures) {
   const groupedByActive = groupBy(captures, (capture) =>
     capture.isActive ? 'active' : 'completed'
   );
-  const active = groupedByActive['active'] || [];
-  const completed = groupedByActive['completed'] || [];
+  const active = _sortBy(
+    groupedByActive['active'] || [],
+    (capture) => -capture.createdAt
+  );
+  const completed = _sortBy(
+    groupedByActive['completed'] || [],
+    (capture) => -capture.completedAt
+  );
 
   return { active, completed };
 }
