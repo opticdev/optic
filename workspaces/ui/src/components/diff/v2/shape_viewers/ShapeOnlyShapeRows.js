@@ -39,7 +39,7 @@ import {
   FieldDescriptionMarkdownRender,
   MarkdownRender,
 } from '../../../docs/DocContribution';
-import { updateContribution as commandsForUpdatingContribution } from '../../../../engine/routines';
+import { commandsForUpdatingContribution } from '../../../../engine/routines';
 
 export function ShapeOnlyViewer(props) {
   const { preview, exampleOnly } = props;
@@ -216,7 +216,7 @@ function ValueRows({ shape }) {
 
 function FieldDescription({ fieldId }) {
   const classes = useShapeViewerStyles();
-  const { cachedQueryResults, handleCommand } = useContext(RfcContext);
+  const { cachedQueryResults, handleCommands } = useContext(RfcContext);
   const { contributions } = cachedQueryResults;
 
   const description = contributions.getOrUndefined(fieldId, DESCRIPTION);
@@ -228,8 +228,10 @@ function FieldDescription({ fieldId }) {
   const displayDescription = description || stagedContent;
   const finalize = () => {
     if (stagedContent !== description) {
-      handleCommand(
-        commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent)
+      handleCommands(
+        ...[
+          commandsForUpdatingContribution(fieldId, DESCRIPTION, stagedContent),
+        ]
       );
     }
     setEditing(false);
