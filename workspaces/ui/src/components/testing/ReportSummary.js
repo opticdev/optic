@@ -10,6 +10,7 @@ import dateFormatDistance from 'date-fns/formatDistance';
 import { parseISO as dateParseISO } from 'date-fns';
 import { usePageTitle } from '../Page';
 import { useReportPath } from '../../contexts/TestingDashboardContext';
+import _sortBy from 'lodash.sortby';
 
 import {
   createEndpointDescriptor,
@@ -557,6 +558,7 @@ function createSummary(capture, spec, report) {
 
   const buildIdTag = capture.tags.find(({ name }) => name === 'buildId');
   const envTag = capture.tags.find(({ name }) => name === 'environment');
+  const diffCountToString = createDiffCountToString(totalDiffs);
 
   return {
     apiName,
@@ -566,7 +568,13 @@ function createSummary(capture, spec, report) {
     isCapturing: !capture.completedAt,
     buildId: (buildIdTag && buildIdTag.value) || '',
     environment: (envTag && envTag.value) || '',
-    endpoints,
+    endpoints: _sortBy(
+      endpoints,
+      (endpoint) =>
+        `${diffCountToString(totalDiffs - endpoint.counts.diffs)}-${
+          endpoint.descriptor.fullPath
+        }-${endpoint.method}`
+    ),
     totalInteractions,
     totalUnmatchedPaths,
     totalDiffs,
@@ -580,5 +588,17 @@ function createSummary(capture, spec, report) {
 
   function asDate(isoDate) {
     return isoDate && dateParseISO(isoDate);
+  }
+
+  function createDiffCountToString(totalDiffs) {
+    const size = ('' + totalDiffs).length;
+
+    return function (diffCount) {
+      const string = '' + diffCount;
+      const padding = Array(Math.max(0, size - string.length))
+        .fill('0')
+        .join('');
+      return padding + string;
+    };
   }
 }
