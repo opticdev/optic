@@ -8,7 +8,7 @@ import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
 import com.useoptic.diff.initial.DistributionAwareShapeBuilder
-import com.useoptic.diff.interactions.BodyUtilities
+import com.useoptic.diff.interactions.{BodyUtilities}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
@@ -28,9 +28,10 @@ object DiffPreviewer {
   ///@todo make return optional
   def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult], allDiffs: Set[ShapeDiffResult]): Option[SideBySideRenderHelper] = shapeIdOption map { shapeId =>
 
-    val relatedDiffs: Map[DiffResult, Set[JsonTrail]] = diffs.map {
-      case diff => diff -> allDiffs.filter(_.shapeTrail == diff.shapeTrail).map(_.jsonTrail).toSet
+    val relatedDiffs: Map[ShapeDiffResult, Set[JsonTrail]] = diffs.collect {
+      case diff: ShapeDiffResult if diffs.contains(diff) => diff -> allDiffs.filter(_.shapeTrail == diff.shapeTrail).map(_.jsonTrail).toSet
     }.toMap
+
 
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffs)
     //first traverse the example
@@ -102,14 +103,14 @@ object DiffPreviewer {
 }
 
 
-class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult], relatedDiffs: Map[DiffResult, Set[JsonTrail]]) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
+class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult], relatedDiffs: Map[ShapeDiffResult, Set[JsonTrail]]) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
 
   def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
     val matching = diffs.collect {
       case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => sd
     }
     //add back in groupings
-    matching ++ Set(relatedDiffs.find(_._2.contains(bodyTrail)).map(i => i._1)).flatten
+    matching.toSet ///++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
   }
 
   override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {

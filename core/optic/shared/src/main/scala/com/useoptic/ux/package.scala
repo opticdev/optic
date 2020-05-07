@@ -90,8 +90,7 @@ package object ux {
                                 interactions: Seq[HttpInteraction],
                                 inRequest: Boolean,
                                 inResponse: Boolean,
-                                description: DiffDescription,
-                                relatedDiffs: Set[ShapeDiffResult])
+                                description: DiffDescription)
                                (implicit val toSuggestions: ToSuggestions,
                                 _previewDiff: (HttpInteraction, Option[RfcState]) => SideBySideRenderHelper,
                                 _previewRequest: (HttpInteraction, Option[RfcState]) => Option[SideBySideRenderHelper],
@@ -104,8 +103,6 @@ package object ux {
     def previewRequest(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[SideBySideRenderHelper] = _previewRequest(interaction, withRfcState)
 
     def previewResponse(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[SideBySideRenderHelper] = _previewResponse(interaction, withRfcState)
-
-    def containsDiff(diff: InteractionDiffResult): Boolean = diff.shapeDiffResultOption.exists(i => relatedDiffs.contains(i))
   }
 
 

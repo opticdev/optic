@@ -218,8 +218,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 }
 
 @JSExportAll
-abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMethod: String)(implicit val interactionsGroupedByDiffs: DiffsToInteractionsMap, ungroupedDiffs: Set[ShapeDiffResult],rfcState: RfcState) {
-
+abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMethod: String)(implicit val interactionsGroupedByDiffs: DiffsToInteractionsMap, ungroupedShapeDiffs: Set[ShapeDiffResult],rfcState: RfcState) {
   def updatedRfcState(rfcState: RfcState): Unit
 
   def suggestionsForDiff(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
@@ -235,16 +234,6 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
   def diffCount: Int = interactionsGroupedByDiffs.keys.size
 
   def interactionsWithDiffsCount: Int = interactionsGroupedByDiffs.values.flatten.size
-
-  def collectRelatedShapeDiffs(diff: InteractionDiffResult): Set[ShapeDiffResult] = {
-    val groupingIdOption = diff.shapeDiffResultOption.flatMap(_.groupingId)
-    groupingIdOption.map(groupingId => {
-      interactionsGroupedByDiffs.keys.collect {
-        case d if d.shapeDiffResultOption.flatMap(_.groupingId).contains(groupingId) => d.shapeDiffResultOption.get
-      }.toSet
-    })
-      .getOrElse(Set(diff.shapeDiffResultOption.get))
-  }
 
   def diffRegions: TopLevelRegions = {
 
@@ -331,17 +320,14 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       case (a: UnmatchedRequestBodyShape, _) => true
       case _ => false
     }.toSeq
-      .distinctByIfDefined(a => a._1.shapeDiffResultOption.flatMap(_.groupingId))
       .groupBy(_._1.interactionTrail.requestBodyContentTypeOption())
       .flatMap { case (contentType, diffMap) => diffMap.map(i => {
         val (diff, interactions) = i
         val description = descriptionInterpreters.interpret(diff, interactions.head)
 
-        val relatedDiffs = collectRelatedShapeDiffs(diff)
-
         val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
           val innerRfcState = withRfcState.getOrElse(rfcState)
-          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), innerRfcState, Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), relatedDiffs, ungroupedDiffs)
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), innerRfcState, Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
         }
 
         val responseRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
@@ -357,8 +343,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           interactions,
           inRequest = true,
           inResponse = false,
-          description,
-          relatedDiffs)(
+          description)(
           () => suggestionsForDiff(diff),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState).get,
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
@@ -372,17 +357,14 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       case (_: UnmatchedResponseBodyShape, _) => true
       case _ => false
     }.toSeq
-      .distinctByIfDefined(a => a._1.shapeDiffResultOption.flatMap(_.groupingId))
       .groupBy(_._1.interactionTrail.responseBodyContentTypeOption())
       .flatMap { case (contentType, diffMap) => diffMap.map(i => {
         val (diff, interactions) = i
         val description = descriptionInterpreters.interpret(diff, interactions.head)
 
-        val relatedDiffs = collectRelatedShapeDiffs(diff)
-
         val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
           val innerRfcState = withRfcState.getOrElse(rfcState)
-          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), relatedDiffs, ungroupedDiffs)
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
         }
         val requestRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
           val innerRfcState = withRfcState.getOrElse(rfcState)
@@ -397,8 +379,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
           interactions,
           inRequest = false,
           inResponse = true,
-          description,
-          relatedDiffs)(
+          description)(
           () => suggestionsForDiff(diff),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState).get,
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => requestRender(interaction, withRfcState),
