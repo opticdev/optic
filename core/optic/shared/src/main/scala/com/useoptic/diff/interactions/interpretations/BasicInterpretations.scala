@@ -35,6 +35,7 @@ class BasicInterpretations(rfcState: RfcState) {
     )
   }
 
+  @Deprecated
   def SetRequestBodyShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val actualJson = BodyUtilities.parseBody(interaction.request.body).get
     val shape = new ShapeBuilder(actualJson).run
@@ -49,13 +50,14 @@ class BasicInterpretations(rfcState: RfcState) {
     )
 
     InteractiveDiffInterpretation(
-      s"Add Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
-      s"Added Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+      s"Add Request with ${contentType} Body",
+      s"Added Request with ${contentType} Body",
       commands,
       ChangeType.Addition
     )
   }
 
+  @Deprecated
   def SetResponseBodyShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val actualJson = BodyUtilities.parseBody(interaction.response.body).get
     val shape = new ShapeBuilder(actualJson).run
@@ -70,8 +72,8 @@ class BasicInterpretations(rfcState: RfcState) {
     )
 
     InteractiveDiffInterpretation(
-      s"Add ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
-      s"Added ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+      s"Add ${interactionTrail.statusCode()} Response with ${contentType} Body",
+      s"Added ${interactionTrail.statusCode()} Response with ${contentType} Body",
       commands,
       ChangeType.Addition
     )
@@ -90,8 +92,7 @@ class BasicInterpretations(rfcState: RfcState) {
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
 
-          val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.response.body)))
-
+          val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.request.body)))
           val commands = baseCommands ++ buildCommands.flatten ++ Seq(
             RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, rootShapeId, isRemoved = false))
           )

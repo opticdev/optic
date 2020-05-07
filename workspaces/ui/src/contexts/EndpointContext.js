@@ -6,7 +6,7 @@ import {
   getEndpointId,
 } from '../utilities/EndpointUtilities';
 import { withRfcContext } from './RfcContext';
-import { updateContribution as commandsForUpdatingContribution } from '../engine/routines';
+import { commandsForUpdatingContribution } from '../engine/routines';
 
 const {
   Context: EndpointsContext,
@@ -22,7 +22,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
     const lookupExampleForResponse = (responseId) =>
       this.props.lookupExampleForResponse(pathId, method, responseId);
     //props from context
-    const { cachedQueryResults, queries, handleCommand } = this.props;
+    const { cachedQueryResults, queries, handleCommands } = this.props;
     const { contributions } = cachedQueryResults;
 
     const endpointId = getEndpointId({ pathId, method });
@@ -39,7 +39,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         lookupExampleForRequest,
         lookupExampleForResponse,
         updateContribution: (id, key, value) => {
-          handleCommand(commandsForUpdatingContribution(id, key, value));
+          handleCommands(...commandsForUpdatingContribution(id, key, value));
         },
       };
 
