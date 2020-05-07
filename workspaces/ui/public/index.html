@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="theme-color" content="#000000"/>
-  <!--
-    manifest.json provides metadata used when your web app is installed on a
-    user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-  -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <!--
-    Notice the use of %PUBLIC_URL% in the tags above.
-    It will be replaced with the URL of the `public` folder during the build.
-    Only files inside the `public` folder can be referenced from the HTML.
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
 
-    Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-    work correctly both with client-side routing and a non-root public URL.
-    Learn how to configure a non-root public URL by running `npm run build`.
-  -->
-  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,500,700" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Inter:200,400,600,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200;400;600;800&display=swap" rel="stylesheet">
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inter:200,400,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200;400;600;800&display=swap"
+          rel="stylesheet">
 
 
-  <title>Optic</title>
+    <title>Optic</title>
 </head>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -44,78 +45,177 @@
   To begin the development, run `npm start` or `yarn start`.
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
-</body>
-
 <script>
-	window['_fs_debug'] = false;
-	window['_fs_host'] = 'fullstory.com';
-	window['_fs_org'] = 'KJ58X';
-	window['_fs_namespace'] = 'FS';
-	(function (m, n, e, t, l, o, g, y) {
-		if (e in m) {
-			if (m.console && m.console.log) {
-				m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');
-			}
-			return;
-		}
-		g = m[e] = function (a, b, s) {
-			g.q ? g.q.push([a, b, s]) : g._api(a, b, s);
-		};
-		g.q = [];
-		o = n.createElement(t);
-		o.async = 1;
-		o.src = 'https://' + _fs_host + '/s/fs.js';
-		y = n.getElementsByTagName(t)[0];
-		y.parentNode.insertBefore(o, y);
-		g.identify = function (i, v, s) {
-			g(l, {uid: i}, s);
-			if (v) g(l, v, s);
-		};
-		g.setUserVars = function (v, s) {
-			g(l, v, s);
-		};
-		g.event = function (i, v, s) {
-			g('event', {n: i, p: v}, s);
-		};
-		g.shutdown = function () {
-			g('rec', !1);
-		};
-		g.restart = function () {
-			g('rec', !0);
-		};
-		g.consent = function (a) {
-			g('consent', !arguments.length || a);
-		};
-		g.identifyAccount = function (i, v) {
-			o = 'account';
-			v = v || {};
-			v.acctId = i;
-			g(o, v);
-		};
-		g.clearUserCookie = function () {
-		};
-	})(window, document, window['_fs_namespace'], 'script', 'user');
+    window.opticAnalyticsEnabled = '%REACT_APP_ENABLE_ANALYTICS%' !== 'no';
+</script>
+<script>
+  window['_fs_debug'] = false;
+  window['_fs_host'] = 'fullstory.com';
+  window['_fs_org'] = 'KJ58X';
+  window['_fs_namespace'] = 'FS';
+  (function(m, n, e, t, l, o, g, y) {
+    if (window.opticAnalyticsEnabled !== 'yes') {
+      return
+    }
+    if (e in m) {
+      if (m.console && m.console.log) {
+        m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');
+      }
+      return;
+    }
+    g = m[e] = function(a, b, s) {
+      g.q ? g.q.push([a, b, s]) : g._api(a, b, s);
+    };
+    g.q = [];
+    o = n.createElement(t);
+    o.async = 1;
+    o.src = 'https://' + _fs_host + '/s/fs.js';
+    y = n.getElementsByTagName(t)[0];
+    y.parentNode.insertBefore(o, y);
+    g.identify = function(i, v, s) {
+      g(l, { uid: i }, s);
+      if (v) g(l, v, s);
+    };
+    g.setUserVars = function(v, s) {
+      g(l, v, s);
+    };
+    g.event = function(i, v, s) {
+      g('event', { n: i, p: v }, s);
+    };
+    g.shutdown = function() {
+      g('rec', !1);
+    };
+    g.restart = function() {
+      g('rec', !0);
+    };
+    g.consent = function(a) {
+      g('consent', !arguments.length || a);
+    };
+    g.identifyAccount = function(i, v) {
+      o = 'account';
+      v = v || {};
+      v.acctId = i;
+      g(o, v);
+    };
+    g.clearUserCookie = function() {
+    };
+  })(window, document, window['_fs_namespace'], 'script', 'user');
 </script>
 
 <script>
-  !function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t,e){var n=document.createElement("script");n.type="text/javascript";n.async=!0;n.src="https://cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(n,a);analytics._loadOptions=e};analytics.SNIPPET_VERSION="4.1.0";
-    analytics.load("ocbfWlFoOjbWIQOYjthCPrOBh1M7Jvop");
-    analytics.page();
-  }}();
+  !function() {
+
+    if (window.opticAnalyticsEnabled !== 'yes') {
+      return
+    }
+    var analytics = window.analytics = window.analytics || [];
+    if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error('Segment snippet included twice.'); else {
+      analytics.invoked = !0;
+      analytics.methods = ['trackSubmit', 'trackClick', 'trackLink', 'trackForm', 'pageview', 'identify', 'reset', 'group', 'track', 'ready', 'alias', 'debug', 'page', 'once', 'off', 'on'];
+      analytics.factory = function(t) {
+        return function() {
+          var e = Array.prototype.slice.call(arguments);
+          e.unshift(t);
+          analytics.push(e);
+          return analytics;
+        };
+      };
+      for (var t = 0; t < analytics.methods.length; t++) {
+        var e = analytics.methods[t];
+        analytics[e] = analytics.factory(e);
+      }
+      analytics.load = function(t, e) {
+        var n = document.createElement('script');
+        n.type = 'text/javascript';
+        n.async = !0;
+        n.src = 'https://cdn.segment.com/analytics.js/v1/' + t + '/analytics.min.js';
+        var a = document.getElementsByTagName('script')[0];
+        a.parentNode.insertBefore(n, a);
+        analytics._loadOptions = e;
+      };
+      analytics.SNIPPET_VERSION = '4.1.0';
+      analytics.load('ocbfWlFoOjbWIQOYjthCPrOBh1M7Jvop');
+      analytics.page();
+    }
+  }();
 </script>
 
 
 <script>
 
   window.intercomSettings = {
-    app_id: "votuin5e",
+    app_id: 'votuin5e',
     hide_default_launcher: true
   };
 
 </script>
 
-<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/votuin5e';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();</script>
+<script>(function() {
+  if (window.opticAnalyticsEnabled !== 'yes') {
+    return
+  }
+  var w = window;
+  var ic = w.Intercom;
+  if (typeof ic === 'function') {
+    ic('reattach_activator');
+    ic('update', w.intercomSettings);
+  } else {
+    var d = document;
+    var i = function() {
+      i.c(arguments);
+    };
+    i.q = [];
+    i.c = function(args) {
+      i.q.push(args);
+    };
+    w.Intercom = i;
+    var l = function() {
+      var s = d.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'https://widget.intercom.io/widget/votuin5e';
+      var x = d.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    };
+    if (w.attachEvent) {
+      w.attachEvent('onload', l);
+    } else {
+      w.addEventListener('load', l, false);
+    }
+  }
+})();</script>
+
+
+<script type="text/javascript">(function(o) {
+  if (window.opticAnalyticsEnabled !== 'yes') {
+    return
+  }
+  var b = 'https://nimbleswan.io/anywhere/', t = '78e90871dc5442209ab69b2b1ebb0357965caa53022e49c6b5adea917436235d',
+    a = window.AutopilotAnywhere = {
+      _runQueue: [], run: function() {
+        this._runQueue.push(arguments);
+      }
+    }, c = encodeURIComponent, s = 'SCRIPT', d = document, l = d.getElementsByTagName(s)[0],
+    p = 't=' + c(d.title || '') + '&u=' + c(d.location.href || '') + '&r=' + c(d.referrer || ''), j = 'text/javascript',
+    z, y;
+  if (!window.Autopilot) window.Autopilot = a;
+  if (o.app) p = 'devmode=true&' + p;
+  z = function(src, asy) {
+    var e = d.createElement(s);
+    e.src = src;
+    e.type = j;
+    e.async = asy;
+    l.parentNode.insertBefore(e, l);
+  };
+  y = function() {
+    z(b + t + '?' + p, true);
+  };
+  if (window.attachEvent) {
+    window.attachEvent('onload', y);
+  } else {
+    window.addEventListener('load', y, false);
+  }
+})({});</script>
+</body>
 
 </html>
-
-<script type="text/javascript">(function(o){var b="https://nimbleswan.io/anywhere/",t="78e90871dc5442209ab69b2b1ebb0357965caa53022e49c6b5adea917436235d",a=window.AutopilotAnywhere={_runQueue:[],run:function(){this._runQueue.push(arguments);}},c=encodeURIComponent,s="SCRIPT",d=document,l=d.getElementsByTagName(s)[0],p="t="+c(d.title||"")+"&u="+c(d.location.href||"")+"&r="+c(d.referrer||""),j="text/javascript",z,y;if(!window.Autopilot) window.Autopilot=a;if(o.app) p="devmode=true&"+p;z=function(src,asy){var e=d.createElement(s);e.src=src;e.type=j;e.async=asy;l.parentNode.insertBefore(e,l);};y=function(){z(b+t+'?'+p,true);};if(window.attachEvent){window.attachEvent("onload",y);}else{window.addEventListener("load",y,false);}})({});</script>

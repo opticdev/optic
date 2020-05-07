@@ -1,13 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
 import { getOrUndefined, getIndex, JsonHelper } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
-import { diff } from 'react-ace';
 import Color from 'color';
 import ClassNames from 'classnames';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import WarningIcon from '@material-ui/icons/Warning';
-import upperFirst from 'lodash/upperFirst';
+import scrollIntoView from 'scroll-into-view-if-needed';
 
 export default function EndpointReportContainer(props) {
   const { captureId, endpoint } = props;
@@ -36,9 +35,10 @@ export function EndpointReport(props) {
   const { diffsSummary, endpointPurpose, endpointCounts } = props;
 
   const classes = useStyles();
+  const containerRef = useScrollToCurrent(true);
 
   return (
-    <div className={classes.root}>
+    <div ref={containerRef} className={classes.root}>
       <h6 className={classes.endpointPurpose}>{endpointPurpose}</h6>
 
       {diffsSummary && <EndpointDiffsSummary diffsSummary={diffsSummary} />}
@@ -233,6 +233,25 @@ function BodyDiffDescription({
       </div>
     </div>
   );
+}
+
+function useScrollToCurrent(isCurrent) {
+  const containerRef = useRef();
+  useEffect(() => {
+    if (!isCurrent) return;
+
+    if (!containerRef.current)
+      throw Error(
+        'Ref must be set to DOM node in order to scroll it into view upon activation'
+      );
+
+    scrollIntoView(containerRef.current, {
+      scrollMode: 'if-needed',
+      block: 'center',
+    });
+  }, [isCurrent]);
+
+  return containerRef;
 }
 
 const useStyles = makeStyles((theme) => ({

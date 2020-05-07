@@ -13,8 +13,27 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 case class CoverageReport(coverageCounts: Counter[CoverageConcerns], diffs: Counter[InteractionDiffResult])
 
+class CoverageInteractionVisitor(report: CoverageReport) extends InteractionVisitor {
+  override def begin(): Unit = {
+
+  }
+
+  override def end(interaction: HttpInteraction, context: PathVisitorContext): Unit = {
+    if (context.path.isDefined) {
+      if (report.diffs.counts.isEmpty) {
+        val key = TotalForPathAndMethodWithoutDiffs(context.path.get, interaction.request.method)
+        report.coverageCounts.increment(key)
+      }
+    }
+  }
+}
+
 class CoveragePathVisitor(report: CoverageReport) extends PathVisitor {
-  val diffVisitors = new DiffVisitors()
+  val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
+  def emit(diff: InteractionDiffResult) = {
+    diffs.append(diff)
+  }
+  val diffVisitors = new DiffVisitors(emit)
 
   override def visit(interaction: HttpInteraction, context: PathVisitorContext): Unit = {
     diffVisitors.pathVisitor.visit(interaction, context)
@@ -27,22 +46,18 @@ class CoveragePathVisitor(report: CoverageReport) extends PathVisitor {
       val key = TotalUnmatchedPath()
       report.coverageCounts.increment(key)
     }
-    diffVisitors.diffs.foreach(diff => {
+    diffs.foreach(diff => {
       report.diffs.increment(diff)
     })
   }
 }
 
-class CoverageOperationVisitor extends OperationVisitor {
-  override def begin(): Unit = ???
-
-  override def visit(interaction: HttpInteraction, context: OperationVisitorContext): Unit = ???
-
-  override def end(interaction: HttpInteraction, context: PathVisitorContext): Unit = ???
-}
-
 class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisitor {
-  val diffVisitors = new DiffVisitors()
+  val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
+  def emit(diff: InteractionDiffResult) = {
+    diffs.append(diff)
+  }
+  val diffVisitors = new DiffVisitors(emit)
 
   override def begin(): Unit = {
     diffVisitors.requestBodyVisitor.begin()
@@ -72,8 +87,8 @@ class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisi
         }
       )
 
-      if (diffVisitors.diffs.nonEmpty) {
-        diffVisitors.diffs.foreach(diff => {
+      if (diffs.nonEmpty) {
+        diffs.foreach(diff => {
           report.diffs.increment(diff)
         })
       } else {
@@ -89,7 +104,11 @@ class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisi
 }
 
 class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVisitor {
-  val diffVisitors = new DiffVisitors()
+  val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
+  def emit(diff: InteractionDiffResult) = {
+    diffs.append(diff)
+  }
+  val diffVisitors = new DiffVisitors(emit)
 
   override def begin(): Unit = {
     diffVisitors.responseBodyVisitor.begin()
@@ -119,8 +138,8 @@ class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVi
         }
       )
 
-      if (diffVisitors.diffs.nonEmpty) {
-        diffVisitors.diffs.foreach(diff => {
+      if (diffs.nonEmpty) {
+        diffs.foreach(diff => {
           report.diffs.increment(diff)
         })
       } else {
@@ -134,15 +153,17 @@ class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVi
   }
 }
 
-class CoverageVisitors extends Visitors {
+class CoverageVisitors() extends Visitors {
   val coverageCounts = new Counter[CoverageConcerns]()
   val diffCounts = new Counter[InteractionDiffResult]()
   val report = CoverageReport(coverageCounts, diffCounts)
+  val emitDiff = (diff: InteractionDiffResult) => {
 
+  }
   override val pathVisitor: PathVisitor = new CoveragePathVisitor(report)
-  override val operationVisitor: OperationVisitor = new CoverageOperationVisitor()
   override val requestBodyVisitor: RequestBodyVisitor = new CoverageRequestBodyVisitor(report)
   override val responseBodyVisitor: ResponseBodyVisitor = new CoverageResponseBodyVisitor(report)
+  override val interactionVisitor: InteractionVisitor = new CoverageInteractionVisitor(report)
 }
 
 object KeyFormatters {

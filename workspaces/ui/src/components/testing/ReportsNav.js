@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
 import classNames from 'classnames';
 import ReportLink from './report-link';
@@ -6,6 +6,7 @@ import dateParseISO from 'date-fns/parseISO';
 import dateFormatRelative from 'date-fns/formatRelative';
 import dateFormatDistance from 'date-fns/formatDistance';
 import groupBy from 'lodash.groupby';
+import scrollIntoView from 'scroll-into-view-if-needed';
 
 // Components
 import Loading from '../navigation/Loading';
@@ -14,7 +15,7 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { makeStyles } from '@material-ui/core/styles';
 
-export default function ReportsNavigation() {
+export default function ReportsNavigation({ currentCaptureId }) {
   const classes = useStyles();
   const { loading, result: captures } = useTestingService(
     (service) => service.listCaptures(),
@@ -39,7 +40,13 @@ export default function ReportsNavigation() {
                 key={activeCapture.captureId}
                 className={classes.captureListItem}
               >
-                <ActiveCapture capture={activeCapture} />
+                <ActiveCapture
+                  capture={activeCapture}
+                  isCurrent={
+                    currentCaptureId &&
+                    activeCapture.captureId === currentCaptureId
+                  }
+                />
               </li>
             ))}
           </ul>
@@ -54,7 +61,13 @@ export default function ReportsNavigation() {
                 key={completeCapture.captureId}
                 className={classes.captureListItem}
               >
-                <CompletedCapture capture={completeCapture} />
+                <CompletedCapture
+                  capture={completeCapture}
+                  isCurrent={
+                    currentCaptureId &&
+                    completeCapture.captureId === currentCaptureId
+                  }
+                />
               </li>
             ))}
           </ul>
@@ -67,14 +80,15 @@ function ActiveCapture(props) {
   const { capture } = props;
   const { tags } = capture;
   const classes = useStyles();
+  const domRef = useScrollToCurrent(props.isCurrent);
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment') || 'unknown';
   const now = new Date();
 
   return (
-    <CaptureNavLink capture={capture}>
-      <Card className={classNames(classes.card, classes.isActive)}>
+    <CaptureNavLink capture={capture} isCurrent={props.isCurrent}>
+      <Card className={classNames(classes.card, classes.isActive)} ref={domRef}>
         <h5 className={classes.buildName}>
           Build <code className={classes.buildId}>{buildIdTag.value}</code> in{' '}
           <code>{envTag.value}</code>
@@ -96,6 +110,7 @@ function CompletedCapture(props) {
   const { capture } = props;
   const { tags } = capture;
   const classes = useStyles();
+  const domRef = useScrollToCurrent(props.isCurrent);
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment');
@@ -104,7 +119,7 @@ function CompletedCapture(props) {
   return (
     <CaptureNavLink capture={capture}>
       <Card className={classNames(classes.card, classes.isComplete)}>
-        <div className={classes.buildName}>
+        <div className={classes.buildName} ref={domRef}>
           Build <code>{buildIdTag.value}</code> in <code>{envTag.value}</code>
         </div>
 
@@ -133,6 +148,25 @@ function CaptureNavLink(props) {
   );
 }
 
+function useScrollToCurrent(isCurrent) {
+  const linkRef = useRef();
+  useEffect(() => {
+    if (!isCurrent) return;
+
+    if (!linkRef.current)
+      throw Error(
+        'CaptureLink Ref must be set in order to scroll it into view upon activation'
+      );
+
+    scrollIntoView(linkRef.current, {
+      scrollMode: 'if-needed',
+      block: 'center',
+    });
+  }, [isCurrent]);
+
+  return linkRef;
+}
+
 // Styles
 // ------
 
@@ -140,6 +174,12 @@ const useStyles = makeStyles((theme) => ({
   navRoot: {
     padding: theme.spacing(2),
     flexGrow: 1,
+    position: 'fixed',
+    width: 'inherit',
+    height: '100vh',
+    overflowY: 'scroll',
+
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
     background: theme.palette.grey[100],
   },
 
