@@ -45,13 +45,18 @@
   To begin the development, run `npm start` or `yarn start`.
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
-
+<script>
+    window.opticAnalyticsEnabled = '%REACT_APP_ENABLE_ANALYTICS%' !== 'no';
+</script>
 <script>
   window['_fs_debug'] = false;
   window['_fs_host'] = 'fullstory.com';
   window['_fs_org'] = 'KJ58X';
   window['_fs_namespace'] = 'FS';
   (function(m, n, e, t, l, o, g, y) {
+    if (window.opticAnalyticsEnabled !== 'yes') {
+      return
+    }
     if (e in m) {
       if (m.console && m.console.log) {
         m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');
@@ -99,6 +104,10 @@
 
 <script>
   !function() {
+
+    if (window.opticAnalyticsEnabled !== 'yes') {
+      return
+    }
     var analytics = window.analytics = window.analytics || [];
     if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error('Segment snippet included twice.'); else {
       analytics.invoked = !0;
@@ -142,6 +151,9 @@
 </script>
 
 <script>(function() {
+  if (window.opticAnalyticsEnabled !== 'yes') {
+    return
+  }
   var w = window;
   var ic = w.Intercom;
   if (typeof ic === 'function') {
@@ -175,6 +187,9 @@
 
 
 <script type="text/javascript">(function(o) {
+  if (window.opticAnalyticsEnabled !== 'yes') {
+    return
+  }
   var b = 'https://nimbleswan.io/anywhere/', t = '78e90871dc5442209ab69b2b1ebb0357965caa53022e49c6b5adea917436235d',
     a = window.AutopilotAnywhere = {
       _runQueue: [], run: function() {
