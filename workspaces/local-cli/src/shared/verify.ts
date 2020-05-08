@@ -14,6 +14,7 @@ import {
 import { CommandSession } from './command-session';
 import * as waitOn from 'wait-on';
 import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
+import { track, trackAndSpawn } from './analytics';
 
 export function verifyTask(cli: Command, taskName: string): void {
   cli.log(fromOptic(colors.bold(`Testing task '${taskName}' `)));
@@ -192,7 +193,8 @@ export function verifyTask(cli: Command, taskName: string): void {
 
   tasks
     .run()
-    .then(() => {
+    .then(async () => {
+      await trackAndSpawn('API Check', { startConfig, hasError: false });
       cli.log(
         '\n\n' +
           fromOptic(
@@ -204,7 +206,7 @@ export function verifyTask(cli: Command, taskName: string): void {
           )
       );
     })
-    .catch((err: any) => {
+    .catch(async (err: any) => {
       cli.log(
         '\n\n' +
           fromOptic(
@@ -221,7 +223,11 @@ export function verifyTask(cli: Command, taskName: string): void {
         )
       );
 
+      await trackAndSpawn('API Check', {
+        startConfig,
+        hasError: true,
+        error: err.message,
+      });
       process.exit(0);
-      // cli.log(colors.red(err.message));
     });
 }

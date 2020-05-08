@@ -5,7 +5,7 @@ import cli from 'cli-ux';
 import { fromOptic } from '../shared/conversation';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { track } from '../shared/analytics';
+import { track, trackAndSpawn } from '../shared/analytics';
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';
@@ -38,7 +38,7 @@ export default class Init extends Command {
 
     const name = await cli.prompt('What is this API named?');
 
-    await track('New API Created', { name });
+    await trackAndSpawn('New API Created', { name });
 
     const config = `
 name: ${name}

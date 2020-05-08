@@ -33,7 +33,8 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
-import { basePath } from '@useoptic/cli-scripts';
+import { basePath, runStandaloneScript } from '@useoptic/cli-scripts';
+import { trackAndSpawn } from './analytics';
 
 async function setupTaskWithConfig(
   cli: Command,
@@ -51,6 +52,8 @@ async function setupTaskWithConfig(
 
   const captureId = uuidv4();
   const startConfig = await TaskToStartConfig(task, captureId);
+
+  trackAndSpawn('Run Task with Local CLI', { task });
 
   const blockers = await findProcess('port', startConfig.proxyConfig.port);
   if (blockers.length > 0) {
@@ -103,11 +106,19 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       specStorePath,
       capture.samples
     );
+
+    trackAndSpawn('Local Capture Completed', {
+      task,
+      sampleCount: capture.samples.length,
+      hasDiff,
+    });
+
     if (hasDiff) {
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
       const notifyScriptPath = path.join(basePath, 'notify');
       const iconPath = path.join(__dirname, '../../assets/optic-logo-png.png');
       runStandaloneScript(notifyScriptPath, uiUrl, iconPath);
+
       cli.log(
         fromOptic(
           `Observed Unexpected API Behavior. Click here to review: ${uiUrl}`
@@ -123,11 +134,6 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       }
     }
   }
-}
-
-export function runStandaloneScript(modulePath: string, ...args: string[]) {
-  const child = cp.fork(modulePath, args, { detached: true, stdio: 'ignore' });
-  return child;
 }
 
 export async function setupTask(cli: Command, taskName: string) {

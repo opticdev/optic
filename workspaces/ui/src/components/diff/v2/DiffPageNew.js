@@ -27,6 +27,7 @@ import { DocDivider } from '../../docs/DocConstants';
 import { PathAndMethod } from './PathAndMethod';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { usePageTitle } from '../../Page';
+import { track } from '../../../Analytics';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const { helpers } = diff;
@@ -152,6 +153,11 @@ function _DiffPageContent(props) {
   );
 
   async function handleApply(message = 'EMPTY MESSAGE') {
+    track('Committed Changes to Endpoint', {
+      endpointPurpose,
+      message,
+      suggestions: acceptedSuggestions.length,
+    });
     const newEventStore = initialEventStore.getCopy(rfcId);
     const {
       StartBatchCommit,

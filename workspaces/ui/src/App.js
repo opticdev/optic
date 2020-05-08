@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import './App.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { appTheme } from './theme';
@@ -6,7 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
 import TopLevelRoutes from './entrypoints';
-import { touchAnalytics } from './Analytics';
+import { touchAnalytics, track } from './Analytics';
 
 class App extends React.Component {
   state = { hasError: false };
@@ -49,8 +49,11 @@ function AppError() {
     window && window.location && window.location.reload(true);
   });
 
-  // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
+  useEffect(() => {
+    track('In-App-Error');
+  });
 
+  // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
   return (
     <div className="app-error-container">
       <div className="app-error">
