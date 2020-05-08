@@ -266,10 +266,15 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+
+    [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(0, 3),
+    },
   },
   setupPitch: {
     width: '100%',
     padding: theme.spacing(2, 3),
+
     [theme.breakpoints.up('md')]: {
       width: (theme.breakpoints.values.md / 4) * 3,
     },
@@ -296,10 +301,10 @@ const useStyles = makeStyles((theme) => ({
 
   setupInstructions: {
     width: '100%',
-    padding: theme.spacing(2, 3),
     marginBottom: theme.spacing(3),
 
     [theme.breakpoints.up('md')]: {
+      padding: theme.spacing(2, 3),
       width: (theme.breakpoints.values.md / 4) * 3,
     },
 
