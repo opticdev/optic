@@ -33,7 +33,7 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
-import { basePath } from '@useoptic/cli-scripts';
+import { basePath, runStandaloneScript } from '@useoptic/cli-scripts';
 import { trackAndSpawn } from './analytics';
 
 async function setupTaskWithConfig(
@@ -134,11 +134,6 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       }
     }
   }
-}
-
-export function runStandaloneScript(modulePath: string, ...args: string[]) {
-  const child = cp.fork(modulePath, args, { detached: true, stdio: 'ignore' });
-  return child;
 }
 
 export async function setupTask(cli: Command, taskName: string) {
