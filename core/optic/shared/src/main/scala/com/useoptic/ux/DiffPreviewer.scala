@@ -8,7 +8,7 @@ import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
 import com.useoptic.diff.initial.DistributionAwareShapeBuilder
-import com.useoptic.diff.interactions.BodyUtilities
+import com.useoptic.diff.interactions.{BodyUtilities}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
@@ -26,11 +26,16 @@ import scala.util.Try
 object DiffPreviewer {
 
   ///@todo make return optional
-  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult]): Option[SideBySideRenderHelper] = shapeIdOption map { shapeId =>
+  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult], allDiffs: Set[ShapeDiffResult]): Option[SideBySideRenderHelper] = shapeIdOption map { shapeId =>
+
+    val relatedDiffs: Map[ShapeDiffResult, Set[JsonTrail]] = diffs.collect {
+      case diff: ShapeDiffResult if diffs.contains(diff) => diff -> allDiffs.filter(_.shapeTrail == diff.shapeTrail).map(_.jsonTrail).toSet
+    }.toMap
+
 
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffs)
     //first traverse the example
-    val exampleRenderVisitor = new ExampleRenderVisitorNew(spec, diffs)
+    val exampleRenderVisitor = new ExampleRenderVisitorNew(spec, diffs, relatedDiffs)
     val jsonLikeTraverser = new JsonLikeAndSpecTraverser(spec, exampleRenderVisitor)
     jsonLikeTraverser.traverseRootShape(jsonLike, shapeId)
 
@@ -56,7 +61,7 @@ object DiffPreviewer {
 
   def previewBody(body: Body): Option[SideBySideRenderHelper] = {
     BodyUtilities.parseBody(body).map(body => {
-      val exampleRenderVisitor = new ExampleRenderVisitorNew(RfcState.empty, Set.empty)
+      val exampleRenderVisitor = new ExampleRenderVisitorNew(RfcState.empty, Set.empty, Map.empty)
       val jsonLikeTraverser = new JsonLikeTraverserWithSpecStubs(RfcState.empty, exampleRenderVisitor)
       jsonLikeTraverser.traverse(Some(body), JsonTrail(Seq.empty))
 
@@ -97,12 +102,15 @@ object DiffPreviewer {
 
 }
 
-class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult]) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
+
+class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult], relatedDiffs: Map[ShapeDiffResult, Set[JsonTrail]]) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
 
   def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
-    diffs.collect {
+    val matching = diffs.collect {
       case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => sd
     }
+    //add back in groupings
+    matching.toSet ///++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
   }
 
   override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {

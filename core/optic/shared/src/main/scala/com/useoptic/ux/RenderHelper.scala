@@ -96,7 +96,7 @@ class ShapeOnlyRenderHelper(val specShapes: Map[SpecShapeId, SpecShape], rootSha
 
       val fields = obj.fields.map(i => {
         RenderSpecField(i.specFieldId, i.fieldName, getSpecShape(i.expectedShape).get, i.diffs)
-      })
+      }).sortBy(_.fieldName)
 
       RenderSpecObject(obj.specObjectId, obj.baseShapeId, fields, obj.name, obj.diffs)
     }
