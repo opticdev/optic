@@ -1,0 +1,23 @@
+{
+  "name": "@useoptic/test-data",
+  "version": "8.0.5",
+  "scripts": {
+    "ws:build": "yarn run tsc -b --verbose",
+    "ws:test": "echo cli-client",
+    "test": "yarn run ws:build && jest --testPathPattern=build/__test",
+    "generate": "yarn run ws:build && node build/index.js"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "@useoptic/domain": "8.0.5",
+    "deepcopy": "^2.0.0",
+    "md5": "^2.2.1"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1"
+  },
+  "files": [
+    "/build"
+  ]
+}

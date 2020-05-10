@@ -48,6 +48,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching spec path") {
         it("should yield UnmatchedUrl diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           println(spec.requestsState.responses)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -55,25 +56,29 @@ class DiffVisitorSpec extends FunSpec {
             Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(UnmatchedRequestUrl(InteractionTrail(Seq()), SpecRoot())))
+          assert(diffs.toSeq == Seq(UnmatchedRequestUrl(InteractionTrail(Seq()), SpecRoot())))
         }
       }
       describe("with interaction not matching any specified method or status Code") {
         it("should yield UnmatchedRequestBodyContentType and UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "GET", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Response(204, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedRequestBodyContentType(
               InteractionTrail(Seq(Url(), Method("GET"))),
               SpecPath("root")
@@ -88,16 +93,18 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching content type") {
         it("should yield UnmatchedRequestContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("bbb"), ArbitraryData(None, None, None))),
             Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedRequestBodyContentType(InteractionTrail(Seq(Url(), Method("POST"), RequestBody("bbb"))), SpecPath("root"))
           ))
         }
@@ -105,16 +112,18 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching body") {
         it("should yield UnmatchedRequestBody diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
             Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedRequestBodyShape(
               InteractionTrail(Seq(RequestBody("ccc"))),
               SpecRequestBody(requestId),
@@ -129,16 +138,18 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching response status code") {
         it("should yield UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
             Response(304, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
               InteractionTrail(Seq(ResponseStatusCode(304))),
               SpecPath("root")
@@ -158,10 +169,11 @@ class DiffVisitorSpec extends FunSpec {
             Response(200, ArbitraryData(None, None, None), Body(Some("bbb222"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
               InteractionTrail(Seq(ResponseBody("bbb222", 200))),
               SpecPath("root")
@@ -181,10 +193,11 @@ class DiffVisitorSpec extends FunSpec {
             Response(200, ArbitraryData(None, None, None), Body(Some("ccc222"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
             Vector()
           )
-          val visitors = new DiffVisitors()
+          val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
+          val visitors = new DiffVisitors((e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(
+          assert(diffs.toSeq == Seq(
             UnmatchedResponseBodyShape(
               InteractionTrail(Seq(ResponseBody("ccc222", 200))),
               SpecResponseBody(responseId),
