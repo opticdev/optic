@@ -2,122 +2,125 @@ import { Scenario } from '../helpers/Scenario';
 import { newBody, newInteraction } from '../helpers/InteractionHelper';
 import { TAGS } from '../helpers/TAGS';
 
-Scenario(
-  'Root Shape is an Object with Keys',
-  ({ AddPath, LearnBaseline, when }) => {
-    const exampleBodyBase = {
-      firstName: 'Aidan',
-      lastName: 'C',
-      age: 26,
-      cities: ['San Fransisco', 'New York', 'Durham'],
-    };
+const newExampleEvent = (name: string, attending: number) => ({
+  name,
+  attending,
+});
 
-    const interaction = newInteraction('/users/1234/profile', 'GET');
-    interaction.withResponseBody(newBody(exampleBodyBase));
+Scenario('Empty Array at Root', ({ AddPath, LearnBaseline, when }) => {
+  const exampleBodyBase: any = [];
 
-    const baseBody = interaction.requestBody;
-
-    AddPath('users', ':userId', 'profile');
-    LearnBaseline(interaction);
-
-    when(
-      'a known field is missing',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          delete body.lastName;
-        })
-      ),
-      TAGS.OMMITED_REQUIRED_FIELD
-    );
-
-    when(
-      'a known field is provided the wrong shape',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.age = 'Twenty-Six';
-        })
-      ),
-      TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
-    );
-
-    when(
-      'an extra field is provided',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.favoriteColor = 'Syracuse-Orange';
-        })
-      ),
-      TAGS.PROVIDED_NEW_FIELD
-    );
-
-    when(
-      'field is array of primitives, and > 1 item does not match expected type',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.cities = [...body.cities, 27707];
-        })
-      ),
-      TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
-    );
-  }
-);
-
-Scenario('Nested Object Keys', ({ AddPath, LearnBaseline, when }) => {
-  const exampleBodyBase = {
-    location: {
-      principality: {
-        city: 'San Fransisco',
-        population: 830000,
-      },
-    },
-  };
-
-  const interaction = newInteraction('/locations/sf', 'GET');
+  const interaction = newInteraction('/events', 'GET');
   interaction.withResponseBody(newBody(exampleBodyBase));
-
-  const interaction2 = interaction.fork((i) => {
-    i.withResponseBody(
-      i.responseBody?.fork((base) => {
-        base.location.coordinates = {
-          latitude: '37.7749° N',
-          longitude: '122.4194° W',
-        };
-      })
-    );
-  });
 
   const baseBody = interaction.requestBody;
 
-  AddPath('locations', ':code');
-  LearnBaseline(interaction, interaction2);
+  AddPath('events');
+  LearnBaseline(interaction);
 
   when(
-    'a new field is provided in a required nested object',
+    'when unknown and provided with items',
     interaction.withResponseBody(
       baseBody?.fork((body) => {
-        body.location.principality.motto = 'Experientia Docet';
+        body = [
+          newExampleEvent('Computer Time', 55),
+          newExampleEvent('Cooking Class', 19),
+        ];
       })
     ),
-    TAGS.PROVIDED_NEW_FIELD
+    TAGS.UNKNOWN_LIST_PROVIDED_WITH_ITEMS
+  );
+});
+
+Scenario('Nested Array', ({ AddPath, LearnBaseline, when }) => {
+  const exampleBodyBase: any = {
+    colors: ['#00FFFF', '#FF00FF', '#C0C0C0'],
+  };
+
+  const interaction = newInteraction('/colors', 'GET');
+  interaction.withResponseBody(newBody(exampleBodyBase));
+
+  const baseBody = interaction.requestBody;
+
+  AddPath('colors');
+  LearnBaseline(interaction);
+
+  when(
+    'when presented with an empty array',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.colors = [];
+      })
+    ),
+    TAGS.NO_DIFF_EXPECTED
   );
 
   when(
-    'a new field is provided in an optional nested object',
+    'when provided with only items that do not match',
     interaction.withResponseBody(
       baseBody?.fork((body) => {
-        body.location.coordinates.format = 'DMS';
+        body.colors = [1, 2, 3, true];
       })
     ),
-    TAGS.PROVIDED_NEW_FIELD
+    TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
   );
 
   when(
-    'the wrong value is provided to an optional field',
+    'when provided with some items that match and some that do not',
     interaction.withResponseBody(
       baseBody?.fork((body) => {
-        body.location.coordinates = 'N/A';
+        body.colors = ['#e2e2e2', true];
       })
     ),
-    TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
+    TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
+  );
+
+  when(
+    'when provided with items that match and null',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.colors = ['#e2e2e2', null];
+      })
+    ),
+    TAGS.ARRAY_ITEM_IS_NULL_AND_DOES_NOT_MATCH_ASSERTION
+  );
+});
+
+Scenario('Array of arrays', ({ AddPath, LearnBaseline, when }) => {
+  const exampleBodyBase: any = {
+    athletes: [
+      ['Brooks', { sport: 'golf' }],
+      ['Woods', { sport: 'golf' }],
+    ],
+  };
+
+  //should be learned as List[OneOf[String, Object]]
+
+  const interaction = newInteraction('/athletes', 'GET');
+  interaction.withResponseBody(newBody(exampleBodyBase));
+
+  const baseBody = interaction.requestBody;
+
+  AddPath('athletes');
+  LearnBaseline(interaction);
+
+  when(
+    'when provided with items that match',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.athletes = [['Brooks', { sport: 'golf' }]];
+      })
+    ),
+    TAGS.NO_DIFF_EXPECTED
+  );
+
+  when(
+    'when the object part of the OneOf has a new field, it should create a diff',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.athletes = [['Brooks', { sport: 'golf', rank: 1 }]];
+      })
+    ),
+    TAGS.PROVIDED_NEW_FIELD
   );
 });

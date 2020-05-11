@@ -1,5 +1,6 @@
 import { Scenario } from '../helpers/Scenario';
 import { newBody, newInteraction } from '../helpers/InteractionHelper';
+import { TAGS } from '../helpers/TAGS';
 // @ts-ignore
 const { expect } = global;
 
@@ -56,18 +57,20 @@ test('Multiple cases can be created', () => {
               delete body.name;
             })
           );
-        })
+        }),
+        TAGS.OMMITED_REQUIRED_FIELD
       );
 
       when(
-        'name age missing',
+        'age missing',
         interaction1.fork((i) => {
           i.withResponseBody(
             i.responseBody?.fork((body) => {
               delete body.age;
             })
           );
-        })
+        }),
+        TAGS.OMMITED_REQUIRED_FIELD
       );
     }
   );

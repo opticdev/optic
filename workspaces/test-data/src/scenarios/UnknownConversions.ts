@@ -3,121 +3,124 @@ import { newBody, newInteraction } from '../helpers/InteractionHelper';
 import { TAGS } from '../helpers/TAGS';
 
 Scenario(
-  'Root Shape is an Object with Keys',
+  'Unknowns diffed against real values',
   ({ AddPath, LearnBaseline, when }) => {
     const exampleBodyBase = {
-      firstName: 'Aidan',
-      lastName: 'C',
-      age: 26,
-      cities: ['San Fransisco', 'New York', 'Durham'],
+      nullable: null,
+      emptyArray: [],
     };
 
-    const interaction = newInteraction('/users/1234/profile', 'GET');
+    const interaction = newInteraction('/unknown', 'GET');
     interaction.withResponseBody(newBody(exampleBodyBase));
 
     const baseBody = interaction.requestBody;
 
-    AddPath('users', ':userId', 'profile');
+    AddPath('unknown');
     LearnBaseline(interaction);
 
     when(
-      'a known field is missing',
+      'a nullable[unknown] is provided with a concrete type',
       interaction.withResponseBody(
         baseBody?.fork((body) => {
-          delete body.lastName;
+          body.nullable = 'nullable string';
         })
       ),
-      TAGS.OMMITED_REQUIRED_FIELD
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
     );
 
     when(
-      'a known field is provided the wrong shape',
+      'a list[unknown] is provided with concrete types',
       interaction.withResponseBody(
         baseBody?.fork((body) => {
-          body.age = 'Twenty-Six';
+          body.emptyArray = [1, 2, 3, 4, 5];
         })
       ),
-      TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
-    );
-
-    when(
-      'an extra field is provided',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.favoriteColor = 'Syracuse-Orange';
-        })
-      ),
-      TAGS.PROVIDED_NEW_FIELD
-    );
-
-    when(
-      'field is array of primitives, and > 1 item does not match expected type',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.cities = [...body.cities, 27707];
-        })
-      ),
-      TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
+      TAGS.UNKNOWN_LIST_PROVIDED_WITH_ITEMS
     );
   }
 );
 
-Scenario('Nested Object Keys', ({ AddPath, LearnBaseline, when }) => {
-  const exampleBodyBase = {
-    location: {
-      principality: {
-        city: 'San Fransisco',
-        population: 830000,
-      },
-    },
-  };
+Scenario(
+  'Unknowns arrays, with complex types',
+  ({ AddPath, LearnBaseline, when }) => {
+    const exampleBodyBase = {
+      users: [],
+    };
 
-  const interaction = newInteraction('/locations/sf', 'GET');
-  interaction.withResponseBody(newBody(exampleBodyBase));
+    const interaction = newInteraction('/users', 'GET');
+    interaction.withResponseBody(newBody(exampleBodyBase));
 
-  const interaction2 = interaction.fork((i) => {
-    i.withResponseBody(
-      i.responseBody?.fork((base) => {
-        base.location.coordinates = {
-          latitude: '37.7749° N',
-          longitude: '122.4194° W',
-        };
-      })
+    const baseBody = interaction.requestBody;
+
+    AddPath('users');
+    LearnBaseline(interaction);
+
+    when(
+      'when unknown replaced by an object',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [{ name: 'Bob' }, { name: 'Tim' }, { name: 'Mary' }];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
     );
-  });
 
-  const baseBody = interaction.requestBody;
+    when(
+      'when unknown replaced by an object with optional fields',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [
+            { name: 'Bob' },
+            { name: 'Tim', age: 12 },
+            { name: 'Mary' },
+          ];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
+    );
 
-  AddPath('locations', ':code');
-  LearnBaseline(interaction, interaction2);
+    when(
+      'when unknown replaced by one of list items',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [12, 'ABC', false];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
+    );
 
-  when(
-    'a new field is provided in a required nested object',
-    interaction.withResponseBody(
-      baseBody?.fork((body) => {
-        body.location.principality.motto = 'Experientia Docet';
-      })
-    ),
-    TAGS.PROVIDED_NEW_FIELD
-  );
+    when(
+      'when unknown replaced by possible null item (first item)',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [null, { name: 'Tim' }, { name: 'Mary' }];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
+    );
 
-  when(
-    'a new field is provided in an optional nested object',
-    interaction.withResponseBody(
-      baseBody?.fork((body) => {
-        body.location.coordinates.format = 'DMS';
-      })
-    ),
-    TAGS.PROVIDED_NEW_FIELD
-  );
+    when(
+      'when unknown replaced by possible null item (last item)',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [{ name: 'Tim' }, { name: 'Mary' }, null];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
+    );
 
-  when(
-    'the wrong value is provided to an optional field',
-    interaction.withResponseBody(
-      baseBody?.fork((body) => {
-        body.location.coordinates = 'N/A';
-      })
-    ),
-    TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
-  );
-});
+    when(
+      'when unknown replaced by array of tuples',
+      interaction.withResponseBody(
+        baseBody?.fork((body) => {
+          body.users = [
+            ['aidan', 767834],
+            ['bob', 653737],
+            ['charles', 293737],
+          ];
+        })
+      ),
+      TAGS.UNKNOWN_NULLABLE_PROVIDED_WITH_VALUE
+    );
+  }
+);

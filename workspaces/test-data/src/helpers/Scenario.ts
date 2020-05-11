@@ -8,13 +8,14 @@ interface ScenarioBlockContext {
   LearnBaseline: (...interactions: InteractionHelper[]) => void;
   // DiffAgainst: (interaction: IHttpInteraction) => void;
 
-  when: (caseName: string, interaction: InteractionHelper) => void;
+  when: (caseName: string, interaction: InteractionHelper, tag: string) => void;
 }
 
 interface StagedScenario {
   scenario: string;
   case: string;
   events: any[];
+  tag: string;
   interaction: IHttpInteraction;
 }
 
@@ -41,11 +42,12 @@ export function Scenario(
       const result = helper.LearnBaseline(commands, baselineInteractions);
       result.forEach((i: any) => commands.push(i));
     },
-    when: (caseName: string, interaction) => {
+    when: (caseName: string, interaction, tag: string) => {
       scenarios.push({
         scenario: name,
         case: caseName,
         events: [],
+        tag,
         interaction: interaction.toInteraction('last'),
       });
     },
@@ -55,6 +57,10 @@ export function Scenario(
   const events = helper.FinalizeEvents(commands);
 
   scenarios.forEach((s) => (s.events = events));
+  scenarios.forEach((i) => allScenarios.push(i));
 
   return { commands, events, scenarios };
 }
+
+//storage
+export const allScenarios: StagedScenario[] = [];

@@ -2,122 +2,103 @@ import { Scenario } from '../helpers/Scenario';
 import { newBody, newInteraction } from '../helpers/InteractionHelper';
 import { TAGS } from '../helpers/TAGS';
 
-Scenario(
-  'Root Shape is an Object with Keys',
-  ({ AddPath, LearnBaseline, when }) => {
-    const exampleBodyBase = {
-      firstName: 'Aidan',
-      lastName: 'C',
-      age: 26,
-      cities: ['San Fransisco', 'New York', 'Durham'],
-    };
-
-    const interaction = newInteraction('/users/1234/profile', 'GET');
-    interaction.withResponseBody(newBody(exampleBodyBase));
-
-    const baseBody = interaction.requestBody;
-
-    AddPath('users', ':userId', 'profile');
-    LearnBaseline(interaction);
-
-    when(
-      'a known field is missing',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          delete body.lastName;
-        })
-      ),
-      TAGS.OMMITED_REQUIRED_FIELD
-    );
-
-    when(
-      'a known field is provided the wrong shape',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.age = 'Twenty-Six';
-        })
-      ),
-      TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
-    );
-
-    when(
-      'an extra field is provided',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.favoriteColor = 'Syracuse-Orange';
-        })
-      ),
-      TAGS.PROVIDED_NEW_FIELD
-    );
-
-    when(
-      'field is array of primitives, and > 1 item does not match expected type',
-      interaction.withResponseBody(
-        baseBody?.fork((body) => {
-          body.cities = [...body.cities, 27707];
-        })
-      ),
-      TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
-    );
-  }
-);
-
-Scenario('Nested Object Keys', ({ AddPath, LearnBaseline, when }) => {
+Scenario('Nested optionals', ({ AddPath, LearnBaseline, when }) => {
   const exampleBodyBase = {
-    location: {
-      principality: {
-        city: 'San Fransisco',
-        population: 830000,
-      },
+    name: {
+      first: 'Bob',
+      last: 'C',
+    },
+    rivals: ['user1', 'user2', 'user3'],
+    stats: {
+      rank: 1,
     },
   };
 
-  const interaction = newInteraction('/locations/sf', 'GET');
+  const interaction = newInteraction('/users/1234/profile', 'GET');
   interaction.withResponseBody(newBody(exampleBodyBase));
 
-  const interaction2 = interaction.fork((i) => {
+  //makes stats empty by default
+  const interaction2 = interaction.fork((i) =>
     i.withResponseBody(
-      i.responseBody?.fork((base) => {
-        base.location.coordinates = {
-          latitude: '37.7749° N',
-          longitude: '122.4194° W',
-        };
+      i.responseBody?.fork((body) => {
+        delete body.stats;
+        delete body.rivals;
       })
-    );
-  });
+    )
+  );
 
   const baseBody = interaction.requestBody;
 
-  AddPath('locations', ':code');
+  AddPath('users', ':userId', 'profile');
   LearnBaseline(interaction, interaction2);
 
   when(
-    'a new field is provided in a required nested object',
+    'an optional field is omitted',
     interaction.withResponseBody(
       baseBody?.fork((body) => {
-        body.location.principality.motto = 'Experientia Docet';
+        delete body.stats;
       })
     ),
-    TAGS.PROVIDED_NEW_FIELD
+    TAGS.NO_DIFF_EXPECTED
   );
 
   when(
-    'a new field is provided in an optional nested object',
+    'an optional field is provided but the type does not match',
     interaction.withResponseBody(
       baseBody?.fork((body) => {
-        body.location.coordinates.format = 'DMS';
-      })
-    ),
-    TAGS.PROVIDED_NEW_FIELD
-  );
-
-  when(
-    'the wrong value is provided to an optional field',
-    interaction.withResponseBody(
-      baseBody?.fork((body) => {
-        body.location.coordinates = 'N/A';
+        body.stats = 'N/A';
       })
     ),
     TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
+  );
+
+  when(
+    'an optional field is provided but is null',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.stats = null;
+      })
+    ),
+    TAGS.PROVIDED_DIFFERENT_TYPE_TO_KNOWN_FIELD
+  );
+
+  when(
+    'an optional field is provided but one of its fields is missing',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        delete body.stats.rank;
+      })
+    ),
+    TAGS.OMMITED_REQUIRED_FIELD
+  );
+
+  when(
+    'an optional array field is provided but it contains no items',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.rivals = [];
+      })
+    ),
+    TAGS.NO_DIFF_EXPECTED
+  );
+
+  when(
+    'an optional array field is provided but it has the wrong typed items',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.rivals = [true, true, '123'];
+      })
+    ),
+    TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
+  );
+
+  when(
+    'an optional array field is provided but it was provided an object',
+    interaction.withResponseBody(
+      baseBody?.fork((body) => {
+        body.rivals = [{ userId: 'alpha' }, { userId: ' beta' }];
+      })
+    ),
+    TAGS.ARRAY_ITEM_DOES_NOT_MATCH_ASSERTION
   );
 });
