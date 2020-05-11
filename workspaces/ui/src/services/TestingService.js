@@ -55,7 +55,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     }
 
     async listCaptures() {
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 400));
       return captures;
     }
 
@@ -65,7 +65,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     }
 
     async loadReport(captureId) {
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 2000));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
       const { rfcState } = queriesFromEvents(events);

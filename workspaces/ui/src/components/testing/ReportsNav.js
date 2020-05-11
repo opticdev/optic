@@ -10,8 +10,8 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 import _sortBy from 'lodash.sortby';
 
 // Components
-import Loading from '../navigation/Loading';
 import { Card } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +29,7 @@ export default function ReportsNavigation({
   const capturesLists = useMemo(() => createCapturesLists(captures || []), [
     captures,
   ]);
+  const mockCaptureLists = useMemo(() => createMockCapturesLists(), []);
 
   useEffect(() => {
     if (loading || error) return;
@@ -36,51 +37,67 @@ export default function ReportsNavigation({
     onCapturesFetched(captures);
   }, [loading, error, captures]);
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
     <nav className={classes.navRoot}>
-      {capturesLists.active.length > 0 && (
+      {(loading || capturesLists.active.length > 0) && (
         <div className={classes.activeCaptures}>
-          <ul className={classes.capturesList}>
-            {capturesLists.active.map((activeCapture) => (
-              <li
-                key={activeCapture.captureId}
-                className={classes.captureListItem}
-              >
-                <ActiveCapture
-                  capture={activeCapture}
-                  isCurrent={
-                    currentCaptureId &&
-                    activeCapture.captureId === currentCaptureId
-                  }
-                />
-              </li>
-            ))}
-          </ul>
+          {loading ? (
+            <ul className={classes.capturesList}>
+              {mockCaptureLists.active.map((n) => (
+                <li key={n} className={classes.captureListItem}>
+                  <MockActiveCapture n={n} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className={classes.capturesList}>
+              {capturesLists.active.map((activeCapture) => (
+                <li
+                  key={activeCapture.captureId}
+                  className={classes.captureListItem}
+                >
+                  <ActiveCapture
+                    capture={activeCapture}
+                    isCurrent={
+                      currentCaptureId &&
+                      activeCapture.captureId === currentCaptureId
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
-      {capturesLists.completed.length > 0 && (
+      {(loading || capturesLists.completed.length > 0) && (
         <div>
-          <ul className={classes.capturesList}>
-            {capturesLists.completed.map((completeCapture) => (
-              <li
-                key={completeCapture.captureId}
-                className={classes.captureListItem}
-              >
-                <CompletedCapture
-                  capture={completeCapture}
-                  isCurrent={
-                    currentCaptureId &&
-                    completeCapture.captureId === currentCaptureId
-                  }
-                />
-              </li>
-            ))}
-          </ul>
+          {loading ? (
+            <ul className={classes.capturesList}>
+              {mockCaptureLists.completed.map((n) => (
+                <li key={n} className={classes.captureListItem}>
+                  <MockCompletedCapture n={n} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className={classes.capturesList}>
+              {capturesLists.completed.map((completeCapture) => (
+                <li
+                  key={completeCapture.captureId}
+                  className={classes.captureListItem}
+                >
+                  <CompletedCapture
+                    capture={completeCapture}
+                    isCurrent={
+                      currentCaptureId &&
+                      completeCapture.captureId === currentCaptureId
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
     </nav>
@@ -158,6 +175,33 @@ function CaptureNavLink(props) {
   );
 }
 
+function MockActiveCapture() {
+  const classes = useStyles();
+
+  return <Skeleton variant="rect" className={classes.loadingCapture} />;
+}
+
+function MockCompletedCapture() {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.loadingCapture}>
+      <Skeleton
+        variant="rect"
+        width="85%"
+        height="1.5rem"
+        className={classes.loadingCaptureLine}
+      />
+      <Skeleton
+        variant="rect"
+        width="45%"
+        height="1rem"
+        className={classes.loadingCaptureLine}
+      />
+    </div>
+  );
+}
+
 function useScrollToCurrent(isCurrent) {
   const linkRef = useRef();
   useEffect(() => {
@@ -198,6 +242,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   capturesList: {
+    flexGrow: 1,
     margin: 0,
     padding: 0,
     listStyleType: 'none',
@@ -207,6 +252,15 @@ const useStyles = makeStyles((theme) => ({
 
   navLink: {
     textDecoration: 'none',
+  },
+
+  loadingCapture: {
+    height: '5rem',
+    marginBottom: theme.spacing(2),
+  },
+
+  loadingCaptureLine: {
+    marginBottom: theme.spacing(1.5),
   },
 
   card: {
@@ -363,4 +417,11 @@ function createCapturesLists(rawCaptures) {
   );
 
   return { active, completed };
+}
+
+function createMockCapturesLists() {
+  return {
+    active: Array.from({ length: 2 }, (_, n) => n),
+    completed: Array.from({ length: 5 }, (_, n) => n),
+  };
 }
