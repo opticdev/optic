@@ -66,7 +66,7 @@ function AppError() {
 
         <h5>
           Please feel free to{' '}
-          <a href="mailto:hi@useoptic.com?subject=Optic App crash report">
+          <a href="mailto:aidan@useoptic.com?subject=Optic App crash report">
             contact us about it.
           </a>
         </h5>
@@ -75,20 +75,24 @@ function AppError() {
 
         <ul>
           <li>
+            Create a debug file and{' '}
+            <a href="mailto:aidan@useoptic.com?subject=Optic App crash report">
+              {' '}
+              email it to our team
+            </a>
+            or{' '}
+            <a href="https://github.com/opticdev/optic/issues">
+              {' '}
+              open a GitHub issue
+            </a>{' '}
+            Just open Developer Tools and type `debugOptic()`.{' '}
+            <a target="_blank">Read more here</a>
+          </li>
+          <li>
             <a href="#" onClick={onClickRefresh}>
               Refresh the page
             </a>{' '}
             in your browser.
-          </li>
-          <li>
-            Try your browser in{' '}
-            <a
-              href="https://en.wikipedia.org/wiki/Privacy_mode"
-              target="_blank"
-            >
-              "privacy" or "incognito" mode
-            </a>
-            .
           </li>
           <li>
             Try <a href="https://browsehappy.com/">a different browser</a>, if
