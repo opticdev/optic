@@ -408,7 +408,7 @@ function _NewRegions(props) {
           />
 
           <div style={{ flex: 1 }} />
-          {length > 1 && (
+          {length > 1 && getOrUndefined(diff.contentType) && (
             <Pagination
               color="primary"
               className={classNames({ [classes.unchecked]: !isChecked })}
