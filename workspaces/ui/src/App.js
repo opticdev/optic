@@ -80,7 +80,12 @@ function AppError() {
               {' '}
               email it to our team
             </a>
-            . Just open Developer Tools and type `debugOptic()`.{' '}
+            or{' '}
+            <a href="https://github.com/opticdev/optic/issues">
+              {' '}
+              open a GitHub issue
+            </a>{' '}
+            Just open Developer Tools and type `debugOptic()`.{' '}
             <a target="_blank">Read more here</a>
           </li>
           <li>

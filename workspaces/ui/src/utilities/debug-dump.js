@@ -1,10 +1,8 @@
-import * as deepCopy from 'deepcopy';
-
 export function debugDump(specService, captureId) {
   return async function () {
     const events = await specService.listEvents();
     const session = await specService.listCapturedSamples(captureId);
-    const sessionCleaned = deepCopy(session);
+    const sessionCleaned = JSON.parse(JSON.stringify(session));
 
     console.log('sanitizing data...');
     sessionCleaned.samples.forEach((i) => {
@@ -26,7 +24,7 @@ export function debugDump(specService, captureId) {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `debug-capture-${captureId}.json`;
+    link.download = `debug-capture-${captureId}-${new Date().toISOString()}.json`;
     console.log(link);
     link.click();
   };
