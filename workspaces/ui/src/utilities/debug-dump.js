@@ -1,31 +1,33 @@
-export function dumpSpecServiceState(specService) {
-  return async function (options) {
-    const {
-      outputFileName,
-      downloadSourcePath,
-      downloadDestinationPath
-    } = options;
+import * as deepCopy from 'deepcopy';
 
+export function debugDump(specService, captureId) {
+  return async function () {
     const events = await specService.listEvents();
-    const captures = await specService.listCaptures();
-    const { captureId } = captures.captures[0];
     const session = await specService.listCapturedSamples(captureId);
+    const sessionCleaned = deepCopy(session);
+
+    console.log('sanitizing data...');
+    sessionCleaned.samples.forEach((i) => {
+      i.request.body.value.asJsonString = null;
+      i.request.body.value.asText = null;
+
+      i.response.body.value.asJsonString = null;
+      i.response.body.value.asText = null;
+    });
 
     const output = JSON.stringify({
       events: JSON.parse(events),
-      session,
-      examples: {}
-    }, null, 2);
+      session: sessionCleaned,
+      examples: {},
+    });
 
-    const blob = new Blob([output], {type: 'application/json'});
-
+    const blob = new Blob([output], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = outputFileName;
+    link.download = `debug-capture-${captureId}.json`;
     console.log(link);
-    link.click()
-    return `mv "${downloadSourcePath}/${outputFileName}" "${downloadDestinationPath}/${outputFileName}"`
+    link.click();
   };
 }
