@@ -16,9 +16,12 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { makeStyles } from '@material-ui/core/styles';
 
-export default function ReportsNavigation({ currentCaptureId }) {
+export default function ReportsNavigation({
+  currentCaptureId,
+  onCapturesFetched,
+}) {
   const classes = useStyles();
-  const { loading, result: captures } = useTestingService(
+  const { loading, error, result: captures } = useTestingService(
     (service) => service.listCaptures(),
     []
   );
@@ -26,6 +29,12 @@ export default function ReportsNavigation({ currentCaptureId }) {
   const capturesLists = useMemo(() => createCapturesLists(captures || []), [
     captures,
   ]);
+
+  useEffect(() => {
+    if (loading || error) return;
+
+    onCapturesFetched(captures);
+  }, [loading, error, captures]);
 
   if (loading) {
     return <Loading />;

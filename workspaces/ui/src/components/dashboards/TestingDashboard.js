@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Loading from '../navigation/Loading';
+import ClassNames from 'classnames';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -10,6 +11,7 @@ import { stuffFromQueries } from '../../contexts/RfcContext';
 import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import ReportSummary from '../testing/ReportSummary';
+import SetupLink from '../testing/SetupLink';
 
 import {
   createContext,
@@ -20,36 +22,7 @@ import {
 import ReportsNavigation from '../testing/ReportsNav';
 import Page from '../Page';
 import { useRouterPaths } from '../../RouterPaths';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexGrow: 1,
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column', // stack vertically on smaller screens for now
-    },
-    [theme.breakpoints.up('sm')]: {
-      flexDirection: 'row', // horizontally on larger screens
-    },
-  },
-  navigationContainer: {
-    // keep then navigation fixed
-    width: '100%',
-    flexGrow: 0,
-    flexShrink: 0,
-    display: 'flex',
-
-    [theme.breakpoints.up('sm')]: {
-      width: (theme.breakpoints.values.sm / 3) * 2,
-    },
-  },
-  reportContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
-  },
-}));
+import TestingPromo from '../marketing/TestingPromo';
 
 export default function TestingDashboardPage(props) {
   const { match, service } = props;
@@ -72,6 +45,11 @@ export default function TestingDashboardPage(props) {
     baseUrl,
   ]);
 
+  const [hasCaptures, setHasCaptures] = useState(true); // be optimistic
+  const onCapturesFetched = useCallback((captures) => {
+    setHasCaptures(captures && captures.length > 0);
+  });
+
   if (!hasService) {
     return <Loading />;
   }
@@ -82,26 +60,48 @@ export default function TestingDashboardPage(props) {
         <Page.Navbar mini={true} />
 
         <Page.Body padded={false}>
-          <div className={classes.root}>
+          <div
+            className={ClassNames(classes.root, {
+              [classes.isEmpty]: !hasCaptures,
+            })}
+          >
             <div className={classes.navigationContainer}>
-              <ReportsNavigation currentCaptureId={currentCaptureId} />
+              <ReportsNavigation
+                currentCaptureId={currentCaptureId}
+                onCapturesFetched={onCapturesFetched}
+              />
             </div>
 
-            <div className={classes.reportContainer}>
-              <Switch>
-                <Route
-                  strict
-                  path={routerPaths.testingEndpointDetails}
-                  component={TestingDashboard}
-                />
-                <Route
-                  strict
-                  path={routerPaths.testingCapture}
-                  component={TestingDashboard}
-                />
-                <Route component={DefaultReportRedirect} />
-              </Switch>
-            </div>
+            {hasCaptures ? (
+              <div className={classes.reportContainer}>
+                <Switch>
+                  <Route
+                    strict
+                    path={routerPaths.testingEndpointDetails}
+                    component={TestingDashboard}
+                  />
+                  <Route
+                    strict
+                    path={routerPaths.testingCapture}
+                    component={TestingDashboard}
+                  />
+                  <Route component={DefaultReportRedirect} />
+                </Switch>
+              </div>
+            ) : (
+              <div className={classes.setup}>
+                <div className={classes.setupInstructions}>
+                  <h3>No live captures have been found yet.</h3>
+
+                  <p>
+                    For help on how to get started with Live Contract Testing,
+                    see <SetupLink>the setup instructions</SetupLink>.
+                  </p>
+                </div>
+
+                <TestingPromo />
+              </div>
+            )}
           </div>
         </Page.Body>
       </Page>
@@ -204,6 +204,79 @@ function useSpec(captureId) {
   // rather than RfcState.
   return { ...hookRest, result: spec };
 }
+
+// Styles
+// ------
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column', // stack vertically on smaller screens for now
+    },
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row', // horizontally on larger screens
+    },
+  },
+
+  isEmpty: {},
+
+  navigationContainer: {
+    // keep then navigation fixed
+    width: '100%',
+    flexGrow: 0,
+    flexShrink: 0,
+    display: 'flex',
+
+    [theme.breakpoints.up('sm')]: {
+      width: (theme.breakpoints.values.sm / 3) * 2,
+    },
+
+    '$isEmpty &': {
+      display: 'none',
+    },
+  },
+  reportContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+  },
+
+  setup: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(0, 3),
+    },
+  },
+
+  setupInstructions: {
+    width: '100%',
+    marginBottom: theme.spacing(3),
+
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing(2, 3),
+      width: (theme.breakpoints.values.md / 4) * 3,
+    },
+
+    '& h3': {
+      ...theme.typography.h4,
+      color: theme.palette.primary.main,
+    },
+
+    '& p': {
+      ...theme.typography.body1,
+      // fontSize:
+      fontWeight: theme.typography.fontWeightLight,
+    },
+  },
+}));
 
 // View models
 // -----------
