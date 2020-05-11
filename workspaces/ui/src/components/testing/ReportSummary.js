@@ -21,6 +21,7 @@ import { StableHasher } from '../../utilities/CoverageUtilities';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Card } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { ReportEndpointLink } from './report-link';
 import EndpointReport from './EndpointReport';
 
@@ -279,6 +280,77 @@ function Stat({ value = 0, label = '' }) {
         {value === 1 ? '' : 's'}
       </Typography>
     </span>
+  );
+}
+
+export function LoadingReportSummary() {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <div className={classes.reportMeta}>
+        <Skeleton width="20%" height="1rem" />
+      </div>
+
+      <div className={classes.stats}>
+        <Skeleton width="100%" height="2.8rem" />
+        <Skeleton width="30%" height="2.8rem" />
+        <h4 className={classes.buildName}>
+          <Skeleton width="60%" height="1.5rem" />
+        </h4>
+      </div>
+
+      <Skeleton width="85px" height="1rem" />
+
+      <ul className={classes.endpointsList}>
+        <li className={classes.endpointsListItem}>
+          <div className={classes.endpointHeader}>
+            <span className={classes.endpointMethod}>
+              <Skeleton width="40px" height="2rem" />
+            </span>
+            <span className={classes.endpointPath}>
+              <Skeleton width="70%" height="2rem" />
+            </span>
+
+            <div className={classes.endpointStats}>
+              <Skeleton width="45px" height="2rem" style={{ marginRight: 8 }} />
+              <Skeleton width="58px" height="2rem" />
+            </div>
+          </div>
+        </li>
+
+        <li className={classes.endpointsListItem}>
+          <div className={classes.endpointHeader}>
+            <span className={classes.endpointMethod}>
+              <Skeleton width="40px" height="2rem" />
+            </span>
+            <span className={classes.endpointPath}>
+              <Skeleton width="60%" height="2rem" />
+            </span>
+
+            <div className={classes.endpointStats}>
+              <Skeleton width="40px" height="2rem" style={{ marginRight: 8 }} />
+              <Skeleton width="50px" height="2rem" />
+            </div>
+          </div>
+        </li>
+
+        <li className={classes.endpointsListItem}>
+          <div className={classes.endpointHeader}>
+            <span className={classes.endpointMethod}>
+              <Skeleton width="40px" height="2rem" />
+            </span>
+            <span className={classes.endpointPath}>
+              <Skeleton width="60%" height="2rem" />
+            </span>
+
+            <div className={classes.endpointStats}>
+              <Skeleton width="40px" height="2rem" />
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   );
 }
 

@@ -10,7 +10,7 @@ import { stuffFromQueries } from '../../contexts/RfcContext';
 // --------------------
 import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import ReportSummary from '../testing/ReportSummary';
+import ReportSummary, { LoadingReportSummary } from '../testing/ReportSummary';
 import SetupLink from '../testing/SetupLink';
 
 import {
@@ -173,7 +173,7 @@ export function TestingDashboard(props) {
       {(loadingReport ||
         loadingSpec ||
         loadingCapture ||
-        loadingUndocumentedEndpoints) && <Loading />}
+        loadingUndocumentedEndpoints) && <LoadingReportSummary />}
 
       {report && spec && capture && undocumentedEndpoints && (
         <ReportSummary
