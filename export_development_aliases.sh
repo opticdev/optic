@@ -35,8 +35,8 @@ install-local() {
   yarn run build-domain
   yarn wsrun --stages --report --fast-exit ws:build
 
-  cd $OPTIC_SRC_DIR && yarn run registry:clean-optic && yarn run registry:start-background && yarn run publish-local
-  YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873
+  publish-optic-locally
+  install-optic-from-local-registry
 }
 alias install-local="install-local"
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start
