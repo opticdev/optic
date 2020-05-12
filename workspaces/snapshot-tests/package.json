@@ -6,6 +6,7 @@
     "ws:test": "echo snapshot-tests"
   },
   "dependencies": {
+    "@useoptic/domain-utilities": "8.0.5",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
   },
