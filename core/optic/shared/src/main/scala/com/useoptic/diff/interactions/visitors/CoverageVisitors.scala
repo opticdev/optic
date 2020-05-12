@@ -7,6 +7,12 @@ import com.useoptic.diff.shapes.ShapeTrail
 import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+
+@JSExport
+@JSExportAll
+case class CoverageReport(coverageCounts: Counter[CoverageConcerns], diffs: Counter[InteractionDiffResult])
+
 class CoverageInteractionVisitor(report: CoverageReport) extends InteractionVisitor {
   override def begin(): Unit = {
 

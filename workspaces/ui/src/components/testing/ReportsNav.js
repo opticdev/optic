@@ -34,8 +34,8 @@ export default function ReportsNavigation({
   useEffect(() => {
     if (loading || error) return;
 
-    onCapturesFetched([...capturesLists.active, capturesLists.completed]);
-  }, [loading, error, capturesLists]);
+    onCapturesFetched(captures);
+  }, [loading, error, captures]);
 
   return (
     <nav className={classes.navRoot}>

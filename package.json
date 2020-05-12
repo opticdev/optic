@@ -18,15 +18,13 @@
   },
   "workspaces": [
     "workspaces/domain",
-    "workspaces/domain-utilities",
     "workspaces/cli-config",
     "workspaces/proxy",
     "workspaces/cli-client",
     "workspaces/ui",
     "workspaces/cli-scripts",
     "workspaces/cli-server",
-    "workspaces/local-cli",
-    "workspaces/snapshot-tests"
+    "workspaces/local-cli"
   ],
   "devDependencies": {
     "@types/debug": "^4.1.5",

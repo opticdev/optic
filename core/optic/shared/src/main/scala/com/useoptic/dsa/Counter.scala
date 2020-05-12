@@ -3,7 +3,7 @@ package com.useoptic.dsa
 import scala.collection.mutable.Map
 
 class Counter[T] {
-  var counts: Map[T, Int] = Map()
+  val counts: Map[T, Int] = Map()
 
   def getCount(key: T) = {
     counts.getOrElse(key, 0)

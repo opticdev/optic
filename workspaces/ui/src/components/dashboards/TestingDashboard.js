@@ -24,8 +24,6 @@ import Page from '../Page';
 import { useRouterPaths } from '../../RouterPaths';
 import TestingPromo from '../marketing/TestingPromo';
 
-const FIRST_CAPTURE_INIT = Symbol();
-
 export default function TestingDashboardPage(props) {
   const { match, service } = props;
   const hasService = !!service;
@@ -47,11 +45,10 @@ export default function TestingDashboardPage(props) {
     baseUrl,
   ]);
 
-  const [firstCapture, setFirstCapture] = useState(FIRST_CAPTURE_INIT);
+  const [hasCaptures, setHasCaptures] = useState(true); // be optimistic
   const onCapturesFetched = useCallback((captures) => {
-    setFirstCapture(captures && captures[0]);
+    setHasCaptures(captures && captures.length > 0);
   });
-  const hasCaptures = firstCapture === FIRST_CAPTURE_INIT || !!firstCapture; // be optimistic
 
   if (!hasService) {
     return <Loading />;
@@ -88,14 +85,7 @@ export default function TestingDashboardPage(props) {
                     path={routerPaths.testingCapture}
                     component={TestingDashboard}
                   />
-                  {firstCapture !== FIRST_CAPTURE_INIT && firstCapture ? (
-                    <Redirect
-                      replace
-                      to={`${baseUrl}/captures/${firstCapture.captureId}`}
-                    />
-                  ) : (
-                    <LoadingReportSummary />
-                  )}
+                  <Route component={DefaultReportRedirect} />
                 </Switch>
               </div>
             ) : (
@@ -117,6 +107,32 @@ export default function TestingDashboardPage(props) {
       </Page>
     </TestingDashboardContextProvider>
   );
+}
+
+function DefaultReportRedirect(props) {
+  const { match } = props;
+  const baseUrl = match.url;
+
+  const { loading, result: captures } = useTestingService((service) =>
+    service.listCaptures()
+  );
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!captures) {
+    // TODO: revisit this state
+    return <div>Could not find any reports</div>;
+  }
+
+  let mostRecent = captures[0];
+  if (mostRecent) {
+    return <Redirect to={`${baseUrl}/captures/${mostRecent.captureId}`} />;
+  } else {
+    // TODO: revisit this UI state
+    return <div>You don't have any captures yet</div>;
+  }
 }
 
 export function TestingDashboard(props) {

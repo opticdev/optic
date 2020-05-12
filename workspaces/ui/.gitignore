@@ -25,5 +25,3 @@ yarn-error.log*
 
 # ide
 .idea/
-
-public/private-sessions
