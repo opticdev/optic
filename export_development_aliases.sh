@@ -21,4 +21,22 @@ alias wsinfo="show-ws-versions"
 search-ws() {
 	find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
 }
+
+install-local() {
+  if [[ -z "$1" ]]
+  then
+    echo "No version provided"
+    exit 1
+  fi
+
+  yarn run bump "$1"
+
+  yarn install
+  yarn run build-domain
+  yarn wsrun --stages --report --fast-exit ws:build
+
+  cd $OPTIC_SRC_DIR && yarn run registry:clean-optic && yarn run registry:start-background && yarn run publish-local
+  YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873
+}
+alias install-local="install-local"
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start

@@ -12,7 +12,6 @@
     "registry:start-background": "yarn run registry:start && wait-on http-get://localhost:4873",
     "registry:stop": "cd docker/private-npm-registry && docker-compose down",
     "publish-local": "OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js",
-    "install-local": "bash ./install-local.sh",
     "publish": "OPTIC_PUBLISH_SCOPE=public node ./workspaces/scripts/publish.js",
     "bump": "node ./workspaces/scripts/bump.js"
   },

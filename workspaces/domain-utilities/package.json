@@ -10,8 +10,7 @@
   "dependencies": {
     "@useoptic/domain": "8.0.6"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "files": [
     "/build"
   ]
