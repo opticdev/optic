@@ -1,8 +1,9 @@
 package com.useoptic.diff.helpers
 
 import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.coverage.CoverageReport
 import com.useoptic.diff.interactions.Traverser
-import com.useoptic.diff.interactions.visitors.{CoverageReport, CoverageVisitors}
+import com.useoptic.diff.interactions.visitors.CoverageVisitors
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}

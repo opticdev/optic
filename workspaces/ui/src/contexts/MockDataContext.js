@@ -6,13 +6,14 @@ MockDataContext.displayName = 'MockDataContext';
 // only expose the Provider component, but hide the Consumer in favour of hooks
 export const { Provider } = MockDataContext;
 
-function createDebugSession({ sessionId }) {
+function createDebugSession({ sessionId, privateSession }) {
+  const collection = privateSession ? 'private-sessions' : 'example-sessions';
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
       // only fetch data once
-      fetchedData = fetch(`/example-sessions/${sessionId}.json`, {
-        headers: { accept: 'application/json' }
+      fetchedData = fetch(`/${collection}/${sessionId}.json`, {
+        headers: { accept: 'application/json' },
       }).then((response) => {
         if (response.ok) {
           return response.json();
@@ -26,17 +27,17 @@ function createDebugSession({ sessionId }) {
 
   return {
     sessionId,
-    getData
+    getData,
   };
 }
 
 // Hooks
 // -----
 
-export function useMockSession({ sessionId }) {
+export function useMockSession({ sessionId, privateSession }) {
   const dashboardContext = useMemo(
-    () => createDebugSession({ sessionId }),
-    [sessionId]
+    () => createDebugSession({ sessionId, privateSession }),
+    [sessionId, privateSession]
   );
   return dashboardContext;
 }
