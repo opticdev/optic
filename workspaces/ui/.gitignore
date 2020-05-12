@@ -25,3 +25,5 @@ yarn-error.log*
 
 # ide
 .idea/
+
+public/customer-sessions
