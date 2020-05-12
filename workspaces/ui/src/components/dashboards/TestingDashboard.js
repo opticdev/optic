@@ -88,10 +88,12 @@ export default function TestingDashboardPage(props) {
                     path={routerPaths.testingCapture}
                     component={TestingDashboard}
                   />
-                  {firstCapture !== FIRST_CAPTURE_INIT && firstCapture && (
+                  {firstCapture !== FIRST_CAPTURE_INIT && firstCapture ? (
                     <Redirect
                       to={`${baseUrl}/captures/${firstCapture.captureId}`}
                     />
+                  ) : (
+                    <LoadingReportSummary />
                   )}
                 </Switch>
               </div>
