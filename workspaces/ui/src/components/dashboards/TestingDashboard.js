@@ -90,6 +90,7 @@ export default function TestingDashboardPage(props) {
                   />
                   {firstCapture !== FIRST_CAPTURE_INIT && firstCapture ? (
                     <Redirect
+                      replace
                       to={`${baseUrl}/captures/${firstCapture.captureId}`}
                     />
                   ) : (
