@@ -11,14 +11,14 @@ import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 export default function Development(props) {
   const match = useRouteMatch();
   const { sessionId } = useParams();
-  const isCustomerSession = !!matchPath(
+  const isPrivateSession = !!matchPath(
     match.path,
-    '/development/customer-sessions'
+    '/development/private-sessions'
   );
 
   const debugSession = useMockSession({
     sessionId: sessionId,
-    customerSession: isCustomerSession,
+    privateSession: isPrivateSession,
   });
 
   return (

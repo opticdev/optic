@@ -9,7 +9,7 @@ export default function TopLevelRoutes() {
     <Switch>
       <Route
         strict
-        path="/development/customer-sessions/:sessionId"
+        path="/development/private-sessions/:sessionId"
         component={Development}
       />
       <Route strict path="/development/:sessionId" component={Development} />
