@@ -2,7 +2,7 @@ package com.useoptic
 
 import com.useoptic.coverage.CoverageConcerns
 import com.useoptic.diff.interactions.InteractionDiffResult
-import com.useoptic.diff.interactions.visitors.CoverageReport
+import com.useoptic.coverage.CoverageReport
 import com.useoptic.dsa.Counter
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
