@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { TestingServiceError } from '../services/TestingService';
 
 const TestingDashboardContext = React.createContext(null);
 
@@ -19,6 +20,7 @@ export function useTestingService(
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notFound, setNotFound] = useState(null);
   const isUnmounted = useRef(false);
 
   useEffect(() => {
@@ -33,7 +35,13 @@ export function useTestingService(
       })
       .catch((err) => {
         if (isUnmounted.current) return;
-        setError(err);
+
+        if (TestingServiceError.instanceOf(err) && err.notFound()) {
+          setNotFound(true);
+          setLoading(false);
+        } else {
+          setError(err);
+        }
       });
   }, deps);
 
@@ -43,7 +51,7 @@ export function useTestingService(
     };
   }, []);
 
-  return { result, loading, error };
+  return { result, loading, error, notFound };
 }
 
 export function useReportPath(captureId) {
