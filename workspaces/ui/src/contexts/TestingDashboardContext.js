@@ -100,12 +100,9 @@ function initialServiceState() {
 }
 
 function serviceStateReducer(state, action) {
-  console.log(state, action);
   if (action.version !== action.latestVersion) {
-    console.log('ignoring action');
     return state;
   }
-  console.log('\n');
 
   switch (action.type) {
     case 'request': {
