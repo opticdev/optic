@@ -125,6 +125,7 @@ export function TestingDashboard(props) {
     loading: loadingReport,
     result: report,
     error: reportError,
+    notFound: reportNotFound,
   } = useTestingService((service) => service.loadReport(captureId), [
     captureId,
   ]);
@@ -135,6 +136,7 @@ export function TestingDashboard(props) {
     loading: loadingCapture,
     result: capture,
     error: captureError,
+    notFound: captureNotFound,
   } = useTestingService((service) => service.loadCapture(captureId), [
     captureId,
   ]);
@@ -143,6 +145,7 @@ export function TestingDashboard(props) {
     loading: loadingUndocumentedEndpoints,
     result: undocumentedEndpoints,
     error: undocumentedEndpointsError,
+    notFound: undocumentedEndpointsNotFound,
   } = useTestingService(
     (service) => service.loadUndocumentedEndpoints(captureId),
     [captureId]
@@ -151,6 +154,13 @@ export function TestingDashboard(props) {
   const error =
     reportError || specError || captureError || undocumentedEndpointsError;
   if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
+
+  const notFound =
+    reportNotFound || captureNotFound || undocumentedEndpointsNotFound;
+
+  if (notFound) {
+    return <h4>Report could not be found</h4>;
+  }
 
   return (
     <>
