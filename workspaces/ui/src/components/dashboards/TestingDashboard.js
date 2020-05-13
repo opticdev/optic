@@ -53,17 +53,6 @@ export default function TestingDashboardPage(props) {
   });
   const hasCaptures = firstCapture === FIRST_CAPTURE_INIT || !!firstCapture; // be optimistic
 
-  const renderTestingDashboard = useCallback(
-    (props) => (
-      <TestingDashboard
-        // use a key to make sure each route get it's own TestingDashboard instance
-        key={props.match.params.captureId}
-        {...props}
-      />
-    ),
-    []
-  );
-
   if (!hasService) {
     return <Loading />;
   }
@@ -92,12 +81,12 @@ export default function TestingDashboardPage(props) {
                   <Route
                     strict
                     path={routerPaths.testingEndpointDetails}
-                    render={renderTestingDashboard}
+                    component={TestingDashboard}
                   />
                   <Route
                     strict
                     path={routerPaths.testingCapture}
-                    render={renderTestingDashboard}
+                    component={TestingDashboard}
                   />
                   {firstCapture !== FIRST_CAPTURE_INIT && firstCapture ? (
                     <Redirect
