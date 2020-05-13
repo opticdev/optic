@@ -23,7 +23,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
   def bodyToOAS(bodyDescriptor: BodyDescriptor) = {
     bodyDescriptor match {
-      case body: ShapedBodyDescriptor => Some(Body(body.httpContentType, Some(new JsonSchemaProjection(body.shapeId)(rfcState.shapesState).asJsonSchema(expand = false))))
+      case body: ShapedBodyDescriptor => Some(Body(body.httpContentType, Some(new JsonSchemaProjection(body.shapeId)(rfcState).asJsonSchema(expand = false))))
       case _ => None
     }
   }
@@ -63,7 +63,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
           None
         }
         case c: Commands.ShapedRequestParameterShapeDescriptor => {
-          Some(FlatShapeProjection.forShapeId(c.shapeId)(rfcState.shapesState))
+          Some(FlatShapeProjection.forShapeId(c.shapeId)(rfcState))
         }
       }
     })
@@ -104,7 +104,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     val sharedDefinitions = sharedSchemaComponents.map(i => {
       import com.useoptic.contexts.shapes.projections.JsonSchemaHelpers._
       val name = i._2.descriptor.name
-      name -> new JsonSchemaProjection(i._1)(rfcState.shapesState).asJsonSchema(expand = true)
+      name -> new JsonSchemaProjection(i._1)(rfcState).asJsonSchema(expand = true)
     }).toSeq
 
     Json.obj(
@@ -169,10 +169,10 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
             val innerOption = i.shape.links.get(OptionalKind.innerParam)
             if (innerOption.isDefined) {
               //is optional
-              QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+              QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
             } else {
               //is required
-              QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+              QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
             }
           })
           json = json.add("parameters", Json.arr(queryParameters.map(_.toJson): _*))

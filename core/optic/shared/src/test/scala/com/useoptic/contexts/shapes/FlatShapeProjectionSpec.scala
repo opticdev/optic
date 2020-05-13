@@ -1,6 +1,6 @@
 package com.useoptic.contexts.shapes
 
-import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
+import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.Commands.FieldShapeFromShape
 import com.useoptic.contexts.shapes.ShapesHelper.ListKind
 import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, NameForShapeId}
@@ -12,7 +12,7 @@ import org.scalatest.FunSpec
 class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
 
   val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
-  def fixture(slug: String, nameConcept: String = null): (String, ShapesState) = {
+  def fixture(slug: String, nameConcept: String = null): (String, RfcState) = {
     val basic = fromFile(slug)
     val result = {
       if (nameConcept != null) {
@@ -24,26 +24,26 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands, commandContext)
-    (result.rootShapeId, rfcService.currentState("id").shapesState)
+    (result.rootShapeId, rfcService.currentState("id"))
   }
 
   it("works on List of strings") {
-    val (id, shapesState) = fixture("primitive-array")
-    val render = FlatShapeProjection.forShapeId(id)(shapesState)
+    val (id, spec) = fixture("primitive-array")
+    val render = FlatShapeProjection.forShapeId(id)(spec)
     assert(render.root.baseShapeId == ListKind.baseShapeId)
   }
 
   it("works on nested inline object") {
-    val (id, shapesState) = fixture("nested-concept")
-    val render = FlatShapeProjection.forShapeId(id)(shapesState)
+    val (id, spec) = fixture("nested-concept")
+    val render = FlatShapeProjection.forShapeId(id)(spec)
     assert(render.root.fields.size == 1)
     assert(render.root.fields.head.fieldName == "c")
     assert(render.root.fields.head.shape.fields.size == 3)
   }
 
   it("works on named concepts") {
-    val (id, shapesState) = fixture("todo", "ToDo")
-    val render = FlatShapeProjection.forShapeId(id)(shapesState)
+    val (id, spec) = fixture("todo", "ToDo")
+    val render = FlatShapeProjection.forShapeId(id)(spec)
     assert(render.root.typeName.map(_.name).mkString == "ToDo")
     assert(render.root.fields.size == 4)
   }
@@ -59,10 +59,10 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
 
 
   it("works for maps") {
-    val shapesState = exampleRfc.shapesState
-    val shapeId = shapesState.flattenedField("field_vmgk9SSZck").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val spec = exampleRfc
+    val shapeId = spec.shapesState.flattenedField("field_vmgk9SSZck").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
 
-    val render = FlatShapeProjection.forShapeId(shapeId, Some("field_vmgk9SSZck"))(shapesState)
+    val render = FlatShapeProjection.forShapeId(shapeId, Some("field_vmgk9SSZck"))(spec)
 
     assert(render.root.typeName.map(_.name).mkString(" ") == "Map from String to Dog")
 
@@ -77,9 +77,9 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
   }
 
   it("can name a nullable") {
-    val (id, shapesState) = fixture("object-with-null-fields")
-    val shapeId = shapesState.flattenedField("pa_5").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-    val render = FlatShapeProjection.forShapeId(shapeId, Some("pa_5"))(shapesState)
+    val (id, spec) = fixture("object-with-null-fields")
+    val shapeId = spec.shapesState.flattenedField("pa_5").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val render = FlatShapeProjection.forShapeId(shapeId, Some("pa_5"))(spec)
 
     assert(render.parameterMap.size == 1)
 
@@ -94,9 +94,9 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
   }
 
   it("works on lists of concepts") {
-    val shapesState = circleExampleRfc.shapesState
+    val spec = circleExampleRfc
 
-    val flatShape = FlatShapeProjection.forShapeId("concept_19_builds")(shapesState)
+    val flatShape = FlatShapeProjection.forShapeId("concept_19_builds")(spec)
 
     assert(flatShape.root.joinedTypeName == "List of Build")
   }

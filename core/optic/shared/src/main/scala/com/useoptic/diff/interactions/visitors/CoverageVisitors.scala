@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions.visitors
 import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
 import com.useoptic.coverage._
 import com.useoptic.diff.interactions._
-import com.useoptic.diff.shapes.{MemoizedResolvers, ShapeTrail}
+import com.useoptic.diff.shapes.{MemoizedResolvers, ShapeTrail, SpecResolvers}
 import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
@@ -28,7 +28,7 @@ class CoverageInteractionVisitor(report: CoverageReport) extends InteractionVisi
   }
 }
 
-class CoveragePathVisitor(report: CoverageReport)(implicit Resolvers: MemoizedResolvers) extends PathVisitor {
+class CoveragePathVisitor(report: CoverageReport)(implicit Resolvers: SpecResolvers) extends PathVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
@@ -53,7 +53,7 @@ class CoveragePathVisitor(report: CoverageReport)(implicit Resolvers: MemoizedRe
   }
 }
 
-class CoverageRequestBodyVisitor(report: CoverageReport)(implicit Resolvers: MemoizedResolvers) extends RequestBodyVisitor {
+class CoverageRequestBodyVisitor(report: CoverageReport)(implicit Resolvers: SpecResolvers) extends RequestBodyVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
@@ -104,7 +104,7 @@ class CoverageRequestBodyVisitor(report: CoverageReport)(implicit Resolvers: Mem
   }
 }
 
-class CoverageResponseBodyVisitor(report: CoverageReport)(implicit Resolvers: MemoizedResolvers) extends ResponseBodyVisitor {
+class CoverageResponseBodyVisitor(report: CoverageReport)(implicit Resolvers: SpecResolvers) extends ResponseBodyVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
@@ -154,7 +154,7 @@ class CoverageResponseBodyVisitor(report: CoverageReport)(implicit Resolvers: Me
   }
 }
 
-class CoverageVisitors(implicit Resolvers: MemoizedResolvers) extends Visitors {
+class CoverageVisitors(implicit Resolvers: SpecResolvers) extends Visitors {
   val coverageCounts = new Counter[CoverageConcerns]()
   val diffCounts = new Counter[InteractionDiffResult]()
   val report = CoverageReport(coverageCounts, diffCounts)

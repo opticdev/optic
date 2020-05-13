@@ -33,7 +33,7 @@ abstract class JsonLikeAndSpecVisitors {
   val objectKeyVisitor: JlasObjectKeyVisitor
 }
 
-class JsonLikeAndSpecDiffPrimitiveVisitor(emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: MemoizedResolvers) extends JlasPrimitiveVisitor {
+class JsonLikeAndSpecDiffPrimitiveVisitor(emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: SpecResolvers) extends JlasPrimitiveVisitor {
   override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput]): Unit = {
     if (trailChoices.isEmpty) {
       emit(UnspecifiedShape(jsonTrail, trailOrigin))
@@ -87,7 +87,7 @@ class JsonLikeAndSpecDiffPrimitiveVisitor(emit: Function[ShapeDiffResult, Any], 
   }
 }
 
-class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: MemoizedResolvers) extends JlasObjectVisitor {
+class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: SpecResolvers) extends JlasObjectVisitor {
 
   override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ObjectKeyChoiceCallback): Unit = {
     if (trailChoices.isEmpty) {
@@ -152,7 +152,7 @@ class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffR
   }
 }
 
-class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: MemoizedResolvers) extends JlasArrayVisitor {
+class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: SpecResolvers) extends JlasArrayVisitor {
   override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ArrayItemChoiceCallback): Unit = {
     if (trailChoices.isEmpty) {
       emit(UnspecifiedShape(jsonTrail, trailOrigin))
@@ -193,7 +193,7 @@ class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffRe
   }
 }
 
-class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: MemoizedResolvers) extends JlasObjectKeyVisitor {
+class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: SpecResolvers) extends JlasObjectKeyVisitor {
   override def visit(objectJsonTrail: JsonTrail, objectKeys: Map[String, JsonLike], objectChoices: Seq[ChoiceOutput]): Unit = {
     objectChoices.foreach(choice => {
       choice.coreShapeKind match {
@@ -245,7 +245,7 @@ object Stuff {
   type ChoiceResolver = Function[ShapeTrail, Seq[ChoiceOutput]]
 }
 
-class JsonLikeAndSpecDiffVisitors(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: MemoizedResolvers) extends JsonLikeAndSpecVisitors {
+class JsonLikeAndSpecDiffVisitors(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any])(implicit Resolvers: SpecResolvers) extends JsonLikeAndSpecVisitors {
   override val primitiveVisitor: JlasPrimitiveVisitor = new JsonLikeAndSpecDiffPrimitiveVisitor(emit, markShapeTrailAsVisited)
   override val arrayVisitor: JlasArrayVisitor = new JsonLikeAndSpecDiffArrayVisitor(spec, emit, markShapeTrailAsVisited)
   override val objectVisitor: JlasObjectVisitor = new JsonLikeAndSpecDiffObjectVisitor(spec, emit, markShapeTrailAsVisited)

@@ -4,17 +4,19 @@ import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, MapKind
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import io.circe.Json
 import JsonSchemaHelpers._
+import com.useoptic.contexts.rfc.RfcState
 
-class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
+class JsonSchemaProjection(shapeId: String)(implicit spec: RfcState) {
 
   def asJsonSchema(expand: Boolean): Json = {
-    val flatShape = FlatShapeProjection.forShapeId(shapeId)(shapesState)
+    val flatShape = FlatShapeProjection.forShapeId(shapeId)(spec)
     flatShapeToJsonSchema(flatShape.root, expand: Boolean)(flatShape)
   }
 
 
   private def flatShapeToJsonSchema(shape: FlatShape, expand: Boolean)(implicit projection: FlatShapeResult): Json = {
     val schema = new JsonSchema
+    val shapesState = spec.shapesState
     val isNamed = shapesState.shapes.get(shape.id).exists(_.descriptor.name != "")
 
     if (isNamed && !expand) {

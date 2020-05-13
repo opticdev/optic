@@ -10,7 +10,7 @@ import com.useoptic.diff.DiffResult
 import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
-import com.useoptic.diff.shapes.SpecResolvers.ResolvedTrail
+import com.useoptic.diff.shapes.SpecResolvers.{ChoiceOutput, ResolvedTrail}
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
 import com.useoptic.diff.shapes.{JsonTrail, _}
 import com.useoptic.logging.Logger
@@ -50,6 +50,7 @@ object DiffPreviewer {
 
 
   def previewShape(spec: RfcState, shapeIdOption: Option[ShapeId]): Option[ShapeOnlyRenderHelper] = shapeIdOption map { shapeId =>
+    implicit val Resolvers = new MemoizedResolvers(spec)
     val shapeRenderVisitor = new ShapeRenderVisitor(spec, Set.empty)
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
     specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
@@ -100,7 +101,7 @@ object DiffPreviewer {
 
 }
 
-class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(implicit Resolvers: MemoizedResolvers) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
+class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(implicit Resolvers: SpecResolvers) extends JsonLikeAndSpecVisitors with ExampleRenderVisitorHelper {
 
   def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
     diffs.collect {
@@ -111,7 +112,7 @@ class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(impli
   override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {
     val diffVisitor = new JsonLikeAndSpecDiffObjectVisitor(spec, (_) => Unit, (_) => Unit)
 
-    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[SpecResolvers.ChoiceOutput], itemChoiceCallback: ObjectKeyChoiceCallback): Unit = {
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ObjectKeyChoiceCallback): Unit = {
       diffVisitor.visit(json, jsonTrail, trailOrigin, trailChoices, (matches, getChoicesForKey) => {
         // assuming one or zero choices
         if (matches.headOption.isDefined) {
@@ -209,7 +210,7 @@ class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(impli
   override val arrayVisitor: JlasArrayVisitor = new JlasArrayVisitor {
     val diffVisitor = new JsonLikeAndSpecDiffArrayVisitor(spec, _ => Unit, _ => Unit)
 
-    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[SpecResolvers.ChoiceOutput], itemChoiceCallback: ArrayItemChoiceCallback): Unit = {
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ArrayItemChoiceCallback): Unit = {
       diffVisitor.visit(json, jsonTrail, trailOrigin, trailChoices, (matches) => {
         val wasTheListMatched = matches.nonEmpty
         if (wasTheListMatched) {
@@ -266,12 +267,12 @@ class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(impli
     }
   }
   override val objectKeyVisitor: JlasObjectKeyVisitor = new JlasObjectKeyVisitor {
-    override def visit(objectJsonTrail: JsonTrail, objectKeys: Map[String, JsonLike], objectChoices: Seq[SpecResolvers.ChoiceOutput]): Unit = {
+    override def visit(objectJsonTrail: JsonTrail, objectKeys: Map[String, JsonLike], objectChoices: Seq[ChoiceOutput]): Unit = {
       //redundant
     }
   }
   override val primitiveVisitor: JlasPrimitiveVisitor = new JlasPrimitiveVisitor {
-    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[SpecResolvers.ChoiceOutput]): Unit = {
+    override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput]): Unit = {
 
       val choicesGroupedByMatch = (
         if (json.isBoolean) {
@@ -328,7 +329,7 @@ class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(impli
             ))
           })
       } else {
-        val baseShapeId = Resolvers.jsonToCoreKind(json).baseShapeId
+        val baseShapeId = JsonResolver.jsonToCoreKind(json).baseShapeId
         pushShape(ExamplePrimitive(
           jsonTrail.toString,
           baseShapeId,
@@ -341,7 +342,7 @@ class ExampleRenderVisitorNew(spec: RfcState, diffs: Set[ShapeDiffResult])(impli
   }
 }
 
-class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends ShapeVisitors with SpecRenderVisitorHelper {
+class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult])(implicit Resolvers: SpecResolvers) extends ShapeVisitors with SpecRenderVisitorHelper {
 
   def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = {
     diffs.collect {
@@ -359,7 +360,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
           None
         } else {
           //@GOTCHA need field bindings?
-          val fieldShape = SpecResolvers.resolveFieldToShape(spec.shapesState, fieldId, objectResolved.bindings).get
+          val fieldShape = Resolvers.resolveFieldToShape(fieldId, objectResolved.bindings).get
           Some(
             SpecField(field.descriptor.name, field.fieldId, fieldShape.shapeEntity.shapeId,
               diffsByTrail(
@@ -398,8 +399,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends Sh
 
     override def begin(shapeTrail: ShapeTrail, listShape: ShapeEntity, itemShape: ShapeEntity): Unit = {
 
-      val baseItem = SpecResolvers.resolveToBaseShape(itemShape.shapeId)(spec.shapesState)
-
+      val baseItem = Resolvers.resolveToBaseShape(itemShape.shapeId)
 
       pushShape(
         SpecArray(

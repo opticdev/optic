@@ -1,44 +1,47 @@
 package com.useoptic.contexts.shapes.projections
 
+import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldId, FieldShapeFromShape, ShapeId}
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, SpecResolvers, ShapeTrail, ShapeTrailPathComponent}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, ShapeTrail, ShapeTrailPathComponent, SpecResolvers, UncachedSpecResolvers}
 import com.useoptic.logging.Logger
 
 import scala.collection.mutable
 
 object FlatShapeProjection {
+
   private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty, None, Seq.empty))
 
-  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty)(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0): FlatShapeResult = {
+  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty)(implicit spec: RfcState, expandedName: Boolean = true, revision: Int = 0): FlatShapeResult = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
-    val root = getFlatShape(shapeId, ShapeTrail(shapeId, Seq.empty))(shapesState, fieldIdOption, expandedName, parametersByShapeId, trailTags, shapeRelatedDiffs)
+    val root = getFlatShape(shapeId, ShapeTrail(shapeId, Seq.empty))(spec, fieldIdOption, expandedName, parametersByShapeId, trailTags, shapeRelatedDiffs)
     FlatShapeResult(root, parametersByShapeId.toMap, Vector(), s"${shapeId}_${revision.toString}")
   }
 
-  private def addLinkToParameter(shapeId: ShapeId, shape: FlatShape)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, parametersByShapeId: mutable.Map[String, FlatShape]): Unit = {
+  private def addLinkToParameter(shapeId: ShapeId, shape: FlatShape)(implicit spec: RfcState, fieldIdOption: Option[String] = None, parametersByShapeId: mutable.Map[String, FlatShape]): Unit = {
     if (!parametersByShapeId.contains(shapeId)) {
       parametersByShapeId.put(shapeId, shape)
     }
   }
 
-  private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail], shapeRelatedDiffs: Seq[ShapeRelatedDiff]): FlatShape = {
-    val shape = shapesState.flattenedShape(shapeId)
+  private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit spec: RfcState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail], shapeRelatedDiffs: Seq[ShapeRelatedDiff]): FlatShape = {
+    val resolvers = new UncachedSpecResolvers(spec)
+    val shape = spec.shapesState.flattenedShape(shapeId)
 
-    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = SpecResolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
+    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = resolvers.resolveParameterToShape(shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
-        shapesState.flattenedField(fieldIdOption.get).bindings
+        spec.shapesState.flattenedField(fieldIdOption.get).bindings
       } else {
-        shapesState.flattenedShape(shapeId).bindings
+        spec.shapesState.flattenedShape(shapeId).bindings
       }
     })
       .map(i => {
         val newPath = path.withChildren(pathNew(i.shapeId):_*)
-        (i.shapeId, getFlatShape(i.shapeId, newPath)(shapesState, None, false, parametersByShapeId, trailTags, shapeRelatedDiffs))
+        (i.shapeId, getFlatShape(i.shapeId, newPath)(spec, None, false, parametersByShapeId, trailTags, shapeRelatedDiffs))
       })
       .getOrElse(returnAny)
 
@@ -71,7 +74,7 @@ object FlatShapeProjection {
         returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$mapKey" -> keyInnerShapeId, "$mapValue" -> valueInnerShapeId))
       }
       case OneOfKind.baseShapeId => {
-        val inners = shapesState.shapes(shapeId).descriptor.parameters match {
+        val inners = spec.shapesState.shapes(shapeId).descriptor.parameters match {
           case DynamicParameterList(shapeParameterIds) => shapeParameterIds
         }
 
@@ -108,15 +111,15 @@ object FlatShapeProjection {
         returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$identifierInner" -> innerShapeId))
       }
       case ObjectKind.baseShapeId => {
-        val baseObject = SpecResolvers.resolveBaseObject(shapeId)(shapesState)
+        val baseObject = resolvers.resolveBaseObject(shapeId)
         val fields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
-          val field = shapesState.fields(fieldId)
+          val field = spec.shapesState.fields(fieldId)
           if (field.isRemoved) {
             None
           } else {
             val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
             val fieldPath = path.withChildren(ObjectTrail(baseObject.shapeId), ObjectFieldTrail(field.fieldId, fieldShapeId))
-            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, fieldPath)(shapesState, Some(fieldId), false, parametersByShapeId, trailTags, shapeRelatedDiffs), fieldId, tagForCurrent(fieldPath), shapeDiffsForCurrent(fieldPath)))
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, fieldPath)(spec, Some(fieldId), false, parametersByShapeId, trailTags, shapeRelatedDiffs), fieldId, tagForCurrent(fieldPath), shapeDiffsForCurrent(fieldPath)))
           }
 
         }).sortBy(_.fieldName)

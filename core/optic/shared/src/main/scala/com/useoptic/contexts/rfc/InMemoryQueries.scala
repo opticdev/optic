@@ -74,13 +74,13 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   }
 
   def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {
-    NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId).shapesState)
+    NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId))
   }
   def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
-    NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
+    NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId))
   }
   def flatShapeForShapeId(shapeId: ShapeId, shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)): FlatShapeResult = {
-    FlatShapeProjection.forShapeId(shapeId, None, trailTags, shapeRelatedDiffs)(service.currentState(aggregateId).shapesState, revision = events.size)
+    FlatShapeProjection.forShapeId(shapeId, None, trailTags, shapeRelatedDiffs)(service.currentState(aggregateId), revision = events.size)
   }
   def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail]= TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty): FlatShapeResult = {
     ExampleProjection.fromJson(example, hash, trailTags, shapeRelatedDiffs)

@@ -6,14 +6,15 @@ import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
-import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
+import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, Resolvers, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
-import com.useoptic.diff.shapes.{SpecResolvers, UnspecifiedShape}
+import com.useoptic.diff.shapes.{JsonResolver, MemoizedResolvers, SpecResolvers, UnspecifiedShape}
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+  implicit val Resolvers: SpecResolvers = new MemoizedResolvers(rfcState)
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {
@@ -39,13 +40,13 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
 
   def interpretUnspecifiedShape(interactionTrail: InteractionTrail, shapeDiff: UnspecifiedShape, interaction: HttpInteraction) = {
     // if our shapeTrail points to an object and jsonTrail points to a key
-    val resolved = SpecResolvers.resolveTrailToCoreShape(rfcState, shapeDiff.shapeTrail)
+    val resolved = Resolvers.resolveTrailToCoreShape(shapeDiff.shapeTrail, Map.empty)
     Logger.log("sentinel-interpretUnspecifiedShape")
     Logger.log(resolved.shapeEntity)
     Logger.log(resolved.coreShapeKind)
     resolved.coreShapeKind match {
       case ListKind => {
-        val json = SpecResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
+        val json = JsonResolver.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
         val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
         val commands = builtShape.commands ++ Seq(
           SetParameterShape(
@@ -68,7 +69,7 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
 
       case ObjectKind => {
         Logger.log(shapeDiff.jsonTrail)
-        val json = SpecResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
+        val json = JsonResolver.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
         Logger.log(json.get)
         val key = shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
         val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run

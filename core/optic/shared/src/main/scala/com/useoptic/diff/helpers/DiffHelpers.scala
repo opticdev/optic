@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers.{DiffsGroupedByRegion, InteractionsGroupedByDiff}
 import com.useoptic.diff.interactions.{InteractionDiffResult, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.interactions.visitors.DiffVisitors
-import com.useoptic.diff.shapes.MemoizedResolvers
+import com.useoptic.diff.shapes.{MemoizedResolvers, SpecResolvers}
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.collection.immutable
@@ -14,7 +14,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExport
 @JSExportAll
 object DiffHelpers {
-  def diff(rfcState: RfcState, interaction: HttpInteraction)(implicit Resolvers: MemoizedResolvers = new MemoizedResolvers(rfcState)): Seq[InteractionDiffResult] = {
+  def diff(rfcState: RfcState, interaction: HttpInteraction)(implicit Resolvers: SpecResolvers = new MemoizedResolvers(rfcState)): Seq[InteractionDiffResult] = {
     val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
     def emit(diff: InteractionDiffResult) = {
       diffs.append(diff)

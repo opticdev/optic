@@ -1,9 +1,10 @@
 package com.useoptic.contexts.shapes.projections
 
+import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, IdentifierKind, ListKind, MapKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, ReferenceKind, StringKind}
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
-import com.useoptic.diff.shapes.SpecResolvers
+import com.useoptic.diff.shapes.{SpecResolvers, UncachedSpecResolvers}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
@@ -15,18 +16,20 @@ object NameForShapeId {
 
   private val returnAny = Seq(ColoredComponent("Any", "primitive", primitiveId= Some(AnyKind.baseShapeId)))
 
-  def getFlatShapeName(shapeId: ShapeId)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None): String = {
+  def getFlatShapeName(shapeId: ShapeId)(implicit spec: RfcState, fieldIdOption: Option[String] = None): String = {
     getShapeName(shapeId).map(_.name).mkString(" ")
   }
 
-  def getFieldIdShapeName(fieldId: String)(implicit shapesState: ShapesState): Seq[ColoredComponent] = {
-    val field = shapesState.fields(fieldId)
-    val result = FlatShapeProjection.forShapeId( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId, Some(fieldId))(shapesState, true)
+  def getFieldIdShapeName(fieldId: String)(implicit spec: RfcState): Seq[ColoredComponent] = {
+    val field = spec.shapesState.fields(fieldId)
+    val result = FlatShapeProjection.forShapeId( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId, Some(fieldId))(spec, true)
     result.root.typeName
   }
 
-  def getShapeName(shapeId: ShapeId, expand: Boolean = false)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, seenIds: Seq[ShapeId] = Seq()): Seq[ColoredComponent] = {
+  def getShapeName(shapeId: ShapeId, expand: Boolean = false)(implicit spec: RfcState, fieldIdOption: Option[String] = None, seenIds: Seq[ShapeId] = Seq()): Seq[ColoredComponent] = {
     //prevent infinite loop
+    val shapesState = spec.shapesState
+    val resolvers = new UncachedSpecResolvers(spec)
     if (seenIds.contains(shapeId)) {
       return returnAny
     }
@@ -38,14 +41,14 @@ object NameForShapeId {
 
     val shape = shapesState.flattenedShape(shapeId)
 
-    def resolveInner(paramId: String) = SpecResolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
+    def resolveInner(paramId: String) = resolvers.resolveParameterToShape(shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
         shapesState.flattenedField(fieldIdOption.get).bindings
       } else {
         shapesState.flattenedShape(shapeId).bindings
       }
     })
-      .map(i => (i.descriptor.baseShapeId, getShapeName(i.shapeId)(shapesState = shapesState, fieldIdOption = fieldIdOption, seenIds =seenIds :+ shapeId)))
+      .map(i => (i.descriptor.baseShapeId, getShapeName(i.shapeId)(spec, fieldIdOption = fieldIdOption, seenIds =seenIds :+ shapeId)))
       .getOrElse(("$any", returnAny))
 
     shape.coreShapeId match {
@@ -92,7 +95,7 @@ object NameForShapeId {
         Seq(ColoredComponent("Identifier as", "text", None)) ++ identifierInner
       }
       case ObjectKind.baseShapeId => {
-        val baseObject = SpecResolvers.resolveBaseObject(shapeId)(shapesState)
+        val baseObject = resolvers.resolveBaseObject(shapeId)
 
         val genericParams = Try(baseObject.descriptor.parameters.asInstanceOf
           [DynamicParameterList].shapeParameterIds).getOrElse(Seq.empty)

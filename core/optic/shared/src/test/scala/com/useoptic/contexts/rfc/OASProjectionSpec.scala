@@ -33,7 +33,7 @@ class OASProjectionSpec extends FunSpec with JsonFileFixture {
 
     it("works for todo shape") {
       val (queries, rfcService, rfcState) = fixture("todo")
-      val todoSchema = new JsonSchemaProjection("jghsd0_1")(rfcState.shapesState).asJsonSchema(expand = false)
+      val todoSchema = new JsonSchemaProjection("jghsd0_1")(rfcState).asJsonSchema(expand = false)
       assert(todoSchema.noSpaces == "{\"type\":\"object\",\"required\":[\"id\",\"isDone\",\"task\"],\"properties\":{\"dueDate\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"},\"isDone\":{\"type\":\"boolean\"},\"task\":{\"type\":\"string\"}}}")
     }
 

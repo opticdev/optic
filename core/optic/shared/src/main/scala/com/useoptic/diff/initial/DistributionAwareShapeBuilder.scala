@@ -103,7 +103,7 @@ object DistributionAwareShapeBuilder {
 
   private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean, totalSamples: Int)(implicit trailValues: TrailValueMap, idGenerator: SequentialIdGenerator): ShapesToMake = {
     val isOptional = values.size != totalSamples
-    val kinds = values.groupBy(v => SpecResolvers.jsonToCoreKind(v))
+    val kinds = values.groupBy(v => JsonResolver.jsonToCoreKind(v))
 
     if (isOptional && !inner) {
       val optionalShape = OptionalShape(fromJsons(values, trail, true, totalSamples), trail, idGenerator.nextId())

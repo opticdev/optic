@@ -1,7 +1,6 @@
 package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.shapes.ShapeEntity
-import com.useoptic.diff.shapes.SpecResolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.types.capture.JsonLike
 
 abstract class ObjectVisitor {

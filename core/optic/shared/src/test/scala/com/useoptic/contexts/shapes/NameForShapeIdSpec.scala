@@ -23,20 +23,20 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands, commandContext)
-    (result.rootShapeId, rfcService.currentState("id").shapesState)
+    (result.rootShapeId, rfcService.currentState("id"))
   }
 
   it("can provide a name to List of shapes") {
-    val (id, shapesState) = fixture("primitive-array")
-    val name = NameForShapeId.getFlatShapeName(id)(shapesState)
+    val (id, spec) = fixture("primitive-array")
+    val name = NameForShapeId.getFlatShapeName(id)(spec)
     assert(name == "List of String")
   }
 
   it("can name a nullable") {
-    val (id, shapesState) = fixture("object-with-null-fields")
-    val shapeId = shapesState.flattenedField("pa_5").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val (id, spec) = fixture("object-with-null-fields")
+    val shapeId = spec.shapesState.flattenedField("pa_5").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
 
-    val name = NameForShapeId.getFlatShapeName(shapeId)(shapesState, Some("pa_5"))
+    val name = NameForShapeId.getFlatShapeName(shapeId)(spec, Some("pa_5"))
     assert(name == "Unknown (nullable)")
   }
 
@@ -49,16 +49,16 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
   }
 
   it("works for maps") {
-    val shapesState = exampleRfc.shapesState
-    val shapeId = shapesState.flattenedField("field_vmgk9SSZck").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-    val name = NameForShapeId.getFlatShapeName(shapeId)(shapesState, Some("field_vmgk9SSZck"))
+    val spec = exampleRfc
+    val shapeId = spec.shapesState.flattenedField("field_vmgk9SSZck").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val name = NameForShapeId.getFlatShapeName(shapeId)(spec, Some("field_vmgk9SSZck"))
     assert(name == "Map from String to Dog")
   }
 
   it("works for one ofs") {
-    val shapesState = exampleRfc.shapesState
-    val shapeId = shapesState.flattenedField("field_iHuSkVboeG").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-    val name = NameForShapeId.getFlatShapeName(shapeId)(shapesState, Some("field_iHuSkVboeG"))
+    val spec = exampleRfc
+    val shapeId = spec.shapesState.flattenedField("field_iHuSkVboeG").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val name = NameForShapeId.getFlatShapeName(shapeId)(spec, Some("field_iHuSkVboeG"))
     assert(name == "List of Pet , Dog or Cat")
   }
 
@@ -71,21 +71,21 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
   }
 
   it("can name list of pet ids") {
-    val shapesState = paginationExampleRfc.shapesState
-    val shapeId = shapesState.flattenedField("field_SWppoWn6kT").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-    val name = NameForShapeId.getFlatShapeName(shapeId)(shapesState, Some("field_SWppoWn6kT"))
+    val spec = paginationExampleRfc
+    val shapeId = spec.shapesState.flattenedField("field_SWppoWn6kT").fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+    val name = NameForShapeId.getFlatShapeName(shapeId)(spec, Some("field_SWppoWn6kT"))
     assert(name == "List of PetId")
   }
 
   it("can name generic") {
-    val shapesState = paginationExampleRfc.shapesState
-    val name = NameForShapeId.getFlatShapeName("shape_YPyuORdmZ7")(shapesState)
+    val spec = paginationExampleRfc
+    val name = NameForShapeId.getFlatShapeName("shape_YPyuORdmZ7")(spec)
     assert(name == "PaginatedList Item: Owner")
   }
 
   it("can name a field's shape") {
-    val shapesState = paginationExampleRfc.shapesState
-    val name = NameForShapeId.getFieldIdShapeName("field_SWppoWn6kT")(shapesState).map(_.name).mkString(" ")
+    val spec = paginationExampleRfc
+    val name = NameForShapeId.getFieldIdShapeName("field_SWppoWn6kT")(spec).map(_.name).mkString(" ")
 
     assert(name == "List of PetId")
   }
@@ -96,9 +96,9 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
-    val shapesState = rfcService.currentState("id").shapesState
+    val spec = rfcService.currentState("id")
 
-    val a= FlatShapeProjection.forShapeId("shape_Me4aQ0D3VR")(shapesState)
+    val a= FlatShapeProjection.forShapeId("shape_Me4aQ0D3VR")(spec)
 
     assert(a.root.joinedTypeName == "abc")
   }
