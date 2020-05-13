@@ -16,25 +16,25 @@ import {
   ensureDaemonStopped,
   FileSystemCaptureSaver,
 } from '@useoptic/cli-server';
-import { ICaptureSaver, ICliDaemonState } from '@useoptic/cli-server';
+import { ICaptureSaver } from '@useoptic/cli-server';
 import { FileSystemCaptureLoader, ICaptureLoader } from '@useoptic/cli-server';
 import { makeUiBaseUrl } from '@useoptic/cli-server';
 import { checkDiffOrUnrecognizedPath } from '@useoptic/domain';
-import * as colors from 'colors';
-import * as path from 'path';
-import * as cp from 'child_process';
 import { errorFromOptic, fromOptic } from './conversation';
 import { developerDebugLogger, userDebugLogger } from './logger';
 import { lockFilePath } from './paths';
 import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
-import * as uuidv4 from 'uuid/v4';
-import findProcess = require('find-process');
 import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
 import { basePath, runStandaloneScript } from '@useoptic/cli-scripts';
 import { trackAndSpawn } from './analytics';
+import * as colors from 'colors';
+import * as path from 'path';
+import findProcess = require('find-process');
+import { SaasCaptureSaver } from '@useoptic/cli-server';
+import * as uuid from 'uuid';
 
 async function setupTaskWithConfig(
   cli: Command,
@@ -50,7 +50,7 @@ async function setupTaskWithConfig(
     );
   }
 
-  const captureId = uuidv4();
+  const captureId = uuid.v4();
   const startConfig = await TaskToStartConfig(task, captureId);
 
   trackAndSpawn('Run Task with Local CLI', { task });
@@ -85,6 +85,32 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
   // start proxy and command session
   const persistenceManagerFactory = () => {
+    if (process.env.OPTIC_PERSISTENCE_METHOD === 'saas') {
+      if (!process.env.OPTIC_SAAS_AGENT_GROUP_ID) {
+        throw new Error(`I need OPTIC_SAAS_AGENT_GROUP_ID`);
+      }
+      if (!process.env.OPTIC_SAAS_API_BASE_URL) {
+        throw new Error(`I need OPTIC_SAAS_API_BASE_URL`);
+      }
+      if (!process.env.OPTIC_SAAS_LAUNCH_TOKEN) {
+        throw new Error(`I need OPTIC_SAAS_LAUNCH_TOKEN`);
+      }
+      if (!process.env.OPTIC_SAAS_ORG_ID) {
+        throw new Error(`I need OPTIC_SAAS_ORG_ID`);
+      }
+      if (!process.env.OPTIC_SAAS_CAPTURE_ID) {
+        throw new Error(`I need OPTIC_SAAS_CAPTURE_ID`);
+      }
+      return new SaasCaptureSaver({
+        orgId: process.env.OPTIC_SAAS_ORG_ID,
+        agentGroupId: process.env.OPTIC_SAAS_AGENT_GROUP_ID,
+        agentId: uuid.v4(),
+        baseUrl: process.env.OPTIC_SAAS_API_BASE_URL,
+        launchTokenString: process.env.OPTIC_SAAS_LAUNCH_TOKEN,
+        captureId: process.env.OPTIC_SAAS_CAPTURE_ID,
+      });
+    }
+    throw new Error('xxx');
     return new FileSystemCaptureSaver({
       captureBaseDirectory: capturesPath,
     });
@@ -179,6 +205,8 @@ export async function runTask(
   const persistenceManager = persistenceManagerFactory();
 
   await sessionManager.run(persistenceManager);
+
+  await persistenceManager.cleanup();
 
   if (process.env.OPTIC_ENV === 'development') {
     await ensureDaemonStopped(lockFilePath);

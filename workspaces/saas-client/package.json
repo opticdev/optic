@@ -1,15 +1,13 @@
 {
-  "name": "@useoptic/cli-client",
-  "version": "8.0.6",
+  "name": "@useoptic/saas-client",
+  "version": "0.1.0",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:test": "echo cli-client"
+    "ws:test": "echo saas-client"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/cli-config": "8.0.6",
-    "cross-fetch": "^3.0.4",
     "@useoptic/client-utilities": "0.1.0"
   },
   "devDependencies": {},

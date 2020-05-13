@@ -19,6 +19,8 @@
     "workspaces/domain",
     "workspaces/domain-utilities",
     "workspaces/cli-config",
+    "workspaces/client-utilities",
+    "workspaces/saas-client",
     "workspaces/proxy",
     "workspaces/cli-client",
     "workspaces/ui",

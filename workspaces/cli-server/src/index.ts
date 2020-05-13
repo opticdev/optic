@@ -8,6 +8,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import {FileSystemCaptureLoader} from './captures/file-system/avro/file-system-capture-loader';
 import {FileSystemCaptureSaver} from './captures/file-system/avro/file-system-capture-saver';
+import {SaasCaptureSaver} from './captures/saas/avro/saas-capture-saver';
 import {makeUiBaseUrl} from './url-builders';
 import {developerDebugLogger} from './logger';
 import * as waitOn from 'wait-on';
@@ -28,6 +29,8 @@ export interface ICaptureSaver {
   init(captureId: string): Promise<void>
 
   save(sample: IHttpInteraction): Promise<void>
+
+  cleanup(): Promise<void>
 }
 
 export interface ICliDaemonState {
@@ -129,5 +132,6 @@ export {
   CliDaemon,
   FileSystemCaptureSaver,
   FileSystemCaptureLoader,
+  SaasCaptureSaver,
   makeUiBaseUrl
 };

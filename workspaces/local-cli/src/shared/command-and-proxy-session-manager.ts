@@ -37,8 +37,8 @@ class CommandAndProxySessionManager {
     await inboundProxy.start({
       flags: {
         chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
-        includeTextBody: true,
-        includeJsonBody: true,
+        includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
+        includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeShapeHash: true
       },
       host: this.config.proxyConfig.host,

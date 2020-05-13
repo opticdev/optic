@@ -127,7 +127,16 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       const report = opticEngine.com.useoptic.diff.helpers
         .CoverageHelpers()
         .getCoverage(rfcState, samplesSeq);
-      const serializedReport: CoverageReport = converter.toJs(report);
+      try {
+        const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
+        console.log({ asJs });
+        const fromJs = opticEngine.CoverageReportJsonDeserializer.fromJs(asJs);
+        console.log({ fromJs });
+      } catch (e) {
+        debugger;
+      }
+
+      const serializedReport = converter.toJs(report);
       return ok(serializedReport);
     }
 
