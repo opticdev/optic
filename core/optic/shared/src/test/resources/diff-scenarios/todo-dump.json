@@ -1,0 +1,965 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_RTRicBAYTv",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "c6ebc435-8f52-499e-a4e7-afa08c14aac1",
+          "createdAt": "2020-05-11T13:15:16.584Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "path_RTRicBAYTv.GET",
+        "key": "purpose",
+        "value": "Get all Todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "c6ebc435-8f52-499e-a4e7-afa08c14aac1",
+          "createdAt": "2020-05-11T13:15:16.589Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "32e1726f-5a44-45e9-a377-98b689421ee9",
+        "commitMessage": "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "5a4d460a-4abc-4a89-8469-c8e6a6eae510",
+          "createdAt": "2020-05-11T13:15:22.593Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "parameter_8yx97Kknwc",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "65000ab1-501f-4099-9599-98ae15ccf63b",
+          "createdAt": "2020-05-11T13:15:22.594Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_gyiBkEf3SM",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "65000ab1-501f-4099-9599-98ae15ccf63b",
+          "createdAt": "2020-05-11T13:15:22.594Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_8yx97Kknwc",
+        "parameterDescriptor": {
+          "shapeId": "shape_gyiBkEf3SM",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "65000ab1-501f-4099-9599-98ae15ccf63b",
+          "createdAt": "2020-05-11T13:15:22.594Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_79qDjbQq0p",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "65000ab1-501f-4099-9599-98ae15ccf63b",
+          "createdAt": "2020-05-11T13:15:22.594Z"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_J81PvWa9ZA",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.596Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BTUc6z7",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.596Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BTUc6z1",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.596Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "BTUc6z2",
+        "shapeId": "BTUc6z7",
+        "name": "task",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BTUc6z2",
+            "shapeId": "BTUc6z1"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.597Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BTUc6z3",
+        "baseShapeId": "$boolean",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.597Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "BTUc6z4",
+        "shapeId": "BTUc6z7",
+        "name": "isDone",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BTUc6z4",
+            "shapeId": "BTUc6z3"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.597Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BTUc6z5",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.597Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "BTUc6z6",
+        "shapeId": "BTUc6z7",
+        "name": "id",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BTUc6z6",
+            "shapeId": "BTUc6z5"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.598Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BTUc6z8",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.598Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "BTUc6z8",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "BTUc6z7"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.598Z"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_J81PvWa9ZA",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "BTUc6z8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "d8461eef-4e52-4440-acfd-593340b9280e",
+          "createdAt": "2020-05-11T13:15:22.598Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "32e1726f-5a44-45e9-a377-98b689421ee9",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "27d3deda-c7ca-4424-96bb-b73fbdc5c1f6",
+          "createdAt": "2020-05-11T13:15:22.601Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "path_RTRicBAYTv.POST",
+        "key": "purpose",
+        "value": "Create new todo",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "67d2d04c-36ea-4b07-9f06-970d1014e19f",
+          "createdAt": "2020-05-11T13:15:26.648Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "987aed38-038b-4ec1-9b18-b56b4c24f1b7",
+        "commitMessage": "\n\nChanges:\n- Added Request with application/json Body\n- Added 200 Response with application/json Body\n- Made field 'id' optional",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "53e23cdc-7fa3-406f-b89d-2490889f3a49",
+          "createdAt": "2020-05-11T13:16:00.787Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "parameter_WZBzl0s4vv",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "POST",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.787Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_qsgVZ3itST",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.787Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_WZBzl0s4vv",
+        "parameterDescriptor": {
+          "shapeId": "shape_qsgVZ3itST",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.787Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_Y07X64FvrZ",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "POST",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.787Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "MzORHv7",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "MzORHv1",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "MzORHv2",
+        "shapeId": "MzORHv7",
+        "name": "task",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "MzORHv2",
+            "shapeId": "MzORHv1"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "MzORHv3",
+        "baseShapeId": "$boolean",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "MzORHv4",
+        "shapeId": "MzORHv7",
+        "name": "isDone",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "MzORHv4",
+            "shapeId": "MzORHv3"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "MzORHv5",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "MzORHv6",
+        "shapeId": "MzORHv7",
+        "name": "id",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "MzORHv6",
+            "shapeId": "MzORHv5"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.788Z"
+        }
+      }
+    },
+    {
+      "RequestBodySet": {
+        "requestId": "request_Y07X64FvrZ",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "MzORHv7",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "9e46eb5e-3362-4359-a6e9-e71cd6c73e5a",
+          "createdAt": "2020-05-11T13:16:00.789Z"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_8HpbDJiE0T",
+        "pathId": "path_RTRicBAYTv",
+        "httpMethod": "POST",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.789Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "hIBlDx7",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.789Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "hIBlDx1",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.789Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "hIBlDx2",
+        "shapeId": "hIBlDx7",
+        "name": "task",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "hIBlDx2",
+            "shapeId": "hIBlDx1"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "hIBlDx3",
+        "baseShapeId": "$boolean",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "hIBlDx4",
+        "shapeId": "hIBlDx7",
+        "name": "isDone",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "hIBlDx4",
+            "shapeId": "hIBlDx3"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "hIBlDx5",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "hIBlDx6",
+        "shapeId": "hIBlDx7",
+        "name": "id",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "hIBlDx6",
+            "shapeId": "hIBlDx5"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_8HpbDJiE0T",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "hIBlDx7",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "18c65b37-37d4-4322-8c1c-6be8de6048a9",
+          "createdAt": "2020-05-11T13:16:00.790Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_yj94GUjRPE",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "34d1aaef-d881-4330-9114-785042a68909",
+          "createdAt": "2020-05-11T13:16:00.791Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_yj94GUjRPE",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "MzORHv5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "34d1aaef-d881-4330-9114-785042a68909",
+          "createdAt": "2020-05-11T13:16:00.791Z"
+        }
+      }
+    },
+    {
+      "FieldShapeSet": {
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "MzORHv6",
+            "shapeId": "shape_yj94GUjRPE"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "34d1aaef-d881-4330-9114-785042a68909",
+          "createdAt": "2020-05-11T13:16:00.791Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "987aed38-038b-4ec1-9b18-b56b4c24f1b7",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "c2ef157a-8905-41dd-b5c8-74d58b924663",
+          "clientCommandBatchId": "b7dfd5b8-f33e-4bdd-b9f8-d53418159bcf",
+          "createdAt": "2020-05-11T13:16:00.792Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "afc18eaf-0711-4dcc-a042-1a6b2730834e",
+        "commitMessage": "\n\nChanges:\n- Add dueDate to the specification",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9b73dd7f-7414-443b-8ab8-d1aab7536b24",
+          "clientCommandBatchId": "b91776d0-7f00-436c-8956-6f4f546d4dfa",
+          "createdAt": "2020-05-11T13:17:21.500Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "PODMGy_0",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9b73dd7f-7414-443b-8ab8-d1aab7536b24",
+          "clientCommandBatchId": "b2e447ca-5c43-4bd3-b97d-a9c8a4acbc06",
+          "createdAt": "2020-05-11T13:17:21.501Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_KZ16SF0JYD",
+        "shapeId": "BTUc6z7",
+        "name": "dueDate",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_KZ16SF0JYD",
+            "shapeId": "PODMGy_0"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9b73dd7f-7414-443b-8ab8-d1aab7536b24",
+          "clientCommandBatchId": "b2e447ca-5c43-4bd3-b97d-a9c8a4acbc06",
+          "createdAt": "2020-05-11T13:17:21.501Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "afc18eaf-0711-4dcc-a042-1a6b2730834e",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "9b73dd7f-7414-443b-8ab8-d1aab7536b24",
+          "clientCommandBatchId": "a488f146-7bff-457c-8307-34246288f06f",
+          "createdAt": "2020-05-11T13:17:21.502Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "samples": [
+      {
+        "uuid": "150681c0-ed46-46f2-b055-f93ec0be4b5b",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGjUIABIKCgR0YXNrEgIIAhINCgdkdWVEYXRlEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAho1CAASCgoEdGFzaxICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggC"
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "f21257e3-b41d-41ab-a244-123200fce6e0",
+        "request": {
+          "host": "localhost",
+          "method": "POST",
+          "path": "/todos",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA=="
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI="
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4b47acc6-028c-4ce3-b856-73b78f709ad7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asShapeHashBytes": null,
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asShapeHashBytes": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGjUIABIKCgR0YXNrEgIIAhINCgdkdWVEYXRlEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAho1CAASCgoEdGFzaxICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg=="
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "metadata": {}
+  },
+  "examples": {}
+}

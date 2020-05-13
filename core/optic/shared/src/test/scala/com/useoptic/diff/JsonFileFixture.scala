@@ -39,6 +39,13 @@ trait JsonFileFixture {
     eventsAndInteractionsFrom(json)
   }
 
+  def universeFromFilePath(path: String): Universe = {
+    import better.files._
+    val filePath = (path).toFile
+    val json = parseFile(filePath.toJava).right.get
+    eventsAndInteractionsFrom(json)
+  }
+
   case class Universe(rfcService: RfcService, rfcId: AggregateId, eventStore: EventStore[RfcEvent], interactions: Vector[HttpInteraction])
 
   def eventsAndInteractionsFrom(slug: String): Universe = {

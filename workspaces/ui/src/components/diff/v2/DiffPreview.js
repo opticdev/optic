@@ -22,6 +22,7 @@ import {
   filterScala,
   getIndex,
   getOrUndefined,
+  getOrUndefinedJson,
   headOrUndefined,
   JsonHelper,
   lengthScala,
@@ -382,6 +383,10 @@ function _NewRegions(props) {
     const shapePreview = getOrUndefined(
       diff.previewShape(currentInteraction, inferPolymorphism)
     );
+
+    console.log('shape preview' + currentInteraction);
+    console.log('shape preview', interactions);
+    console.log('shape preview' + shapePreview);
 
     return (
       <>

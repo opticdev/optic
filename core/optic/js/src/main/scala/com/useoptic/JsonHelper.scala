@@ -2,7 +2,7 @@ package com.useoptic
 
 import com.useoptic.logging.Logger
 import com.useoptic.serialization.InteractionSerialization
-import com.useoptic.types.capture.{HttpInteraction, ShapeHashBytes}
+import com.useoptic.types.capture.{HttpInteraction}
 import io.circe.{Decoder, Json}
 
 import scala.scalajs.js

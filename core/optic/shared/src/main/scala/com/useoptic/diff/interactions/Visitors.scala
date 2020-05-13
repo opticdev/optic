@@ -52,9 +52,9 @@ object BodyUtilities {
     val asJsonString = body.value.asJsonString
     if (asShapeHashBytes.isDefined) {
       if (asJsonString.isDefined) {
-        JsonLikeFrom.rawShapeHashWithRawJson(asShapeHashBytes.get.bytes, asJsonString.get)
+        JsonLikeFrom.rawShapeHashWithRawJson(asShapeHashBytes.get, asJsonString.get)
       } else {
-        JsonLikeFrom.rawShapeHash(asShapeHashBytes.get.bytes)
+        JsonLikeFrom.rawShapeHash(asShapeHashBytes.get)
       }
     } else if (asJsonString.isDefined) {
       JsonLikeFrom.rawJson(asJsonString.get)

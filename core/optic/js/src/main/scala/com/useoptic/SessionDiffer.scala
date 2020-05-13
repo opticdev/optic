@@ -5,7 +5,6 @@ import com.useoptic.contexts.rfc.Events._
 import com.useoptic.contexts.rfc._
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.serialization.InteractionSerialization.shapeHashDecoder
 import com.useoptic.types.capture.HttpInteraction
 import com.useoptic.ux.DiffManager
 
@@ -41,7 +40,6 @@ class SessionDiffer(rawEvents: String) {
   private def toInteraction(x: js.Any): Option[HttpInteraction] = {
     import io.circe.generic.auto._
     import io.circe.scalajs.convertJsToJson
-    import shapeHashDecoder._
     convertJsToJson(x).right.get.as[HttpInteraction].right.toOption
   }
 
