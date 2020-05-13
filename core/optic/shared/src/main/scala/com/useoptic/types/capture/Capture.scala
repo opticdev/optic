@@ -1,5 +1,8 @@
 package com.useoptic.types.capture
 
+import com.useoptic.serialization.Base64EncoderDecode
+import io.circe.Json
+
 import scala.scalajs.js.annotation.JSExportAll
 
 case class Capture(groupingIdentifiers: GroupingIdentifiers, batchItems: Vector[HttpInteraction])
@@ -9,12 +12,12 @@ case class GroupingIdentifiers(agentGroupId: String,
                                agentId: String,
                                batchId: String)
 
-case class ShapeHashBytes(bytes: Vector[Byte])
-
 @JSExportAll
-case class ArbitraryData(asShapeHashBytes: Option[ShapeHashBytes] = None,
+case class ArbitraryData(shapeHashV1Base64: Option[String] = None,
                          asJsonString: Option[String] = None,
-                         asText: Option[String] = None)
+                         asText: Option[String] = None) {
+  def asShapeHashBytes: Option[Vector[Byte]] = shapeHashV1Base64.map(Base64EncoderDecode.decodeString)
+}
 
 case class HttpInteractionTag(name: String, value: String)
 
@@ -22,7 +25,7 @@ case class HttpInteractionTag(name: String, value: String)
 case class HttpInteraction(uuid: String,
                            request: Request,
                            response: Response,
-                           tags: Vector[HttpInteractionTag])
+                           tags: Vector[HttpInteractionTag]) {}
 
 @JSExportAll
 case class Request(host: String,
@@ -37,7 +40,7 @@ case class Response(statusCode: Int, headers: ArbitraryData, body: Body)
 
 @JSExportAll
 case class Body(contentType: Option[String], value: ArbitraryData) {
-  def isEmpty: Boolean = contentType.isEmpty && value.asShapeHashBytes.isEmpty && value.asJsonString.isEmpty && value.asText.isEmpty
+  def isEmpty: Boolean = contentType.isEmpty && value.shapeHashV1Base64.isEmpty && value.asJsonString.isEmpty && value.asText.isEmpty
   def nonEmpty: Boolean = !isEmpty
 }
 

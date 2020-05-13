@@ -47,10 +47,14 @@ class TrafficSessionStoreBase extends React.Component {
         });
         this.checkForUpdates();
 
-        DiffManagerFacade.updateInteractions(
+        console.log('LOOK HERE ', session.samples);
+
+        const parsed = DiffManagerFacade.updateInteractions(
           session.samples,
           this.state.diffManager
         );
+
+        console.log('LOOK HERE ', parsed);
       })
       .catch((e) => {
         console.error(e);

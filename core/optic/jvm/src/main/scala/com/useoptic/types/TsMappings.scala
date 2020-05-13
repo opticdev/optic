@@ -1,6 +1,6 @@
 package com.useoptic.types
 
-import com.useoptic.types.capture.{ArbitraryData, Body, Capture, GroupingIdentifiers, HttpInteraction, HttpInteractionTag, Request, Response, ShapeHashBytes}
+import com.useoptic.types.capture.{ArbitraryData, Body, Capture, GroupingIdentifiers, HttpInteraction, HttpInteractionTag, Request, Response}
 import io.circe.Json
 import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._
@@ -14,7 +14,7 @@ import nl.codestar.scalatsi._
 object MyTSTypes extends DefaultTSTypes {
   implicit val tsJson = TSType.sameAs[Json, Object]
   implicit  lazy val tsArbitraryData: TSType[ArbitraryData] = TSType.interface("IArbitraryData",
-    "asShapeHashBytes" -> (tsShapeHashBytes | TSNull),
+    "shapeHashV1Base64" -> (TSString | TSNull),
     "asJsonString" -> (TSString | TSNull),
     "asText" -> (TSString | TSNull)
   )
@@ -24,7 +24,6 @@ object MyTSTypes extends DefaultTSTypes {
     "value" -> (tsArbitraryData.get)
   )
   implicit val tsInteractionTag = TSType.fromCaseClass[HttpInteractionTag]
-  implicit val tsShapeHashBytes = TSType.fromCaseClass[ShapeHashBytes]
   implicit val tsResponse = TSType.fromCaseClass[Response]
   implicit val tsRequest = TSType.fromCaseClass[Request]
   implicit val tsInteraction = TSType.fromCaseClass[HttpInteraction]

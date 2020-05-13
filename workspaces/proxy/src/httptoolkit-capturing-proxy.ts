@@ -149,19 +149,19 @@ export class HttpToolkitCapturingProxy {
             headers: {
               asJsonString: null,
               asText: null,
-              asShapeHashBytes: null,
+              shapeHashV1Base64: null,
             },
             query: {
               asJsonString: null,
               asText: null,
-              asShapeHashBytes: null,
+              shapeHashV1Base64: null,
             },
             body: this.extractBody(req),
           },
           response: {
             statusCode: res.statusCode,
             headers: {
-              asShapeHashBytes: null,
+              shapeHashV1Base64: null,
               asJsonString: null,
               asText: null,
             },
@@ -240,9 +240,9 @@ export class HttpToolkitCapturingProxy {
       return {
         contentType: (req.body.text && contentType?.essence) || null,
         value: {
-          asShapeHashBytes:
+          shapeHashV1Base64:
             this.config.flags.includeShapeHash && json
-              ? { bytes: toBytes(json) }
+              ? toBytes(json).toString('base64')
               : null,
           asJsonString:
             this.config.flags.includeJsonBody && json
@@ -260,7 +260,7 @@ export class HttpToolkitCapturingProxy {
       value: {
         asText: null,
         asJsonString: null,
-        asShapeHashBytes: null,
+        shapeHashV1Base64: null,
       },
     };
   }
