@@ -21,6 +21,8 @@ object DistributionAwareShapeBuilder {
     val aggregator = aggregateTrailsAndValues(bodies)
     val rootShape = toShapes(aggregator, ids)
 
+    val flattened = rootShape.flattenChildren
+
     implicit val idGenerator: () => String = () => ids.nextId()
 
     val commands = new MutableCommandStream
@@ -37,12 +39,24 @@ object DistributionAwareShapeBuilder {
         }
         case s: OptionalShape => {
           buildCommandsFor(s.shape, Some(s))
-          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), OptionalKind.innerParam)))
+          commands.appendDescribe(SetParameterShape(
+            if (inField) {
+              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
+            } else {
+              ProviderInShape(s.id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
+            }
+          ))
           commands.appendInit(AddShape(s.id, OptionalKind.baseShapeId, ""))
         }
         case s: NullableShape => {
           buildCommandsFor(s.shape, Some(s))
-          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), NullableKind.innerParam)))
+          commands.appendDescribe(SetParameterShape(
+            if (inField) {
+              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), NullableKind.innerParam)
+            } else {
+              ProviderInShape(s.id, ShapeProvider(s.shape.id), NullableKind.innerParam)
+            }
+          ))
           commands.appendInit(AddShape(s.id, NullableKind.baseShapeId, ""))
         }
         case s: FieldWithShape => {
@@ -58,7 +72,13 @@ object DistributionAwareShapeBuilder {
             buildCommandsFor(branch, Some(s))
             val paramId = idGenerator()
             commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
-            commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(branch.id), paramId)))
+            commands.appendDescribe(SetParameterShape(
+              if (inField) {
+                ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(branch.id), paramId)
+              } else {
+                ProviderInShape(s.id, ShapeProvider(branch.id), paramId)
+              }
+            ))
           })
 
           commands.appendInit(AddShape(s.id, OneOfKind.baseShapeId, ""))
@@ -66,7 +86,13 @@ object DistributionAwareShapeBuilder {
         case s: ListOfShape => {
           buildCommandsFor(s.shape, Some(s))
           commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
-          commands.appendDescribe(SetParameterShape(ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)))
+          commands.appendDescribe(SetParameterShape(
+            if (inField) {
+              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), ListKind.innerParam)
+            } else {
+              ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
+            }
+          ))
         }
         case s: Unknown => {
           commands.appendInit(AddShape(s.id, UnknownKind.baseShapeId, ""))
@@ -177,16 +203,17 @@ object DistributionAwareShapeBuilder {
 trait ShapesToMake {
   def id: String
   def trail: JsonTrail
+  def flattenChildren: Vector[ShapesToMake]
 }
 
-case class OptionalShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
-case class NullableShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
-case class OneOfShape(branches: Seq[ShapesToMake], trail: JsonTrail, id: String) extends ShapesToMake
-case class ObjectWithFields(fields: Seq[FieldWithShape], trail: JsonTrail, id: String) extends ShapesToMake
-case class ListOfShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
-case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
-case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake
-case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake
+case class OptionalShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
+case class NullableShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake  {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
+case class OneOfShape(branches: Seq[ShapesToMake], trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = branches.flatMap(_.flattenChildren).toVector}
+case class ObjectWithFields(fields: Seq[FieldWithShape], trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = fields.flatMap(_.flattenChildren).toVector}
+case class ListOfShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
+case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
+case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector.empty}
+case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector.empty}
 ////
 
 class TrailValueMap(val totalSamples: Int) {

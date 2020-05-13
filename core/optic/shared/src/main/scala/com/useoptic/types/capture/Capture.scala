@@ -1,5 +1,6 @@
 package com.useoptic.types.capture
 
+import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.serialization.Base64EncoderDecode
 import io.circe.Json
 
@@ -42,6 +43,7 @@ case class Response(statusCode: Int, headers: ArbitraryData, body: Body)
 case class Body(contentType: Option[String], value: ArbitraryData) {
   def isEmpty: Boolean = contentType.isEmpty && value.shapeHashV1Base64.isEmpty && value.asJsonString.isEmpty && value.asText.isEmpty
   def nonEmpty: Boolean = !isEmpty
+  def jsonOption = BodyUtilities.parseBody(this).map(_.asJson)
 }
 
 

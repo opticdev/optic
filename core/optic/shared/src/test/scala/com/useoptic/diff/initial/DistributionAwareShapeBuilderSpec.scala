@@ -2,11 +2,19 @@ package com.useoptic.diff.initial
 
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
+import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapesHelper.StringKind
+import com.useoptic.diff.helpers.DiffHelpers
+import com.useoptic.diff.interactions.InteractionDiffResult
+import com.useoptic.diff.interactions.visitors.DiffVisitors
+import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.end_to_end.fixtures.JsonExamples
-import com.useoptic.types.capture.JsonLikeFrom
+import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
+import com.useoptic.ux.DiffPreviewer
 import org.scalatest.FunSpec
+
+import scala.util.Try
 
 class DistributionAwareShapeBuilderSpec extends FunSpec {
 
@@ -149,12 +157,19 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
 
     describe("to commands") {
 
-      def tryCommands(commands: Vector[RfcCommand]) = {
+      def tryCommands(commands: Vector[RfcCommand], shapeId: ShapeId, example: JsonLike) = {
         val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
         val eventStore = RfcServiceJSFacade.makeEventStore()
         val rfcService: RfcService = new RfcService(eventStore)
         rfcService.handleCommandSequence("id", commands, commandContext)
-        rfcService.currentState("id").shapesState
+        val rfcState = rfcService.currentState("id")
+
+
+        val diffs = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
+        val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+        traverser.traverseRootShape(Some(example), shapeId)
+        assert(diffs.isEmpty)
+        (rfcState, diffs)
       }
 
       it("can create commands for basic shape") {
@@ -164,7 +179,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
           JsonLikeFrom.json(JsonExamples.basicTodoWithDescription).get
         ))
 
-        tryCommands(commands._2.flatten)
+        tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.basicTodo).get)
       }
 
       it("can create commands for array of strings") {
@@ -172,7 +187,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
           JsonLikeFrom.json(JsonExamples.stringArray).get
         ))
 
-        tryCommands(commands._2.flatten)
+        tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.stringArray).get)
       }
 
       it("can create a one of") {
@@ -182,8 +197,113 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
           JsonLikeFrom.json(JsonExamples.basicTodo).get
         ))
 
-        println(commands._2.flatten)
-        tryCommands(commands._2.flatten)
+        tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.stringArray).get)
+      }
+
+
+      describe("Arrays of arrays") {
+
+        def tryCommands(commands: Vector[RfcCommand]) = {
+          val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
+          val eventStore = RfcServiceJSFacade.makeEventStore()
+          val rfcService: RfcService = new RfcService(eventStore)
+          rfcService.handleCommandSequence("id", commands, commandContext)
+          rfcService.currentState("id")
+        }
+
+        it("when in a field") {
+          val examples = Vector(
+            JsonLikeFrom.json(JsonExamples.fieldOfArrayOfArray).get,
+          )
+          lazy val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(examples)
+
+          println("FOR EXAMPLE: ")
+          println(examples.head.asJson.spaces2)
+
+
+          println("COMMANDS THAT COME OUT:\n ")
+          println(commands.flatten.mkString("\n"))
+
+          val diffs = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
+          val rfcState = tryCommands(commands.flatten)
+
+
+          println("\nDIFF AGAINST SELF (should be empty):\n ")
+          val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+          traverser.traverseRootShape(examples.headOption, shapeId)
+          println(diffs)
+
+          //commented out because it causes a stack overflow
+//          println("\nAttempt to render:\n ")
+//          val renderAttempt = Try(DiffPreviewer.shapeOnlyFromShapeBuilder(examples))
+//          if (renderAttempt.isSuccess) {
+//            println("worked")
+//          } else {
+//            println(renderAttempt.failed.get.getMessage)
+//          }
+        }
+
+        it("when at the root") {
+          val examples = Vector(
+            JsonLikeFrom.json(JsonExamples.arrayOfArray).get,
+          )
+          lazy val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(examples)
+
+          println("FOR EXAMPLE: ")
+          println(examples.head.asJson.spaces2)
+
+
+          println("COMMANDS THAT COME OUT:\n ")
+          println(commands.flatten.mkString("\n"))
+
+          val diffs = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
+          val rfcState = tryCommands(commands.flatten)
+
+
+          println("\nDIFF AGAINST SELF (should be empty):\n ")
+          val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+          traverser.traverseRootShape(examples.headOption, shapeId)
+          println(diffs)
+
+          //commented out because it causes a stack overflow
+//          println("\nAttempt to render:\n ")
+//          val renderAttempt = Try(DiffPreviewer.shapeOnlyFromShapeBuilder(examples))
+//          if (renderAttempt.isSuccess) {
+//            println("worked")
+//          } else {
+//            println(renderAttempt.failed.get.getMessage)
+//          }
+        }
+
+        it("when offset by an object inside") {
+          val examples = Vector(
+            JsonLikeFrom.json(JsonExamples.arrayOfObjectsWithArrayFields).get,
+          )
+          lazy val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(examples)
+
+          println("FOR EXAMPLE: ")
+          println(examples.head.asJson.spaces2)
+
+
+          println("COMMANDS THAT COME OUT:\n ")
+          println(commands.flatten.mkString("\n"))
+
+          val diffs = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
+          val rfcState = tryCommands(commands.flatten)
+
+
+          println("\nDIFF AGAINST SELF (should be empty):\n ")
+          val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+          traverser.traverseRootShape(examples.headOption, shapeId)
+          println(diffs)
+
+          val renderAttempt = Try(DiffPreviewer.shapeOnlyFromShapeBuilder(examples))
+          if (renderAttempt.isSuccess) {
+            println("worked")
+          } else {
+            println(renderAttempt.failed.get.getMessage)
+          }
+        }
       }
 
     }

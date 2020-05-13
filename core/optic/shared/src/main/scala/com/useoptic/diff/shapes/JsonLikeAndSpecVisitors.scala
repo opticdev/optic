@@ -181,10 +181,11 @@ class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffRe
       choice.coreShapeKind match {
         case ListKind => {
           val listTrail = choice.shapeTrail()
-          val listItem = Resolvers.resolveParameterToShape(spec.shapesState, choice.shapeId, ListKind.innerParam, Map.empty).get
-          val listItemTrail = listTrail.withChild(ListItemTrail(choice.shapeId, listItem.shapeId))
-          val choices = Resolvers.listTrailChoices(spec, listItemTrail, Map.empty)
-          choices
+          Resolvers.resolveParameterToShape(spec.shapesState, choice.shapeId, ListKind.innerParam, Map.empty).map(listItem => {
+            val listItemTrail = listTrail.withChild(ListItemTrail(choice.shapeId, listItem.shapeId))
+            val choices = Resolvers.listTrailChoices(spec, listItemTrail, Map.empty)
+            choices
+          }).getOrElse(Seq.empty)
         }
         case _ => throw new Error("expected choice to be ListKind")
       }
