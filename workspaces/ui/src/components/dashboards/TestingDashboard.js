@@ -108,6 +108,18 @@ export default function TestingDashboardPage(props) {
                     For help on how to get started with Live Contract Testing,
                     see <SetupLink>the setup instructions</SetupLink>.
                   </p>
+
+                  <p>
+                    Think this might not be right? Feel free to{' '}
+                    <a
+                      href={SupportLinks.Contact(
+                        'Problem: No live captures found'
+                      )}
+                    >
+                      contact us about it
+                    </a>
+                    .
+                  </p>
                 </div>
 
                 <TestingPromo />
