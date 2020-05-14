@@ -3,9 +3,10 @@
   "version": "8.0.7",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:test": "echo snapshot-tests"
+    "ws:test": "node build/index.js"
   },
   "dependencies": {
+    "@useoptic/domain-types": "8.0.7",
     "@useoptic/domain-utilities": "8.0.7",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
