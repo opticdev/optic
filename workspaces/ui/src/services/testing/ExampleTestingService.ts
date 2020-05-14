@@ -6,8 +6,6 @@ import { StableHasher } from '../../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
 import { ITestingService, CoverageReport, TestingServiceError } from '.';
 
-export class TestingService {}
-
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
     headers: {
