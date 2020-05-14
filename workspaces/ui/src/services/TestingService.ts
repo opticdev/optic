@@ -48,6 +48,8 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
   }
 
   class ExampleTestingService {
+    orgId: string;
+
     constructor(orgId) {
       this.orgId = orgId;
     }
@@ -167,6 +169,9 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 }
 
 export class TestingServiceError extends Error {
+  statusCode: number;
+  type: string;
+
   static type = 'testing-service-error';
   // don't rely on `instanceof` in JS, it's a mistake
   static instanceOf(maybeErr) {
