@@ -12,6 +12,7 @@ import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import ReportSummary, { LoadingReportSummary } from '../testing/ReportSummary';
 import SetupLink from '../testing/SetupLink';
+import * as SupportLinks from '../support/Links';
 
 import {
   createContext,
@@ -107,6 +108,18 @@ export default function TestingDashboardPage(props) {
                     For help on how to get started with Live Contract Testing,
                     see <SetupLink>the setup instructions</SetupLink>.
                   </p>
+
+                  <p>
+                    Think this might not be right? Feel free to{' '}
+                    <a
+                      href={SupportLinks.Contact(
+                        'Problem: No live captures found'
+                      )}
+                    >
+                      contact us about it
+                    </a>
+                    .
+                  </p>
                 </div>
 
                 <TestingPromo />
@@ -125,6 +138,7 @@ export function TestingDashboard(props) {
     loading: loadingReport,
     result: report,
     error: reportError,
+    notFound: reportNotFound,
   } = useTestingService((service) => service.loadReport(captureId), [
     captureId,
   ]);
@@ -135,6 +149,7 @@ export function TestingDashboard(props) {
     loading: loadingCapture,
     result: capture,
     error: captureError,
+    notFound: captureNotFound,
   } = useTestingService((service) => service.loadCapture(captureId), [
     captureId,
   ]);
@@ -143,6 +158,7 @@ export function TestingDashboard(props) {
     loading: loadingUndocumentedEndpoints,
     result: undocumentedEndpoints,
     error: undocumentedEndpointsError,
+    notFound: undocumentedEndpointsNotFound,
   } = useTestingService(
     (service) => service.loadUndocumentedEndpoints(captureId),
     [captureId]
@@ -151,6 +167,13 @@ export function TestingDashboard(props) {
   const error =
     reportError || specError || captureError || undocumentedEndpointsError;
   if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
+
+  const notFound =
+    reportNotFound || captureNotFound || undocumentedEndpointsNotFound;
+
+  if (notFound) {
+    return <ReportNotFound />;
+  }
 
   return (
     <>
@@ -169,6 +192,28 @@ export function TestingDashboard(props) {
         />
       )}
     </>
+  );
+}
+
+function ReportNotFound(props) {
+  const classes = useStyles();
+  return (
+    <div className={classes.notFound}>
+      <h4>The Report you're trying to access could not be found.</h4>
+
+      <p>
+        Looking for the right report? All available reports are listed in the
+        navigation on the left.
+      </p>
+
+      <p>
+        Think this might not be right? Feel free to{' '}
+        <a href={SupportLinks.Contact('Problem: Report not found')}>
+          contact us about it
+        </a>
+        .
+      </p>
+    </div>
   );
 }
 
@@ -250,6 +295,21 @@ const useStyles = makeStyles((theme) => ({
     },
 
     '& h3': {
+      ...theme.typography.h4,
+      color: theme.palette.primary.main,
+    },
+
+    '& p': {
+      ...theme.typography.body1,
+      // fontSize:
+      fontWeight: theme.typography.fontWeightLight,
+    },
+  },
+
+  notFound: {
+    padding: theme.spacing(3, 4),
+
+    '& h4': {
       ...theme.typography.h4,
       color: theme.palette.primary.main,
     },

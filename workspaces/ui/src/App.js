@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
 import TopLevelRoutes from './entrypoints';
 import { touchAnalytics, track } from './Analytics';
+import * as SupportLinks from './components/support/Links';
 
 class App extends React.Component {
   state = { hasError: false };
@@ -66,7 +67,7 @@ function AppError() {
 
         <h5>
           Please feel free to{' '}
-          <a href="mailto:aidan@useoptic.com?subject=Optic App crash report">
+          <a href={SupportLinks.Contact('Optic App crash report')}>
             contact us about it.
           </a>
         </h5>
@@ -76,17 +77,18 @@ function AppError() {
         <ul>
           <li>
             Create a debug file and{' '}
-            <a href="mailto:aidan@useoptic.com?subject=Optic App crash report">
+            <a href={SupportLinks.Contact('Optic App crash report')}>
               {' '}
               email it to our team
-            </a>
-            or{' '}
-            <a href="https://github.com/opticdev/optic/issues">
-              {' '}
-              open a GitHub issue
             </a>{' '}
-            Just open Developer Tools and type `debugOptic()`.{' '}
-            <a target="_blank">Read more here</a>
+            or <a href={SupportLinks.GithubIssues}> open a GitHub issue</a>
+            {': '}
+            <ul>
+              <li>Open Developer Tools</li>
+              <li>
+                Type <code>debugOptic()</code> in the console
+              </li>
+            </ul>
           </li>
           <li>
             <a href="#" onClick={onClickRefresh}>
