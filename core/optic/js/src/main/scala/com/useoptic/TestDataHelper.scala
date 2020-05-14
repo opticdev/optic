@@ -9,8 +9,7 @@ import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.interactions.interpreters.DefaultInterpreters
 import com.useoptic.diff.interactions.{UnmatchedRequestBodyContentType, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape}
 import com.useoptic.dsa.SequentialIdGenerator
-import com.useoptic.serialization.EventSerialization
-import com.useoptic.serialization.InteractionSerialization.shapeHashDecoder
+import com.useoptic.serialization.{EventSerialization, InteractionSerialization}
 import com.useoptic.types.capture.HttpInteraction
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 
@@ -56,12 +55,9 @@ class TestDataHelper(id: String) {
 
     val (events, spec) = commandsToEventsAndState(commands.toVector)
 
-    import io.circe.generic.auto._
-    import io.circe.scalajs.convertJsToJson
-    import shapeHashDecoder._
-    val interactions = convertJsToJson(interactionsRAW).right.get.as[Seq[HttpInteraction]].right.get
+    val interactions = convertJsToJson(interactionsRAW).right.get.asArray.get.map(InteractionSerialization.fromJson)
 
-    val diff = DiffHelpers.groupByDiffs(spec, interactions.toVector)
+    val diff = DiffHelpers.groupByDiffs(spec, interactions)
     val basicInterpreter = new DefaultInterpreters(spec)
     val newBodyCommands = diff.toVector.collect {
       case (diff: UnmatchedRequestBodyContentType, interactions) => basicInterpreter.interpret(diff, interactions.toVector).head.commands

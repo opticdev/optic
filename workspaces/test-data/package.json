@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/test-data",
-  "version": "8.0.5",
+  "version": "8.0.6",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo cli-client",
@@ -10,7 +10,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/domain": "8.0.5",
+    "@useoptic/domain": "8.0.6",
     "deepcopy": "^2.0.0",
     "md5": "^2.2.1"
   },

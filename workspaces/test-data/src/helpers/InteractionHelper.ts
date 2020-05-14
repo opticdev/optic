@@ -1,7 +1,7 @@
 //@ts-ignore
 import * as deepCopy from 'deepcopy';
 import { IHttpInteraction } from '@useoptic/proxy';
-import { IArbitraryData, IBody, IShapeHashBytes } from '@useoptic/domain';
+import { IArbitraryData, IBody } from '@useoptic/domain';
 
 export function newInteraction(url: string, method: string) {
   return new InteractionHelper(url, method);
@@ -72,7 +72,7 @@ export class InteractionHelper {
       response: {
         statusCode: this.statusCode,
         headers: {
-          asShapeHashBytes: null,
+          shapeHashV1Base64: null,
           asJsonString: null,
           asText: null,
         },
@@ -81,7 +81,7 @@ export class InteractionHelper {
             ? {
                 contentType: null,
                 value: {
-                  asShapeHashBytes: null,
+                  shapeHashV1Base64: null,
                   asJsonString: null,
                   asText: null,
                 },
@@ -89,7 +89,7 @@ export class InteractionHelper {
             : {
                 contentType: 'application/json',
                 value: {
-                  asShapeHashBytes: null,
+                  shapeHashV1Base64: null,
                   asJsonString: JSON.stringify(this.responseBody.value),
                   asText: null,
                 },
@@ -100,12 +100,12 @@ export class InteractionHelper {
         method: this.method,
         path: this.url,
         query: {
-          asShapeHashBytes: null,
+          shapeHashV1Base64: null,
           asJsonString: null,
           asText: null,
         },
         headers: {
-          asShapeHashBytes: null,
+          shapeHashV1Base64: null,
           asJsonString: null,
           asText: null,
         },
@@ -114,7 +114,7 @@ export class InteractionHelper {
             ? {
                 contentType: null,
                 value: {
-                  asShapeHashBytes: null,
+                  shapeHashV1Base64: null,
                   asJsonString: null,
                   asText: null,
                 },
@@ -122,7 +122,7 @@ export class InteractionHelper {
             : {
                 contentType: 'application/json',
                 value: {
-                  asShapeHashBytes: null,
+                  shapeHashV1Base64: null,
                   asJsonString: JSON.stringify(this.requestBody.value),
                   asText: null,
                 },
