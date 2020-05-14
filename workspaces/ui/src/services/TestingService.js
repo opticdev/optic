@@ -43,6 +43,10 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     }
   }
 
+  function notFoundErr() {
+    return new TestingServiceError('Not found', { statusCode: 404 });
+  }
+
   class ExampleTestingService {
     constructor(orgId) {
       this.orgId = orgId;
@@ -51,23 +55,35 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     async loadSpecEvents(captureId) {
       await new Promise((r) => setTimeout(r, 200));
 
-      return getSpecEvents(captureId);
+      const spec = getSpecEvents(captureId);
+
+      if (!spec) throw notFoundErr();
+
+      return spec;
     }
 
     async listCaptures() {
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 400));
       return captures;
     }
 
     async loadCapture(captureId) {
       await new Promise((r) => setTimeout(r, 200));
-      return captures.find((capture) => captureId === capture.captureId);
+      const capture = captures.find(
+        (capture) => captureId === capture.captureId
+      );
+      if (!capture) throw notFoundErr();
+
+      return capture;
     }
 
     async loadReport(captureId) {
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 2000));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
+
+      if (!events || !samples) throw notFoundErr();
+
       const { rfcState } = queriesFromEvents(events);
 
       const samplesSeq = JsonHelper.jsArrayToSeq(
@@ -86,6 +102,9 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     async loadEndpointDiffs(captureId, pathId, httpMethod) {
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
+
+      if (!events || !samples) throw notFoundErr();
+
       const { rfcState } = queriesFromEvents(events);
 
       const interactions = JsonHelper.jsArrayToSeq(
@@ -118,6 +137,9 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
+
+      if (!events || !samples) throw notFoundErr();
+
       const { rfcState } = queriesFromEvents(events);
 
       const diffManager = DiffManagerFacade.newFromInteractions(
@@ -142,6 +164,24 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
   }
 
   return new ExampleTestingService(orgId);
+}
+
+export class TestingServiceError extends Error {
+  static type = 'testing-service-error';
+  // don't rely on `instanceof` in JS, it's a mistake
+  static instanceOf(maybeErr) {
+    return maybeErr && maybeErr.type === TestingServiceError.type;
+  }
+
+  constructor(msg, { statusCode }) {
+    super(msg);
+    this.statusCode = statusCode;
+    this.type = TestingServiceError.type;
+  }
+
+  notFound() {
+    return this.statusCode === 404;
+  }
 }
 
 // Might belong in a (View)Model somewhere

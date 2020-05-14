@@ -22,6 +22,7 @@ import {
   filterScala,
   getIndex,
   getOrUndefined,
+  getOrUndefinedJson,
   headOrUndefined,
   JsonHelper,
   lengthScala,
@@ -383,6 +384,10 @@ function _NewRegions(props) {
       diff.previewShape(currentInteraction, inferPolymorphism)
     );
 
+    console.log('shape preview' + currentInteraction);
+    console.log('shape preview', interactions);
+    console.log('shape preview' + shapePreview);
+
     return (
       <>
         <Card className={classes.regionHeader} elevation={2}>
@@ -408,7 +413,7 @@ function _NewRegions(props) {
           />
 
           <div style={{ flex: 1 }} />
-          {length > 1 && (
+          {length > 1 && getOrUndefined(diff.contentType) && (
             <Pagination
               color="primary"
               className={classNames({ [classes.unchecked]: !isChecked })}

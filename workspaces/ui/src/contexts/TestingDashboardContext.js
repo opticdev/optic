@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import { TestingServiceError } from '../services/TestingService';
 
 const TestingDashboardContext = React.createContext(null);
 
@@ -16,23 +23,54 @@ export function useTestingService(
   deps = []
 ) {
   const { service } = useContext(TestingDashboardContext);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const versionRef = useRef(1);
+  const [state, dispatch] = useReducer(
+    serviceStateReducer,
+    initialServiceState(versionRef.current)
+  );
+
+  const isUnmounted = useRef(false);
 
   useEffect(() => {
+    const effectVersion = versionRef.current;
+
+    function effectDispatch(action) {
+      return dispatch({
+        ...action,
+        version: effectVersion,
+        latestVersion: versionRef.current,
+      });
+    }
+
+    effectDispatch({ type: 'request' });
     performRequest(service)
       .then((result) => {
-        setResult(result);
-        setLoading(false);
+        if (isUnmounted.current) return;
+        effectDispatch({ type: 'receive_success', payload: result });
       })
       .catch((err) => {
-        console.error(err);
-        setError(err);
+        if (isUnmounted.current) return;
+
+        if (TestingServiceError.instanceOf(err) && err.notFound()) {
+          effectDispatch({ type: 'receive_not_found' });
+        } else {
+          effectDispatch({ type: 'receive_error', payload: err });
+        }
       });
+
+    return () => {
+      versionRef.current++;
+    };
   }, deps);
 
-  return { result, loading, error };
+  useEffect(() => {
+    return () => {
+      isUnmounted.current = true;
+    };
+  }, []);
+
+  return state;
 }
 
 export function useReportPath(captureId) {
@@ -48,3 +86,63 @@ export function useEndpointPath(captureId, endpointId) {
 }
 
 export { queriesFromEvents } from '../services/TestingService';
+
+// Reducers
+// --------
+
+function initialServiceState() {
+  return {
+    loading: false,
+    result: null,
+    error: null,
+    notFound: false,
+  };
+}
+
+function serviceStateReducer(state, action) {
+  if (action.version !== action.latestVersion) {
+    return state;
+  }
+
+  switch (action.type) {
+    case 'request': {
+      return {
+        ...initialServiceState(),
+        loading: true,
+      };
+    }
+    case 'receive_success': {
+      if (!state.loading) return state;
+
+      return {
+        ...state,
+        result: action.payload,
+        loading: false,
+      };
+    }
+    case 'receive_not_found': {
+      if (!state.loading) return state;
+
+      return {
+        ...state,
+        loading: false,
+        result: null,
+        notFound: true,
+      };
+    }
+    case 'receive_error': {
+      if (!state.loading) return state;
+
+      return {
+        ...state,
+        loading: false,
+        result: null,
+        error: action.payload,
+      };
+    }
+    default:
+      throw new Error(
+        `Unknown action type '${action.type}' for service state reducer`
+      );
+  }
+}

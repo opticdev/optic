@@ -1,0 +1,17 @@
+{
+  "name": "@useoptic/domain-utilities",
+  "version": "8.0.6",
+  "scripts": {
+    "ws:test": "echo domain-utilities",
+    "ws:build": "yarn run tsc -b --verbose"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "@useoptic/domain": "8.0.6"
+  },
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
+}

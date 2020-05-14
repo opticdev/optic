@@ -1,0 +1,45 @@
+[
+  {
+    "uuid": "1",
+    "request": {
+      "host": "localhost",
+      "method": "GET",
+      "path": "/",
+      "query": {
+        "asShapeHashBytes": null,
+        "asJsonString": null,
+        "asText": null
+      },
+      "headers": {
+        "asShapeHashBytes": null,
+        "asJsonString": null,
+        "asText": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {
+          "asShapeHashBytes": null,
+          "asJsonString": null,
+          "asText": null
+        }
+      }
+    },
+    "response": {
+      "statusCode": 200,
+      "headers": {
+        "asShapeHashBytes": null,
+        "asJsonString": null,
+        "asText": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {
+          "asShapeHashBytes": null,
+          "asJsonString": null,
+          "asText": null
+        }
+      }
+    },
+    "tags": []
+  }
+]

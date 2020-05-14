@@ -44,6 +44,7 @@ import {
   RemovedRedBackground,
 } from '../../../theme';
 import { AddOpticLink } from '../../support/Links';
+import { debugDump } from '../../../utilities/debug-dump';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -209,10 +210,15 @@ export const CaptureManager = ({}) => {
 
 function CaptureChooserComponent(props) {
   const { captureId } = props;
+  const specService = useSpecService();
   const classes = useStyles();
   const captureContext = useContext(AllCapturesContext);
   const history = useHistory();
   const baseUrl = useBaseUrl();
+
+  useEffect(() => {
+    global.debugOptic = debugDump(specService, captureId);
+  });
 
   function handleChange(event) {
     const captureId = event.target.value;
@@ -232,34 +238,34 @@ function CaptureChooserComponent(props) {
         </Typography>
         <div style={{ flex: 1 }} />
 
-          <FormControl className={classes.formControl}>
-            <Select
-              placeholder="Select Capture"
-              value={captureId}
-              onChange={handleChange}
-            >
-              {captureContext.captures.map((capture, index) => {
-                return (
-                  <MenuItem value={capture.captureId} key={capture.captureId}>
-                    <ListItemText
-                      primary={`${time.ago(capture.lastUpdate)} ${
-                        index === 0 ? '(LATEST) ' : ''
-                      } `}
-                    />
-                    <ListItemSecondaryAction>
-                      {capture.hasDiff && (
-                        <WarningIcon
-                          fontSize="small"
-                          color="secondary"
-                          style={{ marginRight: 8, paddingTop: 5 }}
-                        />
-                      )}
-                    </ListItemSecondaryAction>
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+        <FormControl className={classes.formControl}>
+          <Select
+            placeholder="Select Capture"
+            value={captureId}
+            onChange={handleChange}
+          >
+            {captureContext.captures.map((capture, index) => {
+              return (
+                <MenuItem value={capture.captureId} key={capture.captureId}>
+                  <ListItemText
+                    primary={`${time.ago(capture.lastUpdate)} ${
+                      index === 0 ? '(LATEST) ' : ''
+                    } `}
+                  />
+                  <ListItemSecondaryAction>
+                    {capture.hasDiff && (
+                      <WarningIcon
+                        fontSize="small"
+                        color="secondary"
+                        style={{ marginRight: 8, paddingTop: 5 }}
+                      />
+                    )}
+                  </ListItemSecondaryAction>
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
       </div>
     </Paper>
   );

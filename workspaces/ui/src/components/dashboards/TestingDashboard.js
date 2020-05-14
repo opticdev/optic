@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Loading from '../navigation/Loading';
+import ClassNames from 'classnames';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -9,7 +10,9 @@ import { stuffFromQueries } from '../../contexts/RfcContext';
 // --------------------
 import { Switch, Route, Redirect, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import ReportSummary from '../testing/ReportSummary';
+import ReportSummary, { LoadingReportSummary } from '../testing/ReportSummary';
+import SetupLink from '../testing/SetupLink';
+import * as SupportLinks from '../support/Links';
 
 import {
   createContext,
@@ -20,36 +23,9 @@ import {
 import ReportsNavigation from '../testing/ReportsNav';
 import Page from '../Page';
 import { useRouterPaths } from '../../RouterPaths';
+import TestingPromo from '../marketing/TestingPromo';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexGrow: 1,
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column', // stack vertically on smaller screens for now
-    },
-    [theme.breakpoints.up('sm')]: {
-      flexDirection: 'row', // horizontally on larger screens
-    },
-  },
-  navigationContainer: {
-    // keep then navigation fixed
-    width: '100%',
-    flexGrow: 0,
-    flexShrink: 0,
-    display: 'flex',
-
-    [theme.breakpoints.up('sm')]: {
-      width: (theme.breakpoints.values.sm / 3) * 2,
-    },
-  },
-  reportContainer: {
-    display: 'flex',
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
-  },
-}));
+const FIRST_CAPTURE_INIT = Symbol();
 
 export default function TestingDashboardPage(props) {
   const { match, service } = props;
@@ -72,6 +48,13 @@ export default function TestingDashboardPage(props) {
     baseUrl,
   ]);
 
+  const [firstCapture, setFirstCapture] = useState(FIRST_CAPTURE_INIT);
+  const onCapturesFetched = useCallback((captures) => {
+    if (captures && captures.length < 1) return;
+    setFirstCapture(captures && captures[0]);
+  });
+  const hasCaptures = firstCapture === FIRST_CAPTURE_INIT || !!firstCapture; // be optimistic
+
   if (!hasService) {
     return <Loading />;
   }
@@ -82,57 +65,72 @@ export default function TestingDashboardPage(props) {
         <Page.Navbar mini={true} />
 
         <Page.Body padded={false}>
-          <div className={classes.root}>
+          <div
+            className={ClassNames(classes.root, {
+              [classes.isEmpty]: !hasCaptures,
+            })}
+          >
             <div className={classes.navigationContainer}>
-              <ReportsNavigation currentCaptureId={currentCaptureId} />
+              <ReportsNavigation
+                currentCaptureId={currentCaptureId}
+                onCapturesFetched={onCapturesFetched}
+              />
             </div>
 
-            <div className={classes.reportContainer}>
-              <Switch>
-                <Route
-                  strict
-                  path={routerPaths.testingEndpointDetails}
-                  component={TestingDashboard}
-                />
-                <Route
-                  strict
-                  path={routerPaths.testingCapture}
-                  component={TestingDashboard}
-                />
-                <Route component={DefaultReportRedirect} />
-              </Switch>
-            </div>
+            {hasCaptures ? (
+              <div className={classes.reportContainer}>
+                <Switch>
+                  <Route
+                    strict
+                    path={routerPaths.testingEndpointDetails}
+                    component={TestingDashboard}
+                  />
+                  <Route
+                    strict
+                    path={routerPaths.testingCapture}
+                    component={TestingDashboard}
+                  />
+                  {firstCapture !== FIRST_CAPTURE_INIT && firstCapture ? (
+                    <Redirect
+                      replace
+                      to={`${baseUrl}/captures/${firstCapture.captureId}`}
+                    />
+                  ) : (
+                    <LoadingReportSummary />
+                  )}
+                </Switch>
+              </div>
+            ) : (
+              <div className={classes.setup}>
+                <div className={classes.setupInstructions}>
+                  <h3>No live captures have been found yet.</h3>
+
+                  <p>
+                    For help on how to get started with Live Contract Testing,
+                    see <SetupLink>the setup instructions</SetupLink>.
+                  </p>
+
+                  <p>
+                    Think this might not be right? Feel free to{' '}
+                    <a
+                      href={SupportLinks.Contact(
+                        'Problem: No live captures found'
+                      )}
+                    >
+                      contact us about it
+                    </a>
+                    .
+                  </p>
+                </div>
+
+                <TestingPromo />
+              </div>
+            )}
           </div>
         </Page.Body>
       </Page>
     </TestingDashboardContextProvider>
   );
-}
-
-function DefaultReportRedirect(props) {
-  const { match } = props;
-  const baseUrl = match.url;
-
-  const { loading, result: captures } = useTestingService((service) =>
-    service.listCaptures()
-  );
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (!captures) {
-    // TODO: revisit this state
-    return <div>Could not find any reports</div>;
-  }
-
-  let mostRecent = captures[0];
-  if (mostRecent) {
-    return <Redirect to={`${baseUrl}/captures/${mostRecent.captureId}`} />;
-  } else {
-    // TODO: revisit this UI state
-    return <div>You don't have any captures yet</div>;
-  }
 }
 
 export function TestingDashboard(props) {
@@ -141,6 +139,7 @@ export function TestingDashboard(props) {
     loading: loadingReport,
     result: report,
     error: reportError,
+    notFound: reportNotFound,
   } = useTestingService((service) => service.loadReport(captureId), [
     captureId,
   ]);
@@ -151,6 +150,7 @@ export function TestingDashboard(props) {
     loading: loadingCapture,
     result: capture,
     error: captureError,
+    notFound: captureNotFound,
   } = useTestingService((service) => service.loadCapture(captureId), [
     captureId,
   ]);
@@ -159,6 +159,7 @@ export function TestingDashboard(props) {
     loading: loadingUndocumentedEndpoints,
     result: undocumentedEndpoints,
     error: undocumentedEndpointsError,
+    notFound: undocumentedEndpointsNotFound,
   } = useTestingService(
     (service) => service.loadUndocumentedEndpoints(captureId),
     [captureId]
@@ -168,12 +169,19 @@ export function TestingDashboard(props) {
     reportError || specError || captureError || undocumentedEndpointsError;
   if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
 
+  const notFound =
+    reportNotFound || captureNotFound || undocumentedEndpointsNotFound;
+
+  if (notFound) {
+    return <ReportNotFound />;
+  }
+
   return (
     <>
       {(loadingReport ||
         loadingSpec ||
         loadingCapture ||
-        loadingUndocumentedEndpoints) && <Loading />}
+        loadingUndocumentedEndpoints) && <LoadingReportSummary />}
 
       {report && spec && capture && undocumentedEndpoints && (
         <ReportSummary
@@ -185,6 +193,28 @@ export function TestingDashboard(props) {
         />
       )}
     </>
+  );
+}
+
+function ReportNotFound(props) {
+  const classes = useStyles();
+  return (
+    <div className={classes.notFound}>
+      <h4>The Report you're trying to access could not be found.</h4>
+
+      <p>
+        Looking for the right report? All available reports are listed in the
+        navigation on the left.
+      </p>
+
+      <p>
+        Think this might not be right? Feel free to{' '}
+        <a href={SupportLinks.Contact('Problem: Report not found')}>
+          contact us about it
+        </a>
+        .
+      </p>
+    </div>
   );
 }
 
@@ -204,6 +234,94 @@ function useSpec(captureId) {
   // rather than RfcState.
   return { ...hookRest, result: spec };
 }
+
+// Styles
+// ------
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column', // stack vertically on smaller screens for now
+    },
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row', // horizontally on larger screens
+    },
+  },
+
+  isEmpty: {},
+
+  navigationContainer: {
+    // keep then navigation fixed
+    width: '100%',
+    flexGrow: 0,
+    flexShrink: 0,
+    display: 'flex',
+
+    [theme.breakpoints.up('sm')]: {
+      width: (theme.breakpoints.values.sm / 3) * 2,
+    },
+
+    '$isEmpty &': {
+      display: 'none',
+    },
+  },
+  reportContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+  },
+
+  setup: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(0, 3),
+    },
+  },
+
+  setupInstructions: {
+    width: '100%',
+    marginBottom: theme.spacing(3),
+
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing(2, 3),
+      width: (theme.breakpoints.values.md / 4) * 3,
+    },
+
+    '& h3': {
+      ...theme.typography.h4,
+      color: theme.palette.primary.main,
+    },
+
+    '& p': {
+      ...theme.typography.body1,
+      // fontSize:
+      fontWeight: theme.typography.fontWeightLight,
+    },
+  },
+
+  notFound: {
+    padding: theme.spacing(3, 4),
+
+    '& h4': {
+      ...theme.typography.h4,
+      color: theme.palette.primary.main,
+    },
+
+    '& p': {
+      ...theme.typography.body1,
+      // fontSize:
+      fontWeight: theme.typography.fontWeightLight,
+    },
+  },
+}));
 
 // View models
 // -----------

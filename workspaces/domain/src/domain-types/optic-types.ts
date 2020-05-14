@@ -1,27 +1,21 @@
 
+export interface IResponse {
+  statusCode: number
+  headers: IArbitraryData
+  body: IBody
+}
+       
+
+export interface IBody {
+  contentType: (string | null)
+  value: IArbitraryData
+}
+       
+
 export interface IArbitraryData {
-  asShapeHashBytes: (IShapeHashBytes | null)
+  shapeHashV1Base64: (string | null)
   asJsonString: (string | null)
   asText: (string | null)
-}
-       
-
-export interface IGroupingIdentifiers {
-  agentGroupId: string
-  captureId: string
-  agentId: string
-  batchId: string
-}
-       
-
-export interface IShapeHashBytes {
-  bytes: number[]
-}
-       
-
-export interface IHttpInteractionTag {
-  name: string
-  value: string
 }
        
 
@@ -33,16 +27,17 @@ export interface IHttpInteraction {
 }
        
 
-export interface IResponse {
-  statusCode: number
-  headers: IArbitraryData
-  body: IBody
+export interface IGroupingIdentifiers {
+  agentGroupId: string
+  captureId: string
+  agentId: string
+  batchId: string
 }
        
 
-export interface ICapture {
-  groupingIdentifiers: IGroupingIdentifiers
-  batchItems: IHttpInteraction[]
+export interface IHttpInteractionTag {
+  name: string
+  value: string
 }
        
 
@@ -56,8 +51,8 @@ export interface IRequest {
 }
        
 
-export interface IBody {
-  contentType: (string | null)
-  value: IArbitraryData
+export interface ICapture {
+  groupingIdentifiers: IGroupingIdentifiers
+  batchItems: IHttpInteraction[]
 }
        
