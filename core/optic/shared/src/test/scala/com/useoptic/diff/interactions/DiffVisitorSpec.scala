@@ -48,6 +48,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching spec path") {
         it("should yield UnmatchedUrl diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           println(spec.requestsState.responses)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -66,6 +67,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching any specified method or status Code") {
         it("should yield UnmatchedRequestBodyContentType and UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "GET", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
@@ -91,6 +93,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching content type") {
         it("should yield UnmatchedRequestContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("bbb"), ArbitraryData(None, None, None))),
@@ -109,6 +112,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching body") {
         it("should yield UnmatchedRequestBody diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
@@ -134,6 +138,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching response status code") {
         it("should yield UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),

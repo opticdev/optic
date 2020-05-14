@@ -1,6 +1,6 @@
 export const opticEngine = require('./domain.js');
 
-const {contexts, diff} = opticEngine.com.useoptic;
+const { contexts, diff } = opticEngine.com.useoptic;
 
 export function setLogger(f: Function) {
   const wrapper = new opticEngine.com.useoptic.LoggerWrapper(f);
@@ -19,15 +19,19 @@ export const ScalaJSHelpers = opticEngine.ScalaJSHelpers;
 export const CompareEquality = opticEngine.com.useoptic.CompareEquality();
 
 export const Facade = contexts.rfc.RfcServiceJSFacade();
-export const Queries = (eventStore: any, service: any, aggregateId: string) => new opticEngine.Queries(eventStore, service, aggregateId);
-
+export const Queries = (eventStore: any, service: any, aggregateId: string) =>
+  new opticEngine.Queries(eventStore, service, aggregateId);
 
 export function commandsToJson(commands: any[]) {
-  return commands.map(x => JSON.parse(opticEngine.CommandSerialization.toJsonString(x)));
+  return commands.map((x) =>
+    JSON.parse(opticEngine.CommandSerialization.toJsonString(x))
+  );
 }
 
 export function commandsFromJson(commands: any[]) {
-  return opticEngine.CommandSerialization.fromJsonString(JSON.stringify(commands));
+  return opticEngine.CommandSerialization.fromJsonString(
+    JSON.stringify(commands)
+  );
 }
 
 export function commandsToJs(commandSequence: any) {
@@ -83,12 +87,19 @@ export const getJson = (j: any) => {
   return ScalaJSHelpers.getJson(j);
 };
 
-
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
   const requestContentType = sample.request.body.contentType;
   const responseContentType = sample.response.body.contentType;
-  const requestBody = sample.request.body.value.asJsonString ? JSON.parse(sample.request.body.value.asJsonString) : (sample.request.body.value.asText ? sample.request.body.value.asText : undefined);
-  const responseBody = sample.response.body.value.asJsonString ? JSON.parse(sample.response.body.value.asJsonString) : (sample.response.body.value.asText ? sample.response.body.value.asText : undefined);
+  const requestBody = sample.request.body.value.asJsonString
+    ? JSON.parse(sample.request.body.value.asJsonString)
+    : sample.request.body.value.asText
+    ? sample.request.body.value.asText
+    : undefined;
+  const responseBody = sample.response.body.value.asJsonString
+    ? JSON.parse(sample.response.body.value.asJsonString)
+    : sample.response.body.value.asText
+    ? sample.response.body.value.asText
+    : undefined;
   // console.log({
   //   sample,
   //   requestContentType,
@@ -100,7 +111,7 @@ export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
     requestContentType,
     requestBody,
     responseBody,
-    responseContentType
+    responseContentType,
   };
 }
 
@@ -108,17 +119,17 @@ export const InteractionDiffer = diff.InteractionDiffer;
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
 export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
-export const StableHashableWrapper = opticEngine.com.useoptic.StableHashableWrapper;
-
+export const StableHashableWrapper =
+  opticEngine.com.useoptic.StableHashableWrapper;
 
 export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade();
 export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer();
 
-import {checkDiffOrUnrecognizedPath} from './check-diff';
-import {IHttpInteraction} from './domain-types/optic-types';
+import { checkDiffOrUnrecognizedPath } from './check-diff';
+import { IHttpInteraction } from './domain-types/optic-types';
 
-export {
-  checkDiffOrUnrecognizedPath
-};
+export { checkDiffOrUnrecognizedPath };
+
+export const TestDataHelper = opticEngine.com.useoptic.TestDataHelper();
 
 export * from './domain-types/optic-types';

@@ -24,8 +24,8 @@
     "workspaces/ui",
     "workspaces/cli-scripts",
     "workspaces/cli-server",
-    "workspaces/local-cli",
-    "workspaces/snapshot-tests"
+    "workspaces/test-data",
+    "workspaces/local-cli"
   ],
   "devDependencies": {
     "@types/debug": "^4.1.5",

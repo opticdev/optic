@@ -40,7 +40,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "{\n\t\"hello\": \"world\",\n\t\"bool\": true\n}",
+              "asJsonString": "{\n\t\"hello\": \"world\",\n\t\"bool\": true, \"nested\": {} }",
               "asText": null,
               "asShapeHashBytes": null
             }
@@ -83,7 +83,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "{}",
+              "asJsonString": "{\"new-field\": true, \"nested\": {\"a\": true}, \"v\": {\n        \"effect_changes\": [{\n\n          \"effect_entries\":[{\"effect\":\"Does not absorb non-damaging electric moves, i.e. thunder wave.\",\"language\":{\"name\":\"en\",\"url\":\"https://pokeapi.co/api/v2/language/9/\"}}]\n\n          }]}}",
               "asText": null,
               "asShapeHashBytes": null
             }
