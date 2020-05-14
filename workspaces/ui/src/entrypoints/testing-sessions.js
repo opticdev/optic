@@ -8,22 +8,18 @@ import {
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 
-export default function Development(props) {
+export default function TestingSessions(props) {
   const match = useRouteMatch();
   const { sessionId } = useParams();
-  const isPrivateSession = !!matchPath(
-    match.path,
-    '/development/private-sessions'
-  );
 
-  const debugSession = useMockSession({
+  const session = useMockSession({
     sessionId: sessionId,
-    privateSession: isPrivateSession,
+    exampleSessionCollection: 'example-sessions',
   });
 
   return (
     <BaseUrlContext value={{ path: match.path, url: match.url }}>
-      <DebugSessionContextProvider value={debugSession}>
+      <DebugSessionContextProvider value={session}>
         <ApiSpecServiceLoader>
           <ApiRoutes />
         </ApiSpecServiceLoader>
