@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@useoptic/domain-types": "8.0.7",
+    "@useoptic/domain": "8.0.7",
     "@useoptic/domain-utilities": "8.0.7",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
