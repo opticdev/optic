@@ -4,7 +4,17 @@ import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
 import { StableHasher } from '../../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
-import { ITestingService, CoverageReport, NotFoundError } from '.';
+import {
+  ITestingService,
+  Result,
+  RfcEventStream,
+  Capture,
+  CoverageReport,
+  ok,
+  err,
+  NotFoundError,
+  UndocumentedEndpoint,
+} from '.';
 
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
@@ -53,52 +63,58 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       this.orgId = orgId;
     }
 
-    async loadSpecEvents(captureId) {
+    async loadSpecEvents(
+      captureId
+    ): Promise<Result<RfcEventStream, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
 
       const spec = getSpecEvents(captureId);
 
-      if (!spec) throw notFoundErr();
+      if (!spec) return err(notFoundErr());
 
-      return spec;
+      return ok(spec);
     }
 
-    async listCaptures() {
+    async listCaptures(): Promise<Result<Capture[]>> {
       await new Promise((r) => setTimeout(r, 400));
 
-      return captures.map(
-        // tolerate example resource evolving by only picking fields we need
-        ({ captureId, createdAt, updatedAt, completedAt, tags }) => {
-          return {
-            captureId,
-            createdAt,
-            updatedAt,
-            completedAt,
-            tags: tags.map(({ name, value }) => ({
-              name,
-              value,
-            })),
-          };
-        }
+      return ok(
+        captures.map(
+          // tolerate example resource evolving by only picking fields we need
+          ({ captureId, createdAt, updatedAt, completedAt, tags }) => {
+            return {
+              captureId,
+              createdAt,
+              updatedAt,
+              completedAt,
+              tags: tags.map(({ name, value }) => ({
+                name,
+                value,
+              })),
+            };
+          }
+        )
       );
     }
 
-    async loadCapture(captureId) {
+    async loadCapture(captureId): Promise<Result<Capture, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
       const capture = captures.find(
         (capture) => captureId === capture.captureId
       );
-      if (!capture) throw notFoundErr();
+      if (!capture) return err(notFoundErr());
 
-      return capture;
+      return ok(capture as Capture);
     }
 
-    async loadReport(captureId) {
+    async loadReport(
+      captureId
+    ): Promise<Result<CoverageReport, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 2000));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -112,14 +128,18 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
         .CoverageHelpers()
         .getCoverage(rfcState, samplesSeq);
       const serializedReport: CoverageReport = converter.toJs(report);
-      return serializedReport;
+      return ok(serializedReport);
     }
 
-    async loadEndpointDiffs(captureId, pathId, httpMethod) {
+    async loadEndpointDiffs(
+      captureId,
+      pathId,
+      httpMethod
+    ): Promise<Result<any, NotFoundError>> {
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -143,18 +163,20 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       // TODO: replace this what the service will _actually_ be returning. Obviously,
       // this isn't serialised as JSON fully, and I imagine there's other details not
       // not considered.
-      return {
+      return ok({
         newRegions: JsonHelper.seqToJsArray(regions.newRegions),
         bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
-      };
+      });
     }
 
-    async loadUndocumentedEndpoints(captureId) {
+    async loadUndocumentedEndpoints(
+      captureId
+    ): Promise<Result<UndocumentedEndpoint[], NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -166,15 +188,17 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
       const undocumentedUrlsSeq = diffManager.unmatchedUrls(true);
 
-      return JsonHelper.seqToJsArray(undocumentedUrlsSeq).map(
-        ({ method, path, pathId, count }) => {
-          return {
-            method,
-            path,
-            pathId,
-            count,
-          };
-        }
+      return ok(
+        JsonHelper.seqToJsArray(undocumentedUrlsSeq).map(
+          ({ method, path, pathId, count }) => {
+            return {
+              method,
+              path,
+              pathId,
+              count,
+            };
+          }
+        )
       );
     }
   }

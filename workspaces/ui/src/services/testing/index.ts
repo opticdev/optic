@@ -1,23 +1,23 @@
 export interface ITestingService {
-  loadSpecEvents(
+  loadSpecEvents(captureId: CaptureId): Promise<Result<RfcEventStream>>;
+
+  listCaptures(): Promise<Result<Capture[]>>;
+
+  loadCapture(captureId: CaptureId): Promise<Result<Capture, NotFoundError>>;
+
+  loadReport(
     captureId: CaptureId
-  ): Promise<Array<{ [eventType: string]: RfcEvent }>>;
-
-  listCaptures(): Promise<Capture[]>;
-
-  loadCapture(captureId: CaptureId): Promise<Capture>;
-
-  loadReport(captureId: CaptureId): Promise<CoverageReport>;
+  ): Promise<Result<CoverageReport, NotFoundError>>;
 
   loadEndpointDiffs(
     captureId: CaptureId,
     pathId: PathId,
     httpMethod: HttpMethod
-  );
+  ): Promise<Result<any, NotFoundError>>;
 
   loadUndocumentedEndpoints(
     captureId: CaptureId
-  ): Promise<UndocumentedEndpoint[]>;
+  ): Promise<Result<UndocumentedEndpoint[], NotFoundError>>;
 }
 
 export type CaptureId = string;
@@ -71,12 +71,10 @@ export interface RfcEvent {
   };
 }
 
-export interface ITestingServiceError {
-  statusCode: number;
-}
+export type RfcEventStream = Array<{ [eventType: string]: RfcEvent }>;
 
 const TESTING_SERVICE_ERROR_TYPE = Symbol('testing-service-error');
-export class TestingServiceError extends Error implements ITestingServiceError {
+export class TestingServiceError extends Error {
   statusCode: number;
   type: Symbol = TESTING_SERVICE_ERROR_TYPE;
 
@@ -91,4 +89,66 @@ export class TestingServiceError extends Error implements ITestingServiceError {
 
 export class NotFoundError extends TestingServiceError {
   statusCode = 404;
+}
+
+interface IResult<T> {
+  isOk(): boolean;
+  isErr(): boolean;
+  unwrap(): T;
+}
+
+export class Ok<T, E extends TestingServiceError = TestingServiceError>
+  implements IResult<T> {
+  constructor(readonly value: T) {}
+
+  isOk(): this is Ok<T, E> {
+    return true;
+  }
+
+  isErr(): this is Err<T, E> {
+    return !this.isOk();
+  }
+
+  unwrap(): T {
+    return this.value;
+  }
+
+  unwrapErr(): E {
+    throw new Error('Cannot unwrap error on Ok');
+  }
+}
+
+export class Err<T, E extends TestingServiceError = TestingServiceError>
+  implements IResult<T> {
+  constructor(readonly error: E) {}
+
+  isOk(): this is Ok<T, E> {
+    return !this.isErr();
+  }
+
+  isErr(): this is Err<T, E> {
+    return true;
+  }
+
+  unwrap(): T {
+    throw this.error;
+  }
+
+  unwrapErr(): E {
+    return this.error;
+  }
+}
+
+export type Result<T, E extends TestingServiceError = TestingServiceError> =
+  | Ok<T, E>
+  | Err<T, E>;
+
+export function ok<T, E extends TestingServiceError = TestingServiceError>(
+  value: T
+): Ok<T, E> {
+  return new Ok(value);
+}
+
+export function err<T, E extends TestingServiceError>(err: E): Err<T, E> {
+  return new Err(err);
 }

@@ -44,20 +44,19 @@ export function useTestingService(
     }
 
     effectDispatch({ type: 'request' });
-    performRequest(service)
-      .then((result) => {
-        if (isUnmounted.current) return;
-        effectDispatch({ type: 'receive_success', payload: result });
-      })
-      .catch((err) => {
-        if (isUnmounted.current) return;
-
-        if (TestingServiceError.instanceOf(err) && err.notFound()) {
+    performRequest(service).then((result) => {
+      if (isUnmounted.current) return;
+      if (result.isOk()) {
+        effectDispatch({ type: 'receive_success', payload: result.value });
+      } else {
+        let err = result.unwrapErr();
+        if (err.notFound()) {
           effectDispatch({ type: 'receive_not_found' });
         } else {
           effectDispatch({ type: 'receive_error', payload: err });
         }
-      });
+      }
+    });
 
     return () => {
       versionRef.current++;
