@@ -8,7 +8,6 @@ import io.circe.{Decoder, Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.circe.Decoder.Result
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
