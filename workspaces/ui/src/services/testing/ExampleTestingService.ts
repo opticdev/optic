@@ -2,9 +2,9 @@
 // interace ITestingService
 import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
-import { StableHasher } from '../utilities/CoverageUtilities';
+import { StableHasher } from '../../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
-import { ITestingService, CoverageReport } from './testing';
+import { ITestingService, CoverageReport, TestingServiceError } from '.';
 
 export class TestingService {}
 
@@ -182,27 +182,6 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
   }
 
   return new ExampleTestingService(orgId);
-}
-
-export class TestingServiceError extends Error {
-  statusCode: number;
-  type: string;
-
-  static type = 'testing-service-error';
-  // don't rely on `instanceof` in JS, it's a mistake
-  static instanceOf(maybeErr) {
-    return maybeErr && maybeErr.type === TestingServiceError.type;
-  }
-
-  constructor(msg, { statusCode }) {
-    super(msg);
-    this.statusCode = statusCode;
-    this.type = TestingServiceError.type;
-  }
-
-  notFound() {
-    return this.statusCode === 404;
-  }
 }
 
 // Might belong in a (View)Model somewhere

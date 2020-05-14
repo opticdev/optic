@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { TestingServiceError } from '../services/TestingService';
+import { TestingServiceError } from '../services/testing';
 
 const TestingDashboardContext = React.createContext(null);
 
@@ -52,11 +52,11 @@ export function useTestingService(
       .catch((err) => {
         if (isUnmounted.current) return;
 
-        if (TestingServiceError.instanceOf(err) && err.notFound()) {
-          effectDispatch({ type: 'receive_not_found' });
-        } else {
-          effectDispatch({ type: 'receive_error', payload: err });
-        }
+        // if (TestingServiceError.instanceOf(err) && err.notFound()) {
+        //   effectDispatch({ type: 'receive_not_found' });
+        // } else {
+        effectDispatch({ type: 'receive_error', payload: err });
+        // }
       });
 
     return () => {
@@ -85,7 +85,7 @@ export function useEndpointPath(captureId, endpointId) {
   return `${baseUrl}/captures/${captureId}/endpoints/${endpointId}`;
 }
 
-export { queriesFromEvents } from '../services/TestingService';
+export { queriesFromEvents } from '../services/testing/ExampleTestingService';
 
 // Reducers
 // --------

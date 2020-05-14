@@ -70,3 +70,24 @@ export interface RfcEvent {
     createdAt: ISO8601Date;
   };
 }
+
+export class TestingServiceError extends Error {
+  statusCode: number;
+  type: string;
+
+  static type = 'testing-service-error';
+  // don't rely on `instanceof` in JS, it's a mistake
+  static instanceOf(maybeErr) {
+    return maybeErr && maybeErr.type === TestingServiceError.type;
+  }
+
+  constructor(msg, { statusCode }) {
+    super(msg);
+    this.statusCode = statusCode;
+    this.type = TestingServiceError.type;
+  }
+
+  notFound() {
+    return this.statusCode === 404;
+  }
+}

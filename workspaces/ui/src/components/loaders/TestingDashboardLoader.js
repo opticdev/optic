@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import TestingDashboard from '../dashboards/TestingDashboard';
-import {useMockData} from '../../contexts/MockDataContext';
+import { useMockData } from '../../contexts/MockDataContext';
 
-import {createExampleTestingService} from '../../services/TestingService';
+import { createExampleTestingService } from '../../services/testing/ExampleTestingService';
 
 export default function TestingServiceLoader(props) {
   const debugData = useMockData();
