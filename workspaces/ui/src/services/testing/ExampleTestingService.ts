@@ -4,7 +4,7 @@ import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
 import { StableHasher } from '../../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
-import { ITestingService, CoverageReport, TestingServiceError } from '.';
+import { ITestingService, CoverageReport, NotFoundError } from '.';
 
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
@@ -43,7 +43,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
   }
 
   function notFoundErr() {
-    return new TestingServiceError('Not found', { statusCode: 404 });
+    return new NotFoundError();
   }
 
   class ExampleTestingService implements ITestingService {
