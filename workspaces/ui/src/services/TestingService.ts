@@ -4,6 +4,7 @@ import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
 import { StableHasher } from '../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
+import { ITestingService, CoverageReport } from './testing';
 
 export class TestingService {}
 
@@ -47,16 +48,14 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     return new TestingServiceError('Not found', { statusCode: 404 });
   }
 
-  class ExampleTestingService {
+  class ExampleTestingService implements ITestingService {
     orgId: string;
 
     constructor(orgId) {
       this.orgId = orgId;
     }
 
-    async loadSpecEvents(
-      captureId: CaptureId
-    ): Promise<Array<{ [eventType: string]: RfcEvent }>> {
+    async loadSpecEvents(captureId) {
       await new Promise((r) => setTimeout(r, 200));
 
       const spec = getSpecEvents(captureId);
@@ -66,7 +65,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       return spec;
     }
 
-    async listCaptures(): Promise<Capture[]> {
+    async listCaptures() {
       await new Promise((r) => setTimeout(r, 400));
 
       return captures.map(
@@ -86,7 +85,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       );
     }
 
-    async loadCapture(captureId: CaptureId): Promise<Capture> {
+    async loadCapture(captureId) {
       await new Promise((r) => setTimeout(r, 200));
       const capture = captures.find(
         (capture) => captureId === capture.captureId
@@ -96,7 +95,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       return capture;
     }
 
-    async loadReport(captureId: CaptureId): Promise<CoverageReport> {
+    async loadReport(captureId) {
       await new Promise((r) => setTimeout(r, 2000));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
@@ -118,11 +117,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       return serializedReport;
     }
 
-    async loadEndpointDiffs(
-      captureId: CaptureId,
-      pathId: PathId,
-      httpMethod: HttpMethod
-    ) {
+    async loadEndpointDiffs(captureId, pathId, httpMethod) {
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
@@ -156,9 +151,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       };
     }
 
-    async loadUndocumentedEndpoints(
-      captureId: CaptureId
-    ): Promise<UndocumentedEndpoint[]> {
+    async loadUndocumentedEndpoints(captureId) {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
@@ -210,57 +203,6 @@ export class TestingServiceError extends Error {
   notFound() {
     return this.statusCode === 404;
   }
-}
-
-type CaptureId = string;
-type ISO8601Date = string;
-type StableHash = string;
-type PathId = string;
-type HttpMethod =
-  | 'GET'
-  | 'OPTIONS'
-  | 'DELETE'
-  | 'HEAD'
-  | 'PATCH'
-  | 'POST'
-  | 'PUT'
-  | 'TRACE';
-
-interface Capture {
-  captureId: CaptureId;
-  createdAt: ISO8601Date;
-  updatedAt: ISO8601Date;
-  completedAt: ISO8601Date | null;
-  tags: Array<{ name: string; value: string }>;
-}
-
-interface CoverageReport {
-  coverageCounts: {
-    // index signature parameter cannot be a type alias :(
-    [stableHash: string]: number;
-  };
-  diffs: {
-    // index signature parameter cannot be a type alias :(
-    [stableHash: string]: number;
-  };
-}
-
-interface UndocumentedEndpoint {
-  method: HttpMethod;
-  path: string;
-  pathId: PathId;
-  count: number;
-}
-
-interface RfcEvent {
-  // TODO create types for all types of events
-  [prop: string]: any;
-  eventContext: null | {
-    clientId: string;
-    clientSessionId: string;
-    clientCommandBatchId: string;
-    createdAt: ISO8601Date;
-  };
 }
 
 // Might belong in a (View)Model somewhere
