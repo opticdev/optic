@@ -52,11 +52,11 @@ export function useTestingService(
       .catch((err) => {
         if (isUnmounted.current) return;
 
-        // if (TestingServiceError.instanceOf(err) && err.notFound()) {
-        //   effectDispatch({ type: 'receive_not_found' });
-        // } else {
-        effectDispatch({ type: 'receive_error', payload: err });
-        // }
+        if (TestingServiceError.instanceOf(err) && err.notFound()) {
+          effectDispatch({ type: 'receive_not_found' });
+        } else {
+          effectDispatch({ type: 'receive_error', payload: err });
+        }
       });
 
     return () => {
