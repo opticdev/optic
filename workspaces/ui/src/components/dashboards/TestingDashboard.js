@@ -50,6 +50,7 @@ export default function TestingDashboardPage(props) {
 
   const [firstCapture, setFirstCapture] = useState(FIRST_CAPTURE_INIT);
   const onCapturesFetched = useCallback((captures) => {
+    if (captures && captures.length < 1) return;
     setFirstCapture(captures && captures[0]);
   });
   const hasCaptures = firstCapture === FIRST_CAPTURE_INIT || !!firstCapture; // be optimistic
