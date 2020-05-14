@@ -9,7 +9,8 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@httptoolkit/browser-launcher": "^1.6.0",
-    "@useoptic/domain": "8.0.7",
+    "@useoptic/domain-types": "8.0.7",
+    "@useoptic/cli-shared": "8.0.7",
     "fs-extra": "^8.1.0",
     "mockttp": "^0.19.2",
     "shape-hash": "^1.0.6",
