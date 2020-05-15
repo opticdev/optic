@@ -1,0 +1,9 @@
+{
+  "type": "InteractionsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Nested-Array",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-provided-with-items-that-match-and-null.json"
+  },
+  "inputs": {}
+}

@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "gen_Nested-optionals",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "an-optional-array-field-is-provided-but-it-has-the-wrong-typed-items.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-optionals",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "an-optional-array-field-is-provided-but-it-has-the-wrong-typed-items.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-optionals",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "an-optional-array-field-is-provided-but-it-has-the-wrong-typed-items.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "gen_Nested-optionals",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "an-optional-array-field-is-provided-but-it-has-the-wrong-typed-items.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}

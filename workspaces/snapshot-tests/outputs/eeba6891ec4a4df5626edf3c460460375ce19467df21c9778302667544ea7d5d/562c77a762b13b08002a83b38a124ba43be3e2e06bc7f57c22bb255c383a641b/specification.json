@@ -1,0 +1,9 @@
+{
+  "type": "InteractionsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Unknowns-arrays-with-complex-types",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-unknown-replaced-by-an-object-with-optional-fields.json"
+  },
+  "inputs": {}
+}

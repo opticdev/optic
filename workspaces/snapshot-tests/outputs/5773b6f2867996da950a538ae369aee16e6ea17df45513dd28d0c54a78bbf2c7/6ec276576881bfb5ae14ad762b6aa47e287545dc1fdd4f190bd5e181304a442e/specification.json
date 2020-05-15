@@ -1,0 +1,9 @@
+{
+  "type": "EventsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Nested-Object-Keys",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "a-new-field-is-provided-in-an-optional-nested-object.json"
+  },
+  "inputs": {}
+}

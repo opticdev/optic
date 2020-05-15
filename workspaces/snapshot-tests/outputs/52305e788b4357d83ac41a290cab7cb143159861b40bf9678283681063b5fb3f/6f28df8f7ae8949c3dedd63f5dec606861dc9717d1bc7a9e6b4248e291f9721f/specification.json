@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "gen_Array-of-arrays",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-the-object-part-of-the-OneOf-has-a-new-field-it-should-create-a-diff.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Array-of-arrays",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-the-object-part-of-the-OneOf-has-a-new-field-it-should-create-a-diff.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "gen_Array-of-arrays",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-the-object-part-of-the-OneOf-has-a-new-field-it-should-create-a-diff.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "gen_Array-of-arrays",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "when-the-object-part-of-the-OneOf-has-a-new-field-it-should-create-a-diff.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}

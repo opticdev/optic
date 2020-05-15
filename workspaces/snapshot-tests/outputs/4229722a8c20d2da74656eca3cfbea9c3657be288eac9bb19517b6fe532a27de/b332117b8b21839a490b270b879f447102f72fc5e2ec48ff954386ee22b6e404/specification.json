@@ -1,0 +1,9 @@
+{
+  "type": "InteractionsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Nested-optionals",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "an-optional-field-is-provided-but-is-null.json"
+  },
+  "inputs": {}
+}

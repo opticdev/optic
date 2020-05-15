@@ -1,0 +1,9 @@
+{
+  "type": "InteractionsFileToJsTaskSpecification",
+  "context": {
+    "universe": "todo",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "get-todos.json"
+  },
+  "inputs": {}
+}

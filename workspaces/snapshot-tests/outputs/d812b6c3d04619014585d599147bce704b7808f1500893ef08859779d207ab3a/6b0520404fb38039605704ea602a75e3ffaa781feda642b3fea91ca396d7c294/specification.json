@@ -1,0 +1,19 @@
+{
+  "type": "EventsToRfcStateTaskSpecification",
+  "context": {
+    "universe": "gen_Nested-optionals",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "an-optional-field-is-provided-but-the-type-does-not-match.json"
+  },
+  "inputs": {
+    "eventsFromFile": {
+      "type": "EventsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-optionals",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "an-optional-field-is-provided-but-the-type-does-not-match.json"
+      },
+      "inputs": {}
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "EventsToRfcStateTaskSpecification",
+  "context": {
+    "universe": "gen_Unknowns-arrays-with-complex-types",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-unknown-replaced-by-array-of-tuples.json"
+  },
+  "inputs": {
+    "eventsFromFile": {
+      "type": "EventsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Unknowns-arrays-with-complex-types",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-unknown-replaced-by-array-of-tuples.json"
+      },
+      "inputs": {}
+    }
+  }
+}

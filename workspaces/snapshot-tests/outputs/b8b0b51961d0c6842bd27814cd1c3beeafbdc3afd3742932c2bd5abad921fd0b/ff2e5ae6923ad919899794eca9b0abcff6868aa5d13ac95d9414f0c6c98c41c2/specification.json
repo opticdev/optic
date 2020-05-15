@@ -1,0 +1,9 @@
+{
+  "type": "InteractionsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Root-Shape-is-an-Object-with-Keys",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "field-is-array-of-primitives-and-greater-1-item-does-not-match-expected-type.json"
+  },
+  "inputs": {}
+}

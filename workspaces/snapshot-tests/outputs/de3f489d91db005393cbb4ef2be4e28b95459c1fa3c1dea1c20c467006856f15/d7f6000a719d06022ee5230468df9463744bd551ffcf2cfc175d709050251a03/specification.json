@@ -1,0 +1,19 @@
+{
+  "type": "EventsToRfcStateTaskSpecification",
+  "context": {
+    "universe": "gen_Nested-Array",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-presented-with-an-empty-array.json"
+  },
+  "inputs": {
+    "eventsFromFile": {
+      "type": "EventsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-Array",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-presented-with-an-empty-array.json"
+      },
+      "inputs": {}
+    }
+  }
+}

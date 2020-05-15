@@ -1,0 +1,507 @@
+[
+  {
+    "PathComponentAdded": {
+      "pathId": "ffb0e90f02541",
+      "parentPathId": "root",
+      "name": "users",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      }
+    }
+  },
+  {
+    "PathParameterAdded": {
+      "pathId": "ffb0e90f02542",
+      "parentPathId": "ffb0e90f02541",
+      "name": ":userId",
+      "eventContext": null
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$string",
+      "eventContext": null,
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_ulOPuYxylR"
+    }
+  },
+  {
+    "PathParameterShapeSet": {
+      "pathId": "ffb0e90f02542",
+      "shapeDescriptor": {
+        "shapeId": "shape_ulOPuYxylR",
+        "isRemoved": false
+      },
+      "eventContext": null
+    }
+  },
+  {
+    "PathComponentAdded": {
+      "pathId": "ffb0e90f02543",
+      "parentPathId": "ffb0e90f02542",
+      "name": "profile",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      }
+    }
+  },
+  {
+    "RequestParameterAddedByPathAndMethod": {
+      "name": "queryString",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      },
+      "parameterId": "parameter_jbk1UwlkAW",
+      "httpMethod": "GET",
+      "pathId": "ffb0e90f02543",
+      "parameterLocation": "query"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_kyH2rf0qSB"
+    }
+  },
+  {
+    "RequestParameterShapeSet": {
+      "parameterId": "parameter_jbk1UwlkAW",
+      "parameterDescriptor": {
+        "shapeId": "shape_kyH2rf0qSB",
+        "isRemoved": false
+      },
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      }
+    }
+  },
+  {
+    "RequestAdded": {
+      "requestId": "request_JFvHcVqQoL",
+      "pathId": "ffb0e90f02543",
+      "httpMethod": "GET",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.397Z"
+      }
+    }
+  },
+  {
+    "ResponseAddedByPathAndMethod": {
+      "httpStatusCode": 200,
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.398Z"
+      },
+      "httpMethod": "GET",
+      "pathId": "ffb0e90f02543",
+      "responseId": "response_JKpM3rMOMD"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.398Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek16"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.398Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek5"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.398Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek1"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "first",
+      "fieldId": "WQmVek2",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.398Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek2",
+          "shapeId": "WQmVek1"
+        }
+      },
+      "shapeId": "WQmVek5"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.399Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek3"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "last",
+      "fieldId": "WQmVek4",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.399Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek4",
+          "shapeId": "WQmVek3"
+        }
+      },
+      "shapeId": "WQmVek5"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "name",
+      "fieldId": "WQmVek6",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.399Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek6",
+          "shapeId": "WQmVek5"
+        }
+      },
+      "shapeId": "WQmVek16"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.399Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek7"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$list",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek8"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$optional",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek9"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "rivals",
+      "fieldId": "WQmVek10",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek10",
+          "shapeId": "WQmVek9"
+        }
+      },
+      "shapeId": "WQmVek16"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek13"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$number",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek11"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "rank",
+      "fieldId": "WQmVek12",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.400Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek12",
+          "shapeId": "WQmVek11"
+        }
+      },
+      "shapeId": "WQmVek13"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "name": "",
+      "baseShapeId": "$optional",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      },
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WQmVek14"
+    }
+  },
+  {
+    "FieldAdded": {
+      "name": "stats",
+      "fieldId": "WQmVek15",
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      },
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WQmVek15",
+          "shapeId": "WQmVek14"
+        }
+      },
+      "shapeId": "WQmVek16"
+    }
+  },
+  {
+    "ShapeParameterShapeSet": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "WQmVek8",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "WQmVek7"
+            }
+          },
+          "consumingParameterId": "$listItem"
+        }
+      },
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      }
+    }
+  },
+  {
+    "ShapeParameterShapeSet": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "WQmVek9",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "WQmVek8"
+            }
+          },
+          "consumingParameterId": "$optionalInner"
+        }
+      },
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      }
+    }
+  },
+  {
+    "ShapeParameterShapeSet": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "WQmVek14",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "WQmVek13"
+            }
+          },
+          "consumingParameterId": "$optionalInner"
+        }
+      },
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      }
+    }
+  },
+  {
+    "ResponseBodySet": {
+      "responseId": "response_JKpM3rMOMD",
+      "bodyDescriptor": {
+        "httpContentType": "application/json",
+        "shapeId": "WQmVek16",
+        "isRemoved": false
+      },
+      "eventContext": {
+        "clientId": "ccc",
+        "clientSessionId": "sss",
+        "clientCommandBatchId": "bbb",
+        "createdAt": "2020-05-15T17:55:27.401Z"
+      }
+    }
+  }
+]

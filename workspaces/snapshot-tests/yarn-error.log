@@ -1,0 +1,53 @@
+Arguments: 
+  /Users/aidancunniffe/.nvm/versions/node/v12.4.0/bin/node /usr/local/Cellar/yarn/1.21.1/libexec/bin/yarn.js install
+
+PATH: 
+  /Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/aidancunniffe/.nvm/versions/node/v12.4.0/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/X11/bin:/Users/aidancunniffe/Developer/optic2020/optic/node_modules/.bin:/Users/aidancunniffe/Library/Android/sdk/tools:/Users/aidancunniffe/Library/Android/sdk/platform-tools:/Users/aidancunniffe/Library/Python/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/X11/bin:/Users/aidancunniffe/Developer/optic2020/optic/node_modules/.bin:/Users/aidancunniffe/Library/Android/sdk/tools:/Users/aidancunniffe/Library/Android/sdk/platform-tools
+
+Yarn version: 
+  1.21.1
+
+Node version: 
+  12.4.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@useoptic%2fdomain-utilities: Not found
+      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:66947:18)
+      at Request.self.callback (/usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:140665:22)
+      at Request.emit (events.js:200:13)
+      at Request.<anonymous> (/usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:141637:10)
+      at Request.emit (events.js:200:13)
+      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:141559:12)
+      at Object.onceWrapper (events.js:288:20)
+      at IncomingMessage.emit (events.js:205:15)
+      at endReadableNT (_stream_readable.js:1154:12)
+      at processTicksAndRejections (internal/process/task_queues.js:84:9)
+
+npm manifest: 
+  {
+    "name": "@useoptic/snapshot-tests",
+    "version": "8.0.6",
+    "scripts": {
+      "ws:build": "yarn run tsc -b --verbose",
+      "ws:test": "node build/index.js"
+    },
+    "dependencies": {
+      "@useoptic/domain-utilities": "8.0.6",
+      "dataloader": "^2.0.0",
+      "fs-extra": "^9.0.0"
+    },
+    "devDependencies": {},
+    "files": [
+      "/build",
+      "/inputs"
+    ]
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

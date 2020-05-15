@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "gen_Empty-Array-at-Root",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "when-unknown-and-provided-with-items.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Empty-Array-at-Root",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-unknown-and-provided-with-items.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "gen_Empty-Array-at-Root",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "when-unknown-and-provided-with-items.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "gen_Empty-Array-at-Root",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "when-unknown-and-provided-with-items.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}
