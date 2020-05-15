@@ -6,6 +6,7 @@ import {
   ITaskContext,
   ITaskIdentifier,
   ITaskSpecification,
+  TaskIdentifier,
   TaskType,
 } from './tasks';
 import {
@@ -55,6 +56,15 @@ async function* FileSystemInputIterator(
       }
     }
   }
+}
+
+import * as crypto from 'crypto';
+import { opticEngine } from '@useoptic/domain';
+
+function getOutputFilePrefix(id: TaskIdentifier) {
+  const hash = crypto.createHash('sha256');
+  hash.update(id);
+  return hash.digest('hex');
 }
 
 function WrapError(e: Error) {
@@ -108,6 +118,116 @@ function TaskSpecificationsForContext(
   ];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//@CONTRIBUTORS register output serializers here
+const outputSerializers: {
+  [TaskType.EventsToRfcStateTaskSpecification]: (
+    output: EventsToRfcStateTaskOutput
+  ) => string;
+  [TaskType.InteractionsFileToJsTaskSpecification]: (
+    output: InteractionsFileToJsTaskOutput
+  ) => string;
+  [TaskType.EventsFileToJsTaskSpecification]: (
+    output: EventsFileToJsTaskOutput
+  ) => string;
+  [TaskType.RfcStateAndInteractionsToDiffs]: (
+    output: RfcStateAndInteractionsToDiffsTaskOutput
+  ) => string;
+} = {
+  [TaskType.EventsFileToJsTaskSpecification](output) {
+    return JSON.stringify(output.events, null, 2);
+  },
+  [TaskType.EventsToRfcStateTaskSpecification](output) {
+    return output.rfcState.toString();
+  },
+  [TaskType.InteractionsFileToJsTaskSpecification](output) {
+    return JSON.stringify(output.interactions, null, 2);
+  },
+  [TaskType.RfcStateAndInteractionsToDiffs](output) {
+    return JSON.stringify(
+      opticEngine.DiffJsonSerializer.toJs(output.diffs),
+      null,
+      2
+    );
+  },
+};
+////////////////////////////////////////////////////////////////////////////////
+
+const outputBaseDirectory = 'outputs';
+
+async function serializeFailure(
+  id: string,
+  taskSpecification: ITaskSpecification,
+  e: Error
+) {
+  const groupDirectory = getOutputFilePrefix(
+    JSON.stringify(taskSpecification.context)
+  );
+  const taskDirectory = getOutputFilePrefix(id);
+  const outputPath = path.join(
+    outputBaseDirectory,
+    groupDirectory,
+    taskDirectory
+  );
+  await fs.ensureDir(outputPath);
+  await fs.writeJson(
+    path.join(
+      outputBaseDirectory,
+      groupDirectory,
+      taskDirectory,
+      'specification.json'
+    ),
+    taskSpecification,
+    { spaces: 2 }
+  );
+  await fs.writeFile(
+    path.join(
+      outputBaseDirectory,
+      groupDirectory,
+      taskDirectory,
+      'output.error.json'
+    ),
+    JSON.stringify(WrapError(e))
+  );
+}
+
+async function serializeResult(
+  id: string,
+  taskSpecification: ITaskSpecification,
+  result: any
+) {
+  const groupDirectory = getOutputFilePrefix(
+    JSON.stringify(taskSpecification.context)
+  );
+  const taskDirectory = getOutputFilePrefix(id);
+  const outputPath = path.join(
+    outputBaseDirectory,
+    groupDirectory,
+    taskDirectory
+  );
+  await fs.ensureDir(outputPath);
+  await fs.writeJson(
+    path.join(
+      outputBaseDirectory,
+      groupDirectory,
+      taskDirectory,
+      'specification.json'
+    ),
+    taskSpecification,
+    { spaces: 2 }
+  );
+  await fs.writeFile(
+    path.join(
+      outputBaseDirectory,
+      groupDirectory,
+      taskDirectory,
+      'output.snapshot.txt'
+    ),
+    outputSerializers[taskSpecification.type](result)
+  );
+}
+
+////////////////////////////////////////////////////////////////////////////////
 async function main() {
   const taskSpecificationToTaskId: ITaskIdentifier = function (
     taskSpecification: ITaskSpecification
@@ -172,11 +292,13 @@ async function main() {
       console.log('executor finished');
       console.log({ result });
       outputQueue.emit(id, result);
+      serializeResult(id, taskSpecification, result);
     } catch (e) {
       console.log('executor failed');
       console.error(e);
       debugger;
       outputQueue.emit(id, e);
+      serializeFailure(id, taskSpecification, e);
     }
   });
   const results: DataLoader<ITaskSpecification, any> = new DataLoader<

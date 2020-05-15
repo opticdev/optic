@@ -3,7 +3,7 @@
   "version": "8.0.6",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:test": "echo snapshot-tests"
+    "ws:test": "node build/index.js"
   },
   "dependencies": {
     "@useoptic/domain-utilities": "8.0.6",

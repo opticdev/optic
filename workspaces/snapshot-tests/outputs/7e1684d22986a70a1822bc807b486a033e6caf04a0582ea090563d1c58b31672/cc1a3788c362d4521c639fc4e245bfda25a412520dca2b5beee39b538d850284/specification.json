@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "gen_Nested-optionals",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "an-optional-field-is-omitted.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-optionals",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "an-optional-field-is-omitted.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "gen_Nested-optionals",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "an-optional-field-is-omitted.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "gen_Nested-optionals",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "an-optional-field-is-omitted.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}

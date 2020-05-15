@@ -1,0 +1,9 @@
+{
+  "type": "EventsFileToJsTaskSpecification",
+  "context": {
+    "universe": "gen_Root-Shape-is-an-Object-with-Keys",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "a-known-field-is-missing.json"
+  },
+  "inputs": {}
+}

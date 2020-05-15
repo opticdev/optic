@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "gen_Unknowns-diffed-against-real-values",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "a-nullableunknown-is-provided-with-a-concrete-type.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "gen_Unknowns-diffed-against-real-values",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "a-nullableunknown-is-provided-with-a-concrete-type.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "gen_Unknowns-diffed-against-real-values",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "a-nullableunknown-is-provided-with-a-concrete-type.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "gen_Unknowns-diffed-against-real-values",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "a-nullableunknown-is-provided-with-a-concrete-type.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}
