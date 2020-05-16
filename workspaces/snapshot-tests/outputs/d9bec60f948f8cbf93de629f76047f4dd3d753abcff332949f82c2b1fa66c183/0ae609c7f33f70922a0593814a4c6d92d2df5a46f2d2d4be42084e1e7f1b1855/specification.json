@@ -1,9 +1,0 @@
-{
-  "type": "EventsFileToJsTaskSpecification",
-  "context": {
-    "universe": "gen_Unknowns-diffed-against-real-values",
-    "eventsScenario": "v0.json",
-    "interactionsScenario": "a-listunknown-is-provided-with-concrete-types.json"
-  },
-  "inputs": {}
-}

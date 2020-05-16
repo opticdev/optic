@@ -1,9 +1,0 @@
-{
-  "type": "InteractionsFileToJsTaskSpecification",
-  "context": {
-    "universe": "gen_Nested-optionals",
-    "eventsScenario": "v0.json",
-    "interactionsScenario": "an-optional-array-field-is-provided-but-it-was-provided-an-object.json"
-  },
-  "inputs": {}
-}
