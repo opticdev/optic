@@ -41,7 +41,9 @@ class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
           }
           fieldName -> fieldShape
         }
-        schema.addRequired(required.toList)
+        if (required.nonEmpty) {
+          schema.addRequired(required.toList)
+        }
         schema.addProperties(fields)
       }
 
