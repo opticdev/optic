@@ -1,9 +1,0 @@
-{
-  "type": "InteractionsFileToJsTaskSpecification",
-  "context": {
-    "universe": "gen_Empty-Array-at-Root",
-    "eventsScenario": "v0.json",
-    "interactionsScenario": "when-unknown-and-provided-with-items.json"
-  },
-  "inputs": {}
-}

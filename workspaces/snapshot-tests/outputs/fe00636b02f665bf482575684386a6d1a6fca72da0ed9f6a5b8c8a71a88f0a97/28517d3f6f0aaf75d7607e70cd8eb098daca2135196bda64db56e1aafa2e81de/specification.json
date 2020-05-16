@@ -1,9 +1,0 @@
-{
-  "type": "EventsFileToJsTaskSpecification",
-  "context": {
-    "universe": "empty",
-    "eventsScenario": "v0.json",
-    "interactionsScenario": "get-root.json"
-  },
-  "inputs": {}
-}

@@ -41,7 +41,7 @@ export interface ITaskSpecificationInputs {
   [key: string]: ITaskSpecification; //@TODO: support ITaskSpecification[]?
 }
 
-export type TaskIdentifier = string;
+type TaskIdentifier = string;
 
 export interface ITaskIdentifier {
   (taskSpecification: ITaskSpecification): TaskIdentifier;

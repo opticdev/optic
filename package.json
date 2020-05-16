@@ -18,7 +18,6 @@
   "workspaces": [
     "workspaces/domain",
     "workspaces/domain-utilities",
-    "workspaces/snapshot-tests",
     "workspaces/cli-config",
     "workspaces/proxy",
     "workspaces/cli-client",

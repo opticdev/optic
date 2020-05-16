@@ -1,9 +1,0 @@
-{
-  "type": "EventsFileToJsTaskSpecification",
-  "context": {
-    "universe": "gen_Nested-Array",
-    "eventsScenario": "v0.json",
-    "interactionsScenario": "when-provided-with-only-items-that-do-not-match.json"
-  },
-  "inputs": {}
-}

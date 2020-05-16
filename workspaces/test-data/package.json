@@ -12,9 +12,7 @@
   "dependencies": {
     "@useoptic/domain": "8.0.6",
     "deepcopy": "^2.0.0",
-    "md5": "^2.2.1",
-    "slugify": "^1.4.0",
-    "fs-extra": "^9.0.0"
+    "md5": "^2.2.1"
   },
   "devDependencies": {
     "jest": "^26.0.1"
