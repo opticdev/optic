@@ -55,6 +55,7 @@ class KnownShapeIssuesSpec extends FunSpec {
       UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(3)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))))
        */
     }
+
     it("when array at the root") {
       val examples = Vector(
         JsonLikeFrom.json(JsonExamples.arrayOfArray).get,
@@ -71,6 +72,28 @@ class KnownShapeIssuesSpec extends FunSpec {
 
       assert(diffs.isEmpty)
       /* This does not yield a diff (as expected)
+        []
+       */
+    }
+
+    it("when array of array of array at root") {
+      val examples = Vector(
+        JsonLikeFrom.json(JsonExamples.arrayOfArrayOfArray).get,
+      )
+      val (commands, initialSpec, diffs, renderAttempt) = run(examples)
+
+      /* This looks correct to me, expected to yield List[List[List[String]]].
+      Define a new shape named  that is a $string, as shape id 99OJfk1
+      Define a new shape named  that is a $list, as shape id 99OJfk2
+      Define a new shape named  that is a $list, as shape id 99OJfk3
+      Define a new shape named  that is a $list, as shape id 99OJfk4
+      Set the shape of parameter $listItem of shape 99OJfk2 to ShapeProvider(99OJfk1)}
+      Set the shape of parameter $listItem of shape 99OJfk3 to ShapeProvider(99OJfk2)}
+      Set the shape of parameter $listItem of shape 99OJfk4 to ShapeProvider(99OJfk3)}
+       */
+
+      assert(diffs.isEmpty)
+      /* This does not yield a diff (as expected) ????? Now I'm confused
         []
        */
     }
