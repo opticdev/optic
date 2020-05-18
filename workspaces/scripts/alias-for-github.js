@@ -44,6 +44,7 @@ async function main() {
             const targetVersion = result.package.dependencies[oldName];
             delete result.package.dependencies[oldName];
             result.package.dependencies[newName] = targetVersion;
+            result.package.dependencies[oldName] = newName;
           }
         });
         await fs.writeJson(

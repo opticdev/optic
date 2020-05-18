@@ -12,6 +12,7 @@
     "registry:start-background": "yarn run registry:start && wait-on http-get://localhost:4873",
     "registry:stop": "cd docker/private-npm-registry && docker-compose down",
     "publish-local": "OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js",
+    "publish-github": "OPTIC_PUBLISH_SCOPE=github node ./workspaces/scripts/publish.js",
     "publish": "OPTIC_PUBLISH_SCOPE=public node ./workspaces/scripts/publish.js",
     "bump": "node ./workspaces/scripts/bump.js",
     "alias-for-github": "node ./workspaces/scripts/alias-for-github.js"
