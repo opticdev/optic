@@ -11,6 +11,7 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@useoptic/domain": "8.0.6",
+    "@useoptic/proxy": "8.0.6",
     "deepcopy": "^2.0.0",
     "md5": "^2.2.1"
   },
