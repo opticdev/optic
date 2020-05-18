@@ -2,10 +2,19 @@
 // interace ITestingService
 import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
-import { StableHasher } from '../utilities/CoverageUtilities';
+import { StableHasher } from '../../utilities/CoverageUtilities';
 import { DiffManagerFacade, JsonHelper, mapScala } from '@useoptic/domain';
-
-export class TestingService {}
+import {
+  ITestingService,
+  Result,
+  RfcEventStream,
+  Capture,
+  CoverageReport,
+  ok,
+  err,
+  NotFoundError,
+  UndocumentedEndpoint,
+} from '.';
 
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
@@ -44,45 +53,68 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
   }
 
   function notFoundErr() {
-    return new TestingServiceError('Not found', { statusCode: 404 });
+    return new NotFoundError();
   }
 
-  class ExampleTestingService {
+  class ExampleTestingService implements ITestingService {
+    orgId: string;
+
     constructor(orgId) {
       this.orgId = orgId;
     }
 
-    async loadSpecEvents(captureId) {
+    async loadSpecEvents(
+      captureId
+    ): Promise<Result<RfcEventStream, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
 
       const spec = getSpecEvents(captureId);
 
-      if (!spec) throw notFoundErr();
+      if (!spec) return err(notFoundErr());
 
-      return spec;
+      return ok(spec);
     }
 
-    async listCaptures() {
+    async listCaptures(): Promise<Result<Capture[]>> {
       await new Promise((r) => setTimeout(r, 400));
-      return captures;
+
+      return ok(
+        captures.map(
+          // tolerate example resource evolving by only picking fields we need
+          ({ captureId, createdAt, updatedAt, completedAt, tags }) => {
+            return {
+              captureId,
+              createdAt,
+              updatedAt,
+              completedAt,
+              tags: tags.map(({ name, value }) => ({
+                name,
+                value,
+              })),
+            };
+          }
+        )
+      );
     }
 
-    async loadCapture(captureId) {
+    async loadCapture(captureId): Promise<Result<Capture, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
       const capture = captures.find(
         (capture) => captureId === capture.captureId
       );
-      if (!capture) throw notFoundErr();
+      if (!capture) return err(notFoundErr());
 
-      return capture;
+      return ok(capture as Capture);
     }
 
-    async loadReport(captureId) {
+    async loadReport(
+      captureId
+    ): Promise<Result<CoverageReport, NotFoundError>> {
       await new Promise((r) => setTimeout(r, 2000));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -95,15 +127,19 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       const report = opticEngine.com.useoptic.diff.helpers
         .CoverageHelpers()
         .getCoverage(rfcState, samplesSeq);
-      const serializedReport = converter.toJs(report);
-      return serializedReport;
+      const serializedReport: CoverageReport = converter.toJs(report);
+      return ok(serializedReport);
     }
 
-    async loadEndpointDiffs(captureId, pathId, httpMethod) {
+    async loadEndpointDiffs(
+      captureId,
+      pathId,
+      httpMethod
+    ): Promise<Result<any, NotFoundError>> {
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -127,18 +163,20 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       // TODO: replace this what the service will _actually_ be returning. Obviously,
       // this isn't serialised as JSON fully, and I imagine there's other details not
       // not considered.
-      return {
+      return ok({
         newRegions: JsonHelper.seqToJsArray(regions.newRegions),
         bodyDiffs: JsonHelper.seqToJsArray(regions.bodyDiffs),
-      };
+      });
     }
 
-    async loadUndocumentedEndpoints(captureId) {
+    async loadUndocumentedEndpoints(
+      captureId
+    ): Promise<Result<UndocumentedEndpoint[], NotFoundError>> {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
 
-      if (!events || !samples) throw notFoundErr();
+      if (!events || !samples) return err(notFoundErr());
 
       const { rfcState } = queriesFromEvents(events);
 
@@ -150,38 +188,22 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
       const undocumentedUrlsSeq = diffManager.unmatchedUrls(true);
 
-      return JsonHelper.seqToJsArray(undocumentedUrlsSeq).map(
-        ({ method, path, pathId, count }) => {
-          return {
-            method,
-            path,
-            pathId,
-            count,
-          };
-        }
+      return ok(
+        JsonHelper.seqToJsArray(undocumentedUrlsSeq).map(
+          ({ method, path, pathId, count }) => {
+            return {
+              method,
+              path,
+              pathId,
+              count,
+            };
+          }
+        )
       );
     }
   }
 
   return new ExampleTestingService(orgId);
-}
-
-export class TestingServiceError extends Error {
-  static type = 'testing-service-error';
-  // don't rely on `instanceof` in JS, it's a mistake
-  static instanceOf(maybeErr) {
-    return maybeErr && maybeErr.type === TestingServiceError.type;
-  }
-
-  constructor(msg, { statusCode }) {
-    super(msg);
-    this.statusCode = statusCode;
-    this.type = TestingServiceError.type;
-  }
-
-  notFound() {
-    return this.statusCode === 404;
-  }
 }
 
 // Might belong in a (View)Model somewhere
