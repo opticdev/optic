@@ -41,7 +41,7 @@ jobs:
     - name: "build workspaces"
       run: yarn wsrun --stages --report --fast-exit ws:build  
     - name: "publish to github"
-      run: yarn run publish-github
+      run: OPTIC_PUBLISH_SCOPE=github node ./workspaces/scripts/publish.js
       env:
         NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       
