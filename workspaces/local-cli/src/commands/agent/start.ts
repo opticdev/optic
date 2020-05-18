@@ -1,26 +1,29 @@
 import { Command } from '@oclif/command';
-import { setupTask } from '../../shared/run-task';
 import * as uuid from 'uuid';
 import { Client as SaasClient } from '@useoptic/saas-client';
-import { developerDebugLogger } from '../../shared/logger';
+import * as fs from 'fs-extra';
+import {
+  developerDebugLogger,
+  loadPathsAndConfig,
+  SaasCaptureSaver,
+} from '@useoptic/cli-shared';
+import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
+import { AgentCliTaskRunner } from '../../shared/agent-cli-task-runner';
 
 export default class Start extends Command {
   static description =
     'starts your API process behind a proxy and sends traffic metadata to the cloud';
 
   async run() {
-    process.env.OPTIC_PERSISTENCE_METHOD = 'saas';
-
     const gatewayBaseUrl =
       'https://k2shife0j5.execute-api.us-east-1.amazonaws.com/stage';
     const baseUrl = `${gatewayBaseUrl}/api/v1`;
-    process.env.OPTIC_SAAS_API_BASE_URL = baseUrl;
 
     const agentGroupId = 'pokeapi-crawler';
     const orgId = 'optic-testing';
     const captureId = uuid.v4();
     const reportUrl = `${baseUrl}/capture-reports/orgs/${orgId}/agentGroups/${agentGroupId}/captures/${captureId}`;
-    this.log(`Access your report at ${reportUrl}`);
+    const agentId = uuid.v4();
     const tokenContents = {
       agentGroupId,
       orgId,
@@ -29,17 +32,30 @@ export default class Start extends Command {
     const tokenString = Buffer.from(JSON.stringify(tokenContents)).toString(
       'base64'
     );
-    process.env.OPTIC_SAAS_LAUNCH_TOKEN = tokenString;
-    process.env.OPTIC_SAAS_AGENT_GROUP_ID = agentGroupId;
-    process.env.OPTIC_SAAS_ORG_ID = orgId;
-    process.env.OPTIC_SAAS_CAPTURE_ID = captureId;
 
+    // start a new capture
     const saasClient = new SaasClient(baseUrl, tokenString);
     developerDebugLogger('getting spec upload url');
     const { uploadUrl } = await saasClient.getSpecUploadUrl();
     developerDebugLogger('uploading spec');
-    await saasClient.uploadSpec(uploadUrl, []);
-    await setupTask(this, 'start');
+    const { paths, config } = await loadPathsAndConfig(this);
+    const { specStorePath } = paths;
+    const events = await fs.readJson(specStorePath);
+    await saasClient.uploadSpec(uploadUrl, events);
+
+    const persistenceManager = new SaasCaptureSaver({
+      orgId,
+      agentGroupId,
+      agentId,
+      baseUrl,
+      launchTokenString: tokenString,
+      captureId,
+    });
+
+    this.log(`Access your report at ${reportUrl}`);
+    const runner = new AgentCliTaskRunner(persistenceManager);
+    const cliTaskSession = new CliTaskSession(runner);
+    await cliTaskSession.start(this, config, 'start');
     this.log(`Access your report at ${reportUrl}`);
   }
 }

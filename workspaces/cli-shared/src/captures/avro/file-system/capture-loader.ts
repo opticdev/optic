@@ -1,38 +1,23 @@
+import {
+  developerDebugLogger,
+  ICaptureLoader,
+  ICaptureManifest,
+} from '../../../index';
 import { IIgnoreRunnable } from '@useoptic/cli-config';
-import { IHttpInteraction } from '@useoptic/domain';
-import { ICapture } from '@useoptic/domain';
-import * as fs from 'fs-extra';
+import { captureFileSuffix } from './index';
 import * as path from 'path';
-import { captureFileSuffix, serdes } from './file-system-capture-saver';
-import { developerDebugLogger } from '../../../logger';
+import * as fs from 'fs-extra';
+import { ICapture, IHttpInteraction } from '@useoptic/domain-types';
 import * as avro from 'avsc';
 
-export interface ICaptureManifest {
-  samples: IHttpInteraction[];
-}
-
-export interface ICaptureLoader {
-  load(captureId: string): Promise<ICaptureManifest>;
-
-  loadWithFilter(
-    captureId: string,
-    filter: IIgnoreRunnable
-  ): Promise<ICaptureManifest>;
-}
-
-export interface ICaptureSaver {
-  init(captureId: string): Promise<void>;
-
-  save(sample: IHttpInteraction): Promise<void>;
-}
-
-interface IFileSystemCaptureLoaderConfig {
+export interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string;
+  captureId: string;
 }
 
 const suffixOffset = -1 * captureFileSuffix.length;
 
-class FileSystemCaptureLoader implements ICaptureLoader {
+export class CaptureLoader implements ICaptureLoader {
   constructor(private config: IFileSystemCaptureLoaderConfig) {}
 
   private async listSortedCaptureFiles(captureId: string) {
@@ -54,7 +39,8 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     return captureFiles;
   }
 
-  async load(captureId: string): Promise<ICaptureManifest> {
+  async load(): Promise<ICaptureManifest> {
+    const captureId = this.config.captureId;
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
     const entriesContents: ICapture[] = await Promise.all(
@@ -81,10 +67,8 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     };
   }
 
-  async loadWithFilter(
-    captureId: string,
-    filter: IIgnoreRunnable
-  ): Promise<ICaptureManifest> {
+  async loadWithFilter(filter: IIgnoreRunnable): Promise<ICaptureManifest> {
+    const captureId = this.config.captureId;
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
     const entriesContents: ICapture[] = await Promise.all(
@@ -115,5 +99,3 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     };
   }
 }
-
-export { FileSystemCaptureLoader };

@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.0.6",
+  "version": "8.0.7",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -11,11 +11,12 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/cli-client": "8.0.6",
-    "@useoptic/cli-config": "8.0.6",
-    "@useoptic/cli-scripts": "8.0.6",
-    "@useoptic/cli-server": "8.0.6",
-    "@useoptic/domain": "8.0.6",
+    "@useoptic/cli-client": "8.0.7",
+    "@useoptic/cli-config": "8.0.7",
+    "@useoptic/cli-scripts": "8.0.7",
+    "@useoptic/cli-server": "8.0.7",
+    "@useoptic/proxy": "8.0.7",
+    "@useoptic/domain": "8.0.7",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
@@ -28,7 +29,7 @@
     "react-dev-utils": "^10.0.0",
     "tree-kill": "^1.2.2",
     "tslib": "^1",
-    "uuid": "^3.4.0"
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -38,7 +39,7 @@
     "@types/mocha": "^5",
     "@types/node": "^10",
     "@types/react-dev-utils": "^9.0.2",
-    "@types/uuid": "^3.4.6",
+    "@types/uuid": "^7.0.3",
     "chai": "^4",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",

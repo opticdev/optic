@@ -1,46 +1,17 @@
-import {Client} from '@useoptic/cli-client';
-import {IIgnoreRunnable} from '@useoptic/cli-config';
-import {IHttpInteraction} from '@useoptic/proxy';
+import { Client } from '@useoptic/cli-client';
 import * as lockfile from 'proper-lockfile';
-import {CliDaemon} from './daemon';
-import {fork} from 'child_process';
+import { CliDaemon } from './daemon';
+import { fork } from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {FileSystemCaptureLoader} from './captures/file-system/avro/file-system-capture-loader';
-import {FileSystemCaptureSaver} from './captures/file-system/avro/file-system-capture-saver';
-import {SaasCaptureSaver} from './captures/saas/avro/saas-capture-saver';
-import {makeUiBaseUrl} from './url-builders';
-import {developerDebugLogger} from './logger';
 import * as waitOn from 'wait-on';
 import findProcess = require('find-process');
 import * as uuid from 'uuid';
+import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
 
-export interface ICaptureManifest {
-  samples: IHttpInteraction[]
-}
-
-export interface ICaptureLoader {
-  load(captureId: string): Promise<ICaptureManifest>
-
-  loadWithFilter(captureId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest>
-}
-
-export interface ICaptureSaver {
-  init(captureId: string): Promise<void>
-
-  save(sample: IHttpInteraction): Promise<void>
-
-  cleanup(): Promise<void>
-}
-
-export interface ICliDaemonState {
-  port: number
-}
-
-export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDaemonState> {
-  if (process.env.OPTIC_ENV === 'development') {
-    await ensureDaemonStopped(lockFilePath);
-  }
+export async function ensureDaemonStarted(
+  lockFilePath: string
+): Promise<ICliDaemonState> {
   const fileExisted = await fs.pathExists(lockFilePath);
   if (!fileExisted) {
     await fs.ensureFile(lockFilePath);
@@ -48,17 +19,23 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
   }
   await fs.ensureDir(path.dirname(lockFilePath));
   const isLocked = await lockfile.check(lockFilePath);
-  developerDebugLogger({isLocked});
+  developerDebugLogger({ isLocked });
   if (isLocked && !fileExisted) {
     developerDebugLogger('lockfile was missing but locked');
   }
   if (!isLocked) {
-    const isDebuggingEnabled = process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
+    const isDebuggingEnabled =
+      process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
     if (isDebuggingEnabled) {
-      developerDebugLogger(`node --inspect debugging enabled. go to chrome://inspect and open the node debugger`);
+      developerDebugLogger(
+        `node --inspect debugging enabled. go to chrome://inspect and open the node debugger`
+      );
     }
     const sentinelFileName = uuid.v4();
-    const sentinelFilePath = path.join(path.dirname(lockFilePath), sentinelFileName);
+    const sentinelFilePath = path.join(
+      path.dirname(lockFilePath),
+      sentinelFileName
+    );
     // fork process
     const child = fork(
       path.join(__dirname, 'main'),
@@ -66,18 +43,18 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
       {
         execArgv: isDebuggingEnabled ? ['--inspect'] : [],
         detached: true,
-        stdio: 'ignore'
+        stdio: 'ignore',
       }
     );
 
     await new Promise(async (resolve) => {
-      developerDebugLogger(`waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`);
+      developerDebugLogger(
+        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
+      );
       await waitOn({
-        resources: [
-          `file://${sentinelFilePath}`
-        ],
+        resources: [`file://${sentinelFilePath}`],
         delay: 250,
-        window: 250
+        window: 250,
       });
       await fs.unlink(sentinelFilePath);
       developerDebugLogger(`lock created ${child.pid}`);
@@ -101,7 +78,7 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   }
 
   const contents = await fs.readJson(lockFilePath);
-  const {port} = contents;
+  const { port } = contents;
   const apiBaseUrl = `http://localhost:${port}/admin-api`;
   const cliClient = new Client(apiBaseUrl);
   try {
@@ -117,7 +94,7 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
       const blockers = await findProcess('port', port);
       if (blockers.length > 0) {
         developerDebugLogger(blockers);
-        blockers.forEach(b => {
+        blockers.forEach((b) => {
           developerDebugLogger(`killing PID ${b.pid}`);
           process.kill(b.pid, 9);
         });
@@ -127,11 +104,4 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   }
 }
 
-
-export {
-  CliDaemon,
-  FileSystemCaptureSaver,
-  FileSystemCaptureLoader,
-  SaasCaptureSaver,
-  makeUiBaseUrl
-};
+export { CliDaemon };

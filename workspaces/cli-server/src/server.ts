@@ -1,7 +1,9 @@
 import {
+  getPathsRelativeToCwd,
   IApiCliConfig,
   IOpticTaskRunnerConfig,
   IPathMapping,
+  readApiConfig,
 } from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
 import * as express from 'express';
@@ -23,7 +25,6 @@ export const log = fs.createWriteStream('./.optic-daemon.log');
 export interface ICliServerConfig {}
 
 export interface IOpticExpressRequestAdditions {
-  session: ICliServerSession;
   paths: IPathMapping;
   config: IApiCliConfig;
   capturesHelpers: CapturesHelpers;
@@ -38,17 +39,9 @@ declare global {
   }
 }
 
-export interface ICliServerCaptureInfo {
-  captureType: 'run';
-  status: 'started' | 'completed';
-  taskConfig: IOpticTaskRunnerConfig;
-  env: { [key: string]: string };
-}
-
 export interface ICliServerSession {
   id: string;
   path: string;
-  captures: ICliServerCaptureInfo[];
 }
 
 export const shutdownRequested = 'cli-server:shutdown-requested';
@@ -70,7 +63,7 @@ class CliServer {
     });
   }
 
-  makeServer() {
+  async makeServer() {
     const app = express();
     app.set('etag', false);
     const sessions: ICliServerSession[] = [];
@@ -107,18 +100,24 @@ class CliServer {
       '/api/sessions',
       bodyParser.json({ limit: '5kb' }),
       async (req, res: express.Response) => {
-        const { path, taskConfig } = req.body;
-        const captureInfo: ICliServerCaptureInfo = {
-          taskConfig,
-          captureType: 'run',
-          status: 'started',
-          env: {},
-        };
+        const { path, taskConfig, captureId } = req.body;
+        if (captureId && taskConfig) {
+          const paths = await getPathsRelativeToCwd(path);
+          const { capturesPath } = paths;
+          const capturesHelpers = new CapturesHelpers(capturesPath);
+          const now = new Date().toISOString();
+          await capturesHelpers.updateCaptureState({
+            captureId,
+            status: 'started',
+            metadata: {
+              startedAt: now,
+              taskConfig,
+              lastInteraction: null,
+            },
+          });
+        }
         const existingSession = sessions.find((x) => x.path === path);
         if (existingSession) {
-          if (taskConfig) {
-            existingSession.captures.push(captureInfo);
-          }
           return res.json({
             session: existingSession,
           });
@@ -128,7 +127,6 @@ class CliServer {
         const session: ICliServerSession = {
           id: sessionId,
           path,
-          captures: taskConfig ? [captureInfo] : [],
         };
         sessions.push(session);
 
@@ -166,7 +164,7 @@ class CliServer {
   }
 
   async start(): Promise<{ port: number }> {
-    const app = this.makeServer();
+    const app = await this.makeServer();
     const port = await getPort({
       port: [34444],
     });

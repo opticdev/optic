@@ -1,23 +1,17 @@
-import * as lockfile from 'proper-lockfile';
-import {userDebugLogger} from './logger';
-import {CliServer, log, shutdownRequested} from './server';
 import * as fs from 'fs-extra';
-
-export interface ICliDaemon {
-
-}
+import * as lockfile from 'proper-lockfile';
+import { userDebugLogger } from '@useoptic/cli-shared';
+import { CliServer, log, shutdownRequested } from './server';
 
 export interface ICliDaemonConfig {
-  lockFilePath: string
+  lockFilePath: string;
 }
 
 class CliDaemon {
   private apiServer!: CliServer;
   private releaseLock!: () => Promise<void>;
 
-  constructor(private config: ICliDaemonConfig) {
-
-  }
+  constructor(private config: ICliDaemonConfig) {}
 
   async start() {
     await this.acquireInstanceLock();
@@ -66,6 +60,4 @@ class CliDaemon {
   }
 }
 
-export {
-  CliDaemon
-};
+export { CliDaemon };

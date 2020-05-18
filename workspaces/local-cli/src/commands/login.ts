@@ -1,17 +1,15 @@
 import { Command } from '@oclif/command';
-import openBrowser = require('react-dev-utils/openBrowser');
 import {
   ensureCredentialsServerStarted,
   loginBaseUrl,
   tokenReceivedEvent,
   setCredentials,
 } from '../shared/authentication-server';
-import * as url from 'url';
 import * as qs from 'querystring';
 import { ensureDaemonStopped } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';
-import { track, trackAndSpawn } from '../shared/analytics';
+import { trackAndSpawn } from '../shared/analytics';
 
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';

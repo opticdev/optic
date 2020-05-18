@@ -16,10 +16,11 @@ class Client {
 
   findSession(
     path: string,
-    taskConfig: IOpticTaskRunnerConfig | null
+    taskConfig: IOpticTaskRunnerConfig | null,
+    captureId: string | null
   ): Promise<{ session: { id: string } }> {
     const url = `${this.baseUrl}/sessions`;
-    return JsonHttpClient.postJson(url, { path, taskConfig });
+    return JsonHttpClient.postJson(url, { path, taskConfig, captureId });
   }
 
   markCaptureAsCompleted(specId: string, captureId: string) {

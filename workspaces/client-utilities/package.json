@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/client-utilities",
-  "version": "0.1.0",
+  "version": "8.0.7",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo client-utilities"

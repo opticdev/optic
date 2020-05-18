@@ -1,8 +1,6 @@
-import {HttpToolkitCapturingProxy, opticStatusPath} from './httptoolkit-capturing-proxy';
-import {IHttpInteraction} from '@useoptic/domain';
-
-export {
+import {
   HttpToolkitCapturingProxy,
-  IHttpInteraction,
-  opticStatusPath
-}
+  opticStatusPath,
+} from './httptoolkit-capturing-proxy';
+
+export { HttpToolkitCapturingProxy, opticStatusPath };

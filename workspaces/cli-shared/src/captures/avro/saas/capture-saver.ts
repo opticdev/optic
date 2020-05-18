@@ -1,54 +1,43 @@
-import {ICaptureSaver} from '../../../index';
-import {Client as SaasClient} from '@useoptic/saas-client';
-import {ICapture, IHttpInteraction} from '@useoptic/domain';
+import { Client as SaasClient } from '@useoptic/saas-client';
+import { ICapture, IHttpInteraction } from '@useoptic/domain-types';
 import Bottleneck from 'bottleneck';
-import * as avro from 'avsc';
-import {developerDebugLogger} from '../../../logger';
-
-const globalLog = require('global-request-logger');
-globalLog.initialize();
-globalLog.on('error', function (request: any, response: any) {
-  debugger
-  console.error('OUTGOING_REQUEST_ERROR :(');
-  console.log('Request', request);
-  console.log('Response', response);
-  developerDebugLogger('OUTGOING_REQUEST_ERROR :(');
-  developerDebugLogger(request);
-  developerDebugLogger(response);
-});
-export const schema = require('@useoptic/domain/build/domain-types/avro-schemas/capture.json');
-export const serdes = avro.Type.forSchema(schema);
-
-export interface IOpticLaunchToken {
-  orgId: string
-  agentGroupId: string
-  captureId: string
-}
+import { developerDebugLogger, ICaptureSaver } from '../../../index';
+import { serdes } from '../index';
 
 export interface ISaasCaptureSaverConfig {
-  orgId: string
-  agentGroupId: string
-  agentId: string
-  captureId: string
-  launchTokenString: string
-  baseUrl: string
+  orgId: string;
+  agentGroupId: string;
+  agentId: string;
+  captureId: string;
+  launchTokenString: string;
+  baseUrl: string;
 }
 
-class SaasCaptureSaver implements ICaptureSaver {
-
+class CaptureSaver implements ICaptureSaver {
   private saasClient: SaasClient;
-  private batcher: Bottleneck.Batcher = new Bottleneck.Batcher({maxSize: 100, maxTime: 1000});
-  private throttler: Bottleneck = new Bottleneck({maxConcurrent: 10, minTime: 1});
+  private batcher: Bottleneck.Batcher = new Bottleneck.Batcher({
+    maxSize: 25,
+    maxTime: 1000,
+  });
+  private throttler: Bottleneck = new Bottleneck({
+    maxConcurrent: 10,
+    minTime: 1,
+  });
   private batchCount: number = 0;
+  private isStopping = false;
 
   constructor(private config: ISaasCaptureSaverConfig) {
     this.saasClient = new SaasClient(config.baseUrl, config.launchTokenString);
   }
 
-  async init(captureId: string) {
+  async init() {
     this.batcher.on('batch', (items: IHttpInteraction[]) => {
       this.batchCount++;
       const batchId = this.batchCount.toString();
+      if (this.isStopping) {
+        developerDebugLogger(`batch ${batchId} came too late`);
+        return;
+      }
       developerDebugLogger(`scheduled batch ${batchId}`);
       this.throttler.schedule(() => {
         developerDebugLogger(`saving batch ${batchId}`);
@@ -56,7 +45,7 @@ class SaasCaptureSaver implements ICaptureSaver {
           .then(() => {
             developerDebugLogger(`saved batch ${batchId}`);
           })
-          .catch(e => {
+          .catch((e) => {
             developerDebugLogger(`error in batch ${batchId}`);
             developerDebugLogger(e);
           });
@@ -69,8 +58,11 @@ class SaasCaptureSaver implements ICaptureSaver {
   }
 
   private async saveBatch(batchId: string, items: IHttpInteraction[]) {
-    const {agentId, agentGroupId, captureId} = this.config;
-    const {uploadUrl} = await this.saasClient.getCaptureUploadUrl(agentId, batchId);
+    const { agentId, agentGroupId, captureId } = this.config;
+    const { uploadUrl } = await this.saasClient.getCaptureUploadUrl(
+      agentId,
+      batchId
+    );
 
     const input: ICapture = {
       groupingIdentifiers: {
@@ -79,24 +71,25 @@ class SaasCaptureSaver implements ICaptureSaver {
         agentId,
         batchId,
       },
-      batchItems: items
+      batchItems: items,
     };
     const bytes = serdes.toBuffer(input);
     return this.saasClient.uploadCapture(uploadUrl, bytes);
   }
 
   async cleanup() {
+    this.isStopping = true;
     developerDebugLogger('waiting for saving to finish...');
     try {
+      await this.throttler.stop();
       await new Promise((resolve, reject) => {
         this.throttler.on('idle', resolve);
       });
     } catch (e) {
       developerDebugLogger(e);
     }
+    developerDebugLogger('done waiting for saving to finish.');
   }
 }
 
-export {
-  SaasCaptureSaver
-};
+export { CaptureSaver };

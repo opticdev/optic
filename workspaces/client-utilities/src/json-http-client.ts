@@ -2,12 +2,13 @@ import fetch from 'cross-fetch';
 
 class JsonHttpClient {
   static async verifyOkResponse(response: Response) {
+    const text = await response.text();
     if (!response.ok) {
-      const text = await response.text();
       throw new Error(
         `expected a successful response. got ${response.status} ${response.statusText} \n${text}`
       );
     }
+    return text;
   }
 
   static async handleJsonResponse(response: Response) {
@@ -42,20 +43,32 @@ class JsonHttpClient {
     });
   }
 
-  static postJson(
+  static postJsonString(
     url: string,
-    body: object,
+    body: string,
     additionalHeaders: Record<string, string> = {}
   ) {
     return fetch(url, {
       method: 'POST',
-      body: JSON.stringify(body),
+      body,
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
         ...additionalHeaders,
       },
     }).then(JsonHttpClient.handleJsonResponse);
+  }
+
+  static postJson(
+    url: string,
+    body: any,
+    additionalHeaders: Record<string, string> = {}
+  ) {
+    return JsonHttpClient.postJsonString(
+      url,
+      JSON.stringify(body),
+      additionalHeaders
+    );
   }
 
   static postJsonWithoutBody(
@@ -71,14 +84,34 @@ class JsonHttpClient {
     }).then(JsonHttpClient.handleJsonResponse);
   }
 
+  static getJsonAsText(url: string) {
+    return fetch(url, {
+      headers: {
+        accept: 'application/json',
+      },
+    }).then(JsonHttpClient.verifyOkResponse);
+  }
+
   static putJson(
     url: string,
     body: object,
     additionalHeaders: Record<string, string> = {}
   ) {
+    return JsonHttpClient.putJsonString(
+      url,
+      JSON.stringify(body),
+      additionalHeaders
+    );
+  }
+
+  static putJsonString(
+    url: string,
+    body: string,
+    additionalHeaders: Record<string, string> = {}
+  ) {
     return fetch(url, {
       method: 'PUT',
-      body: JSON.stringify(body),
+      body: body,
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',

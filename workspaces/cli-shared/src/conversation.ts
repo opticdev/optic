@@ -6,3 +6,4 @@ export function fromOptic(string: string) {
 export function errorFromOptic(string: string) {
   return `${colors.cyan('[optic]')} ${colors.red(string)}`;
 }
+export { colors };

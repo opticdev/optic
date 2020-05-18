@@ -4,7 +4,6 @@ import Command from '@oclif/command';
 import * as colors from 'colors';
 //@ts-ignore
 import * as niceTry from 'nice-try';
-import { fromOptic } from './conversation';
 import {
   getPathsRelativeToConfig,
   IOpticTaskRunnerConfig,
@@ -15,6 +14,7 @@ import { CommandSession } from './command-session';
 import * as waitOn from 'wait-on';
 import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
 import { track, trackAndSpawn } from './analytics';
+import { fromOptic } from '@useoptic/cli-shared';
 
 export function verifyTask(cli: Command, taskName: string): void {
   cli.log(fromOptic(colors.bold(`Testing task '${taskName}' `)));
@@ -35,7 +35,7 @@ export function verifyTask(cli: Command, taskName: string): void {
           const task = config.tasks[taskName];
           foundTask = task;
           if (foundTask) {
-            startConfig = await TaskToStartConfig(task, 'mock-capture');
+            startConfig = await TaskToStartConfig(task);
           }
           return Boolean(task);
         });

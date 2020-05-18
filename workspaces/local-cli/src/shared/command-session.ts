@@ -1,11 +1,11 @@
-import {ChildProcess, spawn, SpawnOptions} from 'child_process';
-import {EventEmitter} from 'events';
+import { ChildProcess, spawn, SpawnOptions } from 'child_process';
+import { EventEmitter } from 'events';
 import * as treeKill from 'tree-kill';
-import {developerDebugLogger} from './logger';
+import { developerDebugLogger } from '@useoptic/cli-shared';
 
 export interface ICommandSessionConfig {
-  command: string
-  environmentVariables: NodeJS.ProcessEnv
+  command: string;
+  environmentVariables: NodeJS.ProcessEnv;
 }
 
 class CommandSession {
@@ -32,8 +32,8 @@ class CommandSession {
       this.isRunning = false;
     });
     this.child.on('exit', (code) => {
-      developerDebugLogger(`command process exited with code ${code}`)
-      this.events.emit('stopped', {state: code ? 'failed' : 'completed'});
+      developerDebugLogger(`command process exited with code ${code}`);
+      this.events.emit('stopped', { state: code ? 'failed' : 'completed' });
     });
 
     return this.child;
@@ -41,16 +41,19 @@ class CommandSession {
 
   stop() {
     if (this.isRunning && this.child) {
-      treeKill(this.child.pid, (e) => {
-        if (e) {
-          console.error(e);
-        }
-        this.events.emit('stopped', {state: 'terminated'});
+      const pid = this.child.pid;
+      return new Promise((resolve) => {
+        treeKill(pid, (e) => {
+          if (e) {
+            console.error(e);
+            return resolve();
+          }
+          this.events.emit('stopped', { state: 'terminated' });
+          resolve();
+        });
       });
     }
   }
 }
 
-export {
-  CommandSession,
-};
+export { CommandSession };

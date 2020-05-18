@@ -1,38 +1,39 @@
-import Command, {flags} from '@oclif/command';
-import {getPathsRelativeToConfig} from '@useoptic/cli-config';
-import {IPathMapping} from '@useoptic/cli-config';
-import {OasProjectionHelper} from '@useoptic/domain';
-import {cli} from 'cli-ux';
+import Command, { flags } from '@oclif/command';
+import { getPathsRelativeToConfig } from '@useoptic/cli-config';
+import { IPathMapping } from '@useoptic/cli-config';
+import { OasProjectionHelper } from '@useoptic/domain';
+import { cli } from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
-import {fromOptic} from "../../shared/conversation";
+import { fromOptic } from '@useoptic/cli-shared';
 
 export default class GenerateOas extends Command {
-
   static description = 'export an OpenAPI 3.0.1 spec';
 
   static flags = {
     json: flags.boolean({
       default: true,
-      exclusive: ['yaml']
+      exclusive: ['yaml'],
     }),
     yaml: flags.boolean({
-      exclusive: ['json']
+      exclusive: ['json'],
     }),
   };
 
   async run() {
     try {
       const paths = await getPathsRelativeToConfig();
-      const {specStorePath} = paths;
+      const { specStorePath } = paths;
       try {
         const eventsBuffer = await fs.readFile(specStorePath);
         const eventsString = eventsBuffer.toString();
         cli.action.start('Generating OAS file');
         const parsedOas = OasProjectionHelper.fromEventString(eventsString);
         const outputFile = await this.emit(paths, parsedOas);
-        cli.action.stop('\n'+fromOptic('Generated OAS file at '+ outputFile));
+        cli.action.stop(
+          '\n' + fromOptic('Generated OAS file at ' + outputFile)
+        );
       } catch (e) {
         this.error(e);
       }
@@ -42,7 +43,7 @@ export default class GenerateOas extends Command {
   }
 
   async emit(paths: IPathMapping, parsedOas: object): Promise<string> {
-    const {flags} = this.parse(GenerateOas);
+    const { flags } = this.parse(GenerateOas);
 
     const shouldOutputYaml = flags.yaml;
 
@@ -50,13 +51,12 @@ export default class GenerateOas extends Command {
     await fs.ensureDir(outputPath);
     if (shouldOutputYaml) {
       const outputFile = path.join(outputPath, 'openapi.yaml');
-      await fs.writeFile(outputFile, yaml.safeDump(parsedOas, {indent: 1}));
-      return outputFile
+      await fs.writeFile(outputFile, yaml.safeDump(parsedOas, { indent: 1 }));
+      return outputFile;
     } else {
       const outputFile = path.join(outputPath, 'openapi.json');
-      await fs.writeJson(outputFile, parsedOas, {spaces: 2});
-      return outputFile
+      await fs.writeJson(outputFile, parsedOas, { spaces: 2 });
+      return outputFile;
     }
   }
 }
-

@@ -11,9 +11,6 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs-extra';
 
-const serviceName = 'optic8plus';
-const accountName = 'default';
-
 const opticrcPath = path.resolve(os.homedir(), '.opticrc');
 
 interface IUserStorage {
