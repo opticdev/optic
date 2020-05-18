@@ -1,6 +1,5 @@
 //@ts-ignore
 import * as deepCopy from 'deepcopy';
-// import { IHttpInteraction } from '@useoptic/proxy';
 import {
   IArbitraryData,
   IBody,
