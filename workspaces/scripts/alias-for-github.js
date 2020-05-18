@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 
-const newScope = '@useoptic-dev/';
+const newScope = '@useoptic-development-channel/';
 
 async function main() {
   const packageJson = await fs.readJson('./package.json');
