@@ -7,7 +7,9 @@
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "@useoptic/domain-types": "8.0.7"
+  },
   "files": [
     "/build"
   ]
