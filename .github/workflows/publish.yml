@@ -31,6 +31,7 @@ jobs:
       with:
         node-version: "12.x"
         registry-url: https://npm.pkg.github.com/
+        scope: "@useoptic"
     - name: "intial yarn install"
       run: yarn install
     - name: "change versions"
