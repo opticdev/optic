@@ -40,21 +40,4 @@ install-local() {
 }
 alias install-local="install-local"
 
-publish-github() {
-  if [[ -z "$1" ]]
-  then
-    echo "No version provided"
-    exit 1
-  fi
-
-  yarn run bump "$1"
-  yarn run alias-for-github
-
-  yarn install
-  yarn run build-domain
-  yarn wsrun --stages --report --fast-exit ws:build
-
-  yarn run publish-github
-}
-alias publish-github="publish-github"
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start
