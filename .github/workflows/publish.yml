@@ -41,7 +41,7 @@ jobs:
     - name: "build workspaces"
       run: yarn wsrun --stages --report --fast-exit ws:build  
     - name: "publish to github"
-      run: publish-github
+      run: yarn run publish-github
       env:
         NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       
