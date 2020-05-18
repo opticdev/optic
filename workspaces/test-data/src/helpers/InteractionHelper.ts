@@ -1,7 +1,11 @@
 //@ts-ignore
 import * as deepCopy from 'deepcopy';
-import { IHttpInteraction } from '@useoptic/proxy';
-import { IArbitraryData, IBody } from '@useoptic/domain';
+// import { IHttpInteraction } from '@useoptic/proxy';
+import {
+  IArbitraryData,
+  IBody,
+  IHttpInteraction,
+} from '@useoptic/domain-types';
 
 export function newInteraction(url: string, method: string) {
   return new InteractionHelper(url, method);

@@ -126,3 +126,5 @@ export const StableHashableWrapper =
 export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade();
 export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer();
 export const DiffHelpers = opticEngine.com.useoptic.diff.helpers.DiffHelpers();
+
+export const TestDataHelper = opticEngine.com.useoptic.TestDataHelper();

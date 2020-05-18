@@ -3042,23 +3042,6 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
-"@useoptic/domain@8.0.6":
-  version "8.0.6"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.0.6.tgz#ef3f6d9839fd079335258d188d2f6d8ec623f4ba"
-  integrity sha512-sLi+v5aaYsR3v8WkSEwHxKEk/cD6xEZIiMeBb0nKJdrvo/8SnPuGJiQGYa+9rVQW3hLDNWNcYStOZhPEeZkZ2A==
-
-"@useoptic/proxy@8.0.6":
-  version "8.0.6"
-  resolved "https://registry.yarnpkg.com/@useoptic/proxy/-/proxy-8.0.6.tgz#89d64f9686282a9cd94040c56d12df6e2b95654d"
-  integrity sha512-nRzIn5iyAy1I8g+yu22fGIPBvBx61RWMnVxTXEjtWf6QdTsoQTJsaUNrVodgJ0wPCWxwa7WxcvKU2pccxZvmPA==
-  dependencies:
-    "@httptoolkit/browser-launcher" "^1.6.0"
-    "@useoptic/domain" "8.0.6"
-    fs-extra "^8.1.0"
-    mockttp "^0.19.2"
-    shape-hash "^1.0.6"
-    whatwg-mimetype "^2.3.0"
-
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
