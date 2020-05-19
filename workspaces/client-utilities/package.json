@@ -1,0 +1,17 @@
+{
+  "name": "@useoptic/client-utilities",
+  "version": "8.0.7",
+  "scripts": {
+    "ws:build": "yarn run tsc -b --verbose",
+    "ws:test": "echo client-utilities"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "cross-fetch": "^3.0.4"
+  },
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
+}

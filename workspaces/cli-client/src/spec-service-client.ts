@@ -1,0 +1,85 @@
+import Bottleneck from 'bottleneck';
+import { EventEmitter } from 'events';
+import { JsonHttpClient } from '@useoptic/client-utilities';
+
+const outgoingPoll = new Bottleneck({
+  maxConcurrent: 1,
+  minTime: 1000,
+});
+
+interface IEventStore {
+  serializeEvents(rfcId: RfcId): JsonString;
+}
+
+type JsonString = string;
+type ListCapturesResponse = any;
+type RfcId = string;
+type SpecId = string;
+type CaptureId = string;
+type GetCaptureStatusResponse = any;
+type ListCapturedSamplesResponse = any;
+type GetCaptureSummaryResponse = any;
+
+export interface ISpecService {
+  listEvents(): Promise<string>;
+
+  saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
+
+  listCaptures(): Promise<ListCapturesResponse>;
+
+  listCapturedSamples(
+    captureId: CaptureId
+  ): Promise<ListCapturedSamplesResponse>;
+
+  getCaptureStatus(captureId: CaptureId): Promise<GetCaptureStatusResponse>;
+}
+
+export class Client implements ISpecService {
+  constructor(
+    private specId: SpecId,
+    private eventEmitter: EventEmitter,
+    private baseUrl: string = '/api'
+  ) {}
+
+  listEvents() {
+    return JsonHttpClient.getJsonAsText(
+      `${this.baseUrl}/specs/${this.specId}/events`
+    );
+  }
+
+  listCaptures() {
+    return JsonHttpClient.getJson(
+      `${this.baseUrl}/specs/${this.specId}/captures`
+    );
+  }
+
+  saveEvents(eventStore: IEventStore, rfcId: RfcId) {
+    const serializedEvents = eventStore.serializeEvents(rfcId);
+    return JsonHttpClient.putJsonString(
+      `${this.baseUrl}/specs/${this.specId}/events`,
+      serializedEvents
+    ).then((x) => {
+      this.eventEmitter.emit('events-updated');
+      return x;
+    });
+  }
+
+  listCapturedSamples(captureId: CaptureId) {
+    return outgoingPoll.schedule(() => {
+      return JsonHttpClient.getJson(
+        `${this.baseUrl}/specs/${this.specId}/captures/${captureId}/samples`
+      ).then((body) => {
+        return {
+          samples: body.samples,
+          metadata: body.metadata,
+        };
+      });
+    });
+  }
+
+  getCaptureStatus(captureId: CaptureId) {
+    return JsonHttpClient.getJson(
+      `${this.baseUrl}/specs/${this.specId}/captures/${captureId}/status`
+    );
+  }
+}

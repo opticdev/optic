@@ -44,6 +44,10 @@ object DiffHelpers {
     })
   }
 
+  def hasDiff(diff: InteractionsGroupedByDiff) = diff.isEmpty
+
+  def distinctDiffCount(diff: InteractionsGroupedByDiff) = diff.keys.size
+
   type DiffsGroupedByRegion = Map[DiffLocation, Iterable[InteractionDiffResult]]
 }
 

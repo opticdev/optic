@@ -14,6 +14,7 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
 
   def traverse(shapeId: ShapeId, shapeTrail: ShapeTrail): Unit = {
     val shapeEntityOption = Try(spec.shapesState.flattenedShape(shapeId)).toOption
+    println(shapeEntityOption)
 
     if (shapeEntityOption.isDefined) {
       val shapeEntity = shapeEntityOption.get
@@ -48,7 +49,8 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
           assert(resolvedItem.isDefined, "We expect all lists to have a parameter for list item")
           visitors.listVisitor.begin(shapeTrail, listShape, resolvedItem.get)
           val itemTrail = shapeTrail.withChild(ListItemTrail(listShape.shapeId, resolvedItem.get.shapeId))
-          visitors.primitiveVisitor.visit(Resolvers.resolveTrailToCoreShape(spec, itemTrail), itemTrail)
+          val coreShape = Resolvers.resolveTrailToCoreShape(spec, itemTrail)
+          visitors.primitiveVisitor.visit(coreShape, itemTrail)
           traverse(resolvedItem.get.shapeId, itemTrail)
         }
         case OneOfKind.baseShapeId => {

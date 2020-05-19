@@ -2,10 +2,10 @@ import Command from '@oclif/command';
 import { createFileTree } from '@useoptic/cli-config';
 import * as colors from 'colors';
 import cli from 'cli-ux';
-import { fromOptic } from '../shared/conversation';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { track, trackAndSpawn } from '../shared/analytics';
+import { fromOptic } from '@useoptic/cli-shared';
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';

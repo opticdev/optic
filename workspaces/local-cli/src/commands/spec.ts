@@ -1,14 +1,21 @@
-import {Command} from '@oclif/command';
-import {Client} from '@useoptic/cli-client';
-import {getPathsRelativeToConfig, IApiCliConfig, readApiConfig} from '@useoptic/cli-config';
-import {IPathMapping} from '@useoptic/cli-config';
-import {ensureDaemonStarted} from '@useoptic/cli-server';
-import {makeUiBaseUrl} from '@useoptic/cli-server';
-import {fromOptic} from '../shared/conversation';
-import {developerDebugLogger, userDebugLogger} from '../shared/logger';
-import {lockFilePath} from '../shared/paths';
+import { Command } from '@oclif/command';
+import { Client } from '@useoptic/cli-client';
+import {
+  getPathsRelativeToConfig,
+  IApiCliConfig,
+  readApiConfig,
+} from '@useoptic/cli-config';
+import { IPathMapping } from '@useoptic/cli-config';
+import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { lockFilePath } from '../shared/paths';
 import * as colors from 'colors';
 import openBrowser = require('react-dev-utils/openBrowser');
+import {
+  developerDebugLogger,
+  fromOptic,
+  makeUiBaseUrl,
+  userDebugLogger,
+} from '@useoptic/cli-shared';
 
 export default class Spec extends Command {
   static description = 'Open your Optic API specification';
@@ -21,7 +28,13 @@ export default class Spec extends Command {
       config = await readApiConfig(paths.configPath);
     } catch (e) {
       userDebugLogger(e);
-      this.log(fromOptic(`No optic.yml file found. Add Optic to your API by running ${colors.bold('api init')}`));
+      this.log(
+        fromOptic(
+          `No optic.yml file found. Add Optic to your API by running ${colors.bold(
+            'api init'
+          )}`
+        )
+      );
       process.exit(0);
     }
     developerDebugLogger(paths);
@@ -34,8 +47,8 @@ export default class Spec extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(basePath, null);
-    developerDebugLogger({cliSession});
+    const cliSession = await cliClient.findSession(basePath, null, null);
+    developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/dashboard`;
     openBrowser(uiUrl);

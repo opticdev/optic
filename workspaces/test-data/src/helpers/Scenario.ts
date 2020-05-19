@@ -1,4 +1,5 @@
-import { IHttpInteraction, TestDataHelper } from '@useoptic/domain';
+import { TestDataHelper } from '@useoptic/domain';
+import { IHttpInteraction } from '@useoptic/domain-types';
 // @ts-ignore
 import * as md5 from 'md5';
 import { InteractionHelper } from './InteractionHelper';

@@ -1,14 +1,15 @@
-import {IOpticTaskRunnerConfig} from '@useoptic/cli-config';
-import {ICaptureSaver} from '@useoptic/cli-server';
-import {HttpToolkitCapturingProxy} from '@useoptic/proxy';
-import {IHttpInteraction} from '@useoptic/proxy';
-import {CommandSession} from './command-session';
-import {developerDebugLogger, userDebugLogger} from './logger';
+import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
+import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
+import { IHttpInteraction } from '@useoptic/domain-types';
+import { CommandSession } from './command-session';
+import {
+  userDebugLogger,
+  developerDebugLogger,
+  ICaptureSaver,
+} from '@useoptic/cli-shared';
 
 class CommandAndProxySessionManager {
-  constructor(private config: IOpticTaskRunnerConfig) {
-
-  }
+  constructor(private config: IOpticTaskRunnerConfig) {}
 
   async run(persistenceManager: ICaptureSaver) {
     const commandSession = new CommandSession();
@@ -20,49 +21,58 @@ class CommandAndProxySessionManager {
       OPTIC_API_HOST: serviceHost.toString(),
     };
 
-    await persistenceManager.init(this.config.captureId);
+    await persistenceManager.init();
 
     inboundProxy.events.on('sample', (sample: IHttpInteraction) => {
-      userDebugLogger(`got sample ${sample.request.method} ${sample.request.path}`);
+      userDebugLogger(
+        `got sample ${sample.request.method} ${sample.request.path}`
+      );
       persistenceManager.save(sample);
     });
 
-    const target = require('url')
-      .format({
-        hostname: serviceHost,
-        port: servicePort,
-        protocol: this.config.serviceConfig.protocol
-      });
-    developerDebugLogger({target});
+    const target = require('url').format({
+      hostname: serviceHost,
+      port: servicePort,
+      protocol: this.config.serviceConfig.protocol,
+    });
+    developerDebugLogger({ target });
     await inboundProxy.start({
       flags: {
         chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
-        includeTextBody: true,
-        includeJsonBody: true,
-        includeShapeHash: true
+        includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
+        includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
+        includeShapeHash: true,
       },
       host: this.config.proxyConfig.host,
-      proxyTarget: process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes' ? undefined : target,
-      proxyPort: this.config.proxyConfig.port
+      proxyTarget:
+        process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes'
+          ? undefined
+          : target,
+      proxyPort: this.config.proxyConfig.port,
     });
 
-    userDebugLogger(`started inbound proxy on port ${this.config.proxyConfig.port}`);
-    userDebugLogger(`Your command will be run with environment variable OPTIC_API_PORT=${servicePort}.`);
-    userDebugLogger(`All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`);
+    userDebugLogger(
+      `started inbound proxy on port ${this.config.proxyConfig.port}`
+    );
+    userDebugLogger(
+      `Your command will be run with environment variable OPTIC_API_PORT=${servicePort}.`
+    );
+    userDebugLogger(
+      `All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`
+    );
     const promises = [];
     developerDebugLogger(this.config);
     if (this.config.command) {
       userDebugLogger(`running command ${this.config.command}`);
       await commandSession.start({
         command: this.config.command,
-        // @ts-ignore
         environmentVariables: {
           ...process.env,
-          ...opticServiceConfig
-        }
+          ...opticServiceConfig,
+        },
       });
-      const commandStoppedPromise = new Promise(resolve => {
-        commandSession.events.on('stopped', ({state}) => {
+      const commandStoppedPromise = new Promise((resolve) => {
+        commandSession.events.on('stopped', ({ state }) => {
           developerDebugLogger(`command session stopped (${state})`);
           resolve();
         });
@@ -80,10 +90,11 @@ class CommandAndProxySessionManager {
     developerDebugLogger(`waiting for command to complete or ^C`);
     await Promise.race(promises);
     commandSession.stop();
+    developerDebugLogger(`waiting for proxy to stop`);
     await inboundProxy.stop();
+    developerDebugLogger(`waiting for persistence manager to stop`);
+    await persistenceManager.cleanup();
   }
 }
 
-export {
-  CommandAndProxySessionManager
-};
+export { CommandAndProxySessionManager };

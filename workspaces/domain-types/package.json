@@ -1,0 +1,15 @@
+{
+  "name": "@useoptic/domain-types",
+  "version": "8.0.7",
+  "scripts": {
+    "ws:build": "yarn run tsc -b --verbose && cp -R ./src/avro-schemas/ ./build/avro-schemas",
+    "ws:test": "echo domain-types"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {},
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
+}

@@ -33,7 +33,6 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
   def updateInteractions(httpInteractions: Seq[HttpInteraction]): Unit = {
     if (_interactions != httpInteractions) {
-      println("LOOK HERE "+ httpInteractions.filter(_.request.path == "/backend/api/user/123/realtime-rule-paginated"))
       _interactions = httpInteractions
       recomputeDiff
     }

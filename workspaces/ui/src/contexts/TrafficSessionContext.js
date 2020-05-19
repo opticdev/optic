@@ -1,7 +1,7 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import compose from 'lodash.compose';
-import { DiffManagerFacade } from '@useoptic/domain';
+import { DiffManagerFacade, getOrUndefinedJson } from '@useoptic/domain';
 
 const {
   Context: TrafficSessionContext,
@@ -46,6 +46,8 @@ class TrafficSessionStoreBase extends React.Component {
           noSession: false,
         });
         this.checkForUpdates();
+
+        window.getOrUndefinedJson = getOrUndefinedJson;
 
         console.log('LOOK HERE ', session.samples);
 

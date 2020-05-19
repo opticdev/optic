@@ -3,7 +3,8 @@ package com.useoptic.ux
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
-import com.useoptic.diff.interactions.InteractionDiffResult
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult}
 import com.useoptic.diff.{ChangeType, DiffResult, JsonFileFixture}
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, JsonLikeTraverser, JsonTrail, ShapeDiffResult, ShapeTrail, ShapeTraverser}
 import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
@@ -106,5 +107,11 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
     val (commands, shapeOnly) = DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get)).get
     assert(shapeOnly.specShapes.size == 3)
   }
+
+//  it("isolated") {
+//    val (commands, shapeOnly) = DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.rawJson("{\"then\": [[\"string\", \"string\", \"string\", \"string\"]]}").get)).get
+//
+//
+//  }
 
 }

@@ -1,4 +1,3 @@
-import { IBody } from '@useoptic/domain';
 import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as os from 'os';
@@ -7,11 +6,11 @@ import * as fs from 'fs-extra';
 import * as launcher from '@httptoolkit/browser-launcher';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
-import { IHttpInteraction } from '@useoptic/domain';
-import { developerDebugLogger } from './logger';
+import mime = require('whatwg-mimetype');
+import { IBody, IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from 'shape-hash';
-import mime = require('whatwg-mimetype');
+import { delay, developerDebugLogger } from '@useoptic/cli-shared';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -266,18 +265,16 @@ export class HttpToolkitCapturingProxy {
   }
 
   async stop() {
-    await this.proxy.stop();
     if (this.config.flags.chrome) {
       const promise = new Promise((resolve) => {
-        const timeoutId = setTimeout(resolve, 2000);
         //@ts-ignore
         this.chrome.on('stop', () => {
-          clearTimeout(timeoutId);
           resolve();
         });
       });
       this.chrome.stop();
-      await promise;
+      await Promise.race([promise, delay(3000)]);
     }
+    await Promise.race([this.proxy.stop(), delay(3000)]);
   }
 }

@@ -1,5 +1,5 @@
 import { StableHasher } from './coverage';
-import { JsonHelper, opticEngine } from '@useoptic/domain';
+import { DiffHelpers, JsonHelper, opticEngine } from '@useoptic/domain';
 
 export { StableHasher } from './coverage';
 
@@ -48,9 +48,9 @@ export function diffFromRfcStateAndInteractions(
   rfcState: any,
   interactions: any[]
 ) {
-  const diffResults = opticEngine.com.useoptic.diff.helpers
-    .DiffHelpers()
-    .groupByDiffs(rfcState, deserializeInteractions(interactions));
-  console.log({ diffResults });
+  const diffResults = DiffHelpers.groupByDiffs(
+    rfcState,
+    deserializeInteractions(interactions)
+  );
   return diffResults;
 }

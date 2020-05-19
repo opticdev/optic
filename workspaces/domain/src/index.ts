@@ -87,6 +87,7 @@ export const getJson = (j: any) => {
   return ScalaJSHelpers.getJson(j);
 };
 
+import { IHttpInteraction } from '@useoptic/domain-types';
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
   const requestContentType = sample.request.body.contentType;
   const responseContentType = sample.response.body.contentType;
@@ -124,12 +125,6 @@ export const StableHashableWrapper =
 
 export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade();
 export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer();
-
-import { checkDiffOrUnrecognizedPath } from './check-diff';
-import { IHttpInteraction } from './domain-types/optic-types';
-
-export { checkDiffOrUnrecognizedPath };
+export const DiffHelpers = opticEngine.com.useoptic.diff.helpers.DiffHelpers();
 
 export const TestDataHelper = opticEngine.com.useoptic.TestDataHelper();
-
-export * from './domain-types/optic-types';

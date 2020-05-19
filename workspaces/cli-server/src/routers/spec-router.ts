@@ -1,14 +1,47 @@
-import { getPathsRelativeToCwd, readApiConfig } from '@useoptic/cli-config';
+import {
+  getPathsRelativeToCwd,
+  IOpticTaskRunnerConfig,
+  readApiConfig,
+} from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { FileSystemCaptureLoader } from '../captures/file-system/avro/file-system-capture-loader';
-import { ICaptureLoader } from '../index';
-import { developerDebugLogger } from '../logger';
 import { ICliServerSession } from '../server';
 import sortBy = require('lodash.sortby');
+import {
+  developerDebugLogger,
+  FileSystemAvroCaptureLoader,
+  ICaptureLoader,
+} from '@useoptic/cli-shared';
+
+type CaptureId = string;
+type Iso8601Timestamp = string;
+export type InvalidCaptureState = {
+  captureId: CaptureId;
+  status: 'unknown';
+};
+
+export function isValidCaptureState(x: CaptureState): x is ValidCaptureState {
+  return x.status === 'started' || x.status === 'completed';
+}
+
+export type ValidCaptureState = {
+  captureId: CaptureId;
+  status: 'started' | 'completed';
+  metadata: {
+    taskConfig: IOpticTaskRunnerConfig;
+    startedAt: Iso8601Timestamp;
+    lastInteraction: {
+      count: number;
+      observedAt: Iso8601Timestamp;
+    } | null;
+  };
+};
+export type CaptureState = InvalidCaptureState | ValidCaptureState;
+
+const captureStateFileName = 'optic-capture-state.json';
 
 export class CapturesHelpers {
   constructor(private basePath: string) {}
@@ -28,7 +61,63 @@ export class CapturesHelpers {
     }
   }
 
-  captureDirectory(captureId: string) {
+  async listCaptureIds(): Promise<CaptureId[]> {
+    const captureIds = await fs.readdir(this.basePath);
+    return captureIds;
+  }
+
+  async loadCaptureState(captureId: CaptureId): Promise<CaptureState> {
+    const stateFilePath = this.stateFile(captureId);
+    const stateFileExists = await fs.pathExists(stateFilePath);
+    if (!stateFileExists) {
+      return {
+        captureId,
+        status: 'unknown',
+      };
+    }
+    const state = await fs.readJson(stateFilePath);
+    return state;
+  }
+
+  async updateCaptureState(state: CaptureState): Promise<void> {
+    await fs.ensureDir(this.captureDirectory(state.captureId));
+    const stateFilePath = this.stateFile(state.captureId);
+    await fs.writeJson(stateFilePath, state);
+  }
+
+  async listCapturesState(): Promise<CaptureState[]> {
+    const captureIds = await this.listCaptureIds();
+    const promises = captureIds.map((captureId) => {
+      return this.loadCaptureState(captureId);
+    });
+    const capturesState = await Promise.all(promises);
+    return capturesState.filter((x) => x !== null);
+  }
+
+  async loadCaptureSummary(captureId: CaptureId) {
+    const captureDirectory = this.captureDirectory(captureId);
+    const files = await fs.readdir(captureDirectory);
+    const interactions = files.filter((x) => x.startsWith('interactions-'));
+    const promises = interactions.map((x) => {
+      return fs.readJson(path.join(captureDirectory, x));
+    });
+    const summaries = await Promise.all(promises);
+    const summary = summaries.reduce(
+      (acc, value) => {
+        acc.diffsCount = acc.diffsCount + value.diffsCount;
+        acc.interactionsCount = acc.interactionsCount + value.interactionsCount;
+        return acc;
+      },
+      { diffsCount: 0, interactionsCount: 0 }
+    );
+    return summary;
+  }
+
+  stateFile(captureId: CaptureId): string {
+    return path.join(this.captureDirectory(captureId), captureStateFileName);
+  }
+
+  captureDirectory(captureId: CaptureId): string {
     return path.join(this.basePath, captureId);
   }
 }
@@ -94,7 +183,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       exampleRequestsPath
     );
     req.optic = {
-      session,
       config,
       paths,
       capturesHelpers,
@@ -151,15 +239,29 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
-    const { captures } = req.optic.session;
+    const captures = await req.optic.capturesHelpers.listCapturesState();
+    const validCaptures: ValidCaptureState[] = captures.filter((x) =>
+      isValidCaptureState(x)
+    ) as ValidCaptureState[];
     res.json({
-      captures: sortBy(captures, (i) => i.taskConfig.startTime)
+      captures: sortBy(validCaptures, (i) => i.metadata.startedAt)
         .reverse()
         .map((i) => ({
-          captureId: i.taskConfig.captureId,
+          captureId: i.captureId,
           status: i.status,
-          lastUpdate: i.taskConfig.startTime,
-          hasDiff: false,
+          lastUpdate: i.metadata.lastInteraction
+            ? i.metadata.lastInteraction.observedAt
+            : i.metadata.startedAt,
+          links: [
+            {
+              rel: 'samples',
+              href: `${req.baseUrl}/captures/${i.captureId}/samples`,
+            },
+            {
+              rel: 'status',
+              href: `${req.baseUrl}/captures/${i.captureId}/status`,
+            },
+          ],
         })),
     });
   });
@@ -167,44 +269,54 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     '/captures/:captureId/status',
     bodyParser.json({ limit: '1kb' }),
     async (req, res) => {
-      const { captureId } = req.params;
-      const captureInfo = req.optic.session.captures.find(
-        (x) => x.taskConfig.captureId === captureId
-      );
-      if (!captureInfo) {
-        return res.sendStatus(400);
-      }
       const { status } = req.body;
       if (status !== 'completed') {
+        debugger;
         return res.sendStatus(400);
       }
-      captureInfo.status = 'completed';
-
-      res.sendStatus(204);
+      try {
+        const { captureId } = req.params;
+        const captureInfo = await req.optic.capturesHelpers.loadCaptureState(
+          captureId
+        );
+        captureInfo.status = 'completed';
+        await req.optic.capturesHelpers.updateCaptureState(captureInfo);
+        res.sendStatus(204);
+      } catch (e) {
+        console.error(e);
+        debugger;
+        return res.sendStatus(400);
+      }
     }
   );
   router.get('/captures/:captureId/status', async (req, res) => {
-    const { captureId } = req.params;
-    const captureInfo = req.optic.session.captures.find(
-      (x) => x.taskConfig.captureId === captureId
-    );
-    if (!captureInfo) {
+    try {
+      const { captureId } = req.params;
+      const captureInfo = await req.optic.capturesHelpers.loadCaptureState(
+        captureId
+      );
+      const captureSummary = await req.optic.capturesHelpers.loadCaptureSummary(
+        captureId
+      );
+      res.json({
+        status: captureInfo.status,
+        diffsCount: captureSummary.diffsCount,
+        interactionsCount: captureSummary.interactionsCount,
+      });
+    } catch (e) {
       return res.sendStatus(400);
     }
-
-    res.json({
-      status: captureInfo.status,
-    });
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const { captureId } = req.params;
 
-    const loader: ICaptureLoader = new FileSystemCaptureLoader({
+    const loader: ICaptureLoader = new FileSystemAvroCaptureLoader({
+      captureId,
       captureBaseDirectory: req.optic.paths.capturesPath,
     });
     try {
       const filter = parseIgnore(req.optic.config.ignoreRequests || []);
-      const capture = await loader.loadWithFilter(captureId, filter);
+      const capture = await loader.loadWithFilter(filter);
       res.json({
         metadata: {},
         samples: capture.samples,
