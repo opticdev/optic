@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextField, Typography } from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
 import classNames from 'classnames';
@@ -92,6 +92,10 @@ export const AnyShape = (props) => {
   const { shape } = props;
 
   const [renderChild, setRenderChild] = useState(null);
+
+  useEffect(() => {
+    setRenderChild(null);
+  }, [shape]);
 
   const setType = (link) => {
     if (link === renderChild) {
@@ -316,6 +320,10 @@ export const FieldRow = withShapeRenderContext((props) => {
   const fieldId = field.specFieldId;
 
   const [renderChild, setRenderChild] = useState(null);
+
+  useEffect(() => {
+    setRenderChild(null);
+  }, [fieldShape]);
 
   const setType = (link) => {
     if (link === renderChild) {
