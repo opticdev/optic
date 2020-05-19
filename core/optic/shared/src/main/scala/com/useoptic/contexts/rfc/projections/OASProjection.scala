@@ -2,15 +2,15 @@ package com.useoptic.contexts.rfc.projections
 
 import com.useoptic.contexts.requests.Commands.{BodyDescriptor, ParameterizedPathComponentDescriptor, ShapedBodyDescriptor}
 import com.useoptic.contexts.requests.{Commands, HttpRequest, HttpResponse}
-import com.useoptic.contexts.rfc.Events.RfcEvent
-import com.useoptic.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade, RfcState}
+import com.useoptic.contexts.rfc.{InMemoryQueries, RfcService, RfcState}
 import com.useoptic.contexts.shapes.ShapesHelper
 import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
-import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, FlatShapeResult, JsonSchemaProjection}
-import com.useoptic.ddd.{AggregateId, InMemoryEventStore}
+import com.useoptic.contexts.shapes.projections.{FlatShapeResult, JsonSchemaProjection}
+import com.useoptic.ddd.{AggregateId}
 import io.circe.Json
 
-class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId) {
+// this is not a projection. it is a query
+class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId, apiName: String) {
 
   import OASDomain._
 
@@ -23,7 +23,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
   def bodyToOAS(bodyDescriptor: BodyDescriptor) = {
     bodyDescriptor match {
-      case body: ShapedBodyDescriptor => Some(Body(body.httpContentType, Some(new JsonSchemaProjection(body.shapeId)(rfcState.shapesState).asJsonSchema(expand = false))))
+      case body: ShapedBodyDescriptor => Some(Body(body.httpContentType, Some(new JsonSchemaProjection(queries, body.shapeId).asJsonSchema(expand = false))))
       case _ => None
     }
   }
@@ -63,7 +63,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
           None
         }
         case c: Commands.ShapedRequestParameterShapeDescriptor => {
-          Some(FlatShapeProjection.forShapeId(c.shapeId)(rfcState.shapesState))
+          Some(queries.flatShapeForShapeId(c.shapeId))
         }
       }
     })
@@ -104,13 +104,13 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     val sharedDefinitions = sharedSchemaComponents.map(i => {
       import com.useoptic.contexts.shapes.projections.JsonSchemaHelpers._
       val name = i._2.descriptor.name
-      name -> new JsonSchemaProjection(i._1)(rfcState.shapesState).asJsonSchema(expand = true)
+      name -> new JsonSchemaProjection(queries, i._1).asJsonSchema(expand = true)
     }).toSeq
 
     Json.obj(
       "openapi" -> Json.fromString("3.0.1"),
       "info" -> Json.obj(
-        "title" -> Json.fromString(queries.apiName()),
+        "title" -> Json.fromString(apiName),
         "version" -> Json.fromString(rfcService.listEvents("id").length.toString)
       ),
       "paths" -> Json.obj(
@@ -169,10 +169,10 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
             val innerOption = i.shape.links.get(OptionalKind.innerParam)
             if (innerOption.isDefined) {
               //is optional
-              QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+              QueryParameter(i.fieldName, false, new JsonSchemaProjection(queries, innerOption.get).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
             } else {
               //is required
-              QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+              QueryParameter(i.fieldName, true, new JsonSchemaProjection(queries, i.shape.id).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
             }
           })
           json = json.add("parameters", Json.arr(queryParameters.map(_.toJson): _*))

@@ -2,11 +2,11 @@ package com.useoptic.diff.initial
 
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
-
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
-import com.useoptic.ux.{ShapeOnlyRenderHelper}
+import com.useoptic.ux.ShapeOnlyRenderHelper
 import org.scalatest.FunSpec
 
 import scala.util.Try
@@ -37,22 +37,22 @@ class KnownShapeIssuesSpec extends FunSpec {
       val (commands, initialSpec, diffs, renderAttempt) = run(examples)
 
       /* This looks correct to me, expected to yield object, w/ field 'then', that is a List[List[String]].
-      Define a new shape named  that is a $object, as shape id C3oDYM5
-      Define a new shape named  that is a $string, as shape id C3oDYM1
-      Define a new shape named  that is a $list, as shape id C3oDYM2
-      Define a new shape named  that is a $list, as shape id C3oDYM3
-      Add a field to shape C3oDYM5 named then with shape FieldShapeFromShape(C3oDYM4,C3oDYM3) as field id C3oDYM4
-      Set the shape of parameter $listItem of shape C3oDYM2 to ShapeProvider(C3oDYM1)}
-      Set the shape of parameter $listItem of field C3oDYM4 to ShapeProvider(C3oDYM2)
+      Define a new shape named  that is a $object, as shape id TheRootObject
+      Define a new shape named  that is a $string, as shape id TheInnermostArrayItemString
+      Define a new shape named  that is a $list, as shape id TheInnermostArray
+      Define a new shape named  that is a $list, as shape id TheOuterArray
+      Add a field to shape TheRootObject named then with shape FieldShapeFromShape(TheFieldThatPointsToTheOuterArray,TheOuterArray) as field id TheFieldThatPointsToTheOuterArray
+      Set the shape of parameter $listItem of shape TheInnermostArray to ShapeProvider(TheInnermostArrayItemString)}
+      Set the shape of parameter $listItem of field TheFieldThatPointsToTheOuterArray to ShapeProvider(TheInnermostArray)
        */
 
       assert(diffs.isEmpty)
       /* This should not yield a diff
-      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))),
-      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(0)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))),
-      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(1)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))),
-      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(2)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))),
-      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(3)),ShapeTrail(C3oDYM5,List(ObjectFieldTrail(C3oDYM4,C3oDYM3)))))
+      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0)),ShapeTrail(TheRootObject,List(ObjectFieldTrail(TheFieldThatPointsToTheOuterArray,TheOuterArray)))),
+      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(0)),ShapeTrail(TheRootObject,List(ObjectFieldTrail(TheFieldThatPointsToTheOuterArray,TheOuterArray)))),
+      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(1)),ShapeTrail(TheRootObject,List(ObjectFieldTrail(TheFieldThatPointsToTheOuterArray,TheOuterArray)))),
+      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(2)),ShapeTrail(TheRootObject,List(ObjectFieldTrail(TheFieldThatPointsToTheOuterArray,TheOuterArray)))),
+      UnspecifiedShape(List(JsonObjectKey(then), JsonArrayItem(0), JsonArrayItem(3)),ShapeTrail(TheRootObject,List(ObjectFieldTrail(TheFieldThatPointsToTheOuterArray,TheOuterArray)))))
        */
     }
 
@@ -91,7 +91,7 @@ class KnownShapeIssuesSpec extends FunSpec {
       Set the shape of parameter $listItem of shape 99OJfk3 to ShapeProvider(99OJfk2)}
       Set the shape of parameter $listItem of shape 99OJfk4 to ShapeProvider(99OJfk3)}
        */
-
+diffs.foreach(println)
       assert(diffs.isEmpty)
       /* This does not yield a diff (as expected) ????? Now I'm confused
         []
@@ -169,9 +169,10 @@ class KnownShapeIssuesSpec extends FunSpec {
 
 
     println("\nDiff Against Self (should be empty):\n ")
-    val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    val traverser = new JsonLikeAndSpecTraverser(resolvers, rfcState, new JsonLikeAndSpecDiffVisitors(resolvers, rfcState, e => diffs.append(e), println))
     examples.foreach(i => traverser.traverseRootShape(Some(i), shapeId))
-    println(diffs)
+    diffs.foreach(println)
 
 //    val renderAttempt = Try(DiffPreviewer.shapeOnlyFromShapeBuilder(examples).get._2)
 

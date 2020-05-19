@@ -3,6 +3,7 @@ package com.useoptic.diff.interactions.visitors
 import com.useoptic.contexts.requests.Commands._
 import com.useoptic.contexts.requests._
 import com.useoptic.diff.interactions._
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ShapeDiffResult, ShapeTrail}
 import com.useoptic.dsa.Counter
 import com.useoptic.logging.Logger
@@ -19,7 +20,7 @@ class DiffPathVisitor(emit: (InteractionDiffResult) => Unit) extends PathVisitor
   }
 }
 
-class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit) extends RequestBodyVisitor {
+class DiffRequestBodyVisitor(resolvers: ShapesResolvers, emit: (InteractionDiffResult) => Unit) extends RequestBodyVisitor {
   var visitedWithUnmatchedContentTypes: Set[RequestId] = Set()
   var visitedWithMatchedContentTypes: Set[RequestId] = Set()
   var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
@@ -75,8 +76,8 @@ class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit) extends Requ
                 visitedShapes.increment(trail)
               }
 
-              val shapeDiffVisitors = new com.useoptic.diff.shapes.JsonLikeAndSpecDiffVisitors(context.spec, emitShapeDiff, markShapeTrailAsVisited)
-              val traverser = new com.useoptic.diff.shapes.JsonLikeAndSpecTraverser(context.spec, shapeDiffVisitors)
+              val shapeDiffVisitors = new com.useoptic.diff.shapes.JsonLikeAndSpecDiffVisitors(resolvers, context.spec, emitShapeDiff, markShapeTrailAsVisited)
+              val traverser = new com.useoptic.diff.shapes.JsonLikeAndSpecTraverser(resolvers, context.spec, shapeDiffVisitors)
               val body = BodyUtilities.parseBody(interaction.request.body)
               traverser.traverseRootShape(body, expected.shapeId)
 
@@ -120,7 +121,7 @@ class DiffRequestBodyVisitor(emit: (InteractionDiffResult) => Unit) extends Requ
   }
 }
 
-class DiffResponseBodyVisitor(emit: (InteractionDiffResult) => Unit) extends ResponseBodyVisitor {
+class DiffResponseBodyVisitor(resolvers: ShapesResolvers, emit: (InteractionDiffResult) => Unit) extends ResponseBodyVisitor {
   var visitedWithUnmatchedContentTypes: Set[HttpResponse] = Set()
   var visitedWithMatchedContentTypes: Set[ResponseId] = Set()
   var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
@@ -171,8 +172,8 @@ class DiffResponseBodyVisitor(emit: (InteractionDiffResult) => Unit) extends Res
             visitedShapes.increment(trail)
           }
 
-          val shapeDiffVisitors = new com.useoptic.diff.shapes.JsonLikeAndSpecDiffVisitors(context.spec, emitShapeDiff, markShapeTrailAsVisited)
-          val traverser = new com.useoptic.diff.shapes.JsonLikeAndSpecTraverser(context.spec, shapeDiffVisitors)
+          val shapeDiffVisitors = new com.useoptic.diff.shapes.JsonLikeAndSpecDiffVisitors(resolvers, context.spec, emitShapeDiff, markShapeTrailAsVisited)
+          val traverser = new com.useoptic.diff.shapes.JsonLikeAndSpecTraverser(resolvers, context.spec, shapeDiffVisitors)
           val body = BodyUtilities.parseBody(interaction.response.body)
           traverser.traverseRootShape(body, expected.shapeId)
 
@@ -216,13 +217,13 @@ class DiffInteractionVisitor(emit: (InteractionDiffResult) => Unit) extends Inte
   override def end(interaction:HttpInteraction, context: PathVisitorContext): Unit = {}
 }
 
-class DiffVisitors(emit: (InteractionDiffResult) => Unit) extends Visitors {
+class DiffVisitors(resolvers: ShapesResolvers, emit: (InteractionDiffResult) => Unit) extends Visitors {
 
   override val pathVisitor = new DiffPathVisitor(emit)
 
-  override val requestBodyVisitor = new DiffRequestBodyVisitor(emit)
+  override val requestBodyVisitor = new DiffRequestBodyVisitor(resolvers, emit)
 
-  override val responseBodyVisitor = new DiffResponseBodyVisitor(emit)
+  override val responseBodyVisitor = new DiffResponseBodyVisitor(resolvers, emit)
 
   override val interactionVisitor = new DiffInteractionVisitor(emit)
 }

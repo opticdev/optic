@@ -1,7 +1,6 @@
 package com.useoptic.contexts.shapes
 
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
-import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
 

@@ -4,6 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.{DiffHelpers, SpecHelpers}
 import com.useoptic.diff.interactions.TestHelpers
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.types.capture.HttpInteraction
 import org.scalatest.FunSpec
 import io.circe.literal._
@@ -13,8 +14,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     it("should be x") {
       val specHelpers = new SpecHelpers()
       val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simplePost(json"""1"""))
+      val resolvers = new DefaultShapesResolvers(rfcState)
       val interaction: HttpInteraction = InteractionHelpers.simplePost(json"""1""", 204, "text/plain")
-      val diffs = DiffHelpers.diff(rfcState, interaction)
+      val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
@@ -26,8 +28,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     it("should be x") {
       val specHelpers = new SpecHelpers()
       val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
+      val resolvers = new DefaultShapesResolvers(rfcState)
       val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""", 200, "text/plain")
-      val diffs = DiffHelpers.diff(rfcState, interaction)
+      val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
@@ -40,8 +43,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       it("should be x") {
         val specHelpers = new SpecHelpers()
         val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
+        val resolvers = new DefaultShapesResolvers(rfcState)
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json""""a"""")
-        val diffs = DiffHelpers.diff(rfcState, interaction)
+        val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
@@ -54,8 +58,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
 
         val specHelpers = new SpecHelpers()
         val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""[]"""))
+        val resolvers = new DefaultShapesResolvers(rfcState)
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""")
-        val diffs = DiffHelpers.diff(rfcState, interaction)
+        val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
@@ -68,8 +73,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
 
         val specHelpers = new SpecHelpers()
         val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{}"""))
+        val resolvers = new DefaultShapesResolvers(rfcState)
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""")
-        val diffs = DiffHelpers.diff(rfcState, interaction)
+        val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
@@ -82,8 +88,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         it("should be x") {
           val specHelpers = new SpecHelpers()
           val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{}"""))
+          val resolvers = new DefaultShapesResolvers(rfcState)
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{"k":1}""")
-          val diffs = DiffHelpers.diff(rfcState, interaction)
+          val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
@@ -96,8 +103,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         it("should be x") {
           val specHelpers = new SpecHelpers()
           val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{"k": 1}"""))
+          val resolvers = new DefaultShapesResolvers(rfcState)
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{}""")
-          val diffs = DiffHelpers.diff(rfcState, interaction)
+          val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
@@ -110,8 +118,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         it("should be x") {
           val specHelpers = new SpecHelpers()
           val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{"k":"v"}"""))
+          val resolvers = new DefaultShapesResolvers(rfcState)
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{"k":1}""")
-          val diffs = DiffHelpers.diff(rfcState, interaction)
+          val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
@@ -125,8 +134,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         it("should be x") {
           val specHelpers = new SpecHelpers()
           val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""[{}]"""))
+          val resolvers = new DefaultShapesResolvers(rfcState)
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""["a"]""")
-          val diffs = DiffHelpers.diff(rfcState, interaction)
+          val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
@@ -140,8 +150,9 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     it("should be x") {
       val specHelpers = new SpecHelpers()
       val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
+      val resolvers = new DefaultShapesResolvers(rfcState)
       val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""", 299)
-      val diffs = DiffHelpers.diff(rfcState, interaction)
+      val diffs = DiffHelpers.diff(resolvers, rfcState, interaction)
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)

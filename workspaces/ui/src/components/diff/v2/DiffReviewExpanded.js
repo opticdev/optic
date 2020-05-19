@@ -70,7 +70,9 @@ export default (props) => {
   const { description, interactions } = diff;
 
   const { selectedInterpretation } = useContext(DiffContext);
-  const { rfcId, rfcService, eventStore } = useContext(RfcContext);
+  const { rfcId, rfcService, cachedQueryResults, eventStore } = useContext(
+    RfcContext
+  );
 
   const length = lengthScala(interactions);
 
@@ -80,10 +82,12 @@ export default (props) => {
     //reset interactions cursor whenever diff is updated. (it's 1 instead of 0 before of Pagination widget)
     setInteractionIndex(1);
   }, [diff]);
+  const currentRfcState = rfcService.currentState(rfcId);
+  const { shapesResolvers } = cachedQueryResults;
 
   const currentInteraction = getIndex(interactions)(interactionIndex - 1);
   const { method, path } = currentInteraction.request;
-
+  const diffPreviewer = new DiffPreviewer(shapesResolvers, currentRfcState);
   return (
     <ShapeExpandedStore>
       <div>
@@ -144,6 +148,7 @@ export default (props) => {
                               const currentRfcState = rfcService.currentState(
                                 rfcId
                               );
+
                               const preview = diff.previewRender(
                                 currentInteraction,
                                 toOption(currentRfcState)
@@ -165,7 +170,7 @@ export default (props) => {
                         <DiffHunkViewer
                           exampleOnly
                           preview={getOrUndefined(
-                            DiffPreviewer.previewBody(
+                            diffPreviewer.previewBody(
                               currentInteraction.request.body
                             )
                           )}
@@ -239,7 +244,7 @@ export default (props) => {
                         <DiffHunkViewer
                           exampleOnly
                           preview={getOrUndefined(
-                            DiffPreviewer.previewBody(
+                            diffPreviewer.previewBody(
                               currentInteraction.response.body
                             )
                           )}

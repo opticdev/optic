@@ -5,6 +5,7 @@ import com.useoptic.contexts.rfc.RfcState
 
 import scala.scalajs.js.annotation.JSExportAll
 
+// This is not a projection. It is a query
 object AllEndpointsProjection {
 
   @JSExportAll

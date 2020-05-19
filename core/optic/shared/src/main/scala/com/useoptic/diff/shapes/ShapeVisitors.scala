@@ -1,8 +1,8 @@
 package com.useoptic.diff.shapes
 
-import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
-import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity}
-import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.contexts.shapes.Commands._
+import com.useoptic.contexts.shapes._
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers.ResolvedTrail
 import com.useoptic.types.capture.JsonLike
 
 abstract class ObjectShapeVisitor {

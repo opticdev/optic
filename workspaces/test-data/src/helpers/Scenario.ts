@@ -1,6 +1,6 @@
-import { TestDataHelper } from '@useoptic/domain';
+import { opticEngine } from '@useoptic/domain';
+const TestDataHelper = opticEngine.com.useoptic.TestDataHelper;
 import { IHttpInteraction } from '@useoptic/domain-types';
-// @ts-ignore
 import * as md5 from 'md5';
 import { InteractionHelper } from './InteractionHelper';
 

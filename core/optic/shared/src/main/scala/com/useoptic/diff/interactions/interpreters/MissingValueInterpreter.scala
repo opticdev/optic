@@ -9,7 +9,8 @@ import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, OneOfItemTrail, OneOfTrail, Resolvers, ShapeTrail, UnmatchedShape}
+import com.useoptic.diff.shapes._
+import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
@@ -43,7 +44,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
 
 
   def interpretUnmatchedShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
-    val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+    val resolved = JsonLikeResolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
     if (resolved.isEmpty) {
       Seq(
         WrapWithOptional(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
@@ -194,7 +195,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   }
 
   def WrapWithOneOf(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
+    val resolved = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()
@@ -244,7 +245,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
         ""
       }
     }
-    val t2 = Resolvers.jsonToCoreKind(resolved.get).name
+    val t2 = JsonLikeResolvers.jsonToCoreKind(resolved.get).name
 
     InteractiveDiffInterpretation(
       s"Allow ${identifier} to be either a ${t1} or ${t2}",

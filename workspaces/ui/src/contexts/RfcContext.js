@@ -26,7 +26,6 @@ global.getCommandsAsJson = function () {
 };
 
 export function stuffFromQueries(queries) {
-  const apiName = queries.apiName();
   const contributions = queries.contributions();
 
   const {
@@ -42,9 +41,8 @@ export function stuffFromQueries(queries) {
   const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId));
 
   const endpoints = queries.endpoints();
-  const conceptsById = queries.namedShapes();
   const shapesState = queries.shapesState();
-
+  const shapesResolvers = queries.shapesResolvers();
   const requestIdsByPathId = Object.entries(pathIdsByRequestId).reduce(
     (acc, entry) => {
       const [requestId, pathId] = entry;
@@ -55,24 +53,19 @@ export function stuffFromQueries(queries) {
     },
     {}
   );
-  queries.memoizedFlatShapeForExample = memoize((x, h, k) => {
-    console.count('memoizedFlatShapeForExample');
-    return queries.flatShapeForExample(x, h, k);
-  });
   const cachedQueryResults = {
-    apiName,
     contributions,
     requests,
     requestParameters,
     responses,
     responsesArray: Object.values(responses),
-    conceptsById,
     pathIdsByRequestId,
     requestIdsByPathId,
     pathsById,
     endpoints,
     pathIdsWithRequests,
     shapesState,
+    shapesResolvers,
   };
   return cachedQueryResults;
 }
@@ -93,7 +86,16 @@ function BaseRfcStore(props) {
         const eventStore = Facade.makeEventStore();
         global.eventStore = eventStore;
         if (initialEventsString) {
+          const markerNameStart = 'rfcContextAddEventsStart';
+          const markerNameStop = 'rfcContextAddEventsStop';
+          //performance.mark(markerNameStart);
           eventStore.bulkAdd(rfcId, initialEventsString);
+          //performance.mark(markerNameStop);
+          // performance.measure(
+          //   'rfcContextAddEvents',
+          //   markerNameStart,
+          //   markerNameStop
+          // );
         }
         const batchId = 'initial-batch';
         const commandContext = new RfcCommandContext(
@@ -181,12 +183,9 @@ function LocalRfcStore(props) {
 
   async function handleChange({ eventStore, rfcId }) {
     try {
-      const response = await specService.saveEvents(eventStore, rfcId);
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text);
-      }
+      await specService.saveEvents(eventStore, rfcId);
     } catch (e) {
+      debugger;
       enqueueSnackbar(
         'Unable to save changes. Please make sure the CLI is still running.',
         { variant: 'error' }

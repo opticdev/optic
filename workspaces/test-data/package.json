@@ -16,6 +16,7 @@
     "md5": "^2.2.1"
   },
   "devDependencies": {
+    "@types/md5": "^2.2.0",
     "jest": "^26.0.1"
   },
   "files": [

@@ -1,10 +1,11 @@
 package com.useoptic.ux
 
-import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
+import com.useoptic.contexts.rfc.{RfcAggregate, RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
 import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult}
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.{ChangeType, DiffResult, JsonFileFixture}
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, JsonLikeTraverser, JsonTrail, ShapeDiffResult, ShapeTrail, ShapeTraverser}
 import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
@@ -26,11 +27,12 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
   }
 
   def diffPreview(shapeExample: (ShapeEntity, RfcState), observation: Json) = {
-
+    val rfcState = shapeExample._2
+    val resolvers = new DefaultShapesResolvers(rfcState)
     val previewDiffs = {
       val diffList = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
-      val visitor = new JsonLikeAndSpecDiffVisitors(shapeExample._2, (diff) => diffList.append(diff), _ => Unit)
-      val traverse = new JsonLikeAndSpecTraverser(shapeExample._2, visitor)
+      val visitor = new JsonLikeAndSpecDiffVisitors(resolvers, rfcState, (diff) => diffList.append(diff), _ => Unit)
+      val traverse = new JsonLikeAndSpecTraverser(resolvers, rfcState, visitor)
 
       traverse.traverseRootShape(JsonLikeFrom.json(observation), shapeExample._1.shapeId)
       diffList.toVector
@@ -38,11 +40,13 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
 
     import com.useoptic.utilities.DistinctBy._
     val diffs = previewDiffs.distinctBy(i => i.shapeTrail).toSet
-
-    DiffPreviewer.previewDiff(JsonLikeFrom.json(observation), shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId), diffs, previewDiffs.toSet)
+    new DiffPreviewer(resolvers, rfcState).previewDiff(JsonLikeFrom.json(observation), Some(ShapeExamples.todoShape._1.shapeId), diffs, previewDiffs.toSet)
   }
+
   def shapeOnlyPreview(shapeExample: (ShapeEntity, RfcState)) = {
-    DiffPreviewer.previewShape(shapeExample._2, Some(ShapeExamples.todoShape._1.shapeId)).get
+    val rfcState = shapeExample._2
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    new DiffPreviewer(resolvers, rfcState).previewShape(Some(ShapeExamples.todoShape._1.shapeId)).get
   }
 
 
@@ -65,7 +69,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       val preview = diffPreview(ShapeExamples.stringArray, JsonExamples.stringArrayWithNumbers)
       val rootshape = preview.get.getRootShape.get
       assert(rootshape.items.size == 12)
-//      assert(rootshape.items.count(_.diffs.nonEmpty) == 9)
+      //      assert(rootshape.items.count(_.diffs.nonEmpty) == 9)
     }
 
     it("can render a diff in nested object with unknown child fields") {
@@ -86,7 +90,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
 
       val display = races.map(_.display)
 
-//      assert(display(14) == "visible")
+      //      assert(display(14) == "visible")
 
       val givenName = races.map(race => race.exampleShape.field("Driver").exampleShape.field("givenName").exampleShape.get.example)
       assert(givenName.distinct.size == givenName.size) //all are different
@@ -99,19 +103,23 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
   }
 
   it("body only render") {
-    val bodyRender = DiffPreviewer.previewBody(Body(Some("json"), ArbitraryData(asJsonString = Some(JsonExamples.basicTodo.noSpaces))))
+    val rfcState = RfcAggregate.initialState
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    val bodyRender = new DiffPreviewer(resolvers, rfcState).previewBody(Body(Some("json"), ArbitraryData(asJsonString = Some(JsonExamples.basicTodo.noSpaces))))
     assert(bodyRender.isDefined)
   }
 
   it("render simulated spec json") {
-    val (commands, shapeOnly) = DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get)).get
+    val rfcState = RfcAggregate.initialState
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    val (commands, shapeOnly) = new DiffPreviewer(resolvers, rfcState).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get)).get
     assert(shapeOnly.specShapes.size == 3)
   }
 
-//  it("isolated") {
-//    val (commands, shapeOnly) = DiffPreviewer.shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.rawJson("{\"then\": [[\"string\", \"string\", \"string\", \"string\"]]}").get)).get
-//
-//
-//  }
+  //  it("isolated") {
+  //    val (commands, shapeOnly) = new DiffPreviewer(resolvers, ).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.rawJson("{\"then\": [[\"string\", \"string\", \"string\", \"string\"]]}").get)).get
+  //
+  //
+  //  }
 
 }

@@ -1,30 +1,31 @@
 package com.useoptic.contexts.shapes.projections
 
-import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, MapKind, NullableKind, NumberKind, ObjectKind, OptionalKind, ReferenceKind, StringKind}
-import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import io.circe.Json
 import JsonSchemaHelpers._
+import com.useoptic.contexts.shapes.ShapesHelper._
+import com.useoptic.contexts.rfc.InMemoryQueries
 
-class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
+// this is not a projection. it is a query
+class JsonSchemaProjection(queries: InMemoryQueries, shapeId: String) {
 
   def asJsonSchema(expand: Boolean): Json = {
-    val flatShape = FlatShapeProjection.forShapeId(shapeId)(shapesState)
+    val flatShape = queries.flatShapeForShapeId(shapeId)
     flatShapeToJsonSchema(flatShape.root, expand: Boolean)(flatShape)
   }
 
 
   private def flatShapeToJsonSchema(shape: FlatShape, expand: Boolean)(implicit projection: FlatShapeResult): Json = {
     val schema = new JsonSchema
-    val isNamed = shapesState.shapes.get(shape.id).exists(_.descriptor.name != "")
+    val isNamed = queries.shapesState.shapes.get(shape.id).exists(_.descriptor.name != "")
 
     if (isNamed && !expand) {
-      val name = shapesState.shapes(shape.id).descriptor.name
-      schema.addRef(("#/components/schemas/"+ name.toCamelCase).asJson)
+      val name = queries.shapesState.shapes(shape.id).descriptor.name
+      schema.addRef(("#/components/schemas/" + name.toCamelCase).asJson)
       return schema.asJson
     }
 
     if (isNamed && expand) {
-      val name = shapesState.shapes(shape.id).descriptor.name
+      val name = queries.shapesState.shapes(shape.id).descriptor.name
       schema.addTitle(name)
     }
 
@@ -48,7 +49,7 @@ class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
       case ListKind.baseShapeId => {
         schema.assignType("array".asJson)
         val inner = shape.links(ListKind.innerParam)
-        schema.addItems(new JsonSchemaProjection(inner).asJsonSchema(expand = false))
+        schema.addItems(new JsonSchemaProjection(queries, inner).asJsonSchema(expand = false))
       }
 
       case StringKind.baseShapeId => schema.assignType("string".asJson)
@@ -57,15 +58,15 @@ class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
 
       case OptionalKind.baseShapeId => {
         val inner = shape.links(OptionalKind.innerParam)
-        return new JsonSchemaProjection(inner).asJsonSchema(expand = false)
+        return new JsonSchemaProjection(queries, inner).asJsonSchema(expand = false)
       }
 
       case MapKind.baseShapeId | ReferenceKind.baseShapeId | NullableKind.baseShapeId | OptionalKind.baseShapeId => {
-//        Logger.log("Core shape not implemented "+  shape.baseShapeId)
+        //        Logger.log("Core shape not implemented "+  shape.baseShapeId)
       }
 
       case _ => {
-//        Logger.log("OAS not implemented for type "+ shape.baseShapeId)
+        //        Logger.log("OAS not implemented for type "+ shape.baseShapeId)
       }
     }
 
@@ -81,7 +82,7 @@ object JsonSchemaHelpers {
   }
 
   implicit class StringHelpersImpl(s: String) {
-    def toCamelCase: String  = {
+    def toCamelCase: String = {
       val split = s.split(" ")
       val tail = split.tail.map { x => x.head.toUpper + x.tail }
       split.head + tail.mkString
@@ -103,8 +104,9 @@ object JsonSchemaHelpers {
     def addProperties(fields: Seq[(String, Json)]) = {
       _internal = _internal.add("properties", Json.obj(fields: _*))
     }
+
     def addRequired(required: List[String]) = {
-      _internal = _internal.add("required", Json.arr(required.map(_.asJson):_*))
+      _internal = _internal.add("required", Json.arr(required.map(_.asJson): _*))
     }
 
     def addItems(json: Json) = {

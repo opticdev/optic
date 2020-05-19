@@ -9,6 +9,7 @@ import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
 import com.useoptic.ux.DiffPreviewer
@@ -163,10 +164,10 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         val rfcService: RfcService = new RfcService(eventStore)
         rfcService.handleCommandSequence("id", commands, commandContext)
         val rfcState = rfcService.currentState("id")
-
+        val resolvers = new DefaultShapesResolvers(rfcState)
 
         val diffs = scala.collection.mutable.ListBuffer[ShapeDiffResult]()
-        val traverser = new JsonLikeAndSpecTraverser(rfcState, new JsonLikeAndSpecDiffVisitors(rfcState, e => diffs.append(e), _ => Unit))
+        val traverser = new JsonLikeAndSpecTraverser(resolvers, rfcState, new JsonLikeAndSpecDiffVisitors(resolvers, rfcState, e => diffs.append(e), _ => Unit))
         traverser.traverseRootShape(Some(example), shapeId)
         assert(diffs.isEmpty)
         (rfcState, diffs)

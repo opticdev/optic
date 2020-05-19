@@ -1,16 +1,14 @@
 package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, ShapeId}
-import com.useoptic.contexts.shapes.ShapeEntity
-import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ListKind, NullableKind, ObjectKind, OneOfKind, OptionalKind}
-import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
-import com.useoptic.types.capture.JsonLike
+import com.useoptic.contexts.shapes.Commands._
+import com.useoptic.contexts.shapes.ShapesHelper._
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers.ResolvedTrail
 
 import scala.util.Try
 
-class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
-  val shapesState = spec.shapesState
+class ShapeTraverser(resolvers: ShapesResolvers, spec: RfcState, visitors: ShapeVisitors) {
 
   def traverse(shapeId: ShapeId, shapeTrail: ShapeTrail): Unit = {
     val shapeEntityOption = Try(spec.shapesState.flattenedShape(shapeId)).toOption
@@ -18,16 +16,16 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
 
     if (shapeEntityOption.isDefined) {
       val shapeEntity = shapeEntityOption.get
-      val resolved = Resolvers.resolveTrailToCoreShape(spec, shapeTrail)
+      val resolved = resolvers.resolveTrailToCoreShape(shapeTrail, Map.empty) //@TODO: check bindings
       shapeEntity.coreShapeId match {
         case ObjectKind.baseShapeId => {
-          val baseObject = Resolvers.resolveBaseObject(shapeId)(shapesState)
+          val baseObject = resolvers.resolveBaseObject(shapeId)
           visitors.objectVisitor.begin(ResolvedTrail(baseObject, ObjectKind, resolved.bindings), shapeTrail, None)
           val fieldNameToId = baseObject.descriptor.fieldOrdering
             .map(fieldId => {
               val field = spec.shapesState.fields(fieldId)
               //@GOTCHA need field bindings?
-              val fieldTrail = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, resolved.bindings).get
+              val fieldTrail = resolvers.resolveFieldToShape(fieldId, resolved.bindings).get
               (field.descriptor.name -> (fieldId, fieldTrail))
             }).toMap
           fieldNameToId.map {
@@ -43,13 +41,13 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
         case ListKind.baseShapeId => {
           val listShape = resolved.shapeEntity
           val resolvedItem = {
-            Resolvers.resolveParameterToShape(spec.shapesState, listShape.shapeId, ListKind.innerParam, resolved.bindings)
-              .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
+            resolvers.resolveParameterToShape(listShape.shapeId, ListKind.innerParam, resolved.bindings)
+              .map(i => resolvers.resolveToBaseShape(i.shapeId))
           }
           assert(resolvedItem.isDefined, "We expect all lists to have a parameter for list item")
           visitors.listVisitor.begin(shapeTrail, listShape, resolvedItem.get)
           val itemTrail = shapeTrail.withChild(ListItemTrail(listShape.shapeId, resolvedItem.get.shapeId))
-          val coreShape = Resolvers.resolveTrailToCoreShape(spec, itemTrail)
+          val coreShape = resolvers.resolveTrailToCoreShape(itemTrail, Map.empty) //@TODO: check bindings
           visitors.primitiveVisitor.visit(coreShape, itemTrail)
           traverse(resolvedItem.get.shapeId, itemTrail)
         }
@@ -62,15 +60,15 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
           }
 
           val branchShapes = shapeParameterIds.flatMap(paramId =>
-            Resolvers.resolveParameterToShape(spec.shapesState, oneOfShape.shapeId, paramId, resolved.bindings))
-            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
+            resolvers.resolveParameterToShape(oneOfShape.shapeId, paramId, resolved.bindings))
+            .map(i => resolvers.resolveToBaseShape(i.shapeId))
 
           visitors.oneOfVisitor.begin(shapeTrail, oneOfShape, branchShapes.map(i => {
-            Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState).shapeId
+            resolvers.resolveToBaseShape(i.shapeId).shapeId
           }))
           branchShapes.zipWithIndex.foreach((item) => {
             val (i, index) = item
-            val branch = Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState)
+            val branch = resolvers.resolveToBaseShape(i.shapeId)
             val branchShapeTrail = shapeTrail.withChild(OneOfItemTrail(oneOfShape.shapeId, shapeParameterIds.apply(index), branch.shapeId))
             visitors.oneOfVisitor.visit(branchShapeTrail, oneOfShape, branch)
             traverse(branch.shapeId, branchShapeTrail)
@@ -78,16 +76,16 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
         }
         case OptionalKind.baseShapeId => {
           val optionalShape = resolved.shapeEntity
-          val innerShapeOption = Resolvers.resolveParameterToShape(spec.shapesState, resolved.shapeEntity.shapeId, OptionalKind.innerParam, resolved.bindings)
-            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
+          val innerShapeOption = resolvers.resolveParameterToShape(resolved.shapeEntity.shapeId, OptionalKind.innerParam, resolved.bindings)
+            .map(i => resolvers.resolveToBaseShape(i.shapeId))
 
           visitors.optionalVisitor.begin(shapeTrail, optionalShape, innerShapeOption)
           innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(OptionalItemTrail(innerShape.shapeId))))
         }
         case NullableKind.baseShapeId => {
           val nullableShape = resolved.shapeEntity
-          val innerShapeOption = Resolvers.resolveParameterToShape(spec.shapesState, resolved.shapeEntity.shapeId, NullableKind.innerParam, resolved.bindings)
-            .map(i => Resolvers.resolveToBaseShape(i.shapeId)(spec.shapesState))
+          val innerShapeOption = resolvers.resolveParameterToShape(resolved.shapeEntity.shapeId, NullableKind.innerParam, resolved.bindings)
+            .map(i => resolvers.resolveToBaseShape(i.shapeId))
 
           visitors.nullableVisitor.begin(shapeTrail, nullableShape, innerShapeOption)
           innerShapeOption.foreach(innerShape => traverse(innerShape.shapeId, shapeTrail.withChild(NullableItemTrail(innerShape.shapeId))))

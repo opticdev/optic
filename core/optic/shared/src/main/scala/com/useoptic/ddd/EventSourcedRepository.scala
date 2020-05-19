@@ -7,7 +7,7 @@ import io.circe.Json
 import io.circe.parser.parse
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
 
 class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, _, Event], eventStore: EventStore[Event]) {
 
@@ -50,7 +50,8 @@ class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[Stat
   }
 
 }
-
+@JSExportAll
+@JSExportDescendentClasses
 abstract class EventStore[Event] {
   def remove(id: AggregateId): Unit
 
@@ -90,6 +91,7 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
     }
   }
 
+  @JSExport
   def fromJson(id: AggregateId, eventsJson: Json): Unit = {
 
     val events = for {

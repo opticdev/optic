@@ -314,6 +314,7 @@ const InnerDiffWrapper = withTrafficSessionContext(
       initialEventStore,
       rfcService,
       rfcId,
+      cachedQueryResults,
       diffManager,
       pathId,
       method,
@@ -333,9 +334,9 @@ const InnerDiffWrapper = withTrafficSessionContext(
     if (isLoading) {
       return <LinearProgress />;
     }
-
     const rfcState = rfcService.currentState(rfcId);
-    diffManager.updatedRfcState(rfcState);
+    const { shapesResolvers } = cachedQueryResults;
+    diffManager.updatedRfcState(rfcState, shapesResolvers);
 
     const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
 

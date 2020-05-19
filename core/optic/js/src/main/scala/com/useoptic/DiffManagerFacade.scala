@@ -1,10 +1,8 @@
 package com.useoptic
 
 import com.useoptic.serialization.InteractionSerialization
-import com.useoptic.serialization.InteractionSerialization
 import com.useoptic.types.capture.{HttpInteraction}
 import com.useoptic.ux.DiffManager
-import io.circe.Decoder
 import io.circe.scalajs.convertJsToJson
 
 import scala.scalajs.js
@@ -21,7 +19,6 @@ object DiffManagerFacade {
   def updateInteractions(x: js.Array[js.Any], diffManager: DiffManager) = {
     val interactions = jsArrayToInteractions(x)
     diffManager.updateInteractions(interactions)
-    js.Array(interactions:_*)
   }
 
   def jsArrayToInteractions(x: js.Array[js.Any]): Vector[HttpInteraction] = {
