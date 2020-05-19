@@ -7,6 +7,11 @@ import com.useoptic.diff.shapes.resolvers.ShapesResolvers._
 import scalaz.Memo
 
 class CachingShapesResolvers(resolvers: ShapesResolvers) extends ShapesResolvers {
+
+  val getField = Memo.mutableHashMapMemo[(FieldId), FieldEntity] {
+    case (a) => resolvers.getField(a)
+  }(_)
+
   val resolveTrailToCoreShape = Memo.mutableHashMapMemo[(ShapeTrail, ParameterBindings), ResolvedTrail] {
     case (a, b) => resolvers.resolveTrailToCoreShape(a, b)
   }(_, _)

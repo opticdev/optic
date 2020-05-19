@@ -26,6 +26,9 @@ import scala.util.Try
 @JSExportAll
 class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
 
+  //temp helper while migrating code
+  def this(spec:RfcState) = this(new DefaultShapesResolvers(spec), spec)
+
   ///@todo make return optional
   def previewDiff(jsonLike: Option[JsonLike], shapeIdOption: Option[ShapeId], diffs: Set[ShapeDiffResult], allDiffs: Set[ShapeDiffResult]): Option[SideBySideRenderHelper] = shapeIdOption map { shapeId =>
 

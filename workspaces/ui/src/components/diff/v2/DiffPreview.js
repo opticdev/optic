@@ -384,10 +384,6 @@ function _NewRegions(props) {
       diff.previewShape(currentInteraction, inferPolymorphism)
     );
 
-    console.log('shape preview' + currentInteraction);
-    console.log('shape preview', interactions);
-    console.log('shape preview' + shapePreview);
-
     return (
       <>
         <Card className={classes.regionHeader} elevation={2}>

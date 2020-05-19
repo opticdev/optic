@@ -22,6 +22,8 @@ class DefaultShapesResolvers(spec: RfcState) extends ShapesResolvers {
   }
 
 
+  val getField: (FieldId) => FieldEntity = (fieldId) => spec.shapesState.fields(fieldId)
+
   val resolveTrailToCoreShapeFromParent: (ResolvedTrail, Seq[ShapeTrailPathComponent]) => ResolvedTrail = (parent: ResolvedTrail, childTrail: Seq[ShapeTrailPathComponent]) => {
     var resolved = parent
     for (pathComponent <- childTrail) {

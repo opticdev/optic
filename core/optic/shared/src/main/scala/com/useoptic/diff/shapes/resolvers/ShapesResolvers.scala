@@ -16,9 +16,12 @@ object ShapesResolvers {
 }
 
 trait ShapesResolvers {
+
   def resolveTrailToCoreShape: (ShapeTrail, ParameterBindings) => ResolvedTrail
 
   def resolveTrailToCoreShapeFromParent: (ResolvedTrail, Seq[ShapeTrailPathComponent]) => ResolvedTrail
+
+  def getField: FieldId => FieldEntity
 
   def flattenChoice: (ShapeTrail, Seq[ShapeTrailPathComponent], ParameterBindings) => Seq[ChoiceOutput]
 

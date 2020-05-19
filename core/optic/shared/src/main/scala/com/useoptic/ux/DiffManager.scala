@@ -340,13 +340,15 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
           val innerRfcState = withRfcState.getOrElse(rfcState)
-          diffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
+          val simulatedDiffPreviewer = new DiffPreviewer(innerRfcState)
+          simulatedDiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
         }
 
         val responseRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
           val innerRfcState = withRfcState.getOrElse(rfcState)
+          val simulatedDiffPreviewer = new DiffPreviewer(innerRfcState)
           val responseShapeID = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
-          diffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), Some(responseShapeID), Set.empty, Set.empty)
+          simulatedDiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), Some(responseShapeID), Set.empty, Set.empty)
         }.toOption.flatten
 
         BodyShapeDiffBlock(
@@ -377,12 +379,14 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
           val innerRfcState = withRfcState.getOrElse(rfcState)
-          diffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
+          val simulatedDiffPreviewer = new DiffPreviewer(innerRfcState)
+          simulatedDiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId), Set(diff.shapeDiffResultOption).flatten, ungroupedShapeDiffs)
         }
         val requestRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
           val innerRfcState = withRfcState.getOrElse(rfcState)
+          val simulatedDiffPreviewer = new DiffPreviewer(innerRfcState)
           val requestBodyShapeId = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
-          diffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), Some(requestBodyShapeId), Set.empty, Set.empty)
+          simulatedDiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), Some(requestBodyShapeId), Set.empty, Set.empty)
         }.toOption.flatten
 
         BodyShapeDiffBlock(
