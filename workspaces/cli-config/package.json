@@ -11,7 +11,7 @@
     "find-up": "^4.1.0",
     "get-port": "^5.1.0",
     "js-yaml": "^3.13.1",
-    "path-to-regexp": "^6.1.0"
+    "path-to-regexp": "^3.0.0"
   },
   "devDependencies": {
     "@types/find-up": "^4.0.0",
