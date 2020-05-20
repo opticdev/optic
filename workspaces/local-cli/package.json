@@ -80,7 +80,6 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
