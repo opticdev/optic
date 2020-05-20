@@ -8,7 +8,7 @@ const isPrivatePublish = process.env.OPTIC_PUBLISH_SCOPE !== 'public';
 const registry =
   process.env.OPTIC_PUBLISH_SCOPE === ('private' && 'http://localhost:4873') ||
   (process.env.OPTIC_PUBLISH_SCOPE === 'github' &&
-    'https://npm.pkg.github.com/');
+    'https://npm.pkg.github.com/useoptic');
 const promise = workspaces.reduce((acc, workspace) => {
   return acc.then((previousResults) => {
     return new Promise((resolve, reject) => {

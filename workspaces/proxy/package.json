@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/opticdev/optic.git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
     "directory": "workspaces/proxy"
   },
   "main": "build/index.js",

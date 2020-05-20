@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: "12.x"
-        registry-url: https://npm.pkg.github.com/
+        registry-url: https://npm.pkg.github.com/useoptic
         scope: "@useoptic"
     - name: "intial yarn install"
       run: yarn install
