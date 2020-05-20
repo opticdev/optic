@@ -53,5 +53,3 @@ jobs:
       with:
         msg: Try the CLI version using yarn global add \`@useoptic/cli@0.1.0-pr-build-$GITHUB_RUN_ID\`
         check_for_duplicate_msg: false
-        env:
-          GITHUB_RUN_ID: ${{GITHUB_RUN_ID}}
