@@ -46,5 +46,3 @@ jobs:
       run: OPTIC_PUBLISH_SCOPE=github node ./workspaces/scripts/publish.js
       env:
         NODE_AUTH_TOKEN: ${{secrets.PUBLISH_GITHUB_TOKEN}}
-        CI: true
-

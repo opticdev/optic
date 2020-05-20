@@ -81,7 +81,7 @@
     "build-storybook": "build-storybook -s public",
     "ws:build": "echo building ui",
     "ws:test": "echo ui",
-    "prepare": "yarn run build-local"
+    "prepare": "CI='' yarn run build-local"
   },
   "eslintConfig": {
     "extends": "react-app"
