@@ -5,6 +5,11 @@
     "ws:test": "echo domain",
     "ws:build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/domain"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {

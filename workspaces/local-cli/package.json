@@ -6,6 +6,11 @@
   "bin": {
     "api": "./bin/run"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/local-cli"
+  },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
     "@oclif/command": "^1",

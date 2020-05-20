@@ -6,6 +6,11 @@
     "index.js",
     "index.d.ts"
   ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/ui"
+  },
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",

@@ -5,6 +5,11 @@
     "ws:build": "yarn run tsc -b --verbose && cp -R ./src/avro-schemas/ ./build/avro-schemas",
     "ws:test": "echo domain-types"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/domain-types"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {},
