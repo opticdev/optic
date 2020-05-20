@@ -1,9 +1,6 @@
 package com.useoptic.contexts.shapes.projections
 
-import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromShape, ShapeId}
 import com.useoptic.contexts.shapes.ShapesHelper._
-import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
-import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
@@ -11,9 +8,7 @@ import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.{JsonTrail, JsonTrailPathComponent, ShapeDiffResult}
 import io.circe.Json
 
-import scala.collection.mutable
-import scala.scalajs.js.annotation.JSExportAll
-
+// this is not a projection. it is a query
 object ExampleProjection {
 
   def fromJson(json: Json, renderId: String, trailTags: TrailTags[JsonTrail] = TrailTags(Map.empty), shapeDiffs: Seq[ShapeRelatedDiff] = Seq.empty): FlatShapeResult = {

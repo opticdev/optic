@@ -1,7 +1,5 @@
 package com.useoptic.utilities
 
-import scala.collection.SeqLike
-
 object DistinctBy {
 
   implicit class DistinctBySeqLike[A, B](seq: Seq[A]) {

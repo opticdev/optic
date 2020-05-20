@@ -61,7 +61,6 @@ export function parseRule(
       .map((i) => i.toUpperCase())
       .filter((i) => allowedMethods.includes(i));
   }
-
   const regex = pathToRegexp(pathInput);
   const shouldIgnore = (method: string, url: string) =>
     methods.includes(method) && regex.exec(url) !== null;

@@ -1,15 +1,11 @@
 package com.useoptic.ux
 
-import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcService, RfcServiceJSFacade, RfcState}
-import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.helpers.SpecHelpers
 import com.useoptic.diff.interactions.TestHelpers
-import com.useoptic.diff.interactions.visitors.DiffVisitors
-import com.useoptic.diff.shapes.{JsonLikeTraverser, JsonTrail, ShapeTrail}
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.dsa.SequentialIdGenerator
-import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
 import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, JsonLikeFrom, Request, Response}
 import io.circe.Json
 import org.scalatest.FunSpec
@@ -40,7 +36,7 @@ class DiffManagerSpec extends FunSpec with JsonFileFixture {
       withPathAndMethod("delete", "/todos/6543", 404),
     ))
 
-    diffManager.updatedRfcState(RfcState.empty)
+    diffManager.updatedRfcState(RfcState.empty, new DefaultShapesResolvers(RfcState.empty))
 
     val urls = diffManager.unmatchedUrls(false, Seq.empty)
     assert(urls.find(i => i.path == "/todos" && i.method == "post").get.interactions.size == 3)
@@ -56,7 +52,7 @@ class DiffManagerSpec extends FunSpec with JsonFileFixture {
       withPathAndMethod("post", "/", 200)
     ))
 
-    diffManager.updatedRfcState(spec)
+    diffManager.updatedRfcState(spec, new DefaultShapesResolvers(spec))
 
     val urls = diffManager.unmatchedUrls(false, Seq.empty)
     assert(urls.head.path == "/")

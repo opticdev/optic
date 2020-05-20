@@ -7,13 +7,12 @@ import com.useoptic.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacad
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.ddd.{AggregateId, EventStore}
-import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
 import io.circe.generic.auto._
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.syntax._
-import io.circe.{Encoder, Json}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
@@ -22,12 +21,13 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 @JSExport
 @JSExportAll
 object OASProjectionHelper {
-  def fromEventString(eventString: String): js.Any = {
+  //@TODO: pass in apiName
+  def fromEventString(eventString: String, apiName: String = "untitled API"): js.Any = {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     eventStore.bulkAdd("id", eventString)
     val rfcService: RfcService = new RfcService(eventStore)
     val queries = new InMemoryQueries(eventStore, rfcService, "id")
-    convertJsonToJs(new OASProjection(queries, rfcService, "id").generate)
+    convertJsonToJs(new OASProjection(queries, rfcService, "id", apiName).generate)
   }
 }
 
@@ -55,7 +55,6 @@ case class ContributionWrapper(all: Map[String, Map[String, String]]) {
 class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
   private val q = new InMemoryQueries(eventStore, service, aggregateId)
 
-  implicit val changeTypeEncoder: Encoder[ChangeType] = (a: ChangeType) => Json.fromString(a.toString)
 
   def pathsWithRequests(): js.Any = {
     convertJsonToJs(q.pathsWithRequests.asJson)
@@ -69,16 +68,8 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     convertJsonToJs(q.shapesState.asJson)
   }
 
-  def namedShapes(): js.Any = {
-    convertJsonToJs(q.namedShapes.asJson)
-  }
-
   def contributions(): ContributionWrapper = {
     ContributionWrapper(q.contributions)
-  }
-
-  def apiName(): String = {
-    q.apiName()
   }
 
   def shapeById(shapeId: ShapeId): js.Any = {
@@ -113,7 +104,5 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     q.flatShapeForExample(convertJsToJson(example).right.get, hash, trailTags)
   }
 
-  def setupState(): js.Any = {
-    convertJsonToJs(q.setupState().asJson)
-  }
+  def shapesResolvers(): ShapesResolvers = q.shapesResolvers()
 }

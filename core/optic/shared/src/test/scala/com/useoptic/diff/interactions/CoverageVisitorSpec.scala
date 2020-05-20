@@ -5,6 +5,7 @@ import com.useoptic.coverage._
 import com.useoptic.diff.helpers.SpecHelpers
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.interactions.visitors.CoverageVisitors
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.types.capture.HttpInteraction
 import org.scalatest.FunSpec
 import io.circe.literal._
@@ -24,7 +25,8 @@ class CoverageVisitorSpec extends FunSpec {
       )
 
       def fixture(spec: RfcState, interactions: Seq[HttpInteraction]) = {
-        val visitors = new CoverageVisitors()
+        val resolvers = new DefaultShapesResolvers(rfcState)
+        val visitors = new CoverageVisitors(resolvers)
         val traverser = new Traverser(rfcState, visitors)
         interactions.foreach(interaction => traverser.traverse(interaction))
         println(visitors.report.coverageCounts.counts)

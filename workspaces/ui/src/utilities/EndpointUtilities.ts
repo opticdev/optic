@@ -99,7 +99,7 @@ export function createEndpointDescriptor(
   } catch (e) {
     // TODO figure out what error we would expect for method / pathId we can't find, so
     // we can deal with that explicitly and stop swallowing other errors
-    console.log(e);
+    console.error(e);
   }
 
   if (!fullPath) return null; // can not find endpoint requests

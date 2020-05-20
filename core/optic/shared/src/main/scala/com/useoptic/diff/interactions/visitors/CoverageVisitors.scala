@@ -4,6 +4,7 @@ import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, Resp
 import com.useoptic.coverage._
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.ShapeTrail
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
@@ -22,12 +23,12 @@ class CoverageInteractionVisitor(report: CoverageReport) extends InteractionVisi
   }
 }
 
-class CoveragePathVisitor(report: CoverageReport) extends PathVisitor {
+class CoveragePathVisitor(resolvers: ShapesResolvers, report: CoverageReport) extends PathVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
   }
-  val diffVisitors = new DiffVisitors(emit)
+  val diffVisitors = new DiffVisitors(resolvers, emit)
 
   override def visit(interaction: HttpInteraction, context: PathVisitorContext): Unit = {
     diffVisitors.pathVisitor.visit(interaction, context)
@@ -46,12 +47,12 @@ class CoveragePathVisitor(report: CoverageReport) extends PathVisitor {
   }
 }
 
-class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisitor {
+class CoverageRequestBodyVisitor(resolvers: ShapesResolvers, report: CoverageReport) extends RequestBodyVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
   }
-  val diffVisitors = new DiffVisitors(emit)
+  val diffVisitors = new DiffVisitors(resolvers, emit)
 
   override def begin(): Unit = {
     diffVisitors.requestBodyVisitor.begin()
@@ -97,12 +98,12 @@ class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisi
   }
 }
 
-class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVisitor {
+class CoverageResponseBodyVisitor(resolvers: ShapesResolvers, report: CoverageReport) extends ResponseBodyVisitor {
   val diffs = new scala.collection.mutable.ArrayBuffer[InteractionDiffResult]()
   def emit(diff: InteractionDiffResult) = {
     diffs.append(diff)
   }
-  val diffVisitors = new DiffVisitors(emit)
+  val diffVisitors = new DiffVisitors(resolvers, emit)
 
   override def begin(): Unit = {
     diffVisitors.responseBodyVisitor.begin()
@@ -147,16 +148,16 @@ class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVi
   }
 }
 
-class CoverageVisitors() extends Visitors {
+class CoverageVisitors(resolvers: ShapesResolvers) extends Visitors {
   val coverageCounts = new Counter[CoverageConcerns]()
   val diffCounts = new Counter[InteractionDiffResult]()
   val report = CoverageReport(coverageCounts, diffCounts)
   val emitDiff = (diff: InteractionDiffResult) => {
 
   }
-  override val pathVisitor: PathVisitor = new CoveragePathVisitor(report)
-  override val requestBodyVisitor: RequestBodyVisitor = new CoverageRequestBodyVisitor(report)
-  override val responseBodyVisitor: ResponseBodyVisitor = new CoverageResponseBodyVisitor(report)
+  override val pathVisitor: PathVisitor = new CoveragePathVisitor(resolvers, report)
+  override val requestBodyVisitor: RequestBodyVisitor = new CoverageRequestBodyVisitor(resolvers, report)
+  override val responseBodyVisitor: ResponseBodyVisitor = new CoverageResponseBodyVisitor(resolvers, report)
   override val interactionVisitor: InteractionVisitor = new CoverageInteractionVisitor(report)
 }
 

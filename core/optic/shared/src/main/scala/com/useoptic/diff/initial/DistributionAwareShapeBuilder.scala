@@ -6,6 +6,7 @@ import com.useoptic.contexts.shapes.ShapesHelper
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes._
+import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
 import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.JsonLike
@@ -88,7 +89,7 @@ object DistributionAwareShapeBuilder {
           commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
           commands.appendDescribe(SetParameterShape(
             if (inField) {
-              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), ListKind.innerParam)
+              ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
             } else {
               ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
             }
@@ -129,7 +130,7 @@ object DistributionAwareShapeBuilder {
 
   private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean, totalSamples: Int)(implicit trailValues: TrailValueMap, idGenerator: SequentialIdGenerator): ShapesToMake = {
     val isOptional = values.size != totalSamples
-    val kinds = values.groupBy(v => Resolvers.jsonToCoreKind(v))
+    val kinds = values.groupBy(v => JsonLikeResolvers.jsonToCoreKind(v))
 
     if (isOptional && !inner) {
       val optionalShape = OptionalShape(fromJsons(values, trail, true, totalSamples), trail, idGenerator.nextId())

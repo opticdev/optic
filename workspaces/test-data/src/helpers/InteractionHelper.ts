@@ -1,10 +1,6 @@
 //@ts-ignore
 import * as deepCopy from 'deepcopy';
-import {
-  IArbitraryData,
-  IBody,
-  IHttpInteraction,
-} from '@useoptic/domain-types';
+import { IHttpInteraction } from '@useoptic/domain-types';
 
 export function newInteraction(url: string, method: string) {
   return new InteractionHelper(url, method);

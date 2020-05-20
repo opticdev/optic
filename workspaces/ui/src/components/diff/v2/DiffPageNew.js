@@ -179,7 +179,6 @@ function _DiffPageContent(props) {
     specContext.applyCommands(
       jsonHelper.jsArrayToVector([EndBatchCommit(batchId)])
     );
-    console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
     await specService.saveEvents(newEventStore, rfcId);
     history.push(`${baseUrl}/diffs/${captureId}`);
   }
@@ -265,8 +264,6 @@ function SuggestionsStore({ children }) {
     setAcceptedSuggestions([]);
   };
 
-  console.log('preview it ' + suggestionToPreview);
-
   const context = {
     suggestionToPreview,
     setSuggestionToPreview,
@@ -314,6 +311,7 @@ const InnerDiffWrapper = withTrafficSessionContext(
       initialEventStore,
       rfcService,
       rfcId,
+      cachedQueryResults,
       diffManager,
       pathId,
       method,
@@ -333,9 +331,9 @@ const InnerDiffWrapper = withTrafficSessionContext(
     if (isLoading) {
       return <LinearProgress />;
     }
-
     const rfcState = rfcService.currentState(rfcId);
-    diffManager.updatedRfcState(rfcState);
+    const { shapesResolvers } = cachedQueryResults;
+    diffManager.updatedRfcState(rfcState, shapesResolvers);
 
     const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
 
@@ -420,7 +418,6 @@ class _CaptureSessionInlineContext extends React.Component {
                   .map((x) => jsonHelper.seqToJsArray(x.commands))
                   .reduce(flatten, []);
                 console.log({
-                  xxx: 'xxx',
                   suggestionToPreview,
                   acceptedSuggestions,
                 });

@@ -4,7 +4,6 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 import com.useoptic.contexts.base.BaseCommandContext
-import io.circe.Json
 
 //@TODO: add envelope to each event (includes which command/transaction they are from and which agent caused it at what time, etc.
 object Events {

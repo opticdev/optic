@@ -2,12 +2,12 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
-import com.useoptic.contexts.shapes.projections.TrailTags
-import com.useoptic.diff.{ChangeType, DiffResult}
+import com.useoptic.diff.ChangeType
 import com.useoptic.diff.ChangeType.ChangeType
-import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, NullableTrail, NullableItemTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnknownTrail, UnmatchedShape, UnspecifiedShape}
+import com.useoptic.diff.interactions._
+import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -55,7 +55,7 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
       case UnmatchedShape(jsonTrail, shapeTrail) => {
         val shapeDescription = expectedShapeDescription(shapeTrail)
 
-        val bodyOption = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+        val bodyOption = JsonLikeResolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
 
         if (bodyOption.isEmpty) {
           val title = s"${jsonTrailDescription(jsonTrail)} in the ${inLocation} is missing"

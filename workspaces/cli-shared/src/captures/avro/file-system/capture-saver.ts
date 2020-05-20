@@ -44,7 +44,16 @@ export class CaptureSaver implements ICaptureSaver {
         agentGroupId,
         batchId,
       };
-      await this.onBatch(groupingIdentifiers, batchId, items, outputDirectory);
+      try {
+        await this.onBatch(
+          groupingIdentifiers,
+          batchId,
+          items,
+          outputDirectory
+        );
+      } catch (e) {
+        console.error(e);
+      }
     });
   }
 

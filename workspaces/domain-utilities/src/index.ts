@@ -3,29 +3,38 @@ import { DiffHelpers, JsonHelper, opticEngine } from '@useoptic/domain';
 
 export { StableHasher } from './coverage';
 
-export function rfcStateFromEvents(events: any[]) {
+export function universeFromEvents(events: any[]) {
   const { contexts } = opticEngine.com.useoptic;
   const { RfcServiceJSFacade } = contexts.rfc;
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
   const rfcId = 'testRfcId';
-
-  const stringifiedEvents = JSON.stringify(events);
-  eventStore.bulkAdd(rfcId, stringifiedEvents);
+  const eventsAsJson = opticEngine.EventSerialization.fromJs(events);
+  eventStore.append(rfcId, eventsAsJson);
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
   const rfcState = rfcService.currentState(rfcId);
+  return {
+    rfcState,
+    eventStore,
+    rfcId,
+    rfcService,
+  };
+}
 
+export function rfcStateFromEvents(events: any[]) {
+  const { rfcState } = universeFromEvents(events);
   return rfcState;
 }
 
 export function reportFromEventsAndInteractions(
+  shapesResolvers: any,
   events: any[],
   interactions: any[]
 ) {
   const rfcState = rfcStateFromEvents(events);
   const report = opticEngine.com.useoptic.diff.helpers
     .CoverageHelpers()
-    .getCoverage(rfcState, interactions);
+    .getCoverage(shapesResolvers, rfcState, interactions);
   return report;
 }
 
@@ -45,10 +54,12 @@ export function deserializeInteractions(serializedInteractions: any) {
 }
 
 export function diffFromRfcStateAndInteractions(
+  shapesResolvers: any,
   rfcState: any,
   interactions: any[]
 ) {
   const diffResults = DiffHelpers.groupByDiffs(
+    shapesResolvers,
     rfcState,
     deserializeInteractions(interactions)
   );

@@ -256,10 +256,10 @@ export const EndpointDocs = (props) => {
   const fingerPrint = `${endpointDescriptor.httpMethod} ${endpointDescriptor.fullPath}`;
   usePageTitle(`${purpose || fingerPrint} - API Documentation`);
 
-  const { rfcService, rfcId } = useContext(RfcContext);
-
+  const { rfcService, rfcId, cachedQueryResults } = useContext(RfcContext);
+  const { shapesResolvers } = cachedQueryResults;
   const currentRfcState = rfcService.currentState(rfcId);
-
+  const diffPreviewer = new DiffPreviewer(shapesResolvers, currentRfcState);
   return (
     <ShapeExpandedStore>
       <div className={classes.maxWidth} style={{ paddingTop: 30 }}>
@@ -349,8 +349,7 @@ export const EndpointDocs = (props) => {
                       const renderedShape =
                         r &&
                         getOrUndefined(
-                          DiffPreviewer.previewShape(
-                            currentRfcState,
+                          diffPreviewer.previewShape(
                             toOption(r.requestBody.shapeId)
                           )
                         );
@@ -370,7 +369,7 @@ export const EndpointDocs = (props) => {
                         )
                       );
                     }}
-                  ></ContentTabs>
+                  />
 
                   <ContentTabs
                     options={allResponses}
@@ -396,8 +395,7 @@ export const EndpointDocs = (props) => {
                       const renderedShape =
                         response &&
                         getOrUndefined(
-                          DiffPreviewer.previewShape(
-                            currentRfcState,
+                          diffPreviewer.previewShape(
                             toOption(response.responseBody.shapeId)
                           )
                         );
@@ -421,7 +419,7 @@ export const EndpointDocs = (props) => {
                       );
                       // return <div>{statusCode} {contentType}</div>;
                     }}
-                  ></ContentTabs>
+                  />
                 </RequestTabsContextStore>
 
                 <div style={{ height: '100vh' }} />

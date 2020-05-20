@@ -8,6 +8,7 @@ import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecResponseBody, TestHelpers, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
@@ -47,13 +48,15 @@ class SpecHelpers {
 class DiffHelpersSpec extends FunSpec {
   def fixture(commands: Seq[RfcCommand], interactions: Seq[HttpInteraction]) = {
     val rfcState: RfcState = TestHelpers.fromCommands(commands)
-    val aggregatedDiff = DiffHelpers.diffAll(rfcState, interactions)
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    val aggregatedDiff = DiffHelpers.diffAll(resolvers, rfcState, interactions)
     aggregatedDiff
   }
 
   def mapFixture(commands: Seq[RfcCommand], interactions: Seq[HttpInteraction]) = {
     val rfcState: RfcState = TestHelpers.fromCommands(commands)
-    val grouped = DiffHelpers.groupByDiffs(rfcState, interactions)
+    val resolvers = new DefaultShapesResolvers(rfcState)
+    val grouped = DiffHelpers.groupByDiffs(resolvers, rfcState, interactions)
     grouped
   }
 

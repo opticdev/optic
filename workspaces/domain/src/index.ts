@@ -87,35 +87,6 @@ export const getJson = (j: any) => {
   return ScalaJSHelpers.getJson(j);
 };
 
-import { IHttpInteraction } from '@useoptic/domain-types';
-export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
-  const requestContentType = sample.request.body.contentType;
-  const responseContentType = sample.response.body.contentType;
-  const requestBody = sample.request.body.value.asJsonString
-    ? JSON.parse(sample.request.body.value.asJsonString)
-    : sample.request.body.value.asText
-    ? sample.request.body.value.asText
-    : undefined;
-  const responseBody = sample.response.body.value.asJsonString
-    ? JSON.parse(sample.response.body.value.asJsonString)
-    : sample.response.body.value.asText
-    ? sample.response.body.value.asText
-    : undefined;
-  // console.log({
-  //   sample,
-  //   requestContentType,
-  //   requestBody,
-  //   responseBody,
-  //   responseContentType
-  // });
-  return {
-    requestContentType,
-    requestBody,
-    responseBody,
-    responseContentType,
-  };
-}
-
 export const InteractionDiffer = diff.InteractionDiffer;
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
@@ -124,7 +95,5 @@ export const StableHashableWrapper =
   opticEngine.com.useoptic.StableHashableWrapper;
 
 export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade();
-export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer();
+export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer;
 export const DiffHelpers = opticEngine.com.useoptic.diff.helpers.DiffHelpers();
-
-export const TestDataHelper = opticEngine.com.useoptic.TestDataHelper();

@@ -5,18 +5,18 @@ import com.useoptic.contexts.rfc.Events._
 import com.useoptic.contexts.rfc._
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.helpers.DiffHelpers
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.types.capture.HttpInteraction
-import com.useoptic.ux.DiffManager
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExport
 @JSExportAll
-class InteractionDiffer(rfcState: RfcState) {
+class InteractionDiffer(resolvers: ShapesResolvers, rfcState: RfcState) {
 
   def hasDiff(interaction: HttpInteraction): Boolean = {
-    DiffHelpers.diff(rfcState, interaction).nonEmpty
+    DiffHelpers.diff(resolvers, rfcState, interaction).nonEmpty
   }
 
   def hasUnrecognizedPath(interaction: HttpInteraction): Boolean = {
@@ -29,13 +29,13 @@ class InteractionDiffer(rfcState: RfcState) {
 
 @JSExport
 @JSExportAll
-class SessionDiffer(rawEvents: String) {
+class SessionDiffer(rawEvents: String, resolvers: ShapesResolvers) {
   val rfcId = "abc"
   val eventStore = new InMemoryEventStore[RfcEvent]()
   eventStore.bulkAdd(rfcId, rawEvents)
   val rfcService = new RfcService(eventStore)
   val rfcState = rfcService.currentState(rfcId)
-  val interactionDiffer = new InteractionDiffer(rfcState)
+  val interactionDiffer = new InteractionDiffer(resolvers, rfcState)
 
   private def toInteraction(x: js.Any): Option[HttpInteraction] = {
     import io.circe.generic.auto._

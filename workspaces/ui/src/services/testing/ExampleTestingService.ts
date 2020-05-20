@@ -116,7 +116,8 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
       if (!events || !samples) return err(notFoundErr());
 
-      const { rfcState } = queriesFromEvents(events);
+      const { rfcState, queries } = queriesFromEvents(events);
+      const shapesResolvers = queries.shapesResolvers();
 
       const samplesSeq = JsonHelper.jsArrayToSeq(
         samples.map((x) => JsonHelper.fromInteraction(x))
@@ -126,7 +127,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       );
       const report = opticEngine.com.useoptic.diff.helpers
         .CoverageHelpers()
-        .getCoverage(rfcState, samplesSeq);
+        .getCoverage(shapesResolvers, rfcState, samplesSeq);
       try {
         const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
         console.log({ asJs });
@@ -150,7 +151,8 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
       if (!events || !samples) return err(notFoundErr());
 
-      const { rfcState } = queriesFromEvents(events);
+      const { rfcState, queries } = queriesFromEvents(events);
+      const shapesResolvers = queries.shapesResolvers();
 
       const interactions = JsonHelper.jsArrayToSeq(
         samples.map((sample) => JsonHelper.fromInteraction(sample))
@@ -160,7 +162,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
         samples,
         () => {}
       );
-      diffManager.updatedRfcState(rfcState);
+      diffManager.updatedRfcState(rfcState, shapesResolvers);
       const endpointDiffManager = diffManager.managerForPathAndMethod(
         pathId,
         httpMethod,
@@ -187,13 +189,14 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
       if (!events || !samples) return err(notFoundErr());
 
-      const { rfcState } = queriesFromEvents(events);
+      const { rfcState, queries } = queriesFromEvents(events);
+      const shapesResolvers = queries.shapesResolvers();
 
       const diffManager = DiffManagerFacade.newFromInteractions(
         samples,
         () => {}
       );
-      diffManager.updatedRfcState(rfcState);
+      diffManager.updatedRfcState(rfcState, shapesResolvers);
 
       const undocumentedUrlsSeq = diffManager.unmatchedUrls(true);
 
@@ -223,10 +226,8 @@ export function queriesFromEvents(events) {
   const eventStore = rfcServiceFacade.makeEventStore();
   const rfcId = 'testRfcId';
 
-  // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
-  // parse -> stringify -> parse
-  const stringifiedEvents = JSON.stringify(events);
-  eventStore.bulkAdd(rfcId, stringifiedEvents);
+  const eventsForScala = opticEngine.EventSerialization.fromJs(events);
+  eventStore.append(rfcId, eventsForScala);
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
   const queries = Queries(eventStore, rfcService, rfcId);
   const rfcState = rfcService.currentState(rfcId);

@@ -215,10 +215,6 @@ export function DiffCursor(props) {
     }
   }, [selectedDiff, diffCount]);
 
-  try {
-    console.log('diff ' + selectedDiff.diff);
-  } catch (e) {}
-
   const DiffItem = ({ diff, button }) => {
     return (
       <ListItem
@@ -383,10 +379,6 @@ function _NewRegions(props) {
     const shapePreview = getOrUndefined(
       diff.previewShape(currentInteraction, inferPolymorphism)
     );
-
-    console.log('shape preview' + currentInteraction);
-    console.log('shape preview', interactions);
-    console.log('shape preview' + shapePreview);
 
     return (
       <>

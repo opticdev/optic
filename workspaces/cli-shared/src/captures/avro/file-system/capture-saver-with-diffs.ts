@@ -7,15 +7,16 @@ import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import {
   diffFromRfcStateAndInteractions,
-  rfcStateFromEvents,
+  universeFromEvents,
 } from '@useoptic/domain-utilities';
-import { DiffHelpers, opticEngine } from '@useoptic/domain';
+import { DiffHelpers, opticEngine, Queries } from '@useoptic/domain';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private rfcState!: any;
+  private shapesResolvers!: any;
 
   constructor(
     config: IFileSystemCaptureLoaderConfig,
@@ -29,8 +30,14 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     //@GOTCHA: if the user updates the spec while the capture is live, the diff data will potentially be inaccurate
     const eventsString = await this.specServiceClient.listEvents();
     const events = JSON.parse(eventsString);
-    const rfcState = rfcStateFromEvents(events);
+    const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
+      events
+    );
+
+    const queries = Queries(eventStore, rfcService, rfcId);
+    const shapesResolvers = queries.shapesResolvers();
     this.rfcState = rfcState;
+    this.shapesResolvers = shapesResolvers;
     developerDebugLogger('built initial spec for diffing on the fly');
     await super.init();
   }
@@ -52,7 +59,11 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     const filteredItems = items.filter(
       (x) => !filter.shouldIgnore(x.request.method, x.request.path)
     );
-    const diffs = diffFromRfcStateAndInteractions(this.rfcState, items);
+    const diffs = diffFromRfcStateAndInteractions(
+      this.shapesResolvers,
+      this.rfcState,
+      items
+    );
     const distinctDiffCount = DiffHelpers.distinctDiffCount(diffs);
     const diffsAsJs = opticEngine.DiffJsonSerializer.toJs(diffs);
     developerDebugLogger({ distinctDiffCount });

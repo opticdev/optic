@@ -1,26 +1,23 @@
 package com.useoptic.contexts.rfc
 
-import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId}
-import com.useoptic.contexts.requests.projections.{AllEndpointsProjection, PathsWithRequestsProjection}
-import com.useoptic.contexts.requests.{PathComponent, RequestsState, Utilities}
+import com.useoptic.ddd._
+import com.useoptic.contexts.requests.Commands._
+import com.useoptic.contexts.requests.projections._
+import com.useoptic.contexts.requests._
 import com.useoptic.contexts.rfc.Events.RfcEvent
-import com.useoptic.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionsProjection, SetupState, SetupStateProjection}
-import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.rfc.projections.ContributionsProjection
+import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesState
-import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, FlatShapeResult, NameForShapeId, NamedShape, NamedShapes, TrailTags}
-import com.useoptic.ddd.{AggregateId, CachedProjection, EventStore}
+import com.useoptic.contexts.shapes.projections._
 import com.useoptic.diff.interactions.ShapeRelatedDiff
-import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
+import com.useoptic.diff.shapes._
+import com.useoptic.diff.shapes.resolvers.{CachingShapesResolvers, DefaultShapesResolvers, ShapesResolvers}
 import io.circe.Json
-import io.circe.generic.auto._
-import io.circe.syntax._
 
-import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
 class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
 
-  private def events = {
+  private def events: Vector[RfcEvent] = {
     eventStore.listEvents(aggregateId)
   }
 
@@ -49,23 +46,7 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
     Utilities.toAbsolutePath(pathId)
   }
 
-  private val namedShapesCache = new CachedProjection(NamedShapes, events)
-
-  def namedShapes: Map[ShapeId, NamedShape] = {
-    namedShapesCache.withEvents(events)
-  }
-
-  def complexityScore: String = {
-    ComplexityScoreProjection.calculate(pathsWithRequests, namedShapes)
-  }
-
-  private val apiNameCache = new CachedProjection(APINameProjection, events)
-
-  def apiName(): String = {
-    apiNameCache.withEvents(events)
-  }
-
-  def resolvePath(url: String) = {
+  def resolvePath(url: String): Option[PathComponentId] = {
     Utilities.resolvePath(url, requestsState.pathComponents)
   }
 
@@ -73,22 +54,27 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
     AllEndpointsProjection.fromRfcState(service.currentState(aggregateId))
   }
 
-  def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {
-    NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId).shapesState)
+  val rfcState = service.currentState(aggregateId)
+
+  val nameForShapeId = new NameForShapeId(shapesResolvers(), rfcState.shapesState)
+
+  def nameForShapeId(shapeId: ShapeId): Seq[ColoredComponent] = {
+    nameForShapeId.getShapeName(shapeId)()
   }
-  def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
-    NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
+
+  def nameForFieldId(fieldId: FieldId): Seq[ColoredComponent] = {
+    nameForShapeId.getFieldIdShapeName(fieldId)
   }
+
+
   def flatShapeForShapeId(shapeId: ShapeId, shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)): FlatShapeResult = {
-    FlatShapeProjection.forShapeId(shapeId, None, trailTags, shapeRelatedDiffs)(service.currentState(aggregateId).shapesState, revision = events.size)
+    nameForShapeId.flatShapeQueries.forShapeId(shapeId, None, trailTags, shapeRelatedDiffs)(revision = events.size)
   }
-  def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail]= TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty): FlatShapeResult = {
+
+  def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail] = TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty): FlatShapeResult = {
     ExampleProjection.fromJson(example, hash, trailTags, shapeRelatedDiffs)
   }
 
-  private val apiSetupCache = new CachedProjection(SetupStateProjection, events)
-  def setupState(): SetupState = {
-    apiSetupCache.withEvents(events)
-  }
+  def shapesResolvers(): ShapesResolvers = new CachingShapesResolvers(new DefaultShapesResolvers(rfcState))
 
 }

@@ -3,8 +3,9 @@ package com.useoptic.diff.shapes
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NullableKind, NumberKind, ObjectKind, OptionalKind, StringKind}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
-import com.useoptic.diff.shapes.Resolvers.ChoiceOutput
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers
+import com.useoptic.diff.shapes.resolvers.ShapesResolvers.ChoiceOutput
 import com.useoptic.types.capture.JsonLike
 
 abstract class JlasObjectVisitor {
@@ -87,7 +88,7 @@ class JsonLikeAndSpecDiffPrimitiveVisitor(emit: Function[ShapeDiffResult, Any], 
   }
 }
 
-class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasObjectVisitor {
+class JsonLikeAndSpecDiffObjectVisitor(resolvers: ShapesResolvers, spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasObjectVisitor {
 
   override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ObjectKeyChoiceCallback): Unit = {
     if (trailChoices.isEmpty) {
@@ -127,7 +128,7 @@ class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffR
               if (field.isRemoved) {
                 None
               } else {
-                val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
+                val (_, fieldShapeEntity) = resolvers.resolveFieldToShapeEntity(fieldId, Map.empty)
                 val shapeId = fieldShapeEntity.get.shapeId
                 Some(field.descriptor.name -> (fieldId, shapeId))
               }
@@ -138,7 +139,7 @@ class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffR
             case Some(x) => {
               val (fieldId, shapeId) = x
               val keyTrail = objectTrail.withChildren(ObjectFieldTrail(fieldId, shapeId))
-              val choices = Resolvers.listTrailChoices(spec, keyTrail, Map.empty)
+              val choices = resolvers.listTrailChoices(keyTrail, Map.empty)
               choices
             }
             case None => Seq.empty
@@ -152,7 +153,7 @@ class JsonLikeAndSpecDiffObjectVisitor(spec: RfcState, emit: Function[ShapeDiffR
   }
 }
 
-class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasArrayVisitor {
+class JsonLikeAndSpecDiffArrayVisitor(resolvers: ShapesResolvers, spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasArrayVisitor {
   override def visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq[ChoiceOutput], itemChoiceCallback: ArrayItemChoiceCallback): Unit = {
     if (trailChoices.isEmpty) {
       emit(UnspecifiedShape(jsonTrail, trailOrigin))
@@ -181,9 +182,9 @@ class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffRe
       choice.coreShapeKind match {
         case ListKind => {
           val listTrail = choice.shapeTrail()
-          Resolvers.resolveParameterToShape(spec.shapesState, choice.shapeId, ListKind.innerParam, Map.empty).map(listItem => {
+          resolvers.resolveParameterToShape(choice.shapeId, ListKind.innerParam, choice.bindings).map(listItem => {
             val listItemTrail = listTrail.withChild(ListItemTrail(choice.shapeId, listItem.shapeId))
-            val choices = Resolvers.listTrailChoices(spec, listItemTrail, Map.empty)
+            val choices = resolvers.listTrailChoices(listItemTrail, choice.bindings)
             choices
           }).getOrElse(Seq.empty)
         }
@@ -194,7 +195,7 @@ class JsonLikeAndSpecDiffArrayVisitor(spec: RfcState, emit: Function[ShapeDiffRe
   }
 }
 
-class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasObjectKeyVisitor {
+class JsonLikeAndSpecDiffObjectKeyVisitor(resolvers: ShapesResolvers, spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JlasObjectKeyVisitor {
   override def visit(objectJsonTrail: JsonTrail, objectKeys: Map[String, JsonLike], objectChoices: Seq[ChoiceOutput]): Unit = {
     objectChoices.foreach(choice => {
       choice.coreShapeKind match {
@@ -208,7 +209,7 @@ class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDi
               if (field.isRemoved) {
                 None
               } else {
-                val (_, fieldShapeEntity) = Resolvers.resolveFieldToShapeEntity(spec.shapesState, fieldId, Map.empty)
+                val (_, fieldShapeEntity) = resolvers.resolveFieldToShapeEntity(fieldId, Map.empty)
                 val shapeId = fieldShapeEntity.get.shapeId
                 Some(field.descriptor.name -> (fieldId, shapeId))
               }
@@ -219,7 +220,7 @@ class JsonLikeAndSpecDiffObjectKeyVisitor(spec: RfcState, emit: Function[ShapeDi
             if (!objectKeys.contains(key)) {
               val (fieldId, shapeId) = keyToField(key)
               val fieldTrail = objectTrail.withChild(ObjectFieldTrail(fieldId, shapeId))
-              val fieldCoreShape = Resolvers.resolveTrailToCoreShape(spec, fieldTrail, Map.empty)
+              val fieldCoreShape = resolvers.resolveTrailToCoreShape(fieldTrail, Map.empty)
               fieldCoreShape.coreShapeKind match {
                 case OptionalKind => {
                   // it's ok for optional things to be omitted
@@ -246,9 +247,9 @@ object Stuff {
   type ChoiceResolver = Function[ShapeTrail, Seq[ChoiceOutput]]
 }
 
-class JsonLikeAndSpecDiffVisitors(spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JsonLikeAndSpecVisitors {
+class JsonLikeAndSpecDiffVisitors(resolvers: ShapesResolvers, spec: RfcState, emit: Function[ShapeDiffResult, Any], markShapeTrailAsVisited: Function[ShapeTrail, Any]) extends JsonLikeAndSpecVisitors {
   override val primitiveVisitor: JlasPrimitiveVisitor = new JsonLikeAndSpecDiffPrimitiveVisitor(emit, markShapeTrailAsVisited)
-  override val arrayVisitor: JlasArrayVisitor = new JsonLikeAndSpecDiffArrayVisitor(spec, emit, markShapeTrailAsVisited)
-  override val objectVisitor: JlasObjectVisitor = new JsonLikeAndSpecDiffObjectVisitor(spec, emit, markShapeTrailAsVisited)
-  override val objectKeyVisitor: JlasObjectKeyVisitor = new JsonLikeAndSpecDiffObjectKeyVisitor(spec, emit, markShapeTrailAsVisited)
+  override val arrayVisitor: JlasArrayVisitor = new JsonLikeAndSpecDiffArrayVisitor(resolvers, spec, emit, markShapeTrailAsVisited)
+  override val objectVisitor: JlasObjectVisitor = new JsonLikeAndSpecDiffObjectVisitor(resolvers, spec, emit, markShapeTrailAsVisited)
+  override val objectKeyVisitor: JlasObjectKeyVisitor = new JsonLikeAndSpecDiffObjectKeyVisitor(resolvers, spec, emit, markShapeTrailAsVisited)
 }

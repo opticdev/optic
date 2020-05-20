@@ -142,6 +142,7 @@ async function createExampleSpecServiceFactory(data) {
       const serializedEvents = eventStore.serializeEvents(rfcId);
       events = serializedEvents;
       eventEmitter.emit('events-updated');
+      return Promise.resolve();
     },
     listExamples: (requestId) => {
       return Promise.resolve({ examples: examples[requestId] || [] });

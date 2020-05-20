@@ -302,10 +302,10 @@ function CaptureDiffWrapper(props) {
   const history = useHistory();
   const [alphabetize, setAlphabetize] = useState(true);
   const { ignoredDiffs } = useContext(IgnoreDiffContext);
-  const { rfcService, rfcId } = useContext(RfcContext);
+  const { rfcService, rfcId, queries } = useContext(RfcContext);
   const rfcState = rfcService.currentState(rfcId);
+  const shapesResolvers = queries.shapesResolvers();
   const { captures } = useContext(AllCapturesContext);
-
   if (captures.length === 0) {
     return empty;
   }
@@ -321,7 +321,7 @@ function CaptureDiffWrapper(props) {
       >
         <TrafficSessionContext.Consumer>
           {({ diffManager }) => {
-            diffManager.updatedRfcState(rfcState);
+            diffManager.updatedRfcState(rfcState, shapesResolvers);
 
             const ignoredAsSeq = JsonHelper.jsArrayToSeq(ignoredDiffs);
             const stats = diffManager.stats(ignoredAsSeq);

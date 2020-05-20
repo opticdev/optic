@@ -1,7 +1,7 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import compose from 'lodash.compose';
-import { DiffManagerFacade, getOrUndefinedJson } from '@useoptic/domain';
+import { DiffManagerFacade } from '@useoptic/domain';
 
 const {
   Context: TrafficSessionContext,
@@ -45,22 +45,15 @@ class TrafficSessionStoreBase extends React.Component {
           error: null,
           noSession: false,
         });
-        this.checkForUpdates();
-
-        window.getOrUndefinedJson = getOrUndefinedJson;
-
-        console.log('LOOK HERE ', session.samples);
-
-        const parsed = DiffManagerFacade.updateInteractions(
+        DiffManagerFacade.updateInteractions(
           session.samples,
           this.state.diffManager
         );
 
-        console.log('LOOK HERE ', parsed);
+        this.checkForUpdates();
       })
       .catch((e) => {
         console.error(e);
-        // debugger;
         this.setState({
           isLoading: false,
           error: e,
@@ -103,9 +96,7 @@ class TrafficSessionStoreBase extends React.Component {
           this.checkForUpdates();
         }
       } catch (e) {
-        // debugger;
         console.error(e);
-        //@GOTCHA: server will throw a 400 if capture is no longer active. could change this behavior in server or just update ui state
       }
     }, 1000);
   }

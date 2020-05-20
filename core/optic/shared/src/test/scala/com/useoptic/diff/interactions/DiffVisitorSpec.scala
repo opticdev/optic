@@ -10,6 +10,7 @@ import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes._
+import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.types.capture._
 import io.circe.literal._
 import org.scalatest.FunSpec
@@ -48,6 +49,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching spec path") {
         it("should yield UnmatchedUrl diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+          val resolvers = new DefaultShapesResolvers(spec)
 
           println(spec.requestsState.responses)
           val interaction: HttpInteraction = HttpInteraction(
@@ -58,7 +60,7 @@ class DiffVisitorSpec extends FunSpec {
           )
 
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(UnmatchedRequestUrl(InteractionTrail(Seq()), SpecRoot())))
@@ -67,6 +69,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching any specified method or status Code") {
         it("should yield UnmatchedRequestBodyContentType and UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+          val resolvers = new DefaultShapesResolvers(spec)
 
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -75,7 +78,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
@@ -93,6 +96,8 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching content type") {
         it("should yield UnmatchedRequestContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+          val resolvers = new DefaultShapesResolvers(spec)
+
 
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -101,7 +106,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
@@ -112,6 +117,8 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching body") {
         it("should yield UnmatchedRequestBody diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+          val resolvers = new DefaultShapesResolvers(spec)
+
 
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -120,7 +127,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
@@ -138,6 +145,8 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching response status code") {
         it("should yield UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
+          val resolvers = new DefaultShapesResolvers(spec)
+
 
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -146,7 +155,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
@@ -163,6 +172,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands ++ Seq(
             SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape.rootShapeId, isRemoved = false))
           ))
+          val resolvers = new DefaultShapesResolvers(spec)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
@@ -170,7 +181,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
@@ -187,6 +198,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands ++ Seq(
             SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape.rootShapeId, isRemoved = false))
           ))
+          val resolvers = new DefaultShapesResolvers(spec)
+
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
@@ -194,7 +207,7 @@ class DiffVisitorSpec extends FunSpec {
             Vector()
           )
           val diffs = scala.collection.mutable.ListBuffer[InteractionDiffResult]()
-          val visitors = new DiffVisitors((e) => diffs.append(e))
+          val visitors = new DiffVisitors(resolvers, (e) => diffs.append(e))
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
