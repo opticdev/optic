@@ -51,5 +51,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        msg: Try the CLI version using yarn global add \`@useoptic/cli@0.1.0-pr-build-$GITHUB_RUN_ID\`
+        msg: Try the CLI version using yarn global add \`@useoptic/cli@0.1.0-pr-build-${{GITHUB_RUN_ID}}\`
         check_for_duplicate_msg: false
