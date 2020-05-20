@@ -5,8 +5,8 @@
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo cli-client"
   },
-  "repository" : {
-    "type" : "git",
+  "repository": {
+    "type": "git",
     "url": "ssh://git@github.com/opticdev/optic.git",
     "directory": "workspaces/cli-client"
   },

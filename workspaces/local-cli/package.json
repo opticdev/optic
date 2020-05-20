@@ -75,8 +75,8 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository" : {
-    "type" : "git",
+  "repository": {
+    "type": "git",
     "url": "ssh://git@github.com/opticdev/optic.git",
     "directory": "workspaces/local-cli"
   },
