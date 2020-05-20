@@ -215,10 +215,6 @@ export function DiffCursor(props) {
     }
   }, [selectedDiff, diffCount]);
 
-  try {
-    console.log('diff ' + selectedDiff.diff);
-  } catch (e) {}
-
   const DiffItem = ({ diff, button }) => {
     return (
       <ListItem

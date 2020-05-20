@@ -85,7 +85,6 @@ object DistributionAwareShapeBuilder {
           commands.appendInit(AddShape(s.id, OneOfKind.baseShapeId, ""))
         }
         case s: ListOfShape => {
-          println(s)
           buildCommandsFor(s.shape, Some(s))
           commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
           commands.appendDescribe(SetParameterShape(

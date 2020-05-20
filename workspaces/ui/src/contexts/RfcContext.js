@@ -78,24 +78,13 @@ function BaseRfcStore(props) {
   const [updateCount, setUpdateCount] = useState(0);
   const { initialCommandsString, initialEventsString, rfcId } = initialRfcInput;
 
-  console.log({ updateCount });
-
   useEffect(
     function () {
       try {
         const eventStore = Facade.makeEventStore();
         global.eventStore = eventStore;
         if (initialEventsString) {
-          const markerNameStart = 'rfcContextAddEventsStart';
-          const markerNameStop = 'rfcContextAddEventsStop';
-          //performance.mark(markerNameStart);
           eventStore.bulkAdd(rfcId, initialEventsString);
-          //performance.mark(markerNameStop);
-          // performance.measure(
-          //   'rfcContextAddEvents',
-          //   markerNameStart,
-          //   markerNameStop
-          // );
         }
         const batchId = 'initial-batch';
         const commandContext = new RfcCommandContext(

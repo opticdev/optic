@@ -179,7 +179,6 @@ function _DiffPageContent(props) {
     specContext.applyCommands(
       jsonHelper.jsArrayToVector([EndBatchCommit(batchId)])
     );
-    console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
     await specService.saveEvents(newEventStore, rfcId);
     history.push(`${baseUrl}/diffs/${captureId}`);
   }
@@ -264,8 +263,6 @@ function SuggestionsStore({ children }) {
   const resetAccepted = () => {
     setAcceptedSuggestions([]);
   };
-
-  console.log('preview it ' + suggestionToPreview);
 
   const context = {
     suggestionToPreview,
@@ -421,7 +418,6 @@ class _CaptureSessionInlineContext extends React.Component {
                   .map((x) => jsonHelper.seqToJsArray(x.commands))
                   .reduce(flatten, []);
                 console.log({
-                  xxx: 'xxx',
                   suggestionToPreview,
                   acceptedSuggestions,
                 });

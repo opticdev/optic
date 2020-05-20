@@ -12,7 +12,6 @@ class ShapeTraverser(resolvers: ShapesResolvers, spec: RfcState, visitors: Shape
 
   def traverse(shapeId: ShapeId, shapeTrail: ShapeTrail): Unit = {
     val shapeEntityOption = Try(spec.shapesState.flattenedShape(shapeId)).toOption
-    println(shapeEntityOption)
 
     if (shapeEntityOption.isDefined) {
       val shapeEntity = shapeEntityOption.get

@@ -182,13 +182,9 @@ class JsonLikeAndSpecDiffArrayVisitor(resolvers: ShapesResolvers, spec: RfcState
       choice.coreShapeKind match {
         case ListKind => {
           val listTrail = choice.shapeTrail()
-          println("xxx")
-          println(choice.bindings)
           resolvers.resolveParameterToShape(choice.shapeId, ListKind.innerParam, choice.bindings).map(listItem => {
             val listItemTrail = listTrail.withChild(ListItemTrail(choice.shapeId, listItem.shapeId))
             val choices = resolvers.listTrailChoices(listItemTrail, choice.bindings)
-            println("yyy")
-            choices.foreach(println)
             choices
           }).getOrElse(Seq.empty)
         }

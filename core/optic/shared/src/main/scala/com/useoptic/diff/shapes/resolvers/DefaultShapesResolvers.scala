@@ -12,8 +12,6 @@ class DefaultShapesResolvers(spec: RfcState) extends ShapesResolvers {
     val rootShape = spec.shapesState.shapes(trail.rootShapeId)
     //@GOTCHA: might need to resolve rootShape to its lowest baseShapeId
     val rootShapeCoreShape = toCoreShape(rootShape, spec.shapesState)
-    println("bbb")
-    println(bindings)
     var resolved: ResolvedTrail = ResolvedTrail(rootShape, rootShapeCoreShape, bindings)
     for (pathComponent <- trail.path) {
       resolved = resolveTrailPath(resolved, pathComponent)
@@ -75,8 +73,6 @@ class DefaultShapesResolvers(spec: RfcState) extends ShapesResolvers {
 
   val resolveTrailPath: (ResolvedTrail, ShapeTrailPathComponent) => ResolvedTrail = (parent: ResolvedTrail, pathComponent: ShapeTrailPathComponent) => {
     val shapesState = spec.shapesState
-    println("ccc")
-    println(parent.coreShapeKind, parent.shapeEntity.shapeId)
     parent.coreShapeKind match {
       case NullableKind => {
         pathComponent match {
