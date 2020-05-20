@@ -5,6 +5,12 @@
     "ws:test": "echo proxy",
     "ws:build": "yarn run tsc -b --verbose"
   },
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/proxy"
+  },
+
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {

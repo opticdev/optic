@@ -1,14 +1,19 @@
 {
   "name": "@useoptic/domain",
-  "version": "8.0.7",
+  "version": "8.0.6",
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/domain"
+  },
   "scripts": {
     "ws:test": "echo domain",
-    "ws:build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js"
+    "ws:build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js && cp -R ./src/domain-types/avro-schemas/ ./build/domain-types/avro-schemas",
+    "ws:debug-test": "node --inspect-brk ../../node_modules/.bin/jest --runInBand .test.js"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "dependencies": {
-  },
+  "dependencies": {},
   "files": [
     "/build"
   ]

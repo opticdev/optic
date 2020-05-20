@@ -5,6 +5,11 @@
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose"
   },
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/cli-config"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {

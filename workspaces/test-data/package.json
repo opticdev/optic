@@ -7,6 +7,11 @@
     "test": "yarn run ws:build && jest --testPathPattern=build/__test",
     "generate": "yarn run ws:build && node build/index.js"
   },
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/test-data"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {

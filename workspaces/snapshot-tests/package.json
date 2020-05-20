@@ -5,6 +5,11 @@
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo snapshot-tests"
   },
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/snapshot-tests"
+  },
   "dependencies": {
     "@useoptic/domain-types": "8.0.7",
     "@useoptic/domain": "8.0.7",

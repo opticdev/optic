@@ -75,7 +75,11 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic",
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/opticdev/optic.git",
+    "directory": "workspaces/local-cli"
+  },
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
