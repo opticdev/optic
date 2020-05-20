@@ -47,9 +47,9 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{secrets.PUBLISH_GITHUB_TOKEN}}
     - name: comment PR
-        uses: unsplash/comment-on-pr@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          msg: "Try the CLI version using: \n ```\nyarn global add @useoptic/cli@0.0.0-pr-build-${{$GITHUB_RUN_ID}}\n```"
-          check_for_duplicate_msg: false
+      uses: unsplash/comment-on-pr@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: "Try the CLI version using: \n ```\nyarn global add @useoptic/cli@0.0.0-pr-build-${{$GITHUB_RUN_ID}}\n```"
+        check_for_duplicate_msg: false
