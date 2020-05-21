@@ -5,6 +5,11 @@
     "ws:build": "yarn run tsc -b --verbose",
     "ws:test": "echo cli-shared"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/cli-shared"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {

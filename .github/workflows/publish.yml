@@ -1,0 +1,55 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publish to GitHub
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  push:
+    branches: [ 'develop' ]
+  pull_request:
+    branches: [ 'develop' ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: "checkout source"
+      uses: actions/checkout@v2
+    - name: "Set up JDK 1.8"
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: "set up node.js"
+      uses: actions/setup-node@v1
+      with:
+        node-version: "12.x"
+        registry-url: https://npm.pkg.github.com/useoptic
+        scope: "@useoptic"
+    - name: "intial yarn install"
+      run: yarn install
+    - name: "change versions"
+      run: yarn run bump "0.1.0-pr.$GITHUB_RUN_ID"
+    - name: "yarn install, post version changes"
+      run: yarn install
+    - name: "build domain"
+      run: yarn run build-domain
+    - name: "build workspaces"
+      run: yarn wsrun --stages --report --fast-exit ws:build
+    - name: "publish to github"
+      run: OPTIC_PUBLISH_SCOPE=github node ./workspaces/scripts/publish.js
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.PUBLISH_GITHUB_TOKEN}}
+    - name: comment PR
+      uses: unsplash/comment-on-pr@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: Try the CLI version using `yarn global add @useoptic/cli@0.1.0-pr.${{github.run_id}}`
+        check_for_duplicate_msg: false

@@ -6,6 +6,11 @@
   "bin": {
     "api": "./bin/run"
   },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/local-cli"
+  },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
     "@oclif/command": "^1",
@@ -75,7 +80,6 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",

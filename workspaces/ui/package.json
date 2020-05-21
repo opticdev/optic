@@ -6,6 +6,11 @@
     "index.js",
     "index.d.ts"
   ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/ui"
+  },
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
@@ -76,7 +81,7 @@
     "build-storybook": "build-storybook -s public",
     "ws:build": "echo building ui",
     "ws:test": "echo ui",
-    "prepare": "yarn run build-local"
+    "prepare": "CI='' yarn run build-local"
   },
   "eslintConfig": {
     "extends": "react-app"
