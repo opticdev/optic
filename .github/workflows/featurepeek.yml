@@ -23,6 +23,6 @@ jobs:
     - name: Install dependencies
       run: yarn install
     - name: Build
-      run: yarn run build-ui
+      run:  cd workspaces/ui && yarn run build-local
     - name: Ping FeaturePeek
       run: bash <(curl -s https://peek.run/ci)
