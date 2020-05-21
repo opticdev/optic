@@ -1,0 +1,23 @@
+
+name: Build and ping FeaturePeek
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use node 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Docker login
+      run: docker login -u opticdev -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
+    - name: Build and push image
+      run: |
+        docker build -t docker.pkg.github.com/opticdev/optic/frontend:latest .
+        docker push docker.pkg.github.com/opticdev/optic/frontend:latest
+    - name: Ping FeaturePeek
+      run: bash <(curl -s https://peek.run/ci) -p docker.pkg.github.com/opticdev/optic/frontend:latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
