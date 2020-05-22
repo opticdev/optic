@@ -13,8 +13,7 @@
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
-  "dependencies": {
-  },
+  "dependencies": {},
   "files": [
     "/build"
   ]
