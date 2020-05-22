@@ -4,12 +4,15 @@ export OPTIC_SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &
 echo "Optic development scripts will run from $OPTIC_SRC_DIR"
 alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_UI_HOST=http://localhost:3000 OPTIC_AUTH_UI_HOST=http://localhost:4005 $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
-WS_BUILD="yarn wsrun --stages --report --fast-exit ws:build && sh ./workspace-scripts/build/on-success.sh || sh ./workspace-scripts/build/on-failure.sh"
-alias watch-optic="cd $OPTIC_SRC_DIR && yarn run watch --filter=workspace-scripts/watch-filter.js \"$WS_BUILD\""
 alias rescue-optic="rm -rf ~/.optic/daemon-lock.json.lock/ ~/.optic/daemon-lock.json"
 alias publish-optic-locally="cd $OPTIC_SRC_DIR && yarn run registry:clean-optic && yarn run registry:start-background && yarn run publish-local"
 alias install-optic-from-local-registry="YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873"
 
+watch-optic() {
+  cd "$OPTIC_SRC_DIR"
+  yarn wsrun --stages --report --fast-exit ws:clean
+  yarn run watch --filter=workspace-scripts/watch-filter.js "yarn wsrun --stages --report --fast-exit ws:build && sh ./workspace-scripts/build/on-success.sh || sh ./workspace-scripts/build/on-failure.sh"
+}
 check-ws() {
 	yarn workspaces info | sed -e '2,$!d' -e '$d' | jq -r 'keys[] as $k | "\($k): \(.[$k].mismatchedWorkspaceDependencies)"'
 }
