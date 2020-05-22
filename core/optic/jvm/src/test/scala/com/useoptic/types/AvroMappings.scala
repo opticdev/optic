@@ -2,7 +2,7 @@ package com.useoptic.types
 
 import better.files.File
 import com.sksamuel.avro4s.AvroSchema
-import com.useoptic.types.capture.Capture
+import com.useoptic.types.capture.InteractionBatch
 import org.apache.avro.Schema
 
 object AvroMappings {
@@ -12,7 +12,7 @@ object AvroMappings {
     out.createIfNotExists(asDirectory = true)
     out.children.foreach(_.delete(true))
     // Add to this List
-    writeSchema("capture.json", AvroSchema[Capture])
+    writeSchema("interaction-batch.json", AvroSchema[InteractionBatch])
   }
 
   def writeSchema(fileName: String, schema: Schema) = {

@@ -3,6 +3,7 @@
   "version": "8.0.7",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
+    "ws:clean": "rm -rf build/*",
     "ws:test": "echo cli-server"
   },
   "repository": {

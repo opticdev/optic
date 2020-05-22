@@ -80,6 +80,7 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "ws:build": "echo building ui",
+    "ws:clean": "rm -rf build/*",
     "ws:test": "echo ui",
     "prepare": "CI='' yarn run build-local"
   },

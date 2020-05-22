@@ -3,7 +3,8 @@
   "version": "8.0.7",
   "scripts": {
     "ws:test": "echo domain-utilities",
-    "ws:build": "yarn run tsc -b --verbose"
+    "ws:build": "yarn run tsc -b --verbose",
+    "ws:clean": "rm -rf build/*"
   },
   "repository": {
     "type": "git",
