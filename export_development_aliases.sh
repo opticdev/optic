@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # usage: $ source ./export_development_aliases.sh
-export OPTIC_SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export OPTIC_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 echo "Optic development scripts will run from $OPTIC_SRC_DIR"
 alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_UI_HOST=http://localhost:3000 OPTIC_AUTH_UI_HOST=http://localhost:4005 $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
@@ -14,7 +14,7 @@ watch-optic() {
   yarn run watch --filter=workspace-scripts/watch-filter.js "yarn wsrun --stages --report --fast-exit ws:build && sh ./workspace-scripts/build/on-success.sh || sh ./workspace-scripts/build/on-failure.sh"
 }
 check-ws() {
-	yarn workspaces info | sed -e '2,$!d' -e '$d' | jq -r 'keys[] as $k | "\($k): \(.[$k].mismatchedWorkspaceDependencies)"'
+  yarn workspaces info | sed -e '2,$!d' -e '$d' | jq -r 'keys[] as $k | "\($k): \(.[$k].mismatchedWorkspaceDependencies)"'
 }
 alias check-workspace-dependencies="check-ws"
 show-ws-versions() {
@@ -22,23 +22,29 @@ show-ws-versions() {
 }
 alias wsinfo="show-ws-versions"
 search-ws() {
-	find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
+  find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
 }
 
+install-and-publish() {
+  cd "$OPTIC_SRC_DIR"
+
+  yarn install
+  yarn run build-domain
+  yarn wsrun --stages --report --fast-exit ws:clean
+  yarn wsrun --stages --report --fast-exit ws:build
+
+  publish-optic-locally
+}
 install-local() {
-  if [[ -z "$1" ]]
-  then
+  cd "$OPTIC_SRC_DIR"
+  if [[ -z "$1" ]]; then
     echo "No version provided"
     exit 1
   fi
 
   yarn run bump "$1"
 
-  yarn install
-  yarn run build-domain
-  yarn wsrun --stages --report --fast-exit ws:build
-
-  publish-optic-locally
+  install-and-publish
   install-optic-from-local-registry
 }
 alias install-local="install-local"
