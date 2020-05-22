@@ -30,7 +30,9 @@
     "workspaces/cli-scripts",
     "workspaces/cli-server",
     "workspaces/test-data",
-    "workspaces/local-cli"
+    "workspaces/local-cli",
+    "workspaces/agent-cli",
+    "workspaces/ci-cli"
   ],
   "devDependencies": {
     "@types/debug": "^4.1.5",
