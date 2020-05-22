@@ -38,7 +38,7 @@ lazy val optic =
       }
     ) // defined in sbt-scalajs-crossproject
     .jvmSettings(
-      typescriptClassesToGenerateFor := Seq("com.useoptic.types.capture.Capture"),
+      typescriptClassesToGenerateFor := Seq("com.useoptic.types.capture.InteractionBatch"),
       // The output file which will contain the typescript interfaces
       typescriptOutputFile := new java.io.File("build/optic-types.ts"),
       // Include the package(s) of the classes here

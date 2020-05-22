@@ -6,7 +6,7 @@ import io.circe.Json
 
 import scala.scalajs.js.annotation.JSExportAll
 
-case class Capture(groupingIdentifiers: GroupingIdentifiers, batchItems: Vector[HttpInteraction])
+case class InteractionBatch(groupingIdentifiers: GroupingIdentifiers, batchItems: Vector[HttpInteraction])
 
 case class GroupingIdentifiers(agentGroupId: String,
                                captureId: String,

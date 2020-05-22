@@ -43,7 +43,7 @@ export interface IRequest {
   body: IBody;
 }
 
-export interface ICapture {
+export interface IInteractionBatch {
   groupingIdentifiers: IGroupingIdentifiers;
   batchItems: IHttpInteraction[];
 }

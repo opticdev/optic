@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as avro from 'avsc';
 import * as uuid from 'uuid';
 import {
-  ICapture,
+  IInteractionBatch,
   IGroupingIdentifiers,
   IHttpInteraction,
 } from '@useoptic/domain-types';
@@ -67,7 +67,7 @@ export class CaptureSaver implements ICaptureSaver {
       outputDirectory,
       `${batchId}${captureFileSuffix}`
     );
-    const output: ICapture = {
+    const output: IInteractionBatch = {
       groupingIdentifiers,
       batchItems: items,
     };

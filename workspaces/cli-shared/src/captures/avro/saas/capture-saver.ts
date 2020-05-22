@@ -1,5 +1,5 @@
 import { Client as SaasClient } from '@useoptic/saas-client';
-import { ICapture, IHttpInteraction } from '@useoptic/domain-types';
+import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import Bottleneck from 'bottleneck';
 import { developerDebugLogger, ICaptureSaver } from '../../../index';
 import { serdes } from '../index';
@@ -64,7 +64,7 @@ class CaptureSaver implements ICaptureSaver {
       batchId
     );
 
-    const input: ICapture = {
+    const input: IInteractionBatch = {
       groupingIdentifiers: {
         agentGroupId,
         captureId,

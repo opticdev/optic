@@ -7,7 +7,7 @@ import { IIgnoreRunnable } from '@useoptic/cli-config';
 import { captureFileSuffix } from './index';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { ICapture, IHttpInteraction } from '@useoptic/domain-types';
+import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import * as avro from 'avsc';
 
 export interface IFileSystemCaptureLoaderConfig {
@@ -43,12 +43,12 @@ export class CaptureLoader implements ICaptureLoader {
     const captureId = this.config.captureId;
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
-    const entriesContents: ICapture[] = await Promise.all(
+    const entriesContents: IInteractionBatch[] = await Promise.all(
       captureFiles.map((x) => {
         const decoder = avro.createFileDecoder(x);
 
-        return new Promise<ICapture>((resolve, reject) => {
-          decoder.once('data', (contents: ICapture) => {
+        return new Promise<IInteractionBatch>((resolve, reject) => {
+          decoder.once('data', (contents: IInteractionBatch) => {
             resolve(contents);
           });
           decoder.once('error', (err) => reject(err));
@@ -56,7 +56,7 @@ export class CaptureLoader implements ICaptureLoader {
       })
     );
     const allSamples = entriesContents.reduce(
-      (acc: IHttpInteraction[], capture: ICapture) => [
+      (acc: IHttpInteraction[], capture: IInteractionBatch) => [
         ...acc,
         ...capture.batchItems,
       ],
@@ -71,12 +71,12 @@ export class CaptureLoader implements ICaptureLoader {
     const captureId = this.config.captureId;
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
-    const entriesContents: ICapture[] = await Promise.all(
+    const entriesContents: IInteractionBatch[] = await Promise.all(
       captureFiles.map((x) => {
         const decoder = avro.createFileDecoder(x);
 
-        return new Promise<ICapture>((resolve, reject) => {
-          decoder.once('data', (contents: ICapture) => {
+        return new Promise<IInteractionBatch>((resolve, reject) => {
+          decoder.once('data', (contents: IInteractionBatch) => {
             resolve(contents);
           });
           decoder.once('error', (err) => reject(err));
@@ -84,7 +84,7 @@ export class CaptureLoader implements ICaptureLoader {
       })
     );
     const filteredSamples = entriesContents.reduce(
-      (acc: IHttpInteraction[], capture: ICapture) => {
+      (acc: IHttpInteraction[], capture: IInteractionBatch) => {
         const filteredEntrySamples = capture.batchItems.filter(
           (x: IHttpInteraction) => {
             return !filter.shouldIgnore(x.request.method, x.request.path);

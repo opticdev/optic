@@ -51,7 +51,7 @@ export interface IRequest {
 }
        
 
-export interface ICapture {
+export interface IInteractionBatch {
   groupingIdentifiers: IGroupingIdentifiers
   batchItems: IHttpInteraction[]
 }

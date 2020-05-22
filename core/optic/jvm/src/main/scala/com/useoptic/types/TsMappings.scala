@@ -1,6 +1,6 @@
 package com.useoptic.types
 
-import com.useoptic.types.capture.{ArbitraryData, Body, Capture, GroupingIdentifiers, HttpInteraction, HttpInteractionTag, Request, Response}
+import com.useoptic.types.capture.{ArbitraryData, Body, InteractionBatch, GroupingIdentifiers, HttpInteraction, HttpInteractionTag, Request, Response}
 import io.circe.Json
 import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._
@@ -28,5 +28,5 @@ object MyTSTypes extends DefaultTSTypes {
   implicit val tsRequest = TSType.fromCaseClass[Request]
   implicit val tsInteraction = TSType.fromCaseClass[HttpInteraction]
   implicit val tsGrouping = TSType.fromCaseClass[GroupingIdentifiers]
-  implicit val tsCapture = TSType.fromCaseClass[Capture]
+  implicit val tsCapture = TSType.fromCaseClass[InteractionBatch]
 }
