@@ -19,7 +19,7 @@ const analytics = new Analytics(token, {
   flushAt: 1,
 });
 
-export async function getUser() {
+export async function getUser(): Promise<IUser | null> {
   return new Promise<IUser | null>(async (resolve, reject) => {
     const credentials = await getCredentials();
     if (credentials) {

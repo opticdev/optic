@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "8.0.7",
+  "version": "8.0.8",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,12 +14,12 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/domain": "8.0.7",
-    "@useoptic/domain-types": "8.0.7",
-    "@useoptic/cli-config": "8.0.7",
-    "@useoptic/domain-utilities": "8.0.7",
-    "@useoptic/saas-client": "8.0.7",
-    "@useoptic/cli-client": "8.0.7",
+    "@useoptic/domain": "8.0.8",
+    "@useoptic/domain-types": "8.0.8",
+    "@useoptic/cli-config": "8.0.8",
+    "@useoptic/domain-utilities": "8.0.8",
+    "@useoptic/saas-client": "8.0.8",
+    "@useoptic/cli-client": "8.0.8",
     "@oclif/command": "^1.6.1",
     "avsc": "^5.4.21",
     "bottleneck": "^2.19.5",

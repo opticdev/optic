@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/saas-client",
-  "version": "8.0.7",
+  "version": "8.0.8",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,7 +14,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/client-utilities": "8.0.7"
+    "@useoptic/client-utilities": "8.0.8"
   },
   "devDependencies": {},
   "files": [
