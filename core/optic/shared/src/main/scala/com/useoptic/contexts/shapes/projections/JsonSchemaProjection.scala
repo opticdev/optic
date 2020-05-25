@@ -42,7 +42,9 @@ class JsonSchemaProjection(queries: InMemoryQueries, shapeId: String) {
           }
           fieldName -> fieldShape
         }
-        schema.addRequired(required.toList)
+        if (required.nonEmpty) {
+          schema.addRequired(required.toList)
+        }
         schema.addProperties(fields)
       }
 

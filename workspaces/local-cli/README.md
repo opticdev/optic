@@ -19,7 +19,7 @@ $ npm install -g @useoptic/cli
 $ api COMMAND
 running command...
 $ api (-v|--version|version)
-@useoptic/cli/8.0.7 darwin-x64 node-v12.16.2
+@useoptic/cli/8.0.7 darwin-x64 node-v12.4.0
 $ api --help [COMMAND]
 USAGE
   $ api COMMAND
