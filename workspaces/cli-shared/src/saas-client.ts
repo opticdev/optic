@@ -3,29 +3,28 @@ import { JsonHttpClient } from '@useoptic/client-utilities';
 class Client {
   private readonly defaultAdditionalHeaders: Record<string, string>;
 
-  constructor(private baseUrl: string, private launchToken: string) {
-    //@TODO make this actually a jwt
-    console.log({ launchToken });
-    this.defaultAdditionalHeaders = {
-      Authorization: `Bearer ${this.launchToken}`,
-    };
+  constructor(private baseUrl: string, private readonly authToken?: string) {
+    this.defaultAdditionalHeaders = {};
+  }
+
+  private defaultHeaders({ auth = true } = {}) {
+    const headers = { ...this.defaultAdditionalHeaders };
+
+    if (auth) {
+      headers.Authorization = `Bearer ${this.authToken}`;
+    }
+
+    return headers;
   }
 
   async getSpecUploadUrl() {
     const url = `${this.baseUrl}/spec-uploads`;
-    console.log({ url });
-    return JsonHttpClient.postJsonWithoutBody(
-      url,
-      this.defaultAdditionalHeaders
-    );
+    return JsonHttpClient.postJsonWithoutBody(url, this.defaultHeaders());
   }
 
   async getCaptureUploadUrl(agentId: string, batchId: string) {
     const url = `${this.baseUrl}/capture-uploads/agents/${agentId}/batches/${batchId}`;
-    return JsonHttpClient.postJsonWithoutBody(
-      url,
-      this.defaultAdditionalHeaders
-    );
+    return JsonHttpClient.postJsonWithoutBody(url, this.defaultHeaders());
   }
 
   uploadCapture(uploadUrl: string, bytes: Buffer) {
