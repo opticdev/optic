@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ui",
-  "version": "8.0.8",
+  "version": "8.0.7",
   "files": [
     "build",
     "index.js",
@@ -20,9 +20,9 @@
     "@types/react-dom": "^16.9.6",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
-    "@useoptic/cli-client": "8.0.8",
-    "@useoptic/domain": "8.0.8",
-    "@useoptic/domain-utilities": "8.0.8",
+    "@useoptic/cli-client": "8.0.7",
+    "@useoptic/domain": "8.0.7",
+    "@useoptic/domain-utilities": "8.0.7",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
