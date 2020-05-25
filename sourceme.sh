@@ -42,7 +42,8 @@ install-and-publish() {
   (
     set -o errexit
     optic-install
-    publish-optic-locally
+    cd "$OPTIC_SRC_DIR"
+    yarn run publish-local
   )
 }
 install-local() {
