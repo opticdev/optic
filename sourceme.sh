@@ -8,7 +8,7 @@ alias rescue-optic="rm -rf ~/.optic/daemon-lock.json.lock/ ~/.optic/daemon-lock.
 alias publish-optic-locally="cd $OPTIC_SRC_DIR && yarn run registry:clean-optic && yarn run registry:start-background && yarn run publish-local"
 alias install-optic-from-local-registry="YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873"
 
-watch-optic() {
+optic-watch() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
@@ -27,7 +27,7 @@ alias wsinfo="show-ws-versions"
 search-ws() {
   find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
 }
-optic-install() {
+optic-build() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
@@ -38,7 +38,7 @@ optic-install() {
     yarn wsrun --stages --report --fast-exit ws:build
   )
 }
-install-and-publish() {
+optic-build-and-publish-locally() {
   (
     set -o errexit
     optic-install
@@ -46,7 +46,7 @@ install-and-publish() {
     yarn run publish-local
   )
 }
-install-local() {
+optic-install-from-local-registry() {
   cd "$OPTIC_SRC_DIR"
   if [[ -z "$1" ]]; then
     echo "No version provided"
@@ -61,5 +61,5 @@ install-local() {
     install-optic-from-local-registry
   )
 }
-alias install-local="install-local"
+alias optic-install-from-local-registry="optic-install-from-local-registry"
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start
