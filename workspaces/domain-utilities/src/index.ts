@@ -21,6 +21,12 @@ export function universeFromEvents(events: any[]) {
   };
 }
 
+export function cachingResolversAndRfcStateFromEvents(events: any[]) {
+  const { rfcState } = universeFromEvents(events);
+  const resolvers = opticEngine.ShapesResolvers.newCachingResolver(rfcState);
+  return { resolvers, rfcState };
+}
+
 export function rfcStateFromEvents(events: any[]) {
   const { rfcState } = universeFromEvents(events);
   return rfcState;
@@ -32,6 +38,17 @@ export function reportFromEventsAndInteractions(
   interactions: any[]
 ) {
   const rfcState = rfcStateFromEvents(events);
+  const report = opticEngine.com.useoptic.diff.helpers
+    .CoverageHelpers()
+    .getCoverage(shapesResolvers, rfcState, interactions);
+  return report;
+}
+
+export function reportFromRfcStateAndInteractions(
+  shapesResolvers: any,
+  rfcState: any,
+  interactions: any[]
+) {
   const report = opticEngine.com.useoptic.diff.helpers
     .CoverageHelpers()
     .getCoverage(shapesResolvers, rfcState, interactions);
