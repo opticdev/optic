@@ -23,7 +23,6 @@
     "@useoptic/cli-shared": "8.0.7",
     "@useoptic/proxy": "8.0.7",
     "@useoptic/domain": "8.0.7",
-    "@useoptic/saas-client": "8.0.7",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",

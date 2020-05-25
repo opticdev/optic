@@ -14,6 +14,10 @@ import { Command } from '@oclif/command';
 export { Command };
 ////////////////////////////////////////////////////////////////////////////////
 
+export { Client as SaasClient } from './saas-client';
+
+////////////////////////////////////////////////////////////////////////////////
+
 import { developerDebugLogger, userDebugLogger } from './logger';
 import { colors, fromOptic } from './conversation';
 

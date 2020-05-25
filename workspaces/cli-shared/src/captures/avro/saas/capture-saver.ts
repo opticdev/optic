@@ -1,4 +1,4 @@
-import { Client as SaasClient } from '@useoptic/saas-client';
+import { Client as SaasClient } from '../../../saas-client';
 import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import Bottleneck from 'bottleneck';
 import { developerDebugLogger, ICaptureSaver } from '../../../index';
