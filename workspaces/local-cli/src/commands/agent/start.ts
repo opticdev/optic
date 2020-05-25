@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 import * as uuid from 'uuid';
-import { Client as SaasClient } from '@useoptic/saas-client';
+import { SaasClient } from '@useoptic/cli-shared';
 import * as fs from 'fs-extra';
 import {
   developerDebugLogger,
