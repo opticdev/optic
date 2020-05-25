@@ -1,9 +1,9 @@
 //@ts-ignore
-import * as Listr from 'listr';
+import Listr from 'listr';
 import Command from '@oclif/command';
-import * as colors from 'colors';
+import colors from 'colors';
 //@ts-ignore
-import * as niceTry from 'nice-try';
+import niceTry from 'nice-try';
 import {
   getPathsRelativeToConfig,
   IOpticTaskRunnerConfig,
@@ -11,7 +11,7 @@ import {
   TaskToStartConfig,
 } from '@useoptic/cli-config';
 import { CommandSession } from './command-session';
-import * as waitOn from 'wait-on';
+import waitOn from 'wait-on';
 import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
 import { track, trackAndSpawn } from './analytics';
 import { fromOptic } from '@useoptic/cli-shared';

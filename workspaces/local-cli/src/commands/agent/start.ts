@@ -9,15 +9,15 @@ import {
 } from '@useoptic/cli-shared';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { AgentCliTaskRunner } from '../../shared/agent-cli-task-runner';
+import Config from '../../config';
+import UrlJoin from 'url-join';
 
 export default class Start extends Command {
   static description =
     'starts your API process behind a proxy and sends traffic metadata to the cloud';
 
   async run() {
-    const gatewayBaseUrl =
-      'https://5r0o2vdn3d.execute-api.us-east-1.amazonaws.com/stage';
-    const baseUrl = `${gatewayBaseUrl}/api/v1`;
+    const baseUrl = UrlJoin(Config.apiGatewayUrl, 'api/v1');
 
     const agentGroupId = 'pokeapi-crawler';
     const orgId = 'optic-testing';
