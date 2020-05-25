@@ -3,7 +3,7 @@ import { JsonHttpClient } from '@useoptic/client-utilities';
 class Client {
   private readonly defaultAdditionalHeaders: Record<string, string>;
 
-  constructor(private baseUrl: string, private readonly authToken?: string) {
+  constructor(private baseUrl: string, private authToken?: string) {
     this.defaultAdditionalHeaders = {};
   }
 
@@ -15,6 +15,21 @@ class Client {
     }
 
     return headers;
+  }
+
+  setAuthToken(token: string) {
+    this.authToken = token;
+  }
+
+  async getAuthToken(apiName: string) {
+    const url = `${this.baseUrl}/registrations`;
+    const body = {
+      apiName,
+    };
+
+    const response = await JsonHttpClient.postJson(url, body);
+
+    return response.token;
   }
 
   async getSpecUploadUrl() {

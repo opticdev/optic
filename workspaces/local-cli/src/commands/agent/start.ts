@@ -16,11 +16,12 @@ export default class Start extends Command {
 
   async run() {
     const gatewayBaseUrl =
-      'https://k2shife0j5.execute-api.us-east-1.amazonaws.com/stage';
+      'https://5r0o2vdn3d.execute-api.us-east-1.amazonaws.com/stage';
     const baseUrl = `${gatewayBaseUrl}/api/v1`;
 
     const agentGroupId = 'pokeapi-crawler';
     const orgId = 'optic-testing';
+    const apiName = 'optic-testing-api';
     const captureId = uuid.v4();
     const reportUrl = `${baseUrl}/capture-reports/orgs/${orgId}/agentGroups/${agentGroupId}/captures/${captureId}`;
     const agentId = uuid.v4();
@@ -35,6 +36,10 @@ export default class Start extends Command {
 
     // start a new capture
     const saasClient = new SaasClient(baseUrl, tokenString);
+    developerDebugLogger('getting auth token');
+    const authToken = await saasClient.getAuthToken(apiName);
+    saasClient.setAuthToken(authToken);
+
     developerDebugLogger('getting spec upload url');
     const { uploadUrl } = await saasClient.getSpecUploadUrl();
     developerDebugLogger('uploading spec');
