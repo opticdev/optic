@@ -1,11 +1,12 @@
 import { Client } from '@useoptic/cli-client';
 
-let isAnalyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS !== 'no';
+let isAnalyticsEnabled = window.opticAnalyticsEnabled;
 
 const readyPromise = new Promise(async (resolve) => {
   const client = new Client('/api');
   if (isAnalyticsEnabled) {
-    const response = client.getIdentity();
+    const response = await client.getIdentity();
+    debugger;
     if (response.ok) {
       const { user } = await response.json();
       window.FS.identify(user.sub, {

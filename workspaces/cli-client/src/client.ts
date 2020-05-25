@@ -9,9 +9,11 @@ class Client {
     return JsonHttpClient.getJsonWithoutHandlingResponse(url);
   }
 
-  setIdentity(user: IUser) {
-    const url = `${this.baseUrl}/identity`;
-    return JsonHttpClient.putJson(url, { user });
+  setIdentity(user: IUser | null) {
+    if (user) {
+      const url = `${this.baseUrl}/identity`;
+      return JsonHttpClient.putJson(url, { user });
+    }
   }
 
   findSession(

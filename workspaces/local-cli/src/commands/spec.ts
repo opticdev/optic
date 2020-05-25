@@ -16,6 +16,8 @@ import {
   makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
+import { cli } from 'cli-ux';
+import { getUser } from '../shared/analytics';
 
 export default class Spec extends Command {
   static description = 'Open your Optic API specification';
@@ -47,6 +49,7 @@ export default class Spec extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
+    cliClient.setIdentity(await getUser());
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
