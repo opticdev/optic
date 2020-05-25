@@ -21,14 +21,13 @@ class Client {
     this.authToken = token;
   }
 
-  async getAuthToken(apiName: string) {
+  async getApiAuthToken(apiName: string) {
     const url = `${this.baseUrl}/registrations`;
     const body = {
       apiName,
     };
 
     const response = await JsonHttpClient.postJson(url, body);
-
     return response.token;
   }
 

@@ -37,7 +37,7 @@ export default class Start extends Command {
     // start a new capture
     const saasClient = new SaasClient(baseUrl, tokenString);
     developerDebugLogger('getting auth token');
-    const authToken = await saasClient.getAuthToken(apiName);
+    const authToken = await saasClient.getApiAuthToken(apiName);
     saasClient.setAuthToken(authToken);
 
     developerDebugLogger('getting spec upload url');
