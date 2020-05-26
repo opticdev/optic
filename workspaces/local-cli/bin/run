@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-require('@useoptic/domain').setLogger(() => {});
 require('../lib/')
   .run()
   .then(require('@oclif/command/flush'))

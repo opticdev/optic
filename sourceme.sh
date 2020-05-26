@@ -4,50 +4,65 @@ export OPTIC_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && p
 echo "Optic development scripts will run from $OPTIC_SRC_DIR"
 alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_UI_HOST=http://localhost:3000 OPTIC_AUTH_UI_HOST=http://localhost:4005 $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
-alias rescue-optic="rm -rf ~/.optic/daemon-lock.json.lock/ ~/.optic/daemon-lock.json"
-alias publish-optic-locally="cd $OPTIC_SRC_DIR && yarn run registry:clean-optic && yarn run registry:start-background && yarn run publish-local"
-alias install-optic-from-local-registry="YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873"
-
-optic-watch() {
+optic_workspace_clean() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:clean
-    yarn run watch --filter=workspace-scripts/watch-filter.js "yarn wsrun --stages --report --fast-exit ws:build && sh ./workspace-scripts/build/on-success.sh || sh ./workspace-scripts/build/on-failure.sh"
   )
 }
-check-ws() {
+optic_workspace_build() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    yarn wsrun --stages --report --fast-exit ws:build
+  )
+}
+optic_workspace_build_with_notification() {
+  (
+    set -o errexit
+    optic_workspace_build && sh ./workspace-scripts/build/on-success.sh || sh ./workspace-scripts/build/on-failure.sh
+  )
+}
+optic_watch() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    optic_workspace_clean
+    yarn run watch --filter=workspace-scripts/watch-filter.js "source sourceme.sh && optic_workspace_build_with_notification"
+  )
+}
+check_ws() {
   yarn workspaces info | sed -e '2,$!d' -e '$d' | jq -r 'keys[] as $k | "\($k): \(.[$k].mismatchedWorkspaceDependencies)"'
 }
 alias check-workspace-dependencies="check-ws"
-show-ws-versions() {
+show_ws_versions() {
   find ./workspaces -type f -iname package.json -not -path "*node_modules*" -print0 | xargs -0 cat | jq ".name, .version"
 }
 alias wsinfo="show-ws-versions"
-search-ws() {
+search_ws() {
   find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
 }
-optic-build() {
+optic_build() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
 
     yarn install
     yarn run build-domain
-    yarn wsrun --stages --report --fast-exit ws:clean
-    yarn wsrun --stages --report --fast-exit ws:build
+    optic_workspace_clean
+    optic_workspace_build
   )
 }
-optic-build-and-publish-locally() {
+optic_build_and_publish_locally() {
   (
     set -o errexit
-    optic-install
+    optic_build
     cd "$OPTIC_SRC_DIR"
     yarn run publish-local
   )
 }
-optic-install-from-local-registry() {
-  cd "$OPTIC_SRC_DIR"
+optic_release_and_install_locally() {
   if [[ -z "$1" ]]; then
     echo "No version provided"
     exit 1
@@ -55,11 +70,17 @@ optic-install-from-local-registry() {
   (
     set -o errexit
 
+    cd "$OPTIC_SRC_DIR"
     yarn run bump "$1"
 
-    install-and-publish
-    install-optic-from-local-registry
+    optic_build_and_publish_locally
+    optic_install_from_local_registry
   )
 }
-alias optic-install-from-local-registry="optic-install-from-local-registry"
+optic_install_from_local_registry() {
+  (
+    set -o errexit
+    YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873
+  )
+}
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start

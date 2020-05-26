@@ -7,8 +7,7 @@
     "rootDir": "src",
     "strict": true,
     "target": "es2017",
-    "skipLibCheck": true,
-    "esModuleInterop": true
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

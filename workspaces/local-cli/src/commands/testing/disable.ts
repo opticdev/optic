@@ -1,6 +1,6 @@
 import Command from '@oclif/command';
 import slugify from 'slugify';
-import colors from 'colors';
+import * as colors from 'colors';
 import {
   loadPathsAndConfig,
   fromOptic,
@@ -9,7 +9,7 @@ import {
   errorFromOptic,
 } from '@useoptic/cli-shared';
 import cli from 'cli-ux';
-import fs from 'fs-extra';
+import * as fs from 'fs-extra';
 
 export default class Disable extends Command {
   static description = 'Disable Live Contracting Testing for your API';

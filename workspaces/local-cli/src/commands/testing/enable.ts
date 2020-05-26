@@ -1,5 +1,5 @@
 import Command from '@oclif/command';
-import fs from 'fs-extra';
+import * as fs from 'fs-extra';
 import {
   developerDebugLogger,
   loadPathsAndConfig,
@@ -7,7 +7,7 @@ import {
   promiseFromOptic,
   SaasClient,
 } from '@useoptic/cli-shared';
-import UrlJoin from 'url-join';
+import UrlJoin = require('url-join');
 import Config from '../../config';
 
 export default class Enable extends Command {

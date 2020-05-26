@@ -1,15 +1,21 @@
 {
   "name": "@useoptic/agent-cli",
   "version": "0.1.0",
-  "author": "@useopticdev",
+  "author": "@useoptic",
   "bin": {
     "optic-agent": "./bin/run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/agent-cli"
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
+    "dotenv": "^8.2.0",
     "tslib": "^1"
   },
   "devDependencies": {
@@ -21,7 +27,6 @@
     "chai": "^4",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
-    "eslint-config-oclif-typescript": "^0.1",
     "globby": "^10",
     "mocha": "^5",
     "nyc": "^14",
@@ -50,7 +55,6 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint . --ext .ts --config .eslintrc",
