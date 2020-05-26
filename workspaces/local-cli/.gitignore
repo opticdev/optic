@@ -1,5 +1,6 @@
 *-debug.log
 *-error.log
+.env
 /.nyc_output
 /dist
 /lib
