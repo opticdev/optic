@@ -5,6 +5,7 @@ import {
   developerDebugLogger,
   loadPathsAndConfig,
   fromOptic,
+  promiseFromOptic,
   SaasClient,
 } from '@useoptic/cli-shared';
 import { cli } from 'cli-ux';
@@ -27,19 +28,28 @@ export default class Enable extends Command {
 
     const baseUrl = UrlJoin(Config.apiGatewayUrl, 'api/v1');
     const saasClient = new SaasClient(baseUrl);
-    // TODO: render progress indicator and deal with failure
     developerDebugLogger('fetching auth token');
-    const authToken = await saasClient.getApiAuthToken(
-      config.name || 'Unknown API'
-    );
+
+    const gettingApiToken = saasClient
+      .getApiAuthToken(config.name || 'Unknown API')
+      .catch(() => {
+        cli.action.stop;
+      });
+    promiseFromOptic(gettingApiToken, 'Creating Testing credentials for API');
+
+    const authToken = await gettingApiToken;
 
     const testingConfig = { authToken };
-    // TODO: render progress indicator and deal with failure
-    await fs.ensureFile(paths.testingConfigPath);
-    await fs.writeFile(
-      paths.testingConfigPath,
-      Buffer.from(JSON.stringify(testingConfig))
-    );
+    const savingToken = (async () => {
+      await fs.ensureFile(paths.testingConfigPath);
+      await fs.writeFile(
+        paths.testingConfigPath,
+        Buffer.from(JSON.stringify(testingConfig))
+      );
+    })();
+    promiseFromOptic(savingToken, 'Saving Testing credentials locally');
+
+    await savingToken;
 
     this.log(fromOptic('Live Contract Testing has successfully been enabled.'));
   }

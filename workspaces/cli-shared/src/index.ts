@@ -19,9 +19,9 @@ export { Client as SaasClient } from './saas-client';
 ////////////////////////////////////////////////////////////////////////////////
 
 import { developerDebugLogger, userDebugLogger } from './logger';
-import { colors, fromOptic } from './conversation';
+import { colors, fromOptic, promiseFromOptic } from './conversation';
 
-export { developerDebugLogger, userDebugLogger };
+export { developerDebugLogger, userDebugLogger, promiseFromOptic };
 
 ////////////////////////////////////////////////////////////////////////////////
 
