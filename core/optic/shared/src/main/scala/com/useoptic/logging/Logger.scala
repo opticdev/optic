@@ -9,9 +9,13 @@ trait SimpleLogger {
 @JSExportTopLevel("Logger")
 @JSExportAll
 object Logger {
-  var logger: SimpleLogger = new SimpleLogger {
+  val printlnLogger: SimpleLogger = new SimpleLogger {
     override def log(x: Any): Any = println(x)
   }
+  val noopLogger: SimpleLogger = new SimpleLogger {
+    override def log(x: Any): Any = {}
+  }
+  var logger = noopLogger
 
   def log(x: Any) = {
     logger.log(x)
