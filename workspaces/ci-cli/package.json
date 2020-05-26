@@ -1,9 +1,14 @@
 {
   "name": "@useoptic/ci-cli",
   "version": "0.1.0",
-  "author": "@useopticdev",
+  "author": "@useoptic",
   "bin": {
     "optic-ci": "./bin/run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/ci-cli"
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
@@ -50,7 +55,6 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint . --ext .ts --config .eslintrc",
