@@ -8,6 +8,13 @@ export function errorFromOptic(string: string) {
   return `${colors.cyan('[optic]')} ${colors.red(string)}`;
 }
 
+export function warningFromOptic(msg: string) {
+  return msg
+    .split('\n')
+    .map((line) => `${colors.cyan('[optic]')} ${colors.yellow(line)}`)
+    .join('\n');
+}
+
 export function promiseFromOptic(
   promise: PromiseLike<unknown>,
   msgOrOptions: string | OraOptions

@@ -71,7 +71,7 @@ export { CaptureSaver as SaasCaptureSaver } from './captures/avro/saas/capture-s
 export { CaptureSaver as FileSystemAvroCaptureSaver } from './captures/avro/file-system/capture-saver';
 export { CaptureLoader as FileSystemAvroCaptureLoader } from './captures/avro/file-system/capture-loader';
 ////////////////////////////////////////////////////////////////////////////////
-export { fromOptic, errorFromOptic } from './conversation';
+export { fromOptic, errorFromOptic, warningFromOptic } from './conversation';
 
 ////////////////////////////////////////////////////////////////////////////////
 
