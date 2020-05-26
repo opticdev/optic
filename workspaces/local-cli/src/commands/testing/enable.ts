@@ -14,7 +14,9 @@ export default class Enable extends Command {
   static description = 'Enable Live Contracting Testing for your API';
 
   async run() {
-    const { paths, config } = await loadPathsAndConfig(this);
+    const loadingConfig = loadPathsAndConfig(this);
+    promiseFromOptic(loadingConfig, 'Loading your optic.yml');
+    const { paths, config } = await loadingConfig;
 
     if (fs.existsSync(paths.testingConfigPath)) {
       return this.log(
