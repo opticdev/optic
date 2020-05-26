@@ -1,5 +1,4 @@
 import Command from '@oclif/command';
-import colors from 'colors';
 import fs from 'fs-extra';
 import {
   developerDebugLogger,
@@ -8,7 +7,6 @@ import {
   promiseFromOptic,
   SaasClient,
 } from '@useoptic/cli-shared';
-import { cli } from 'cli-ux';
 import UrlJoin from 'url-join';
 import Config from '../../config';
 
@@ -30,11 +28,9 @@ export default class Enable extends Command {
     const saasClient = new SaasClient(baseUrl);
     developerDebugLogger('fetching auth token');
 
-    const gettingApiToken = saasClient
-      .getApiAuthToken(config.name || 'Unknown API')
-      .catch(() => {
-        cli.action.stop;
-      });
+    const gettingApiToken = saasClient.getApiAuthToken(
+      config.name || 'Unknown API'
+    );
     promiseFromOptic(gettingApiToken, 'Creating Testing credentials for API');
 
     const authToken = await gettingApiToken;
