@@ -20,6 +20,10 @@ export interface IUser {
   email: string;
 }
 
+export interface ITestingConfig {
+  authToken: string;
+}
+
 export interface IOpticTask {
   command?: string;
   baseUrl: string;
@@ -156,6 +160,7 @@ export interface IPathMapping {
   gitignorePath: string;
   capturesPath: string;
   exampleRequestsPath: string;
+  testingConfigPath: string;
 }
 
 export async function getPathsRelativeToConfig() {
@@ -179,6 +184,7 @@ export async function getPathsRelativeToCwd(
   const gitignorePath = path.join(basePath, '.gitignore');
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
+  const testingConfigPath = path.join(basePath, 'testing.json');
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
 
@@ -189,6 +195,7 @@ export async function getPathsRelativeToCwd(
     configPath,
     gitignorePath,
     capturesPath,
+    testingConfigPath,
     exampleRequestsPath,
   };
 }
