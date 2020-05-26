@@ -15,6 +15,7 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
+    "dotenv": "^8.2.0",
     "tslib": "^1"
   },
   "devDependencies": {
@@ -26,7 +27,6 @@
     "chai": "^4",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
-    "eslint-config-oclif-typescript": "^0.1",
     "globby": "^10",
     "mocha": "^5",
     "nyc": "^14",

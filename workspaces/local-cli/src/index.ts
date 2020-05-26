@@ -1,7 +1,7 @@
 import dotenv = require('dotenv');
-import Path = require('path');
+import * as path from 'path';
 dotenv.config({
-  path: Path.join(__dirname, '../.env'),
+  path: path.join(__dirname, '../.env'),
 });
 
 export { run } from '@oclif/command';

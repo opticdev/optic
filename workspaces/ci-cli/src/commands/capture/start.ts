@@ -1,4 +1,6 @@
 import { Command, flags } from '@oclif/command';
+import { getPathsRelativeToCwd, readApiConfig } from '@useoptic/cli-config';
+import { dirname } from 'path';
 
 export default class Start extends Command {
   static description = 'describe the command here';
@@ -20,7 +22,7 @@ export default class Start extends Command {
       required: true,
       description: 'the name of the environment you are deploying into',
     }),
-    'config-path': flags.string({
+    config: flags.string({
       required: true,
       description: 'the path to your optic.yml file',
     }),
@@ -30,14 +32,32 @@ export default class Start extends Command {
 
   async run() {
     const { args, flags } = this.parse(Start);
-
-    this.log(flags['deployment-id']);
     // use flags.config to resolve the optic.yml. extract the ignoreRequests from it
     // find the .optic/api/specification.json relative to the optic.yml
-    // find the jwt
-    // use the jwt to get an upload url for the spec
+    // find the api jwt
+    // use the api jwt to get an upload url for the spec
     // upload the spec
-    // use the jwt and the spec url and the flags, etc. to create a capture
-    // output the response to standard out so the caller can pass it along to each agent-cli
+
+    const {
+      config: configPath,
+      ['deployment-id']: deploymentId,
+      ['build-id']: buildId,
+      environment: environmentName,
+    } = flags;
+    const config = await readApiConfig(configPath);
+
+    // use the api jwt and the spec url and the flags, etc. to create a capture
+    // output the capture jwt to standard out so the caller can pass it along to each agent-cli
+    const request = {
+      specLocation: {},
+      opticConfig: {
+        ignoreRequests: config.ignoreRequests,
+      },
+      captureMetadata: {
+        deploymentId,
+        buildId,
+        environmentName,
+      },
+    };
   }
 }

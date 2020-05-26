@@ -1,6 +1,6 @@
 import { ChildProcess, spawn, SpawnOptions } from 'child_process';
 import { EventEmitter } from 'events';
-import treeKill from 'tree-kill';
+import * as treeKill from 'tree-kill';
 import { developerDebugLogger } from '@useoptic/cli-shared';
 
 export interface ICommandSessionConfig {
