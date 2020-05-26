@@ -18,7 +18,7 @@ export default class Enable extends Command {
     const { paths, config } = await loadPathsAndConfig(this);
 
     if (fs.existsSync(paths.testingConfigPath)) {
-      this.log(
+      return this.log(
         fromOptic(
           'Testing is already enabled for this API. To re-enable, use testing:disable command first.'
         )
