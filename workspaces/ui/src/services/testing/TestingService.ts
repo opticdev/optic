@@ -36,27 +36,27 @@ export class TestingService {
 
   private async refreshAuth() {
     if (!this.refreshing) {
+      const refresh = async () => {
+        const response = await this.fetchAuthToken();
+
+        if (!response.ok)
+          throw new Error(
+            'Could not fetch testing credentials required to use TestingService'
+          );
+
+        const payload = await response.json();
+        if (!payload.authToken)
+          throw new Error(
+            'Could not fetch usable testing credentials to use Testing Service'
+          );
+
+        this.authToken = payload.authToken;
+        this.refreshing = null;
+      };
       // only refresh auth once, no matter how many endpoints are waiting
-      this.refreshing = refresh.call(this);
+      this.refreshing = refresh();
     }
 
     return this.refreshing;
-
-    async function refresh() {
-      const response = this.fetchAuthToken();
-
-      if (!response.ok)
-        throw new Error(
-          'Could not fetch testing credentials required to use TestingService'
-        );
-
-      const payload = await response.json();
-      if (!payload.authToken)
-        throw new Error(
-          'Could not fetch usable testing credentials to use Testing Service'
-        );
-
-      this.authToken = payload.authToken;
-    }
   }
 }
