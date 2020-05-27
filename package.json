@@ -23,7 +23,6 @@
     "workspaces/cli-config",
     "workspaces/cli-shared",
     "workspaces/client-utilities",
-    "workspaces/saas-client",
     "workspaces/proxy",
     "workspaces/cli-client",
     "workspaces/ui",
