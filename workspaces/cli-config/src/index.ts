@@ -53,6 +53,15 @@ export async function readApiConfig(
   return parsed;
 }
 
+export async function readTestingConfig(
+  testingConfigPath: string
+): Promise<ITestingConfig> {
+  const parsed = await fs.readJSON(testingConfigPath);
+
+  // TODO: validate shape?
+  return parsed;
+}
+
 export interface IOpticCliInitConfig {
   type: 'init';
 }
