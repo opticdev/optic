@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { ICliServerSession } from '../server';
-import sortBy = require('lodash.sortby');
+import sortBy from 'lodash.sortby';
 import {
   developerDebugLogger,
   FileSystemAvroCaptureLoader,

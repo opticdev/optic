@@ -10,7 +10,7 @@ import {
 import { trackAndSpawn } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
-import findProcess = require('find-process');
+import findProcess from 'find-process';
 
 import {
   getCredentials,

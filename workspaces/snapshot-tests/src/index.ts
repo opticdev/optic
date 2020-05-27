@@ -25,7 +25,7 @@ import {
   RfcStateAndInteractionsToDiffsTaskOutput,
   RfcStateAndInteractionsToDiffsTaskSpecification,
 } from './tasks/RfcStateAndInteractionsToDiffs';
-import DataLoader = require('dataloader');
+import DataLoader from 'dataloader';
 
 async function* FileSystemInputIterator(
   inputDirectory: string

@@ -9,7 +9,7 @@ import { IPathMapping } from '@useoptic/cli-config';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import * as colors from 'colors';
-import openBrowser = require('react-dev-utils/openBrowser');
+import openBrowser from 'react-dev-utils/openBrowser';
 import {
   developerDebugLogger,
   fromOptic,

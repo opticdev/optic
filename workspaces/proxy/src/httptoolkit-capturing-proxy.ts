@@ -6,7 +6,7 @@ import * as fs from 'fs-extra';
 import * as launcher from '@httptoolkit/browser-launcher';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
-import mime = require('whatwg-mimetype');
+import mime from 'whatwg-mimetype';
 import { IBody, IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from 'shape-hash';
