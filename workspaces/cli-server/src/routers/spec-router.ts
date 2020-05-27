@@ -2,6 +2,7 @@ import {
   getPathsRelativeToCwd,
   IOpticTaskRunnerConfig,
   readApiConfig,
+  readTestingConfig,
 } from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
 import express from 'express';
@@ -325,6 +326,24 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     } catch (e) {
       console.error(e);
       res.sendStatus(500);
+    }
+  });
+
+  router.get('/testing-credentials', async (req, res) => {
+    const { paths } = req.optic;
+    if (!(await fs.pathExists(paths.testingConfigPath))) {
+      return res.sendStatus(404);
+    }
+
+    try {
+      const testingConfig = await readTestingConfig(paths.testingConfigPath);
+
+      return res.json({
+        authToken: testingConfig.authToken,
+      });
+    } catch (e) {
+      console.error(e);
+      return res.sendStatus(500);
     }
   });
 
