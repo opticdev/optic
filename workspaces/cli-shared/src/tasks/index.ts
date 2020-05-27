@@ -5,7 +5,7 @@ import {
   TaskNotFoundError,
   TaskToStartConfig,
 } from '@useoptic/cli-config';
-import * as colors from 'colors';
+import colors from 'colors';
 import { errorFromOptic } from '../conversation';
 
 export class CliTaskSession {

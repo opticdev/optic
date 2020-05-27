@@ -1,6 +1,10 @@
-import * as express from 'express';
+import express from 'express';
 
-export function middleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+export function middleware(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   const tokenHeader = req.headers['Authorization'];
   if (!tokenHeader || tokenHeader.length !== 1) {
     return res.sendStatus(401);

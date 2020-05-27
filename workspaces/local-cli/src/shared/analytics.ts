@@ -6,7 +6,7 @@
   - We should not be spawning a new process every time we want to track something. We should be flushing events out of this process and another process can take care of them
  */
 // @ts-ignore
-import * as Analytics from 'analytics-node';
+import Analytics from 'analytics-node';
 import { runScriptByName } from '@useoptic/cli-scripts';
 import {
   getCredentials,

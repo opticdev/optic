@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
-import * as path from 'path';
+import path from 'path';
 import {
   IApiCliConfig,
   IOpticTaskRunnerConfig,
@@ -10,7 +10,7 @@ import {
 import { trackAndSpawn } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
-import findProcess = require('find-process');
+import findProcess from 'find-process';
 
 import {
   getCredentials,

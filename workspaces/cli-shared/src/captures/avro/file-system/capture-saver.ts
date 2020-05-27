@@ -1,7 +1,7 @@
 import Bottleneck from 'bottleneck';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as avro from 'avsc';
+import fs from 'fs-extra';
+import path from 'path';
+import avro from 'avsc';
 import * as uuid from 'uuid';
 import {
   IInteractionBatch,

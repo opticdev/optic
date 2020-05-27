@@ -1,6 +1,6 @@
 import { IRfcEvent } from '../EventsToRfcState';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import path from 'path';
+import fs from 'fs-extra';
 import {
   ITaskExecutor,
   ITaskExecutorDependencies,

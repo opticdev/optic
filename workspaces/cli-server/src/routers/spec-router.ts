@@ -4,12 +4,12 @@ import {
   readApiConfig,
 } from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import express from 'express';
+import bodyParser from 'body-parser';
+import path from 'path';
+import fs from 'fs-extra';
 import { ICliServerSession } from '../server';
-import sortBy = require('lodash.sortby');
+import sortBy from 'lodash.sortby';
 import {
   developerDebugLogger,
   FileSystemAvroCaptureLoader,

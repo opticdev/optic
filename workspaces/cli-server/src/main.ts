@@ -1,5 +1,5 @@
 import { CliDaemon } from './daemon';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { userDebugLogger } from '@useoptic/cli-shared';
 console.log('starting daemon', process.argv, process.env.DEBUG);
 console.log(process.cwd(), __dirname, __filename);

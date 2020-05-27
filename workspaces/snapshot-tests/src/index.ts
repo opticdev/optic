@@ -1,5 +1,5 @@
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import path from 'path';
+import fs from 'fs-extra';
 import { TypedEventEmitter } from './typed-event-emitter';
 import {
   executors,
@@ -25,7 +25,7 @@ import {
   RfcStateAndInteractionsToDiffsTaskOutput,
   RfcStateAndInteractionsToDiffsTaskSpecification,
 } from './tasks/RfcStateAndInteractionsToDiffs';
-import DataLoader = require('dataloader');
+import DataLoader from 'dataloader';
 
 async function* FileSystemInputIterator(
   inputDirectory: string
@@ -58,7 +58,7 @@ async function* FileSystemInputIterator(
   }
 }
 
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 import { opticEngine } from '@useoptic/domain';
 
 function getOutputFilePrefix(id: TaskIdentifier) {

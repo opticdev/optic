@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 import { deleteCredentials } from '../shared/authentication-server';
-import * as colors from 'colors';
+import colors from 'colors';
 
 export default class Logout extends Command {
   static description = 'Logout from Optic';

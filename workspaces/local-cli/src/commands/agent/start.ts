@@ -1,7 +1,7 @@
 import { Command } from '@oclif/command';
 import * as uuid from 'uuid';
 import { SaasClient } from '@useoptic/cli-shared';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import {
   developerDebugLogger,
   loadPathsAndConfig,
@@ -10,7 +10,7 @@ import {
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { AgentCliTaskRunner } from '../../shared/agent-cli-task-runner';
 import Config from '../../config';
-import UrlJoin = require('url-join');
+import UrlJoin from 'url-join';
 
 export default class Start extends Command {
   static description =

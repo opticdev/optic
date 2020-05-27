@@ -51,9 +51,12 @@ export const buildDiffsFromRfcStateAndInteractions: ITaskExecutor<
   debugger;
   const rfcState = dependencies[rfcStateFromEventsKey].rfcState;
   const interactions = dependencies[interactionsFromFileKey].interactions;
-  const diffs = diffFromRfcStateAndInteractions(rfcState, interactions);
+  // TODO: fix me: missing shapeResolves as first argument
+  // const diffs = diffFromRfcStateAndInteractions(rfcState, interactions);
   debugger;
+
   return Promise.resolve({
-    diffs,
+    // diffs,
+    diffs: [], // TODO: remove me when def of diffs is fixed above
   });
 };

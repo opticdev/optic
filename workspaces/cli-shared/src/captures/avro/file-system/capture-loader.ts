@@ -5,10 +5,10 @@ import {
 } from '../../../index';
 import { IIgnoreRunnable } from '@useoptic/cli-config';
 import { captureFileSuffix } from './index';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import path from 'path';
+import fs from 'fs-extra';
 import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
-import * as avro from 'avsc';
+import avro from 'avsc';
 
 export interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string;

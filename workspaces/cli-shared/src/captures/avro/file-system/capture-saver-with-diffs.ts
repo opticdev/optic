@@ -10,8 +10,8 @@ import {
   universeFromEvents,
 } from '@useoptic/domain-utilities';
 import { DiffHelpers, opticEngine, Queries } from '@useoptic/domain';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import fs from 'fs-extra';
+import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {

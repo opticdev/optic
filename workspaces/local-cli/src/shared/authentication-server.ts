@@ -1,15 +1,15 @@
-import * as cors from 'cors';
-import * as bodyParser from 'body-parser';
-import * as express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import express from 'express';
 //@ts-ignore
-import * as jwtDecode from 'jwt-decode';
-import * as http from 'http';
+import jwtDecode from 'jwt-decode';
+import http from 'http';
 import { EventEmitter } from 'events';
-import * as getPort from 'get-port';
+import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
-import * as path from 'path';
-import * as os from 'os';
-import * as fs from 'fs-extra';
+import path from 'path';
+import os from 'os';
+import fs from 'fs-extra';
 
 const opticrcPath = path.resolve(os.homedir(), '.opticrc');
 

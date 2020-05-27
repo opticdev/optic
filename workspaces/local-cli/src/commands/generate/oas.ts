@@ -3,9 +3,9 @@ import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import { IPathMapping } from '@useoptic/cli-config';
 import { OasProjectionHelper } from '@useoptic/domain';
 import { cli } from 'cli-ux';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as yaml from 'js-yaml';
+import fs from 'fs-extra';
+import path from 'path';
+import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
 
 export default class GenerateOas extends Command {

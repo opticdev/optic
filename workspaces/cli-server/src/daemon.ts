@@ -1,5 +1,5 @@
-import * as fs from 'fs-extra';
-import * as lockfile from 'proper-lockfile';
+import fs from 'fs-extra';
+import lockfile from 'proper-lockfile';
 import { userDebugLogger } from '@useoptic/cli-shared';
 import { CliServer, log, shutdownRequested } from './server';
 

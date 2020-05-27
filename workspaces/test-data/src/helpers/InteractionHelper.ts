@@ -1,5 +1,5 @@
 //@ts-ignore
-import * as deepCopy from 'deepcopy';
+import deepCopy from 'deepcopy';
 import { IHttpInteraction } from '@useoptic/domain-types';
 
 export function newInteraction(url: string, method: string) {

@@ -1,5 +1,5 @@
 import { StableHashableWrapper } from '@useoptic/domain';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 function hasher(input: string) {
   const sha1 = crypto.createHash('sha1');
