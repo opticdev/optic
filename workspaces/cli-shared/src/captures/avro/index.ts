@@ -1,4 +1,4 @@
-import * as avro from 'avsc';
+import avro from 'avsc';
 import { InteractionBatch } from '@useoptic/domain-types';
 
 export const schema = InteractionBatch;

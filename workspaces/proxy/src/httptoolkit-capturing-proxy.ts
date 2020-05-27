@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
-import * as path from 'path';
-import * as os from 'os';
+import path from 'path';
+import os from 'os';
 import * as mockttp from 'mockttp';
-import * as fs from 'fs-extra';
-import * as launcher from '@httptoolkit/browser-launcher';
+import fs from 'fs-extra';
+import launcher from '@httptoolkit/browser-launcher';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';

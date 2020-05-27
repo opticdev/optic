@@ -1,9 +1,9 @@
 import Command from '@oclif/command';
 import { createFileTree } from '@useoptic/cli-config';
-import * as colors from 'colors';
+import colors from 'colors';
 import cli from 'cli-ux';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import fs from 'fs-extra';
+import path from 'path';
 import { track, trackAndSpawn } from '../shared/analytics';
 import { fromOptic } from '@useoptic/cli-shared';
 

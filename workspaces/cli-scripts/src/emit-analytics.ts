@@ -1,5 +1,5 @@
 // @ts-ignore
-import * as Analytics from 'analytics-node';
+import Analytics from 'analytics-node';
 
 function run(token: string, jsonString: string) {
   const analytics = new Analytics(token, {

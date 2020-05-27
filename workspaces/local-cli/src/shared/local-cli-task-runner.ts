@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
-import * as path from 'path';
+import path from 'path';
 import {
   IApiCliConfig,
   IOpticTaskRunnerConfig,

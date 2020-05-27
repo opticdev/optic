@@ -5,7 +5,7 @@ import {
   tokenReceivedEvent,
   setCredentials,
 } from '../shared/authentication-server';
-import * as qs from 'querystring';
+import qs from 'querystring';
 import { ensureDaemonStopped } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';

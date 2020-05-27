@@ -1,9 +1,9 @@
 import { Client } from '@useoptic/cli-client';
-import * as lockfile from 'proper-lockfile';
+import lockfile from 'proper-lockfile';
 import { CliDaemon } from './daemon';
 import { fork } from 'child_process';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import fs from 'fs-extra';
+import path from 'path';
 import waitOn from 'wait-on';
 import findProcess from 'find-process';
 import * as uuid from 'uuid';

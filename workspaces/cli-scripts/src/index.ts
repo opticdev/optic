@@ -1,5 +1,5 @@
-import * as cp from 'child_process';
-import * as path from 'path';
+import cp from 'child_process';
+import path from 'path';
 
 export const basePath: string = __dirname;
 

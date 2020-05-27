@@ -1,5 +1,5 @@
 import Command from '@oclif/command';
-import * as path from 'path';
+import path from 'path';
 import { basePath, runStandaloneScript } from '@useoptic/cli-scripts';
 
 export default class TestNotification extends Command {

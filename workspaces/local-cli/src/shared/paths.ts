@@ -1,4 +1,8 @@
-import * as path from 'path';
-import * as os from 'os';
+import path from 'path';
+import os from 'os';
 
-export const lockFilePath = path.join(os.homedir(), '.optic', 'daemon-lock.json');
+export const lockFilePath = path.join(
+  os.homedir(),
+  '.optic',
+  'daemon-lock.json'
+);
