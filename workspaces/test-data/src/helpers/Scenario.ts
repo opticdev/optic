@@ -1,7 +1,7 @@
 import { opticEngine } from '@useoptic/domain';
 const TestDataHelper = opticEngine.com.useoptic.TestDataHelper;
 import { IHttpInteraction } from '@useoptic/domain-types';
-import * as md5 from 'md5';
+import md5 from 'md5';
 import { InteractionHelper } from './InteractionHelper';
 
 interface ScenarioBlockContext {

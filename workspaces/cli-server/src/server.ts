@@ -6,13 +6,13 @@ import {
   readApiConfig,
 } from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
-import * as express from 'express';
-import * as getPort from 'get-port';
-import * as bodyParser from 'body-parser';
-import * as http from 'http';
+import express from 'express';
+import getPort from 'get-port';
+import bodyParser from 'body-parser';
+import http from 'http';
 import { Socket } from 'net';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import path from 'path';
+import fs from 'fs-extra';
 import {
   CapturesHelpers,
   ExampleRequestsHelpers,

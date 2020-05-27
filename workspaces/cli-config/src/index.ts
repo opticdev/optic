@@ -1,9 +1,9 @@
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as url from 'url';
-import * as yaml from 'js-yaml';
-import * as getPort from 'get-port';
-import * as findUp from 'find-up';
+import fs from 'fs-extra';
+import path from 'path';
+import url from 'url';
+import yaml from 'js-yaml';
+import getPort from 'get-port';
+import findUp from 'find-up';
 import {
   parseRule,
   parseIgnore,

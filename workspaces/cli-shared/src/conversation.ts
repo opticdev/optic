@@ -1,4 +1,4 @@
-import * as colors from 'colors';
+import colors from 'colors';
 import { promise as OraPromise, Options as OraOptions } from 'ora';
 
 export function fromOptic(msg: string) {

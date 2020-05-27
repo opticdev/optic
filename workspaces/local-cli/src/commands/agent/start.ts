@@ -10,7 +10,7 @@ import {
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { AgentCliTaskRunner } from '../../shared/agent-cli-task-runner';
 import Config from '../../config';
-import UrlJoin = require('url-join');
+import UrlJoin from 'url-join';
 
 export default class Start extends Command {
   static description =
