@@ -24,7 +24,6 @@
     "workspaces/cli-config",
     "workspaces/cli-shared",
     "workspaces/client-utilities",
-    "workspaces/proxy",
     "workspaces/cli-client",
     "workspaces/ui",
     "workspaces/cli-scripts",
