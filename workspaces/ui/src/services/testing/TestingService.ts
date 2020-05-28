@@ -1,4 +1,5 @@
-import { ITestingService } from '.';
+import { ITestingService, Result, Capture } from '.';
+import UrlJoin from 'url-join';
 
 // TODO: implement ITestingService
 export class TestingService {
@@ -7,7 +8,7 @@ export class TestingService {
 
   constructor(
     private fetchAuthToken: () => PromiseLike<Response>,
-    baseUrl: string
+    private baseUrl: string
   ) {
     this.refreshAuth();
   }
@@ -19,13 +20,15 @@ export class TestingService {
     const headers = new Headers(options.headers || {});
     const { authToken } = this;
 
+    const url = UrlJoin(this.baseUrl, path);
+
     if (!authToken) {
       await this.refreshAuth();
     }
 
     headers.set('Authorization', `Bearer ${this.authToken}`);
 
-    const response = await fetch(path, {
+    const response = await fetch(url, {
       headers,
     });
 
@@ -60,5 +63,13 @@ export class TestingService {
     }
 
     return this.refreshing;
+  }
+
+  async listCaptures(): Promise<Result<Capture[]>> {
+    const response = await this.callApi('/captures');
+
+    if (!response.ok) throw new Error('List of captures could not be fetched');
+
+    return response.json();
   }
 }
