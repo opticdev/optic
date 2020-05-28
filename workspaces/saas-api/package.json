@@ -1,0 +1,17 @@
+{
+  "name": "@useoptic/saas-api",
+  "description": "interfaces and types for Optic SaaS surface area",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build/*"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
