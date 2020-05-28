@@ -67,7 +67,6 @@ export default class Start extends Command {
     const { uploadUrl, location } = await saasClient.getSpecUploadUrl();
 
     // upload the spec
-    const specStoreExists = await fs.pathExists(specStorePath);
     const events = await fs.readJson(specStorePath);
     await saasClient.uploadSpec(uploadUrl, events);
 
@@ -88,10 +87,10 @@ export default class Start extends Command {
       },
     };
 
-    const {
-      agentToken,
-    }: ICreateCaptureResponse = await saasClient.startCapture(captureInfo);
+    const response: ICreateCaptureResponse = await saasClient.startCapture(
+      captureInfo
+    );
     // output the capture jwt to standard out so the caller can pass it along to each agent-cli
-    this.log(agentToken);
+    this.log(JSON.stringify(response));
   }
 }

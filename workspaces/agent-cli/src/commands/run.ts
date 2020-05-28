@@ -7,6 +7,7 @@ import * as uuid from 'uuid';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { IApiCliConfig } from '@useoptic/cli-config';
 import { AgentCliTaskRunner } from '../task-runner';
+import { ICreateCaptureResponse } from '@useoptic/saas-types';
 
 export default class Run extends Command {
   static description = 'describe the command here';
@@ -30,9 +31,11 @@ export default class Run extends Command {
 
   async run() {
     const { flags } = this.parse(Run);
-
-    const { opticConfig, captureToken } = JSON.parse(flags.config);
-    const decodedToken = jwtDecode(captureToken);
+    const opticConfig = {
+      ignoreRequests: undefined,
+    };
+    const { agentToken }: ICreateCaptureResponse = JSON.parse(flags.config);
+    const decodedToken = jwtDecode(agentToken);
     const { opticContext } = decodedToken;
     const { orgId, agentGroupId, captureId } = opticContext;
 
@@ -43,7 +46,7 @@ export default class Run extends Command {
       agentGroupId,
       agentId,
       baseUrl: Config.apiBaseUrl,
-      launchTokenString: captureToken,
+      launchTokenString: agentToken,
       captureId,
     });
 

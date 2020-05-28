@@ -48,20 +48,20 @@ class Client {
 
   uploadInteractions(uploadUrl: string, bytes: Buffer) {
     return JsonHttpClient.putBytes(uploadUrl, bytes, {
-      'content-type': 'avro/optic-interactions-v1+binary',
+      'Content-Type': 'avro/optic-interactions-v1+binary',
     });
   }
 
   uploadSpec(uploadUrl: string, spec: any[]) {
     const bytes = Buffer.from(JSON.stringify(spec));
     return JsonHttpClient.putBytes(uploadUrl, bytes, {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     });
   }
 
   startCapture(body: ICreateCaptureRequest) {
     const url = `${this.baseUrl}/captures`;
-    return JsonHttpClient.postJson(url, body);
+    return JsonHttpClient.postJson(url, body, this.defaultHeaders());
   }
 }
 
