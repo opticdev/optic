@@ -59,4 +59,4 @@ jobs:
     - name: "mkdir docker/private-npm-registry/storage && yarn start local npm registry"
       run: yarn run registry:start
     - name: "publish to local registry"
-      run: OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
+      run: source sourceme.sh && optic_build_and_publish_locally
