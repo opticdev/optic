@@ -1,8 +1,10 @@
-import Command from '@oclif/command';
-import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
-import { IApiCliConfig } from '@useoptic/cli-config';
-import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
-import { ICaptureSaver, IOpticTaskRunner } from '@useoptic/cli-shared';
+import { IApiCliConfig, IOpticTaskRunnerConfig } from '@useoptic/cli-config';
+import {
+  Command,
+  CommandAndProxySessionManager,
+  ICaptureSaver,
+  IOpticTaskRunner,
+} from '@useoptic/cli-shared';
 
 export class AgentCliTaskRunner implements IOpticTaskRunner {
   constructor(private persistenceManager: ICaptureSaver) {}

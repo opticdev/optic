@@ -8,7 +8,6 @@ import waitOn from 'wait-on';
 import findProcess from 'find-process';
 import * as uuid from 'uuid';
 import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
-import { IUser } from '@useoptic/cli-config';
 
 export async function ensureDaemonStarted(
   lockFilePath: string

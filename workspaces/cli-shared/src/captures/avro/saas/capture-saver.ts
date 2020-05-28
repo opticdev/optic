@@ -1,7 +1,10 @@
-import { Client as SaasClient } from '../../../saas-client';
 import { IInteractionBatch, IHttpInteraction } from '@useoptic/domain-types';
 import Bottleneck from 'bottleneck';
-import { developerDebugLogger, ICaptureSaver } from '../../../index';
+import {
+  developerDebugLogger,
+  ICaptureSaver,
+  SaasClient,
+} from '../../../index';
 import { serdes } from '../index';
 
 export interface ISaasCaptureSaverConfig {

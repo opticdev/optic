@@ -1,4 +1,12 @@
 import { Command, flags } from '@oclif/command';
+import { SaasCaptureSaver } from '@useoptic/cli-shared';
+import Config from '../config';
+//@ts-ignore
+import jwtDecode from 'jwt-decode';
+import * as uuid from 'uuid';
+import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
+import { IApiCliConfig } from '@useoptic/cli-config';
+import { AgentCliTaskRunner } from '../task-runner';
 
 export default class Run extends Command {
   static description = 'describe the command here';
@@ -6,22 +14,51 @@ export default class Run extends Command {
   static examples = [`$ optic-agent run ????`];
 
   static flags = {
-    command: flags.string({ description: 'the command to run' }),
+    command: flags.string({
+      required: true,
+      description: 'the command to run',
+    }),
     masquerade: flags.string({
+      required: true,
       description: 'host:port Optic should start on',
     }),
     config: flags.string({
-      description: 'the output from optic-ci capture:start ...',
+      required: true,
+      description: 'the output from optic-ci capture:start',
     }),
   };
 
-  static args = [{ name: 'file' }];
-
   async run() {
-    const { args, flags } = this.parse(Run);
+    const { flags } = this.parse(Run);
 
-    // create a saasClient with the token from the config
-    // create a SaasCaptureSaver
-    // start the proxy and command
+    const { opticConfig, captureToken } = JSON.parse(flags.config);
+    const decodedToken = jwtDecode(captureToken);
+    const { opticContext } = decodedToken;
+    const { orgId, agentGroupId, captureId } = opticContext;
+
+    const agentId = uuid.v4();
+
+    const persistenceManager = new SaasCaptureSaver({
+      orgId,
+      agentGroupId,
+      agentId,
+      baseUrl: Config.apiBaseUrl,
+      launchTokenString: captureToken,
+      captureId,
+    });
+
+    const runner = new AgentCliTaskRunner(persistenceManager);
+    const cliTaskSession = new CliTaskSession(runner);
+    const config: IApiCliConfig = {
+      name: '',
+      ignoreRequests: opticConfig.ignoreRequests,
+      tasks: {
+        start: {
+          command: flags.command,
+          baseUrl: flags.masquerade,
+        },
+      },
+    };
+    await cliTaskSession.start(this, config, 'start');
   }
 }

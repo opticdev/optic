@@ -16,10 +16,10 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
-import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
 import { runScriptByName } from '@useoptic/cli-scripts';
 import {
   cleanupAndExit,
+  CommandAndProxySessionManager,
   developerDebugLogger,
   fromOptic,
   IOpticTaskRunner,

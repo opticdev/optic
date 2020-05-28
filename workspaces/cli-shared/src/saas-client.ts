@@ -1,4 +1,5 @@
 import { JsonHttpClient } from '@useoptic/client-utilities';
+import { ICreateCaptureRequest } from '@useoptic/saas-api';
 
 class Client {
   private readonly defaultAdditionalHeaders: Record<string, string>;
@@ -52,6 +53,11 @@ class Client {
     return JsonHttpClient.putBytes(uploadUrl, bytes, {
       'content-type': 'application/json',
     });
+  }
+
+  startCapture(body: ICreateCaptureRequest) {
+    const url = `${this.baseUrl}/captures`;
+    return JsonHttpClient.postJson(url, body);
   }
 }
 
