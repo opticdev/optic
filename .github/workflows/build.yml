@@ -56,7 +56,7 @@ jobs:
       run: ls -laR "$GITHUB_WORKSPACE/workspaces/domain/src"
     - name: "check domain build directory"
       run: ls -laR "$GITHUB_WORKSPACE/workspaces/domain/build"
-    - name: "start local npm registry"
+    - name: "mkdir docker/private-npm-registry/storage && yarn start local npm registry"
       run: yarn run registry:start
     - name: "publish to local registry"
       run: OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
