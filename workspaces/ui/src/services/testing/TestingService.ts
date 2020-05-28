@@ -8,7 +8,9 @@ export class TestingService {
   constructor(
     private fetchAuthToken: () => PromiseLike<Response>,
     baseUrl: string
-  ) {}
+  ) {
+    this.refreshAuth();
+  }
 
   private async callApi(
     path: string,
