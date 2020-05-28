@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/agent-cli",
-  "version": "0.1.0",
+  "version": "8.0.7",
   "author": "@useoptic",
   "bin": {
     "optic-agent": "./bin/run"

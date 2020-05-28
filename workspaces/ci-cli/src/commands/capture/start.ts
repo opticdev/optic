@@ -11,7 +11,7 @@ import Config from '../../config';
 import {
   ICreateCaptureRequest,
   ICreateCaptureResponse,
-} from '@useoptic/saas-api';
+} from '@useoptic/saas-types';
 
 export default class Start extends Command {
   static description = 'describe the command here';

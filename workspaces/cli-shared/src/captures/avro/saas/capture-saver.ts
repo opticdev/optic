@@ -62,7 +62,7 @@ class CaptureSaver implements ICaptureSaver {
 
   private async saveBatch(batchId: string, items: IHttpInteraction[]) {
     const { agentId, agentGroupId, captureId } = this.config;
-    const { uploadUrl } = await this.saasClient.getCaptureUploadUrl(
+    const { uploadUrl } = await this.saasClient.getInteractionsUploadUrl(
       agentId,
       batchId
     );
@@ -77,7 +77,7 @@ class CaptureSaver implements ICaptureSaver {
       batchItems: items,
     };
     const bytes = serdes.toBuffer(input);
-    return this.saasClient.uploadCapture(uploadUrl, bytes);
+    return this.saasClient.uploadInteractions(uploadUrl, bytes);
   }
 
   async cleanup() {

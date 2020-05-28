@@ -20,7 +20,7 @@
     "workspaces/domain-types",
     "workspaces/domain",
     "workspaces/domain-utilities",
-    "workspaces/saas-api",
+    "workspaces/saas-types",
     "workspaces/cli-config",
     "workspaces/cli-shared",
     "workspaces/client-utilities",
