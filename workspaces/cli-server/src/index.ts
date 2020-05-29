@@ -10,7 +10,8 @@ import * as uuid from 'uuid';
 import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
 
 export async function ensureDaemonStarted(
-  lockFilePath: string
+  lockFilePath: string,
+  cloudApiBaseUrl: string
 ): Promise<ICliDaemonState> {
   const fileExisted = await fs.pathExists(lockFilePath);
   if (!fileExisted) {
@@ -39,7 +40,7 @@ export async function ensureDaemonStarted(
     // fork process
     const child = fork(
       path.join(__dirname, 'main'),
-      [lockFilePath, sentinelFilePath],
+      [lockFilePath, sentinelFilePath, cloudApiBaseUrl],
       {
         execArgv: isDebuggingEnabled ? ['--inspect'] : [],
         detached: true,
@@ -55,6 +56,7 @@ export async function ensureDaemonStarted(
         resources: [`file://${sentinelFilePath}`],
         delay: 250,
         window: 250,
+        timeout: 3000,
       });
       await fs.unlink(sentinelFilePath);
       developerDebugLogger(`lock created ${child.pid}`);

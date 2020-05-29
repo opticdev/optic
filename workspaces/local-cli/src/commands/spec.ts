@@ -43,7 +43,10 @@ export default class Spec extends Command {
   }
 
   async helper(basePath: string, config: IApiCliConfig) {
-    const daemonState = await ensureDaemonStarted(lockFilePath);
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
 
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);

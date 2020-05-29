@@ -67,7 +67,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    const daemonState = await ensureDaemonStarted(lockFilePath);
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
