@@ -22,7 +22,9 @@ import { basePath } from '@useoptic/ui';
 
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
-export interface ICliServerConfig {}
+export interface ICliServerConfig {
+  cloudApiBaseUrl: string;
+}
 
 export interface IOpticExpressRequestAdditions {
   paths: IPathMapping;
@@ -154,7 +156,7 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = makeRouter(sessions);
+    const specRouter = makeRouter(sessions, this.config.cloudApiBaseUrl);
     app.use('/api/specs/:specId', specRouter);
 
     // ui

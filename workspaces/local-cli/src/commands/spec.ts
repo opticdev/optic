@@ -16,9 +16,8 @@ import {
   makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
-import { cli } from 'cli-ux';
 import { getUser } from '../shared/analytics';
-
+import { Config } from '../config';
 export default class Spec extends Command {
   static description = 'Open your Optic API specification';
 
@@ -44,7 +43,10 @@ export default class Spec extends Command {
   }
 
   async helper(basePath: string, config: IApiCliConfig) {
-    const daemonState = await ensureDaemonStarted(lockFilePath);
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
 
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);

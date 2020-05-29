@@ -3,21 +3,19 @@ import path from 'path';
 import os from 'os';
 import * as mockttp from 'mockttp';
 import fs from 'fs-extra';
-import launcher from '@httptoolkit/browser-launcher';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';
 import { IBody, IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from 'shape-hash';
-import { delay, developerDebugLogger } from '@useoptic/cli-shared';
+import { developerDebugLogger } from './index';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
   proxyPort: number;
   host: string;
   flags: {
-    chrome: boolean;
     includeJsonBody: boolean;
     includeTextBody: boolean;
     includeShapeHash: boolean;
@@ -53,7 +51,6 @@ export const opticStatusPath = '/__optic_status';
 
 export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;
-  private chrome!: launcher.BrowserInstance;
   private requests: Map<string, mockttp.CompletedRequest> = new Map();
   private config!: IHttpToolkitCapturingProxyConfig;
   public readonly events: EventEmitter = new EventEmitter();
@@ -192,42 +189,6 @@ export class HttpToolkitCapturingProxy {
         `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`
       );
     }
-
-    if (config.flags.chrome) {
-      this.chrome = await new Promise((resolve, reject) => {
-        //@ts-ignore
-        launcher((err, launch) => {
-          if (err) {
-            return reject(err);
-          }
-          const launchUrl = `https://docs.useoptic.com`;
-          const spkiFingerprint = mockttp.generateSPKIFingerprint(
-            certificateInfo.cert
-          );
-          const launchOptions: launcher.LaunchOptions = {
-            profile: configPath,
-            browser: 'chrome',
-            proxy: `https://127.0.0.1:${config.proxyPort}`,
-            noProxy: ['<-loopback>'],
-            options: [
-              `--ignore-certificate-errors-spki-list=${spkiFingerprint}`,
-            ],
-          };
-          launch(launchUrl, launchOptions, function (
-            err: any,
-            instance:
-              | launcher.BrowserInstance
-              | PromiseLike<launcher.BrowserInstance>
-              | undefined
-          ) {
-            if (err) {
-              return reject(err);
-            }
-            resolve(instance);
-          });
-        });
-      });
-    }
   }
 
   extractBody(
@@ -265,16 +226,6 @@ export class HttpToolkitCapturingProxy {
   }
 
   async stop() {
-    if (this.config.flags.chrome) {
-      const promise = new Promise((resolve) => {
-        //@ts-ignore
-        this.chrome.on('stop', () => {
-          resolve();
-        });
-      });
-      this.chrome.stop();
-      await Promise.race([promise, delay(3000)]);
-    }
-    await Promise.race([this.proxy.stop(), delay(3000)]);
+    await this.proxy.stop();
   }
 }

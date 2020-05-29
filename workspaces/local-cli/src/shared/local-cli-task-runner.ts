@@ -16,10 +16,10 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
-import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
 import { runScriptByName } from '@useoptic/cli-scripts';
 import {
   cleanupAndExit,
+  CommandAndProxySessionManager,
   developerDebugLogger,
   fromOptic,
   IOpticTaskRunner,
@@ -30,6 +30,7 @@ import * as uuid from 'uuid';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
+import { Config } from '../config';
 
 export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   const { paths, config } = await loadPathsAndConfig(cli);
@@ -66,7 +67,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    const daemonState = await ensureDaemonStarted(lockFilePath);
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);

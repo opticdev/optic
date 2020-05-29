@@ -1,12 +1,12 @@
-@useoptic/agent-cli
+@useoptic/ci-cli
 ===================
 
 
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/@useoptic/agent-cli.svg)](https://npmjs.org/package/@useoptic/agent-cli)
-[![Downloads/week](https://img.shields.io/npm/dw/@useoptic/agent-cli.svg)](https://npmjs.org/package/@useoptic/agent-cli)
-[![License](https://img.shields.io/npm/l/@useoptic/agent-cli.svg)](https://github.com/opticdev/optic/blob/master/package.json)
+[![Version](https://img.shields.io/npm/v/@useoptic/ci-cli.svg)](https://npmjs.org/package/@useoptic/ci-cli)
+[![Downloads/week](https://img.shields.io/npm/dw/@useoptic/ci-cli.svg)](https://npmjs.org/package/@useoptic/ci-cli)
+[![License](https://img.shields.io/npm/l/@useoptic/ci-cli.svg)](https://github.com/opticdev/optic/blob/master/package.json)
 
 <!-- toc -->
 * [Usage](#usage)
@@ -15,29 +15,29 @@
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g @useoptic/agent-cli
-$ optic-agent COMMAND
+$ npm install -g @useoptic/ci-cli
+$ optic-ci COMMAND
 running command...
-$ optic-agent (-v|--version|version)
-@useoptic/agent-cli/0.1.0 darwin-x64 node-v12.16.2
-$ optic-agent --help [COMMAND]
+$ optic-ci (-v|--version|version)
+@useoptic/ci-cli/0.1.0 darwin-x64 node-v12.16.2
+$ optic-ci --help [COMMAND]
 USAGE
-  $ optic-agent COMMAND
+  $ optic-ci COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`optic-agent hello [FILE]`](#optic-agent-hello-file)
-* [`optic-agent help [COMMAND]`](#optic-agent-help-command)
+* [`optic-ci hello [FILE]`](#optic-ci-hello-file)
+* [`optic-ci help [COMMAND]`](#optic-ci-help-command)
 
-## `optic-agent hello [FILE]`
+## `optic-ci hello [FILE]`
 
 describe the command here
 
 ```
 USAGE
-  $ optic-agent hello [FILE]
+  $ optic-ci hello [FILE]
 
 OPTIONS
   -f, --force
@@ -45,19 +45,19 @@ OPTIONS
   -n, --name=name  name to print
 
 EXAMPLE
-  $ optic-agent hello
+  $ optic-ci hello
   hello world from ./src/hello.ts!
 ```
 
 _See code: [src/commands/hello.ts](https://github.com/opticdev/optic/blob/v0.1.0/src/commands/hello.ts)_
 
-## `optic-agent help [COMMAND]`
+## `optic-ci help [COMMAND]`
 
-display help for optic-agent
+display help for optic-ci
 
 ```
 USAGE
-  $ optic-agent help [COMMAND]
+  $ optic-ci help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for

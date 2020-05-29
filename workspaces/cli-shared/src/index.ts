@@ -17,6 +17,10 @@ export { Command };
 export { Client as SaasClient } from './saas-client';
 
 ////////////////////////////////////////////////////////////////////////////////
+export { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
+export { CommandSession } from './command-session';
+export { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
+////////////////////////////////////////////////////////////////////////////////
 
 import { developerDebugLogger, userDebugLogger } from './logger';
 import { colors, fromOptic, promiseFromOptic } from './conversation';

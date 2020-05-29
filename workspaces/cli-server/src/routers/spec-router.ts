@@ -5,7 +5,7 @@ import {
   readTestingConfig,
 } from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
@@ -16,6 +16,9 @@ import {
   FileSystemAvroCaptureLoader,
   ICaptureLoader,
 } from '@useoptic/cli-shared';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import * as http from 'http';
+import * as url from 'url';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -156,7 +159,10 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export function makeRouter(sessions: ICliServerSession[]) {
+export function makeRouter(
+  sessions: ICliServerSession[],
+  cloudApiBaseUrl: string
+) {
   function prepareEvents(events: any): string {
     return `[
 ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
@@ -194,6 +200,17 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
+
+  router.use(
+    '/cloud',
+    createProxyMiddleware({
+      changeOrigin: true,
+      target: cloudApiBaseUrl,
+      pathRewrite(input, req) {
+        return input.substring(req.baseUrl.length);
+      },
+    })
+  );
 
   // events router
   router.get('/events', async (req, res) => {

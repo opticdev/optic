@@ -4,9 +4,18 @@ import { userDebugLogger } from '@useoptic/cli-shared';
 console.log('starting daemon', process.argv, process.env.DEBUG);
 console.log(process.cwd(), __dirname, __filename);
 
-const [, , lockFilePath, sentinelFilePath] = process.argv;
+const [, , lockFilePath, sentinelFilePath, cloudApiBaseUrl] = process.argv;
+if (!lockFilePath) {
+  throw new Error(`missing lockFilePath`);
+}
+if (!sentinelFilePath) {
+  throw new Error(`missing sentinelFilePath`);
+}
+if (!cloudApiBaseUrl) {
+  throw new Error(`missing cloudApiBaseUrl`);
+}
 userDebugLogger(`daemon lock file ${lockFilePath}`);
-const daemon = new CliDaemon({ lockFilePath });
+const daemon = new CliDaemon({ lockFilePath, cloudApiBaseUrl });
 daemon
   .start()
   .then(async (result) => {

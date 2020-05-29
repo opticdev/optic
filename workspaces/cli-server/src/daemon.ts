@@ -5,6 +5,7 @@ import { CliServer, log, shutdownRequested } from './server';
 
 export interface ICliDaemonConfig {
   lockFilePath: string;
+  cloudApiBaseUrl: string;
 }
 
 class CliDaemon {
@@ -37,7 +38,9 @@ class CliDaemon {
   }
 
   async startApiServer() {
-    this.apiServer = new CliServer({});
+    this.apiServer = new CliServer({
+      cloudApiBaseUrl: this.config.cloudApiBaseUrl,
+    });
     this.apiServer.events.on(shutdownRequested, () => {
       userDebugLogger('shutting down daemon');
       this.stop();

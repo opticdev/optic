@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ci-cli",
-  "version": "0.1.0",
+  "version": "8.0.7",
   "author": "@useoptic",
   "bin": {
     "optic-ci": "./bin/run"
@@ -16,8 +16,11 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
     "@useoptic/cli-config": "8.0.7",
+    "@useoptic/cli-shared": "8.0.7",
     "dotenv": "^8.2.0",
-    "tslib": "^1"
+    "jwt-decode": "^2.2.0",
+    "tslib": "^1",
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -30,7 +33,6 @@
     "eslint-config-oclif": "^3.1",
     "fs-extra": "^9.0.0",
     "globby": "^10",
-    "jwt-decode": "^2.2.0",
     "mocha": "^5",
     "nyc": "^14",
     "ts-node": "^8",
