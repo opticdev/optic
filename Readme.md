@@ -80,7 +80,7 @@ As you committ the observed diffs, Optic builds documentation in OpenAPI format 
 
 ### See it for Yourself
 
-The best way to see Optic in action is to get [set up](https://docs.useoptic.com/setup) in your current API project.
+The best way to see Optic in action is to get [set up](https://docs.useoptic.com/setup) in your current API project. You can also try our [interactive demo](https://docs.useoptic.com/demo) to get a highlight of Optic's workflow and capabilities.
 
 ## Key Features
 📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
@@ -95,6 +95,7 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 
 
 ## Documentation [https://docs.useoptic.com](https://docs.useoptic.com)
+
 Read the full docs at: [docs.useoptic.com](https://docs.useoptic.com)
 
 ## License 
