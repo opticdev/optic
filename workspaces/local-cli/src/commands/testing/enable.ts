@@ -7,7 +7,7 @@ import {
   promiseFromOptic,
   SaasClient,
 } from '@useoptic/cli-shared';
-import Config from '../../config';
+import { Config } from '../../config';
 import { ITestingConfig } from '@useoptic/cli-config';
 
 export default class Enable extends Command {

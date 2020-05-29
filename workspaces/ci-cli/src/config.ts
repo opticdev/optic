@@ -6,6 +6,8 @@ const apiBaseUrl = urljoin(
     'https://k2shife0j5.execute-api.us-east-1.amazonaws.com/stage',
   apiPathPrefix
 );
-export default {
+const Config = {
   apiBaseUrl,
 };
+export default Config;
+export { Config };

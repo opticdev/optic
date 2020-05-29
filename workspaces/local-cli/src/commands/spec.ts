@@ -16,9 +16,8 @@ import {
   makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
-import { cli } from 'cli-ux';
 import { getUser } from '../shared/analytics';
-
+import { Config } from '../config';
 export default class Spec extends Command {
   static description = 'Open your Optic API specification';
 

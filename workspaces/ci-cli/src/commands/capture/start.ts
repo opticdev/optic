@@ -7,7 +7,7 @@ import {
 import { dirname } from 'path';
 import fs from 'fs-extra';
 import { SaasClient } from '@useoptic/cli-shared';
-import Config from '../../config';
+import { Config } from '../../config';
 import {
   ICreateCaptureRequest,
   ICreateCaptureResponse,

@@ -30,6 +30,7 @@ import * as uuid from 'uuid';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
+import { Config } from '../config';
 
 export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   const { paths, config } = await loadPathsAndConfig(cli);

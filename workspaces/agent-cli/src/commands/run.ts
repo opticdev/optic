@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import { SaasCaptureSaver } from '@useoptic/cli-shared';
-import Config from '../config';
+import { Config } from '../config';
 //@ts-ignore
 import jwtDecode from 'jwt-decode';
 import * as uuid from 'uuid';
