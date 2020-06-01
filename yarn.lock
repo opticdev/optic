@@ -2590,7 +2590,7 @@
     "@types/tapable" "*"
     "@types/webpack" "*"
 
-"@types/http-proxy-middleware@*":
+"@types/http-proxy-middleware@*", "@types/http-proxy-middleware@^0.19.3":
   version "0.19.3"
   resolved "https://registry.yarnpkg.com/@types/http-proxy-middleware/-/http-proxy-middleware-0.19.3.tgz#b2eb96fbc0f9ac7250b5d9c4c53aade049497d03"
   integrity sha512-lnBTx6HCOUeIJMLbI/LaL5EmdKLhczJY5oeXZpX/cXE4rRqb3RmV7VcMpiEfYkmTjipv3h7IAyIINe4plEv7cA==
@@ -2599,7 +2599,7 @@
     "@types/http-proxy" "*"
     "@types/node" "*"
 
-"@types/http-proxy@*":
+"@types/http-proxy@*", "@types/http-proxy@^1.17.4":
   version "1.17.4"
   resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.4.tgz#e7c92e3dbe3e13aa799440ff42e6d3a17a9d045b"
   integrity sha512-IrSHl2u6AWXduUaDLqYpt45tLVCtYv7o4Z0s1KghBCDgIIS9oW5K1H8mZG/A2CfeLdEa7rTd1ACOiHBc1EMT2Q==
@@ -8442,6 +8442,17 @@ http-proxy-middleware@^0.19.1:
     is-glob "^4.0.0"
     lodash "^4.17.11"
     micromatch "^3.1.10"
+
+http-proxy-middleware@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-1.0.4.tgz#425ea177986a0cda34f9c81ec961c719adb6c2a9"
+  integrity sha512-8wiqujNWlsZNbeTSSWMLUl/u70xbJ5VYRwPR8RcAbvsNxzAZbgwLzRvT96btbm3fAitZUmo5i8LY6WKGyHDgvA==
+  dependencies:
+    "@types/http-proxy" "^1.17.4"
+    http-proxy "^1.18.1"
+    is-glob "^4.0.1"
+    lodash "^4.17.15"
+    micromatch "^4.0.2"
 
 http-proxy@^1.18.1:
   version "1.18.1"
