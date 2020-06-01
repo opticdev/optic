@@ -6,7 +6,7 @@ const readyPromise = new Promise(async (resolve) => {
   const client = new Client('/api');
   if (isAnalyticsEnabled) {
     const response = await client.getIdentity();
-    debugger;
+    // debugger;
     if (response.ok) {
       const { user } = await response.json();
       window.FS.identify(user.sub, {
