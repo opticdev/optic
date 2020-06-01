@@ -19,7 +19,7 @@ $ npm install -g @useoptic/ci-cli
 $ optic-agent COMMAND
 running command...
 $ optic-agent (-v|--version|version)
-@useoptic/ci-cli/8.1.1 darwin-x64 node-v12.4.0
+@useoptic/ci-cli/8.0.8 darwin-x64 node-v12.4.0
 $ optic-agent --help [COMMAND]
 USAGE
   $ optic-agent COMMAND
@@ -54,7 +54,7 @@ EXAMPLE
   $ optic-ci capture:start ???
 ```
 
-_See code: [src/commands/capture/start.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/capture/start.ts)_
+_See code: [src/commands/capture/start.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/capture/start.ts)_
 
 ## `optic-agent help [COMMAND]`
 

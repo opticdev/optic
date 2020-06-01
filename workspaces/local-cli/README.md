@@ -19,7 +19,7 @@ $ npm install -g @useoptic/cli
 $ api COMMAND
 running command...
 $ api (-v|--version|version)
-@useoptic/cli/8.1.1 darwin-x64 node-v12.4.0
+@useoptic/cli/8.0.8 darwin-x64 node-v12.4.0
 $ api --help [COMMAND]
 USAGE
   $ api COMMAND
@@ -49,7 +49,7 @@ USAGE
   $ api check [TASKNAME]
 ```
 
-_See code: [src/commands/check.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/check.ts)_
+_See code: [src/commands/check.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/check.ts)_
 
 ## `api generate:oas`
 
@@ -64,7 +64,7 @@ OPTIONS
   --yaml
 ```
 
-_See code: [src/commands/generate/oas.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/generate/oas.ts)_
+_See code: [src/commands/generate/oas.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/generate/oas.ts)_
 
 ## `api help [COMMAND]`
 
@@ -92,7 +92,7 @@ USAGE
   $ api init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/init.ts)_
 
 ## `api login`
 
@@ -103,7 +103,7 @@ USAGE
   $ api login
 ```
 
-_See code: [src/commands/login.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/login.ts)_
+_See code: [src/commands/login.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/login.ts)_
 
 ## `api logout`
 
@@ -114,7 +114,7 @@ USAGE
   $ api logout
 ```
 
-_See code: [src/commands/logout.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/logout.ts)_
+_See code: [src/commands/logout.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/logout.ts)_
 
 ## `api run [TASKNAME]`
 
@@ -125,7 +125,7 @@ USAGE
   $ api run [TASKNAME]
 ```
 
-_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/run.ts)_
 
 ## `api spec`
 
@@ -136,7 +136,7 @@ USAGE
   $ api spec
 ```
 
-_See code: [src/commands/spec.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/spec.ts)_
+_See code: [src/commands/spec.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/spec.ts)_
 
 ## `api start`
 
@@ -147,7 +147,7 @@ USAGE
   $ api start
 ```
 
-_See code: [src/commands/start.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/start.ts)_
 
 ## `api testing:disable`
 
@@ -158,7 +158,7 @@ USAGE
   $ api testing:disable
 ```
 
-_See code: [src/commands/testing/disable.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/testing/disable.ts)_
+_See code: [src/commands/testing/disable.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/testing/disable.ts)_
 
 ## `api testing:enable`
 
@@ -169,5 +169,5 @@ USAGE
   $ api testing:enable
 ```
 
-_See code: [src/commands/testing/enable.ts](https://github.com/useoptic/optic-package/blob/v8.1.1/src/commands/testing/enable.ts)_
+_See code: [src/commands/testing/enable.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/testing/enable.ts)_
 <!-- commandsstop -->
