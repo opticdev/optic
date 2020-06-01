@@ -77,7 +77,7 @@ export default function TestingDashboardPage(props) {
               />
             </div>
 
-            {hasCaptures ? (
+            {hasCaptures && false ? ( // TODO: remove debug disable
               <div className={classes.reportContainer}>
                 <Switch>
                   <Route
