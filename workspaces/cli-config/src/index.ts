@@ -183,9 +183,7 @@ export async function getPathsRelativeToConfig() {
   );
 }
 
-export async function getPathsRelativeToCwd(
-  cwd: string
-): Promise<IPathMapping> {
+export function pathsFromCwd(cwd: string): IPathMapping {
   const configPath = path.join(cwd, 'optic.yml');
 
   const basePath = path.join(cwd, '.optic');
@@ -194,19 +192,27 @@ export async function getPathsRelativeToCwd(
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
   const testingConfigPath = path.join(basePath, 'testing.json');
+  return {
+    cwd,
+    configPath,
+    basePath,
+    capturesPath,
+    gitignorePath,
+    specStorePath,
+    exampleRequestsPath,
+    testingConfigPath,
+  };
+}
+
+export async function getPathsRelativeToCwd(
+  cwd: string
+): Promise<IPathMapping> {
+  const pathMapping = pathsFromCwd(cwd);
+  const { capturesPath, exampleRequestsPath } = pathMapping;
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
 
-  return {
-    cwd,
-    basePath,
-    specStorePath,
-    configPath,
-    gitignorePath,
-    capturesPath,
-    testingConfigPath,
-    exampleRequestsPath,
-  };
+  return pathMapping;
 }
 
 export async function createFileTree(config: string, basePath: string) {
@@ -246,6 +252,10 @@ captures/
     basePath,
     capturesPath,
   };
+}
+
+export interface ITestingConfig {
+  authToken: string;
 }
 
 export { parseIgnore, parseRule, IIgnoreRunnable };

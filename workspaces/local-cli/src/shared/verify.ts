@@ -10,11 +10,14 @@ import {
   readApiConfig,
   TaskToStartConfig,
 } from '@useoptic/cli-config';
-import { CommandSession } from './command-session';
+import {
+  HttpToolkitCapturingProxy,
+  CommandSession,
+} from '@useoptic/cli-shared';
 import waitOn from 'wait-on';
-import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
 import { track, trackAndSpawn } from './analytics';
 import { fromOptic } from '@useoptic/cli-shared';
+import url from 'url';
 
 export function verifyTask(cli: Command, taskName: string): void {
   cli.log(fromOptic(colors.bold(`Testing task '${taskName}' `)));
@@ -146,7 +149,7 @@ export function verifyTask(cli: Command, taskName: string): void {
 
         const inboundProxy = new HttpToolkitCapturingProxy();
 
-        const target = require('url').format({
+        const target = url.format({
           hostname: serviceHost,
           port: servicePort,
           protocol: serviceConfig.protocol,
@@ -154,7 +157,6 @@ export function verifyTask(cli: Command, taskName: string): void {
 
         await inboundProxy.start({
           flags: {
-            chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
             includeTextBody: true,
             includeJsonBody: true,
             includeShapeHash: true,

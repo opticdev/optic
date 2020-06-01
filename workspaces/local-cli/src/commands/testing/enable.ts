@@ -7,8 +7,8 @@ import {
   promiseFromOptic,
   SaasClient,
 } from '@useoptic/cli-shared';
-import UrlJoin from 'url-join';
-import Config from '../../config';
+import { Config } from '../../config';
+import { ITestingConfig } from '@useoptic/cli-config';
 
 export default class Enable extends Command {
   static description = 'Enable Live Contracting Testing for your API';
@@ -26,8 +26,7 @@ export default class Enable extends Command {
       );
     }
 
-    const baseUrl = UrlJoin(Config.apiGatewayUrl, 'api/v1');
-    const saasClient = new SaasClient(baseUrl);
+    const saasClient = new SaasClient(Config.apiBaseUrl);
     developerDebugLogger('fetching auth token');
 
     const gettingApiToken = saasClient.getApiAuthToken(
@@ -37,13 +36,10 @@ export default class Enable extends Command {
 
     const authToken = await gettingApiToken;
 
-    const testingConfig = { authToken };
+    const testingConfig: ITestingConfig = { authToken };
     const savingToken = (async () => {
       await fs.ensureFile(paths.testingConfigPath);
-      await fs.writeFile(
-        paths.testingConfigPath,
-        Buffer.from(JSON.stringify(testingConfig))
-      );
+      await fs.writeJson(paths.testingConfigPath, testingConfig);
     })();
     promiseFromOptic(savingToken, 'Saving Testing credentials locally');
 

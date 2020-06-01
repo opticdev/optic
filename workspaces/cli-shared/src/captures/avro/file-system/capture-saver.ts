@@ -2,7 +2,6 @@ import Bottleneck from 'bottleneck';
 import fs from 'fs-extra';
 import path from 'path';
 import avro from 'avsc';
-import * as uuid from 'uuid';
 import {
   IInteractionBatch,
   IGroupingIdentifiers,

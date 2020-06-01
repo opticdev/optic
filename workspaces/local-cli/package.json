@@ -22,7 +22,6 @@
     "@useoptic/cli-server": "8.0.7",
     "@useoptic/cli-shared": "8.0.7",
     "@useoptic/domain": "8.0.7",
-    "@useoptic/proxy": "8.0.7",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
@@ -35,7 +34,6 @@
     "nice-try": "^2.0.1",
     "react-dev-utils": "^10.0.0",
     "slugify": "^1.4.0",
-    "tree-kill": "^1.2.2",
     "tslib": "^1",
     "url-join": "^4.0.1",
     "uuid": "^8.0.0"

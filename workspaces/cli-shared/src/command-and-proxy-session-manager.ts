@@ -1,12 +1,9 @@
 import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
-import { HttpToolkitCapturingProxy } from '@useoptic/proxy';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { CommandSession } from './command-session';
-import {
-  userDebugLogger,
-  developerDebugLogger,
-  ICaptureSaver,
-} from '@useoptic/cli-shared';
+import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
+import { developerDebugLogger, ICaptureSaver, userDebugLogger } from './index';
+import url from 'url';
 
 class CommandAndProxySessionManager {
   constructor(private config: IOpticTaskRunnerConfig) {}
@@ -30,7 +27,7 @@ class CommandAndProxySessionManager {
       persistenceManager.save(sample);
     });
 
-    const target = require('url').format({
+    const target = url.format({
       hostname: serviceHost,
       port: servicePort,
       protocol: this.config.serviceConfig.protocol,
@@ -38,7 +35,6 @@ class CommandAndProxySessionManager {
     developerDebugLogger({ target });
     await inboundProxy.start({
       flags: {
-        chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
         includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeShapeHash: true,

@@ -5,7 +5,7 @@ import {
   readTestingConfig,
 } from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
@@ -16,6 +16,8 @@ import {
   FileSystemAvroCaptureLoader,
   ICaptureLoader,
 } from '@useoptic/cli-shared';
+import * as http from 'http';
+import * as url from 'url';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
