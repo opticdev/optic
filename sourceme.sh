@@ -2,12 +2,14 @@
 # usage: $ source ./sourceme.sh
 export OPTIC_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 echo "Optic development scripts will run from $OPTIC_SRC_DIR"
+export OPTIC_DEBUG_ENV_FILE="$OPTIC_SRC_DIR/.env"
+## Don't expose this below, instead create .env and add to there, so we can all 
+## use our own local clusters to run against.
+# export OPTIC_LOCAL_CLI__API_GATEWAY="https://yx9uc028d6.execute-api.us-east-1.amazonaws.com/stage"
+
 alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_UI_HOST=http://localhost:3000 OPTIC_AUTH_UI_HOST=http://localhost:4005 $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 
-## Don't expose this below, instead create workspaces/local-cli/.env and add to there, so we can all 
-## use our own local clusters to run against.
-# export OPTIC_LOCAL_CLI__API_GATEWAY="https://yx9uc028d6.execute-api.us-east-1.amazonaws.com/stage"
 alias cidev="$OPTIC_SRC_DIR/workspaces/ci-cli/bin/run"
 alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
 optic_workspace_clean() {
