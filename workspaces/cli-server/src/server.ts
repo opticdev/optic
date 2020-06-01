@@ -19,6 +19,7 @@ import {
   makeRouter,
 } from './routers/spec-router';
 import { basePath } from '@useoptic/ui';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
@@ -156,8 +157,20 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = makeRouter(sessions, this.config.cloudApiBaseUrl);
+    const specRouter = makeRouter(sessions);
     app.use('/api/specs/:specId', specRouter);
+
+    // testing service proxy
+    app.use(
+      '/api/testing',
+      createProxyMiddleware({
+        changeOrigin: true,
+        target: this.config.cloudApiBaseUrl,
+        pathRewrite(input, req) {
+          return input.substring(req.baseUrl.length);
+        },
+      })
+    );
 
     // ui
     this.addUiServer(app);

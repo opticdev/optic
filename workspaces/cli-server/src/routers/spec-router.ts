@@ -16,7 +16,6 @@ import {
   FileSystemAvroCaptureLoader,
   ICaptureLoader,
 } from '@useoptic/cli-shared';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import * as http from 'http';
 import * as url from 'url';
 
@@ -159,10 +158,7 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export function makeRouter(
-  sessions: ICliServerSession[],
-  cloudApiBaseUrl: string
-) {
+export function makeRouter(sessions: ICliServerSession[]) {
   function prepareEvents(events: any): string {
     return `[
 ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
@@ -200,17 +196,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
-
-  router.use(
-    '/cloud',
-    createProxyMiddleware({
-      changeOrigin: true,
-      target: cloudApiBaseUrl,
-      pathRewrite(input, req) {
-        return input.substring(req.baseUrl.length);
-      },
-    })
-  );
 
   // events router
   router.get('/events', async (req, res) => {

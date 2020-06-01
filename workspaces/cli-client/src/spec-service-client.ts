@@ -82,4 +82,10 @@ export class Client implements ISpecService {
       `${this.baseUrl}/specs/${this.specId}/captures/${captureId}/status`
     );
   }
+
+  getTestingCredentials() {
+    return JsonHttpClient.getJsonWithoutHandlingResponse(
+      `${this.baseUrl}/specs/${this.specId}/testing-credentials`
+    );
+  }
 }
