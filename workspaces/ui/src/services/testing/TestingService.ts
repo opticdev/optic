@@ -1,4 +1,4 @@
-import { ITestingService, Result, Capture } from '.';
+import { ITestingService, Result, Capture, ok } from '.';
 import UrlJoin from 'url-join';
 
 // TODO: implement ITestingService
@@ -70,6 +70,8 @@ export class TestingService {
 
     if (!response.ok) throw new Error('List of captures could not be fetched');
 
-    return response.json();
+    const payload = await response.json();
+
+    return ok(payload.captures);
   }
 }
