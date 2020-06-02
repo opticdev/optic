@@ -23,7 +23,7 @@ describe('run', () => {
     ])
     .it('Will start your API normally even with invalid token', (ctx) => {
       expect(ctx.stdout).to.include(
-        'Optic monitoring token is missing. Starting your API normally'
+        'A valid Optic monitoring token was not provided. Starting your API normally'
       );
     });
 
@@ -39,7 +39,7 @@ describe('run', () => {
       'Will start your API normally even with invalid config string',
       (ctx) => {
         expect(ctx.stdout).to.include(
-          'Optic monitoring token is missing. Starting your API normally'
+          'A valid Optic monitoring token was not provided. Starting your API normally'
         );
       }
     );
