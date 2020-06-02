@@ -45,10 +45,10 @@ export default class Run extends Command {
     try {
       createCaptureConfig = JSON.parse(flags.config);
     } catch (e) {
-      console.error(
+      this.error(
         fromOptic(`Unable to parse capture config: "${flags.config}"`)
       );
-      console.error(e);
+      this.error(e);
     }
 
     let opticContext:
@@ -66,12 +66,12 @@ export default class Run extends Command {
         const decodedToken = jwtDecode(agentToken);
         opticContext = decodedToken.opticContext;
       } catch (e) {
-        console.error(
+        this.error(
           fromOptic(
             `Invalid monitoring config token provided. Please try another`
           )
         );
-        console.error(e);
+        this.error(e);
       }
     }
 
