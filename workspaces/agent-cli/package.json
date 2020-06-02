@@ -18,6 +18,7 @@
     "@useoptic/cli-shared": "8.0.7",
     "dotenv": "^8.2.0",
     "jwt-decode": "^2.2.0",
+    "nice-try": "^2.0.1",
     "tslib": "^1",
     "uuid": "^8.0.0"
   },
