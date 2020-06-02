@@ -1,4 +1,14 @@
-import { ITestingService, Result, Capture, ok } from '.';
+import {
+  ITestingService,
+  Capture,
+  CoverageReport,
+  Result,
+  ok,
+  err,
+  NotFoundError,
+  RfcEventStream,
+  UndocumentedEndpoint,
+} from '.';
 import UrlJoin from 'url-join';
 
 // TODO: implement ITestingService
@@ -73,5 +83,80 @@ export class TestingService {
     const payload = await response.json();
 
     return ok(payload.captures);
+  }
+
+  async loadCapture(captureId): Promise<Result<Capture, NotFoundError>> {
+    const response = await this.callApi(`/captures/${captureId}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('Capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+
+    return ok(payload);
+  }
+
+  async loadReport(captureId): Promise<Result<CoverageReport, NotFoundError>> {
+    const response = await this.callApi(
+      `/captures/${captureId}/reports/coverage`
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('CoverageReport for capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+
+    return ok(payload);
+  }
+
+  async loadUndocumentedEndpoints(
+    captureId
+  ): Promise<Result<UndocumentedEndpoint[], NotFoundError>> {
+    const response = await this.callApi(
+      `/captures/${captureId}/reports/undocumented-urls`
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error(
+          'Undocumented endpoints for capture could not be fetched'
+        );
+      }
+    }
+
+    const payload = await response.json();
+    return ok(payload);
+  }
+
+  async loadSpecEvents(
+    captureId
+  ): Promise<Result<RfcEventStream, NotFoundError>> {
+    const response = await this.callApi(`/captures/${captureId}/spec`, {
+      redirect: 'follow',
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('Spec for capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+
+    return ok(payload);
   }
 }
