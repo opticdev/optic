@@ -72,6 +72,19 @@ export class TestingService {
 
     const payload = await response.json();
 
-    return ok(payload.captures);
+    return ok(
+      payload.captures.map((capture) => {
+        // TOOD: consider renaming rest of app to `environment`, rather than rewriting here
+        const tags = capture.tags.map((tag) => {
+          if (tag.name !== 'environmentName') return tag;
+          return {
+            ...tag,
+            name: 'environment',
+          };
+        });
+
+        return { ...capture, tags };
+      })
+    );
   }
 }
