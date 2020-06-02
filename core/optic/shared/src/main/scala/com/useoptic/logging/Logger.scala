@@ -10,7 +10,7 @@ trait SimpleLogger {
 @JSExportAll
 object Logger {
   val printlnLogger: SimpleLogger = new SimpleLogger {
-    override def log(x: Any): Any = println(x)
+    override def log(x: Any): Any = println(x) //never delete this one, I'm allowed :)
   }
   val noopLogger: SimpleLogger = new SimpleLogger {
     override def log(x: Any): Any = {}

@@ -28,6 +28,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
   def updatedRfcState(rfcState: RfcState, resolvers: ShapesResolvers): Unit = {
     if (_currentRfcState != rfcState) {
       _currentRfcState = rfcState
+
       _resolvers = resolvers
       diffPreviewer = new DiffPreviewer(_resolvers, _currentRfcState)
       recomputeDiff
@@ -290,17 +291,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
 
         val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
-          println("ABC LOOK HERE")
           if (inferPolymorphism) {
             val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
             val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
-            println("got 2 HERE")
-            println("got 2 HERE")
-            println(interaction)
-            println(Vector(BodyUtilities.parseBody(interaction.request.body)))
-
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
           }
         }
@@ -318,15 +313,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
           if (inferPolymorphism) {
-            println("LOOK HERE")
+
             val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
             val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
-            println("got 2 HERE")
-            println("got 2 HERE")
-            println(interaction)
-            println(Vector(BodyUtilities.parseBody(interaction.request.body)))
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
           }
         }

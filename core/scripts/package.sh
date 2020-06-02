@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+echo "Packaging Development Domain"
+
 export SBT_OPTS="-Xmx2G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=2G -Xss2M  -Duser.timezone=GMT"
 sbt fastOptJS
 OUTPUT_FILE=../workspaces/domain/src/domain.js
