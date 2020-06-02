@@ -318,7 +318,6 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
             val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
-            println("AIDAN C")
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
           }
         }
