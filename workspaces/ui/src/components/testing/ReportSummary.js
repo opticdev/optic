@@ -634,7 +634,7 @@ function createSummary(capture, spec, report) {
   const totalCompliantInteractions = totalInteractions - totalDiffs;
 
   const buildIdTag = capture.tags.find(({ name }) => name === 'buildId');
-  const envTag = capture.tags.find(({ name }) => name === 'environment');
+  const envTag = capture.tags.find(({ name }) => name === 'environmentName');
 
   return {
     apiName,
