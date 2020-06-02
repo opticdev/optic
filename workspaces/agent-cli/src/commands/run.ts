@@ -7,8 +7,6 @@ import {
 import { Config } from '../config';
 //@ts-ignore
 import jwtDecode from 'jwt-decode';
-//@ts-ignore
-import niceTry from 'nice-try';
 import * as uuid from 'uuid';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { IApiCliConfig } from '@useoptic/cli-config';
@@ -34,31 +32,66 @@ export default class Run extends Command {
     }),
   };
 
+  parseConfig():
+    | {
+        orgId: string;
+        agentGroupId: string;
+        captureId: string;
+        agentToken: any;
+      }
+    | undefined {
+    let createCaptureConfig: ICreateCaptureResponse | undefined = undefined;
+    const { flags } = this.parse(Run);
+    try {
+      createCaptureConfig = JSON.parse(flags.config);
+    } catch (e) {
+      console.error(
+        fromOptic(`Unable to parse capture config: "${flags.config}"`)
+      );
+      console.error(e);
+    }
+
+    let opticContext:
+      | {
+          orgId: string;
+          agentGroupId: string;
+          captureId: string;
+        }
+      | undefined = undefined;
+    let agentToken: string | undefined = undefined;
+
+    if (createCaptureConfig && createCaptureConfig!.agentToken) {
+      try {
+        agentToken = createCaptureConfig!.agentToken!;
+        const decodedToken = jwtDecode(agentToken);
+        opticContext = decodedToken.opticContext;
+      } catch (e) {
+        console.error(
+          fromOptic(
+            `Invalid monitoring config token provided. Please try another`
+          )
+        );
+        console.error(e);
+      }
+    }
+
+    if (opticContext) {
+      return {
+        orgId: opticContext!.orgId,
+        agentGroupId: opticContext!.agentGroupId,
+        captureId: opticContext!.captureId,
+        agentToken,
+      };
+    }
+  }
+
   async run() {
     const { flags } = this.parse(Run);
     const opticConfig = {
       ignoreRequests: undefined,
     };
 
-    const identifiers:
-      | {
-          orgId: string;
-          agentGroupId: string;
-          captureId: string;
-          agentToken: any;
-        }
-      | undefined = niceTry(() => {
-      const { agentToken }: ICreateCaptureResponse = JSON.parse(flags.config);
-      const decodedToken = jwtDecode(agentToken);
-      const { opticContext } = decodedToken;
-
-      return {
-        orgId: opticContext.orgId,
-        agentGroupId: opticContext.agentGroupId,
-        captureId: opticContext.captureId,
-        agentToken,
-      };
-    });
+    const identifiers = this.parseConfig();
 
     //Optic has valid config
     if (identifiers) {
@@ -89,7 +122,7 @@ export default class Run extends Command {
     } else {
       this.log(
         fromOptic(
-          'Optic monitoring token is missing. Starting your API normally'
+          'A valid Optic monitoring token was not provided. Starting your API normally'
         )
       );
 
