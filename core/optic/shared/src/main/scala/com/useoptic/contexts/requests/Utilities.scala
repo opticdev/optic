@@ -100,20 +100,27 @@ object Utilities {
     }
   }
 
-  type PathMap = Map[PathComponentId, PathComponent]
-  def resolvePath(url: String, pathMap: PathMap): Option[PathComponentId] = {
-    val children = pathMap.toSeq
+  def groupPathsByParentId(pathMap: PathMap): Map[PathComponentId, Seq[(PathComponentId, PathComponent)]] = {
+    pathMap.toSeq
       .groupBy((entry) => {
         val (_, pathComponent) = entry
         pathComponent.descriptor.parentPathId
       })
+  }
+
+  def resolvePathByGrouping(url: String, groupedPaths: Map[PathComponentId, Seq[(PathComponentId, PathComponent)]]) = {
     val urlComponents = url.split("/").filterNot(_ == "")
     if (urlComponents.isEmpty) {
       Some(rootPathId)
     } else {
       val lastParent = rootPathId
-      resolveHelper(lastParent, urlComponents, children)
+      resolveHelper(lastParent, urlComponents, groupedPaths)
     }
+  }
+
+  type PathMap = Map[PathComponentId, PathComponent]
+  def resolvePath(url: String, pathMap: PathMap): Option[PathComponentId] = {
+    resolvePathByGrouping(url, groupPathsByParentId(pathMap))
   }
 
   def resolveHelper(lastParent: PathComponentId, urlComponents: Seq[String], children: Map[PathComponentId, Seq[(String, PathComponent)]]): Option[PathComponentId] = {
