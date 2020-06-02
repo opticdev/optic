@@ -1,7 +1,7 @@
 package com.useoptic.diff.helpers
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.diff.helpers.DiffHelpers.{DiffsGroupedByRegion, InteractionsGroupedByDiff}
+import com.useoptic.diff.helpers.DiffHelpers.{DiffsGroupedByRegion, InteractionsGroupedByDiff, diff}
 import com.useoptic.diff.interactions.{InteractionDiffResult, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
@@ -41,6 +41,18 @@ object DiffHelpers {
       val changedItems =
         diffs.map((diff) => {
           (diff -> (acc.getOrElse(diff, Seq.empty) :+ interaction))
+        }).toMap
+      acc ++ changedItems
+    })
+  }
+
+  def groupByNormalizedDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interactions: Seq[HttpInteraction], initial: InteractionsGroupedByDiff = Map.empty): InteractionsGroupedByDiff = {
+    interactions.foldLeft(initial)((acc, interaction) => {
+      val diffs = diff(resolvers, rfcState, interaction)
+      val changedItems =
+        diffs.map((diff) => {
+          val normalized = diff.normalize()
+          (normalized -> (acc.getOrElse(normalized, Seq.empty) :+ interaction))
         }).toMap
       acc ++ changedItems
     })
