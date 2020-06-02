@@ -39,6 +39,7 @@ export class TestingService {
     headers.set('Authorization', `Bearer ${this.authToken}`);
 
     const response = await fetch(url, {
+      ...options,
       headers,
     });
 
@@ -143,9 +144,7 @@ export class TestingService {
   async loadSpecEvents(
     captureId
   ): Promise<Result<RfcEventStream, NotFoundError>> {
-    const response = await this.callApi(`/captures/${captureId}/spec`, {
-      redirect: 'follow',
-    });
+    const response = await this.callApi(`/captures/${captureId}/spec`);
 
     if (!response.ok) {
       if (response.status === 404) {
