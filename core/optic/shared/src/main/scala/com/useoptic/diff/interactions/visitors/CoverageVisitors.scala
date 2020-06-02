@@ -42,7 +42,7 @@ class CoveragePathVisitor(resolvers: ShapesResolvers, report: CoverageReport) ex
       report.coverageCounts.increment(key)
     }
     diffs.foreach(diff => {
-      report.diffs.increment(diff)
+      report.diffs.increment(diff.normalize())
     })
   }
 }
@@ -84,7 +84,7 @@ class CoverageRequestBodyVisitor(resolvers: ShapesResolvers, report: CoverageRep
 
       if (diffs.nonEmpty) {
         diffs.foreach(diff => {
-          report.diffs.increment(diff)
+          report.diffs.increment(diff.normalize())
         })
       } else {
         diffVisitors.requestBodyVisitor.visitedShapeTrails.counts.foreach(entry => {
@@ -135,7 +135,7 @@ class CoverageResponseBodyVisitor(resolvers: ShapesResolvers, report: CoverageRe
 
       if (diffs.nonEmpty) {
         diffs.foreach(diff => {
-          report.diffs.increment(diff)
+          report.diffs.increment(diff.normalize())
         })
       } else {
         diffVisitors.responseBodyVisitor.visitedShapeTrails.counts.foreach(entry => {

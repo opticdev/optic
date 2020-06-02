@@ -6,12 +6,28 @@ import com.useoptic.serialization.StableHashable
 
 sealed trait InteractionDiffResult extends StableHashable with DiffResult {
   def interactionTrail: InteractionTrail
+
   def requestsTrail: RequestSpecTrail
+
   def shapeDiffResultOption: Option[ShapeDiffResult] = None
+
+  def normalize(): InteractionDiffResult = {
+    this match {
+      case d: UnmatchedRequestUrl => d
+      case d: UnmatchedRequestMethod => d
+      case d: UnmatchedRequestBodyContentType => d
+      case d: UnmatchedResponseStatusCode => d
+      case d: UnmatchedResponseBodyContentType => d
+      case d: UnmatchedRequestBodyShape => d.copy(shapeDiffResult = d.shapeDiffResult.withNormalizedJsonTrail)
+      case d: UnmatchedResponseBodyShape => d.copy(shapeDiffResult = d.shapeDiffResult.withNormalizedJsonTrail)
+    }
+  }
 }
+
 
 sealed trait ShapeRelatedDiff extends InteractionDiffResult {
   def shapeDiffResult: ShapeDiffResult
+
   override def shapeDiffResultOption: Option[ShapeDiffResult] = Some(shapeDiffResult)
 }
 

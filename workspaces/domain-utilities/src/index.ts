@@ -82,3 +82,15 @@ export function diffFromRfcStateAndInteractions(
   );
   return diffResults;
 }
+export function normalizedDiffFromRfcStateAndInteractions(
+  shapesResolvers: any,
+  rfcState: any,
+  interactions: any[]
+) {
+  const diffResults = DiffHelpers.groupByNormalizedDiffs(
+    shapesResolvers,
+    rfcState,
+    deserializeInteractions(interactions)
+  );
+  return diffResults;
+}

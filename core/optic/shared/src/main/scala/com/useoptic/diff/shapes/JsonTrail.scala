@@ -12,6 +12,7 @@ case class JsonTrail(path: Seq[JsonTrailPathComponent]) {
   }
 
   override def toString = path.toString()
+
   //@todo this is smelly. prefer new comparators. every internal equality check will use this too
   def compareLoose(obj: Any): Boolean = obj match {
     case trail: JsonTrail => compareToPath(trail)
@@ -29,6 +30,13 @@ case class JsonTrail(path: Seq[JsonTrailPathComponent]) {
       case (Some(a: JsonArrayItem), Some(b: JsonArrayItem)) => true
       case (a, b) => a == b
     }
+  }
+
+  def withNormalizedJsonTrail = {
+    JsonTrail(path.map {
+      case p: JsonArrayItem => JsonArrayItem(0)
+      case p => p
+    })
   }
 }
 
