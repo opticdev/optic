@@ -110,7 +110,8 @@ function ActiveCapture(props) {
   const domRef = useScrollToCurrent(props.isCurrent);
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
-  const envTag = tags.find(({ name }) => name === 'environment') || 'unknown';
+  const envTag =
+    tags.find(({ name }) => name === 'environmentName') || 'unknown';
   const now = new Date();
 
   return (
@@ -140,7 +141,7 @@ function CompletedCapture(props) {
   const domRef = useScrollToCurrent(props.isCurrent);
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
-  const envTag = tags.find(({ name }) => name === 'environment');
+  const envTag = tags.find(({ name }) => name === 'environmentName');
   const now = new Date();
 
   return (
