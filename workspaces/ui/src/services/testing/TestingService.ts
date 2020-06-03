@@ -14,7 +14,7 @@ import { StableHasher } from '../../utilities/CoverageUtilities';
 import { opticEngine } from '@useoptic/domain';
 
 // TODO: implement ITestingService
-export class TestingService {
+export class TestingService implements ITestingService {
   private authToken: string;
   private refreshing?: Promise<unknown>;
 
