@@ -103,6 +103,7 @@ export default function ReportSummary(props) {
         <SummaryStats
           totalInteractions={totalInteractions}
           totalDiffs={totalDiffs}
+          totalUnmatchedPaths={totalUnmatchedPaths}
           totalUndocumentedEndpoints={undocumentedEndpoints.length}
         />
         <h4 className={classes.buildName}>
@@ -131,17 +132,20 @@ export default function ReportSummary(props) {
                 </code>
 
                 <div className={classes.endpointStats}>
-                  {endpoint.counts.diffs > 0 && (
-                    <span
-                      className={classNames(
-                        classes.endpointChip,
-                        classes.endpointDiffsChip
-                      )}
-                    >
-                      <strong>{endpoint.counts.diffs}</strong>
-                      {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
-                    </span>
-                  )}
+                  {endpoint.counts.diffs > 0 &&
+                    process.env
+                      .REACT_APP_TESTING_DASHBOARD_ENDPOINT_DIFF_STATS ===
+                      'true' && (
+                      <span
+                        className={classNames(
+                          classes.endpointChip,
+                          classes.endpointDiffsChip
+                        )}
+                      >
+                        <strong>{endpoint.counts.diffs}</strong>
+                        {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
+                      </span>
+                    )}
                   {endpoint.counts.incompliant > 0 ? (
                     <span
                       className={classNames(
@@ -207,50 +211,55 @@ export default function ReportSummary(props) {
         <p>No endpoints have been documented yet</p>
       )}
 
-      <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
+      {process.env.REACT_APP_TESTING_DASHBOARD_UNDOCUMENTED_ENDPOINTS ===
+        'true' && (
+        <>
+          <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
 
-      {undocumentedEndpoints.length > 0 && (
-        <ul className={classes.endpointsList}>
-          {undocumentedEndpoints.map((undocumented) => (
-            <li
-              key={undocumented.method + undocumented.path}
-              className={classNames(
-                classes.endpointsListItem,
-                classes.isUndocumented
-              )}
-            >
-              <Card className={classes.endpointCard}>
-                <div className={classes.endpointHeader}>
-                  <span
-                    className={classNames(
-                      classes.endpointMethod,
-                      classesHttpMethods[undocumented.method]
-                    )}
-                  >
-                    {undocumented.method}
-                  </span>
-                  <code className={classes.endpointPath}>
-                    {undocumented.path}
-                  </code>
+          {undocumentedEndpoints.length > 0 && (
+            <ul className={classes.endpointsList}>
+              {undocumentedEndpoints.map((undocumented) => (
+                <li
+                  key={undocumented.method + undocumented.path}
+                  className={classNames(
+                    classes.endpointsListItem,
+                    classes.isUndocumented
+                  )}
+                >
+                  <Card className={classes.endpointCard}>
+                    <div className={classes.endpointHeader}>
+                      <span
+                        className={classNames(
+                          classes.endpointMethod,
+                          classesHttpMethods[undocumented.method]
+                        )}
+                      >
+                        {undocumented.method}
+                      </span>
+                      <code className={classes.endpointPath}>
+                        {undocumented.path}
+                      </code>
 
-                  <div className={classes.endpointStats}>
-                    <span
-                      className={classNames(
-                        classes.endpointChip,
-                        classes.endpointIncompliantChip
-                      )}
-                    >
-                      <strong>
-                        {undocumented.count}/{undocumented.count}
-                      </strong>
-                      {' incompliant'}
-                    </span>
-                  </div>
-                </div>
-              </Card>
-            </li>
-          ))}
-        </ul>
+                      <div className={classes.endpointStats}>
+                        <span
+                          className={classNames(
+                            classes.endpointChip,
+                            classes.endpointIncompliantChip
+                          )}
+                        >
+                          <strong>
+                            {undocumented.count}/{undocumented.count}
+                          </strong>
+                          {' incompliant'}
+                        </span>
+                      </div>
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );
@@ -260,21 +269,48 @@ ReportSummary.displayName = 'Testing/ReportSummary';
 function SummaryStats({
   totalInteractions,
   totalDiffs,
+  totalUnmatchedPaths,
   totalUndocumentedEndpoints,
 }) {
   const classes = useStyles();
 
+  const diffsStat =
+    process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DIFF_STATS === 'true' ? (
+      <>
+        yield in <Stat value={totalDiffs} label="diff" />
+      </>
+    ) : (
+      <>
+        of which{' '}
+        <Stat value={totalDiffs} label="incompliant" pluralize={false} />
+      </>
+    );
+
+  const undocumentedStat =
+    process.env.REACT_APP_TESTING_DASHBOARD_UNDOCUMENTED_ENDPOINTS ===
+    'true' ? (
+      <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />
+    ) : (
+      <>
+        <Stat
+          value={totalUnmatchedPaths}
+          label="against
+        undocumented endpoints"
+          pluralize={false}
+        />
+      </>
+    );
+
   return (
     <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-      Optic observed <Stat value={totalInteractions} label="interaction" />
-      , yielding in <Stat value={totalDiffs} label="diff" /> and{' '}
-      <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />.
+      Optic observed <Stat value={totalInteractions} label="interaction" />,
+      yielding {diffsStat} and {undocumentedStat}.
     </Typography>
   );
 }
 SummaryStats.displayName = 'Testing/ReportSummary/SummaryStats';
 
-function Stat({ value = 0, label = '' }) {
+function Stat({ value = 0, label = '', pluralize = true }) {
   return (
     <span>
       {value !== 0 && (
@@ -290,7 +326,7 @@ function Stat({ value = 0, label = '' }) {
       <Typography variant="h6" component="span" style={{ fontWeight: 800 }}>
         {value === 0 && 'no '}
         {label}
-        {value === 1 ? '' : 's'}
+        {!pluralize || value === 1 ? '' : 's'}
       </Typography>
     </span>
   );
