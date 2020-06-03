@@ -115,83 +115,92 @@ export default function ReportSummary(props) {
 
       {endpoints.length > 0 ? (
         <ul className={classes.endpointsList} onClick={onClickList}>
-          {endpoints.map((endpoint) => (
-            <li
-              key={endpoint.id}
-              className={classNames(classes.endpointsListItem, {
-                [classes.isCurrent]:
-                  currentEndpointId && endpoint.id === currentEndpointId,
-              })}
-            >
-              <Card className={classes.endpointCard}>
-                <ReportEndpointLink
-                  replace
-                  className={classes.endpointLink}
-                  captureId={captureId}
-                  endpointId={endpoint.id}
+          {endpoints.map((endpoint) => {
+            const endpointHeader = (
+              <div className={classes.endpointHeader}>
+                <span
+                  className={classNames(
+                    classes.endpointMethod,
+                    classesHttpMethods[endpoint.descriptor.httpMethod]
+                  )}
                 >
-                  <div className={classes.endpointHeader}>
+                  {endpoint.descriptor.httpMethod}
+                </span>
+                <code className={classes.endpointPath}>
+                  {endpoint.descriptor.fullPath}
+                </code>
+
+                <div className={classes.endpointStats}>
+                  {endpoint.counts.diffs > 0 && (
                     <span
                       className={classNames(
-                        classes.endpointMethod,
-                        classesHttpMethods[endpoint.descriptor.httpMethod]
+                        classes.endpointChip,
+                        classes.endpointDiffsChip
                       )}
                     >
-                      {endpoint.descriptor.httpMethod}
+                      <strong>{endpoint.counts.diffs}</strong>
+                      {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
                     </span>
-                    <code className={classes.endpointPath}>
-                      {endpoint.descriptor.fullPath}
-                    </code>
-
-                    <div className={classes.endpointStats}>
-                      {endpoint.counts.diffs > 0 && (
-                        <span
-                          className={classNames(
-                            classes.endpointChip,
-                            classes.endpointDiffsChip
-                          )}
-                        >
-                          <strong>{endpoint.counts.diffs}</strong>
-                          {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
-                        </span>
+                  )}
+                  {endpoint.counts.incompliant > 0 ? (
+                    <span
+                      className={classNames(
+                        classes.endpointChip,
+                        classes.endpointIncompliantChip
                       )}
-                      {endpoint.counts.incompliant > 0 ? (
-                        <span
-                          className={classNames(
-                            classes.endpointChip,
-                            classes.endpointIncompliantChip
-                          )}
-                        >
-                          <strong>
-                            {endpoint.counts.incompliant}/
-                            {endpoint.counts.interactions}
-                          </strong>
-                          {' incompliant'}
-                        </span>
-                      ) : (
-                        <span
-                          className={classNames(
-                            classes.endpointChip,
-                            classes.endpointCompliantChip
-                          )}
-                        >
-                          <strong>
-                            {endpoint.counts.compliant}/
-                            {endpoint.counts.interactions}
-                          </strong>
-                          {' compliant'}
-                        </span>
+                    >
+                      <strong>
+                        {endpoint.counts.incompliant}/
+                        {endpoint.counts.interactions}
+                      </strong>
+                      {' incompliant'}
+                    </span>
+                  ) : (
+                    <span
+                      className={classNames(
+                        classes.endpointChip,
+                        classes.endpointCompliantChip
                       )}
-                    </div>
-                  </div>
-                </ReportEndpointLink>
-
-                {currentEndpointId && endpoint.id === currentEndpointId && (
-                  <EndpointReport endpoint={endpoint} captureId={captureId} />
-                )}
-              </Card>
-            </li>
-          ))}
+                    >
+                      <strong>
+                        {endpoint.counts.compliant}/
+                        {endpoint.counts.interactions}
+                      </strong>
+                      {' compliant'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+            return (
+              <li
+                key={endpoint.id}
+                className={classNames(classes.endpointsListItem, {
+                  [classes.isCurrent]:
+                    currentEndpointId && endpoint.id === currentEndpointId,
+                })}
+              >
+                <Card className={classes.endpointCard}>
+                  {process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DETAILS ===
+                  'true' ? (
+                    <ReportEndpointLink
+                      replace
+                      className={classes.endpointLink}
+                      captureId={captureId}
+                      endpointId={endpoint.id}
+                    >
+                      {endpointHeader}
+                    </ReportEndpointLink>
+                  ) : (
+                    <div className={classes.endpointLink}>{endpointHeader}</div>
+                  )}
+                  {currentEndpointId && endpoint.id === currentEndpointId && (
+                    <EndpointReport endpoint={endpoint} captureId={captureId} />
+                  )}
+                </Card>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         // @TODO: revisit this empty state
