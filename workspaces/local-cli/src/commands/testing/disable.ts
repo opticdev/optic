@@ -10,9 +10,11 @@ import {
 } from '@useoptic/cli-shared';
 import cli from 'cli-ux';
 import fs from 'fs-extra';
+import Config from '../../config';
 
 export default class Disable extends Command {
   static description = 'Disable Live Contracting Testing for your API';
+  static hidden: boolean = Config.hiddenFeatures.includes('testing');
 
   async run() {
     const loadingConfig = loadPathsAndConfig(this);
