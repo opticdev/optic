@@ -103,6 +103,7 @@ export default function ReportSummary(props) {
         <SummaryStats
           totalInteractions={totalInteractions}
           totalDiffs={totalDiffs}
+          totalUnmatchedPaths={totalUnmatchedPaths}
           totalUndocumentedEndpoints={undocumentedEndpoints.length}
         />
         <h4 className={classes.buildName}>
@@ -265,15 +266,27 @@ ReportSummary.displayName = 'Testing/ReportSummary';
 function SummaryStats({
   totalInteractions,
   totalDiffs,
+  totalUnmatchedPaths,
   totalUndocumentedEndpoints,
 }) {
   const classes = useStyles();
+
+  const undocumentedStat =
+    process.env.REACT_APP_TESTING_DASHBOARD_UNDOCUMENTED_ENDPOINTS ===
+    'true' ? (
+      <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />
+    ) : (
+      <>
+        <Stat value={totalUnmatchedPaths} label="interaction" /> against
+        undocumented endpoints
+      </>
+    );
 
   return (
     <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
       Optic observed <Stat value={totalInteractions} label="interaction" />
       , yielding in <Stat value={totalDiffs} label="diff" /> and{' '}
-      <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />.
+      {undocumentedStat}.
     </Typography>
   );
 }
