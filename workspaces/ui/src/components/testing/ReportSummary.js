@@ -132,17 +132,20 @@ export default function ReportSummary(props) {
                 </code>
 
                 <div className={classes.endpointStats}>
-                  {endpoint.counts.diffs > 0 && (
-                    <span
-                      className={classNames(
-                        classes.endpointChip,
-                        classes.endpointDiffsChip
-                      )}
-                    >
-                      <strong>{endpoint.counts.diffs}</strong>
-                      {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
-                    </span>
-                  )}
+                  {endpoint.counts.diffs > 0 &&
+                    process.env
+                      .REACT_APP_TESTING_DASHBOARD_ENDPOINT_DIFF_STATS ===
+                      'true' && (
+                      <span
+                        className={classNames(
+                          classes.endpointChip,
+                          classes.endpointDiffsChip
+                        )}
+                      >
+                        <strong>{endpoint.counts.diffs}</strong>
+                        {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
+                      </span>
+                    )}
                   {endpoint.counts.incompliant > 0 ? (
                     <span
                       className={classNames(
