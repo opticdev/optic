@@ -80,14 +80,11 @@ export default function TestingDashboardPage(props) {
             {hasCaptures ? (
               <div className={classes.reportContainer}>
                 <Switch>
-                  {process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DETAILS ===
-                    'true' && (
-                    <Route
-                      strict
-                      path={routerPaths.testingEndpointDetails}
-                      component={TestingDashboard}
-                    />
-                  )}
+                  <Route
+                    strict
+                    path={routerPaths.testingEndpointDetails}
+                    component={TestingDashboard}
+                  />
                   <Route
                     strict
                     path={routerPaths.testingCapture}
@@ -104,35 +101,53 @@ export default function TestingDashboardPage(props) {
                 </Switch>
               </div>
             ) : (
-              <div className={classes.setup}>
-                <div className={classes.setupInstructions}>
-                  <h3>No live captures have been found yet.</h3>
-
-                  <p>
-                    For help on how to get started with Live Contract Testing,
-                    see <SetupLink>the setup instructions</SetupLink>.
-                  </p>
-
-                  <p>
-                    Think this might not be right? Feel free to{' '}
-                    <a
-                      href={SupportLinks.Contact(
-                        'Problem: No live captures found'
-                      )}
-                    >
-                      contact us about it
-                    </a>
-                    .
-                  </p>
-                </div>
-
-                <TestingPromo />
-              </div>
+              <TestingDashboardSetup assertion="No live captures have been found yet." />
             )}
           </div>
         </Page.Body>
       </Page>
     </TestingDashboardContextProvider>
+  );
+}
+
+export function TestingDashboardSetupPage() {
+  return (
+    <Page title="Live Contracting Dashboard">
+      <Page.Navbar mini={true} />
+
+      <Page.Body padded={false}>
+        <TestingDashboardSetup />
+      </Page.Body>
+    </Page>
+  );
+}
+
+function TestingDashboardSetup({ assertion }) {
+  const classes = useStyles();
+
+  if (!assertion) assertion = 'Live Contract Testing has not been setup yet.';
+
+  return (
+    <div className={classes.setup}>
+      <div className={classes.setupInstructions}>
+        <h3>{assertion}</h3>
+
+        <p>
+          For help on how to get started with Live Contract Testing, see{' '}
+          <SetupLink>the setup instructions</SetupLink>.
+        </p>
+
+        <p>
+          Think this might not be right? Feel free to{' '}
+          <a href={SupportLinks.Contact(`Problem: ${assertion}`)}>
+            contact us about it
+          </a>
+          .
+        </p>
+      </div>
+
+      <TestingPromo />
+    </div>
   );
 }
 
