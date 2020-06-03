@@ -109,8 +109,8 @@ export default function TestingDashboardPage(props) {
                   <h3>No live captures have been found yet.</h3>
 
                   <p>
-                    For help on how to get started with Live Contract Testing,
-                    see <SetupLink>the setup instructions</SetupLink>.
+                    For help getting started with Live Contract Testing,
+                    <SetupLink>contact the maintainers</SetupLink>.
                   </p>
 
                   <p>
