@@ -1,8 +1,20 @@
-import { ITestingService, Result, Capture, ok } from '.';
+import {
+  ITestingService,
+  Capture,
+  CoverageReport,
+  Result,
+  ok,
+  err,
+  NotFoundError,
+  RfcEventStream,
+  UndocumentedEndpoint,
+} from '.';
 import UrlJoin from 'url-join';
+import { StableHasher } from '../../utilities/CoverageUtilities';
+import { opticEngine } from '@useoptic/domain';
 
 // TODO: implement ITestingService
-export class TestingService {
+export class TestingService implements ITestingService {
   private authToken: string;
   private refreshing?: Promise<unknown>;
 
@@ -29,6 +41,7 @@ export class TestingService {
     headers.set('Authorization', `Bearer ${this.authToken}`);
 
     const response = await fetch(url, {
+      ...options,
       headers,
     });
 
@@ -73,5 +86,84 @@ export class TestingService {
     const payload = await response.json();
 
     return ok(payload.captures);
+  }
+
+  async loadCapture(captureId): Promise<Result<Capture, NotFoundError>> {
+    const response = await this.callApi(`/captures/${captureId}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('Capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+
+    return ok(payload);
+  }
+
+  async loadReport(captureId): Promise<Result<CoverageReport, NotFoundError>> {
+    const response = await this.callApi(
+      `/captures/${captureId}/reports/coverage`
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('CoverageReport for capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+    const deserialized = opticEngine.CoverageReportJsonDeserializer.fromJs(
+      payload
+    );
+    const converter = new opticEngine.com.useoptic.CoverageReportConverter(
+      StableHasher
+    );
+    const serializedReport = converter.toJs(deserialized);
+    return ok(serializedReport);
+  }
+
+  async loadUndocumentedEndpoints(
+    captureId
+  ): Promise<Result<UndocumentedEndpoint[], NotFoundError>> {
+    const response = await this.callApi(
+      `/captures/${captureId}/reports/undocumented-urls`
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error(
+          'Undocumented endpoints for capture could not be fetched'
+        );
+      }
+    }
+
+    const payload = await response.json();
+    return ok(payload);
+  }
+
+  async loadSpecEvents(
+    captureId
+  ): Promise<Result<RfcEventStream, NotFoundError>> {
+    const response = await this.callApi(`/captures/${captureId}/spec`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return err(new NotFoundError());
+      } else {
+        throw new Error('Spec for capture could not be fetched');
+      }
+    }
+
+    const payload = await response.json();
+
+    return ok(payload);
   }
 }

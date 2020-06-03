@@ -9,7 +9,7 @@ export interface ITestingService {
     captureId: CaptureId
   ): Promise<Result<CoverageReport, NotFoundError>>;
 
-  loadEndpointDiffs(
+  loadEndpointDiffs?(
     captureId: CaptureId,
     pathId: PathId,
     httpMethod: HttpMethod
