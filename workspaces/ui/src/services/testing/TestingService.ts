@@ -10,6 +10,8 @@ import {
   UndocumentedEndpoint,
 } from '.';
 import UrlJoin from 'url-join';
+import { StableHasher } from '../../utilities/CoverageUtilities';
+import { opticEngine } from '@useoptic/domain';
 
 // TODO: implement ITestingService
 export class TestingService {
@@ -116,8 +118,14 @@ export class TestingService {
     }
 
     const payload = await response.json();
-
-    return ok(payload);
+    const deserialized = opticEngine.CoverageReportJsonDeserializer.fromJs(
+      payload
+    );
+    const converter = new opticEngine.com.useoptic.CoverageReportConverter(
+      StableHasher
+    );
+    const serializedReport = converter.toJs(deserialized);
+    return ok(serializedReport);
   }
 
   async loadUndocumentedEndpoints(
