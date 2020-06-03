@@ -274,6 +274,18 @@ function SummaryStats({
 }) {
   const classes = useStyles();
 
+  const diffsStat =
+    process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DIFF_STATS === 'true' ? (
+      <>
+        yield in <Stat value={totalDiffs} label="diff" />
+      </>
+    ) : (
+      <>
+        of which{' '}
+        <Stat value={totalDiffs} label="incompliant" pluralize={false} />
+      </>
+    );
+
   const undocumentedStat =
     process.env.REACT_APP_TESTING_DASHBOARD_UNDOCUMENTED_ENDPOINTS ===
     'true' ? (
@@ -287,15 +299,14 @@ function SummaryStats({
 
   return (
     <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-      Optic observed <Stat value={totalInteractions} label="interaction" />
-      , yielding in <Stat value={totalDiffs} label="diff" /> and{' '}
-      {undocumentedStat}.
+      Optic observed <Stat value={totalInteractions} label="interaction" />,
+      yielding {diffsStat} and {undocumentedStat}.
     </Typography>
   );
 }
 SummaryStats.displayName = 'Testing/ReportSummary/SummaryStats';
 
-function Stat({ value = 0, label = '' }) {
+function Stat({ value = 0, label = '', pluralize = true }) {
   return (
     <span>
       {value !== 0 && (
@@ -311,7 +322,7 @@ function Stat({ value = 0, label = '' }) {
       <Typography variant="h6" component="span" style={{ fontWeight: 800 }}>
         {value === 0 && 'no '}
         {label}
-        {value === 1 ? '' : 's'}
+        {!pluralize || value === 1 ? '' : 's'}
       </Typography>
     </span>
   );
