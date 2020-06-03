@@ -292,8 +292,12 @@ function SummaryStats({
       <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />
     ) : (
       <>
-        <Stat value={totalUnmatchedPaths} label="interaction" /> against
-        undocumented endpoints
+        <Stat
+          value={totalUnmatchedPaths}
+          label="against
+        undocumented endpoints"
+          pluralize={false}
+        />
       </>
     );
 
