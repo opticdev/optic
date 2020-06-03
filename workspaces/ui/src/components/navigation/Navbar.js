@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouterPaths } from '../../RouterPaths';
+import { useEnabledFeatures } from '../../contexts/SpecServiceContext';
 import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -55,6 +56,8 @@ export default function Navbar(props) {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
 
+  const enabledFeatures = useEnabledFeatures();
+
   const menuItems = useMemo(
     () => [
       {
@@ -67,8 +70,7 @@ export default function Navbar(props) {
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
         link: routerPaths.docsRoot,
       },
-      ...(process.env.REACT_APP_TESTING_DASHBOARD === 'true' ||
-      process.env.REACT_APP_TESTING_DASHBOARD_TEASER === 'true'
+      ...(enabledFeatures && enabledFeatures.TESTING_DASHBOARD
         ? [
             {
               name: 'Live Contract Testing',
