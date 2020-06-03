@@ -133,7 +133,7 @@ function TestingDashboardSetup({ assertion }) {
         <h3>{assertion}</h3>
 
         <p>
-          For help on how to get started with Live Contract Testing, see{' '}
+          For help on getting started with Live Contract Testing, see{' '}
           <SetupLink>the setup instructions</SetupLink>.
         </p>
 
