@@ -58,7 +58,9 @@ export default class Start extends Command {
     // find the api jwt
     const testingConfigExists = await fs.pathExists(testingConfigPath);
     if (!testingConfigExists) {
-      return this.error(`Please run 'api testing:enable'`);
+      return this.error(
+        `No testing token found at ${testingConfigPath} \nPlease run 'api testing:enable'`
+      );
     }
     const { authToken }: ITestingConfig = await fs.readJson(testingConfigPath);
 

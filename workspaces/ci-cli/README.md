@@ -16,48 +16,53 @@
 <!-- usage -->
 ```sh-session
 $ npm install -g @useoptic/ci-cli
-$ optic-ci COMMAND
+$ optic-agent COMMAND
 running command...
-$ optic-ci (-v|--version|version)
-@useoptic/ci-cli/0.1.0 darwin-x64 node-v12.16.2
-$ optic-ci --help [COMMAND]
+$ optic-agent (-v|--version|version)
+@useoptic/ci-cli/8.0.8 darwin-x64 node-v12.4.0
+$ optic-agent --help [COMMAND]
 USAGE
-  $ optic-ci COMMAND
+  $ optic-agent COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`optic-ci hello [FILE]`](#optic-ci-hello-file)
-* [`optic-ci help [COMMAND]`](#optic-ci-help-command)
+* [`optic-agent capture:start`](#optic-agent-capturestart)
+* [`optic-agent help [COMMAND]`](#optic-agent-help-command)
 
-## `optic-ci hello [FILE]`
+## `optic-agent capture:start`
 
 describe the command here
 
 ```
 USAGE
-  $ optic-ci hello [FILE]
+  $ optic-agent capture:start
 
 OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
+  --build-id=build-id            (required) a unique identifier representing the version of the code, build process, and
+                                 build environment variables
+
+  --config=config                (required) the path to your optic.yml file
+
+  --deployment-id=deployment-id  (required) a unique identifier representing the version of the code, build process,
+                                 build environment variables, and runtime environment variables
+
+  --environment=environment      (required) the name of the environment you are deploying into
 
 EXAMPLE
-  $ optic-ci hello
-  hello world from ./src/hello.ts!
+  $ optic-ci capture:start ???
 ```
 
-_See code: [src/commands/hello.ts](https://github.com/opticdev/optic/blob/v0.1.0/src/commands/hello.ts)_
+_See code: [src/commands/capture/start.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/capture/start.ts)_
 
-## `optic-ci help [COMMAND]`
+## `optic-agent help [COMMAND]`
 
-display help for optic-ci
+display help for optic-agent
 
 ```
 USAGE
-  $ optic-ci help [COMMAND]
+  $ optic-agent help [COMMAND]
 
 ARGUMENTS
   COMMAND  command to show help for
