@@ -21,13 +21,9 @@ class SpecServiceStore extends React.Component {
     }
 
     const determineEnabledFeatures = async () => {
-      const response = await specService.getTestingCredentials();
+      const enabledFeatures = await specService.getEnabledFeatures();
 
-      const newEnabled = {
-        TESTING_DASHBOARD: response.status >= 200 && response.status <= 299,
-      };
-
-      this.setState({ enabledFeatures: newEnabled });
+      this.setState({ enabledFeatures });
     };
 
     determineEnabledFeatures();

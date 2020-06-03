@@ -88,4 +88,12 @@ export class Client implements ISpecService {
       `${this.baseUrl}/specs/${this.specId}/testing-credentials`
     );
   }
+
+  async getEnabledFeatures() {
+    const response = await this.getTestingCredentials();
+
+    return {
+      TESTING_DASHBOARD: response.status >= 200 && response.status <= 299,
+    };
+  }
 }
