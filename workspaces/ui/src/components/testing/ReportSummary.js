@@ -103,7 +103,7 @@ export default function ReportSummary(props) {
         <SummaryStats
           totalInteractions={totalInteractions}
           totalDiffs={totalDiffs}
-          totalUnmatchedPaths={totalUnmatchedPaths}
+          totalUndocumentedEndpoints={undocumentedEndpoints.length}
         />
         <h4 className={classes.buildName}>
           from capturing interactions for build <code>{summary.buildId}</code>{' '}
@@ -248,14 +248,18 @@ export default function ReportSummary(props) {
 }
 ReportSummary.displayName = 'Testing/ReportSummary';
 
-function SummaryStats({ totalInteractions, totalDiffs, totalUnmatchedPaths }) {
+function SummaryStats({
+  totalInteractions,
+  totalDiffs,
+  totalUndocumentedEndpoints,
+}) {
   const classes = useStyles();
 
   return (
     <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
       Optic observed <Stat value={totalInteractions} label="interaction" />
       , yielding in <Stat value={totalDiffs} label="diff" /> and{' '}
-      <Stat value={totalUnmatchedPaths} label="undocumented endpoint" />.
+      <Stat value={totalUndocumentedEndpoints} label="undocumented endpoint" />.
     </Typography>
   );
 }
