@@ -152,6 +152,12 @@ async function createExampleSpecServiceFactory(data) {
       requestExamples.push(interaction);
       examples[requestId] = requestExamples;
     },
+
+    getEnabledFeatures() {
+      return {
+        TESTING_DASHBOARD: true,
+      };
+    },
   };
 
   return { specService };

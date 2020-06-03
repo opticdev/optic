@@ -165,6 +165,7 @@ class CliServer {
       '/api/testing',
       createProxyMiddleware({
         changeOrigin: true,
+        followRedirects: true,
         target: this.config.cloudApiBaseUrl,
         pathRewrite(input, req) {
           return input.substring(req.baseUrl.length);
