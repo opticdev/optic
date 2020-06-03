@@ -7,6 +7,8 @@ const {
 } = GenericContextFactory(null);
 
 class SpecServiceStore extends React.Component {
+  state = { enabledFeatures: null };
+
   componentDidMount() {
     const { specService, specServiceEvents } = this.props;
     if (!specServiceEvents) {
@@ -17,13 +19,26 @@ class SpecServiceStore extends React.Component {
         this.forceUpdate();
       });
     }
+
+    const determineEnabledFeatures = async () => {
+      const response = await specService.getTestingCredentials();
+
+      const newEnabled = {
+        TESTING_DASHBOARD: response.status >= 200 && response.status <= 299,
+      };
+
+      this.setState({ enabledFeatures: newEnabled });
+    };
+
+    determineEnabledFeatures();
   }
 
   render() {
     const { specService } = this.props;
+    const { enabledFeatures } = this.state;
 
     return (
-      <SpecServiceContext.Provider value={{ specService }}>
+      <SpecServiceContext.Provider value={{ specService, enabledFeatures }}>
         {this.props.children}
       </SpecServiceContext.Provider>
     );
@@ -38,34 +53,12 @@ function useSpecService() {
 function useEnabledFeatures() {
   const specContext = useContext(SpecServiceContext);
 
-  const [enabledFeatures, setEnabledFeatures] = useState(null);
+  if (!specContext)
+    throw Error(
+      'useEnabledFeatures can only be used inside SpecServiceContext'
+    );
 
-  useEffect(() => {
-    if (!specContext)
-      throw Error(
-        'useEnabledFeatures can only be used inside SpecServiceContext'
-      );
-
-    if (enabledFeatures !== null) return;
-
-    const { specService } = specContext;
-    const performRequest = async () => {
-      const response = await specService.getTestingCredentials();
-
-      const newEnabled = {
-        TESTING_DASHBOARD: response.status >= 200 && response.status <= 299,
-      };
-
-      setEnabledFeatures(newEnabled);
-    };
-
-    performRequest().catch((err) => {
-      console.error('Could not determine enabled features for user');
-      throw err;
-    });
-  }, [enabledFeatures]);
-
-  return enabledFeatures;
+  return specContext.enabledFeatures;
 }
 
 export {
