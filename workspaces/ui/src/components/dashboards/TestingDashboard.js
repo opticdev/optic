@@ -80,14 +80,11 @@ export default function TestingDashboardPage(props) {
             {hasCaptures ? (
               <div className={classes.reportContainer}>
                 <Switch>
-                  {process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DETAILS ===
-                    'true' && (
-                    <Route
-                      strict
-                      path={routerPaths.testingEndpointDetails}
-                      component={TestingDashboard}
-                    />
-                  )}
+                  <Route
+                    strict
+                    path={routerPaths.testingEndpointDetails}
+                    component={TestingDashboard}
+                  />
                   <Route
                     strict
                     path={routerPaths.testingCapture}
