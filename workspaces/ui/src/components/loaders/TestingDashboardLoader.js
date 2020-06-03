@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import TestingDashboard from '../dashboards/TestingDashboard';
+import TestingDashboard, {
+  TestingDashboardSetupPage,
+} from '../dashboards/TestingDashboard';
 import { useMockData } from '../../contexts/MockDataContext';
-import { useSpecService } from '../../contexts/SpecServiceContext';
+import {
+  useSpecService,
+  useEnabledFeatures,
+} from '../../contexts/SpecServiceContext';
 
 import { createExampleTestingService } from '../../services/testing/ExampleTestingService';
 import { TestingService } from '../../services/testing/TestingService';
@@ -12,9 +17,15 @@ export default function TestingServiceLoader(props) {
 
   const [service, setService] = useState(null);
   const specService = useSpecService();
+  const enabledFeatures = useEnabledFeatures();
 
   useEffect(() => {
-    if (debugData.available && debugData.loading) return; // wait until next time when example data has been fetched
+    if (
+      (debugData.available && debugData.loading) || // wait until next time when example data has been fetched
+      !enabledFeatures ||
+      !enabledFeatures.TESTING_DASHBOARD // don't setup if we're not sure testing is enabled
+    )
+      return;
 
     const serviceFactory = debugData.available
       ? () => createExampleTestingServiceFactory(debugData.data)
@@ -30,6 +41,10 @@ export default function TestingServiceLoader(props) {
     };
     task();
   }, [debugData.available, debugData.loading, specService]);
+
+  if (enabledFeatures && !enabledFeatures.TESTING_DASHBOARD) {
+    return <TestingDashboardSetupPage />;
+  }
 
   return <TestingDashboard service={service} {...props} />;
 }
