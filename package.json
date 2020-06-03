@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build-workspace": "node ./workspaces/scripts/build/build.js",
-    "build-domain": "cd ./core && if [ -z ${OPTIC_PUBLISH_SCOPE+x} ]; then ./scripts/package.sh; else ./scripts/package-optimized.sh; fi",
+    "build-domain": "cd ./core && ./scripts/package.sh",
     "copy-domain": "echo copied",
     "build-ui": "cd workspaces/ui && yarn run build-local",
     "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
