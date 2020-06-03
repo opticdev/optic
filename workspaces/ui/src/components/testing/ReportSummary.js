@@ -207,50 +207,55 @@ export default function ReportSummary(props) {
         <p>No endpoints have been documented yet</p>
       )}
 
-      <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
+      {process.env.REACT_APP_TESTING_DASHBOARD_UNDOCUMENTED_ENDPOINTS ===
+        'true' && (
+        <>
+          <h4 className={classes.endpointsHeader}>Undocumented Endpoints</h4>
 
-      {undocumentedEndpoints.length > 0 && (
-        <ul className={classes.endpointsList}>
-          {undocumentedEndpoints.map((undocumented) => (
-            <li
-              key={undocumented.method + undocumented.path}
-              className={classNames(
-                classes.endpointsListItem,
-                classes.isUndocumented
-              )}
-            >
-              <Card className={classes.endpointCard}>
-                <div className={classes.endpointHeader}>
-                  <span
-                    className={classNames(
-                      classes.endpointMethod,
-                      classesHttpMethods[undocumented.method]
-                    )}
-                  >
-                    {undocumented.method}
-                  </span>
-                  <code className={classes.endpointPath}>
-                    {undocumented.path}
-                  </code>
+          {undocumentedEndpoints.length > 0 && (
+            <ul className={classes.endpointsList}>
+              {undocumentedEndpoints.map((undocumented) => (
+                <li
+                  key={undocumented.method + undocumented.path}
+                  className={classNames(
+                    classes.endpointsListItem,
+                    classes.isUndocumented
+                  )}
+                >
+                  <Card className={classes.endpointCard}>
+                    <div className={classes.endpointHeader}>
+                      <span
+                        className={classNames(
+                          classes.endpointMethod,
+                          classesHttpMethods[undocumented.method]
+                        )}
+                      >
+                        {undocumented.method}
+                      </span>
+                      <code className={classes.endpointPath}>
+                        {undocumented.path}
+                      </code>
 
-                  <div className={classes.endpointStats}>
-                    <span
-                      className={classNames(
-                        classes.endpointChip,
-                        classes.endpointIncompliantChip
-                      )}
-                    >
-                      <strong>
-                        {undocumented.count}/{undocumented.count}
-                      </strong>
-                      {' incompliant'}
-                    </span>
-                  </div>
-                </div>
-              </Card>
-            </li>
-          ))}
-        </ul>
+                      <div className={classes.endpointStats}>
+                        <span
+                          className={classNames(
+                            classes.endpointChip,
+                            classes.endpointIncompliantChip
+                          )}
+                        >
+                          <strong>
+                            {undocumented.count}/{undocumented.count}
+                          </strong>
+                          {' incompliant'}
+                        </span>
+                      </div>
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );
