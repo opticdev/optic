@@ -50,19 +50,16 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.1
 
 ## `optic-agent run`
 
-describe the command here
+start your API process with Optic monitoring
 
 ```
 USAGE
   $ optic-agent run
 
 OPTIONS
-  --command=command        (required) the command to run
-  --config=config          (required) the output from optic-ci capture:start
-  --masquerade=masquerade  (required) host:port Optic should start on
-
-EXAMPLE
-  $ optic-agent run ????
+  --command=command  (required) the command to start your API
+  --config=config    (required) the output from optic-ci capture:start
+  --listen=listen    (required) host:port Optic should start on
 ```
 
 _See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/run.ts)_

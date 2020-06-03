@@ -13,7 +13,7 @@ import fs from 'fs-extra';
 
 export default class Disable extends Command {
   static description = 'Disable Live Contracting Testing for your API';
-
+  static hidden: boolean = true;
   async run() {
     const loadingConfig = loadPathsAndConfig(this);
     promiseFromOptic(loadingConfig, 'Loading your optic.yml');
