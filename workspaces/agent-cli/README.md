@@ -19,7 +19,7 @@ $ npm install -g @useoptic/agent-cli
 $ optic-agent COMMAND
 running command...
 $ optic-agent (-v|--version|version)
-@useoptic/agent-cli/0.1.0 darwin-x64 node-v12.16.2
+@useoptic/agent-cli/8.0.8 darwin-x64 node-v12.4.0
 $ optic-agent --help [COMMAND]
 USAGE
   $ optic-agent COMMAND
@@ -28,28 +28,8 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`optic-agent hello [FILE]`](#optic-agent-hello-file)
 * [`optic-agent help [COMMAND]`](#optic-agent-help-command)
-
-## `optic-agent hello [FILE]`
-
-describe the command here
-
-```
-USAGE
-  $ optic-agent hello [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
-
-EXAMPLE
-  $ optic-agent hello
-  hello world from ./src/hello.ts!
-```
-
-_See code: [src/commands/hello.ts](https://github.com/opticdev/optic/blob/v0.1.0/src/commands/hello.ts)_
+* [`optic-agent run`](#optic-agent-run)
 
 ## `optic-agent help [COMMAND]`
 
@@ -67,4 +47,20 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.1/src/commands/help.ts)_
+
+## `optic-agent run`
+
+start your API process with Optic monitoring
+
+```
+USAGE
+  $ optic-agent run
+
+OPTIONS
+  --command=command  (required) the command to start your API
+  --config=config    (required) the output from optic-ci capture:start
+  --listen=listen    (required) host:port Optic should start on
+```
+
+_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.0.8/src/commands/run.ts)_
 <!-- commandsstop -->

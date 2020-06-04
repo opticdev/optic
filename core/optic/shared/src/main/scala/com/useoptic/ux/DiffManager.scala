@@ -28,6 +28,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
   def updatedRfcState(rfcState: RfcState, resolvers: ShapesResolvers): Unit = {
     if (_currentRfcState != rfcState) {
       _currentRfcState = rfcState
+
       _resolvers = resolvers
       diffPreviewer = new DiffPreviewer(_resolvers, _currentRfcState)
       recomputeDiff
@@ -266,11 +267,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewRender = (interaction: HttpInteraction) => diffPreviewer.previewBody(interaction.request.body)
 
-        val bodies = interactions.map(_.request.body).flatMap(BodyUtilities.parseBody).toVector
-        val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
 
         val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
           if (inferPolymorphism) {
+            val bodies = interactions.map(_.request.body).flatMap(BodyUtilities.parseBody).toVector
+            val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.request.body)).flatten).map(_._2)
@@ -288,11 +289,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewRender = (interaction: HttpInteraction) => diffPreviewer.previewBody(interaction.response.body)
 
-        val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
-        val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
 
         val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
           if (inferPolymorphism) {
+            val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
+            val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)
@@ -310,11 +311,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         val previewRender = (interaction: HttpInteraction) => diffPreviewer.previewBody(interaction.response.body)
 
-        val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
-        val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
-
         val previewShape = (interaction: HttpInteraction, inferPolymorphism: Boolean) => {
           if (inferPolymorphism) {
+
+            val bodies = interactions.map(_.response.body).flatMap(BodyUtilities.parseBody).toVector
+            val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
             preview.map(_._2)
           } else {
             diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(interaction.response.body)).flatten).map(_._2)

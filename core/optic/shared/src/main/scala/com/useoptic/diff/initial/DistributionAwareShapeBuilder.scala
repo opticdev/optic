@@ -21,9 +21,7 @@ object DistributionAwareShapeBuilder {
 
     val aggregator = aggregateTrailsAndValues(bodies)
     val rootShape = toShapes(aggregator, ids)
-
     val flattened = rootShape.flattenChildren
-
     implicit val idGenerator: () => String = () => ids.nextId()
 
     val commands = new MutableCommandStream
@@ -129,6 +127,7 @@ object DistributionAwareShapeBuilder {
   }
 
   private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean, totalSamples: Int)(implicit trailValues: TrailValueMap, idGenerator: SequentialIdGenerator): ShapesToMake = {
+
     val isOptional = values.size != totalSamples
     val kinds = values.groupBy(v => JsonLikeResolvers.jsonToCoreKind(v))
 

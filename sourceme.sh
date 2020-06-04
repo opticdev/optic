@@ -85,6 +85,8 @@ optic_install_from_local_registry() {
   (
     set -o errexit
     YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/cli --registry=http://localhost:4873
+    YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/agent-cli --registry=http://localhost:4873
+    YARN_REGISTRY=http://localhost:4873 yarn global add @useoptic/ci-cli --registry=http://localhost:4873
   )
 }
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start

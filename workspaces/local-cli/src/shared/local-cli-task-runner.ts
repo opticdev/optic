@@ -98,7 +98,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
-    cli.log(fromOptic(`Review the API Diff live at ${uiUrl}`));
+    cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
 
     ////////////////////////////////////////////////////////////////////////////////
     const { capturesPath } = this.paths;

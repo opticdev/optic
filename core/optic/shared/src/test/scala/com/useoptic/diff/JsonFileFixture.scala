@@ -46,7 +46,9 @@ trait JsonFileFixture {
     eventsAndInteractionsFrom(json)
   }
 
-  case class Universe(rfcService: RfcService, rfcId: AggregateId, eventStore: EventStore[RfcEvent], interactions: Vector[HttpInteraction])
+  case class Universe(rfcService: RfcService, rfcId: AggregateId, eventStore: EventStore[RfcEvent], interactions: Vector[HttpInteraction]) {
+    def rfcState = rfcService.currentState(rfcId)
+  }
 
   def eventsAndInteractionsFrom(slug: String): Universe = {
     val json = fromFile(slug)
