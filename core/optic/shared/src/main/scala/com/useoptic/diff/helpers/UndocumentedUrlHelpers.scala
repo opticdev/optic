@@ -6,14 +6,14 @@ import com.useoptic.diff.helpers.UndocumentedUrlHelpers.{MethodAndPath, UrlCount
 import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 @JSExport
 @JSExportAll
 class UndocumentedUrlHelpers {
   def countUndocumentedUrls(spec: RfcState, interactions: Seq[HttpInteraction]): UrlCounter = {
     val grouping = Utilities.groupPathsByParentId(spec.requestsState.pathComponents)
-    val urlCounter = UndocumentedUrlHelpers.newCounter
+    val urlCounter = UndocumentedUrlHelpers.newCounter()
     interactions.foreach(interaction => {
       val pathId = Utilities.resolvePathByGrouping(interaction.request.path, grouping)
       if (pathId.isEmpty) {
@@ -24,10 +24,14 @@ class UndocumentedUrlHelpers {
   }
 }
 
+@JSExportAll
+@JSExportTopLevel("UndocumentedUrlHelpers")
 object UndocumentedUrlHelpers {
   type UrlCounter = Counter[MethodAndPath]
 
   case class MethodAndPath(method: String, path: String)
 
-  def newCounter = new Counter[MethodAndPath]
+  def newCounter() = {
+    new Counter[MethodAndPath]
+  }
 }
