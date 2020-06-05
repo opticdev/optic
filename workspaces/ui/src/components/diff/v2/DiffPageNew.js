@@ -333,6 +333,7 @@ const InnerDiffWrapper = withTrafficSessionContext(
     }
     const rfcState = rfcService.currentState(rfcId);
     const { shapesResolvers } = cachedQueryResults;
+    diffManager.updateEndpointFilter(pathId, method, true);
     diffManager.updatedRfcState(rfcState, shapesResolvers);
 
     const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
