@@ -12,7 +12,8 @@ import { ITestingConfig } from '@useoptic/cli-config';
 
 export default class Enable extends Command {
   static description = 'Enable Live Contracting Testing for your API';
-  static hidden: boolean = true;
+  static hidden: boolean = Config.hiddenFeatures.includes('testing');
+
   async run() {
     const loadingConfig = loadPathsAndConfig(this);
     promiseFromOptic(loadingConfig, 'Loading your optic.yml');

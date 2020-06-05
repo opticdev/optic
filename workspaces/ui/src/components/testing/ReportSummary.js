@@ -277,7 +277,7 @@ function SummaryStats({
   const diffsStat =
     process.env.REACT_APP_TESTING_DASHBOARD_ENDPOINT_DIFF_STATS === 'true' ? (
       <>
-        yield in <Stat value={totalDiffs} label="diff" />
+        yielding in <Stat value={totalDiffs} label="diff" />
       </>
     ) : (
       <>
@@ -303,8 +303,8 @@ function SummaryStats({
 
   return (
     <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-      Optic observed <Stat value={totalInteractions} label="interaction" />,
-      yielding {diffsStat} and {undocumentedStat}.
+      Optic observed <Stat value={totalInteractions} label="interaction" />,{' '}
+      {diffsStat} and {undocumentedStat}.
     </Typography>
   );
 }

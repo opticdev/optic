@@ -7,6 +7,7 @@ const apiBaseUrl = urljoin(
 );
 const Config = {
   apiBaseUrl,
+  hiddenFeatures: ['testing'],
 };
 export default Config;
 export { Config };
