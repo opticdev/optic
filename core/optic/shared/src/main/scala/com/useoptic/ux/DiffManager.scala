@@ -1,7 +1,8 @@
 package com.useoptic.ux
 
 import com.useoptic.DiffStats
-import com.useoptic.contexts.requests.Commands.PathComponentId
+import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestMethod}
+import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{ChangeType, DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers
@@ -20,6 +21,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
   private var _currentRfcState: RfcState = null
   private var _resolvers: ShapesResolvers = null
+  private var _endpointFilter: Option[(PathComponentId, RequestMethod)] = None
   private var diffPreviewer: DiffPreviewer = null
   private var _interactionsGroupedByDiffs: DiffsToInteractionsMap = Map.empty
   private var _interactions: Seq[HttpInteraction] = initialInteractions
@@ -42,8 +44,32 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     }
   }
 
+  def updateEndpointFilter(pathId: PathComponentId, method: RequestMethod, skipRecompute: Boolean = false): Unit = {
+    val newFilter = Some((pathId, method))
+    val shouldRecompute = newFilter != _endpointFilter
+    _endpointFilter = newFilter
+    if (shouldRecompute && !skipRecompute) {
+      recomputeDiff()
+    }
+  }
+
+  def clearEndpointFilter(): Unit = {
+    val newFilter = None
+    val shouldRecompute = newFilter != _endpointFilter
+    _endpointFilter = newFilter
+    if (shouldRecompute) {
+      recomputeDiff()
+    }
+  }
+
   def recomputeDiff() = {
     if (_currentRfcState != null) {
+
+      val interactionsFilter: HttpInteraction => Boolean = if (_endpointFilter.isDefined) { interaction =>
+        val (pathId, method) = _endpointFilter.get
+        method == interaction.request.method &&
+        Utilities.resolvePath(interaction.request.path, _currentRfcState.requestsState.pathComponents).contains(pathId)
+      }  else _ => true
 
       // Never learn from the request body for an interaction that yields a non 2xx-response
       def filterInteractionsWithErrorResponses(diff: InteractionDiffResult, interactions: Seq[HttpInteraction]) = diff match {
@@ -52,7 +78,11 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
         case _ => interactions
       }
 
-      _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_resolvers, _currentRfcState, _interactions).collect {
+      val filtered = _interactions.filter(interactionsFilter)
+
+      println(s"Recomputing diffs ${filtered.length} / ${_interactions.length}")
+
+      _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_resolvers, _currentRfcState, filtered).collect {
         case (diff, interactions) => (diff, filterInteractionsWithErrorResponses(diff, interactions))
       }.filter(_._2.nonEmpty)
 

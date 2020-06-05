@@ -8,6 +8,7 @@ import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
 object Commands {
   type PathComponentId = String
+  type RequestMethod = String
   type RequestId = String
   type RequestParameterId = String
   type ResponseId = String
@@ -44,7 +45,7 @@ object Commands {
   case class RenamePathParameter(pathId: PathComponentId, name: String) extends RequestsCommand
   case class RemovePathParameter(pathId: PathComponentId) extends RequestsCommand
 
-  case class AddRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsCommand
+  case class AddRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: RequestMethod) extends RequestsCommand
   //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
   case class SetRequestContentType(requestId: RequestId, httpContentType: String) extends RequestsCommand
   //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command's ability to change the content type anymore, or enforce uniqueness of content types across multiple requests
@@ -71,7 +72,7 @@ object Commands {
   case class RemoveHeaderParameter(parameterId: RequestParameterId) extends RequestsCommand
   @Deprecated
   case class AddResponse(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int) extends RequestsCommand
-  case class AddResponseByPathAndMethod(responseId: ResponseId, pathId: PathComponentId, httpMethod: String, httpStatusCode: Int) extends RequestsCommand
+  case class AddResponseByPathAndMethod(responseId: ResponseId, pathId: PathComponentId, httpMethod: RequestMethod, httpStatusCode: Int) extends RequestsCommand
   //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
   case class SetResponseContentType(responseId: ResponseId, httpContentType: String) extends RequestsCommand
   //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore

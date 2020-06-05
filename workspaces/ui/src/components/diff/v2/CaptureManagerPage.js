@@ -322,6 +322,7 @@ function CaptureDiffWrapper(props) {
         <TrafficSessionContext.Consumer>
           {({ diffManager }) => {
             diffManager.updatedRfcState(rfcState, shapesResolvers);
+            diffManager.clearEndpointFilter();
 
             const ignoredAsSeq = JsonHelper.jsArrayToSeq(ignoredDiffs);
             const stats = diffManager.stats(ignoredAsSeq);
