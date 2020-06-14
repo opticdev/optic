@@ -4,15 +4,10 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapesHelper.StringKind
-import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.diff.interactions.InteractionDiffResult
-import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
-import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
-import com.useoptic.ux.DiffPreviewer
 import org.scalatest.FunSpec
 
 import scala.util.Try
@@ -27,13 +22,6 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       JsonLikeFrom.json(JsonExamples.basicTodoWithoutStatus).get,
     ))
 
-
-    it("collects values for entire fieldset") {
-      val keys = todoMap.toMap.collect {
-        case (path, values) if path.path.size == 1 && path.path.head.isInstanceOf[JsonObjectKey] => path.path.head.asInstanceOf[JsonObjectKey].key
-      }
-      assert(keys.toSet == Set("isDone", "description", "message"))
-    }
 
     it("can stage object for creation with some optional fields") {
       val shapesToMake = DistributionAwareShapeBuilder.toShapes(todoMap)
@@ -151,8 +139,8 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
         val branches = shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[OneOfShape].branches
-        assert(branches(0).isInstanceOf[ObjectWithFields])
-        assert(branches(1).isInstanceOf[PrimitiveKind])
+        assert(branches(0).isInstanceOf[PrimitiveKind])
+        assert(branches(1).isInstanceOf[ObjectWithFields])
       }
     }
 

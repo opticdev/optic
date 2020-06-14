@@ -2,11 +2,9 @@ package com.useoptic.diff.initial
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
-import com.useoptic.contexts.shapes.ShapesHelper
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes._
-import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
 import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.JsonLike
@@ -17,12 +15,10 @@ object DistributionAwareShapeBuilder {
 
   def toCommands(bodies: Vector[JsonLike], seed: String = s"${Random.alphanumeric take 6 mkString}"): (ShapeId, ImmutableCommandStream) = {
 
-    val ids = new SequentialIdGenerator(seed)
+    val idGenerator = new SequentialIdGenerator(seed)
 
-    val aggregator = aggregateTrailsAndValues(bodies)
-    val rootShape = toShapes(aggregator, ids)
-    val flattened = rootShape.flattenChildren
-    implicit val idGenerator: () => String = () => ids.nextId()
+    val aggregator = aggregateTrailsAndValues(bodies, idGenerator)
+    val rootShape = toShapes(aggregator)
 
     val commands = new MutableCommandStream
 
@@ -69,7 +65,7 @@ object DistributionAwareShapeBuilder {
         case s: OneOfShape => {
           s.branches.foreach(branch => {
             buildCommandsFor(branch, Some(s))
-            val paramId = idGenerator()
+            val paramId = idGenerator.nextId()
             commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
             commands.appendDescribe(SetParameterShape(
               if (inField) {
@@ -104,9 +100,9 @@ object DistributionAwareShapeBuilder {
     (rootShape.id, commands.toImmutable)
   }
 
-  def aggregateTrailsAndValues(bodies: Vector[JsonLike]): TrailValueMap = {
+  def aggregateTrailsAndValues(bodies: Vector[JsonLike], idGenerator: SequentialIdGenerator = new SequentialIdGenerator()): TrailValueMap = {
 
-    val aggregator = new TrailValueMap(bodies.size)
+    val aggregator = new TrailValueMap(bodies.size, idGenerator)
 
     val visitor = new ShapeBuilderVisitor(aggregator)
 
@@ -117,136 +113,161 @@ object DistributionAwareShapeBuilder {
     aggregator
   }
 
-
-  def toShapes(implicit trailValues: TrailValueMap, idGenerator: SequentialIdGenerator = new SequentialIdGenerator): ShapesToMake = {
-    val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
-    val root = trailValues.getRoot.flatten
-    var count = 0
-
-    fromJsons(root, JsonTrail(Seq.empty), false, trailValues.totalSamples)
-  }
-
-  private def fromJsons(values: Vector[JsonLike], trail: JsonTrail, inner: Boolean, totalSamples: Int)(implicit trailValues: TrailValueMap, idGenerator: SequentialIdGenerator): ShapesToMake = {
-
-    val isOptional = values.size != totalSamples
-    val kinds = values.groupBy(v => JsonLikeResolvers.jsonToCoreKind(v))
-
-    if (isOptional && !inner) {
-      val optionalShape = OptionalShape(fromJsons(values, trail, true, totalSamples), trail, idGenerator.nextId())
-      optionalShape
-    } else {
-
-      val shapesToMake: Seq[ShapesToMake] = kinds.map {
-        case (kind, examples) => {
-          kind match {
-            case ShapesHelper.ObjectKind => {
-              val fieldIntersection = examples.flatMap(_.fields.keySet).toSet
-              val field = fieldIntersection.map(fieldName => {
-                val fieldTrail = trail.withChild(JsonObjectKey(fieldName))
-                val fieldValues = examples.flatMap(i => i.fields.get(fieldName))
-                val fieldShape = fromJsons(fieldValues, fieldTrail, false, examples.size)
-                FieldWithShape(fieldName, fieldShape, fieldTrail, idGenerator.nextId())
-              }).toSeq
-
-              ObjectWithFields(field, trail, idGenerator.nextId())
-            }
-            case ShapesHelper.ListKind => {
-              val flattenAllItemsAcrossExamples = examples.flatMap(_.items)
-
-              val listItemTrail = trail.withChild(JsonArrayItem(0))
-              val listItemKind = if (flattenAllItemsAcrossExamples.isEmpty) {
-                Unknown(listItemTrail, idGenerator.nextId())
-              } else {
-                fromJsons(flattenAllItemsAcrossExamples, listItemTrail, true, examples.size)
-              }
-
-              ListOfShape(listItemKind, trail, idGenerator.nextId())
-            }
-            case ShapesHelper.StringKind => PrimitiveKind(ShapesHelper.StringKind, trail, idGenerator.nextId())
-            case ShapesHelper.NumberKind => PrimitiveKind(ShapesHelper.NumberKind, trail, idGenerator.nextId())
-            case ShapesHelper.BooleanKind => PrimitiveKind(ShapesHelper.BooleanKind, trail, idGenerator.nextId())
-            case ShapesHelper.NullableKind => {
-              val notNullExamples = examples.filterNot(_.isNull)
-              val innerNull = fromJsons(notNullExamples, trail, true, examples.size)
-              NullableShape(innerNull, trail, idGenerator.nextId())
-            }
-          }
-        }
-      }.toSeq
-
-      def flattenShapes(shapes: Seq[ShapesToMake]): ShapesToMake = {
-        if (shapes.isEmpty) {
-          Unknown(trail, idGenerator.nextId())
-        } else if (shapes.size == 1) {
-          shapes.head
-        } else {
-          if (shapes.exists(_.isInstanceOf[NullableShape])) {
-            //override with nullable
-            val remainingShapes = shapes.filterNot(_.isInstanceOf[NullableShape])
-            NullableShape(flattenShapes(remainingShapes), trail, idGenerator.nextId())
-          } else {
-            OneOfShape(shapes, trail, idGenerator.nextId())
-          }
-        }
-      }
-
-      flattenShapes(shapesToMake)
-    }
-  }
-
-
+  def toShapes(trailValues: TrailValueMap): ShapesToMake = trailValues.getRoot.toShape
 }
 
 
 
 //// Shapes to Make
-trait ShapesToMake {
+sealed trait ShapesToMake {
   def id: String
   def trail: JsonTrail
-  def flattenChildren: Vector[ShapesToMake]
 }
 
-case class OptionalShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
-case class NullableShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake  {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
-case class OneOfShape(branches: Seq[ShapesToMake], trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = branches.flatMap(_.flattenChildren).toVector}
-case class ObjectWithFields(fields: Seq[FieldWithShape], trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = fields.flatMap(_.flattenChildren).toVector}
-case class ListOfShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
-case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector(shape) ++ shape.flattenChildren}
-case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector.empty}
-case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake {override def flattenChildren: Vector[ShapesToMake] = Vector.empty}
-////
+case class OptionalShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
+case class NullableShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
+case class OneOfShape(branches: Seq[ShapesToMake], trail: JsonTrail, id: String) extends ShapesToMake
+case class ObjectWithFields(fields: Seq[FieldWithShape], trail: JsonTrail, id: String) extends ShapesToMake
+case class ListOfShape(shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
+case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id: String) extends ShapesToMake
+case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake
+case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake
 
-class TrailValueMap(val totalSamples: Int) {
-  private val _internal = scala.collection.mutable.Map[JsonTrail, Vector[Option[JsonLike]]]()
 
-  def putValue(trail: JsonTrail, value: JsonLike): Unit = putValueOptional(trail, Some(value))
+class TrailValueMap(val totalSamples: Int, idGenerator: SequentialIdGenerator) {
 
-  def putValueOptional(trail: JsonTrail, value: Option[JsonLike]): Unit = {
-    if (_internal.contains(trail)) {
-      _internal.put(trail, _internal(trail) :+ value)
-    } else {
-      _internal.put(trail, Vector(value))
+
+  class ValueAffordanceMap(var trail: JsonTrail) {
+    var wasString: Boolean = false
+    var wasNumber: Boolean = false
+    var wasBoolean: Boolean = false
+    var wasNull: Boolean = false
+    var wasArray: Boolean = false
+    var wasObject: Boolean = false
+
+    private var fieldSet: Set[Set[String]] = Set.empty
+
+    def touchObject(fields: Set[String]) = {
+      wasObject = true
+      fieldSet = fieldSet + fields
     }
+
+    def isUnknown =
+      !wasString &&
+        !wasNumber &&
+        !wasBoolean &&
+        !wasNull &&
+        !wasArray &&
+        !wasObject
+
+    def toShape: ShapesToMake = {
+      val kindsSet: Set[Option[ShapesToMake]] = Set(
+        if (wasString) Some(PrimitiveKind(StringKind, trail, idGenerator.nextId())) else None,
+        if (wasNumber) Some(PrimitiveKind(NumberKind, trail, idGenerator.nextId())) else None,
+        if (wasBoolean) Some(PrimitiveKind(BooleanKind, trail, idGenerator.nextId())) else None,
+        if (wasArray) Some({
+          val itemTrail = trail.withChild(JsonArrayItem(0))
+          val inner = _internal.getOrElseUpdate(itemTrail, new ValueAffordanceMap(itemTrail))
+          inner.toShape
+          ListOfShape(inner.toShape, trail, idGenerator.nextId())
+        }) else None,
+        if (wasObject) Some({
+          val unionOfKeys = fieldSet.flatten
+
+          val optionalKeys = unionOfKeys.collect {
+            case key if !fieldSet.forall(i => i.contains(key)) => key
+          }
+
+          val fields = unionOfKeys.toVector.sorted.map(key => {
+            val fieldTrail = trail.withChild(JsonObjectKey(key))
+            val inner = _internal.getOrElseUpdate(fieldTrail, new ValueAffordanceMap(fieldTrail))
+
+            val isOptional = optionalKeys.contains(key)
+            val innerShape = inner.toShape
+
+            val fieldShape = if (isOptional) {
+              OptionalShape(innerShape, fieldTrail, idGenerator.nextId())
+            } else {
+              innerShape
+            }
+
+            FieldWithShape(key, fieldShape, fieldTrail, idGenerator.nextId())
+          })
+
+          ObjectWithFields(fields, trail, idGenerator.nextId())
+        }) else None
+      )
+
+      val kinds = kindsSet.flatten
+
+      val finalShape: ShapesToMake = if (kinds.size == 1) {
+        kinds.head
+      } else if (kinds.size > 1) {
+        OneOfShape(kinds.toSeq.sortWith {
+          case (_: PrimitiveKind, _) => true
+          case (a: PrimitiveKind, b: PrimitiveKind) => a.baseShape.baseShapeId > b.baseShape.baseShapeId
+          case _ => false
+        }, trail, idGenerator.nextId())
+      } else {
+        Unknown(trail, idGenerator.nextId())
+      }
+
+      if (wasNull) {
+        NullableShape(finalShape, trail, idGenerator.nextId())
+      } else {
+        finalShape
+      }
+    }
+
   }
 
-  def getRoot = valuesForTrail(JsonTrail(Seq.empty))
+  private val _internal = scala.collection.mutable.Map[JsonTrail, ValueAffordanceMap]()
 
-  def toMap: Map[JsonTrail, Vector[Option[JsonLike]]] = _internal.toMap
+  def putValue(trail: JsonTrail, value: JsonLike): Unit = {
+    val affordanceMap = _internal.getOrElseUpdate(trail, new ValueAffordanceMap(trail))
 
-  def valuesForTrail(trail: JsonTrail): Vector[Option[JsonLike]] = _internal.getOrElse(trail, Vector.empty)
+    if (value.isString) {
+      affordanceMap.wasString = true
+    }
+    if (value.isNumber) {
+      affordanceMap.wasNumber = true
+    }
+    if (value.isBoolean) {
+      affordanceMap.wasBoolean = true
+    }
+    if (value.isNull) {
+      affordanceMap.wasNull = true
+    }
+    if (value.isArray) {
+      affordanceMap.wasArray = true
+    }
+    if (value.isObject) {
+      affordanceMap.touchObject(value.fields.keySet)
+    }
+
+  }
+
+  def getRoot: ValueAffordanceMap = _internal(JsonTrail(Seq.empty))
 
   def hasTrail(trail: JsonTrail) = _internal.contains(trail)
 
 }
 class ShapeBuilderVisitor(aggregator: TrailValueMap) extends JsonLikeVisitors {
 
+  def normalizeTrail(jsonTrail: JsonTrail): JsonTrail = {
+    JsonTrail(jsonTrail.path.map {
+      case JsonArrayItem(_) => JsonArrayItem(0)
+      case a => a
+    })
+  }
+
   override val objectVisitor: ObjectVisitor = new ObjectVisitor {
-    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(normalizeTrail(bodyTrail), value)
   }
   override val arrayVisitor: ArrayVisitor =new ArrayVisitor {
-    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(normalizeTrail(bodyTrail), value)
   }
   override val primitiveVisitor: PrimitiveVisitor = new PrimitiveVisitor {
-    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(bodyTrail, value)
+    override def visit(value: JsonLike, bodyTrail: JsonTrail): Unit = aggregator.putValue(normalizeTrail(bodyTrail), value)
   }
 }
