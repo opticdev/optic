@@ -30,11 +30,20 @@ class SpecServiceStore extends React.Component {
   }
 
   render() {
-    const { specService } = this.props;
+    const {
+      specService,
+      captureServiceFactory,
+      diffServiceFactory,
+    } = this.props;
     const { enabledFeatures } = this.state;
-
+    const value = {
+      specService,
+      captureServiceFactory,
+      diffServiceFactory,
+      enabledFeatures,
+    };
     return (
-      <SpecServiceContext.Provider value={{ specService, enabledFeatures }}>
+      <SpecServiceContext.Provider value={value}>
         {this.props.children}
       </SpecServiceContext.Provider>
     );
@@ -44,6 +53,12 @@ class SpecServiceStore extends React.Component {
 function useSpecService() {
   const { specService } = useContext(SpecServiceContext);
   return specService;
+}
+
+function useServices() {
+  const { specService, diffServiceFactory, captureServiceFactory } = useContext(
+    SpecServiceContext
+  );
 }
 
 function useEnabledFeatures() {
@@ -62,5 +77,6 @@ export {
   SpecServiceContext,
   SpecServiceStore,
   useSpecService,
+  useServices,
   useEnabledFeatures,
 };
