@@ -7,6 +7,10 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
+import {
+  ExampleCaptureService,
+  ExampleDiffService,
+} from '../services/diff/ExampleDiffService';
 
 export default function TestingSessions(props) {
   const match = useRouteMatch();
@@ -17,10 +21,23 @@ export default function TestingSessions(props) {
     exampleSessionCollection: 'example-sessions',
   });
 
+  const captureServiceFactory = (specService, captureId) => {
+    debugger;
+    return new ExampleCaptureService(specService, captureId);
+  };
+
+  const diffServiceFactory = (specService, config) => {
+    debugger;
+    return new ExampleDiffService(specService, config);
+  };
+
   return (
     <BaseUrlContext value={{ path: match.path, url: match.url }}>
       <DebugSessionContextProvider value={session}>
-        <ApiSpecServiceLoader>
+        <ApiSpecServiceLoader
+          captureServiceFactory={captureServiceFactory}
+          diffServiceFactory={diffServiceFactory}
+        >
           <ApiRoutes />
         </ApiSpecServiceLoader>
       </DebugSessionContextProvider>
