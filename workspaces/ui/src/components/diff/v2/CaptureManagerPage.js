@@ -18,6 +18,10 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import { dumpSpecServiceState } from '../../../utilities/dump-spec-service-state';
+import {
+  TrafficSessionContext,
+  TrafficSessionStore,
+} from '../../../contexts/TrafficSessionContext';
 import { GenericContextFactory } from '../../../contexts/GenericContextFactory';
 import {
   useServices,
@@ -25,12 +29,7 @@ import {
 } from '../../../contexts/SpecServiceContext';
 import { useRouterPaths } from '../../../RouterPaths';
 import { RfcContext } from '../../../contexts/RfcContext';
-import {
-  DiffResultHelper,
-  JsonHelper,
-  lengthScala,
-  mapScala,
-} from '@useoptic/domain';
+import { JsonHelper, lengthScala, mapScala } from '@useoptic/domain';
 import { NewUrlModal } from './AddUrlModal';
 import DiffPageNew, { IgnoreDiffContext, IgnoreDiffStore } from './DiffPageNew';
 import { Show, ShowSpan } from '../../shared/Show';
@@ -49,11 +48,7 @@ import {
 } from '../../../theme';
 import { AddOpticLink } from '../../support/Links';
 import { debugDump } from '../../../utilities/debug-dump';
-import {
-  CaptureContext,
-  CaptureStateStore,
-  useCaptureContext,
-} from '../../../contexts/CaptureContext';
+import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -283,9 +278,12 @@ function CaptureChooserComponent(props) {
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
   return (
-    // sessionId={props.match.params.captureId}
-    // specService={specService}
-    <DiffPageNew {...props} />
+    <TrafficSessionStore
+      sessionId={props.match.params.captureId}
+      specService={specService}
+    >
+      <DiffPageNew {...props} />
+    </TrafficSessionStore>
   );
 }
 
@@ -300,187 +298,206 @@ Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
   />
 );
 
+function CaptureDiffWrapper2(props) {
+  const { captureId } = props.match.params;
+
+  return (
+    <CaptureContext captureId={captureId}>
+      <div>asdf</div>
+    </CaptureContext>
+  );
+}
+
 function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;
+  const baseUrl = useBaseUrl();
   const classes = useStyles();
-
-  const rfcContext = useContext(RfcContext);
-  const services = useServices();
+  const specService = useSpecService();
+  const history = useHistory();
+  const [alphabetize, setAlphabetize] = useState(true);
+  const { ignoredDiffs } = useContext(IgnoreDiffContext);
+  const { rfcService, rfcId, queries } = useContext(RfcContext);
+  const rfcState = rfcService.currentState(rfcId);
+  const shapesResolvers = queries.shapesResolvers();
+  const { captures } = useContext(AllCapturesContext);
+  if (captures.length === 0) {
+    return empty;
+  }
 
   return (
-    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
+    <>
       <CaptureChooserComponent captureId={captureId} />
-      <CaptureDiffStat />
-      <EndpointDiffs captureId={captureId} />
-      <UnrecognizedUrls captureId={captureId} />
-    </CaptureStateStore>
-  );
-}
+      <TrafficSessionStore
+        key={captureId}
+        sessionId={captureId}
+        specService={specService}
+        renderNoSession={<div>No Capture</div>}
+      >
+        <TrafficSessionContext.Consumer>
+          {({ diffManager }) => {
+            diffManager.updatedRfcState(rfcState, shapesResolvers);
+            diffManager.clearEndpointFilter();
 
-function CaptureDiffStat() {
-  const classes = useStyles();
-  // const { stats } = useCaptureContext();
-  //also available
-  // stats.captureCompleted
-  // stats.processed
-  return (
-    <div className={classes.stats}>
-      <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-        Optic observed <Stat number={0} label="interaction" />, yielding{' '}
-        <Stat number={0} label="diff" /> and{' '}
-        <Stat number={0} label="undocumented endpoint" />.
-        {/*<Stat number={stats.interactionsCounter || 0} label="interaction" />,*/}
-        {/*yielding <Stat number={stats.totalDiffs || 0} label="diff" /> and{' '}*/}
-        {/*<Stat*/}
-        {/*  number={stats.undocumentedEndpoints || 0}*/}
-        {/*  label="undocumented endpoint"*/}
-        {/*/>*/}
-        {/*.*/}
-      </Typography>
-    </div>
-  );
-}
-
-function EndpointDiffs(props) {
-  const { captureId } = props;
-  const classes = useStyles();
-  const { endpointDiffs } = useCaptureContext();
-  const history = useHistory();
-  const baseUrl = useBaseUrl();
-
-  //also available
-  // stats.captureCompleted
-  // stats.processed
-  return (
-    <Show when={Boolean(endpointDiffs.length)}>
-      <DocSubGroup title={`Endpoint Diffs (${endpointDiffs.length})`}>
-        <List>
-          {endpointDiffs.map((i) => {
-            console.log(i);
-            const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
-            return (
-              <EndpointsContextStore
-                key={to}
-                pathId={i.pathId}
-                method={i.method}
-              >
-                <EndpointsContext.Consumer>
-                  {({ endpointDescriptor }) => (
-                    <ListItem
-                      button
-                      className={classes.row}
-                      component={Link}
-                      to={to}
-                    >
-                      <div className={classes.listItemInner}>
-                        <Typography
-                          component="div"
-                          variant="overline"
-                          style={{ color: DocDarkGrey }}
-                        >
-                          {endpointDescriptor.purpose}
-                        </Typography>
-                        <PathAndMethod
-                          method={endpointDescriptor.httpMethod}
-                          path={endpointDescriptor.fullPath}
-                        />
-                      </div>
-                      <ListItemSecondaryAction>
-                        <ShowSpan when={i.addedCount > 0}>
-                          <Chip
-                            className={classes.chips}
-                            size="small"
-                            label={i.addedCount}
-                            style={{
-                              backgroundColor: AddedGreenBackground,
-                            }}
-                          />
-                        </ShowSpan>
-                        <ShowSpan when={i.removedCount > 0}>
-                          <Chip
-                            className={classes.chips}
-                            size="small"
-                            label={i.removedCount}
-                            style={{
-                              backgroundColor: RemovedRedBackground,
-                            }}
-                          />
-                        </ShowSpan>
-                        <ShowSpan when={i.changedCount > 0}>
-                          <Chip
-                            className={classes.chips}
-                            size="small"
-                            label={i.changedCount}
-                            style={{
-                              backgroundColor: ChangedYellowBackground,
-                            }}
-                          />
-                        </ShowSpan>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  )}
-                </EndpointsContext.Consumer>
-              </EndpointsContextStore>
+            const ignoredAsSeq = JsonHelper.jsArrayToSeq(ignoredDiffs);
+            const stats = diffManager.stats(ignoredAsSeq);
+            const allUnmatchedPaths = JsonHelper.seqToJsArray(
+              diffManager.allUnmatchedPaths
             );
-          })}
-        </List>
-      </DocSubGroup>
-    </Show>
-  );
-}
+            const newUrls = diffManager.unmatchedUrls(
+              alphabetize,
+              ignoredAsSeq
+            );
+            const endpointDiffs = diffManager.endpointDiffs(
+              ignoredAsSeq,
+              /* filter ouunmatched URLs */ true
+            );
 
-function UnrecognizedUrls(props) {
-  const { captureId } = props;
-  const classes = useStyles();
-  const history = useHistory();
-  const { unrecognizedUrls } = useCaptureContext();
-  const baseUrl = useBaseUrl();
-
-  const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
-    JsonHelper.jsArrayToSeq(unrecognizedUrls)
-  );
-
-  const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
-  const urls = JsonHelper.seqToJsArray(urlsSplit.urls);
-
-  return (
-    <Show when={urlsSplit.showing > 0}>
-      <DocSubGroup title={`Undocumented URLs (${urlsSplit.totalCount})`}>
-        <List>
-          {urls.map((i) => {
             return (
-              // <div>{i.toString()}</div>
-              <NewUrlModal
-                key={i.toString()}
-                allUnmatchedPaths={allUnmatchedPaths}
-                newUrl={i}
-                onAdd={(result) => {
-                  const { pathId, method } = result;
-                  const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
-                  history.push(to);
-                }}
-              >
-                <ListItem button className={classes.row}>
-                  <div className={classes.listItemInner}>
-                    <PathAndMethod method={i.method} path={i.path} />
-                  </div>
-                  <ListItemSecondaryAction>
-                    <Chip
-                      className={classes.chips}
-                      size="small"
-                      label={i.count}
-                      style={{
-                        backgroundColor: AddedGreenBackground,
-                      }}
+              <>
+                <div className={classes.stats}>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    style={{ fontWeight: 200 }}
+                  >
+                    Optic observed{' '}
+                    <Stat
+                      number={stats.totalInteractions}
+                      label="interaction"
                     />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              </NewUrlModal>
+                    , yielding in{' '}
+                    <Stat number={stats.totalDiffs} label="diff" /> and{' '}
+                    <Stat
+                      number={stats.undocumentedEndpoints}
+                      label="undocumented endpoint"
+                    />
+                    .
+                  </Typography>
+                </div>
+                <Show when={lengthScala(endpointDiffs) > 0}>
+                  <DocSubGroup
+                    title={`Endpoint Diffs (${lengthScala(endpointDiffs)})`}
+                  >
+                    <List>
+                      {mapScala(endpointDiffs)((i) => {
+                        const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
+                        return (
+                          <EndpointsContextStore
+                            key={to}
+                            pathId={i.pathId}
+                            method={i.method}
+                          >
+                            <EndpointsContext.Consumer>
+                              {({ endpointDescriptor }) => (
+                                <ListItem
+                                  button
+                                  className={classes.row}
+                                  component={Link}
+                                  to={to}
+                                >
+                                  <div className={classes.listItemInner}>
+                                    <Typography
+                                      component="div"
+                                      variant="overline"
+                                      style={{ color: DocDarkGrey }}
+                                    >
+                                      {endpointDescriptor.purpose}
+                                    </Typography>
+                                    <PathAndMethod
+                                      method={endpointDescriptor.httpMethod}
+                                      path={endpointDescriptor.fullPath}
+                                    />
+                                  </div>
+                                  <ListItemSecondaryAction>
+                                    <ShowSpan when={i.addedCount > 0}>
+                                      <Chip
+                                        className={classes.chips}
+                                        size="small"
+                                        label={i.addedCount}
+                                        style={{
+                                          backgroundColor: AddedGreenBackground,
+                                        }}
+                                      />
+                                    </ShowSpan>
+                                    <ShowSpan when={i.removedCount > 0}>
+                                      <Chip
+                                        className={classes.chips}
+                                        size="small"
+                                        label={i.removedCount}
+                                        style={{
+                                          backgroundColor: RemovedRedBackground,
+                                        }}
+                                      />
+                                    </ShowSpan>
+                                    <ShowSpan when={i.changedCount > 0}>
+                                      <Chip
+                                        className={classes.chips}
+                                        size="small"
+                                        label={i.changedCount}
+                                        style={{
+                                          backgroundColor: ChangedYellowBackground,
+                                        }}
+                                      />
+                                    </ShowSpan>
+                                  </ListItemSecondaryAction>
+                                </ListItem>
+                              )}
+                            </EndpointsContext.Consumer>
+                          </EndpointsContextStore>
+                        );
+                      })}
+                    </List>
+                  </DocSubGroup>
+                </Show>
+
+                <Show when={lengthScala(newUrls) > 0}>
+                  <DocSubGroup
+                    title={`Undocumented URLs (${lengthScala(newUrls)})`}
+                  >
+                    <List>
+                      {mapScala(newUrls)((i) => {
+                        return (
+                          <NewUrlModal
+                            key={i}
+                            allUnmatchedPaths={allUnmatchedPaths}
+                            newUrl={i}
+                            onAdd={(result) => {
+                              const { pathId, method } = result;
+                              const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
+                              history.push(to);
+                            }}
+                          >
+                            <ListItem button className={classes.row}>
+                              <div className={classes.listItemInner}>
+                                <PathAndMethod
+                                  method={i.method}
+                                  path={i.path}
+                                />
+                              </div>
+                              <ListItemSecondaryAction>
+                                <Chip
+                                  className={classes.chips}
+                                  size="small"
+                                  label={i.count}
+                                  style={{
+                                    backgroundColor: AddedGreenBackground,
+                                  }}
+                                />
+                              </ListItemSecondaryAction>
+                            </ListItem>
+                          </NewUrlModal>
+                        );
+                      })}
+                    </List>
+                  </DocSubGroup>
+                </Show>
+                <MoreRecentCapture />
+              </>
             );
-          })}
-        </List>
-      </DocSubGroup>
-    </Show>
+          }}
+        </TrafficSessionContext.Consumer>
+      </TrafficSessionStore>
+    </>
   );
 }
 

@@ -11,11 +11,6 @@ import {
   ExampleCaptureService,
   ExampleDiffService,
 } from '../services/diff/ExampleDiffService';
-import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
-import {
-  cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
-  normalizedDiffFromRfcStateAndInteractions,
-} from '@useoptic/domain-utilities';
 
 export default function TestingSessions(props) {
   const match = useRouteMatch();
@@ -26,62 +21,14 @@ export default function TestingSessions(props) {
     exampleSessionCollection: 'example-sessions',
   });
 
-  const captureServiceFactory = async (specService, captureId) => {
-    return new ExampleCaptureService(specService);
+  const captureServiceFactory = (specService, captureId) => {
+    debugger;
+    return new ExampleCaptureService(specService, captureId);
   };
 
-  const diffServiceFactory = async (
-    specService,
-    captureService,
-    _rfcState,
-    additionalCommands,
-    config,
-    captureId
-  ) => {
-    async function computeInitialDiff() {
-      const capture = await specService.listCapturedSamples(captureId);
-      const events = await specService.listEvents();
-
-      const commandContext = new RfcCommandContext(
-        'simulated',
-        'simulated',
-        'simulated'
-      );
-
-      const {
-        resolvers,
-        rfcState,
-      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        JSON.parse(events),
-        commandContext,
-        additionalCommands
-      );
-      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-      for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
-          resolvers,
-          rfcState,
-          JsonHelper.fromInteraction(interaction),
-          interaction.uuid,
-          diffs
-        );
-      }
-      return {
-        diffs,
-        rfcState,
-        resolvers,
-      };
-    }
-
-    const { diffs, rfcState } = await computeInitialDiff();
-
-    return new ExampleDiffService(
-      specService,
-      captureService,
-      config,
-      diffs,
-      rfcState
-    );
+  const diffServiceFactory = (specService, config) => {
+    debugger;
+    return new ExampleDiffService(specService, config);
   };
 
   return (
