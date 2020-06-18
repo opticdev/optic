@@ -23,7 +23,10 @@ import {
   TrafficSessionStore,
 } from '../../../contexts/TrafficSessionContext';
 import { GenericContextFactory } from '../../../contexts/GenericContextFactory';
-import { useSpecService } from '../../../contexts/SpecServiceContext';
+import {
+  useServices,
+  useSpecService,
+} from '../../../contexts/SpecServiceContext';
 import { useRouterPaths } from '../../../RouterPaths';
 import { RfcContext } from '../../../contexts/RfcContext';
 import { JsonHelper, lengthScala, mapScala } from '@useoptic/domain';
@@ -45,6 +48,7 @@ import {
 } from '../../../theme';
 import { AddOpticLink } from '../../support/Links';
 import { debugDump } from '../../../utilities/debug-dump';
+import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -293,6 +297,16 @@ Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
 `.trim()}
   />
 );
+
+function CaptureDiffWrapper2(props) {
+  const { captureId } = props.match.params;
+
+  return (
+    <CaptureContext captureId={captureId}>
+      <div>asdf</div>
+    </CaptureContext>
+  );
+}
 
 function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;

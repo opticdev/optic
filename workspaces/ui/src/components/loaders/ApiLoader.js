@@ -7,6 +7,7 @@ import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContex
 import EventEmitter from 'events';
 
 export function ApiSpecServiceLoader(props) {
+  const { diffServiceFactory, captureServiceFactory } = props;
   const debugData = useMockData();
 
   const [service, setService] = useState(null);
@@ -46,6 +47,8 @@ export function ApiSpecServiceLoader(props) {
     <SpecServiceStore
       specService={service}
       specServiceEvents={service.eventEmitter}
+      diffServiceFactory={diffServiceFactory}
+      captureServiceFactory={captureServiceFactory}
     >
       <InitialRfcCommandsStore
         initialEventsString={events}
@@ -59,6 +62,7 @@ export function ApiSpecServiceLoader(props) {
 }
 
 export function LocalCliSpecServiceLoader(props) {
+  const { diffServiceFactory, captureServiceFactory } = props;
   const [events, setEvents] = useState(null);
   const { specService } = props;
   useEffect(() => {
@@ -89,6 +93,8 @@ export function LocalCliSpecServiceLoader(props) {
     <SpecServiceStore
       specService={specService}
       specServiceEvents={specService.eventEmitter}
+      diffServiceFactory={diffServiceFactory}
+      captureServiceFactory={captureServiceFactory}
     >
       <InitialRfcCommandsStore
         initialEventsString={events}
@@ -103,13 +109,12 @@ export function LocalCliSpecServiceLoader(props) {
   );
 }
 
+export const captureId = 'example-session';
 async function createExampleSpecServiceFactory(data) {
   let events = JSON.stringify(data.events);
 
   const examples = data.examples || {};
   const eventEmitter = new EventEmitter();
-
-  const captureId = 'example-session';
 
   const specService = {
     eventEmitter,
