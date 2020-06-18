@@ -8,16 +8,14 @@ import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjec
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
-import com.useoptic.dsa.SequentialIdGenerator
+import com.useoptic.dsa.{OpticDomainIds, SequentialIdGenerator}
 import com.useoptic.types.capture.JsonLike
 
 import scala.util.Random
 
 object DistributionAwareShapeBuilder {
 
-  def toCommands(bodies: Vector[JsonLike], seed: String = s"${Random.alphanumeric take 6 mkString}"): (ShapeId, ImmutableCommandStream) = {
-
-    val ids = new SequentialIdGenerator(seed)
+  def toCommands(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds): (ShapeId, ImmutableCommandStream) = {
 
     val aggregator = aggregateTrailsAndValues(bodies)
     val rootShape = toShapes(aggregator, ids)

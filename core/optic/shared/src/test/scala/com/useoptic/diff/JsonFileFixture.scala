@@ -7,6 +7,7 @@ import java.io.File
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.{Commands, Events, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.ddd.{AggregateId, EventStore}
+import com.useoptic.dsa.OpticIds
 import com.useoptic.serialization.{CommandSerialization, EventSerialization, InteractionSerialization}
 import com.useoptic.types.capture.HttpInteraction
 
@@ -65,6 +66,7 @@ trait JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcId = "testRfcId"
     eventStore.append(rfcId, events)
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService = new RfcService(eventStore)
     val rfcState = rfcService.currentState(rfcId)
     Universe(rfcService, rfcId, eventStore, interactions)

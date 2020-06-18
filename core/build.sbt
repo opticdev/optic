@@ -44,7 +44,8 @@ lazy val optic =
       // Include the package(s) of the classes here
       // Optionally import your own TSType implicits to override default default generated
       typescriptGenerationImports := Seq("com.useoptic.types.MyTSTypes._"),
-      libraryDependencies ++= Seq(
+      envVars in Test := Map("SCALA_ENV" -> "test"),
+        libraryDependencies ++= Seq(
         "com.sksamuel.avro4s" %% "avro4s-core" % "3.0.6",
         "com.sksamuel.avro4s" %% "avro4s-json" % "3.0.6",
         "com.github.pathikrit" %% "better-files" % "3.8.0" % "test"

@@ -10,6 +10,7 @@ import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, Re
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture._
 import io.circe.Json
 import org.scalatest.FunSpec
@@ -101,6 +102,7 @@ class BasicInterpretationsSpec extends FunSpec {
           SpecPath("root")
         )
       ))
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val diff = diffs.head
       val interpretations = new BasicInterpreters(rfcState).interpret(diff, interaction)
       assert(interpretations.length == 1)
@@ -134,6 +136,7 @@ class BasicInterpretationsSpec extends FunSpec {
         )
       ))
       val diff = diffs.head
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val interpretations = new BasicInterpreters(rfcState).interpret(diff, interaction)
       assert(interpretations.length == 1)
       val interpretation = interpretations.head
@@ -162,6 +165,7 @@ class BasicInterpretationsSpec extends FunSpec {
           UnmatchedRequestBodyShape(InteractionTrail(Seq(RequestBody("application/json"))), SpecRequestBody("request1"), UnmatchedShape(JsonTrail(Seq(JsonObjectKey("k"))), ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2")))))
         ))
         val diff = diffs.head
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpretations = new BasicInterpreters(rfcState).interpret(diff, interaction)
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
@@ -195,6 +199,7 @@ class BasicInterpretationsSpec extends FunSpec {
           )
         ))
         val diff = diffs.head
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpretations = new BasicInterpreters(rfcState).interpret(diff, interaction)
         assert(interpretations.length == 1)
         val interpretation = interpretations.head

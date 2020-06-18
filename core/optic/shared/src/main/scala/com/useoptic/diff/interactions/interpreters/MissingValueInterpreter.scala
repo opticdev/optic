@@ -2,7 +2,7 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
-import com.useoptic.contexts.shapes.{Commands, ShapesAggregate, ShapesHelper}
+import com.useoptic.contexts.shapes.{Commands, ShapesAggregate}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NullableKind, OneOfKind, OptionalKind}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
@@ -11,10 +11,11 @@ import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
+import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
-class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
 
   private val basicInterpretations = new BasicInterpretations(rfcState)
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
@@ -87,7 +88,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   }
 
   def WrapWithOptional(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val wrapperShapeId = ShapesHelper.newShapeId()
+    val wrapperShapeId = ids.newShapeId
     val baseCommands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
     )
@@ -141,7 +142,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   }
 
   def WrapWithNullable(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val wrapperShapeId = ShapesHelper.newShapeId()
+    val wrapperShapeId = ids.newShapeId
     val baseCommands = Seq(
       AddShape(wrapperShapeId, NullableKind.baseShapeId, ""),
     )
@@ -196,9 +197,9 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
 
   def WrapWithOneOf(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val resolved = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
-    val wrapperShapeId = ShapesHelper.newShapeId()
-    val p1 = ShapesHelper.newShapeParameterId()
-    val p2 = ShapesHelper.newShapeParameterId()
+    val wrapperShapeId = ids.newShapeId
+    val p1 = ids.newParameterId
+    val p2 = ids.newParameterId
     val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run
     val baseCommands = builtShape.commands ++ Seq(
       AddShape(wrapperShapeId, OneOfKind.baseShapeId, ""),

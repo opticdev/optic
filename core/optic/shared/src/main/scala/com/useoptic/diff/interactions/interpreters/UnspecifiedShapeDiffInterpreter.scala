@@ -11,10 +11,11 @@ import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.resolvers.{JsonLikeResolvers, ShapesResolvers}
+import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
-class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {
@@ -73,7 +74,7 @@ class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcS
         Logger.log(json.get)
         val key = shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
         val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
-        val fieldId = ShapesHelper.newFieldId()
+        val fieldId = ids.newFieldId
         val commands = builtShape.commands ++ Seq(
           AddField(fieldId, resolved.shapeEntity.shapeId, key, FieldShapeFromShape(fieldId, builtShape.rootShapeId))
         )

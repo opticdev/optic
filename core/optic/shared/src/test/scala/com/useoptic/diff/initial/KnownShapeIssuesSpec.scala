@@ -4,6 +4,7 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
+import com.useoptic.dsa.OpticIds
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
 import com.useoptic.ux.ShapeOnlyRenderHelper
@@ -153,6 +154,7 @@ diffs.foreach(println)
     def tryCommands(commands: Vector[RfcCommand]) = {
       val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
       val eventStore = RfcServiceJSFacade.makeEventStore()
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val rfcService: RfcService = new RfcService(eventStore)
       rfcService.handleCommandSequence("id", commands, commandContext)
       rfcService.currentState("id")

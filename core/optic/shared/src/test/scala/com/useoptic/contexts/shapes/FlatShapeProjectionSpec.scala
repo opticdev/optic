@@ -7,6 +7,7 @@ import com.useoptic.contexts.shapes.projections.{FlatShapeQueries, NameForShapeI
 import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.JsonLikeFrom
 import org.scalatest.FunSpec
 
@@ -15,6 +16,7 @@ class FlatShapeQueriesSpec extends FunSpec with JsonFileFixture {
   val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fixture(slug: String, nameConcept: String = null): (String, RfcState) = {
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val basic = fromFile(slug)
     val result = {
       if (nameConcept != null) {
@@ -61,6 +63,7 @@ class FlatShapeQueriesSpec extends FunSpec with JsonFileFixture {
   lazy val exampleRfc = {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
@@ -102,6 +105,7 @@ class FlatShapeQueriesSpec extends FunSpec with JsonFileFixture {
   lazy val circleExampleRfc = {
     val commands = commandsFrom("circle-ci")
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")

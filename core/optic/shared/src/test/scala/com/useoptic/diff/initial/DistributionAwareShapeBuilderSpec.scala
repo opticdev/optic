@@ -10,6 +10,7 @@ import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
 import com.useoptic.ux.DiffPreviewer
@@ -161,6 +162,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       def tryCommands(commands: Vector[RfcCommand], shapeId: ShapeId, example: JsonLike) = {
         val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
         val eventStore = RfcServiceJSFacade.makeEventStore()
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val rfcService: RfcService = new RfcService(eventStore)
         rfcService.handleCommandSequence("id", commands, commandContext)
         val rfcState = rfcService.currentState("id")

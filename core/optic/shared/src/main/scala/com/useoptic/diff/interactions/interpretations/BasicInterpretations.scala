@@ -8,23 +8,24 @@ import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInSha
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuilder}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, ShapeTrail, UnknownTrail}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
+import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 
-class BasicInterpretations(rfcState: RfcState) {
+class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
 
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
 
   def AddResponse(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
     val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
 
-    val responseId = RequestsServiceHelper.newResponseId()
+    val responseId = ids.newResponseId
     val commands = Seq(
       RequestsCommands.AddResponse(responseId, requestId, interactionTrail.statusCode())
     )
@@ -41,7 +42,7 @@ class BasicInterpretations(rfcState: RfcState) {
     val actualJson = BodyUtilities.parseBody(interaction.request.body).get
     val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
-    val wrapperId = ShapesHelper.newShapeId()
+    val wrapperId = ids.newShapeId
     val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
     val contentType = interactionTrail.requestContentType()
 
@@ -63,7 +64,7 @@ class BasicInterpretations(rfcState: RfcState) {
     val actualJson = BodyUtilities.parseBody(interaction.response.body).get
     val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
-    val wrapperId = ShapesHelper.newShapeId()
+    val wrapperId = ids.newShapeId
     val responseId = RequestSpecTrailHelpers.responseId(requestsTrail).get
     val contentType = interactionTrail.responseContentType()
 
@@ -82,7 +83,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interactions: Vector[HttpInteraction]): InteractiveDiffInterpretation = {
     val baseInteraction = interactions.head
-    val requestId = RequestsServiceHelper.newRequestId()
+    val requestId = ids.newRequestId
     val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
     val baseCommands = Seq(
       RequestsCommands.AddRequest(requestId, pathId, baseInteraction.request.method),
@@ -129,7 +130,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interactions: Vector[HttpInteraction]) = {
     val baseInteraction = interactions.head
-    val responseId = RequestsServiceHelper.newResponseId()
+    val responseId = ids.newResponseId
     val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
     val baseCommands = Seq(
       RequestsCommands.AddResponseByPathAndMethod(responseId, pathId, baseInteraction.request.method, baseInteraction.response.statusCode),
@@ -228,7 +229,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
     //@TODO: inject real shapesState? for now this will always create a new shape
     val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run
-    val fieldId = ShapesHelper.newFieldId()
+    val fieldId = ids.newFieldId
     val shapeId = shapeTrail.lastObject().get
     val fieldName = jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
     val additionalCommands = Seq(

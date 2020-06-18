@@ -1,15 +1,16 @@
 package com.useoptic.contexts.rfc
 
 import com.useoptic.contexts.rfc.projections.OASProjection
-import com.useoptic.contexts.shapes.projections.{JsonSchemaProjection}
+import com.useoptic.contexts.shapes.projections.JsonSchemaProjection
 import com.useoptic.diff.JsonFileFixture
+import com.useoptic.dsa.OpticIds
 import org.scalatest.FunSpec
 
 class OASProjectionSpec extends FunSpec with JsonFileFixture {
   val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fixture(slug: String): (InMemoryQueries, RfcService, RfcState) = {
-
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val eventStore = RfcServiceJSFacade.makeEventStore()
     eventStore.append("id", eventsFrom(slug))
     val rfcService: RfcService = new RfcService(eventStore)

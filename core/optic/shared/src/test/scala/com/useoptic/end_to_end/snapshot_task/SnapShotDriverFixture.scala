@@ -1,9 +1,9 @@
-package com.useoptic.end_to_end.fixtures
+package com.useoptic.end_to_end.snapshot_task
 
-import org.scalatest.{BeforeAndAfterAll, FunSpec, Matchers, WordSpec}
-import io.circe.parser._
-import io.circe._
 import better.files._
+import io.circe._
+import io.circe.parser._
+import org.scalatest.{BeforeAndAfterAll, WordSpec}
 
 abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, snapshotName: String) extends WordSpec with BeforeAndAfterAll {
 
@@ -11,13 +11,12 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
 
   val snapshotsDir = "domain-snapshots".toFile
   val snapshotDirectory = snapshotsDir / folderSlug
-  val snapshotOutputDirectory = snapshotsDir / "outputs"
+  val snapshotOutputDirectory = snapshotsDir / folderSlug / "outputs"
 
   snapshotDirectory.createIfNotExists(asDirectory = true)
   snapshotOutputDirectory.createIfNotExists(asDirectory = true)
 
-  def addInput(staticName: String, block: () => InputJson) = {
-    println("WRITING IT")
+  def when(staticName: String, block: () => InputJson) = {
     val inputFile = snapshotDirectory / (staticName + ".managed.json")
     inputFile.createIfNotExists(asDirectory = false)
     inputFile.writeText(serializeInput(block()).spaces2)
@@ -38,13 +37,14 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
   def runSuite = {
     s"${snapshotName} snapshot tests" should {
       println(snapshotDirectory.list)
-      snapshotDirectory.list.foreach { case file =>
+      snapshotDirectory.list.filter(_.isRegularFile).foreach { case file =>
         s"${file.nameWithoutExtension}" should {
 
           var input: Option[InputJson] = None
           var output: Option[OutputJson] = None
 
           s"input should deserialize properly" in {
+            println(file)
             input = Some(deserializeInput(parse(file.contentAsString).right.get))
           }
 
@@ -53,14 +53,24 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
           }
 
           s"Matches Snapshot" in {
-            val hash = convertBytesToHex(md.digest((file.contentAsString + folderSlug).getBytes))+".json"
-            val snapshot = snapshotOutputDirectory / hash
-            if (snapshot.exists) {
-              val snapshotValue = deserializeOutput(parse(snapshot.contentAsString).right.get)
-              assert(compare(output.get, snapshotValue))
+
+            if (output.isDefined) {
+              val dir = snapshotOutputDirectory
+              dir.createIfNotExists(asDirectory = true)
+              val snapshot = dir / file.name
+              if (snapshot.exists) {
+                val snapshotValue = deserializeOutput(parse(snapshot.contentAsString).right.get)
+                assert(compare(output.get, snapshotValue), s"(${dir.name} / ${file.name}) snapshot does not match")
+              } else {
+                val pendingDirectory = dir / "pending"
+                pendingDirectory.createIfNotExists(asDirectory = true)
+                val pendingSnapshot = pendingDirectory / file.name
+                println(s"A pending snapshot has been written. To approve move it out of the pending folder${pendingSnapshot}")
+                pendingSnapshot.write(serializeOutput(output.get).spaces2)
+                assert(false, "Pending Snapshot. Must be approved before test will pass")
+              }
             } else {
-              println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work" + snapshot)
-              snapshot.write(serializeOutput(output.get).spaces2)
+              assert(false, "Transform failed")
             }
           }
         }

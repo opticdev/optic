@@ -6,6 +6,7 @@ import com.useoptic.contexts.shapes.projections.{FlatShapeQueries, NameForShapeI
 import com.useoptic.diff._
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.JsonLikeFrom
 import org.scalatest.FunSpec
 
@@ -22,6 +23,7 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
       }
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands, commandContext)
     (result.rootShapeId, rfcService.currentState("id"))
@@ -48,6 +50,7 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
   lazy val exampleRfc = {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
@@ -74,6 +77,7 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
   lazy val paginationExampleRfc = {
     val commands = commandsFrom("pagination")
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
@@ -108,6 +112,7 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
   it("works for nested shapes") {
     val commands = commandsFrom("nested-naming")
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")

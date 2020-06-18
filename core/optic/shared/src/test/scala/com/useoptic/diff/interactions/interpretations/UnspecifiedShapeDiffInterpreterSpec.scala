@@ -5,6 +5,7 @@ import com.useoptic.diff.helpers.{DiffHelpers, SpecHelpers}
 import com.useoptic.diff.interactions.TestHelpers
 import com.useoptic.diff.interactions.interpreters.UnspecifiedShapeDiffInterpreter
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.HttpInteraction
 import org.scalatest.FunSpec
 import io.circe.literal._
@@ -22,6 +23,7 @@ class UnspecifiedShapeDiffInterpreterSpec extends FunSpec {
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpreter = new UnspecifiedShapeDiffInterpreter(resolvers, rfcState)
         val interpretations = interpreter.interpret(diff, interaction)
         assert(interpretations.size == 1)
@@ -46,6 +48,7 @@ class UnspecifiedShapeDiffInterpreterSpec extends FunSpec {
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val interpreter = new UnspecifiedShapeDiffInterpreter(resolvers, rfcState)
       val interpretations = interpreter.interpret(diff, interaction)
       assert(interpretations.size == 1)

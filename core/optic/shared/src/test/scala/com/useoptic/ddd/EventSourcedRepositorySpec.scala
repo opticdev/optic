@@ -1,5 +1,6 @@
 package com.useoptic.ddd
 
+import com.useoptic.dsa.OpticDomainIds
 import org.scalatest.FunSpec
 
 class EventSourcedRepositorySpec extends FunSpec {
@@ -13,7 +14,7 @@ class EventSourcedRepositorySpec extends FunSpec {
       state + 1
     }
 
-    override def handleCommand(state: TestState): PartialFunction[(TestCommandContext, TestCommand), Effects[TestEvent]] = ???
+    override def handleCommand(state: TestState)(implicit ids: OpticDomainIds): PartialFunction[(TestCommandContext, TestCommand), Effects[TestEvent]] = ???
 
     override def initialState: TestState = {
       0

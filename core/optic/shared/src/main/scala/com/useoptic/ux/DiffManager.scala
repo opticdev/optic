@@ -10,6 +10,7 @@ import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDes
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.ShapeDiffResult
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
@@ -184,7 +185,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       case _ => None
     }.flatten
 
-    val descriptionInterpreters = new DiffDescriptionInterpreters(_currentRfcState)
+    val descriptionInterpreters = new DiffDescriptionInterpreters(_currentRfcState)(ids = OpticIds.generator)
 
     val endpointDiffs = allEndpointDiffs.groupBy(i => (i._1, i._2)).map {
       case ((path, method), v) => {
@@ -266,7 +267,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
   def updatedRfcState(rfcState: RfcState, resolvers: ShapesResolvers): Unit
 
   def suggestionsForDiff(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
-    val basicInterpreter = new DefaultInterpreters(resolvers, rfcState)
+    val basicInterpreter = new DefaultInterpreters(resolvers, rfcState)(ids = OpticIds.generator)
 
     basicInterpreter.interpret(diff, interactions)
   }
@@ -281,7 +282,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
   def diffRegions: TopLevelRegions = {
 
-    val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+    val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)(ids = OpticIds.generator)
 
     def toNewRegionSuggestion(inferPolymorphism: Boolean, diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): InteractiveDiffInterpretation = {
       if (inferPolymorphism) {

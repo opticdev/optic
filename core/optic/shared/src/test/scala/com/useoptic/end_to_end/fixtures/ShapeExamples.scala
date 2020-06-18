@@ -3,6 +3,7 @@ package com.useoptic.end_to_end.fixtures
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.dsa.OpticIds
 import io.circe.Json
 
 object ShapeExamples {
@@ -19,6 +20,7 @@ object ShapeExamples {
 
     val rfcId: String = "rfc-1"
     val eventStore = RfcServiceJSFacade.makeEventStore()
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommands(rfcId, RfcCommandContext("ccc", "sss", "bbb"), initialCommands: _*)
     (rfcService.currentState(rfcId).shapesState.shapes(builder.rootShapeId), rfcService.currentState(rfcId))
