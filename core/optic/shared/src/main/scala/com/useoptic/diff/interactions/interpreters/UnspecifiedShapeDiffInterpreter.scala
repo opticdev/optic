@@ -4,8 +4,8 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeProvider}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
@@ -48,12 +48,12 @@ class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcS
     resolved.coreShapeKind match {
       case ListKind => {
         val json = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
-        val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
-        val commands = builtShape.commands ++ Seq(
+        val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(json.get))
+        val commands = newCommands.flatten ++ Seq(
           SetParameterShape(
             ProviderInShape(
               resolved.shapeEntity.shapeId,
-              ShapeProvider(builtShape.rootShapeId),
+              ShapeProvider(inlineShapeId),
               ListKind.innerParam
             )
           )
@@ -73,10 +73,11 @@ class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcS
         val json = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
         Logger.log(json.get)
         val key = shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
-        val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run
+        val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(json.get))
+
         val fieldId = ids.newFieldId
-        val commands = builtShape.commands ++ Seq(
-          AddField(fieldId, resolved.shapeEntity.shapeId, key, FieldShapeFromShape(fieldId, builtShape.rootShapeId))
+        val commands = newCommands.flatten ++ Seq(
+          AddField(fieldId, resolved.shapeEntity.shapeId, key, FieldShapeFromShape(fieldId, inlineShapeId))
         )
         Seq(
           InteractiveDiffInterpretation(

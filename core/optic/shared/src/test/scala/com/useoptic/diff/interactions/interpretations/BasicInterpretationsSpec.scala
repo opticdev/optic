@@ -4,7 +4,7 @@ import com.useoptic.contexts.requests.Commands
 import com.useoptic.contexts.requests.Commands.ShapedBodyDescriptor
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.interpreters.BasicInterpreters
 import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, ResponseBody, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, TestHelpers, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, Url}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
@@ -82,11 +82,11 @@ object InteractionHelpers {
 class BasicInterpretationsSpec extends FunSpec {
   describe("AddRequestBodyContentType") {
 
-    val builtShape = new ShapeBuilder(json"""{}""", "s").run
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator)
     val initialCommands = Seq(
       Commands.AddRequest("request1", "root", "PUT")
-    ) ++ builtShape.commands ++ Seq(
-      Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("text/plain", builtShape.rootShapeId, false)),
+    ) ++ builtShape._2.flatten ++ Seq(
+      Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("text/plain", builtShape._1, false)),
       Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
     )
 
@@ -115,12 +115,12 @@ class BasicInterpretationsSpec extends FunSpec {
   }
   describe("AddResponseBodyContentType") {
 
-    val builtShape = new ShapeBuilder(json"""{}""", "s").run
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator)
     val initialCommands = Seq(
       Commands.AddRequest("request1", "root", "GET")
-    ) ++ builtShape.commands ++ Seq(
+    ) ++ builtShape._2.flatten ++ Seq(
       Commands.AddResponseByPathAndMethod("response1", "root", "GET", 200),
-      Commands.SetResponseBodyShape("response1", ShapedBodyDescriptor("text/plain", builtShape.rootShapeId, false)),
+      Commands.SetResponseBodyShape("response1", ShapedBodyDescriptor("text/plain", builtShape._1, false)),
     )
 
     it("should add the expected content type to the spec") {
@@ -148,11 +148,11 @@ class BasicInterpretationsSpec extends FunSpec {
   }
   describe("ChangeShape") {
     describe("changing a field's shape") {
-      val builtShape = new ShapeBuilder(json"""{"k":1}""", "s").run
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":1}""").get))(OpticIds.newDeterministicIdGenerator)
       val initialCommands = Seq(
         Commands.AddRequest("request1", "root", "PUT")
-      ) ++ builtShape.commands ++ Seq(
-        Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape.rootShapeId, false)),
+      ) ++ builtShape._2.flatten ++ Seq(
+        Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape._1, false)),
         Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
       )
       val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
@@ -175,11 +175,12 @@ class BasicInterpretationsSpec extends FunSpec {
       }
     }
     describe("changing a list item's shape") {
-      val builtShape = new ShapeBuilder(json"""{"k":[1]}""", "s").run
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":[1]}""").get))(OpticIds.newDeterministicIdGenerator)
+
       val initialCommands = Seq(
         Commands.AddRequest("request1", "root", "PUT")
-      ) ++ builtShape.commands ++ Seq(
-        Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape.rootShapeId, false)),
+      ) ++ builtShape._2.flatten ++ Seq(
+        Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape._1, false)),
         Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
       )
       val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)

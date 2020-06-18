@@ -28,16 +28,16 @@ class RequestsService(shapesService: ShapesService)(implicit ids: OpticDomainIds
 @JSExport
 @JSExportAll
 object RequestsServiceHelper {
-//  val pathIdGenerator = new RandomAlphanumericIdGenerator("path", "_", 10)
-//  val requestIdGenerator = new RandomAlphanumericIdGenerator("request", "_", 10)
-//  val responseIdGenerator = new RandomAlphanumericIdGenerator("response", "_", 10)
-//  val parameterIdGenerator = new RandomAlphanumericIdGenerator("parameter", "_", 10)
-//
-//  def newPathId(): String = pathIdGenerator.nextId()
-//
-//  def newRequestId(): String = requestIdGenerator.nextId()
-//
-//  def newResponseId(): String = responseIdGenerator.nextId()
-//
-//  def newParameterId(): String = parameterIdGenerator.nextId()
+  val pathIdGenerator = new RandomAlphanumericIdGenerator("path", "_", 10)
+  val requestIdGenerator = new RandomAlphanumericIdGenerator("request", "_", 10)
+  val responseIdGenerator = new RandomAlphanumericIdGenerator("response", "_", 10)
+  val parameterIdGenerator = new RandomAlphanumericIdGenerator("parameter", "_", 10)
+
+  def newPathId(): String = pathIdGenerator.nextId()
+
+  def newRequestId(): String = requestIdGenerator.nextId()
+
+  def newResponseId(): String = responseIdGenerator.nextId()
+
+  def newParameterId(): String = parameterIdGenerator.nextId()
 }
