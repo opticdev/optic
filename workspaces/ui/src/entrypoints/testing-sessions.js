@@ -22,12 +22,10 @@ export default function TestingSessions(props) {
   });
 
   const captureServiceFactory = (specService, captureId) => {
-    debugger;
     return new ExampleCaptureService(specService, captureId);
   };
 
   const diffServiceFactory = (specService, config) => {
-    debugger;
     return new ExampleDiffService(specService, config);
   };
 

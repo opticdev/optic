@@ -59,6 +59,12 @@ function useServices() {
   const { specService, diffServiceFactory, captureServiceFactory } = useContext(
     SpecServiceContext
   );
+
+  return {
+    specService,
+    diffServiceFactory,
+    captureServiceFactory,
+  };
 }
 
 function useEnabledFeatures() {

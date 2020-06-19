@@ -14,9 +14,17 @@ export interface IDiffService {
   ): Promise<ILoadInteractionResponse>;
   listDiffs(): Promise<IListDiffsResponse>;
   listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse>;
+  loadStats(): Promise<ILoadStatsResponse>;
 }
 
 export interface IRfcCommand {}
+
+export interface ILoadStatsResponse {
+  totalInteractions: number;
+  processed: number;
+  captureCompleted: boolean;
+}
+
 export interface IStartDiffResponse {
   notificationUrl: string;
   loadDiffUrl: string;
@@ -27,6 +35,7 @@ export interface ILoadInteractionResponse {
 }
 export interface IListDiffsResponse {
   diffs: any[];
+  rfcState: any;
 }
 
 export interface IListUnrecognizedUrlsResponse {
