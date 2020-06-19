@@ -4,6 +4,7 @@ import {
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   ILoadInteractionResponse,
+  ILoadStatsResponse,
   IRfcCommand,
   IStartDiffResponse,
 } from './index';
@@ -14,6 +15,7 @@ import {
   cachingResolversAndRfcStateFromEvents,
   normalizedDiffFromRfcStateAndInteractions,
 } from '@useoptic/domain-utilities';
+import { DiffResultHelper, ScalaJSHelpers } from '@useoptic/domain/build';
 export class ExampleCaptureService implements ICaptureService {
   async startDiff(
     ignoreRequests: string[],
@@ -28,28 +30,45 @@ export class ExampleCaptureService implements ICaptureService {
 }
 
 export class ExampleDiffService implements IDiffService {
-  constructor(private specService: ISpecService) {}
+  private readonly diffsPromise: Promise<IListDiffsResponse>;
+
+  constructor(private specService: ISpecService) {
+    async function computeInitialDiff() {
+      const capture = await specService.listCapturedSamples(captureId);
+      const events = await specService.listEvents();
+      const { resolvers, rfcState } = cachingResolversAndRfcStateFromEvents(
+        JSON.parse(events)
+      );
+      const diffs = normalizedDiffFromRfcStateAndInteractions(
+        resolvers,
+        rfcState,
+        capture.samples
+      );
+      return {
+        diffs,
+        rfcState,
+        resolvers,
+      };
+    }
+    this.diffsPromise = computeInitialDiff();
+  }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const interactions = await this.specService.listCapturedSamples(captureId);
-    const events = await this.specService.listEvents();
-    const { resolvers, rfcState } = cachingResolversAndRfcStateFromEvents(
-      JSON.parse(events)
+    const { diffs, rfcState } = await this.diffsPromise;
+    const endpointDiffs = ScalaJSHelpers.toJsArray(
+      DiffResultHelper.endpointDiffs(diffs, rfcState)
     );
-    const diffs = normalizedDiffFromRfcStateAndInteractions(
-      resolvers,
-      rfcState,
-      interactions
-    );
-    return {
-      diffs,
-    };
+    return endpointDiffs;
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    return Promise.resolve({
-      urls: [],
-    });
+    const { diffs, rfcState } = await this.diffsPromise;
+
+    const urls = ScalaJSHelpers.toJsArray(
+      DiffResultHelper.unmatchedUrls(diffs, rfcState)
+    );
+
+    return Promise.resolve(urls);
   }
 
   async loadInteraction(
@@ -62,5 +81,14 @@ export class ExampleDiffService implements IDiffService {
     return {
       interaction,
     };
+  }
+
+  async loadStats(): Promise<ILoadStatsResponse> {
+    const capture = await this.specService.listCapturedSamples(captureId);
+    return Promise.resolve({
+      totalInteractions: capture.samples.length,
+      processed: capture.samples.length,
+      captureCompleted: true,
+    });
   }
 }
