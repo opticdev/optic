@@ -32,8 +32,6 @@ export class ExampleCaptureService implements ICaptureService {
     ignoreRequests: string[],
     additionalCommands: IRfcCommand[]
   ): Promise<IStartDiffResponse> {
-    debugger;
-
     return {
       loadDiffUrl: '',
       loadUnrecognizedUrlsUrl: '',
@@ -178,7 +176,8 @@ export class ExampleDiffService implements IDiffService {
 
     return {
       bodyPreview,
-      shapePreview,
+      shapePreview: shapePreview.shape,
+      suggestion: shapePreview.suggestion,
     };
   }
 }

@@ -71,6 +71,9 @@ export default (props) => {
   const classes = useStyles();
   const { diff } = props;
 
+  const ds = diff.toString();
+  console.log('diff string ', ds);
+
   const description = useDiffDescription(diff);
 
   const { selectedInterpretation } = useContext(DiffContext);
