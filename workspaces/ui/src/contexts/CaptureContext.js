@@ -46,7 +46,7 @@ export function CaptureStateStore(props) {
       const config = await captureService.startDiff(
         ScalaJSHelpers.eventsJsArray(eventStore.listEvents(rfcId)),
         [],
-        setAdditionalCommands
+        additionalCommands
       );
       const diffServiceForCapture = diffServiceFactory(
         specService,

@@ -1,6 +1,7 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.requests.Commands.PathComponentId
+import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers.InteractionsGroupedByDiff
@@ -39,17 +40,17 @@ object DiffResultHelper {
       case _ => false
     }.flatMap {
       case (diff, interactions) => getLocationForDiff(diff, rfcState).map(location => {
-        EndpointDiffs(location.pathId, location.method,  Map(diff -> interactions.map(i => i.uuid)))
+        EndpointDiffs(location.method, location.pathId,  Map(diff -> interactions.map(i => i.uuid)))
       })
     }.groupBy(i => (i.pathId, i.method)).map {
       case ((path, method), diffs) => {
         val diffsForTHisOne = diffs.flatMap(_.diffs).toMap
-        println(s"NEW ENDPOINT DIFF for ${method} ${path} ${diffsForTHisOne.size}")
         EndpointDiffs(method, path, diffsForTHisOne)
       }
     }
   }.toVector.sortBy(_.diffs.size).reverse
 
+  def interactionsWithDiffsCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.flatMap(_._2).toSet.size
   def diffCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.size
 
   def newRegionDiffs(diffs: Map[InteractionDiffResult, Seq[String]]): Seq[NewRegionDiff] = {
@@ -79,10 +80,11 @@ object DiffResultHelper {
         }
         override val statusCode: Option[Int] = _diff match {
           case d: UnmatchedResponseStatusCode => Some(d.interactionTrail.statusCode())
+          case d: UnmatchedResponseBodyContentType => Some(d.interactionTrail.statusCode())
           case _  => None
         }
       }
-    }}.toVector
+    }}.toVector.sortBy(_.statusCode)
   }
 
   def bodyDiffs(diffs: Map[InteractionDiffResult, Seq[String]]): Seq[BodyDiff] = {
@@ -184,7 +186,7 @@ case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[Int
 
 @JSExportAll
 abstract class NewRegionDiff {
-  val diff: DiffResult
+  val diff: InteractionDiffResult
   val interactionPointers: Seq[String]
   val inRequest: Boolean
   val inResponse: Boolean
@@ -203,7 +205,7 @@ abstract class NewRegionDiff {
     new DiffPreviewer(null, null).previewBody(body)
   }
 
-  def previewShapeRender(rfcState: RfcState, interactions: Vector[HttpInteraction], inferPolymorphism: Boolean): Option[ShapeOnlyRenderHelper] = {
+  def previewShapeRender(rfcState: RfcState, interactions: Vector[HttpInteraction], inferPolymorphism: Boolean): PreviewShapeAndCommands = {
     val diffPreviewer = new DiffPreviewer(ShapesResolvers.newResolver(rfcState), rfcState)
 
     def getBody(i: HttpInteraction) = {
@@ -216,14 +218,31 @@ abstract class NewRegionDiff {
 
     val firstInteraction = interactions.head
 
-    if (inferPolymorphism) {
+    val result = if (inferPolymorphism) {
       val bodies = interactions.map(getBody).flatMap(BodyUtilities.parseBody)
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
-      preview.map(_._2)
+      preview.map(i => PreviewShapeAndCommands(Some(i._2), toSuggestion(Vector(interactions.head), rfcState, inferPolymorphism).headOption))
     } else {
-      diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten).map(_._2)
+      diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten)
+        .map(i => PreviewShapeAndCommands(Some(i._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption))
+    }
+
+    result.getOrElse(PreviewShapeAndCommands(None, None))
+  }
+
+
+  def toSuggestion(interactions: Vector[HttpInteraction], currentRfcState: RfcState, inferPolymorphism: Boolean): Seq[InteractiveDiffInterpretation] = {
+    val resolvers = ShapesResolvers.newResolver(currentRfcState)
+    val basicInterpreter = new DefaultInterpreters(resolvers, currentRfcState)
+    if (inferPolymorphism) {
+      basicInterpreter.interpret(diff, interactions)
+    } else {
+      basicInterpreter.interpret(diff, interactions.head)
     }
   }
+
+  override def toString: PathComponentId = diff.toString + interactionPointers.toString()
+
 }
 
 @JSExportAll
@@ -234,6 +253,11 @@ abstract class BodyDiff {
   val inRequest: Boolean
   val inResponse: Boolean
 
+  override def toString: PathComponentId = diff.toString + interactionPointers.toString()
+
   def firstInteractionPointer: String = interactionPointers.head
   def interactionsCount: Int = interactionPointers.size
 }
+
+@JSExportAll
+case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggestion: Option[InteractiveDiffInterpretation])
