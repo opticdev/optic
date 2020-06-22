@@ -25,8 +25,8 @@ export default function TestingSessions(props) {
     return new ExampleCaptureService(specService, captureId);
   };
 
-  const diffServiceFactory = (specService, config) => {
-    return new ExampleDiffService(specService, config);
+  const diffServiceFactory = (specService, additionalCommands, config) => {
+    return new ExampleDiffService(specService, additionalCommands, config);
   };
 
   return (

@@ -14,7 +14,12 @@ import {
 import { DiffContextStore, withDiffContext } from './DiffContext';
 import { withRfcContext } from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { Facade, opticEngine, RfcCommandContext } from '@useoptic/domain';
+import {
+  DiffResultHelper,
+  Facade,
+  opticEngine,
+  RfcCommandContext,
+} from '@useoptic/domain';
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import { primary } from '../../../theme';
 import uuidv4 from 'uuid/v4';
@@ -28,6 +33,10 @@ import { PathAndMethod } from './PathAndMethod';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { usePageTitle } from '../../Page';
 import { track } from '../../../Analytics';
+import {
+  CaptureStateStore,
+  useCaptureContext,
+} from '../../../contexts/CaptureContext';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const { helpers } = diff;
@@ -77,21 +86,23 @@ function DiffPageNew(props) {
   const baseUrl = useBaseUrl();
   const { pathId, method, captureId } = props.match.params;
   return (
-    <CaptureSessionInlineContext
-      specStore={specStore}
-      captureId={captureId}
-      pathId={pathId}
-      method={method}
-    >
-      <EndpointsContextStore
+    <CaptureStateStore captureId={captureId}>
+      <CaptureSessionInlineContext
+        specStore={specStore}
+        captureId={captureId}
         pathId={pathId}
         method={method}
-        inContextOfDiff={true}
-        notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        <DiffPageContent captureId={captureId} />
-      </EndpointsContextStore>
-    </CaptureSessionInlineContext>
+        <EndpointsContextStore
+          pathId={pathId}
+          method={method}
+          inContextOfDiff={true}
+          notFound={<Redirect to={`${baseUrl}/diffs`} />}
+        >
+          <DiffPageContent captureId={captureId} />
+        </EndpointsContextStore>
+      </CaptureSessionInlineContext>
+    </CaptureStateStore>
   );
 }
 
@@ -118,13 +129,13 @@ function _DiffPageContent(props) {
   const {
     history,
     endpointDescriptor,
-    endpointDiffManger,
     classes,
     initialEventStore,
     rfcId,
     acceptedSuggestions,
     acceptSuggestion,
     selectedDiff,
+    diffsForThisEndpoint,
     clientId,
     clientSessionId,
     reset,
@@ -183,7 +194,16 @@ function _DiffPageContent(props) {
     history.push(`${baseUrl}/diffs/${captureId}`);
   }
 
-  const diffRegions = endpointDiffManger.diffRegions;
+  const newRegions = jsonHelper.seqToJsArray(
+    DiffResultHelper.newRegionDiffs(diffsForThisEndpoint)
+  );
+
+  const bodyDiffs = jsonHelper.seqToJsArray(
+    DiffResultHelper.bodyDiffs(diffsForThisEndpoint)
+  );
+
+  const hasNewRegions = newRegions.length > 0;
+  const diffCount = DiffResultHelper.diffCount(diffsForThisEndpoint);
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -198,46 +218,48 @@ function _DiffPageContent(props) {
               <PathAndMethod method={httpMethod} path={fullPath} />
             </div>
 
-            <NewRegions
-              ignoreDiff={ignoreDiff}
-              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
-              method={httpMethod}
-              fullPath={fullPath}
-              newRegions={diffRegions.newRegions}
-            />
+            {hasNewRegions && (
+              <NewRegions
+                ignoreDiff={ignoreDiff}
+                endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                method={httpMethod}
+                fullPath={fullPath}
+                newRegions={newRegions}
+              />
+            )}
 
-            {!diffRegions.hasNewRegions && (
+            {!hasNewRegions && (
               <>
-                <DiffCursor diffs={diffRegions.bodyDiffs} />
+                <DiffCursor diffs={bodyDiffs} />
                 {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
               </>
             )}
 
-            {/*<ShapeDiffRegion*/}
-            {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
-            {/*  title="Request Body Diffs"/>*/}
+            {/*/!*<ShapeDiffRegion*!/*/}
+            {/*/!*  region={endpointDiffManger.diffRegions.requestRegions}*!/*/}
+            {/*/!*  title="Request Body Diffs"/>*!/*/}
 
-            {/*<ShapeDiffRegion*/}
-            {/*  region={endpointDiffManger.diffRegions.responseRegions}*/}
-            {/*  title="Response Body Diffs"/>*/}
+            {/*/!*<ShapeDiffRegion*!/*/}
+            {/*/!*  region={endpointDiffManger.diffRegions.responseRegions}*!/*/}
+            {/*/!*  title="Response Body Diffs"/>*!/*/}
 
-            {endpointDiffManger.diffCount !== 0 && (
-              <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />
-            )}
+            {/*{endpointDiffManger.diffCount !== 0 && (*/}
+            {/*  <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />*/}
+            {/*)}*/}
 
-            <CommitCard
-              acceptedSuggestions={acceptedSuggestions}
-              ignoredDiffs={ignoredDiffs}
-              diffCount={endpointDiffManger.diffCount}
-              interactionsWithDiffsCount={
-                endpointDiffManger.interactionsWithDiffsCount
-              }
-              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
-              method={httpMethod}
-              fullPath={fullPath}
-              reset={handleDiscard}
-              apply={handleApply}
-            />
+            {/*<CommitCard*/}
+            {/*  acceptedSuggestions={acceptedSuggestions}*/}
+            {/*  ignoredDiffs={ignoredDiffs}*/}
+            {/*  diffCount={endpointDiffManger.diffCount}*/}
+            {/*  interactionsWithDiffsCount={*/}
+            {/*    endpointDiffManger.interactionsWithDiffsCount*/}
+            {/*  }*/}
+            {/*  endpointPurpose={endpointPurpose || 'Endpoint Purpose'}*/}
+            {/*  method={httpMethod}*/}
+            {/*  fullPath={fullPath}*/}
+            {/*  reset={handleDiscard}*/}
+            {/*  apply={handleApply}*/}
+            {/*/>*/}
           </div>
         </div>
       )}
@@ -304,98 +326,96 @@ function flatten(acc, array) {
   return [...acc, ...array];
 }
 
-const InnerDiffWrapper = withTrafficSessionContext(
-  withRfcContext(function InnerDiffWrapperBase(props) {
-    const {
-      eventStore,
-      initialEventStore,
-      rfcService,
-      rfcId,
-      cachedQueryResults,
-      diffManager,
-      pathId,
-      method,
-    } = props;
-    const { isLoading, session } = props;
-    const { children } = props;
-    const {
-      setSuggestionToPreview,
-      setAcceptedSuggestions,
-      acceptedSuggestions,
-      suggestionToPreview,
-      ignoredDiffs,
-      resetIgnored,
-      resetAccepted,
-    } = props;
+const InnerDiffWrapper = function (props) {
+  const { isLoading, session } = props;
+  const { children } = props;
+  const {
+    endpointDiffs,
+    updatedAdditionalCommands,
+    diffId,
+  } = useCaptureContext();
+  const {
+    setSuggestionToPreview,
+    setAcceptedSuggestions,
+    setSelectedDiff,
+    acceptedSuggestions,
+    suggestionToPreview,
+    ignoredDiffs,
+    resetIgnored,
+    resetAccepted,
+    pathId,
+    method,
+  } = props;
 
-    if (isLoading) {
-      return <LinearProgress />;
-    }
-    const rfcState = rfcService.currentState(rfcId);
-    const { shapesResolvers } = cachedQueryResults;
-    diffManager.updateEndpointFilter(pathId, method, true);
-    diffManager.updatedRfcState(rfcState, shapesResolvers);
+  if (isLoading) {
+    return <LinearProgress />;
+  }
 
-    const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
+  const simulatedCommands = suggestionToPreview
+    ? jsonHelper.seqToJsArray(suggestionToPreview.commands)
+    : [];
 
-    const endpointDiffManger = diffManager.managerForPathAndMethod(
-      pathId,
-      method,
-      ignored
-    );
+  const diffsForThisEndpoint = DiffResultHelper.diffsForPathAndMethod(
+    jsonHelper.jsArrayToSeq(endpointDiffs),
+    pathId,
+    method,
+    jsonHelper.jsArrayToSeq(ignoredDiffs)
+  );
 
-    const simulatedCommands = suggestionToPreview
-      ? jsonHelper.seqToJsArray(suggestionToPreview.commands)
-      : [];
-
-    global.opticDebug.diffContext = {
-      samples: session ? session.samples : [],
-      samplesSeq: jsonHelper.jsArrayToSeq(
-        (session ? session.samples : []).map((x) =>
-          jsonHelper.fromInteraction(x)
-        )
-      ),
-      // diffResults,
-      acceptedSuggestions,
-      suggestionToPreview,
-      // regions,
-      // getInteractionsForDiff,
-      // interpreter,
-      // interpretationsForDiffAndInteraction,
-      simulatedCommands,
-      eventStore,
-      initialEventStore,
-      rfcState,
-      opticEngine,
-      StableHasher,
-    };
-    /*
+  // global.opticDebug.diffContext = {
+  //   samples: session ? session.samples : [],
+  //   samplesSeq: jsonHelper.jsArrayToSeq(
+  //     (session ? session.samples : []).map((x) =>
+  //       jsonHelper.fromInteraction(x)
+  //     )
+  //   ),
+  //   // diffResults,
+  //   acceptedSuggestions,
+  //   suggestionToPreview,
+  //   // regions,
+  //   // getInteractionsForDiff,
+  //   // interpreter,
+  //   // interpretationsForDiffAndInteraction,
+  //   simulatedCommands,
+  //   eventStore,
+  //   initialEventStore,
+  //   rfcState,
+  //   opticEngine,
+  //   StableHasher,
+  // };
+  /*
 const converter = new opticDebug.diffContext.opticEngine.com.useoptic.CoverageReportConverter(opticDebug.diffContext.StableHasher)
 const report = opticDebug.diffContext.opticEngine.com.useoptic.diff.helpers.CoverageHelpers().getCoverage(opticDebug.diffContext.rfcState, opticDebug.diffContext.samples)
 converter.toJs(report)
-   */
+ */
 
-    return (
-      <DiffContextStore
-        endpointDiffManger={endpointDiffManger}
-        setSuggestionToPreview={setSuggestionToPreview}
-        reset={() => {
-          resetIgnored();
-          resetAccepted();
-        }}
-        acceptSuggestion={(...suggestions) => {
-          if (suggestions) {
-            setAcceptedSuggestions([...acceptedSuggestions, ...suggestions]);
-            setSuggestionToPreview(null);
-          }
-        }}
-        acceptedSuggestions={acceptedSuggestions}
-      >
-        {children}
-      </DiffContextStore>
-    );
-  })
-);
+  return (
+    <DiffContextStore
+      diffId={diffId}
+      diffsForThisEndpoint={diffsForThisEndpoint}
+      setSuggestionToPreview={setSuggestionToPreview}
+      reset={() => {
+        resetIgnored();
+        resetAccepted();
+      }}
+      acceptSuggestion={(...suggestions) => {
+        if (suggestions) {
+          const updatedSuggestions = [...acceptedSuggestions, ...suggestions];
+          setAcceptedSuggestions(updatedSuggestions);
+          setSuggestionToPreview(null);
+          const simulatedCommands = updatedSuggestions
+            .map((x) => jsonHelper.seqToJsArray(x.commands))
+            .reduce(flatten, []);
+          updatedAdditionalCommands(simulatedCommands);
+        }
+      }}
+      acceptedSuggestions={acceptedSuggestions}
+    >
+      {children}
+    </DiffContextStore>
+  );
+  // })
+};
 
 class _CaptureSessionInlineContext extends React.Component {
   render() {

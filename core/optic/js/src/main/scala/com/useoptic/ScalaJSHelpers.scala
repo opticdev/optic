@@ -1,6 +1,9 @@
 package com.useoptic
 
 
+import com.useoptic.contexts.rfc.Events.RfcEvent
+import com.useoptic.ddd.{AggregateId, EventStore}
+import com.useoptic.serialization.EventSerialization
 import io.circe.Json
 
 import scala.scalajs.js
@@ -48,5 +51,9 @@ object ScalaJSHelpers {
   }
 
   def getJson(j: Json): js.Any = convertJsonToJs(j)
+
+  def eventsJsArray(events: Vector[RfcEvent]): js.Any = {
+    convertJsonToJs(EventSerialization.toJson(events))
+  }
 
 }
