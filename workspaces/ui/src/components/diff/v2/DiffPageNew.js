@@ -204,6 +204,9 @@ function _DiffPageContent(props) {
 
   const hasNewRegions = newRegions.length > 0;
   const diffCount = DiffResultHelper.diffCount(diffsForThisEndpoint);
+  const interactionsWithDiffsCount = DiffResultHelper.interactionsWithDiffsCount(
+    diffsForThisEndpoint
+  );
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -243,23 +246,21 @@ function _DiffPageContent(props) {
             {/*/!*  region={endpointDiffManger.diffRegions.responseRegions}*!/*/}
             {/*/!*  title="Response Body Diffs"/>*!/*/}
 
-            {/*{endpointDiffManger.diffCount !== 0 && (*/}
-            {/*  <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />*/}
-            {/*)}*/}
+            {diffCount !== 0 && (
+              <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />
+            )}
 
-            {/*<CommitCard*/}
-            {/*  acceptedSuggestions={acceptedSuggestions}*/}
-            {/*  ignoredDiffs={ignoredDiffs}*/}
-            {/*  diffCount={endpointDiffManger.diffCount}*/}
-            {/*  interactionsWithDiffsCount={*/}
-            {/*    endpointDiffManger.interactionsWithDiffsCount*/}
-            {/*  }*/}
-            {/*  endpointPurpose={endpointPurpose || 'Endpoint Purpose'}*/}
-            {/*  method={httpMethod}*/}
-            {/*  fullPath={fullPath}*/}
-            {/*  reset={handleDiscard}*/}
-            {/*  apply={handleApply}*/}
-            {/*/>*/}
+            <CommitCard
+              acceptedSuggestions={acceptedSuggestions}
+              ignoredDiffs={ignoredDiffs}
+              diffCount={diffCount}
+              interactionsWithDiffsCount={interactionsWithDiffsCount}
+              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+              method={httpMethod}
+              fullPath={fullPath}
+              reset={handleDiscard}
+              apply={handleApply}
+            />
           </div>
         </div>
       )}
