@@ -220,7 +220,7 @@ export function DiffCursor(props) {
       setSelectedDiff(diffs[0]);
       setShowAllDiffs(false);
     }
-  }, [diffs.join((i) => i.toString())]);
+  }, [selectedDiff, diffCount]);
 
   const DiffItem = ({ diff, button }) => {
     const description = useDiffDescription(diff);
@@ -327,12 +327,15 @@ export default function DiffPreview() {
 }
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff, endpointPurpose, method, fullPath } = props;
-
+  const {
+    newRegions,
+    ignoreDiff,
+    acceptSuggestion,
+    endpointPurpose,
+    method,
+    fullPath,
+  } = props;
   const classes = useStyles();
-
-  const { acceptSuggestion } = useContext(DiffContext);
-  const { diffService, captureService } = useCaptureContext();
 
   const [deselected, setDeselected] = useState([]);
   const [showExpanded, setShowExpanded] = useState(false);
@@ -354,31 +357,16 @@ function _NewRegions(props) {
     }
   };
 
-  const onApply = async () => {
-    const allIgnored = newRegions
-      .map((diffBlock) => isDeselected(diffBlock))
-      .map((i) => i.diff);
-
+  const onApply = () => {
+    const allIgnored = filterScala(newRegions)((diffBlock) =>
+      isDeselected(diffBlock)
+    ).map((i) => i.diff);
     ignoreDiff(...allIgnored);
-    const allApproved = await Promise.all(
-      newRegions
-        .filter((diffBlock) => !isDeselected(diffBlock))
-        .map(async (i) => {
-          //@todo this is messy and doubles the compute
-          const { interaction } = await captureService.loadInteraction(
-            i.firstInteractionPointer
-          );
-
-          const { suggestion } = await diffService.loadInitialPreview(
-            i,
-            JsonHelper.fromInteraction(interaction),
-            inferPolymorphism
-          );
-
-          return getOrUndefined(suggestion);
-        })
-    );
-
+    const allApproved = newRegions
+      .filter((diffBlock) => !isDeselected(diffBlock))
+      .map((i) => {
+        return i.suggestion(inferPolymorphism);
+      });
     acceptSuggestion(...allApproved);
   };
 
@@ -390,6 +378,8 @@ function _NewRegions(props) {
   const PreviewNewBodyRegion = ({ diff, inferPolymorphism }) => {
     const isChecked = !isDeselected(diff);
     const length = diff.interactionsCount;
+
+    console.log('new bodies? ', diff.diff.toString());
 
     const [interactionIndex, setInteractionIndex] = React.useState(1);
 
@@ -509,7 +499,6 @@ function _NewRegions(props) {
         return (
           <PreviewNewBodyRegion
             diff={diff}
-            key={diff.toString()}
             inferPolymorphism={inferPolymorphism}
           />
         );
@@ -523,7 +512,6 @@ function _NewRegions(props) {
         return (
           <PreviewNewBodyRegion
             diff={diff}
-            key={diff.toString()}
             inferPolymorphism={inferPolymorphism}
           />
         );
@@ -622,23 +610,7 @@ function _NewRegions(props) {
   );
 }
 
-export class NewRegions extends React.Component {
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    const result = CompareEquality.between(
-      nextProps.newRegions,
-      this.props.newRegions
-    );
-
-    console.log('rerender ', result);
-    //@todo add ignore here
-    return !result;
-  }
-
-  render() {
-    console.log('rendering all over again');
-    return <_NewRegions {...this.props} />;
-  }
-}
+export const NewRegions = withDiffContext(_NewRegions);
 
 export const BreadcumbX = (props) => {
   const classes = useStyles();

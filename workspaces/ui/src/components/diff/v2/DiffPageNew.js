@@ -6,13 +6,13 @@ import {
   EndpointsContextStore,
   withEndpointsContext,
 } from '../../../contexts/EndpointContext';
+import { withTrafficSessionContext } from '../../../contexts/TrafficSessionContext';
 import {
   SpecServiceContext,
-  useServices,
   withSpecServiceContext,
 } from '../../../contexts/SpecServiceContext';
-import { DiffContext, DiffContextStore, withDiffContext } from './DiffContext';
-import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
+import { DiffContextStore, withDiffContext } from './DiffContext';
+import { withRfcContext } from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {
   DiffResultHelper,
@@ -84,13 +84,9 @@ const styles = (theme) => ({
 function DiffPageNew(props) {
   const { specStore } = useContext(SpecServiceContext);
   const baseUrl = useBaseUrl();
-  const rfcContext = useContext(RfcContext);
-  const services = useServices();
-
   const { pathId, method, captureId } = props.match.params;
-
   return (
-    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
+    <CaptureStateStore captureId={captureId}>
       <CaptureSessionInlineContext
         specStore={specStore}
         captureId={captureId}
@@ -208,11 +204,6 @@ function _DiffPageContent(props) {
 
   const hasNewRegions = newRegions.length > 0;
   const diffCount = DiffResultHelper.diffCount(diffsForThisEndpoint);
-  const interactionsWithDiffsCount = DiffResultHelper.interactionsWithDiffsCount(
-    diffsForThisEndpoint
-  );
-
-  const diffContext = useContext(DiffContext);
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -252,21 +243,23 @@ function _DiffPageContent(props) {
             {/*/!*  region={endpointDiffManger.diffRegions.responseRegions}*!/*/}
             {/*/!*  title="Response Body Diffs"/>*!/*/}
 
-            {diffCount !== 0 && (
-              <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />
-            )}
+            {/*{endpointDiffManger.diffCount !== 0 && (*/}
+            {/*  <DocDivider style={{ marginTop: 60, marginBottom: 60 }} />*/}
+            {/*)}*/}
 
-            <CommitCard
-              acceptedSuggestions={acceptedSuggestions}
-              ignoredDiffs={ignoredDiffs}
-              diffCount={diffCount}
-              interactionsWithDiffsCount={interactionsWithDiffsCount}
-              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
-              method={httpMethod}
-              fullPath={fullPath}
-              reset={handleDiscard}
-              apply={handleApply}
-            />
+            {/*<CommitCard*/}
+            {/*  acceptedSuggestions={acceptedSuggestions}*/}
+            {/*  ignoredDiffs={ignoredDiffs}*/}
+            {/*  diffCount={endpointDiffManger.diffCount}*/}
+            {/*  interactionsWithDiffsCount={*/}
+            {/*    endpointDiffManger.interactionsWithDiffsCount*/}
+            {/*  }*/}
+            {/*  endpointPurpose={endpointPurpose || 'Endpoint Purpose'}*/}
+            {/*  method={httpMethod}*/}
+            {/*  fullPath={fullPath}*/}
+            {/*  reset={handleDiscard}*/}
+            {/*  apply={handleApply}*/}
+            {/*/>*/}
           </div>
         </div>
       )}
@@ -402,7 +395,6 @@ converter.toJs(report)
       diffsForThisEndpoint={diffsForThisEndpoint}
       setSuggestionToPreview={setSuggestionToPreview}
       reset={() => {
-        updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
       }}
