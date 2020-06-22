@@ -51,6 +51,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { LightTooltip } from '../../tooltips/LightTooltip';
+import { useCaptureContext } from '../../../contexts/CaptureContext';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import {
+  useDiffDescription,
+  useInitialBodyPreview,
+  useInteractionWithPointer,
+} from './DiffHooks';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -202,7 +209,7 @@ const removal = (
 export function DiffCursor(props) {
   const classes = useStyles();
   const { diffs } = props;
-  const diffCount = lengthScala(diffs);
+  const diffCount = diffs.length;
 
   const { selectedDiff, setSelectedDiff } = useContext(DiffContext);
 
@@ -210,12 +217,14 @@ export function DiffCursor(props) {
 
   useEffect(() => {
     if (selectedDiff === null && diffCount > 0) {
-      setSelectedDiff(headOrUndefined(diffs));
+      setSelectedDiff(diffs[0]);
       setShowAllDiffs(false);
     }
   }, [selectedDiff, diffCount]);
 
   const DiffItem = ({ diff, button }) => {
+    const description = useDiffDescription(diff);
+
     return (
       <ListItem
         button={button}
@@ -225,9 +234,12 @@ export function DiffCursor(props) {
           setShowAllDiffs(false);
         }}
       >
-        <Typography variant="h5" className={classes.diffTitle}>
-          {diff.description.title}
-        </Typography>
+        {description && (
+          <Typography variant="h5" className={classes.diffTitle}>
+            {description.title}
+            {/*{diff.toString()}*/}
+          </Typography>
+        )}
         <BreadcumbX location={JsonHelper.seqToJsArray(diff.location)} />
       </ListItem>
     );
@@ -248,7 +260,7 @@ export function DiffCursor(props) {
             Choose a diff to review
           </Typography>
           <List>
-            {mapScala(diffs)((diff, n) => (
+            {diffs.map((diff, n) => (
               <DiffItem key={n} diff={diff} button={true} />
             ))}
           </List>
@@ -329,7 +341,7 @@ function _NewRegions(props) {
   const [showExpanded, setShowExpanded] = useState(false);
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
-  if (lengthScala(newRegions) === 0) {
+  if (newRegions.length === 0) {
     return null;
   }
 
@@ -350,23 +362,24 @@ function _NewRegions(props) {
       isDeselected(diffBlock)
     ).map((i) => i.diff);
     ignoreDiff(...allIgnored);
-    const allApproved = filterScala(newRegions)(
-      (diffBlock) => !isDeselected(diffBlock)
-    ).map((i) => {
-      return i.suggestion(inferPolymorphism);
-    });
+    const allApproved = newRegions
+      .filter((diffBlock) => !isDeselected(diffBlock))
+      .map((i) => {
+        return i.suggestion(inferPolymorphism);
+      });
     acceptSuggestion(...allApproved);
   };
 
   const ignoreAll = () => {
-    const allIgnored = mapScala(newRegions)((i) => i.diff);
+    const allIgnored = newRegions.map((i) => i.diff);
     ignoreDiff(...allIgnored);
   };
 
   const PreviewNewBodyRegion = ({ diff, inferPolymorphism }) => {
     const isChecked = !isDeselected(diff);
-    const { interactions } = diff;
-    const length = lengthScala(interactions);
+    const length = diff.interactionsCount;
+
+    console.log('new bodies? ', diff.diff.toString());
 
     const [interactionIndex, setInteractionIndex] = React.useState(1);
 
@@ -374,11 +387,26 @@ function _NewRegions(props) {
       setInteractionIndex(1);
     }, [diff]);
 
-    const currentInteraction = getIndex(interactions)(interactionIndex - 1);
-    const preview = getOrUndefined(diff.previewRender(currentInteraction));
-    const shapePreview = getOrUndefined(
-      diff.previewShape(currentInteraction, inferPolymorphism)
+    const currentInteractionPointer = getIndex(diff.interactionPointers)(
+      interactionIndex - 1
     );
+
+    const currentInteraction = useInteractionWithPointer(
+      currentInteractionPointer
+    );
+
+    const initialBody = useInitialBodyPreview(
+      diff,
+      currentInteraction && currentInteraction.interactionScala,
+      inferPolymorphism
+    );
+
+    if (!currentInteraction || !initialBody) {
+      return <LinearProgress />;
+    }
+
+    const bodyPreview = getOrUndefined(initialBody.bodyPreview);
+    const shapePreview = getOrUndefined(initialBody.shapePreview);
 
     return (
       <>
@@ -399,7 +427,7 @@ function _NewRegions(props) {
                     getOrUndefined(diff.contentType) || 'No Body'
                   }`
             }
-            secondary={`Observed ${diff.count} times`}
+            secondary={`Observed ${diff.interactionsCount} times`}
             primaryTypographyProps={{ style: { fontSize: 14 } }}
             secondaryTypographyProps={{ style: { fontSize: 12 } }}
           />
@@ -425,7 +453,7 @@ function _NewRegions(props) {
           })}
         >
           <div style={{ width: '55%', paddingRight: 15 }}>
-            {preview && (
+            {bodyPreview && (
               <ShapeBox
                 header={
                   <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -439,7 +467,7 @@ function _NewRegions(props) {
                 }
               >
                 <ShapeExpandedStore>
-                  <DiffHunkViewer preview={preview} exampleOnly />
+                  <DiffHunkViewer preview={bodyPreview} exampleOnly />
                 </ShapeExpandedStore>
               </ShapeBox>
             )}
@@ -465,27 +493,31 @@ function _NewRegions(props) {
     );
   };
 
-  const newRequests = mapScala(newRegions)((diff) => {
-    if (diff.inRequest) {
-      return (
-        <PreviewNewBodyRegion
-          diff={diff}
-          inferPolymorphism={inferPolymorphism}
-        />
-      );
-    }
-  }).filter((i) => !!i);
+  const newRequests = newRegions
+    .map((diff) => {
+      if (diff.inRequest) {
+        return (
+          <PreviewNewBodyRegion
+            diff={diff}
+            inferPolymorphism={inferPolymorphism}
+          />
+        );
+      }
+    })
+    .filter((i) => !!i);
 
-  const newResponses = mapScala(newRegions)((diff) => {
-    if (diff.inResponse) {
-      return (
-        <PreviewNewBodyRegion
-          diff={diff}
-          inferPolymorphism={inferPolymorphism}
-        />
-      );
-    }
-  }).filter((i) => !!i);
+  const newResponses = newRegions
+    .map((diff) => {
+      if (diff.inResponse) {
+        return (
+          <PreviewNewBodyRegion
+            diff={diff}
+            inferPolymorphism={inferPolymorphism}
+          />
+        );
+      }
+    })
+    .filter((i) => !!i);
 
   const copy =
     newResponses.length > 0 &&

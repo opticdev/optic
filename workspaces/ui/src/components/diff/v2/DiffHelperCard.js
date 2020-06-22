@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import { DiffContext } from './DiffContext';
 import { CompareEquality, mapScala } from '@useoptic/domain';
 import { IgnoreDiffContext } from './DiffPageNew';
+import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
+import { diff } from 'react-ace';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const DiffHelperCard = (props) => {
   const classes = useStyles();
-  const { inRequest, inResponse } = props;
+  const { inRequest, inResponse, description, currentInteraction } = props;
   const {
     selectedInterpretation,
     setSelectedDiff,
@@ -60,6 +62,9 @@ export const DiffHelperCard = (props) => {
     acceptSuggestion,
     clearPreview,
   } = useContext(DiffContext);
+
+  const suggestions = useSuggestionsForDiff(selectedDiff, currentInteraction);
+
   const showIt =
     (selectedDiff && selectedDiff.inRequest && inRequest) ||
     (selectedDiff.inResponse && inResponse);
@@ -68,14 +73,12 @@ export const DiffHelperCard = (props) => {
     return null;
   }
 
-  const suggestions = selectedDiff.suggestions;
-
   return (
     <div className={classes.root}>
       <Card elevation={3}>
         <div className={classes.header}>
           <Typography className={classes.font} variant="subtitle1">
-            {selectedDiff.description.summary}
+            {description.summary}
           </Typography>
           <div style={{ flex: 1, minWidth: 20 }} />
           <PulsingOptic />
@@ -85,7 +88,7 @@ export const DiffHelperCard = (props) => {
 
         <FormControl component="fieldset" className={classes.formControl}>
           <RadioGroup>
-            {mapScala(suggestions)((suggestion, n) => {
+            {suggestions.map((suggestion, n) => {
               return (
                 <FormControlLabel
                   key={n}
