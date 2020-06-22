@@ -220,7 +220,7 @@ export function DiffCursor(props) {
       setSelectedDiff(diffs[0]);
       setShowAllDiffs(false);
     }
-  }, [selectedDiff, diffCount]);
+  }, [diffs.join((i) => i.toString())]);
 
   const DiffItem = ({ diff, button }) => {
     const description = useDiffDescription(diff);
@@ -337,6 +337,8 @@ function _NewRegions(props) {
   } = props;
   const classes = useStyles();
 
+  const { diffService } = useCaptureContext();
+
   const [deselected, setDeselected] = useState([]);
   const [showExpanded, setShowExpanded] = useState(false);
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
@@ -357,16 +359,31 @@ function _NewRegions(props) {
     }
   };
 
-  const onApply = () => {
-    const allIgnored = filterScala(newRegions)((diffBlock) =>
-      isDeselected(diffBlock)
-    ).map((i) => i.diff);
+  const onApply = async () => {
+    const allIgnored = newRegions
+      .map((diffBlock) => isDeselected(diffBlock))
+      .map((i) => i.diff);
+
     ignoreDiff(...allIgnored);
-    const allApproved = newRegions
-      .filter((diffBlock) => !isDeselected(diffBlock))
-      .map((i) => {
-        return i.suggestion(inferPolymorphism);
-      });
+    const allApproved = await Promise.all(
+      newRegions
+        .filter((diffBlock) => !isDeselected(diffBlock))
+        .map(async (i) => {
+          //@todo this is messy and doubles the compute
+          const { interaction } = await diffService.loadInteraction(
+            i.firstInteractionPointer
+          );
+
+          const { suggestion } = await diffService.loadInitialPreview(
+            i,
+            JsonHelper.fromInteraction(interaction),
+            inferPolymorphism
+          );
+
+          return getOrUndefined(suggestion);
+        })
+    ).filter((i) => Boolean(i));
+
     acceptSuggestion(...allApproved);
   };
 
@@ -378,8 +395,6 @@ function _NewRegions(props) {
   const PreviewNewBodyRegion = ({ diff, inferPolymorphism }) => {
     const isChecked = !isDeselected(diff);
     const length = diff.interactionsCount;
-
-    console.log('new bodies? ', diff.diff.toString());
 
     const [interactionIndex, setInteractionIndex] = React.useState(1);
 
