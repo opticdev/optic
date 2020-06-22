@@ -21,8 +21,50 @@ export function universeFromEvents(events: any[]) {
   };
 }
 
-export function cachingResolversAndRfcStateFromEvents(events: any[]) {
+export function universeFromEventsAndAdditionalCommands(
+  events: any[],
+  commandsContext: any,
+  commands: any[]
+) {
+  const { contexts } = opticEngine.com.useoptic;
+  const { RfcServiceJSFacade } = contexts.rfc;
+  const rfcServiceFacade = RfcServiceJSFacade();
+  const eventStore = rfcServiceFacade.makeEventStore();
+  const rfcId = 'testRfcId';
+  const eventsAsJson = opticEngine.EventSerialization.fromJs(events);
+  //process the initial events
+  eventStore.append(rfcId, eventsAsJson);
+  const rfcService = rfcServiceFacade.makeRfcService(eventStore);
+  //tack on the additional commands
+  rfcService.handleCommands(rfcId, commandsContext, ...commands);
+  const rfcState = rfcService.currentState(rfcId);
+  return {
+    rfcState,
+    eventStore,
+    rfcId,
+    rfcService,
+  };
+}
+
+export function cachingResolversAndRfcStateFromEvents(
+  events: any[],
+  extraCommands: any[]
+) {
   const { rfcState } = universeFromEvents(events);
+  const resolvers = opticEngine.ShapesResolvers.newCachingResolver(rfcState);
+  return { resolvers, rfcState };
+}
+
+export function cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+  events: any[],
+  commandsContext: any,
+  additionalCommands: any[]
+) {
+  const { rfcState } = universeFromEventsAndAdditionalCommands(
+    events,
+    commandsContext,
+    additionalCommands
+  );
   const resolvers = opticEngine.ShapesResolvers.newCachingResolver(rfcState);
   return { resolvers, rfcState };
 }

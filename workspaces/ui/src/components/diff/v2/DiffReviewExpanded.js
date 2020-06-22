@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 import {
   DiffPreviewer,
+  DiffResultHelper,
   getIndex,
   getOrUndefined,
   JsonHelper,
@@ -21,6 +22,8 @@ import { DiffHelperCard } from './DiffHelperCard';
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import { BreadcumbX } from './DiffPreview';
 import { primary } from '../../../theme';
+import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,14 +70,15 @@ const useStyles = makeStyles((theme) => ({
 export default (props) => {
   const classes = useStyles();
   const { diff } = props;
-  const { description, interactions } = diff;
+
+  const description = useDiffDescription(diff);
 
   const { selectedInterpretation } = useContext(DiffContext);
   const { rfcId, rfcService, cachedQueryResults, eventStore } = useContext(
     RfcContext
   );
 
-  const length = lengthScala(interactions);
+  const length = diff.interactionsCount;
 
   const [interactionIndex, setInteractionIndex] = React.useState(1);
 
@@ -85,9 +89,22 @@ export default (props) => {
   const currentRfcState = rfcService.currentState(rfcId);
   const { shapesResolvers } = cachedQueryResults;
 
-  const currentInteraction = getIndex(interactions)(interactionIndex - 1);
-  const { method, path } = currentInteraction.request;
-  const diffPreviewer = new DiffPreviewer(shapesResolvers, currentRfcState);
+  const currentInteractionPointer = getIndex(diff.interactionPointers)(
+    interactionIndex - 1
+  );
+
+  const currentInteraction = useInteractionWithPointer(
+    currentInteractionPointer
+  );
+
+  if (!currentInteraction || !description) {
+    return <LinearProgress />;
+  }
+
+  const { interaction, interactionScala } = currentInteraction;
+
+  const { method, path } = interactionScala.request;
+
   return (
     <ShapeExpandedStore>
       <div>
@@ -113,7 +130,7 @@ export default (props) => {
         <PathAndMethod path={path} method={method} />
 
         <div className={classes.content}>
-          <Show when={currentInteraction.request.body.nonEmpty}>
+          <Show when={interactionScala.request.body.nonEmpty}>
             <InnerRow
               left={
                 <ShapeBox
@@ -123,7 +140,7 @@ export default (props) => {
                       location={[
                         `Request Body`,
                         getOrUndefined(
-                          currentInteraction.request.body.contentType
+                          interactionScala.request.body.contentType
                         ),
                       ]}
                     />
@@ -149,15 +166,17 @@ export default (props) => {
                                 rfcId
                               );
 
-                              const preview = diff.previewRender(
-                                currentInteraction,
-                                toOption(currentRfcState)
+                              const preview = DiffResultHelper.previewDiff(
+                                diff,
+                                interactionScala,
+                                currentRfcState
                               );
+
                               return (
                                 <DiffHunkViewer
                                   suggestion={selectedInterpretation}
                                   diff={diff}
-                                  preview={preview}
+                                  preview={getOrUndefined(preview)}
                                   diffDescription={description}
                                 />
                               );
@@ -170,8 +189,9 @@ export default (props) => {
                         <DiffHunkViewer
                           exampleOnly
                           preview={getOrUndefined(
-                            diffPreviewer.previewBody(
-                              currentInteraction.request.body
+                            DiffResultHelper.previewBody(
+                              interactionScala.request.body,
+                              currentRfcState
                             )
                           )}
                         />
@@ -180,7 +200,13 @@ export default (props) => {
                   })()}
                 </ShapeBox>
               }
-              right={<DiffHelperCard inRequest />}
+              right={
+                <DiffHelperCard
+                  inRequest
+                  description={description}
+                  currentInteraction={interactionScala}
+                />
+              }
             />
 
             <div style={{ marginTop: 20, marginBottom: 20 }}>
@@ -188,7 +214,7 @@ export default (props) => {
             </div>
           </Show>
 
-          <Show when={currentInteraction.response.body.nonEmpty}>
+          <Show when={interactionScala.response.body.nonEmpty}>
             <InnerRow
               left={
                 <ShapeBox
@@ -196,9 +222,9 @@ export default (props) => {
                     <BreadcumbX
                       itemStyles={{ fontSize: 13, color: 'white' }}
                       location={[
-                        `${currentInteraction.response.statusCode} Response Body`,
+                        `${interactionScala.response.statusCode} Response Body`,
                         getOrUndefined(
-                          currentInteraction.response.body.contentType
+                          interactionScala.response.body.contentType
                         ),
                       ]}
                     />
@@ -223,15 +249,16 @@ export default (props) => {
                               const currentRfcState = rfcService.currentState(
                                 rfcId
                               );
-                              const preview = diff.previewRender(
-                                currentInteraction,
-                                toOption(currentRfcState)
+                              const preview = DiffResultHelper.previewDiff(
+                                diff,
+                                interactionScala,
+                                currentRfcState
                               );
                               return (
                                 <DiffHunkViewer
                                   suggestion={selectedInterpretation}
                                   diff={diff}
-                                  preview={preview}
+                                  preview={getOrUndefined(preview)}
                                   diffDescription={description}
                                 />
                               );
@@ -244,8 +271,9 @@ export default (props) => {
                         <DiffHunkViewer
                           exampleOnly
                           preview={getOrUndefined(
-                            diffPreviewer.previewBody(
-                              currentInteraction.response.body
+                            DiffResultHelper.previewBody(
+                              interactionScala.response.body,
+                              currentRfcState
                             )
                           )}
                         />
@@ -254,7 +282,13 @@ export default (props) => {
                   })()}
                 </ShapeBox>
               }
-              right={<DiffHelperCard inResponse />}
+              right={
+                <DiffHelperCard
+                  inResponse
+                  description={description}
+                  currentInteraction={interactionScala}
+                />
+              }
             />
           </Show>
         </div>
