@@ -28,6 +28,7 @@ export interface IOpticTask {
   command?: string;
   baseUrl: string;
   proxy?: string;
+  targetUrl?: string;
 }
 
 export interface IApiCliConfig {
@@ -50,6 +51,7 @@ export async function readApiConfig(
       '`optic.yml` will not parse. Make sure it is valid YAML.'
     );
   }
+
   return parsed;
 }
 
@@ -107,14 +109,14 @@ export interface IOpticApiInterceptConfig {
 
 export interface IOpticTaskRunnerConfig {
   command?: string;
-  // where does the service normally live?
+  // the target service, implementing the API we're observing
   serviceConfig: {
     port: number;
     host: string;
     protocol: string;
     basePath: string;
   };
-  // where should intercepted requests go?
+  // the proxy, in front of the target service
   proxyConfig: {
     port: number;
     host: string;
@@ -126,38 +128,41 @@ export interface IOpticTaskRunnerConfig {
 export async function TaskToStartConfig(
   task: IOpticTask
 ): Promise<IOpticTaskRunnerConfig> {
-  const parsedBaseUrl = url.parse(task.baseUrl);
-  const randomPort = await getPort({ port: getPort.makeRange(3300, 3900) });
-  const serviceProtocol = parsedBaseUrl.protocol || 'http:';
-  const proxyPort =
-    parsedBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443');
-  const parsedProxyBaseUrl = task.proxy && url.parse(task.proxy);
+  const baseUrl = url.parse(task.baseUrl);
+  const targetUrl = task.targetUrl && url.parse(task.targetUrl);
+
+  const serviceProtocol =
+    (targetUrl && targetUrl.protocol) || baseUrl.protocol || 'http:';
+  const serviceConfig = {
+    host: (targetUrl && targetUrl.hostname) || baseUrl.hostname || 'localhost',
+    protocol: serviceProtocol,
+    port:
+      targetUrl && targetUrl.port
+        ? parseInt(targetUrl.port) // use target port if available
+        : targetUrl
+        ? serviceProtocol === 'http:' // assume standard ports for targets without explicit ports
+          ? 80
+          : 443
+        : await getPort({ port: getPort.makeRange(3300, 3900) }), // find available port if no explicit target set
+    basePath: (targetUrl && targetUrl.path) || baseUrl.path || '/',
+  };
+
+  const proxyProtocol = baseUrl.protocol || 'http:';
+  const proxyConfig = {
+    host: baseUrl.hostname || 'localhost',
+    protocol: proxyProtocol,
+    port: baseUrl.port
+      ? parseInt(baseUrl.port) // use base url port if explicitly set
+      : proxyProtocol === 'http:' // assume standard port for base url without explicit port
+      ? 80
+      : 443,
+    basePath: serviceConfig.basePath,
+  };
 
   return {
     command: task.command,
-    serviceConfig: {
-      port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
-      host: parsedBaseUrl.hostname || 'localhost',
-      protocol: serviceProtocol,
-      basePath: parsedBaseUrl.path || '/',
-    },
-    proxyConfig: {
-      port: parseInt(
-        parsedProxyBaseUrl
-          ? parsedProxyBaseUrl.port ||
-              (serviceProtocol === 'http:' ? '80' : '443')
-          : proxyPort,
-        10
-      ),
-      host:
-        (parsedProxyBaseUrl
-          ? parsedProxyBaseUrl.hostname
-          : parsedBaseUrl.hostname) || 'localhost',
-      protocol:
-        (parsedProxyBaseUrl ? parsedProxyBaseUrl.protocol : serviceProtocol) ||
-        'http:',
-      basePath: parsedBaseUrl.path || '/',
-    },
+    serviceConfig,
+    proxyConfig,
   };
 }
 
