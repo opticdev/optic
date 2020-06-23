@@ -25,6 +25,7 @@ import {
   ScalaJSHelpers,
 } from '@useoptic/domain/build';
 import uuidv4 from 'uuid/v4';
+import { getOrUndefined } from '@useoptic/domain';
 
 export class ExampleCaptureService implements ICaptureService {
   async startDiff(
@@ -128,10 +129,12 @@ export class ExampleDiffService implements IDiffService {
       diff.firstInteractionPointer
     );
     if (interaction.interaction) {
-      return DiffResultHelper.descriptionFromDiff(
-        diff.diff,
-        rfcState,
-        JsonHelper.fromInteraction(interaction.interaction)
+      return getOrUndefined(
+        DiffResultHelper.descriptionFromDiff(
+          diff.diff,
+          rfcState,
+          JsonHelper.fromInteraction(interaction.interaction)
+        )
       );
     } else {
       return null;

@@ -396,6 +396,7 @@ converter.toJs(report)
       diffsForThisEndpoint={diffsForThisEndpoint}
       setSuggestionToPreview={setSuggestionToPreview}
       reset={() => {
+        updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
       }}

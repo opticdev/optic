@@ -12,6 +12,7 @@ import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.types.capture.{Body, HttpInteraction}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.util.Try
 
 @JSExport
 @JSExportAll
@@ -140,10 +141,10 @@ object DiffResultHelper {
     case _ => None
   }
 
-  def descriptionFromDiff(diff: InteractionDiffResult, rfcState: RfcState, anInteraction: HttpInteraction): DiffDescription = {
+  def descriptionFromDiff(diff: InteractionDiffResult, rfcState: RfcState, anInteraction: HttpInteraction): Option[DiffDescription] = Try {
     val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
     descriptionInterpreters.interpret(diff, anInteraction)
-  }
+  }.toOption
 
   def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, currentRfcState: RfcState): Option[SideBySideRenderHelper] = {
     val simulatedDiffPreviewer = new DiffPreviewer(currentRfcState)
@@ -218,16 +219,14 @@ abstract class NewRegionDiff {
 
     val firstInteraction = interactions.head
 
-    val result = if (inferPolymorphism) {
+    if (inferPolymorphism) {
       val bodies = interactions.map(getBody).flatMap(BodyUtilities.parseBody)
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
-      preview.map(i => PreviewShapeAndCommands(Some(i._2), toSuggestion(Vector(interactions.head), rfcState, inferPolymorphism).headOption))
+      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(Vector(interactions.head), rfcState, inferPolymorphism).headOption)
     } else {
-      diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten)
-        .map(i => PreviewShapeAndCommands(Some(i._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption))
+      val preview = diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten)
+      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption)
     }
-
-    result.getOrElse(PreviewShapeAndCommands(None, None))
   }
 
 
