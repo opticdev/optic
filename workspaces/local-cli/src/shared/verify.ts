@@ -7,6 +7,7 @@ import niceTry from 'nice-try';
 import {
   getPathsRelativeToConfig,
   IOpticTaskRunnerConfig,
+  IOpticTask,
   readApiConfig,
   TaskToStartConfig,
 } from '@useoptic/cli-config';
@@ -23,7 +24,7 @@ export function verifyTask(cli: Command, taskName: string): void {
   cli.log(fromOptic(colors.bold(`Testing task '${taskName}' `)));
   cli.log('\n' + colors.underline('Assertions'));
 
-  let foundTask;
+  let foundTask: IOpticTask;
   let startConfig: IOpticTaskRunnerConfig;
 
   let fixUrl = 'https://docs.useoptic.com/';
@@ -46,6 +47,17 @@ export function verifyTask(cli: Command, taskName: string): void {
         if (!taskExists) {
           fixUrl = fixUrl + 'common-issues#error-1-task-does-not-exist';
           throw new Error(`Task ${taskName} not found`);
+        }
+      },
+    },
+    {
+      title: `Task '${taskName} has a 'command' and / or a 'targetUrl'`,
+      task: async () => {
+        if (!foundTask.command && !foundTask.targetUrl && !foundTask.proxy) {
+          // TODO: add fix URL
+          throw new Error(
+            `A command and / or a targetUrl is required for Optic to know where to forward traffic`
+          );
         }
       },
     },
