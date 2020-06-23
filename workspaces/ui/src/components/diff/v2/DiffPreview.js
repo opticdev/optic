@@ -382,7 +382,7 @@ function _NewRegions(props) {
 
           return getOrUndefined(suggestion);
         })
-    ).filter((i) => Boolean(i));
+    );
 
     acceptSuggestion(...allApproved);
   };
