@@ -129,7 +129,9 @@ export async function TaskToStartConfig(
   task: IOpticTask
 ): Promise<IOpticTaskRunnerConfig> {
   const baseUrl = url.parse(task.baseUrl);
-  const targetUrl = task.targetUrl && url.parse(task.targetUrl);
+  const targetUrl =
+    (task.targetUrl && url.parse(task.targetUrl)) ||
+    (task.proxy && url.parse(task.proxy)); // TODO: add deprecation warning
 
   const serviceProtocol =
     (targetUrl && targetUrl.protocol) || baseUrl.protocol || 'http:';
