@@ -28,7 +28,6 @@
     "workspaces/ui",
     "workspaces/cli-scripts",
     "workspaces/cli-server",
-    "workspaces/test-data",
     "workspaces/local-cli",
     "workspaces/agent-cli",
     "workspaces/ci-cli",
