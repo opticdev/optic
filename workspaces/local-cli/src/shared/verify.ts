@@ -53,6 +53,7 @@ export function verifyTask(cli: Command, taskName: string): void {
       title: `The command provided starts your API on the ${colors.bold(
         '$OPTIC_API_PORT'
       )}`,
+      enabled: () => startConfig && !!startConfig.command,
       task: async (cxt: any, task: any) => {
         const commandSession = new CommandSession();
 
