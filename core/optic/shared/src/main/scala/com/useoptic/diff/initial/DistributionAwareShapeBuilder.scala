@@ -3,6 +3,7 @@ package com.useoptic.diff.initial
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper._
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder.{buildCommandsFor, toShapes}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.{ImmutableCommandStream, MutableCommandStream}
@@ -13,94 +14,96 @@ import scala.util.Random
 
 object DistributionAwareShapeBuilder {
 
+  def streaming(implicit ids: OpticDomainIds) = new StreamingShapeBuilder()
+
   def toCommands(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds): (ShapeId, ImmutableCommandStream) = {
 
     val aggregator = aggregateTrailsAndValues(bodies)
+
+    implicit val commands = new MutableCommandStream
+
     val rootShape = toShapes(aggregator)
-
-    val commands = new MutableCommandStream
-
-    def buildCommandsFor(shape: ShapesToMake, parent: Option[ShapesToMake]): Unit = {
-
-      def inField = parent.isDefined && parent.get.isInstanceOf[FieldWithShape]
-      def inShape = !inField
-
-      shape match {
-        case s: ObjectWithFields => {
-          commands.appendInit(AddShape(s.id, ObjectKind.baseShapeId, ""))
-          s.fields.foreach(field => buildCommandsFor(field, Some(s)))
-        }
-        case s: OptionalShape => {
-          buildCommandsFor(s.shape, Some(s))
-          commands.appendDescribe(SetParameterShape(
-            if (inField) {
-              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
-            } else {
-              ProviderInShape(s.id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
-            }
-          ))
-          commands.appendInit(AddShape(s.id, OptionalKind.baseShapeId, ""))
-        }
-        case s: NullableShape => {
-          buildCommandsFor(s.shape, Some(s))
-          commands.appendDescribe(SetParameterShape(
-            if (inField) {
-              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), NullableKind.innerParam)
-            } else {
-              ProviderInShape(s.id, ShapeProvider(s.shape.id), NullableKind.innerParam)
-            }
-          ))
-          commands.appendInit(AddShape(s.id, NullableKind.baseShapeId, ""))
-        }
-        case s: FieldWithShape => {
-          assert(parent.isDefined && parent.get.isInstanceOf[ObjectWithFields], "Fields must have a parent")
-          buildCommandsFor(s.shape, Some(s))
-          commands.appendInit(AddField(s.id, parent.get.id, s.key, FieldShapeFromShape(s.id, s.shape.id)))
-        }
-        case s: PrimitiveKind => {
-          commands.appendInit(AddShape(s.id, s.baseShape.baseShapeId, ""))
-        }
-        case s: OneOfShape => {
-          s.branches.foreach(branch => {
-            buildCommandsFor(branch, Some(s))
-            val paramId = ids.newParameterId
-            commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
-            commands.appendDescribe(SetParameterShape(
-              if (inField) {
-                ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(branch.id), paramId)
-              } else {
-                ProviderInShape(s.id, ShapeProvider(branch.id), paramId)
-              }
-            ))
-          })
-
-          commands.appendInit(AddShape(s.id, OneOfKind.baseShapeId, ""))
-        }
-        case s: ListOfShape => {
-          buildCommandsFor(s.shape, Some(s))
-          commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
-          commands.appendDescribe(SetParameterShape(
-            if (inField) {
-              ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
-            } else {
-              ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
-            }
-          ))
-        }
-        case s: Unknown => {
-          commands.appendInit(AddShape(s.id, UnknownKind.baseShapeId, ""))
-        }
-      }
-    }
-
     buildCommandsFor(rootShape, None)
 
     (rootShape.id, commands.toImmutable)
   }
 
+  def buildCommandsFor(shape: ShapesToMake, parent: Option[ShapesToMake])(implicit commands: MutableCommandStream, ids: OpticDomainIds): Unit = {
+
+    def inField = parent.isDefined && parent.get.isInstanceOf[FieldWithShape]
+    def inShape = !inField
+
+    shape match {
+      case s: ObjectWithFields => {
+        commands.appendInit(AddShape(s.id, ObjectKind.baseShapeId, ""))
+        s.fields.foreach(field => buildCommandsFor(field, Some(s)))
+      }
+      case s: OptionalShape => {
+        buildCommandsFor(s.shape, Some(s))
+        commands.appendDescribe(SetParameterShape(
+          if (inField) {
+            ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
+          } else {
+            ProviderInShape(s.id, ShapeProvider(s.shape.id), OptionalKind.innerParam)
+          }
+        ))
+        commands.appendInit(AddShape(s.id, OptionalKind.baseShapeId, ""))
+      }
+      case s: NullableShape => {
+        buildCommandsFor(s.shape, Some(s))
+        commands.appendDescribe(SetParameterShape(
+          if (inField) {
+            ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(s.shape.id), NullableKind.innerParam)
+          } else {
+            ProviderInShape(s.id, ShapeProvider(s.shape.id), NullableKind.innerParam)
+          }
+        ))
+        commands.appendInit(AddShape(s.id, NullableKind.baseShapeId, ""))
+      }
+      case s: FieldWithShape => {
+        assert(parent.isDefined && parent.get.isInstanceOf[ObjectWithFields], "Fields must have a parent")
+        buildCommandsFor(s.shape, Some(s))
+        commands.appendInit(AddField(s.id, parent.get.id, s.key, FieldShapeFromShape(s.id, s.shape.id)))
+      }
+      case s: PrimitiveKind => {
+        commands.appendInit(AddShape(s.id, s.baseShape.baseShapeId, ""))
+      }
+      case s: OneOfShape => {
+        s.branches.foreach(branch => {
+          buildCommandsFor(branch, Some(s))
+          val paramId = ids.newParameterId
+          commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
+          commands.appendDescribe(SetParameterShape(
+            if (inField) {
+              ProviderInField(parent.get.asInstanceOf[FieldWithShape].id, ShapeProvider(branch.id), paramId)
+            } else {
+              ProviderInShape(s.id, ShapeProvider(branch.id), paramId)
+            }
+          ))
+        })
+
+        commands.appendInit(AddShape(s.id, OneOfKind.baseShapeId, ""))
+      }
+      case s: ListOfShape => {
+        buildCommandsFor(s.shape, Some(s))
+        commands.appendInit(AddShape(s.id, ListKind.baseShapeId, ""))
+        commands.appendDescribe(SetParameterShape(
+          if (inField) {
+            ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
+          } else {
+            ProviderInShape(s.id, ShapeProvider(s.shape.id), ListKind.innerParam)
+          }
+        ))
+      }
+      case s: Unknown => {
+        commands.appendInit(AddShape(s.id, UnknownKind.baseShapeId, ""))
+      }
+    }
+  }
+
   def aggregateTrailsAndValues(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds): TrailValueMap = {
 
-    val aggregator = new TrailValueMap(bodies.size)
+    val aggregator = new TrailValueMap()
 
     val visitor = new ShapeBuilderVisitor(aggregator)
 
@@ -114,7 +117,21 @@ object DistributionAwareShapeBuilder {
   def toShapes(trailValues: TrailValueMap): ShapesToMake = trailValues.getRoot.toShape
 }
 
+class StreamingShapeBuilder()(implicit ids: OpticDomainIds) {
 
+  private val aggregator = new TrailValueMap()
+  private val visitor = new ShapeBuilderVisitor(aggregator)
+  private val jsonLikeTraverser = new JsonLikeTraverser(RfcState.empty, visitor)
+
+  def process(jsonLike: JsonLike) = jsonLikeTraverser.traverse(Some(jsonLike), JsonTrail(Seq.empty))
+
+  def toCommands: (String, ImmutableCommandStream) = {
+    implicit val commands = new MutableCommandStream
+    val rootShape = toShapes(aggregator)
+    buildCommandsFor(rootShape, None)
+    (rootShape.id, commands.toImmutable)
+  }
+}
 
 //// Shapes to Make
 sealed trait ShapesToMake {
@@ -132,7 +149,7 @@ case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String)
 case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake
 
 
-class TrailValueMap(val totalSamples: Int)(implicit ids: OpticDomainIds) {
+class TrailValueMap()(implicit ids: OpticDomainIds) {
 
 
   class ValueAffordanceMap(var trail: JsonTrail) {
