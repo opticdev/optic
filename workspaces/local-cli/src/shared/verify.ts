@@ -16,7 +16,7 @@ import {
   CommandSession,
 } from '@useoptic/cli-shared';
 import waitOn from 'wait-on';
-import { track, trackAndSpawn } from './analytics';
+import { opticTaskToProps, track, trackAndSpawn } from './analytics';
 import { fromOptic } from '@useoptic/cli-shared';
 import url from 'url';
 
@@ -210,7 +210,7 @@ export function verifyTask(cli: Command, taskName: string): void {
     .run()
     .then(async () => {
       await trackAndSpawn('API Check', {
-        ...apiCheckToProps(taskName, startConfig),
+        ...opticTaskToProps(taskName, startConfig),
         hasError: false,
       });
       cli.log(
@@ -242,28 +242,9 @@ export function verifyTask(cli: Command, taskName: string): void {
       );
 
       await trackAndSpawn('API Check', {
-        ...apiCheckToProps(taskName, startConfig),
+        ...opticTaskToProps(taskName, startConfig),
         hasError: true,
         error: err.message,
       });
     });
-}
-
-function apiCheckToProps(task: string, config: IOpticTaskRunnerConfig) {
-  if (config) {
-    return {
-      task,
-      command: config.command,
-      'serviceConfig.port': config.serviceConfig.port,
-      'serviceConfig.host': config.serviceConfig.host,
-      'serviceConfig.protocol': config.serviceConfig.protocol,
-      'serviceConfig.basePath': config.serviceConfig.basePath,
-      'proxyConfig.port': config.proxyConfig.port,
-      'proxyConfig.host': config.proxyConfig.host,
-      'proxyConfig.protocol': config.proxyConfig.protocol,
-      'proxyConfig.basePath': config.proxyConfig.basePath,
-    };
-  } else {
-    return { task };
-  }
 }

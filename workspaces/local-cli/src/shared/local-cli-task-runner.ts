@@ -7,7 +7,7 @@ import {
   IPathMapping,
   TargetPortUnavailableError,
 } from '@useoptic/cli-config';
-import { trackAndSpawn } from './analytics';
+import { opticTaskToProps, trackAndSpawn } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
@@ -51,7 +51,10 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
-    trackAndSpawn('Run Task with Local CLI', { taskConfig });
+    trackAndSpawn('Run Task with Local CLI', {
+      ...opticTaskToProps('', taskConfig),
+      captureId: this.captureId,
+    });
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +136,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       taskConfig,
       sampleCount,
       hasDiff,
+      captureId: this.captureId,
     });
 
     if (hasDiff) {
