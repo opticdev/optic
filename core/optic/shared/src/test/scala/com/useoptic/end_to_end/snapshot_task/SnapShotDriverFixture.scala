@@ -62,16 +62,16 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
         s"${file.nameWithoutExtension}" should {
           var input: Option[InputJson] = None
           var output: Try[OutputJson] = null
-          s"input should deserialize properly" in {
+          s"deserialize the input" in {
             input = Some(deserializeInput(parse(file.contentAsString).right.get))
           }
 
-          s"input yields valid output" in {
+          s"perform task" in {
             output = Try(transform(input.get))
             assert(output.isSuccess, if (output.isFailure) "Failed to transform: "+ output.failed.get.getMessage.toString else "")
           }
 
-          s"Matches Snapshot" in {
+          s"match snapshot" in {
             if (output.isSuccess) {
               if (!knownIssues.contains(file.nameWithoutExtension)) {
                 println("THIS IS A KNOWN ISSUE:")

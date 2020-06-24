@@ -3,7 +3,6 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.coverage._
 import com.useoptic.diff.helpers.SpecHelpers
-import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.interactions.visitors.CoverageVisitors
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.types.capture.HttpInteraction

@@ -6,7 +6,6 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
 import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecResponseBody, TestHelpers, UnmatchedResponseBodyShape}
-import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
