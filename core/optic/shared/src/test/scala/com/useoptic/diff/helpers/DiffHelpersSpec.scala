@@ -4,13 +4,13 @@ import com.useoptic.contexts.requests.Commands.ShapedBodyDescriptor
 import com.useoptic.contexts.requests.{Commands => RequestsCommands}
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
 import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecResponseBody, TestHelpers, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
-import com.useoptic.dsa.SequentialIdGenerator
+import com.useoptic.dsa.{OpticIds, SequentialIdGenerator}
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 import io.circe.Json
 import org.scalatest.FunSpec
@@ -25,21 +25,21 @@ class SpecHelpers {
   def simpleGet(responseBody: Json): Seq[RfcCommand] = {
     val requestId = requestIdGenerator.nextId()
     val responseId = responseIdGenerator.nextId()
-    val builtShape = new ShapeBuilder(JsonLikeFrom.json(responseBody).get, shapeIdPrefixGenerator.nextId()).run
-    builtShape.commands ++ Seq(
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(responseBody).get))(OpticIds.newDeterministicIdGenerator)
+    builtShape._2.flatten ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "GET"),
       RequestsCommands.AddResponse(responseId, requestId, 200),
-      RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor("application/json", builtShape.rootShapeId, isRemoved = false))
+      RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor("application/json", builtShape._1, isRemoved = false))
     )
   }
 
   def simplePost(requestBody: Json): Seq[RfcCommand] = {
     val requestId = requestIdGenerator.nextId()
     val responseId = responseIdGenerator.nextId()
-    val builtShape = new ShapeBuilder(JsonLikeFrom.json(requestBody).get, shapeIdPrefixGenerator.nextId()).run
-    builtShape.commands ++ Seq(
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(requestBody).get))(OpticIds.newDeterministicIdGenerator)
+    builtShape._2.flatten ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "POST"),
-      RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor("application/json", builtShape.rootShapeId, isRemoved = false)),
+      RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor("application/json", builtShape._1, isRemoved = false)),
       RequestsCommands.AddResponse(responseId, requestId, 204)
     )
   }

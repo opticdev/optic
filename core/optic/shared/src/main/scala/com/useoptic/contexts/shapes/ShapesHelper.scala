@@ -6,31 +6,15 @@ import com.useoptic.contexts.rfc.Events.EventContext
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.Events._
 import com.useoptic.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
-import com.useoptic.dsa.{IdGenerator, RandomAlphanumericIdGenerator}
+import com.useoptic.dsa.{OpticDomainIds, OpticIds, RandomAlphanumericIdGenerator}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExport
 @JSExportAll
 object ShapesHelper {
-  val shapeIdGenerator = new RandomAlphanumericIdGenerator("shape", "_", 10)
-  val fieldIdGenerator = new RandomAlphanumericIdGenerator("field", "_", 10)
-  val shapeParameterIdGenerator = new RandomAlphanumericIdGenerator("shape-parameter", "_", 10)
-
-  def newShapeId(): String = {
-    shapeIdGenerator.nextId()
-  }
-
-  def newShapeParameterId(): String = {
-    shapeParameterIdGenerator.nextId()
-  }
-
-  def newFieldId(): String = {
-    fieldIdGenerator.nextId()
-  }
-
-  def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext]): Vector[RequestsEvent] = {
-    val shapeId = newShapeId()
+  def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext])(implicit ids: OpticDomainIds): Vector[RequestsEvent] = {
+    val shapeId = ids.newShapeId
     Vector(
       adder,
       ShapeAdded(shapeId, "$string", DynamicParameterList(Seq.empty), "", eventContext),
@@ -38,8 +22,8 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
-  def appendDefaultStringTypeEvents(adder: PathParameterAdded): Vector[RequestsEvent] = {
-    val shapeId = newShapeId()
+  def appendDefaultStringTypeEvents(adder: PathParameterAdded)(implicit ids: OpticDomainIds): Vector[RequestsEvent] = {
+    val shapeId = ids.newShapeId
 
     Vector(
       adder,
@@ -85,13 +69,13 @@ object ShapesHelper {
 }
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))
-class ShapesService() {
+class ShapesService()(implicit ids: OpticDomainIds) {
   private val eventStore = new InMemoryEventStore[ShapesEvent]
   private val repository = new EventSourcedRepository[ShapesState, ShapesEvent](ShapesAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: ShapesCommand): Unit = {
     val state = repository.findById(id)
-    val effects = ShapesAggregate.handleCommand(state)((ShapesCommandContext("a", "b", "c"), command))
+    val effects = ShapesAggregate.handleCommand(state)(ids)((ShapesCommandContext("a", "b", "c"), command))
     repository.save(id, effects.eventsToPersist)
   }
 

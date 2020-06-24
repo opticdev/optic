@@ -6,11 +6,12 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.ddd.InMemoryEventStore
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture._
 import io.circe.literal._
 import org.scalatest.FunSpec
@@ -39,10 +40,10 @@ class DiffVisitorSpec extends FunSpec {
       val requestId = "req1"
       val responseId = "res1"
       val requestContentType = "ccc"
-      val builtShape = new ShapeBuilder(json"""{"f":[123]}""", "s").run
-      val initialCommands = builtShape.commands ++ Seq(
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator)
+      val initialCommands = builtShape._2.flatten ++ Seq(
         AddRequest(requestId, Commands.rootPathId, "POST"),
-        SetRequestBodyShape(requestId, ShapedBodyDescriptor(requestContentType, builtShape.rootShapeId, isRemoved = false)),
+        SetRequestBodyShape(requestId, ShapedBodyDescriptor(requestContentType, builtShape._1, isRemoved = false)),
         AddResponse(responseId, requestId, 200)
       )
 
@@ -170,7 +171,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching response content type") {
         it("should yield UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands ++ Seq(
-            SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape.rootShapeId, isRemoved = false))
+            SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape._1, isRemoved = false))
           ))
           val resolvers = new DefaultShapesResolvers(spec)
 
@@ -196,7 +197,7 @@ class DiffVisitorSpec extends FunSpec {
       describe("with interaction not matching response body shape") {
         it("should yield UnmatchedResponseBodyShape diff") {
           val spec = TestHelpers.fromCommands(initialCommands ++ Seq(
-            SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape.rootShapeId, isRemoved = false))
+            SetResponseBodyShape(responseId, ShapedBodyDescriptor("ccc222", builtShape._1, isRemoved = false))
           ))
           val resolvers = new DefaultShapesResolvers(spec)
 

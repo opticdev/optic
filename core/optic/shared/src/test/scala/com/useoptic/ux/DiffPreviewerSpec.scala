@@ -8,6 +8,7 @@ import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult}
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.{ChangeType, DiffResult, JsonFileFixture}
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, JsonLikeTraverser, JsonTrail, ShapeDiffResult, ShapeTrail, ShapeTraverser}
+import com.useoptic.dsa.OpticIds
 import com.useoptic.end_to_end.fixtures.{JsonExamples, ShapeExamples}
 import com.useoptic.types.capture.{ArbitraryData, Body, JsonLikeFrom}
 import io.circe.Json
@@ -22,6 +23,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
     val rfcId: String = "rfc-1"
     val eventStore = RfcServiceJSFacade.makeEventStore()
     eventStore.append(rfcId, events)
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.currentState(rfcId)
   }

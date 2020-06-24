@@ -1,0 +1,47 @@
+{
+  "diffs" : [
+    {
+      "UnmatchedResponseBodyShape" : {
+        "interactionTrail" : {
+          "path" : [
+            {
+              "ResponseBody" : {
+                "contentType" : "application/json",
+                "statusCode" : 200
+              }
+            }
+          ]
+        },
+        "requestsTrail" : {
+          "SpecResponseBody" : {
+            "responseId" : "response_1"
+          }
+        },
+        "shapeDiffResult" : {
+          "UnmatchedShape" : {
+            "jsonTrail" : {
+              "path" : [
+                {
+                  "JsonObjectKey" : {
+                    "key" : "firstName"
+                  }
+                }
+              ]
+            },
+            "shapeTrail" : {
+              "rootShapeId" : "shape_8",
+              "path" : [
+                {
+                  "ObjectFieldTrail" : {
+                    "fieldId" : "parameter_3",
+                    "fieldShapeId" : "shape_6"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

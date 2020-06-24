@@ -4,15 +4,11 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapesHelper.StringKind
-import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.diff.interactions.InteractionDiffResult
-import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.{JsonLikeAndSpecDiffVisitors, JsonLikeAndSpecTraverser, ShapeDiffResult}
-import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.end_to_end.fixtures.JsonExamples
 import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
-import com.useoptic.ux.DiffPreviewer
 import org.scalatest.FunSpec
 
 import scala.util.Try
@@ -25,15 +21,8 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       JsonLikeFrom.json(JsonExamples.basicTodo).get,
       JsonLikeFrom.json(JsonExamples.basicTodoWithDescription).get,
       JsonLikeFrom.json(JsonExamples.basicTodoWithoutStatus).get,
-    ))
+    ))(OpticIds.newDeterministicIdGenerator)
 
-
-    it("collects values for entire fieldset") {
-      val keys = todoMap.toMap.collect {
-        case (path, values) if path.path.size == 1 && path.path.head.isInstanceOf[JsonObjectKey] => path.path.head.asInstanceOf[JsonObjectKey].key
-      }
-      assert(keys.toSet == Set("isDone", "description", "message"))
-    }
 
     it("can stage object for creation with some optional fields") {
       val shapesToMake = DistributionAwareShapeBuilder.toShapes(todoMap)
@@ -47,7 +36,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
 
       lazy val stringArrayMap = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
         JsonLikeFrom.json(JsonExamples.stringArray).get
-      ))
+      ))(OpticIds.newDeterministicIdGenerator)
 
       val shapesToMake = DistributionAwareShapeBuilder.toShapes(stringArrayMap)
       assert(shapesToMake.isInstanceOf[ListOfShape])
@@ -59,7 +48,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
 
       lazy val stringArrayMap = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
         JsonLikeFrom.json(JsonExamples.stringArrayWithNumbers).get
-      ))
+      ))(OpticIds.newDeterministicIdGenerator)
 
       val shapesToMake = DistributionAwareShapeBuilder.toShapes(stringArrayMap)
       assert(shapesToMake.isInstanceOf[ListOfShape])
@@ -71,7 +60,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
 
       lazy val stringArrayMap = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
         JsonLikeFrom.json(JsonExamples.emptyArray).get
-      ))
+      ))(OpticIds.newDeterministicIdGenerator)
 
       val shapesToMake = DistributionAwareShapeBuilder.toShapes(stringArrayMap)
       assert(shapesToMake.isInstanceOf[ListOfShape])
@@ -84,7 +73,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
           JsonLikeFrom.json(JsonExamples.objectWithNull).get,
           JsonLikeFrom.json(JsonExamples.objectWithNull).get,
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
 
@@ -97,7 +86,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
           JsonLikeFrom.json(JsonExamples.emptyArray).get,
           JsonLikeFrom.json(JsonExamples.emptyObject).get,
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
         assert(shapesToMake.isInstanceOf[OneOfShape])
@@ -107,7 +96,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
           JsonLikeFrom.json(JsonExamples.objectWithNull).get,
           JsonLikeFrom.json(JsonExamples.objectWithNullAsString).get,
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
 
@@ -121,7 +110,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
           JsonLikeFrom.json(JsonExamples.objectWithNull).get,
           JsonLikeFrom.json(JsonExamples.objectWithNullAsString).get,
           JsonLikeFrom.json(JsonExamples.objectWithNullAsNumber).get,
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
 
@@ -136,7 +125,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       it("can stage a list of the same object shape") {
         lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
           JsonLikeFrom.json(JsonExamples.objectsWithOptionalsArray).get
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
         val fields = shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[ObjectWithFields].fields
@@ -147,12 +136,12 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       it("can stage a list of objects and strings") {
         lazy val map = DistributionAwareShapeBuilder.aggregateTrailsAndValues(Vector(
           JsonLikeFrom.json(JsonExamples.objectsAndStringsInArray).get
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         val shapesToMake = DistributionAwareShapeBuilder.toShapes(map)
         val branches = shapesToMake.asInstanceOf[ListOfShape].shape.asInstanceOf[OneOfShape].branches
-        assert(branches(0).isInstanceOf[ObjectWithFields])
-        assert(branches(1).isInstanceOf[PrimitiveKind])
+        assert(branches(0).isInstanceOf[PrimitiveKind])
+        assert(branches(1).isInstanceOf[ObjectWithFields])
       }
     }
 
@@ -161,6 +150,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       def tryCommands(commands: Vector[RfcCommand], shapeId: ShapeId, example: JsonLike) = {
         val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
         val eventStore = RfcServiceJSFacade.makeEventStore()
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val rfcService: RfcService = new RfcService(eventStore)
         rfcService.handleCommandSequence("id", commands, commandContext)
         val rfcState = rfcService.currentState("id")
@@ -178,7 +168,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         val commands = DistributionAwareShapeBuilder.toCommands(Vector(
           JsonLikeFrom.json(JsonExamples.basicTodo).get,
           JsonLikeFrom.json(JsonExamples.basicTodoWithDescription).get
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.basicTodo).get)
       }
@@ -186,7 +176,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
       it("can create commands for array of strings") {
         lazy val commands = DistributionAwareShapeBuilder.toCommands(Vector(
           JsonLikeFrom.json(JsonExamples.stringArray).get
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.stringArray).get)
       }
@@ -196,7 +186,7 @@ class DistributionAwareShapeBuilderSpec extends FunSpec {
         lazy val commands = DistributionAwareShapeBuilder.toCommands(Vector(
           JsonLikeFrom.json(JsonExamples.stringArray).get,
           JsonLikeFrom.json(JsonExamples.basicTodo).get
-        ))
+        ))(OpticIds.newDeterministicIdGenerator)
 
         tryCommands(commands._2.flatten, commands._1, JsonLikeFrom.json(JsonExamples.stringArray).get)
       }
