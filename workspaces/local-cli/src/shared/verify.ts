@@ -16,7 +16,7 @@ import {
   CommandSession,
 } from '@useoptic/cli-shared';
 import waitOn from 'wait-on';
-import { track, trackAndSpawn } from './analytics';
+import { opticTaskToProps, track, trackAndSpawn } from './analytics';
 import { fromOptic } from '@useoptic/cli-shared';
 import url from 'url';
 
@@ -209,7 +209,10 @@ export function verifyTask(cli: Command, taskName: string): void {
   tasks
     .run()
     .then(async () => {
-      await trackAndSpawn('API Check', { startConfig, hasError: false });
+      await trackAndSpawn('API Check', {
+        ...opticTaskToProps(taskName, startConfig),
+        hasError: false,
+      });
       cli.log(
         '\n\n' +
           fromOptic(
@@ -239,10 +242,9 @@ export function verifyTask(cli: Command, taskName: string): void {
       );
 
       await trackAndSpawn('API Check', {
-        startConfig,
+        ...opticTaskToProps(taskName, startConfig),
         hasError: true,
         error: err.message,
       });
-      process.exit(0);
     });
 }

@@ -12,7 +12,7 @@ import {
   getCredentials,
   getUserFromCredentials,
 } from './authentication-server';
-import { IUser } from '@useoptic/cli-config';
+import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
 
 const token = 'RvYGmY1bZqlbMukS8pP9DPEifG6CEBEs';
 const analytics = new Analytics(token, {
@@ -59,4 +59,26 @@ export function trackAndSpawn(event: string, properties: any = {}) {
       })
     );
   });
+}
+
+export function opticTaskToProps(
+  task: string,
+  config: IOpticTaskRunnerConfig
+): any {
+  if (config) {
+    return {
+      task,
+      command: config.command,
+      'serviceConfig.port': config.serviceConfig.port,
+      'serviceConfig.host': config.serviceConfig.host,
+      'serviceConfig.protocol': config.serviceConfig.protocol,
+      'serviceConfig.basePath': config.serviceConfig.basePath,
+      'proxyConfig.port': config.proxyConfig.port,
+      'proxyConfig.host': config.proxyConfig.host,
+      'proxyConfig.protocol': config.proxyConfig.protocol,
+      'proxyConfig.basePath': config.proxyConfig.basePath,
+    };
+  } else {
+    return { task };
+  }
 }
