@@ -6,6 +6,7 @@ import com.useoptic.contexts.rfc._
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js
@@ -30,6 +31,7 @@ class InteractionDiffer(resolvers: ShapesResolvers, rfcState: RfcState) {
 @JSExport
 @JSExportAll
 class SessionDiffer(rawEvents: String, resolvers: ShapesResolvers) {
+  implicit val ids = OpticIds.generator
   val rfcId = "abc"
   val eventStore = new InMemoryEventStore[RfcEvent]()
   eventStore.bulkAdd(rfcId, rawEvents)

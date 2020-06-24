@@ -10,6 +10,7 @@ import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import com.useoptic.contexts.shapes.Validators.ensureShapeIdExists
 import com.useoptic.ddd.{Effects, EventSourcedAggregate}
+import com.useoptic.dsa.OpticDomainIds
 
 case class RequestsCommandContext(
                                    override val clientId: String,
@@ -19,7 +20,7 @@ case class RequestsCommandContext(
                                  ) extends BaseCommandContext
 
 object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCommand, RequestsCommandContext, RequestsEvent] {
-  override def handleCommand(_state: RequestsState): PartialFunction[(RequestsCommandContext, RequestsCommand), Effects[RequestsEvent]] = {
+  override def handleCommand(_state: RequestsState)(implicit ids: OpticDomainIds): PartialFunction[(RequestsCommandContext, RequestsCommand), Effects[RequestsEvent]] = {
     // remember we're leaving most of the validation to the checkers. only things for internal consistency need to happen here
 
     case (commandContext: RequestsCommandContext, command: RequestsCommand) => {
@@ -87,8 +88,8 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensurePathComponentIdExists(c.pathId)
           val existingRequests = Resolvers.resolveRequests(state, c.pathId, c.httpMethod)
           if (existingRequests.isEmpty) {
-            val shapeId = ShapesHelper.newShapeId()
-            val queryStringParameterId = RequestsServiceHelper.newParameterId()
+            val shapeId = ids.newShapeId
+            val queryStringParameterId = ids.newParameterId
             persist(Vector(
               Events.RequestParameterAddedByPathAndMethod(queryStringParameterId, c.pathId, c.httpMethod, "query", "queryString", eventContext),
               ShapeAdded(shapeId, ObjectKind.baseShapeId, DynamicParameterList(Seq.empty), "", eventContext),

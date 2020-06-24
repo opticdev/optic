@@ -14,6 +14,7 @@ import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceC
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers.{ChoiceOutput, ResolvedTrail}
 import com.useoptic.diff.shapes.resolvers.{DefaultShapesResolvers, JsonLikeResolvers, ShapesResolvers}
 import com.useoptic.diff.shapes.{JsonTrail, _}
+import com.useoptic.dsa.OpticIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{Body, JsonLike}
 import com.useoptic.ux.ExampleRenderInterfaces._
@@ -85,12 +86,12 @@ class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
       return None
     }
 
-    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)
+    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)(ids = OpticIds.generator)
     val flattenedCommands = commands.flatten
 
     val simulatedId = "simulated"
     val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
-    val service = new RfcService(new InMemoryEventStore[Events.RfcEvent])
+    val service = new RfcService(new InMemoryEventStore[Events.RfcEvent])(ids = OpticIds.generator)
     flattenedCommands.foreach(command => {
       val result = Try(service.handleCommand(simulatedId, command, commandContext))
       if (result.isFailure) {

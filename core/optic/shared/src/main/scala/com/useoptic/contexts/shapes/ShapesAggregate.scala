@@ -6,6 +6,7 @@ import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.Events._
 import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
 import com.useoptic.ddd.{Effects, EventSourcedAggregate}
+import com.useoptic.dsa.OpticDomainIds
 
 import scala.collection.immutable.ListMap
 
@@ -16,7 +17,7 @@ case class ShapesCommandContext(
                                ) extends BaseCommandContext
 
 object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand, ShapesCommandContext, ShapesEvent] {
-  override def handleCommand(_state: ShapesState): PartialFunction[(ShapesCommandContext, ShapesCommand), Effects[ShapesEvent]] = {
+  override def handleCommand(_state: ShapesState)(implicit ids: OpticDomainIds): PartialFunction[(ShapesCommandContext, ShapesCommand), Effects[ShapesEvent]] = {
     case (commandContext: ShapesCommandContext, command: ShapesCommand) => {
 
       implicit val state: ShapesState = _state

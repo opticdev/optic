@@ -11,6 +11,7 @@ import com.useoptic.contexts.shapes.Commands.ShapesCommand
 import com.useoptic.contexts.shapes.Events.ShapesEvent
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
 import com.useoptic.ddd.{Effects, EventSourcedAggregate}
+import com.useoptic.dsa.OpticDomainIds
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
@@ -41,7 +42,7 @@ case class RfcCommandContext(
 
 object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcCommandContext, RfcEvent] {
 
-  override def handleCommand(state: RfcState): PartialFunction[(RfcCommandContext, RfcCommand), Effects[RfcEvent]] = {
+  override def handleCommand(state: RfcState)(implicit ids: OpticDomainIds): PartialFunction[(RfcCommandContext, RfcCommand), Effects[RfcEvent]] = {
     case (cc: RfcCommandContext, command: ShapesCommand) =>
       forwardTo(ShapesAggregate)((cc.toShapesCommandContext(), command), state.shapesState).asInstanceOf[Effects[RfcEvent]]
     case (cc: RfcCommandContext, command: RequestsCommand) =>

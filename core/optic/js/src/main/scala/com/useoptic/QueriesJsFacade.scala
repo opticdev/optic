@@ -10,6 +10,7 @@ import com.useoptic.ddd.{AggregateId, EventStore}
 import com.useoptic.diff.interactions.ShapeRelatedDiff
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
+import com.useoptic.dsa.OpticIds
 import io.circe.generic.auto._
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.syntax._
@@ -21,6 +22,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 @JSExport
 @JSExportAll
 object OASProjectionHelper {
+  implicit val ids = OpticIds.generator
   //@TODO: pass in apiName
   def fromEventString(eventString: String, apiName: String = "untitled API"): js.Any = {
     val eventStore = RfcServiceJSFacade.makeEventStore()

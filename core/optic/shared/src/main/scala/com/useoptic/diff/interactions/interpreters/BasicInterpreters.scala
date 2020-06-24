@@ -6,13 +6,14 @@ import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.{UnmatchedShape, UnspecifiedShape}
+import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExport
 @JSExportAll
-class BasicInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+class BasicInterpreters(rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
   override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
     val interpretations = new BasicInterpretations(rfcState)
     diff match {
