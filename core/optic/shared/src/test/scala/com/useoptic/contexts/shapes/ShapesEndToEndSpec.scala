@@ -5,11 +5,13 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.{RfcAggregate, RfcCommandContext}
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.projections.NamedShapes
+import com.useoptic.dsa.OpticIds
 import org.scalatest.FunSpec
 
 class ShapesEndToEndSpec extends FunSpec {
   def fixture(commands: Seq[RfcCommand]): (Vector[RfcEvent], ShapesState) = {
     println("Steps:")
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     commands.foreach(println)
 
     println("Running...")
@@ -17,7 +19,7 @@ class ShapesEndToEndSpec extends FunSpec {
       case (acc, command) => {
         val (events, state) = acc
 
-        val effects = RfcAggregate.handleCommand(state)((RfcCommandContext("a", "b", "c"), command))
+        val effects = RfcAggregate.handleCommand(state)(ids)((RfcCommandContext("a", "b", "c"), command))
 
         val newState = effects.eventsToPersist.foldLeft(state) {
           case (s, event) => RfcAggregate.applyEvent(event, s)

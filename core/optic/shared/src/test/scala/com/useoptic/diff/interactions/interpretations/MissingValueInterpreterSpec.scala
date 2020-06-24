@@ -5,12 +5,14 @@ import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.interactions.TestHelpers
 import com.useoptic.diff.interactions.interpreters.MissingValueInterpreter
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import org.scalatest.FunSpec
 
 class MissingValueInterpreterSpec extends FunSpec with JsonFileFixture {
   describe("oneOf") {
     describe("given an array response") {
       val universe = eventsAndInteractionsFrom("list-with-oneof")
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       it("should give a diff") {
         val rfcState = universe.rfcService.currentState(universe.rfcId)
         val resolvers = new DefaultShapesResolvers(rfcState)

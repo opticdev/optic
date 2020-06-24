@@ -8,6 +8,7 @@ import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes._
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
+import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -41,7 +42,7 @@ case class DiffDescription(title: String, assertion: String, interactionPointerD
 
 @JSExport
 @JSExportAll
-class DiffDescriptionInterpreters(rfcState: RfcState) {
+class DiffDescriptionInterpreters(rfcState: RfcState)(implicit ids: OpticDomainIds) {
   def interpret(diff: ShapeDiffResult, inRequest: Boolean, interactionTrail: InteractionTrail, interaction: HttpInteraction): (String, InteractionPointerDescription) = {
 
     val inLocation = (if (inRequest) "Request" else s"${interactionTrail.statusCode()} Response") + " body"

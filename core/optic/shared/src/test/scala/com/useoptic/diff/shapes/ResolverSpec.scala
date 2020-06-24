@@ -2,12 +2,13 @@ package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.shapes.Commands.ShapeProvider
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NumberKind, ObjectKind}
-import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.interactions.TestHelpers
 import org.scalatest.FunSpec
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers.ResolvedTrail
 import com.useoptic.diff.shapes.resolvers.{DefaultShapesResolvers, JsonLikeResolvers}
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.JsonLikeFrom
 import io.circe.literal._
 
@@ -15,40 +16,39 @@ import io.circe.literal._
 class ResolverSpec extends FunSpec {
   describe("resolving trails") {
     describe("given a spec with a request body that is an object") {
-      val builtShape = new ShapeBuilder(json"""{"f":[123]}""", "s").run
-      val rfcState = TestHelpers.fromCommands(builtShape.commands)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator)
+      val rfcState = TestHelpers.fromCommands(builtShape._2.flatten)
       val resolvers = new DefaultShapesResolvers(rfcState)
 
       it("should resolve the root as an object") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq()), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq()), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_0"), ObjectKind, Map()))
       }
 
       it("should resolve the field 'f'") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"))), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq(ObjectFieldTrail("s_1", "s_2"))), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_2"), ListKind, Map(ListKind.innerParam -> Some(ShapeProvider("s_3")))))
       }
 
       it("should resolve a value in field 'f'") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3"))), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3"))), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_3"), NumberKind, Map(ListKind.innerParam -> Some(ShapeProvider("s_3")))))
       }
     }
     describe("given a spec with a request body that is an array") {
-
-      val builtShape = new ShapeBuilder(json"""[{"id": 1}]""", "s").run
-      val rfcState = TestHelpers.fromCommands(builtShape.commands)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""[{"id": 1}]""").get))(OpticIds.newDeterministicIdGenerator)
+      val rfcState = TestHelpers.fromCommands(builtShape._2.flatten)
       val resolvers = new DefaultShapesResolvers(rfcState)
       it("should resolve the root as a list") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq()), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq()), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_0"), ListKind, Map()))
       }
       it("should resolve the list item as an object") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq(ListItemTrail("s_0", "s_1"))), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq(ListItemTrail("s_0", "s_1"))), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_1"), ObjectKind, Map()))
       }
       it("should resolve the field id as a number") {
-        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape.rootShapeId, Seq(ListItemTrail("s_0", "s_1"), ObjectFieldTrail("s_2", "s_3"))), Map.empty)
+        val resolvedTrail = resolvers.resolveTrailToCoreShape(ShapeTrail(builtShape._1, Seq(ListItemTrail("s_0", "s_1"), ObjectFieldTrail("s_2", "s_3"))), Map.empty)
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_3"), NumberKind, Map()))
       }
     }

@@ -2,10 +2,12 @@ package com.useoptic.contexts.requests
 
 import com.useoptic.contexts.requests.Commands.AddPathComponent
 import com.useoptic.contexts.shapes.ShapesService
+import com.useoptic.dsa.OpticIds
 import org.scalatest.FunSpec
 
 class RequestsStateBuilderSpec extends FunSpec {
   def fixture = new {
+    implicit val ids = OpticIds.newDeterministicIdGenerator
     val service = new RequestsService(new ShapesService)
     val aggregateId1 = "a1"
 

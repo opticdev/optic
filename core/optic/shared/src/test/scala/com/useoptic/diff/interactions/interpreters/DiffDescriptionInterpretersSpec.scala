@@ -5,6 +5,7 @@ import com.useoptic.diff.helpers.{DiffHelpers, SpecHelpers}
 import com.useoptic.diff.interactions.TestHelpers
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.HttpInteraction
 import org.scalatest.FunSpec
 import io.circe.literal._
@@ -20,6 +21,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
       assert(interpretation.title == "The text/plain content type is not documented in the spec")
     }
@@ -34,6 +36,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
       assert(interpretation.title == "The text/plain content type is not documented in the spec")
     }
@@ -49,6 +52,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
         assert(interpretation.title == "The shape was not a number")
       }
@@ -64,6 +68,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
         assert(interpretation.title == "The shape was not a List")
       }
@@ -79,6 +84,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
         assert(diffs.size == 1)
         val diff = diffs.head
         println(diff)
+        implicit val ids = OpticIds.newDeterministicIdGenerator
         val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
         assert(interpretation.title == "The shape was not a Object")
       }
@@ -94,6 +100,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
+          implicit val ids = OpticIds.newDeterministicIdGenerator
           val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
           assert(interpretation.title == "The shape at key k was not expected")
         }
@@ -109,6 +116,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
+          implicit val ids = OpticIds.newDeterministicIdGenerator
           val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
           assert(interpretation.title == "The shape at key k was not a number")
         }
@@ -124,6 +132,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
+          implicit val ids = OpticIds.newDeterministicIdGenerator
           val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
           assert(interpretation.title == "The shape at key k was not a string")
         }
@@ -140,6 +149,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
           assert(diffs.size == 1)
           val diff = diffs.head
           println(diff)
+          implicit val ids = OpticIds.newDeterministicIdGenerator
           val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
           assert(interpretation.title == "The shape at index 0 was not a Object")
         }
@@ -156,6 +166,7 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       assert(diffs.size == 1)
       val diff = diffs.head
       println(diff)
+      implicit val ids = OpticIds.newDeterministicIdGenerator
       val interpretation = new DiffDescriptionInterpreters(rfcState).interpret(diff, interaction)
       assert(interpretation.title == "The 299 status code is not documented in the spec")
     }
