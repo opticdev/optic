@@ -14,9 +14,10 @@ export function CaptureStateStore(props) {
   const { captureId } = props;
 
   const [diffService, setDiffService] = useState(null);
+  const [captureService, setCaptureService] = useState(null);
   const [additionalCommands, setAdditionalCommands] = useState([]);
 
-  const { eventStore, rfcId } = useContext(RfcContext);
+  const { eventStore, rfcService, rfcId } = useContext(RfcContext);
 
   // diff state
   const [endpointDiffs, setEndpointDiffs] = useState([]);
@@ -33,26 +34,40 @@ export function CaptureStateStore(props) {
   async function restart() {
     if (diffService) {
       diffService.loadStats().then(setStats);
-      diffService.listDiffs().then(setEndpointDiffs);
-      diffService.listUnrecognizedUrls().then(setUnrecognizedUrls);
+      diffService.listDiffs().then((x) => {
+        setEndpointDiffs(x.diffs);
+      });
+      diffService.listUnrecognizedUrls().then((x) => {
+        setUnrecognizedUrls(x.urls);
+      });
       setDiffId(diffService.diffId());
     }
   }
   useEffect(() => {
-    const captureService = captureServiceFactory(specService, captureId);
     async function task() {
+      const captureService = await captureServiceFactory(
+        specService,
+        captureId
+      );
       //@TODO: handle error
       //@TODO:getConfig for ignoreRequests config
+      const events = eventStore.listEvents(rfcId);
       const config = await captureService.startDiff(
-        ScalaJSHelpers.eventsJsArray(eventStore.listEvents(rfcId)),
+        ScalaJSHelpers.eventsJsArray(events),
         [],
         additionalCommands
       );
-      const diffServiceForCapture = diffServiceFactory(
+      const rfcState = rfcService.currentState(rfcId);
+
+      const diffServiceForCapture = await diffServiceFactory(
         specService,
+        captureService,
+        rfcState,
         additionalCommands,
-        config
+        config,
+        captureId
       );
+      setCaptureService(captureService);
       setDiffService(diffServiceForCapture);
     }
     task();
@@ -73,6 +88,7 @@ export function CaptureStateStore(props) {
 
   const value = {
     diffService,
+    captureService,
     restart,
     updatedAdditionalCommands,
     diffId,

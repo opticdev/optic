@@ -17,7 +17,7 @@ export function useDiffDescription(diff) {
 }
 
 export function useInteractionWithPointer(pointer) {
-  const { diffService } = useCaptureContext();
+  const { captureService } = useCaptureContext();
   const [interaction, setInteraction] = useState(null);
   const [interactionScala, setInteractionScala] = useState(null);
 
@@ -25,7 +25,7 @@ export function useInteractionWithPointer(pointer) {
     const getInteraction = async () => {
       if (pointer) {
         const interaction =
-          (await diffService.loadInteraction(pointer)).interaction || null;
+          (await captureService.loadInteraction(pointer)).interaction || null;
         setInteraction(interaction);
         setInteractionScala(JsonHelper.fromInteraction(interaction));
       } else {

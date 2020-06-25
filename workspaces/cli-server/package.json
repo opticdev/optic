@@ -16,6 +16,7 @@
   "dependencies": {
     "@useoptic/cli-client": "8.1.0",
     "@useoptic/cli-config": "8.1.0",
+    "@useoptic/cli-scripts": "8.1.0",
     "@useoptic/cli-shared": "8.1.0",
     "@useoptic/ui": "8.1.0",
     "avsc": "^5.4.18",
