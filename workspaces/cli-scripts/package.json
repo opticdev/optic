@@ -15,7 +15,8 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "node-notifier": "^7.0.0",
-    "analytics-node": "^3.4.0-beta.1"
+    "analytics-node": "^3.4.0-beta.1",
+    "@useoptic/cli-shared": "8.1.0"
   },
   "devDependencies": {
     "@types/node-notifier": "^6.0.1"

@@ -1,13 +1,11 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.requests.Commands.PathComponentId
-import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
-import com.useoptic.diff.helpers.DiffHelpers.InteractionsGroupedByDiff
+import com.useoptic.diff.helpers.DiffHelpers.InteractionPointersGroupedByDiff
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
-import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
-import com.useoptic.diff.shapes.ShapeDiffResult
+import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.types.capture.{Body, HttpInteraction}
 
@@ -18,15 +16,10 @@ import scala.util.Try
 @JSExportAll
 object DiffResultHelper {
 
-  def unmatchedUrls(diffs: InteractionsGroupedByDiff, rfcState: RfcState): Vector[NewEndpoint] = {
-    diffs.collect {
-      case (newUrl: UnmatchedRequestUrl, interactions) => NewEndpoint(interactions.head.request.path, interactions.head.request.method, None, interactions.size)
-      case (newMethod: UnmatchedRequestMethod, interactions) => {
-        val location = getLocationForDiff(newMethod, rfcState)
-        NewEndpoint(interactions.head.request.path, interactions.head.request.method, Some(location.get.pathId), interactions.size)
-      }
-    }
-  }.toVector.sortBy(i => (i.method + i.path))
+  def unmatchedUrls(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[NewEndpoint] = {
+    //@TODO: implement this
+    Vector.empty
+  }
 
   def diffsForPathAndMethod(allEndpointDiffs: Seq[EndpointDiffs], pathId: PathComponentId, method: String, ignoredDiffs: Seq[DiffResult]): Map[InteractionDiffResult, Seq[String]] = {
     allEndpointDiffs.find(i => i.method == method && i.pathId == pathId)
@@ -34,14 +27,14 @@ object DiffResultHelper {
       .getOrElse(Map.empty)
   }
 
-  def endpointDiffs(diffs: InteractionsGroupedByDiff, rfcState: RfcState): Vector[EndpointDiffs] = {
+  def endpointDiffs(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[EndpointDiffs] = {
     diffs.filterNot {
       case (a: UnmatchedRequestUrl, _) => true
       case (a: UnmatchedRequestMethod, _) => true
       case _ => false
     }.flatMap {
-      case (diff, interactions) => getLocationForDiff(diff, rfcState).map(location => {
-        EndpointDiffs(location.method, location.pathId,  Map(diff -> interactions.map(i => i.uuid)))
+      case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
+        EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers))
       })
     }.groupBy(i => (i.pathId, i.method)).map {
       case ((path, method), diffs) => {

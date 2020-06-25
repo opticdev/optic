@@ -1,5 +1,6 @@
 import { StableHasher } from './coverage';
 import { DiffHelpers, JsonHelper, opticEngine } from '@useoptic/domain';
+import { IHttpInteraction } from '@useoptic/domain-types';
 
 export { StableHasher } from './coverage';
 
@@ -115,7 +116,7 @@ export function deserializeInteractions(serializedInteractions: any) {
 export function diffFromRfcStateAndInteractions(
   shapesResolvers: any,
   rfcState: any,
-  interactions: any[]
+  interactions: IHttpInteraction[]
 ) {
   const diffResults = DiffHelpers.groupByDiffs(
     shapesResolvers,
@@ -127,7 +128,7 @@ export function diffFromRfcStateAndInteractions(
 export function normalizedDiffFromRfcStateAndInteractions(
   shapesResolvers: any,
   rfcState: any,
-  interactions: any[]
+  interactions: IHttpInteraction[]
 ) {
   const diffResults = DiffHelpers.groupByNormalizedDiffs(
     shapesResolvers,
