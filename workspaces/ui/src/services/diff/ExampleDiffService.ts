@@ -68,7 +68,7 @@ export class ExampleDiffService implements IDiffService {
     const endpointDiffs = ScalaJSHelpers.toJsArray(
       DiffResultHelper.endpointDiffs(this.diffs, this.rfcState)
     );
-    return endpointDiffs;
+    return Promise.resolve({ diffs: endpointDiffs });
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
