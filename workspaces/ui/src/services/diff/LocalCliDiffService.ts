@@ -10,81 +10,50 @@ import {
   IRfcCommand,
   IStartDiffResponse,
 } from './index';
-import { IHttpInteraction } from '@useoptic/domain-types';
-import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
-import { captureId } from '../../components/loaders/ApiLoader';
+import { JsonHttpClient } from '@useoptic/client-utilities';
 import {
   DiffResultHelper,
+  getOrUndefined,
   JsonHelper,
-  RfcCommandContext,
+  opticEngine,
   ScalaJSHelpers,
-} from '@useoptic/domain/build';
-import uuidv4 from 'uuid/v4';
-import { getOrUndefined } from '@useoptic/domain';
+} from '@useoptic/domain';
 
-export class ExampleCaptureService implements ICaptureService {
-  constructor(private specService: ISpecService) {}
-
-  async startDiff(
-    events: any[],
-    ignoreRequests: string[],
-    additionalCommands: IRfcCommand[]
-  ): Promise<IStartDiffResponse> {
-    return {
-      diffId: uuidv4(),
-      loadDiffUrl: '',
-      loadUnrecognizedUrlsUrl: '',
-      notificationUrl: '',
-    };
-  }
-
-  async loadInteraction(
-    interactionPointer: string
-  ): Promise<ILoadInteractionResponse> {
-    const capture = await this.specService.listCapturedSamples(captureId);
-    const interaction = capture.samples.find(
-      (x: IHttpInteraction) => x.uuid === interactionPointer
-    );
-    return {
-      interaction,
-    };
-  }
-}
-
-export class ExampleDiffService implements IDiffService {
+export class LocalCliDiffService implements IDiffService {
   constructor(
-    private specService: ISpecService,
     private captureService: ICaptureService,
-    private diffConfig: IStartDiffResponse,
-    private diffs: any,
+    private baseUrl: string,
+    private config: IStartDiffResponse,
     private rfcState: any
   ) {}
-
   diffId(): string {
-    return this.diffConfig.diffId;
+    return this.config.diffId;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const endpointDiffs = ScalaJSHelpers.toJsArray(
-      DiffResultHelper.endpointDiffs(this.diffs, this.rfcState)
+    const url = `${this.baseUrl}/diffs`;
+    const diffsJson = await JsonHttpClient.getJson(url);
+    const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
+      diffsJson
     );
-    return endpointDiffs;
+    return {
+      diffs: ScalaJSHelpers.toJsArray(
+        DiffResultHelper.endpointDiffs(diffs, this.rfcState)
+      ),
+    };
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const urls = ScalaJSHelpers.toJsArray(
-      DiffResultHelper.unmatchedUrls(this.diffs, this.rfcState)
-    );
-
-    return Promise.resolve({ urls });
+    return Promise.resolve({
+      urls: [],
+    });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
-    const capture = await this.specService.listCapturedSamples(captureId);
     return Promise.resolve({
-      totalInteractions: capture.samples.length,
-      processed: capture.samples.length,
-      captureCompleted: true,
+      captureCompleted: false,
+      processed: 124,
+      totalInteractions: 8675309,
     });
   }
 
@@ -144,5 +113,29 @@ export class ExampleDiffService implements IDiffService {
       shapePreview: shapePreview.shape,
       suggestion: shapePreview.suggestion,
     };
+  }
+}
+
+export class LocalCliCaptureService implements ICaptureService {
+  constructor(private baseUrl: string) {}
+
+  async startDiff(
+    events: any[],
+    ignoreRequests: string[],
+    additionalCommands: IRfcCommand[]
+  ): Promise<IStartDiffResponse> {
+    const url = `${this.baseUrl}/diffs`;
+    return JsonHttpClient.postJson(url, {
+      ignoreRequests,
+      additionalCommands,
+      events,
+    });
+  }
+
+  loadInteraction(
+    interactionPointer: string
+  ): Promise<ILoadInteractionResponse> {
+    const url = `${this.baseUrl}/interactions/${interactionPointer}`;
+    return JsonHttpClient.getJson(url);
   }
 }

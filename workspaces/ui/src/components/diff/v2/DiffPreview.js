@@ -337,7 +337,7 @@ function _NewRegions(props) {
   } = props;
   const classes = useStyles();
 
-  const { diffService } = useCaptureContext();
+  const { diffService, captureService } = useCaptureContext();
 
   const [deselected, setDeselected] = useState([]);
   const [showExpanded, setShowExpanded] = useState(false);
@@ -370,7 +370,7 @@ function _NewRegions(props) {
         .filter((diffBlock) => !isDeselected(diffBlock))
         .map(async (i) => {
           //@todo this is messy and doubles the compute
-          const { interaction } = await diffService.loadInteraction(
+          const { interaction } = await captureService.loadInteraction(
             i.firstInteractionPointer
           );
 

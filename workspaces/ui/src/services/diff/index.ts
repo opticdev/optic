@@ -6,14 +6,14 @@ export interface ICaptureService {
     ignoreRequests: string[],
     additionalCommands: IRfcCommand[]
   ): Promise<IStartDiffResponse>;
+  loadInteraction(
+    interactionPointer: string
+  ): Promise<ILoadInteractionResponse>;
 }
 
 export interface IDiffService {
   diffId(): string;
   // backend
-  loadInteraction(
-    interactionPointer: string
-  ): Promise<ILoadInteractionResponse>;
   listDiffs(): Promise<IListDiffsResponse>;
   listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse>;
   loadStats(): Promise<ILoadStatsResponse>;
@@ -39,6 +39,7 @@ export interface ILoadStatsResponse {
 }
 
 export interface IStartDiffResponse {
+  diffId: string;
   notificationUrl: string;
   loadDiffUrl: string;
   loadUnrecognizedUrlsUrl: string;
@@ -48,7 +49,6 @@ export interface ILoadInteractionResponse {
 }
 export interface IListDiffsResponse {
   diffs: any[];
-  rfcState: any;
 }
 
 export interface IListUnrecognizedUrlsResponse {

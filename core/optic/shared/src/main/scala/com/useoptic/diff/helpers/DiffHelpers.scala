@@ -34,6 +34,7 @@ object DiffHelpers {
   }
 
   type InteractionsGroupedByDiff = Map[InteractionDiffResult, Seq[HttpInteraction]]
+  type InteractionPointersGroupedByDiff = Map[InteractionDiffResult, Seq[String]]
 
   def groupByDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interactions: Seq[HttpInteraction], initial: InteractionsGroupedByDiff = Map.empty): InteractionsGroupedByDiff = {
     interactions.foldLeft(initial)((acc, interaction) => {
@@ -57,6 +58,28 @@ object DiffHelpers {
       acc ++ changedItems
     })
   }
+
+  type InteractionToPointer = (HttpInteraction) => String
+
+  def groupInteractionPointersByNormalizedDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interactions: Seq[HttpInteraction], toPointer: InteractionToPointer, initial: InteractionPointersGroupedByDiff = Map.empty): InteractionPointersGroupedByDiff = {
+    interactions.foldLeft(initial)((acc, interaction) => {
+      val diffs = diff(resolvers, rfcState, interaction)
+      val changedItems =
+        diffs.map((diff) => {
+          val normalized = diff.normalize()
+          (normalized -> (acc.getOrElse(normalized, Seq.empty) :+ toPointer(interaction)))
+        }).toMap
+      acc ++ changedItems
+    })
+  }
+
+  def groupInteractionPointerByNormalizedDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interaction: HttpInteraction, pointer: String, initial: InteractionPointersGroupedByDiff = Map.empty): InteractionPointersGroupedByDiff = {
+    groupInteractionPointersByNormalizedDiffs(resolvers, rfcState, Seq(interaction), (_) => pointer, initial)
+  }
+
+  def emptyInteractionsGroupedByDiff(): InteractionsGroupedByDiff = Map.empty
+
+  def emptyInteractionPointersGroupedByDiff(): InteractionPointersGroupedByDiff = Map.empty
 
   def hasDiff(diff: InteractionsGroupedByDiff) = diff.isEmpty
 
