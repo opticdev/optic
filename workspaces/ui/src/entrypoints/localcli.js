@@ -30,7 +30,7 @@ export default function LocalCli(props) {
     captureId
   ) {
     const baseUrl = `/api/specs/${apiId}/captures/${captureId}/diffs/${config.diffId}`;
-    return new LocalCliDiffService(captureService, baseUrl, config, rfcState);
+    return new LocalCliDiffService(captureService, baseUrl, rfcState);
   };
 
   return (

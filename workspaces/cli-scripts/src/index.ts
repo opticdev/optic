@@ -13,13 +13,7 @@ export function runScriptByName(name: string, ...args: string[]) {
 }
 
 export function runManagedScript(modulePath: string, ...args: string[]) {
-  //@GOTCHA: execArgv is inherited from the parent, so if you are using --inspect in the parent, the child will fail
-  // instead, you can use --inspect=0 or --inspect=<some specific non-colliding port>
-
-  const isDebuggingEnabled =
-    process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
-  const execArgv = isDebuggingEnabled ? ['--inspect=63694'] : [];
-  const child = cp.fork(modulePath, args, { execArgv });
+  const child = cp.fork(modulePath, args, { execArgv: ['--inspect=0'] });
   return child;
 }
 

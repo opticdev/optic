@@ -171,26 +171,21 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.sendStatus(404);
       return;
     }
-    try {
-      const paths = await getPathsRelativeToCwd(session.path);
-      const { configPath, capturesPath, exampleRequestsPath } = paths;
-      const config = await readApiConfig(configPath);
-      const capturesHelpers = new CapturesHelpers(capturesPath);
-      const exampleRequestsHelpers = new ExampleRequestsHelpers(
-        exampleRequestsPath
-      );
-      req.optic = {
-        config,
-        paths,
-        capturesHelpers,
-        exampleRequestsHelpers,
-      };
-      next();
-    } catch (e) {
-      res.status(500).json({
-        message: e.message,
-      });
-    }
+
+    const paths = await getPathsRelativeToCwd(session.path);
+    const { configPath, capturesPath, exampleRequestsPath } = paths;
+    const config = await readApiConfig(configPath);
+    const capturesHelpers = new CapturesHelpers(capturesPath);
+    const exampleRequestsHelpers = new ExampleRequestsHelpers(
+      exampleRequestsPath
+    );
+    req.optic = {
+      config,
+      paths,
+      capturesHelpers,
+      exampleRequestsHelpers,
+    };
+    next();
   }
 
   const router = express.Router({ mergeParams: true });
@@ -265,12 +260,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
             },
           ],
         })),
-    });
-  });
-
-  router.get('/config', async (req, res) => {
-    res.json({
-      config: req.optic.config,
     });
   });
 
