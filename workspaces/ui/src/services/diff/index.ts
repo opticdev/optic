@@ -40,9 +40,7 @@ export interface ILoadStatsResponse {
 
 export interface IStartDiffResponse {
   diffId: string;
-  notificationUrl: string;
-  loadDiffUrl: string;
-  loadUnrecognizedUrlsUrl: string;
+  notificationsUrl?: string;
 }
 export interface ILoadInteractionResponse {
   interaction: IHttpInteraction;

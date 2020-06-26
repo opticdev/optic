@@ -108,7 +108,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       res.json({
         diffId: id,
-        notificationsUrl: `${req.baseUrl}/${id}/notifications`,
+        notificationsUrl: `${req.baseUrl}/diffs/${id}/notifications`,
       });
     }
   );
