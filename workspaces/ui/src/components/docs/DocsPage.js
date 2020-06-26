@@ -378,6 +378,7 @@ export const EndpointDocs = (props) => {
                       return (
                         <MarkdownContribution
                           value={getContribution(id, DESCRIPTION)}
+                          key={statusCode}
                           label={`${statusCode} Response Description`}
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);

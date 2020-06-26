@@ -1,0 +1,105 @@
+{
+    "events": [{"PathComponentAdded":{"pathId":"path_YjAXHMcjtS","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"4789d710-d64b-46ab-b5f2-3acdc088dbf9","createdAt":"2020-04-10T20:28:48.861Z"}}},{"ContributionAdded":{"id":"path_YjAXHMcjtS.GET","key":"purpose","value":"Get Todos","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"4789d710-d64b-46ab-b5f2-3acdc088dbf9","createdAt":"2020-04-10T20:28:48.866Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_xuVRrCtcbt","pathId":"path_YjAXHMcjtS","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"ShapeAdded":{"shapeId":"shape_4m23iMAvxR","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_xuVRrCtcbt","parameterDescriptor":{"shapeId":"shape_4m23iMAvxR","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"RequestAdded":{"requestId":"request_Mxf8LCuADh","pathId":"path_YjAXHMcjtS","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_nIctYvlcR2","pathId":"path_YjAXHMcjtS","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.024Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_3","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"FieldAdded":{"fieldId":"OCwpHf_2","shapeId":"OCwpHf_1","name":"a","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OCwpHf_2","shapeId":"OCwpHf_3"}},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_5","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"FieldAdded":{"fieldId":"OCwpHf_4","shapeId":"OCwpHf_1","name":"b","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OCwpHf_4","shapeId":"OCwpHf_5"}},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_7","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"FieldAdded":{"fieldId":"OCwpHf_6","shapeId":"OCwpHf_1","name":"c","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OCwpHf_6","shapeId":"OCwpHf_7"}},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.025Z"}}},{"ShapeAdded":{"shapeId":"OCwpHf_8","baseShapeId":"OCwpHf_1","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.026Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"OCwpHf_0","providerDescriptor":{"ShapeProvider":{"shapeId":"OCwpHf_8"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.026Z"}}},{"ResponseBodySet":{"responseId":"response_nIctYvlcR2","bodyDescriptor":{"httpContentType":"application/json","shapeId":"OCwpHf_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"64497f1a-60f5-48f5-89ea-490fb6cb99a7","clientCommandBatchId":"initial-batch","createdAt":"2020-04-10T20:29:31.026Z"}}}],
+    "session": {
+      "metadata": {
+        "completed": false
+      },
+      "samples": [
+        {
+            "uuid": "2",
+            "request": {
+              "host": "localhost",
+              "method": "GET",
+              "path": "/todos",
+              "query": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "body": {
+                "contentType": null,
+                "value": {
+                  "asJsonString": null,
+                  "asText": null,
+                  "asShapeHashBytes": null
+                }
+              }
+            },
+            "response": {
+              "statusCode": 200,
+              "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "body": {
+                "contentType": "application/json",
+                "value": {
+                  "asJsonString": "[{\"a\": true, \"b\": \"optional\", \"c\": \"null string\"}, {\"a\": 1234, \"c\": null}, {\"a\": 987, \"c\": null}]",
+                  "asText": null,
+                  "asShapeHashBytes": null
+                }
+              }
+            },
+            "tags": []
+          },
+          {
+            "uuid": "3",
+            "request": {
+              "host": "localhost",
+              "method": "GET",
+              "path": "/todos",
+              "query": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "body": {
+                "contentType": null,
+                "value": {
+                  "asJsonString": null,
+                  "asText": null,
+                  "asShapeHashBytes": null
+                }
+              }
+            },
+            "response": {
+              "statusCode": 500,
+              "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+              },
+              "body": {
+                "contentType": "application/json",
+                "value": {
+                  "asJsonString": "[{\"a\": true, \"b\": \"optional\", \"c\": \"null string\"}, {\"a\": 1234, \"c\": null}, {\"a\": 987, \"c\": null}]",
+                  "asText": null,
+                  "asShapeHashBytes": null
+                }
+              }
+            },
+            "tags": []
+          }    
+      ],
+      "links": [
+        {
+          "rel": "next",
+          "href": ""
+        }
+      ]
+    },
+    "examples": {},
+    "refs": [{ "rel": "example-reports", "id": "todo-report" }]
+  }
+  
