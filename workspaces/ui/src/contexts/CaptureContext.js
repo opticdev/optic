@@ -44,6 +44,7 @@ export function CaptureStateStore(props) {
     }
   }
   useEffect(() => {
+    let notifications;
     async function task() {
       const captureService = await captureServiceFactory(
         specService,
@@ -57,6 +58,10 @@ export function CaptureStateStore(props) {
         [],
         additionalCommands
       );
+      const notifications = new EventSource(config.notificationsUrl);
+      notifications.onmessage = (event) => {
+        debugger;
+      };
       const rfcState = rfcService.currentState(rfcId);
 
       const diffServiceForCapture = await diffServiceFactory(
@@ -71,6 +76,11 @@ export function CaptureStateStore(props) {
       setDiffService(diffServiceForCapture);
     }
     task();
+    return function cleanup() {
+      if (notifications) {
+        notifications.close();
+      }
+    };
   }, [captureId, additionalCommands]);
 
   useEffect(() => {
