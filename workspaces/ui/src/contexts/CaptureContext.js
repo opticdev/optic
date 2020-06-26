@@ -50,11 +50,11 @@ export function CaptureStateStore(props) {
         captureId
       );
       //@TODO: handle error
-      //@TODO:getConfig for ignoreRequests config
+      const apiConfig = await specService.loadConfig();
       const events = eventStore.listEvents(rfcId);
       const config = await captureService.startDiff(
         ScalaJSHelpers.eventsJsArray(events),
-        [],
+        apiConfig.config.ignoreRequests || [],
         additionalCommands
       );
 
