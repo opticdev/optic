@@ -133,8 +133,10 @@ class ContentTabs extends React.Component {
       return null
     }
 
+    const key = `${contentTypeTab}-${responseStatusCode}-${responseContentType}`
+
     return (
-      <div className={classes.container}>
+      <div className={classes.container} key={key} >
         <ReusableDiffRow notifications={notifications}>
           <div className={classes.root}>
             <Typography variant="h5" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
