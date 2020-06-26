@@ -32,9 +32,7 @@ export class ExampleCaptureService implements ICaptureService {
   ): Promise<IStartDiffResponse> {
     return {
       diffId: uuidv4(),
-      loadDiffUrl: '',
-      loadUnrecognizedUrlsUrl: '',
-      notificationUrl: '',
+      notificationsUrl: '',
     };
   }
 
