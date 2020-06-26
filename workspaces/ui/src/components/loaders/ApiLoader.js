@@ -118,10 +118,11 @@ async function createExampleSpecServiceFactory(data) {
 
   const specService = {
     eventEmitter,
-    getConfig: async function () {
+    loadConfig: async function () {
       return Promise.resolve({
         config: {
           apiName: 'Example API',
+          ignoreRequests: [],
         },
       });
     },
