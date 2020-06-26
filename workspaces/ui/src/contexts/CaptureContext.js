@@ -58,10 +58,12 @@ export function CaptureStateStore(props) {
         apiConfig.config.ignoreRequests || [],
         additionalCommands
       );
-      const notifications = new EventSource(config.notificationsUrl);
-      notifications.onmessage = (event) => {
-        debugger;
-      };
+      if (config.notificationsUrl) {
+        const notifications = new EventSource(config.notificationsUrl);
+        notifications.onmessage = (event) => {
+          debugger;
+        };
+      }
       const rfcState = rfcService.currentState(rfcId);
 
       const diffServiceForCapture = await diffServiceFactory(
