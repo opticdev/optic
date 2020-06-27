@@ -180,6 +180,12 @@ case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[Int
 
 @JSExportAll
 abstract class NewRegionDiff {
+  
+  def isSameAs(b: NewRegionDiff): Boolean = {
+    this.diff == b.diff &&
+    this.interactionPointers == b.interactionPointers
+  }
+
   val diff: InteractionDiffResult
   val interactionPointers: Seq[String]
   val inRequest: Boolean
