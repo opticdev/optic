@@ -59,9 +59,13 @@ export function CaptureStateStore(props) {
         additionalCommands
       );
       if (config.notificationsUrl) {
-        const notifications = new EventSource(config.notificationsUrl);
-        notifications.onmessage = (event) => {
-          debugger;
+        const notificationsSource = new EventSource(config.notificationsUrl);
+        notificationsSource.onmessage = (event) => {};
+        notificationsSource.onerror = (e) => {
+          console.error(e);
+        };
+        notificationsSource.onopen = (e) => {
+          console.log(e);
         };
       }
       const rfcState = rfcService.currentState(rfcId);

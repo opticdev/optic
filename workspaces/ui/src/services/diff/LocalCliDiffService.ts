@@ -44,17 +44,13 @@ export class LocalCliDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    return Promise.resolve({
-      urls: [],
-    });
+    const url = `${this.baseUrl}/undocumented-urls`;
+    return JsonHttpClient.getJson(url);
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
-    return Promise.resolve({
-      captureCompleted: false,
-      processed: 124,
-      totalInteractions: 8675309,
-    });
+    const url = `${this.baseUrl}/stats`;
+    return JsonHttpClient.getJson(url);
   }
 
   async loadDescription(diff: any): Promise<IGetDescriptionResponse> {
