@@ -299,33 +299,38 @@ function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;
   const classes = useStyles();
 
+  const rfcContext = useContext(RfcContext);
+  const services = useServices();
+
   return (
-    <CaptureStateStore captureId={captureId}>
+    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
       <CaptureChooserComponent captureId={captureId} />
-      <CaptureDiffStates />
+      <CaptureDiffStat />
       <EndpointDiffs captureId={captureId} />
       <UnrecognizedUrls captureId={captureId} />
     </CaptureStateStore>
   );
 }
 
-function CaptureDiffStates() {
+function CaptureDiffStat() {
   const classes = useStyles();
-  const { stats } = useCaptureContext();
+  // const { stats } = useCaptureContext();
   //also available
   // stats.captureCompleted
   // stats.processed
   return (
     <div className={classes.stats}>
       <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-        Optic observed{' '}
-        <Stat number={stats.interactionsCounter || 0} label="interaction" />,
-        yielding <Stat number={stats.totalDiffs || 0} label="diff" /> and{' '}
-        <Stat
-          number={stats.undocumentedEndpoints || 0}
-          label="undocumented endpoint"
-        />
-        .
+        Optic observed <Stat number={0} label="interaction" />, yielding{' '}
+        <Stat number={0} label="diff" /> and{' '}
+        <Stat number={0} label="undocumented endpoint" />.
+        {/*<Stat number={stats.interactionsCounter || 0} label="interaction" />,*/}
+        {/*yielding <Stat number={stats.totalDiffs || 0} label="diff" /> and{' '}*/}
+        {/*<Stat*/}
+        {/*  number={stats.undocumentedEndpoints || 0}*/}
+        {/*  label="undocumented endpoint"*/}
+        {/*/>*/}
+        {/*.*/}
       </Typography>
     </div>
   );
@@ -338,14 +343,19 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
+  console.log('i am here ', endpointDiffs);
+  console.log('i am here ', Boolean(endpointDiffs.length));
+
   //also available
   // stats.captureCompleted
   // stats.processed
   return (
     <Show when={Boolean(endpointDiffs.length)}>
+      I AM HERE
       <DocSubGroup title={`Endpoint Diffs (${endpointDiffs.length})`}>
         <List>
           {endpointDiffs.map((i) => {
+            console.log(i);
             const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
             return (
               <EndpointsContextStore
