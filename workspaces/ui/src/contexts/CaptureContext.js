@@ -31,7 +31,7 @@ export function CaptureStateStore(props) {
     diffServiceFactory,
   } = useServices();
 
-  async function update() {
+  async function restart() {
     if (diffService) {
       diffService.loadStats().then(setStats);
       diffService.listDiffs().then((x) => {
@@ -51,19 +51,23 @@ export function CaptureStateStore(props) {
         captureId
       );
       //@TODO: handle error
-      //@TODO:getConfig for ignoreRequests config
+      const apiConfig = await specService.loadConfig();
       const events = eventStore.listEvents(rfcId);
       const config = await captureService.startDiff(
         ScalaJSHelpers.eventsJsArray(events),
-        [],
+        apiConfig.config.ignoreRequests || [],
         additionalCommands
       );
-
-      notifications = new EventSource(config.notificationsUrl);
-      notifications.onmessage = (event) => {
-        debugger;
-      };
-
+      if (config.notificationsUrl) {
+        const notificationsSource = new EventSource(config.notificationsUrl);
+        notificationsSource.onmessage = (event) => {};
+        notificationsSource.onerror = (e) => {
+          console.error(e);
+        };
+        notificationsSource.onopen = (e) => {
+          console.log(e);
+        };
+      }
       const rfcState = rfcService.currentState(rfcId);
 
       const diffServiceForCapture = await diffServiceFactory(
@@ -86,10 +90,8 @@ export function CaptureStateStore(props) {
   }, [captureId, additionalCommands]);
 
   useEffect(() => {
-    const poll = setInterval(() => update(), 3000);
-    return () => {
-      clearInterval(poll);
-    };
+    restart();
+    return () => {};
   }, [diffService]);
 
   if (!diffService) {
@@ -103,7 +105,7 @@ export function CaptureStateStore(props) {
   const value = {
     diffService,
     captureService,
-    restart: update,
+    restart,
     updatedAdditionalCommands,
     diffId,
     endpointDiffs,
