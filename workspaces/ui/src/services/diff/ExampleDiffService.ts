@@ -20,7 +20,7 @@ import {
   ScalaJSHelpers,
 } from '@useoptic/domain/build';
 import uuidv4 from 'uuid/v4';
-import { getOrUndefined } from '@useoptic/domain';
+import { getOrUndefined, opticEngine } from '@useoptic/domain';
 
 export class ExampleCaptureService implements ICaptureService {
   constructor(private specService: ISpecService) {}
@@ -70,19 +70,25 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const urls = ScalaJSHelpers.toJsArray(
-      DiffResultHelper.unmatchedUrls(this.diffs, this.rfcState)
+    const capture = await this.specService.listCapturedSamples(captureId);
+    const samplesSeq = JsonHelper.jsArrayToSeq(
+      capture.samples.map((x) => JsonHelper.fromInteraction(x))
     );
+    const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlHelpers();
+    const counter = undocumentedUrlHelpers.countUndocumentedUrls(
+      this.rfcState,
+      samplesSeq
+    );
+    const urls = opticEngine.UrlCounterJsonSerializer.toFriendlyJs(counter);
 
     return Promise.resolve({ urls });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
     const capture = await this.specService.listCapturedSamples(captureId);
+
     return Promise.resolve({
-      totalInteractions: capture.samples.length,
-      processed: capture.samples.length,
-      captureCompleted: true,
+      interactionsCounter: capture.samples.length.toString(),
     });
   }
 

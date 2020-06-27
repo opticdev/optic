@@ -1,7 +1,9 @@
 package com.useoptic.dsa
 
 import scala.collection.mutable.Map
+import scala.scalajs.js.annotation.JSExportAll
 
+@JSExportAll
 class Counter[T] {
   var counts: Map[T, Int] = Map()
 

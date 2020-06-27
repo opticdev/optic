@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
 import { runManagedScriptByName } from '@useoptic/cli-scripts';
-import { IDiffProjectionEmitterConfig } from '@useoptic/cli-shared/build/diffs/diff-worker';
+import {
+  getDiffOutputPaths,
+  IDiffProjectionEmitterConfig,
+} from '@useoptic/cli-shared/build/diffs/diff-worker';
 import { ChildProcess } from 'child_process';
-import { getDiffOutputBaseDirectory } from '../routers/capture-router';
 
 export interface IDiffManagerConfig {
   diffId: string;
@@ -17,7 +19,7 @@ export class DiffManager {
   constructor() {}
 
   async start(config: IDiffManagerConfig) {
-    const outputPaths = getDiffOutputBaseDirectory(config);
+    const outputPaths = getDiffOutputPaths(config);
     const scriptConfig: IDiffProjectionEmitterConfig = {
       captureId: config.captureId,
       diffId: config.diffId,
@@ -26,7 +28,7 @@ export class DiffManager {
       ignoreRequestsFilePath: outputPaths.ignoreRequests,
       additionalCommandsFilePath: outputPaths.additionalCommands,
     };
-
+    console.log(JSON.stringify(scriptConfig));
     const child = runManagedScriptByName(
       'emit-diff-projections',
       JSON.stringify(scriptConfig)
