@@ -4,6 +4,8 @@ import { useServices } from './SpecServiceContext';
 import { RfcContext } from './RfcContext';
 import { ScalaJSHelpers } from '@useoptic/domain';
 
+let notifications;
+
 export const CaptureContext = React.createContext(null);
 
 export function useCaptureContext() {
@@ -44,7 +46,6 @@ export function CaptureStateStore(props) {
     }
   }
   useEffect(() => {
-    let notifications;
     async function task() {
       const captureService = await captureServiceFactory(
         specService,
@@ -60,9 +61,14 @@ export function CaptureStateStore(props) {
       );
 
       notifications = new EventSource(config.notificationsUrl);
-      notifications.onmessage = (event) => {
-        debugger;
-      };
+      // notifications.onopen = (e) => {
+      //   console.log('GOT OPEN');
+      //   console.log(e);
+      // };
+      // notifications.onmessage = (e) => {
+      //   console.log('GOT HERE');
+      //   console.log(e);
+      // };
 
       const rfcState = rfcService.currentState(rfcId);
 
@@ -86,7 +92,7 @@ export function CaptureStateStore(props) {
   }, [captureId, additionalCommands]);
 
   useEffect(() => {
-    const poll = setInterval(() => update(), 3000);
+    const poll = setInterval(() => update(), 4000);
     return () => {
       clearInterval(poll);
     };

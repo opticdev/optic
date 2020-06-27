@@ -18,10 +18,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import { dumpSpecServiceState } from '../../../utilities/dump-spec-service-state';
-import {
-  TrafficSessionContext,
-  TrafficSessionStore,
-} from '../../../contexts/TrafficSessionContext';
 import { GenericContextFactory } from '../../../contexts/GenericContextFactory';
 import {
   useServices,
@@ -282,12 +278,9 @@ function CaptureChooserComponent(props) {
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
   return (
-    <TrafficSessionStore
-      sessionId={props.match.params.captureId}
-      specService={specService}
-    >
-      <DiffPageNew {...props} />
-    </TrafficSessionStore>
+    // sessionId={props.match.params.captureId}
+    // specService={specService}
+    <DiffPageNew {...props} />
   );
 }
 

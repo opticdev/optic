@@ -125,7 +125,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     }
 
     function emit(data: any) {
+      res.write('event: updated\n');
       res.write(`data: ${JSON.stringify(data)}\n\n`);
+      // @ts-ignore
+      res.flush();
     }
 
     const headers = {
