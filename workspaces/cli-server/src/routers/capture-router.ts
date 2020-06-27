@@ -1,14 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { delay, IdGenerator } from '@useoptic/cli-shared';
+import { IdGenerator } from '@useoptic/cli-shared';
 import { CaptureId } from '@useoptic/saas-types';
 import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { DiffManager } from '../diffs/diff-manager';
-import path from 'path';
 import fs from 'fs-extra';
+import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -77,7 +77,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       const { ignoreRequests, events, additionalCommands } = req.body;
       const id = dependencies.idGenerator.nextId();
       const manager = new DiffManager();
-      const diffOutputPaths = getDiffOutputBaseDirectory({
+      const diffOutputPaths = getDiffOutputPaths({
         captureBaseDirectory: req.optic.paths.capturesPath,
         captureId,
         diffId: id,
@@ -125,10 +125,8 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     }
 
     function emit(data: any) {
-      res.write('event: updated\n');
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-      // @ts-ignore
-      res.flush();
+      console.log('emit');
+      res.write(`data: {}\n\n`);
     }
 
     const headers = {
@@ -145,6 +143,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
     req.on('close', () => {
       diffMetadata.manager.stop();
+      diffs.delete(diffId);
     });
   });
 
@@ -152,7 +151,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/diffs', async (req, res) => {
     const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputBaseDirectory({
+    const diffOutputPaths = getDiffOutputPaths({
       captureBaseDirectory: req.optic.paths.capturesPath,
       captureId,
       diffId,
@@ -160,6 +159,42 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     try {
       //@TODO: streamify
       const contents = await fs.readJson(diffOutputPaths.diffs);
+      res.json(contents);
+    } catch (e) {
+      res.status(404).json({
+        message: e.message,
+      });
+    }
+  });
+  router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
+    const { captureId, diffId } = req.params;
+    const diffOutputPaths = getDiffOutputPaths({
+      captureBaseDirectory: req.optic.paths.capturesPath,
+      captureId,
+      diffId,
+    });
+    try {
+      //@TODO: streamify
+      const contents = await fs.readJson(diffOutputPaths.undocumentedUrls);
+      res.json({
+        urls: contents,
+      });
+    } catch (e) {
+      res.status(404).json({
+        message: e.message,
+      });
+    }
+  });
+  router.get('/diffs/:diffId/stats', async (req, res) => {
+    const { captureId, diffId } = req.params;
+    const diffOutputPaths = getDiffOutputPaths({
+      captureBaseDirectory: req.optic.paths.capturesPath,
+      captureId,
+      diffId,
+    });
+    try {
+      //@TODO: streamify
+      const contents = await fs.readJson(diffOutputPaths.stats);
       res.json(contents);
     } catch (e) {
       res.status(404).json({
@@ -188,25 +223,4 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   return router;
-}
-
-export function getDiffOutputBaseDirectory(values: {
-  captureBaseDirectory: string;
-  captureId: string;
-  diffId: string;
-}) {
-  const { captureBaseDirectory, captureId, diffId } = values;
-  const base = path.join(captureBaseDirectory, captureId, 'diffs', diffId);
-  const diffs = path.join(base, 'diffs.json');
-  const events = path.join(base, 'events.json');
-  const ignoreRequests = path.join(base, 'ignoreRequests.json');
-  const additionalCommands = path.join(base, 'additionalCommands.json');
-
-  return {
-    base,
-    diffs,
-    events,
-    ignoreRequests,
-    additionalCommands,
-  };
 }

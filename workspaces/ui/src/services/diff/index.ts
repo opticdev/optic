@@ -33,9 +33,7 @@ export interface IDiffService {
 export interface IRfcCommand {}
 
 export interface ILoadStatsResponse {
-  totalInteractions: number;
-  processed: number;
-  captureCompleted: boolean;
+  interactionsCounter: string;
 }
 
 export interface IStartDiffResponse {

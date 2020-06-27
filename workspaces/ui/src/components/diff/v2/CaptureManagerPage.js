@@ -319,8 +319,8 @@ function CaptureDiffStates() {
     <div className={classes.stats}>
       <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
         Optic observed{' '}
-        <Stat number={stats.totalInteractions || 0} label="interaction" />,
-        yielding in <Stat number={stats.totalDiffs || 0} label="diff" /> and{' '}
+        <Stat number={stats.interactionsCounter || 0} label="interaction" />,
+        yielding <Stat number={stats.totalDiffs || 0} label="diff" /> and{' '}
         <Stat
           number={stats.undocumentedEndpoints || 0}
           label="undocumented endpoint"
