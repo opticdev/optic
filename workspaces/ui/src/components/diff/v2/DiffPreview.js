@@ -335,6 +335,7 @@ function _NewRegions(props) {
     method,
     fullPath,
   } = props;
+
   const classes = useStyles();
 
   const { diffService, captureService } = useCaptureContext();
@@ -514,6 +515,7 @@ function _NewRegions(props) {
         return (
           <PreviewNewBodyRegion
             diff={diff}
+            key={diff.toString()}
             inferPolymorphism={inferPolymorphism}
           />
         );
@@ -527,6 +529,7 @@ function _NewRegions(props) {
         return (
           <PreviewNewBodyRegion
             diff={diff}
+            key={diff.toString()}
             inferPolymorphism={inferPolymorphism}
           />
         );
@@ -625,7 +628,23 @@ function _NewRegions(props) {
   );
 }
 
-export const NewRegions = withDiffContext(_NewRegions);
+export class NewRegions extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    const result = CompareEquality.between(
+      nextProps.newRegions,
+      this.props.newRegions
+    );
+
+    console.log('rerender ', result);
+    //@todo add ignore here
+    return !result;
+  }
+
+  render() {
+    console.log('rendering all over again');
+    return <_NewRegions {...this.props} />;
+  }
+}
 
 export const BreadcumbX = (props) => {
   const classes = useStyles();
