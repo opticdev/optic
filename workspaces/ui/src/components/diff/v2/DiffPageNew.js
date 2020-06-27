@@ -6,7 +6,6 @@ import {
   EndpointsContextStore,
   withEndpointsContext,
 } from '../../../contexts/EndpointContext';
-import { withTrafficSessionContext } from '../../../contexts/TrafficSessionContext';
 import {
   SpecServiceContext,
   withSpecServiceContext,
@@ -207,6 +206,8 @@ function _DiffPageContent(props) {
   const interactionsWithDiffsCount = DiffResultHelper.interactionsWithDiffsCount(
     diffsForThisEndpoint
   );
+
+  console.log('hasNewRegions', hasNewRegions);
 
   return (
     <IgnoreDiffContext.Consumer>

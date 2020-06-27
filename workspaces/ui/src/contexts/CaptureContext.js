@@ -4,6 +4,8 @@ import { useServices } from './SpecServiceContext';
 import { RfcContext } from './RfcContext';
 import { ScalaJSHelpers } from '@useoptic/domain';
 
+let notifications;
+
 export const CaptureContext = React.createContext(null);
 
 export function useCaptureContext() {
@@ -31,7 +33,7 @@ export function CaptureStateStore(props) {
     diffServiceFactory,
   } = useServices();
 
-  async function restart() {
+  async function update() {
     if (diffService) {
       diffService.loadStats().then(setStats);
       diffService.listDiffs().then((x) => {
@@ -44,30 +46,30 @@ export function CaptureStateStore(props) {
     }
   }
   useEffect(() => {
-    let notifications;
     async function task() {
       const captureService = await captureServiceFactory(
         specService,
         captureId
       );
       //@TODO: handle error
-      const apiConfig = await specService.loadConfig();
+      //@TODO:getConfig for ignoreRequests config
       const events = eventStore.listEvents(rfcId);
       const config = await captureService.startDiff(
         ScalaJSHelpers.eventsJsArray(events),
-        apiConfig.config.ignoreRequests || [],
+        [],
         additionalCommands
       );
-      if (config.notificationsUrl) {
-        const notificationsSource = new EventSource(config.notificationsUrl);
-        notificationsSource.onmessage = (event) => {};
-        notificationsSource.onerror = (e) => {
-          console.error(e);
-        };
-        notificationsSource.onopen = (e) => {
-          console.log(e);
-        };
-      }
+
+      notifications = new EventSource(config.notificationsUrl);
+      // notifications.onopen = (e) => {
+      //   console.log('GOT OPEN');
+      //   console.log(e);
+      // };
+      // notifications.onmessage = (e) => {
+      //   console.log('GOT HERE');
+      //   console.log(e);
+      // };
+
       const rfcState = rfcService.currentState(rfcId);
 
       const diffServiceForCapture = await diffServiceFactory(
@@ -90,8 +92,10 @@ export function CaptureStateStore(props) {
   }, [captureId, additionalCommands]);
 
   useEffect(() => {
-    restart();
-    return () => {};
+    const poll = setInterval(() => update(), 4000);
+    return () => {
+      clearInterval(poll);
+    };
   }, [diffService]);
 
   if (!diffService) {
@@ -105,7 +109,7 @@ export function CaptureStateStore(props) {
   const value = {
     diffService,
     captureService,
-    restart,
+    restart: update,
     updatedAdditionalCommands,
     diffId,
     endpointDiffs,
