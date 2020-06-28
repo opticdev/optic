@@ -8,10 +8,11 @@ import {
 } from '../../../contexts/EndpointContext';
 import {
   SpecServiceContext,
+  useServices,
   withSpecServiceContext,
 } from '../../../contexts/SpecServiceContext';
-import { DiffContextStore, withDiffContext } from './DiffContext';
-import { withRfcContext } from '../../../contexts/RfcContext';
+import { DiffContext, DiffContextStore, withDiffContext } from './DiffContext';
+import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {
   DiffResultHelper,
@@ -83,9 +84,13 @@ const styles = (theme) => ({
 function DiffPageNew(props) {
   const { specStore } = useContext(SpecServiceContext);
   const baseUrl = useBaseUrl();
+  const rfcContext = useContext(RfcContext);
+  const services = useServices();
+
   const { pathId, method, captureId } = props.match.params;
+
   return (
-    <CaptureStateStore captureId={captureId}>
+    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
       <CaptureSessionInlineContext
         specStore={specStore}
         captureId={captureId}
@@ -207,7 +212,7 @@ function _DiffPageContent(props) {
     diffsForThisEndpoint
   );
 
-  console.log('hasNewRegions', hasNewRegions);
+  const diffContext = useContext(DiffContext);
 
   return (
     <IgnoreDiffContext.Consumer>

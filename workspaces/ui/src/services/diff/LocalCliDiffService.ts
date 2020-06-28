@@ -17,6 +17,7 @@ import {
   JsonHelper,
   opticEngine,
   ScalaJSHelpers,
+  UrlCounterHelper,
 } from '@useoptic/domain';
 
 export class LocalCliDiffService implements IDiffService {
@@ -45,7 +46,9 @@ export class LocalCliDiffService implements IDiffService {
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const url = `${this.baseUrl}/undocumented-urls`;
-    return JsonHttpClient.getJson(url);
+    const json = (await JsonHttpClient.getJson(url)).urls;
+    const result = UrlCounterHelper.fromJsonToSeq(json);
+    return result;
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
