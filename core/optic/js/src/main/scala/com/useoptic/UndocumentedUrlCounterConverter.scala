@@ -1,13 +1,16 @@
 package com.useoptic
 
+import com.useoptic.UrlCounterDeserializer.fromJson
 import com.useoptic.diff.helpers.UndocumentedUrlHelpers.{MethodAndPath, UrlCounter}
+import com.useoptic.ux.{NewEndpoint}
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.syntax._
 import io.circe.generic.auto._
 
+import scala.collection.immutable
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 
 @JSExportTopLevel("UrlCounterJsonSerializer")
@@ -56,5 +59,18 @@ object UrlCounterDeserializer {
 
   def fromJs(x: js.Any) = {
     fromJson(convertJsToJson(x).right.get)
+  }
+
+
+}
+
+@JSExport
+@JSExportAll
+object UrlCounterHelper {
+  import UrlCounterDeserializer._
+  def fromJsonToSeq(jsJson: js.Any): js.Array[NewEndpoint] = {
+    js.Array.apply(
+      convertJsToJson(jsJson).right.get.as[Seq[NewEndpoint]].right.get:_*
+    )
   }
 }
