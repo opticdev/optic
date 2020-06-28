@@ -327,17 +327,11 @@ export default function DiffPreview() {
 }
 
 function _NewRegions(props) {
-  const {
-    newRegions,
-    ignoreDiff,
-    acceptSuggestion,
-    endpointPurpose,
-    method,
-    fullPath,
-  } = props;
+  const { newRegions, ignoreDiff, endpointPurpose, method, fullPath } = props;
 
   const classes = useStyles();
 
+  const { acceptSuggestion } = useContext(DiffContext);
   const { diffService, captureService } = useCaptureContext();
 
   const [deselected, setDeselected] = useState([]);

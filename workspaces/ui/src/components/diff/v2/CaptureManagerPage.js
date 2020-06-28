@@ -25,7 +25,12 @@ import {
 } from '../../../contexts/SpecServiceContext';
 import { useRouterPaths } from '../../../RouterPaths';
 import { RfcContext } from '../../../contexts/RfcContext';
-import { JsonHelper, lengthScala, mapScala } from '@useoptic/domain';
+import {
+  DiffResultHelper,
+  JsonHelper,
+  lengthScala,
+  mapScala,
+} from '@useoptic/domain';
 import { NewUrlModal } from './AddUrlModal';
 import DiffPageNew, { IgnoreDiffContext, IgnoreDiffStore } from './DiffPageNew';
 import { Show, ShowSpan } from '../../shared/Show';
@@ -343,15 +348,11 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  console.log('i am here ', endpointDiffs);
-  console.log('i am here ', Boolean(endpointDiffs.length));
-
   //also available
   // stats.captureCompleted
   // stats.processed
   return (
     <Show when={Boolean(endpointDiffs.length)}>
-      I AM HERE
       <DocSubGroup title={`Endpoint Diffs (${endpointDiffs.length})`}>
         <List>
           {endpointDiffs.map((i) => {
@@ -435,16 +436,22 @@ function UnrecognizedUrls(props) {
   const { unrecognizedUrls } = useCaptureContext();
   const baseUrl = useBaseUrl();
 
-  const allUnmatchedPaths = unrecognizedUrls.map((i) => i.url);
+  const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
+    JsonHelper.jsArrayToSeq(unrecognizedUrls)
+  );
+
+  const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
+  const urls = JsonHelper.seqToJsArray(urlsSplit.urls);
 
   return (
-    <Show when={unrecognizedUrls.length > 0}>
-      <DocSubGroup title={`Undocumented URLs (${unrecognizedUrls.length})`}>
+    <Show when={urlsSplit.showing > 0}>
+      <DocSubGroup title={`Undocumented URLs (${urlsSplit.totalCount})`}>
         <List>
-          {unrecognizedUrls.map((i) => {
+          {urls.map((i) => {
             return (
+              // <div>{i.toString()}</div>
               <NewUrlModal
-                key={i}
+                key={i.toString()}
                 allUnmatchedPaths={allUnmatchedPaths}
                 newUrl={i}
                 onAdd={(result) => {
