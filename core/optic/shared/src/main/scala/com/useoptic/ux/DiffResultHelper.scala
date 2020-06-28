@@ -4,6 +4,7 @@ import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers.InteractionPointersGroupedByDiff
+import com.useoptic.diff.helpers.UndocumentedUrlHelpers.UrlCounter
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
@@ -16,9 +17,28 @@ import scala.util.Try
 @JSExportAll
 object DiffResultHelper {
 
+  private val stableRandomSeed = scala.util.Random.nextLong()
+
   def unmatchedUrls(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[NewEndpoint] = {
     //@TODO: implement this
     Vector.empty
+  }
+
+  def splitUnmatchedUrls(urls: Seq[NewEndpoint]): SplitUndocumentedUrls = {
+    val random = scala.util.Random
+    random.setSeed(stableRandomSeed)
+
+    def getRandomElement: Option[NewEndpoint] = urls match {
+      case _ => urls.lift(random.nextInt(urls.size))
+    }
+
+    if (urls.size > 250) {
+      val urlsToShow = Range(0, 250).flatMap(i => getRandomElement).distinct
+      SplitUndocumentedUrls(urlsToShow.toVector.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
+    } else {
+      SplitUndocumentedUrls(urls.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
+    }
+
   }
 
   def diffsForPathAndMethod(allEndpointDiffs: Seq[EndpointDiffs], pathId: PathComponentId, method: String, ignoredDiffs: Seq[DiffResult]): Map[InteractionDiffResult, Seq[String]] = {
@@ -180,7 +200,7 @@ case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[Int
 
 @JSExportAll
 abstract class NewRegionDiff {
-  
+
   def isSameAs(b: NewRegionDiff): Boolean = {
     this.diff == b.diff &&
     this.interactionPointers == b.interactionPointers
@@ -259,3 +279,9 @@ abstract class BodyDiff {
 
 @JSExportAll
 case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggestion: Option[InteractiveDiffInterpretation])
+
+
+@JSExportAll
+case class SplitUndocumentedUrls(urls: Seq[NewEndpoint], totalCount: Int, allPaths: Seq[String]) {
+   def showing: Int = urls.length
+}

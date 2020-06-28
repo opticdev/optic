@@ -10,7 +10,7 @@ export function useCaptureContext() {
   return useContext(CaptureContext);
 }
 
-const initialState = () => {
+const initialState = (debouncer = null) => {
   return {
     diffService: null,
     captureService: null,
@@ -20,7 +20,7 @@ const initialState = () => {
     lastUpdate: null,
     pendingUpdates: false,
 
-    reloadDebounce: null,
+    reloadDebounce: debouncer,
     unrecognizedUrls: [],
     endpointDiffs: [],
   };
@@ -32,7 +32,10 @@ export class CaptureStateStore extends React.Component {
   componentDidMount = async () => {
     this.setState(
       {
-        reloadDebounce: debounce(this.reload, 1000, { leading: true }),
+        reloadDebounce: debounce(this.reload, 1000, {
+          leading: true,
+          maxWait: 1500,
+        }),
       },
       async () => await this.startDiff()
     );
@@ -55,16 +58,31 @@ export class CaptureStateStore extends React.Component {
         diffService.listUnrecognizedUrls(),
       ]);
 
-      console.log('results', [
-        diffsResponse.diffs.length,
-        urlsResponse.urls.length,
-      ]);
+      console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
 
       this.setState({
         endpointDiffs: diffsResponse.diffs,
-        unrecognizedUrls: urlsResponse.urls,
+        unrecognizedUrls: urlsResponse,
       });
     }
+  };
+
+  cleanupDiff = async () => {
+    if (this.state.notificationChannel) {
+      this.state.notificationChannel.close();
+    }
+    return await new Promise((resolve) => {
+      this.setState(
+        {
+          unrecognizedUrls: [],
+          endpointDiffs: [],
+          lastUpdate: null,
+          pendingUpdates: false,
+          config: null,
+        },
+        resolve
+      );
+    });
   };
 
   startDiff = async () => {
@@ -77,6 +95,9 @@ export class CaptureStateStore extends React.Component {
       rfcId,
       rfcService,
     } = this.props;
+
+    //clear diff
+    await this.cleanupDiff();
 
     const captureService = await captureServiceFactory(specService, captureId);
     //@TODO: handle error
@@ -122,6 +143,12 @@ export class CaptureStateStore extends React.Component {
     });
   };
 
+  updatedAdditionalCommands = (additionalCommands) => {
+    this.setState({ additionalCommands }, () => {
+      this.startDiff();
+    });
+  };
+
   render = () => {
     const {
       pendingUpdates,
@@ -129,18 +156,29 @@ export class CaptureStateStore extends React.Component {
       endpointDiffs,
       lastUpdate,
       config,
+      diffService,
+      captureService,
     } = this.state;
+
     const value = {
       pendingUpdates,
       config,
       lastUpdate,
       endpointDiffs,
       unrecognizedUrls,
+      diffService,
+      captureService,
+      updatedAdditionalCommands: this.updatedAdditionalCommands,
     };
 
     return (
       <CaptureContext.Provider value={value}>
-        {JSON.stringify(value)}
+        {JSON.stringify({
+          pendingUpdates,
+          lastUpdate,
+          endpointDiffs: endpointDiffs.length,
+          unrecognizedUrls: unrecognizedUrls.length,
+        })}
         {this.props.children}
       </CaptureContext.Provider>
     );
