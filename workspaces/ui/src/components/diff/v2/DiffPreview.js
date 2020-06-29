@@ -395,7 +395,7 @@ function _NewRegions(props) {
 
     useEffect(() => {
       setInteractionIndex(1);
-    }, [diff]);
+    }, [diff.toString()]);
 
     const currentInteractionPointer = getIndex(diff.interactionPointers)(
       interactionIndex - 1
