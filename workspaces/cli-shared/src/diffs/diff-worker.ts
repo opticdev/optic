@@ -14,6 +14,7 @@ import {
 import fs from 'fs-extra';
 import Bottleneck from 'bottleneck';
 import path from 'path';
+import lockfile from 'proper-lockfile';
 
 export interface IDiffProjectionEmitterConfig {
   diffId: string;
@@ -48,7 +49,12 @@ export function getDiffOutputPaths(values: {
     additionalCommands,
   };
 }
-
+async function safeWriteJson(filePath: string, contents: any) {
+  await fs.ensureFile(filePath);
+  await lockfile.lock(filePath);
+  await fs.writeJson(filePath, contents);
+  await lockfile.unlock(filePath);
+}
 export class DiffWorker {
   constructor(private config: IDiffProjectionEmitterConfig) {}
 
@@ -104,7 +110,9 @@ export class DiffWorker {
     const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
       rfcState
     );
-    let interactionCounter = BigInt(0);
+    let hasMoreInteractions = true;
+    let diffedInteractionsCounter = BigInt(0);
+    let skippedInteractionsCounter = BigInt(0);
     const batcher = new Bottleneck.Batcher({
       maxSize: 100,
       maxTime: 100,
@@ -114,39 +122,52 @@ export class DiffWorker {
     const queue = new Bottleneck({
       maxConcurrent: 1,
     });
-
+    function notifyParent() {
+      const progress = {
+        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+        hasMoreInteractions,
+      };
+      if (process && process.send) {
+        process.send({
+          type: 'progress',
+          data: progress,
+        });
+      } else {
+        console.log(progress);
+      }
+    }
     async function flush() {
-      const c = interactionCounter.toString();
+      const c = diffedInteractionsCounter.toString();
 
       console.time(`flushing ${c}`);
-      const outputDiff = fs.writeJson(
+      const outputDiff = safeWriteJson(
         diffOutputPaths.diffs,
         opticEngine.DiffWithPointersJsonSerializer.toJs(diffs)
       );
-      const outputCount = fs.writeJson(
+      const outputCount = safeWriteJson(
         diffOutputPaths.undocumentedUrls,
         opticEngine.UrlCounterJsonSerializer.toFriendlyJs(undocumentedUrls)
       );
-      const outputStats = fs.writeJson(diffOutputPaths.stats, {
-        interactionsCounter: c,
+      const outputStats = safeWriteJson(diffOutputPaths.stats, {
+        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+        isDone: !hasMoreInteractions,
       });
 
       await Promise.all([outputDiff, outputCount, outputStats]);
 
-      if (process && process.send) {
-        process.send({
-          type: 'progress',
-          data: { interactionCounter: interactionCounter.toString() },
-        });
-      } else {
-        console.log(interactionCounter.toString());
-      }
+      notifyParent();
 
       console.timeEnd(`flushing ${c}`);
     }
 
     batcher.on('batch', () => {
-      queue.schedule(() => flush());
+      console.log('scheduling batch flush');
+      queue.schedule(() => {
+        console.log('executing batch flush');
+        return flush();
+      });
     });
 
     const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
@@ -156,16 +177,17 @@ export class DiffWorker {
       }
     );
 
-    await fs.ensureFile(diffOutputPaths.diffs);
-    await fs.ensureFile;
+    await fs.ensureDir(diffOutputPaths.base);
     await flush();
 
     for await (const item of interactionIterator) {
       // for (const x of [1, 2, 3]) {
       const { batchId, interaction, index } = item;
-
-      interactionCounter = interactionCounter + BigInt(1);
+      skippedInteractionsCounter = item.skippedInteractionsCounter;
+      diffedInteractionsCounter = item.diffedInteractionsCounter;
+      console.time(`serdes ${batchId} ${index}`);
       const deserializedInteraction = JsonHelper.fromInteraction(interaction);
+      console.timeEnd(`serdes ${batchId} ${index}`);
       console.time(`diff ${batchId} ${index}`);
       diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
         resolvers,
@@ -189,5 +211,6 @@ export class DiffWorker {
 
       batcher.add(null);
     }
+    hasMoreInteractions = false;
   }
 }

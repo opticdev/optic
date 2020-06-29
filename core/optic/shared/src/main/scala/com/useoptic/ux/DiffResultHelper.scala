@@ -11,7 +11,7 @@ import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.{Body, HttpInteraction}
-
+import com.useoptic.dsa.OpticIds
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
 

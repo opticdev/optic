@@ -9,6 +9,7 @@ import {
 import { DiffManager } from '../diffs/diff-manager';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
+import lockfile from 'proper-lockfile';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -114,8 +115,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   );
 
   ////////////////////////////////////////////////////////////////////////////////
-  //@TODO: router.get('/diffs/:diffId/{diffs,undocumented-urls,statistics,notifications}')
-  ////////////////////////////////////////////////////////////////////////////////
 
   router.get('/diffs/:diffId/notifications', async (req, res) => {
     const { diffId } = req.params;
@@ -126,7 +125,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
     function emit(data: any) {
       console.log('emit');
-      res.write(`data: {}\n\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
 
     const headers = {
@@ -137,8 +136,8 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     res.writeHead(200, headers);
     emit({ type: 'message', data: {} });
 
-    diffMetadata.manager.events.on('progress', () => {
-      emit({ type: 'message', data: {} });
+    diffMetadata.manager.events.on('progress', (data) => {
+      emit({ type: 'message', data });
     });
 
     req.on('close', () => {
@@ -158,7 +157,9 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
+      await lockfile.lock(diffOutputPaths.diffs);
       const contents = await fs.readJson(diffOutputPaths.diffs);
+      await lockfile.unlock(diffOutputPaths.diffs);
       res.json(contents);
     } catch (e) {
       res.status(404).json({
@@ -175,7 +176,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
+      await lockfile.lock(diffOutputPaths.undocumentedUrls);
       const contents = await fs.readJson(diffOutputPaths.undocumentedUrls);
+      await lockfile.unlock(diffOutputPaths.undocumentedUrls);
+
       res.json({
         urls: contents,
       });
@@ -194,7 +198,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
+      await lockfile.lock(diffOutputPaths.stats);
       const contents = await fs.readJson(diffOutputPaths.stats);
+      await lockfile.unlock(diffOutputPaths.stats);
+
       res.json(contents);
     } catch (e) {
       res.status(404).json({
