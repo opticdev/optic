@@ -1,5 +1,6 @@
 package com.useoptic.diff.helpers
 
+import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.UndocumentedUrlHelpers.{MethodAndPath, UrlCounter}
@@ -29,8 +30,13 @@ class UndocumentedUrlHelpers {
 class UndocumentedUrlIncrementalHelpers(spec: RfcState) {
   val grouping = Utilities.groupPathsByParentId(spec.requestsState.pathComponents)
 
+  def tryResolvePathId(url: String): Option[PathComponentId] = {
+    val pathId = Utilities.resolvePathByGrouping(url, grouping)
+    pathId
+  }
+
   def countUndocumentedUrls(interaction: HttpInteraction, urlCounter: UrlCounter): UrlCounter = {
-    val pathId = Utilities.resolvePathByGrouping(interaction.request.path, grouping)
+    val pathId = tryResolvePathId(interaction.request.path)
     if (pathId.isEmpty) {
       urlCounter.increment(MethodAndPath(interaction.request.method, interaction.request.path))
     }

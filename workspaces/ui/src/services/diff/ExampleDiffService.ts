@@ -28,7 +28,8 @@ export class ExampleCaptureService implements ICaptureService {
   async startDiff(
     events: any[],
     ignoreRequests: string[],
-    additionalCommands: IRfcCommand[]
+    additionalCommands: IRfcCommand[],
+    filters: { pathId: string; method: string }[]
   ): Promise<IStartDiffResponse> {
     return {
       diffId: uuidv4(),

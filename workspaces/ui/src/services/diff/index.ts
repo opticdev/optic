@@ -4,7 +4,8 @@ export interface ICaptureService {
   startDiff(
     events: any[],
     ignoreRequests: string[],
-    additionalCommands: IRfcCommand[]
+    additionalCommands: IRfcCommand[],
+    filters: { pathId: string; method: string }[]
   ): Promise<IStartDiffResponse>;
   loadInteraction(
     interactionPointer: string

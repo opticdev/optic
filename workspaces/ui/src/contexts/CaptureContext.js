@@ -112,7 +112,8 @@ export class CaptureStateStore extends React.Component {
     const config = await captureService.startDiff(
       ScalaJSHelpers.eventsJsArray(events),
       apiConfig.config.ignoreRequests || [],
-      this.state.additionalCommands
+      this.state.additionalCommands,
+      []
     );
 
     let notificationChannel = null;

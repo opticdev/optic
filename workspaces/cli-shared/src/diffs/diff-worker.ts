@@ -10,6 +10,7 @@ import {
   JsonHelper,
   opticEngine,
   RfcCommandContext,
+  ScalaJSHelpers,
 } from '@useoptic/domain';
 import fs from 'fs-extra';
 import Bottleneck from 'bottleneck';
@@ -20,6 +21,7 @@ export interface IDiffProjectionEmitterConfig {
   diffId: string;
   specFilePath: string;
   ignoreRequestsFilePath: string;
+  filtersFilePath: string;
   additionalCommandsFilePath: string;
   captureBaseDirectory: string;
   captureId: string;
@@ -37,6 +39,7 @@ export function getDiffOutputPaths(values: {
   const undocumentedUrls = path.join(base, 'undocumentedUrls.json');
   const events = path.join(base, 'events.json');
   const ignoreRequests = path.join(base, 'ignoreRequests.json');
+  const filters = path.join(base, 'filters.json');
   const additionalCommands = path.join(base, 'additionalCommands.json');
 
   return {
@@ -46,30 +49,37 @@ export function getDiffOutputPaths(values: {
     undocumentedUrls,
     events,
     ignoreRequests,
+    filters,
     additionalCommands,
   };
 }
+
 async function safeWriteJson(filePath: string, contents: any) {
   await fs.ensureFile(filePath);
   await lockfile.lock(filePath);
   await fs.writeJson(filePath, contents);
   await lockfile.unlock(filePath);
 }
+
 export class DiffWorker {
   constructor(private config: IDiffProjectionEmitterConfig) {}
 
   async run() {
     debugger;
     console.log('running');
-    console.time('load spec');
-    const ignoreRequests = await fs.readJson(
-      this.config.ignoreRequestsFilePath
-    );
-    const events: any[] = await fs.readJson(this.config.specFilePath);
-    const additionalCommands: any[] = await fs.readJson(
-      this.config.additionalCommandsFilePath
-    );
-    console.timeEnd('load spec');
+    console.time('load inputs');
+    const [
+      ignoreRequests,
+      events,
+      additionalCommands,
+      filters,
+    ] = await Promise.all([
+      fs.readJson(this.config.ignoreRequestsFilePath),
+      fs.readJson(this.config.specFilePath),
+      fs.readJson(this.config.additionalCommandsFilePath),
+      fs.readJson(this.config.filtersFilePath),
+    ]);
+    console.timeEnd('load inputs');
     console.time('build state');
     const batchId = 'bbb';
     const clientId = 'ccc'; //@TODO: should use real values
@@ -96,15 +106,33 @@ export class DiffWorker {
         interaction.request.path
       );
     }
+    function filterByEndpoint(endpoint: { pathId: string; method: string }) {
+      return function (interaction: IHttpInteraction) {
+        const pathId = ScalaJSHelpers.getOrUndefined(
+          undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
+        );
+        return (
+          endpoint.method === interaction.request.method &&
+          endpoint.pathId === pathId &&
+          !ignoredRequests.shouldIgnore(
+            interaction.request.method,
+            interaction.request.path
+          )
+        );
+      };
+    }
 
+    const interactionFilter =
+      filters.length > 0 ? filterByEndpoint(filters[0]) : filterIgnoredRequests;
     const interactionIterator = CaptureInteractionIterator(
       {
         captureId: this.config.captureId,
         captureBaseDirectory: this.config.captureBaseDirectory,
       },
-      filterIgnoredRequests
+      interactionFilter
     );
     debugger;
+
     let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
     let undocumentedUrls = opticEngine.UndocumentedUrlHelpers.newCounter();
     const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
@@ -122,6 +150,7 @@ export class DiffWorker {
     const queue = new Bottleneck({
       maxConcurrent: 1,
     });
+
     function notifyParent() {
       const progress = {
         diffedInteractionsCounter: diffedInteractionsCounter.toString(),
@@ -137,6 +166,7 @@ export class DiffWorker {
         console.log(progress);
       }
     }
+
     async function flush() {
       const c = diffedInteractionsCounter.toString();
 
