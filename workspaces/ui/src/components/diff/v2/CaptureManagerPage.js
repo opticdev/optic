@@ -185,7 +185,13 @@ function CaptureChooserComponent(props) {
   const specService = useSpecService();
   const classes = useStyles();
   const captureContext = useContext(AllCapturesContext);
-  const { endpointDiffs, unrecognizedUrls } = useCaptureContext();
+  const {
+    endpointDiffs,
+    unrecognizedUrls,
+    completed,
+    skipped,
+    processed,
+  } = useCaptureContext();
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
@@ -272,16 +278,17 @@ function CaptureChooserComponent(props) {
 
           <div className={classes.statsSection}>
             <div className={classes.progressWrapper}>
-              <Fade in={/* finished */ true}>
+              <Fade in={!completed}>
                 <LinearProgress variant="indeterminate" />
               </Fade>
             </div>
             <Typography
               component="div"
               variant="overline"
+              style={{ marginTop: 12 }}
               className={classes.progressStats}
             >
-              {'124'} processed {' | '} {'124'} skipped
+              {processed} processed {' | '} {skipped} skipped
             </Typography>
             <Typography
               component="div"
@@ -391,7 +398,6 @@ function EndpointDiffs(props) {
       </div>
       <List style={{ padding: 13, paddingTop: 4 }}>
         {endpointDiffs.map((i) => {
-          console.log(i);
           const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
           return (
             <EndpointsContextStore key={to} pathId={i.pathId} method={i.method}>
@@ -586,7 +592,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 300,
     maxWidth: 1200,
   },
-  statsSection: {},
+  statsSection: {
+    paddingBottom: theme.spacing(2),
+  },
   progressStats: {
     paddingLeft: theme.spacing(1),
     color: DocDarkGrey,

@@ -19,6 +19,9 @@ const initialState = (debouncer = null) => {
     additionalCommands: [],
     lastUpdate: null,
     pendingUpdates: false,
+    completed: false,
+    skipped: '0',
+    processed: '0',
 
     reloadDebounce: debouncer,
     unrecognizedUrls: [],
@@ -47,8 +50,18 @@ export class CaptureStateStore extends React.Component {
     }
   }
 
-  reload = async () => {
-    this.setState({ pendingUpdates: true, lastUpdate: new Date() });
+  reload = async (notifData) => {
+    const notifDataUpdates = (() => {
+      if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
+        return {
+          completed: !notifData.hasMoreInteractions,
+          skipped: notifData.skippedInteractionsCounter,
+          processed: notifData.diffedInteractionsCounter,
+        };
+      } else {
+        return {};
+      }
+    })();
 
     const { diffService } = this.state;
 
@@ -66,6 +79,9 @@ export class CaptureStateStore extends React.Component {
         this.setState({
           endpointDiffs: diffsResponse.diffs,
           unrecognizedUrls: urlsResponse,
+          pendingUpdates: true,
+          lastUpdate: new Date(),
+          ...notifDataUpdates,
         });
       } catch (e) {
         console.error('issue with reload, skipping', e);
@@ -85,6 +101,9 @@ export class CaptureStateStore extends React.Component {
           lastUpdate: null,
           pendingUpdates: false,
           config: null,
+          completed: false,
+          skipped: '0',
+          processed: '0',
         },
         resolve
       );
@@ -120,7 +139,8 @@ export class CaptureStateStore extends React.Component {
     if (config.notificationsUrl) {
       notificationChannel = new EventSource(config.notificationsUrl);
       notificationChannel.onmessage = (event) => {
-        this.state.reloadDebounce();
+        const { data } = JSON.parse(event.data);
+        this.state.reloadDebounce(data);
       };
       notificationChannel.onerror = (e) => {
         console.error(e);
@@ -168,6 +188,9 @@ export class CaptureStateStore extends React.Component {
       config,
       diffService,
       captureService,
+      completed,
+      skipped,
+      processed,
     } = this.state;
 
     const value = {
@@ -178,6 +201,9 @@ export class CaptureStateStore extends React.Component {
       unrecognizedUrls,
       diffService,
       captureService,
+      completed,
+      skipped,
+      processed,
       updatedAdditionalCommands: this.updatedAdditionalCommands,
     };
 

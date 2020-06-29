@@ -74,9 +74,7 @@ object DiffResultHelper {
         EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */)
       }
     }
-
-    endpointsFromDiff.map(i => s"${i.method} ${i.pathId} ${i.count}").foreach(println)
-
+    
     (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
   }
 
