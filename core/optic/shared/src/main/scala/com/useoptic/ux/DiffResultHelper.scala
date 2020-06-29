@@ -9,7 +9,7 @@ import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDes
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.types.capture.{Body, HttpInteraction}
-
+import com.useoptic.dsa.OpticIds
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
 
@@ -17,6 +17,7 @@ import scala.util.Try
 @JSExportAll
 object DiffResultHelper {
 
+  implicit val ids = OpticIds.generator
   private val stableRandomSeed = scala.util.Random.nextLong()
 
   def unmatchedUrls(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[NewEndpoint] = {
@@ -250,6 +251,7 @@ abstract class NewRegionDiff {
 
 
   def toSuggestion(interactions: Vector[HttpInteraction], currentRfcState: RfcState, inferPolymorphism: Boolean): Seq[InteractiveDiffInterpretation] = {
+    implicit val ids = OpticIds.generator
     val resolvers = ShapesResolvers.newResolver(currentRfcState)
     val basicInterpreter = new DefaultInterpreters(resolvers, currentRfcState)
     if (inferPolymorphism) {
