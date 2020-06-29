@@ -16,6 +16,8 @@ export async function* CaptureInteractionIterator(
   //@TODO: add a way to check if the capture has completed
 ) {
   let shouldStop = false;
+  let skippedInteractionsCounter = BigInt(0);
+  let diffedInteractionsCounter = BigInt(0);
   let currentBatchId = BigInt(0);
   while (!shouldStop) {
     const batchFilePath = path.join(
@@ -33,12 +35,16 @@ export async function* CaptureInteractionIterator(
     for await (const x of items) {
       const shouldEmit = filter(x);
       if (shouldEmit) {
+        diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
         yield {
           batchId: currentBatchId.toString(),
           index,
           interaction: x,
+          skippedInteractionsCounter,
+          diffedInteractionsCounter,
         };
       } else {
+        skippedInteractionsCounter = skippedInteractionsCounter + BigInt(1);
         console.log(`skipping ${x.request.method} ${x.request.path}`);
       }
       index = index + 1;

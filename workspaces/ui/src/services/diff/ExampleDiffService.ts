@@ -88,7 +88,8 @@ export class ExampleDiffService implements IDiffService {
     const capture = await this.specService.listCapturedSamples(captureId);
 
     return Promise.resolve({
-      interactionsCounter: capture.samples.length.toString(),
+      diffedInteractionsCounter: capture.samples.length.toString(),
+      skippedInteractionsCounter: '0',
     });
   }
 
