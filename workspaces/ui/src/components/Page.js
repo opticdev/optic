@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
+import { useLocation } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 
 const PageContext = React.createContext(null);
@@ -35,6 +36,7 @@ export default function Page(props) {
 
   return (
     <PageContext.Provider value={pageContext}>
+      <ScrollToPosition />
       <div className={classes.root}>{props.children}</div>;
     </PageContext.Provider>
   );
@@ -61,6 +63,19 @@ export function usePageTitle(title, injectedContext) {
   }, [title]);
 
   return title;
+}
+
+
+// enables scrolling to a specific position on the page - defaults to the top left (0, 0)
+
+function ScrollToPosition({x = 0, y = 0}) {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(x, y);
+  }, [pathname]);
+
+  return null;
 }
 
 // require the use of sub components in context of the Page, to nudge the use of them

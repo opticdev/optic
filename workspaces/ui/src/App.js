@@ -23,7 +23,6 @@ class App extends React.Component {
         <ThemeProvider theme={appTheme}>
           <SnackbarProvider maxSnack={1}>
             <BrowserRouter>
-              <ScrollToTop/>
               <>
                 <Route path="/" component={TopLevelRoutes} />
               </>
@@ -107,16 +106,5 @@ function AppError() {
   );
 }
 
-// used to make sure we don't preserve scroll between pages
-
-function ScrollToTop() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-}
 
 export default App;
