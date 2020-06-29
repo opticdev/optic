@@ -16,8 +16,6 @@ export class DiffManager {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
 
-  constructor() {}
-
   async start(config: IDiffManagerConfig) {
     const outputPaths = getDiffOutputPaths(config);
     const scriptConfig: IDiffProjectionEmitterConfig = {
@@ -35,7 +33,7 @@ export class DiffManager {
     );
     child.on('message', (x: any) => {
       console.log(x);
-      this.events.emit('progress');
+      this.events.emit(x.type, x.data);
     });
     child.on('exit', function () {
       console.log(arguments);
@@ -45,7 +43,7 @@ export class DiffManager {
 
   async stop() {
     if (this.child) {
-      this.child.kill();
+      this.child.kill('SIGTERM');
     }
   }
 }
