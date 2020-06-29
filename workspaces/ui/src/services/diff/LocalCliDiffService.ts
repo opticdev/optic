@@ -47,7 +47,7 @@ export class LocalCliDiffService implements IDiffService {
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const url = `${this.baseUrl}/undocumented-urls`;
     const json = (await JsonHttpClient.getJson(url)).urls;
-    const result = UrlCounterHelper.fromJsonToSeq(json);
+    const result = UrlCounterHelper.fromJsonToSeq(json, this.rfcState);
     return result;
   }
 

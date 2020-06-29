@@ -1,6 +1,7 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.requests.Commands.PathComponentId
+import com.useoptic.contexts.requests.projections.AllEndpointsProjection
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers.InteractionPointersGroupedByDiff
@@ -8,6 +9,7 @@ import com.useoptic.diff.helpers.UndocumentedUrlHelpers.UrlCounter
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
+import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.{Body, HttpInteraction}
 import com.useoptic.dsa.OpticIds
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -29,13 +31,12 @@ object DiffResultHelper {
     val random = scala.util.Random
     random.setSeed(stableRandomSeed)
 
-    def getRandomElement: Option[NewEndpoint] = urls match {
-      case _ => urls.lift(random.nextInt(urls.size))
-    }
-
     if (urls.size > 250) {
-      val urlsToShow = Range(0, 250).flatMap(i => getRandomElement).distinct
-      SplitUndocumentedUrls(urlsToShow.toVector.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
+      import com.useoptic.utilities.DistinctBy._
+      //known paths should of course get preference
+      val knownPaths = urls.filter(_.pathId.isDefined).distinctByIfDefined(i => (Some(i.pathId, i.method)))
+      val urlsToShow = random.shuffle(urls).take(250 - knownPaths.length)
+      SplitUndocumentedUrls( (knownPaths ++ urlsToShow).toVector.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
     } else {
       SplitUndocumentedUrls(urls.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
     }
@@ -49,21 +50,35 @@ object DiffResultHelper {
   }
 
   def endpointDiffs(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[EndpointDiffs] = {
-    diffs.filterNot {
-      case (a: UnmatchedRequestUrl, _) => true
-      case (a: UnmatchedRequestMethod, _) => true
-      case _ => false
-    }.flatMap {
-      case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
-        EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers))
-      })
-    }.groupBy(i => (i.pathId, i.method)).map {
-      case ((path, method), diffs) => {
-        val diffsForTHisOne = diffs.flatMap(_.diffs).toMap
-        EndpointDiffs(method, path, diffsForTHisOne)
+
+    val endpointsFromDiff = {
+      diffs.filterNot {
+        case (a: UnmatchedRequestUrl, _) => true
+        case (a: UnmatchedRequestMethod, _) => true
+        case _ => false
+      }.flatMap {
+        case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
+          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers))
+        })
+      }.groupBy(i => (i.pathId, i.method)).map {
+        case ((path, method), diffs) => {
+          val diffsForTHisOne = diffs.flatMap(_.diffs).toMap
+          EndpointDiffs(method, path, diffsForTHisOne)
+        }
+      }
+    }.toVector
+
+    val additionalEndpointsWithoutDiffs = AllEndpointsProjection.fromRfcState(rfcState).collect {
+      //collect other endpoints we know exist, that don't have a diff
+      case endpoint if !endpointsFromDiff.exists(i => i.pathId == endpoint.pathId && i.method == endpoint.method) => {
+        EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */)
       }
     }
-  }.toVector.sortBy(_.diffs.size).reverse
+
+    endpointsFromDiff.map(i => s"${i.method} ${i.pathId} ${i.count}").foreach(println)
+
+    (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
+  }
 
   def interactionsWithDiffsCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.flatMap(_._2).toSet.size
   def diffCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.size
