@@ -75,7 +75,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
-      const { ignoreRequests, events, additionalCommands } = req.body;
+      const { ignoreRequests, events, additionalCommands, filters } = req.body;
       const id = dependencies.idGenerator.nextId();
       const manager = new DiffManager();
       const diffOutputPaths = getDiffOutputPaths({
@@ -86,6 +86,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       await fs.ensureDir(diffOutputPaths.base);
       await fs.writeJson(diffOutputPaths.events, events);
       await fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests);
+      await fs.writeJson(diffOutputPaths.filters, filters);
       await fs.writeJson(
         diffOutputPaths.additionalCommands,
         additionalCommands
