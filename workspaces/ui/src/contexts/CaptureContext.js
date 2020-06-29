@@ -53,17 +53,23 @@ export class CaptureStateStore extends React.Component {
     const { diffService } = this.state;
 
     if (diffService) {
-      const [diffsResponse, urlsResponse] = await Promise.all([
-        diffService.listDiffs(),
-        diffService.listUnrecognizedUrls(),
-      ]);
+      try {
+        const [diffsResponse, urlsResponse] = await Promise.all([
+          diffService.listDiffs(),
+          diffService.listUnrecognizedUrls(),
+        ]);
 
-      console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
-
-      this.setState({
-        endpointDiffs: diffsResponse.diffs,
-        unrecognizedUrls: urlsResponse,
-      });
+        console.log('results', [
+          diffsResponse.diffs.length,
+          urlsResponse.length,
+        ]);
+        this.setState({
+          endpointDiffs: diffsResponse.diffs,
+          unrecognizedUrls: urlsResponse,
+        });
+      } catch (e) {
+        console.error('issue with reload, skipping', e);
+      }
     }
   };
 
@@ -134,13 +140,16 @@ export class CaptureStateStore extends React.Component {
       captureId
     );
 
-    this.setState({
-      config,
-      diffService,
-      captureService,
-      notificationChannel,
-      pendingUpdates: false,
-    });
+    this.setState(
+      {
+        config,
+        diffService,
+        captureService,
+        notificationChannel,
+        pendingUpdates: false,
+      },
+      () => this.reload()
+    );
   };
 
   updatedAdditionalCommands = (additionalCommands) => {
@@ -173,12 +182,12 @@ export class CaptureStateStore extends React.Component {
 
     return (
       <CaptureContext.Provider value={value}>
-        {JSON.stringify({
-          pendingUpdates,
-          lastUpdate,
-          endpointDiffs: endpointDiffs.length,
-          unrecognizedUrls: unrecognizedUrls.length,
-        })}
+        {/*{JSON.stringify({*/}
+        {/*  pendingUpdates,*/}
+        {/*  lastUpdate,*/}
+        {/*  endpointDiffs: endpointDiffs.length,*/}
+        {/*  unrecognizedUrls: unrecognizedUrls.length,*/}
+        {/*})}*/}
         {this.props.children}
       </CaptureContext.Provider>
     );

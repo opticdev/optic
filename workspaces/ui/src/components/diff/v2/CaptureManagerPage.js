@@ -9,7 +9,12 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { DocDarkGrey } from '../../docs/DocConstants';
+import {
+  Dark,
+  DocDarkGrey,
+  DocDivider,
+  DocGrey,
+} from '../../docs/DocConstants';
 import { DocSubGroup } from '../../docs/DocSubGroup';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -25,6 +30,7 @@ import {
 } from '../../../contexts/SpecServiceContext';
 import { useRouterPaths } from '../../../RouterPaths';
 import { RfcContext } from '../../../contexts/RfcContext';
+import classNames from 'classnames';
 import {
   DiffResultHelper,
   JsonHelper,
@@ -54,60 +60,12 @@ import {
   CaptureStateStore,
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    width: '100%',
-    alignSelf: 'center', // center on page
-    flexGrow: 1, // grow to fill whole page vertically
-    display: 'flex',
-    flexDirection: 'column',
-    maxWidth: theme.breakpoints.values.lg,
-    paddingTop: 35,
-  },
-  chips: {
-    marginLeft: 10,
-  },
-  scroll: {
-    overflow: 'scroll',
-    flex: 1,
-    paddingLeft: 40,
-    paddingRight: 40,
-    paddingBottom: 300,
-    maxWidth: 1200,
-  },
-  header: {
-    display: 'flex',
-    flexDirection: 'row',
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    padding: 8,
-    paddingLeft: 20,
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    width: 250,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  stats: {
-    marginTop: 20,
-    paddingBottom: 15,
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  listItemInner: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  row: {
-    marginBottom: 11,
-  },
-}));
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { CustomNavTab } from './CustomNavTab';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import TypeModal from '../../shared/JsonTextarea';
+import Fade from '@material-ui/core/Fade';
 
 const {
   Context: AllCapturesContext,
@@ -176,7 +134,7 @@ export function CaptureManagerPage(props) {
   return (
     <Page title="Review API Diffs">
       <Page.Navbar mini={true} />
-      <Page.Body>
+      <Page.Body padded={false}>
         <AllCapturesStore>
           <IgnoreDiffStore>
             <Switch>
@@ -217,13 +175,25 @@ export const CaptureManager = ({}) => {
   );
 };
 
+const subtabs = {
+  ENDPOINT_DIFF: 'ENDPOINT_DIFF',
+  UNDOCUMENTED_URL: 'UNDOCUMENTED_URL',
+};
+
 function CaptureChooserComponent(props) {
   const { captureId } = props;
   const specService = useSpecService();
   const classes = useStyles();
   const captureContext = useContext(AllCapturesContext);
+  const { endpointDiffs, unrecognizedUrls } = useCaptureContext();
   const history = useHistory();
   const baseUrl = useBaseUrl();
+
+  const realEndpointDiffCount = endpointDiffs.filter((i) => i.count > 0).length;
+  //these numbers are a bit funcky because it also counts requests/reponses the other count does not
+  const totalEndpoints = endpointDiffs.length;
+
+  const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
 
   useEffect(() => {
     global.debugOptic = debugDump(specService, captureId);
@@ -235,57 +205,117 @@ function CaptureChooserComponent(props) {
   }
 
   return (
-    <Paper>
-      <div className={classes.header}>
-        <FiberManualRecordIcon
-          color="secondary"
-          fontSize="small"
-          style={{ marginRight: 10 }}
-        />
-        <Typography variant="h6" style={{ fontSize: 19 }}>
-          Local Capture
-        </Typography>
-        <div style={{ flex: 1 }} />
+    <>
+      <div className={classes.navigationContainer}>
+        <div className={classes.navRoot}>
+          <div className={classes.header}>
+            <FiberManualRecordIcon
+              color="secondary"
+              fontSize="small"
+              style={{ marginRight: 10 }}
+            />
+            <Typography variant="h6" style={{ fontSize: 19 }}>
+              Local Capture
+            </Typography>
+          </div>
 
-        <FormControl className={classes.formControl}>
-          <Select
-            placeholder="Select Capture"
-            value={captureId}
-            onChange={handleChange}
+          <FormControl className={classes.formControl} fullWidth>
+            <Select
+              placeholder="Select Capture"
+              value={captureId}
+              onChange={handleChange}
+            >
+              {captureContext.captures.map((capture, index) => {
+                return (
+                  <MenuItem value={capture.captureId} key={capture.captureId}>
+                    <ListItemText
+                      primary={`${time.ago(capture.lastUpdate)} ${
+                        index === 0 ? '(LATEST) ' : ''
+                      } `}
+                    />
+                    <ListItemSecondaryAction>
+                      {capture.hasDiff && (
+                        <WarningIcon
+                          fontSize="small"
+                          color="secondary"
+                          style={{ marginRight: 8, paddingTop: 5 }}
+                        />
+                      )}
+                    </ListItemSecondaryAction>
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+
+          <DocDivider style={{ marginTop: 22, marginBottom: 15 }} />
+
+          <Tabs
+            orientation="vertical"
+            className={classes.tabs}
+            onChange={(_, value) => setTab(value)}
+            value={tab}
           >
-            {captureContext.captures.map((capture, index) => {
-              return (
-                <MenuItem value={capture.captureId} key={capture.captureId}>
-                  <ListItemText
-                    primary={`${time.ago(capture.lastUpdate)} ${
-                      index === 0 ? '(LATEST) ' : ''
-                    } `}
-                  />
-                  <ListItemSecondaryAction>
-                    {capture.hasDiff && (
-                      <WarningIcon
-                        fontSize="small"
-                        color="secondary"
-                        style={{ marginRight: 8, paddingTop: 5 }}
-                      />
-                    )}
-                  </ListItemSecondaryAction>
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
+            <CustomNavTab
+              label={`Endpoint Diffs (${realEndpointDiffCount} / ${totalEndpoints}) `}
+              value={subtabs.ENDPOINT_DIFF}
+            />
+            <CustomNavTab
+              label={`Undocumented URLs (${unrecognizedUrls.length})`}
+              value={subtabs.UNDOCUMENTED_URL}
+            />
+          </Tabs>
+
+          <DocDivider style={{ marginTop: 22, marginBottom: 15 }} />
+
+          <div style={{ flex: 1 }} />
+
+          <div className={classes.statsSection}>
+            <div className={classes.progressWrapper}>
+              <Fade in={/* finished */ true}>
+                <LinearProgress variant="indeterminate" />
+              </Fade>
+            </div>
+            <Typography
+              component="div"
+              variant="overline"
+              className={classes.progressStats}
+            >
+              {'124'} processed {' | '} {'124'} skipped
+            </Typography>
+            <Typography
+              component="div"
+              variant="overline"
+              className={classes.progressStats}
+            >
+              Last observation {'9 minutes ago'}
+            </Typography>
+          </div>
+        </div>
       </div>
-    </Paper>
+      <div className={classes.pageContainer}>
+        <div className={classes.center}>
+          {subtabs.ENDPOINT_DIFF === tab && (
+            <EndpointDiffs captureId={captureId} />
+          )}
+          {subtabs.UNDOCUMENTED_URL === tab && (
+            <UnrecognizedUrls captureId={captureId} />
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
+  const classes = useStyles();
   return (
     // sessionId={props.match.params.captureId}
     // specService={specService}
-    <DiffPageNew {...props} />
+    <div className={classes.pageContainer}>
+      <DiffPageNew {...props} />
+    </div>
   );
 }
 
@@ -310,9 +340,6 @@ function CaptureDiffWrapper(props) {
   return (
     <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
       <CaptureChooserComponent captureId={captureId} />
-      <CaptureDiffStat />
-      <EndpointDiffs captureId={captureId} />
-      <UnrecognizedUrls captureId={captureId} />
     </CaptureStateStore>
   );
 }
@@ -348,21 +375,30 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
+  const realCount = endpointDiffs.filter((i) => i.count > 0).length;
+
   //also available
   // stats.captureCompleted
   // stats.processed
   return (
-    <Show when={Boolean(endpointDiffs.length)}>
-      <DocSubGroup title={`Endpoint Diffs (${endpointDiffs.length})`}>
-        <List>
-          {endpointDiffs.map((i) => {
-            console.log(i);
-            const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
-            return (
-              <EndpointsContextStore
-                key={to}
-                pathId={i.pathId}
-                method={i.method}
+    <>
+      <div className={classes.stats}>
+        <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
+          {realCount > 0
+            ? 'Some endpoints are exhibiting undocumented behavior'
+            : 'All endpoints are working as specified'}
+        </Typography>
+      </div>
+      <List style={{ padding: 13, paddingTop: 4 }}>
+        {endpointDiffs.map((i) => {
+          console.log(i);
+          const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
+          return (
+            <EndpointsContextStore key={to} pathId={i.pathId} method={i.method}>
+              <Paper
+                className={classNames(classes.paper, {
+                  [classes.disabled]: i.count === 0,
+                })}
               >
                 <EndpointsContext.Consumer>
                   {({ endpointDescriptor }) => (
@@ -373,12 +409,12 @@ function EndpointDiffs(props) {
                       to={to}
                     >
                       <div className={classes.listItemInner}>
-                        <Typography
-                          component="div"
-                          variant="overline"
-                          style={{ color: DocDarkGrey }}
-                        >
-                          {endpointDescriptor.purpose}
+                        <Typography component="div" variant="subtitle2">
+                          {endpointDescriptor.endpointPurpose || (
+                            <span style={{ color: DocDarkGrey }}>
+                              Unamed Endpoint
+                            </span>
+                          )}
                         </Typography>
                         <PathAndMethod
                           method={endpointDescriptor.httpMethod}
@@ -386,33 +422,23 @@ function EndpointDiffs(props) {
                         />
                       </div>
                       <ListItemSecondaryAction>
-                        <ShowSpan when={i.addedCount > 0}>
+                        <ShowSpan when={i.count > 0}>
                           <Chip
                             className={classes.chips}
                             size="small"
-                            label={i.addedCount}
-                            style={{
-                              backgroundColor: AddedGreenBackground,
-                            }}
-                          />
-                        </ShowSpan>
-                        <ShowSpan when={i.removedCount > 0}>
-                          <Chip
-                            className={classes.chips}
-                            size="small"
-                            label={i.removedCount}
-                            style={{
-                              backgroundColor: RemovedRedBackground,
-                            }}
-                          />
-                        </ShowSpan>
-                        <ShowSpan when={i.changedCount > 0}>
-                          <Chip
-                            className={classes.chips}
-                            size="small"
-                            label={i.changedCount}
+                            label={`Diffs: ${i.count}`}
                             style={{
                               backgroundColor: ChangedYellowBackground,
+                            }}
+                          />
+                        </ShowSpan>
+                        <ShowSpan when={i.count === 0}>
+                          <Chip
+                            className={classes.chips}
+                            size="small"
+                            label={`No Diffs`}
+                            style={{
+                              backgroundColor: AddedGreenBackground,
                             }}
                           />
                         </ShowSpan>
@@ -420,12 +446,12 @@ function EndpointDiffs(props) {
                     </ListItem>
                   )}
                 </EndpointsContext.Consumer>
-              </EndpointsContextStore>
-            );
-          })}
-        </List>
-      </DocSubGroup>
-    </Show>
+              </Paper>
+            </EndpointsContextStore>
+          );
+        })}
+      </List>
+    </>
   );
 }
 
@@ -444,43 +470,56 @@ function UnrecognizedUrls(props) {
   const urls = JsonHelper.seqToJsArray(urlsSplit.urls);
 
   return (
-    <Show when={urlsSplit.showing > 0}>
-      <DocSubGroup title={`Undocumented URLs (${urlsSplit.totalCount})`}>
-        <List>
-          {urls.map((i) => {
-            return (
-              // <div>{i.toString()}</div>
-              <NewUrlModal
-                key={i.toString()}
-                allUnmatchedPaths={allUnmatchedPaths}
-                newUrl={i}
-                onAdd={(result) => {
-                  const { pathId, method } = result;
-                  const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
-                  history.push(to);
-                }}
-              >
-                <ListItem button className={classes.row}>
-                  <div className={classes.listItemInner}>
-                    <PathAndMethod method={i.method} path={i.path} />
-                  </div>
-                  <ListItemSecondaryAction>
-                    <Chip
-                      className={classes.chips}
-                      size="small"
-                      label={i.count}
-                      style={{
-                        backgroundColor: AddedGreenBackground,
-                      }}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              </NewUrlModal>
-            );
-          })}
-        </List>
-      </DocSubGroup>
-    </Show>
+    <>
+      <div className={classes.stats}>
+        <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
+          Optic observed{' '}
+          <Stat number={urlsSplit.totalCount || 0} label="undocumented url" />.
+        </Typography>
+      </div>
+
+      <Show when={urlsSplit.totalCount >= 250}>
+        <div className={classes.subStat}>
+          <Typography variant="caption" style={{ color: DocGrey }}>
+            Showing {urls.length} undocumented URLs. Start documenting the new
+            endpoints or ignore the paths in your optic.yml file.
+          </Typography>
+        </div>
+      </Show>
+
+      <List>
+        {urls.map((i) => {
+          return (
+            <NewUrlModal
+              key={i.toString()}
+              allUnmatchedPaths={allUnmatchedPaths}
+              newUrl={i}
+              onAdd={(result) => {
+                const { pathId, method } = result;
+                const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
+                history.push(to);
+              }}
+            >
+              <ListItem button className={classes.row}>
+                <div className={classes.listItemInner}>
+                  <PathAndMethod method={i.method} path={i.path} />
+                </div>
+                <ListItemSecondaryAction>
+                  <Chip
+                    className={classes.chips}
+                    size="small"
+                    label={i.count}
+                    style={{
+                      backgroundColor: AddedGreenBackground,
+                    }}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+            </NewUrlModal>
+          );
+        })}
+      </List>
+    </>
   );
 }
 
@@ -505,3 +544,99 @@ const Stat = ({ number, label }) => {
     </span>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    height: '100vh',
+    overflow: 'hidden',
+  },
+  navigationContainer: {
+    width: 280,
+    overflow: 'hidden',
+    display: 'flex',
+  },
+  pageContainer: {
+    display: 'flex',
+    flexGrow: 1,
+    flexShrink: 1,
+    overflow: 'scroll',
+    height: '100vh',
+    justifyContent: 'center',
+  },
+  navRoot: {
+    flexGrow: 1,
+    position: 'fixed',
+    width: 'inherit',
+    height: '100vh',
+    overflowY: 'scroll',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
+    background: theme.palette.grey[100],
+  },
+  chips: {
+    marginLeft: 10,
+  },
+  tabs: {
+    marginLeft: theme.spacing(4),
+  },
+  center: {
+    flex: 1,
+    paddingBottom: 300,
+    maxWidth: 1200,
+  },
+  statsSection: {},
+  progressStats: {
+    paddingLeft: theme.spacing(1),
+    color: DocDarkGrey,
+  },
+  progressWrapper: {
+    height: 6,
+    width: '100%',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexShrink: 1,
+    width: '100%',
+    alignItems: 'center',
+    margin: theme.spacing(2),
+  },
+  formControl: {
+    paddingLeft: 35,
+    paddingRight: 15,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+  stats: {
+    marginTop: 20,
+    paddingBottom: 15,
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  subStat: {
+    paddingBottom: 15,
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  listItemInner: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  row: {
+    marginBottom: 11,
+  },
+  disabled: {
+    pointerEvents: 'none',
+    opacity: 0.5,
+  },
+  paper: {
+    marginBottom: 15,
+  },
+}));
