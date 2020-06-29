@@ -25,6 +25,7 @@ export class DiffManager {
       specFilePath: outputPaths.events,
       ignoreRequestsFilePath: outputPaths.ignoreRequests,
       additionalCommandsFilePath: outputPaths.additionalCommands,
+      filtersFilePath: outputPaths.filters,
     };
     console.log(JSON.stringify(scriptConfig));
     const child = runManagedScriptByName(

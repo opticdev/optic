@@ -121,13 +121,15 @@ export class LocalCliCaptureService implements ICaptureService {
   async startDiff(
     events: any[],
     ignoreRequests: string[],
-    additionalCommands: IRfcCommand[]
+    additionalCommands: IRfcCommand[],
+    filters: { pathId: string; method: string }[]
   ): Promise<IStartDiffResponse> {
     const url = `${this.baseUrl}/diffs`;
     return JsonHttpClient.postJson(url, {
       ignoreRequests,
       additionalCommands,
       events,
+      filters,
     });
   }
 
