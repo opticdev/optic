@@ -56,6 +56,9 @@ class CommandAndProxySessionManager {
     userDebugLogger(
       `All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`
     );
+    
+    console.log(`Your API is being monitored by optic at ${this.config.serviceConfig.host}:${this.config.proxyConfig.port}`);
+    
     const promises = [];
     developerDebugLogger(this.config);
     if (this.config.command) {
