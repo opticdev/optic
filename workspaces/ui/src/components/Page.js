@@ -34,6 +34,13 @@ export default function Page(props) {
     document.title = `${title} - Optic`;
   }, [title]);
 
+  const { pathname } = useLocation();
+  const scrollToTop = true; // change to be determined by page context
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname && scrollToTop]);
+
   return (
     <PageContext.Provider value={pageContext}>
       <ScrollToPosition />
@@ -64,6 +71,7 @@ export function usePageTitle(title, injectedContext) {
 
   return title;
 }
+
 
 
 // enables scrolling to a specific position on the page - defaults to the top left (0, 0)
