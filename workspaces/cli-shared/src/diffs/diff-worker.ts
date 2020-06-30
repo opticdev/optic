@@ -1,4 +1,4 @@
-import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
+import { cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq } from '@useoptic/domain-utilities';
 import { parseIgnore } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import {
@@ -92,7 +92,7 @@ export class DiffWorker {
     const {
       rfcState,
       resolvers,
-    } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+    } = cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
       events,
       commandsContext,
       opticEngine.CommandSerialization.fromJs(additionalCommands)
