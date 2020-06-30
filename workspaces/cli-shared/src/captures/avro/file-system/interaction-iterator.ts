@@ -9,12 +9,30 @@ import { CaptureId } from '@useoptic/saas-types';
 export interface FilterPredicate<T> {
   (item: T): boolean;
 }
-
+export type InteractionIteratorItem =
+  | {
+      hasMoreInteractions: false;
+      interaction: null;
+      skippedInteractionsCounter: bigint;
+      diffedInteractionsCounter: bigint;
+    }
+  | {
+      hasMoreInteractions: true;
+      interaction: {
+        context: {
+          batchId: string;
+          index: number;
+        };
+        value: IHttpInteraction;
+      } | null;
+      skippedInteractionsCounter: bigint;
+      diffedInteractionsCounter: bigint;
+    };
 export async function* CaptureInteractionIterator(
   config: IFileSystemCaptureLoaderConfig,
   filter: FilterPredicate<IHttpInteraction>
   //@TODO: add a way to check if the capture has completed
-) {
+): AsyncGenerator<InteractionIteratorItem> {
   let shouldStop = false;
   let skippedInteractionsCounter = BigInt(0);
   let diffedInteractionsCounter = BigInt(0);
@@ -37,20 +55,38 @@ export async function* CaptureInteractionIterator(
       if (shouldEmit) {
         diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
         yield {
+            hasMoreInteractions: true,
+            interaction: {
+              context: {
           batchId: currentBatchId.toString(),
           index,
-          interaction: x,
+              },
+              value: x,
+            },
           skippedInteractionsCounter,
           diffedInteractionsCounter,
         };
       } else {
         skippedInteractionsCounter = skippedInteractionsCounter + BigInt(1);
+        yield {
+          hasMoreInteractions: true,
+          interaction: null,
+          skippedInteractionsCounter,
+          diffedInteractionsCounter,
+        };
         console.log(`skipping ${x.request.method} ${x.request.path}`);
       }
       index = index + 1;
     }
     currentBatchId = currentBatchId + BigInt(1);
   }
+
+  yield {
+    hasMoreInteractions: false,
+    interaction: null,
+    skippedInteractionsCounter,
+    diffedInteractionsCounter,
+  };
 }
 
 export async function* BatchInteractionIterator(batchFilePath: string) {

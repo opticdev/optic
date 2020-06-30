@@ -211,19 +211,28 @@ export class DiffWorker {
     await flush();
 
     for await (const item of interactionIterator) {
-      // for (const x of [1, 2, 3]) {
-      const { batchId, interaction, index } = item;
       skippedInteractionsCounter = item.skippedInteractionsCounter;
       diffedInteractionsCounter = item.diffedInteractionsCounter;
+      hasMoreInteractions = item.hasMoreInteractions;
+      if (!hasMoreInteractions) {
+        // @GOTCHA item.interaction.value should not be present when hasMoreInteractions is false
+        break;
+      }
+      if (!item.interaction) {
+        continue;
+      }
+      const { batchId, index } = item.interaction.context;
       console.time(`serdes ${batchId} ${index}`);
-      const deserializedInteraction = JsonHelper.fromInteraction(interaction);
+      const deserializedInteraction = JsonHelper.fromInteraction(
+        item.interaction.value
+      );
       console.timeEnd(`serdes ${batchId} ${index}`);
       console.time(`diff ${batchId} ${index}`);
       diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
         resolvers,
         rfcState,
         deserializedInteraction,
-        interactionPointerConverter.toPointer(interaction, {
+        interactionPointerConverter.toPointer(item.interaction.value, {
           interactionIndex: index,
           batchId,
         }),
@@ -236,11 +245,9 @@ export class DiffWorker {
         undocumentedUrls
       );
       console.timeEnd(`count ${batchId} ${index}`);
-
-      // }
-
       batcher.add(null);
     }
     hasMoreInteractions = false;
+    batcher.add(null);
   }
 }
