@@ -122,7 +122,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     );
 
     ////////////////////////////////////////////////////////////////////////////////
-
+    process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
     const sessionManager = new CommandAndProxySessionManager(taskConfig);
 
     await sessionManager.run(persistenceManager);
