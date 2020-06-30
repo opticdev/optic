@@ -652,10 +652,10 @@ function useCompassTargetTracker(isEnabled) {
     compassState.width,
   ]);
 
-  useEffect(() => {
-    animationRaf.current = requestAnimationFrame(onAnimationFrame);
-    return () => cancelAnimationFrame(animationRaf.current);
-  }, [onAnimationFrame]);
+  // useEffect(() => {
+  //   animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  //   return () => cancelAnimationFrame(animationRaf.current);
+  // }, [onAnimationFrame]);
 
   return {
     ref: elementRef,

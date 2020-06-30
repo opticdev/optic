@@ -30,6 +30,7 @@ class _DiffContextStore extends React.Component {
       acceptedSuggestions,
       setTabTo,
       diffsForThisEndpoint,
+      completed,
     } = this.props;
 
     const setSelectedDiff = (diff) => {
@@ -48,6 +49,7 @@ class _DiffContextStore extends React.Component {
 
     const context = {
       diffsForThisEndpoint,
+      completed,
       selectedDiff: this.state.selectedDiff,
       setSelectedDiff,
       isFinishing: this.state.isFinishing,
