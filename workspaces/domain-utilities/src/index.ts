@@ -70,6 +70,18 @@ export function cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
   return { resolvers, rfcState };
 }
 
+export function cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
+  events: any[],
+  commandsContext: any,
+  additionalCommandsSeq: any
+) {
+  return cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+    events,
+    commandsContext,
+    JsonHelper.seqToJsArray(additionalCommandsSeq)
+  );
+}
+
 export function rfcStateFromEvents(events: any[]) {
   const { rfcState } = universeFromEvents(events);
   return rfcState;
