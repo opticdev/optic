@@ -321,7 +321,9 @@ function RequestDiffWrapper(props) {
     // sessionId={props.match.params.captureId}
     // specService={specService}
     <div className={classes.pageContainer}>
-      <DiffPageNew {...props} />
+      <div className={classes.center}>
+        <DiffPageNew {...props} />
+      </div>
     </div>
   );
 }
