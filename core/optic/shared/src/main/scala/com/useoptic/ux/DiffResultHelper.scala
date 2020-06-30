@@ -74,7 +74,7 @@ object DiffResultHelper {
         EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */)
       }
     }
-    
+
     (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
   }
 
@@ -274,12 +274,15 @@ abstract class NewRegionDiff {
     }
   }
 
-  override def toString: PathComponentId = diff.toString + interactionPointers.toString()
+  override def toString(): String = diff.toString + interactionPointers.toString()
 
 }
 
 @JSExportAll
 abstract class BodyDiff {
+
+  def isSameAs(b: BodyDiff): Boolean = this.diff == b.diff
+
   val diff: InteractionDiffResult
   val location: Seq[String]
   val interactionPointers: Seq[String]

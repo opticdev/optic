@@ -3,7 +3,7 @@ package com.useoptic
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.diff.shapes.ShapeDiffResult
-import com.useoptic.ux.{BodyShapeDiffBlock, DiffBlock, NewRegionDiff}
+import com.useoptic.ux.{BodyDiff, BodyShapeDiffBlock, DiffBlock, NewRegionDiff}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -31,5 +31,18 @@ object CompareEquality {
     } else {
       false
     }
+  }
+
+  def betweenBodyDiffs(aBodyRegions: js.Array[BodyDiff], bBodyRegions: js.Array[BodyDiff]): Boolean = {
+    if (aBodyRegions.size == bBodyRegions.size) {
+      aBodyRegions.zip(bBodyRegions).forall {
+        case (a, b) => a.isSameAs(b)
+      }
+    } else {
+      false
+    }
+  }
+  def betweenSelectedDiffs(aBodyRegions: js.UndefOr[BodyDiff], bBodyRegions: js.UndefOr[BodyDiff]): Boolean = {
+    aBodyRegions.toOption != bBodyRegions.toOption
   }
 }

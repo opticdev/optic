@@ -58,6 +58,394 @@ import {
   useInitialBodyPreview,
   useInteractionWithPointer,
 } from './DiffHooks';
+import { Show } from '../../shared/Show';
+
+export default function DiffPreview() {
+  const classes = useStyles();
+
+  return (
+    <Paper className={classes.wrapper} elevation={2}>
+      <div className={classes.header}>
+        <Typography style={{ marginLeft: 11 }} variant="subtitle2">
+          The Field X was added
+        </Typography>
+        <div style={{ flex: 1 }} />
+        {addition}
+        {update}
+        {removal}
+        <Button style={{ marginLeft: 5 }}>Resolve</Button>
+      </div>
+      <div className={classes.diffs}>
+        <div className={classes.hunk}>
+          <div className={classes.hunkHeader}>
+            <Typography
+              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
+              variant="subtitle2"
+            >
+              Request Body
+            </Typography>
+            <Typography
+              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
+              variant="subtitle2"
+            >
+              application/json
+            </Typography>
+          </div>
+        </div>
+      </div>
+    </Paper>
+  );
+}
+
+function _NewRegions(props) {
+  const { newRegions, ignoreDiff, endpointPurpose, method, fullPath } = props;
+
+  const classes = useStyles();
+
+  const { acceptSuggestion } = useContext(DiffContext);
+  const { diffService, captureService } = useCaptureContext();
+
+  const [deselected, setDeselected] = useState([]);
+  const [showExpanded, setShowExpanded] = useState(false);
+  const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
+
+  if (newRegions.length === 0) {
+    return null;
+  }
+
+  const isDeselected = (diff) =>
+    !!deselected.find((i) => CompareEquality.between(i, diff.diff));
+  const onChange = (diff) => (e) => {
+    if (!e.target.checked) {
+      setDeselected([...deselected, diff.diff]);
+    } else {
+      setDeselected(
+        deselected.filter((i) => !CompareEquality.between(i, diff.diff))
+      );
+    }
+  };
+
+  const onApply = async () => {
+    const allIgnored = newRegions
+      .map((diffBlock) => isDeselected(diffBlock))
+      .map((i) => i.diff);
+
+    ignoreDiff(...allIgnored);
+    const allApproved = await Promise.all(
+      newRegions
+        .filter((diffBlock) => !isDeselected(diffBlock))
+        .map(async (i) => {
+          //@todo this is messy and doubles the compute
+          const { interaction } = await captureService.loadInteraction(
+            i.firstInteractionPointer
+          );
+
+          const { suggestion } = await diffService.loadInitialPreview(
+            i,
+            JsonHelper.fromInteraction(interaction),
+            inferPolymorphism
+          );
+
+          return getOrUndefined(suggestion);
+        })
+    );
+
+    acceptSuggestion(...allApproved);
+  };
+
+  const ignoreAll = () => {
+    const allIgnored = newRegions.map((i) => i.diff);
+    ignoreDiff(...allIgnored);
+  };
+
+  const newRequests = newRegions
+    .map((diff) => {
+      if (diff.inRequest) {
+        return (
+          <PreviewNewBodyRegion
+            diff={diff}
+            key={diff.diff.toString()}
+            isDeselected={isDeselected}
+            onChange={onChange}
+            inferPolymorphism={inferPolymorphism}
+          />
+        );
+      }
+    })
+    .filter((i) => !!i);
+
+  const newResponses = newRegions
+    .map((diff) => {
+      if (diff.inResponse) {
+        return (
+          <PreviewNewBodyRegion
+            diff={diff}
+            isDeselected={isDeselected}
+            onChange={onChange}
+            key={diff.diff.toString()}
+            inferPolymorphism={inferPolymorphism}
+          />
+        );
+      }
+    })
+    .filter((i) => !!i);
+
+  const copy =
+    newResponses.length > 0 &&
+    newRequests.length > 0 &&
+    'request and response types';
+  const copyFallback =
+    newResponses.length > 0 && newRequests.length === 0
+      ? 'response types'
+      : 'request types';
+
+  const approveCount =
+    newResponses.length + newRequests.length - deselected.length;
+
+  return (
+    <Card className={classes.wrapper} elevation={2}>
+      <div className={classes.header}>
+        <Typography variant="h5" color="primary">
+          Generate Initial Documentation
+        </Typography>
+        <Typography variant="body2" color="textSecondary">{`New ${
+          copy || copyFallback
+        } types observed. Review them, then click Document Bodies`}</Typography>
+        {/*<div>*/}
+        {/*  <Typography variant="h6">{endpointPurpose}</Typography>*/}
+        {/*  <PathAndMethod method={method}*/}
+        {/*                 path={fullPath}/>*/}
+        {/*</div>*/}
+      </div>
+
+      <div style={{ float: 'right', marginTop: -55 }}>
+        <PulsingOptic />
+      </div>
+
+      <div className={classes.approveNewRegions}>
+        <LightTooltip title="Use all example requests to infer all the Optional, Nullable and OneOfs in your bodies automatically. If you leave this option disabled, Optic will allow you to review the polymorphism in your API manually.">
+          <FormControlLabel
+            style={{ marginRight: 12 }}
+            control={
+              <Switch
+                checked={inferPolymorphism}
+                onChange={(e) => setInferPolymorphism(e.target.checked)}
+                color="primary"
+              />
+            }
+            labelPlacement="start"
+            label={
+              <Typography variant="body1" color="textSecondary">
+                Infer Polymorphism
+              </Typography>
+            }
+          />
+        </LightTooltip>
+        <Button color="default" onClick={ignoreAll} style={{ marginRight: 10 }}>
+          Ignore All
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={approveCount === 0}
+          onClick={onApply}
+        >
+          Document ({approveCount}) bodies
+        </Button>
+      </div>
+
+      <DocDivider style={{ marginTop: 20, marginBottom: 20 }} />
+
+      <div className={classes.diffsNewRegion}>
+        {newRequests.length > 0 && (
+          <div className={classes.region}>
+            <Typography variant="h6" color="primary">
+              Requests
+            </Typography>
+            {newRequests}
+          </div>
+        )}
+
+        <Show when={newRequests.length}>
+          <DocDivider style={{ marginTop: 30, marginBottom: 20 }} />
+        </Show>
+
+        {newResponses.length > 0 && (
+          <div className={classes.region}>
+            <Typography variant="h6" color="primary">
+              Responses
+            </Typography>
+            {newResponses}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
+
+export class NewRegions extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    const result = CompareEquality.between(
+      nextProps.newRegions,
+      this.props.newRegions
+    );
+
+    //@todo add ignore here
+    return !result;
+  }
+
+  render() {
+    console.log('rendering all over again');
+    return <_NewRegions {...this.props} />;
+  }
+}
+
+export const BreadcumbX = (props) => {
+  const classes = useStyles();
+  const { location, itemStyles } = props;
+  return (
+    <Breadcrumbs
+      className={classes.location}
+      separator={<span style={{ fontSize: 13, ...itemStyles }}>{'›'}</span>}
+      aria-label="breadcrumb"
+    >
+      {location
+        .filter((i) => !!i)
+        .map((n) => (
+          <Typography
+            key={n}
+            style={itemStyles}
+            className={classes.crumb}
+            color="primary"
+          >
+            {n}
+          </Typography>
+        ))}
+    </Breadcrumbs>
+  );
+};
+
+const PreviewNewBodyRegion = ({
+  diff,
+  inferPolymorphism,
+  isDeselected,
+  onChange,
+}) => {
+  const isChecked = !isDeselected(diff);
+  const classes = useStyles();
+  const length = diff.interactionsCount;
+
+  const [interactionIndex, setInteractionIndex] = React.useState(1);
+
+  useEffect(() => {
+    setInteractionIndex(1);
+  }, [diff.diff ? diff.diff.toString() : undefined]);
+
+  const currentInteractionPointer = getIndex(diff.interactionPointers)(
+    interactionIndex - 1
+  );
+
+  const currentInteraction = useInteractionWithPointer(
+    currentInteractionPointer
+  );
+
+  const initialBody = useInitialBodyPreview(
+    diff,
+    currentInteraction && currentInteraction.interactionScala,
+    inferPolymorphism
+  );
+
+  if (!currentInteraction || !initialBody) {
+    return <LinearProgress />;
+  }
+
+  const bodyPreview = getOrUndefined(initialBody.bodyPreview);
+  const shapePreview = getOrUndefined(initialBody.shapePreview);
+
+  return (
+    <>
+      <Card className={classes.regionHeader} elevation={2}>
+        <Checkbox
+          checked={isChecked}
+          onChange={onChange(diff)}
+          color="primary"
+        />
+        <ListItemText
+          className={classNames({
+            [classes.uncheckedText]: !isChecked,
+          })}
+          primary={
+            diff.inRequest
+              ? getOrUndefined(diff.contentType) || 'No Body'
+              : `${getOrUndefined(diff.statusCode)} Response ${
+                  getOrUndefined(diff.contentType) || 'No Body'
+                }`
+          }
+          secondary={`Observed ${diff.interactionsCount} times`}
+          primaryTypographyProps={{ style: { fontSize: 14 } }}
+          secondaryTypographyProps={{ style: { fontSize: 12 } }}
+        />
+
+        <div style={{ flex: 1 }} />
+        {length > 1 && getOrUndefined(diff.contentType) && (
+          <Pagination
+            color="primary"
+            className={classNames({ [classes.unchecked]: !isChecked })}
+            style={{ display: 'flex' }}
+            count={length}
+            page={interactionIndex}
+            showLastButton={length > 5}
+            size="small"
+            onChange={(e, pageNumber) => setInteractionIndex(pageNumber)}
+          />
+        )}
+      </Card>
+
+      <div
+        className={classNames(classes.newContentPreview, {
+          [classes.unchecked]: !isChecked,
+        })}
+      >
+        <div style={{ width: '55%', paddingRight: 15 }}>
+          {bodyPreview && (
+            <ShapeBox
+              header={
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <BreadcumbX
+                    itemStyles={{ fontSize: 13, color: 'white' }}
+                    location={['Example']}
+                  />
+                  <div style={{ flex: 1 }}></div>
+                  <span style={{ color: 'white' }}>⮕</span>
+                </div>
+              }
+            >
+              <ShapeExpandedStore>
+                <DiffHunkViewer preview={bodyPreview} exampleOnly />
+              </ShapeExpandedStore>
+            </ShapeBox>
+          )}
+        </div>
+        <div style={{ flex: 1 }}>
+          {shapePreview && (
+            <ShapeBox
+              header={
+                <BreadcumbX
+                  itemStyles={{ fontSize: 13, color: 'white' }}
+                  location={['Documented Shape']}
+                />
+              }
+            >
+              <ShapeExpandedStore>
+                <ShapeOnlyViewer preview={shapePreview} exampleOnly />
+              </ShapeExpandedStore>
+            </ShapeBox>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -159,35 +547,8 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 5,
     justifyContent: 'center',
   },
-  diffCursor: {
-    position: 'sticky',
-    top: 0,
-    zIndex: 500,
-    paddingTop: 10,
-    paddingBottom: 10,
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    borderLeft: `3px solid ${UpdatedBlue}`,
-  },
-  diffTitle: {
-    fontSize: 19,
-    fontWeight: 400,
-    paddingLeft: 11,
-  },
-  diffCursorActions: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingRight: 10,
-  },
-  diffItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'baseline',
-    paddingLeft: 5,
-  },
 }));
+
 const addition = (
   <FiberManualRecordIcon
     style={{ width: '.7em', height: '.7em', color: AddedGreenBackground }}
@@ -205,462 +566,3 @@ const removal = (
     style={{ width: '.7em', height: '.7em', color: RemovedRedBackground }}
   />
 );
-
-export function DiffCursor(props) {
-  const classes = useStyles();
-  const { diffs } = props;
-  const diffCount = diffs.length;
-
-  const { selectedDiff, setSelectedDiff } = useContext(DiffContext);
-
-  const [showAllDiffs, setShowAllDiffs] = useState(false);
-
-  useEffect(() => {
-    if (selectedDiff === null && diffCount > 0) {
-      setSelectedDiff(diffs[0]);
-      setShowAllDiffs(false);
-    }
-  }, [diffs.join((i) => i.toString())]);
-
-  const DiffItem = ({ diff, button }) => {
-    const description = useDiffDescription(diff);
-
-    return (
-      <ListItem
-        button={button}
-        className={classes.diffItem}
-        onClick={() => {
-          setSelectedDiff(diff);
-          setShowAllDiffs(false);
-        }}
-      >
-        {description && (
-          <Typography variant="h5" className={classes.diffTitle}>
-            {description.title}
-            {/*{diff.toString()}*/}
-          </Typography>
-        )}
-        <BreadcumbX location={JsonHelper.seqToJsArray(diff.location)} />
-      </ListItem>
-    );
-  };
-
-  if (!selectedDiff && diffCount === 0) {
-    return null;
-  }
-
-  return (
-    <Card className={classes.diffCursor} elevation={3}>
-      <div style={{ flex: 1 }}>
-        {!showAllDiffs && selectedDiff && (
-          <DiffItem button={false} diff={selectedDiff} />
-        )}
-        <Collapse in={showAllDiffs}>
-          <Typography variant="subtitle2" style={{ paddingLeft: 12 }}>
-            Choose a diff to review
-          </Typography>
-          <List>
-            {diffs.map((diff, n) => (
-              <DiffItem key={n} diff={diff} button={true} />
-            ))}
-          </List>
-        </Collapse>
-      </div>
-      {!showAllDiffs && (
-        <div className={classes.diffCursorActions}>
-          <Typography
-            variant="overline"
-            style={{ color: DocDarkGrey, marginRight: 10 }}
-          >
-            {diffCount} diffs
-          </Typography>
-          <DiffToolTip title="See all Diffs">
-            <IconButton
-              color="primary"
-              disabled={diffCount <= 1}
-              onClick={() => setShowAllDiffs(true)}
-            >
-              <MenuOpenIcon />
-            </IconButton>
-          </DiffToolTip>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-export default function DiffPreview() {
-  const classes = useStyles();
-
-  return (
-    <Paper className={classes.wrapper} elevation={2}>
-      <div className={classes.header}>
-        <Typography style={{ marginLeft: 11 }} variant="subtitle2">
-          The Field X was added
-        </Typography>
-        <div style={{ flex: 1 }} />
-        {addition}
-        {update}
-        {removal}
-        <Button style={{ marginLeft: 5 }}>Resolve</Button>
-      </div>
-      <div className={classes.diffs}>
-        <div className={classes.hunk}>
-          <div className={classes.hunkHeader}>
-            <Typography
-              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
-              variant="subtitle2"
-            >
-              Request Body
-            </Typography>
-            <Typography
-              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
-              variant="subtitle2"
-            >
-              application/json
-            </Typography>
-          </div>
-        </div>
-      </div>
-    </Paper>
-  );
-}
-
-function _NewRegions(props) {
-  const { newRegions, ignoreDiff, endpointPurpose, method, fullPath } = props;
-
-  const classes = useStyles();
-
-  const { acceptSuggestion } = useContext(DiffContext);
-  const { diffService, captureService } = useCaptureContext();
-
-  const [deselected, setDeselected] = useState([]);
-  const [showExpanded, setShowExpanded] = useState(false);
-  const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
-
-  if (newRegions.length === 0) {
-    return null;
-  }
-
-  const isDeselected = (diff) =>
-    !!deselected.find((i) => CompareEquality.between(i, diff.diff));
-  const onChange = (diff) => (e) => {
-    if (!e.target.checked) {
-      setDeselected([...deselected, diff.diff]);
-    } else {
-      setDeselected(
-        deselected.filter((i) => !CompareEquality.between(i, diff.diff))
-      );
-    }
-  };
-
-  const onApply = async () => {
-    const allIgnored = newRegions
-      .map((diffBlock) => isDeselected(diffBlock))
-      .map((i) => i.diff);
-
-    ignoreDiff(...allIgnored);
-    const allApproved = await Promise.all(
-      newRegions
-        .filter((diffBlock) => !isDeselected(diffBlock))
-        .map(async (i) => {
-          //@todo this is messy and doubles the compute
-          const { interaction } = await captureService.loadInteraction(
-            i.firstInteractionPointer
-          );
-
-          const { suggestion } = await diffService.loadInitialPreview(
-            i,
-            JsonHelper.fromInteraction(interaction),
-            inferPolymorphism
-          );
-
-          return getOrUndefined(suggestion);
-        })
-    );
-
-    acceptSuggestion(...allApproved);
-  };
-
-  const ignoreAll = () => {
-    const allIgnored = newRegions.map((i) => i.diff);
-    ignoreDiff(...allIgnored);
-  };
-
-  const PreviewNewBodyRegion = ({ diff, inferPolymorphism }) => {
-    const isChecked = !isDeselected(diff);
-    const length = diff.interactionsCount;
-
-    const [interactionIndex, setInteractionIndex] = React.useState(1);
-
-    useEffect(() => {
-      setInteractionIndex(1);
-    }, [diff.toString()]);
-
-    const currentInteractionPointer = getIndex(diff.interactionPointers)(
-      interactionIndex - 1
-    );
-
-    const currentInteraction = useInteractionWithPointer(
-      currentInteractionPointer
-    );
-
-    const initialBody = useInitialBodyPreview(
-      diff,
-      currentInteraction && currentInteraction.interactionScala,
-      inferPolymorphism
-    );
-
-    if (!currentInteraction || !initialBody) {
-      return <LinearProgress />;
-    }
-
-    const bodyPreview = getOrUndefined(initialBody.bodyPreview);
-    const shapePreview = getOrUndefined(initialBody.shapePreview);
-
-    return (
-      <>
-        <Card className={classes.regionHeader} elevation={2}>
-          <Checkbox
-            checked={isChecked}
-            onChange={onChange(diff)}
-            color="primary"
-          />
-          <ListItemText
-            className={classNames({
-              [classes.uncheckedText]: !isChecked,
-            })}
-            primary={
-              diff.inRequest
-                ? getOrUndefined(diff.contentType) || 'No Body'
-                : `${getOrUndefined(diff.statusCode)} Response ${
-                    getOrUndefined(diff.contentType) || 'No Body'
-                  }`
-            }
-            secondary={`Observed ${diff.interactionsCount} times`}
-            primaryTypographyProps={{ style: { fontSize: 14 } }}
-            secondaryTypographyProps={{ style: { fontSize: 12 } }}
-          />
-
-          <div style={{ flex: 1 }} />
-          {length > 1 && getOrUndefined(diff.contentType) && (
-            <Pagination
-              color="primary"
-              className={classNames({ [classes.unchecked]: !isChecked })}
-              style={{ display: 'flex' }}
-              count={length}
-              page={interactionIndex}
-              showLastButton={length > 5}
-              size="small"
-              onChange={(e, pageNumber) => setInteractionIndex(pageNumber)}
-            />
-          )}
-        </Card>
-
-        <div
-          className={classNames(classes.newContentPreview, {
-            [classes.unchecked]: !isChecked,
-          })}
-        >
-          <div style={{ width: '55%', paddingRight: 15 }}>
-            {bodyPreview && (
-              <ShapeBox
-                header={
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <BreadcumbX
-                      itemStyles={{ fontSize: 13, color: 'white' }}
-                      location={['Example']}
-                    />
-                    <div style={{ flex: 1 }}></div>
-                    <span style={{ color: 'white' }}>⮕</span>
-                  </div>
-                }
-              >
-                <ShapeExpandedStore>
-                  <DiffHunkViewer preview={bodyPreview} exampleOnly />
-                </ShapeExpandedStore>
-              </ShapeBox>
-            )}
-          </div>
-          <div style={{ flex: 1 }}>
-            {shapePreview && (
-              <ShapeBox
-                header={
-                  <BreadcumbX
-                    itemStyles={{ fontSize: 13, color: 'white' }}
-                    location={['Documented Shape']}
-                  />
-                }
-              >
-                <ShapeExpandedStore>
-                  <ShapeOnlyViewer preview={shapePreview} exampleOnly />
-                </ShapeExpandedStore>
-              </ShapeBox>
-            )}
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const newRequests = newRegions
-    .map((diff) => {
-      if (diff.inRequest) {
-        return (
-          <PreviewNewBodyRegion
-            diff={diff}
-            key={diff.toString()}
-            inferPolymorphism={inferPolymorphism}
-          />
-        );
-      }
-    })
-    .filter((i) => !!i);
-
-  const newResponses = newRegions
-    .map((diff) => {
-      if (diff.inResponse) {
-        return (
-          <PreviewNewBodyRegion
-            diff={diff}
-            key={diff.toString()}
-            inferPolymorphism={inferPolymorphism}
-          />
-        );
-      }
-    })
-    .filter((i) => !!i);
-
-  const copy =
-    newResponses.length > 0 &&
-    newRequests.length > 0 &&
-    'request and response types';
-  const copyFallback =
-    newResponses.length > 0 && newRequests.length === 0
-      ? 'response types'
-      : 'request types';
-
-  const approveCount =
-    newResponses.length + newRequests.length - deselected.length;
-
-  return (
-    <Card className={classes.wrapper} elevation={2}>
-      <div className={classes.header}>
-        <Typography variant="h5" color="primary">
-          Generate Initial Documentation
-        </Typography>
-        <Typography variant="body2" color="textSecondary">{`New ${
-          copy || copyFallback
-        } types observed. Review them, then click Document Bodies`}</Typography>
-        {/*<div>*/}
-        {/*  <Typography variant="h6">{endpointPurpose}</Typography>*/}
-        {/*  <PathAndMethod method={method}*/}
-        {/*                 path={fullPath}/>*/}
-        {/*</div>*/}
-      </div>
-
-      <div style={{ float: 'right', marginTop: -55 }}>
-        <PulsingOptic />
-      </div>
-
-      <div className={classes.approveNewRegions}>
-        <LightTooltip title="Use all example requests to infer all the Optional, Nullable and OneOfs in your bodies automatically. If you leave this option disabled, Optic will allow you to review the polymorphism in your API manually.">
-          <FormControlLabel
-            style={{ marginRight: 12 }}
-            control={
-              <Switch
-                checked={inferPolymorphism}
-                onChange={(e) => setInferPolymorphism(e.target.checked)}
-                color="primary"
-              />
-            }
-            labelPlacement="start"
-            label={
-              <Typography variant="body1" color="textSecondary">
-                Infer Polymorphism
-              </Typography>
-            }
-          />
-        </LightTooltip>
-        <Button color="default" onClick={ignoreAll} style={{ marginRight: 10 }}>
-          Ignore All
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={approveCount === 0}
-          onClick={onApply}
-        >
-          Document ({approveCount}) bodies
-        </Button>
-      </div>
-
-      <DocDivider style={{ marginTop: 20, marginBottom: 20 }} />
-
-      <div className={classes.diffsNewRegion}>
-        {newRequests.length > 0 && (
-          <div className={classes.region}>
-            <Typography variant="h6" color="primary">
-              Requests
-            </Typography>
-            {newRequests}
-          </div>
-        )}
-
-        <DocDivider style={{ marginTop: 30, marginBottom: 20 }} />
-
-        {newResponses.length > 0 && (
-          <div className={classes.region}>
-            <Typography variant="h6" color="primary">
-              Responses
-            </Typography>
-            {newResponses}
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-export class NewRegions extends React.Component {
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    const result = CompareEquality.between(
-      nextProps.newRegions,
-      this.props.newRegions
-    );
-
-    console.log('rerender ', result);
-    //@todo add ignore here
-    return !result;
-  }
-
-  render() {
-    console.log('rendering all over again');
-    return <_NewRegions {...this.props} />;
-  }
-}
-
-export const BreadcumbX = (props) => {
-  const classes = useStyles();
-  const { location, itemStyles } = props;
-  return (
-    <Breadcrumbs
-      className={classes.location}
-      separator={<span style={{ fontSize: 13, ...itemStyles }}>{'›'}</span>}
-      aria-label="breadcrumb"
-    >
-      {location
-        .filter((i) => !!i)
-        .map((n) => (
-          <Typography
-            key={n}
-            style={itemStyles}
-            className={classes.crumb}
-            color="primary"
-          >
-            {n}
-          </Typography>
-        ))}
-    </Breadcrumbs>
-  );
-};

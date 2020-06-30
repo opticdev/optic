@@ -154,24 +154,22 @@ export const CaptureManager = ({}) => {
   const baseUrl = useBaseUrl();
 
   return (
-    <div className={classes.container}>
-      <Switch>
-        <Route
-          exact
-          path={routerPaths.captureRoot}
-          component={CaptureDiffWrapper}
-        />
-        <Route
-          exact
-          path={routerPaths.captureRequestDiffsRoot}
-          component={RequestDiffWrapper}
-        />
-        {captures.length && (
-          <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
-        )}
-        <Route component={() => empty} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route
+        exact
+        path={routerPaths.captureRoot}
+        component={CaptureDiffWrapper}
+      />
+      <Route
+        exact
+        path={routerPaths.captureRequestDiffsRoot}
+        component={RequestDiffWrapper}
+      />
+      {captures.length && (
+        <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
+      )}
+      <Route component={() => empty} />
+    </Switch>
   );
 };
 
@@ -211,7 +209,7 @@ function CaptureChooserComponent(props) {
   }
 
   return (
-    <>
+    <div className={classes.container}>
       <div className={classes.navigationContainer}>
         <div className={classes.navRoot}>
           <div className={classes.header}>
@@ -310,7 +308,7 @@ function CaptureChooserComponent(props) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -320,8 +318,8 @@ function RequestDiffWrapper(props) {
   return (
     // sessionId={props.match.params.captureId}
     // specService={specService}
-    <div className={classes.pageContainer}>
-      <div className={classes.center}>
+    <div className={classes.diffContainer}>
+      <div className={classes.diffWrapper}>
         <DiffPageNew {...props} />
       </div>
     </div>
@@ -648,5 +646,21 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     marginBottom: 15,
+  },
+  diffContainer: {
+    display: 'flex',
+    height: '100vh',
+    paddingLeft: 32,
+    paddingRight: 32,
+    flexDirection: 'row',
+    overflow: 'scroll',
+    flexGrow: 1,
+    flexShrink: 1,
+    justifyContent: 'center',
+  },
+  diffWrapper: {
+    flex: 1,
+    padding: '24px 0px 144px',
+    maxWidth: 1280,
   },
 }));

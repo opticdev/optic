@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useServices } from './SpecServiceContext';
 import { RfcContext } from './RfcContext';
-import { ScalaJSHelpers } from '@useoptic/domain';
+import { commandsToJson, ScalaJSHelpers } from '@useoptic/domain';
 import debounce from 'lodash.debounce';
 export const CaptureContext = React.createContext(null);
 
@@ -53,6 +53,9 @@ export class CaptureStateStore extends React.Component {
   reload = async (notifData) => {
     const notifDataUpdates = (() => {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
+        if (!notifData.hasMoreInteractions) {
+          console.log('completed diff');
+        }
         return {
           completed: !notifData.hasMoreInteractions,
           skipped: notifData.skippedInteractionsCounter,
@@ -130,12 +133,16 @@ export class CaptureStateStore extends React.Component {
     //@TODO: handle error
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
+
+    console.log('trying to start a new diff');
     const config = await captureService.startDiff(
       ScalaJSHelpers.eventsJsArray(events),
       apiConfig.config.ignoreRequests || [],
-      this.state.additionalCommands,
+      commandsToJson(this.state.additionalCommands), //commands serialize me
       pathId && method ? [{ pathId, method }] : [] // partition diff when on an endpoint page
     );
+
+    console.log('Starting new Diff ', config);
 
     let notificationChannel = null;
     if (config.notificationsUrl) {

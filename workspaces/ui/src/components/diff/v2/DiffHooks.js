@@ -11,7 +11,7 @@ export function useDiffDescription(diff) {
       setDescription((await diffService.loadDescription(diff)) || null);
     };
     getDescription();
-  }, [diff.toString()]);
+  }, [diff.diff.toString()]);
 
   return description;
 }
@@ -19,26 +19,33 @@ export function useDiffDescription(diff) {
 export function useInteractionWithPointer(pointer) {
   const { captureService } = useCaptureContext();
   const [interaction, setInteraction] = useState(null);
-  const [interactionScala, setInteractionScala] = useState(null);
 
   useEffect(() => {
+    let mounted = true;
     const getInteraction = async () => {
       if (pointer) {
+        setInteraction(null);
         const interaction =
           (await captureService.loadInteraction(pointer)).interaction || null;
-        setInteraction(interaction);
-        setInteractionScala(JsonHelper.fromInteraction(interaction));
+        if (mounted) {
+          setInteraction({
+            interaction,
+            interactionScala: JsonHelper.fromInteraction(interaction),
+          });
+        }
       } else {
-        setInteraction(null);
-        setInteractionScala(null);
+        if (mounted) {
+          setInteraction(null);
+        }
       }
     };
+
     getInteraction();
+
+    return () => (mounted = false);
   }, [pointer]);
 
-  if (interaction && interactionScala) {
-    return { interaction, interactionScala };
-  }
+  return interaction;
 }
 
 export function useSuggestionsForDiff(diff, currentInteraction) {
@@ -46,16 +53,24 @@ export function useSuggestionsForDiff(diff, currentInteraction) {
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
+    let mounted = true;
     const getSuggestions = async () => {
       if (diff) {
-        setSuggestions(
-          await diffService.listSuggestions(diff, currentInteraction)
+        const result = await diffService.listSuggestions(
+          diff,
+          currentInteraction
         );
+        if (mounted) {
+          setSuggestions(result);
+        }
       } else {
-        setSuggestions([]);
+        if (mounted) {
+          setSuggestions([]);
+        }
       }
     };
     getSuggestions();
+    return () => (mounted = false);
   }, [diff.toString()]);
 
   return suggestions;
@@ -71,21 +86,29 @@ export function useInitialBodyPreview(
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
+    let mounted = true;
     const getInitialPreview = async () => {
       if (diff && currentInteraction) {
-        setPreview(
-          await diffService.loadInitialPreview(
-            diff,
-            currentInteraction,
-            inferPolymorphism
-          )
+        const result = await diffService.loadInitialPreview(
+          diff,
+          currentInteraction,
+          inferPolymorphism
         );
+        if (mounted) {
+          setPreview(result);
+        }
       } else {
-        setPreview(null);
+        if (mounted) {
+          setPreview(null);
+        }
       }
     };
     getInitialPreview();
-  }, [diff.toString(), currentInteraction]);
+    return () => (mounted = false);
+  }, [
+    diff.diff.toString(),
+    currentInteraction && currentInteraction.toString(),
+  ]);
 
   return preview;
 }

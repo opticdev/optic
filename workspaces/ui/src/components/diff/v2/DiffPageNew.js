@@ -24,7 +24,7 @@ import SimulatedCommandContext from '../SimulatedCommandContext';
 import { primary } from '../../../theme';
 import uuidv4 from 'uuid/v4';
 import { Redirect, withRouter } from 'react-router-dom';
-import { DiffCursor, NewRegions } from './DiffPreview';
+import { NewRegions } from './DiffPreview';
 import { CommitCard } from './CommitCard';
 import { StableHasher } from '../../../utilities/CoverageUtilities';
 import DiffReviewExpanded from './DiffReviewExpanded';
@@ -37,6 +37,8 @@ import {
   CaptureStateStore,
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
+import { DiffLoading } from './LoadingNextDiff';
+import { DiffCursor } from './DiffCursor';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const { helpers } = diff;
@@ -145,7 +147,9 @@ function _DiffPageContent(props) {
     acceptedSuggestions,
     acceptSuggestion,
     selectedDiff,
+    setSelectedDiff,
     diffsForThisEndpoint,
+    completed,
     clientId,
     clientSessionId,
     reset,
@@ -220,6 +224,9 @@ function _DiffPageContent(props) {
 
   const diffContext = useContext(DiffContext);
 
+  const showLoader =
+    newRegions.length === 0 && bodyDiffs.length === 0 && !completed;
+
   return (
     <IgnoreDiffContext.Consumer>
       {({ ignoreDiff, ignoredDiffs }) => (
@@ -233,6 +240,8 @@ function _DiffPageContent(props) {
               <PathAndMethod method={httpMethod} path={fullPath} />
             </div>
 
+            <DiffLoading show={showLoader} />
+
             {hasNewRegions && (
               <NewRegions
                 ignoreDiff={ignoreDiff}
@@ -245,7 +254,12 @@ function _DiffPageContent(props) {
 
             {!hasNewRegions && (
               <>
-                <DiffCursor diffs={bodyDiffs} />
+                <DiffCursor
+                  diffs={bodyDiffs}
+                  setSelectedDiff={setSelectedDiff}
+                  selectedDiff={selectedDiff}
+                  completed={completed}
+                />
                 {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
               </>
             )}
@@ -346,6 +360,7 @@ const InnerDiffWrapper = function (props) {
     endpointDiffs,
     updatedAdditionalCommands,
     diffId,
+    completed,
   } = useCaptureContext();
   const {
     setSuggestionToPreview,
@@ -407,6 +422,7 @@ converter.toJs(report)
       diffId={diffId}
       diffsForThisEndpoint={diffsForThisEndpoint}
       setSuggestionToPreview={setSuggestionToPreview}
+      completed={completed}
       reset={() => {
         updatedAdditionalCommands([]);
         resetIgnored();
