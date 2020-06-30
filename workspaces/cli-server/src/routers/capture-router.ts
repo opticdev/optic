@@ -158,7 +158,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.diffs);
+      await lockfile.lock(diffOutputPaths.diffs, { retries: { retries: 10 } });
       const contents = await fs.readJson(diffOutputPaths.diffs);
       await lockfile.unlock(diffOutputPaths.diffs);
       res.json(contents);
@@ -177,7 +177,9 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.undocumentedUrls);
+      await lockfile.lock(diffOutputPaths.undocumentedUrls, {
+        retries: { retries: 10 },
+      });
       const contents = await fs.readJson(diffOutputPaths.undocumentedUrls);
       await lockfile.unlock(diffOutputPaths.undocumentedUrls);
 
@@ -199,7 +201,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     });
     try {
       //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.stats);
+      await lockfile.lock(diffOutputPaths.stats, { retries: { retries: 10 } });
       const contents = await fs.readJson(diffOutputPaths.stats);
       await lockfile.unlock(diffOutputPaths.stats);
 
