@@ -9,11 +9,13 @@ import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
+import io.circe.parser._
 
 import scala.collection.immutable
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 import scala.util.{Failure, Try}
+import io.circe.scalajs.{convertJsonToJs, convertJsToJson}
 
 @JSExportTopLevel("CommandSerialization")
 @JSExportAll
@@ -23,7 +25,6 @@ object CommandSerializationJs {
   }
 
   def toJs(vector: Seq[RfcCommand]): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(toJson(vector))
   }
 
@@ -38,7 +39,6 @@ object CommandSerializationJs {
   }
 
   def toJs(command: RfcCommand): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(toJson(command))
   }
 
@@ -58,6 +58,10 @@ object CommandSerializationJs {
   private def decodeRequestCommand(item: Json): Result[RequestsCommand] = item.as[RequestsCommand]
 
   private def decodeRfcCommand(item: Json): Result[ContributionCommand] = item.as[ContributionCommand]
+
+  def fromJs(x: js.Any): Vector[RfcCommand] = {
+    fromJson(convertJsToJson(x).right.get).get
+  }
 
   def fromJson(json: Json): Try[Vector[RfcCommand]] = Try {
     if (!json.isArray) {
@@ -81,7 +85,6 @@ object CommandSerializationJs {
   }
 
   def fromJsonString(jsonString: String): immutable.Seq[RfcCommand] = {
-    import io.circe.parser._
 
     val commandsVector =
       for {

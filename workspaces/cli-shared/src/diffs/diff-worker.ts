@@ -95,7 +95,7 @@ export class DiffWorker {
     } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
       events,
       commandsContext,
-      additionalCommands
+      opticEngine.CommandSerialization.fromJs(additionalCommands)
     );
     console.timeEnd('build state');
     const ignoredRequests = parseIgnore(ignoreRequests);
