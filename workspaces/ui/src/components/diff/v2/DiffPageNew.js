@@ -90,7 +90,13 @@ function DiffPageNew(props) {
   const { pathId, method, captureId } = props.match.params;
 
   return (
-    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
+    <CaptureStateStore
+      captureId={captureId}
+      pathId={pathId}
+      method={method}
+      {...rfcContext}
+      {...services}
+    >
       <CaptureSessionInlineContext
         specStore={specStore}
         captureId={captureId}

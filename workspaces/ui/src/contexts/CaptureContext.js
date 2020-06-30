@@ -119,6 +119,8 @@ export class CaptureStateStore extends React.Component {
       eventStore,
       rfcId,
       rfcService,
+      method,
+      pathId,
     } = this.props;
 
     //clear diff
@@ -132,7 +134,7 @@ export class CaptureStateStore extends React.Component {
       ScalaJSHelpers.eventsJsArray(events),
       apiConfig.config.ignoreRequests || [],
       this.state.additionalCommands,
-      []
+      pathId && method ? [{ pathId, method }] : [] // partition diff when on an endpoint page
     );
 
     let notificationChannel = null;
