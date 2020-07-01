@@ -84,24 +84,28 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         diffId: id,
       });
       await fs.ensureDir(diffOutputPaths.base);
-      await fs.writeJson(diffOutputPaths.events, events);
-      await fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests);
-      await fs.writeJson(diffOutputPaths.filters, filters);
-      await fs.writeJson(
-        diffOutputPaths.additionalCommands,
-        additionalCommands
-      );
+      await Promise.all([
+        fs.writeJson(diffOutputPaths.events, events),
+        fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests),
+        fs.writeJson(diffOutputPaths.filters, filters),
+        fs.writeJson(diffOutputPaths.additionalCommands, additionalCommands),
+      ]);
       const workerStarted = new Promise((resolve, reject) => {
         manager.events.once('progress', resolve);
+        manager.events.once('error', reject);
       });
       await manager.start({
         captureBaseDirectory: req.optic.paths.capturesPath,
         captureId: captureId,
         diffId: id,
       });
-
-      await workerStarted;
-
+      try {
+        await workerStarted;
+      } catch (e) {
+        return res.status(500).json({
+          message: e.message,
+        });
+      }
       const diffMetadata = {
         id,
         manager,
@@ -139,6 +143,9 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
     diffMetadata.manager.events.on('progress', (data) => {
       emit({ type: 'message', data });
+    });
+    diffMetadata.manager.events.on('error', (data) => {
+      emit({ type: 'error', data });
     });
 
     req.on('close', () => {
