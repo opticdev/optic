@@ -13,7 +13,6 @@ import {
 } from '../../../contexts/SpecServiceContext';
 import { DiffContext, DiffContextStore, withDiffContext } from './DiffContext';
 import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import {
   DiffResultHelper,
   Facade,
@@ -34,7 +33,7 @@ import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { usePageTitle } from '../../Page';
 import { track } from '../../../Analytics';
 import {
-  CaptureStateStore,
+  CaptureContextStore,
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import { DiffLoading } from './LoadingNextDiff';
@@ -86,35 +85,27 @@ const styles = (theme) => ({
 function DiffPageNew(props) {
   const { specStore } = useContext(SpecServiceContext);
   const baseUrl = useBaseUrl();
-  const rfcContext = useContext(RfcContext);
   const services = useServices();
 
   const { pathId, method, captureId } = props.match.params;
 
   return (
-    <CaptureStateStore
+    <CaptureSessionInlineContext
+      specStore={specStore}
       captureId={captureId}
       pathId={pathId}
       method={method}
-      {...rfcContext}
-      {...services}
+      services={services}
     >
-      <CaptureSessionInlineContext
-        specStore={specStore}
-        captureId={captureId}
+      <EndpointsContextStore
         pathId={pathId}
         method={method}
+        inContextOfDiff={true}
+        notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        <EndpointsContextStore
-          pathId={pathId}
-          method={method}
-          inContextOfDiff={true}
-          notFound={<Redirect to={`${baseUrl}/diffs`} />}
-        >
-          <DiffPageContent captureId={captureId} />
-        </EndpointsContextStore>
-      </CaptureSessionInlineContext>
-    </CaptureStateStore>
+        <DiffPageContent captureId={captureId} />
+      </EndpointsContextStore>
+    </CaptureSessionInlineContext>
   );
 }
 
@@ -376,7 +367,7 @@ const InnerDiffWrapper = function (props) {
   } = props;
 
   if (isLoading) {
-    return <LinearProgress />;
+    return null;
   }
 
   const simulatedCommands = suggestionToPreview
@@ -450,7 +441,15 @@ converter.toJs(report)
 class _CaptureSessionInlineContext extends React.Component {
   render() {
     const jsonHelper = JsonHelper();
-    const { rfcId, eventStore, children, pathId, method } = this.props;
+    const {
+      captureId,
+      services,
+      rfcId,
+      eventStore,
+      children,
+      pathId,
+      method,
+    } = this.props;
     return (
       //@todo refactor sessionId to captureId
       <SuggestionsStore>
@@ -468,10 +467,6 @@ class _CaptureSessionInlineContext extends React.Component {
                 const simulatedCommands = acceptedSuggestions
                   .map((x) => jsonHelper.seqToJsArray(x.commands))
                   .reduce(flatten, []);
-                console.log({
-                  suggestionToPreview,
-                  acceptedSuggestions,
-                });
                 return (
                   <SimulatedCommandContext
                     rfcId={rfcId}
@@ -479,19 +474,26 @@ class _CaptureSessionInlineContext extends React.Component {
                     commands={simulatedCommands}
                     shouldSimulate={true}
                   >
-                    <InnerDiffWrapper
+                    <CaptureContextStore
+                      captureId={captureId}
                       pathId={pathId}
                       method={method}
-                      ignoredDiffs={ignoredDiffs}
-                      resetIgnored={resetIgnored}
-                      resetAccepted={resetAccepted}
-                      suggestionToPreview={suggestionToPreview}
-                      setAcceptedSuggestions={setAcceptedSuggestions}
-                      setSuggestionToPreview={setSuggestionToPreview}
-                      acceptedSuggestions={acceptedSuggestions}
+                      {...services}
                     >
-                      {children}
-                    </InnerDiffWrapper>
+                      <InnerDiffWrapper
+                        pathId={pathId}
+                        method={method}
+                        ignoredDiffs={ignoredDiffs}
+                        resetIgnored={resetIgnored}
+                        resetAccepted={resetAccepted}
+                        suggestionToPreview={suggestionToPreview}
+                        setAcceptedSuggestions={setAcceptedSuggestions}
+                        setSuggestionToPreview={setSuggestionToPreview}
+                        acceptedSuggestions={acceptedSuggestions}
+                      >
+                        {children}
+                      </InnerDiffWrapper>
+                    </CaptureContextStore>
                   </SimulatedCommandContext>
                 );
               }}

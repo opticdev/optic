@@ -60,7 +60,7 @@ export class DiffCursor extends React.Component {
         this.props.selectedDiff || undefined,
         nextProps.selectedDiff || undefined
       ) ||
-      this.state.showAllDiffs != nextState.showAllDiffs
+      this.state.showAllDiffs !== nextState.showAllDiffs
     );
   }
 

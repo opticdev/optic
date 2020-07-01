@@ -78,6 +78,29 @@ object DiffResultHelper {
     (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
   }
 
+
+  def groupEndpointDiffsByRegion(diffs: Map[InteractionDiffResult, Seq[String]]): EndpointDiffGrouping = {
+
+    val regions = newRegionDiffs(diffs)
+    val body = bodyDiffs(diffs)
+
+    val requestBodyDiffs = body.collect { case i if i.inRequest => i }.groupBy(_.contentType).map(i => {
+      EndpointBodyDiffRegion(i._1, None, i._2.toVector)
+    })
+
+    val responseBodyDiffs = body.collect { case i if i.inResponse => i }.groupBy(i => (i.contentType, i.statusCode) ).map(i => {
+      val (ct, sc) = i._1
+      EndpointBodyDiffRegion(ct, sc, i._2.toVector)
+    })
+
+
+    EndpointDiffGrouping(
+      requestBodyDiffs.toVector,
+      responseBodyDiffs.toVector,
+      regions
+    )
+  }
+
   def interactionsWithDiffsCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.flatMap(_._2).toSet.size
   def diffCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.size
 
@@ -135,6 +158,8 @@ object DiffResultHelper {
         override val interactionPointers = _interactionPointers
         override val inRequest: Boolean = _inRequest
         override val inResponse: Boolean = _inResponse
+        override val contentType: Option[String] = if (_inRequest) _diff.interactionTrail.requestBodyContentTypeOption() else _diff.interactionTrail.responseBodyContentTypeOption()
+        override val statusCode: Option[Int] = Try(_diff.interactionTrail.statusCode()).toOption
       }
     }}.toVector
   }
@@ -286,6 +311,8 @@ abstract class BodyDiff {
   val diff: InteractionDiffResult
   val location: Seq[String]
   val interactionPointers: Seq[String]
+  val contentType: Option[String]
+  val statusCode: Option[Int]
   val inRequest: Boolean
   val inResponse: Boolean
 
@@ -294,6 +321,16 @@ abstract class BodyDiff {
   def firstInteractionPointer: String = interactionPointers.head
   def interactionsCount: Int = interactionPointers.size
 }
+
+@JSExportAll
+case class EndpointDiffGrouping(requestDiffs: Seq[EndpointBodyDiffRegion],
+                                responseDiffs: Seq[EndpointBodyDiffRegion],
+                                newRegions: Seq[NewRegionDiff]) {
+  def hasNewRegions: Boolean = newRegions.nonEmpty
+  def empty: Boolean = requestDiffs.isEmpty && responseDiffs.isEmpty && newRegions.isEmpty
+}
+@JSExportAll
+case class EndpointBodyDiffRegion(contentType: Option[String], statusCode: Option[Int], bodyDiffs: Vector[BodyDiff])
 
 @JSExportAll
 case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggestion: Option[InteractiveDiffInterpretation])
