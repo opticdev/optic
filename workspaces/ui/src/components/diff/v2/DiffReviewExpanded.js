@@ -101,7 +101,7 @@ export default (props) => {
   );
 
   if (!currentInteraction || !description) {
-    return <LinearProgress />;
+    return null;
   }
 
   const { interaction, interactionScala } = currentInteraction;

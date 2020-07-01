@@ -57,7 +57,7 @@ import { AddOpticLink } from '../../support/Links';
 import { debugDump } from '../../../utilities/debug-dump';
 import {
   CaptureContext,
-  CaptureStateStore,
+  CaptureContextStore,
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import Tabs from '@material-ui/core/Tabs';
@@ -345,9 +345,9 @@ function CaptureDiffWrapper(props) {
   const services = useServices();
 
   return (
-    <CaptureStateStore captureId={captureId} {...rfcContext} {...services}>
+    <CaptureContextStore captureId={captureId} {...services}>
       <CaptureChooserComponent captureId={captureId} />
-    </CaptureStateStore>
+    </CaptureContextStore>
   );
 }
 
