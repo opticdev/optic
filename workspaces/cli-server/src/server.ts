@@ -11,6 +11,7 @@ import getPort from 'get-port';
 import bodyParser from 'body-parser';
 import http from 'http';
 import { Socket } from 'net';
+import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 import {
@@ -21,7 +22,7 @@ import {
 import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-export const log = fs.createWriteStream('./.optic-daemon.log');
+export const log = fs.createWriteStream(path.join(os.homedir(), '.optic', 'optic-daemon.log'));
 
 export interface ICliServerConfig {
   cloudApiBaseUrl: string;
