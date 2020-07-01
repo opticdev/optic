@@ -65,189 +65,210 @@ export class DiffWorker {
   constructor(private config: IDiffProjectionEmitterConfig) {}
 
   async run() {
-    debugger;
     console.log('running');
-    console.time('load inputs');
-    const [
-      ignoreRequests,
-      events,
-      additionalCommands,
-      filters,
-    ] = await Promise.all([
-      fs.readJson(this.config.ignoreRequestsFilePath),
-      fs.readJson(this.config.specFilePath),
-      fs.readJson(this.config.additionalCommandsFilePath),
-      fs.readJson(this.config.filtersFilePath),
-    ]);
-    console.timeEnd('load inputs');
-    console.time('build state');
-    const batchId = 'bbb';
-    const clientId = 'ccc'; //@TODO: should use real values
-    const clientSessionId = 'sss'; //@TODO: should use real values
-    const commandsContext = RfcCommandContext(
-      clientId,
-      clientSessionId,
-      batchId
-    );
-    const {
-      rfcState,
-      resolvers,
-    } = cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
-      events,
-      commandsContext,
-      opticEngine.CommandSerialization.fromJs(additionalCommands)
-    );
-    console.timeEnd('build state');
-    const ignoredRequests = parseIgnore(ignoreRequests);
 
-    function filterIgnoredRequests(interaction: IHttpInteraction) {
-      return !ignoredRequests.shouldIgnore(
-        interaction.request.method,
-        interaction.request.path
-      );
-    }
-    function filterByEndpoint(endpoint: { pathId: string; method: string }) {
-      return function (interaction: IHttpInteraction) {
-        const pathId = ScalaJSHelpers.getOrUndefined(
-          undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
-        );
-        return (
-          endpoint.method === interaction.request.method &&
-          endpoint.pathId === pathId &&
-          !ignoredRequests.shouldIgnore(
-            interaction.request.method,
-            interaction.request.path
-          )
-        );
-      };
-    }
-
-    const interactionFilter =
-      filters.length > 0 ? filterByEndpoint(filters[0]) : filterIgnoredRequests;
-    const interactionIterator = CaptureInteractionIterator(
-      {
-        captureId: this.config.captureId,
-        captureBaseDirectory: this.config.captureBaseDirectory,
-      },
-      interactionFilter
-    );
-    debugger;
-
-    let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-    let undocumentedUrls = opticEngine.UndocumentedUrlHelpers.newCounter();
-    const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
-      rfcState
-    );
-    let hasMoreInteractions = true;
-    let diffedInteractionsCounter = BigInt(0);
-    let skippedInteractionsCounter = BigInt(0);
-    const batcher = new Bottleneck.Batcher({
-      maxSize: 100,
-      maxTime: 100,
-    });
-    const diffOutputPaths = getDiffOutputPaths(this.config);
-
-    const queue = new Bottleneck({
-      maxConcurrent: 1,
-    });
-
-    function notifyParent() {
-      const progress = {
-        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        hasMoreInteractions,
-      };
+    function notifyParentOfError(e: Error) {
       if (process && process.send) {
         process.send({
-          type: 'progress',
-          data: progress,
+          type: 'error',
+          data: {
+            message: e.message,
+          },
         });
       } else {
-        console.log(progress);
+        console.error(e);
       }
     }
 
-    async function flush() {
-      const c = diffedInteractionsCounter.toString();
-
-      console.time(`flushing ${c}`);
-      const outputDiff = safeWriteJson(
-        diffOutputPaths.diffs,
-        opticEngine.DiffWithPointersJsonSerializer.toJs(diffs)
+    try {
+      console.time('load inputs');
+      const [
+        ignoreRequests,
+        events,
+        additionalCommands,
+        filters,
+      ] = await Promise.all([
+        fs.readJson(this.config.ignoreRequestsFilePath),
+        fs.readJson(this.config.specFilePath),
+        fs.readJson(this.config.additionalCommandsFilePath),
+        fs.readJson(this.config.filtersFilePath),
+      ]);
+      console.timeEnd('load inputs');
+      console.time('build state');
+      const batchId = 'bbb';
+      const clientId = 'ccc'; //@TODO: should use real values
+      const clientSessionId = 'sss'; //@TODO: should use real values
+      const commandsContext = RfcCommandContext(
+        clientId,
+        clientSessionId,
+        batchId
       );
-      const outputCount = safeWriteJson(
-        diffOutputPaths.undocumentedUrls,
-        opticEngine.UrlCounterJsonSerializer.toFriendlyJs(undocumentedUrls)
-      );
-      const outputStats = safeWriteJson(diffOutputPaths.stats, {
-        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        isDone: !hasMoreInteractions,
-      });
-
-      await Promise.all([outputDiff, outputCount, outputStats]);
-
-      notifyParent();
-
-      console.timeEnd(`flushing ${c}`);
-    }
-
-    batcher.on('batch', () => {
-      console.log('scheduling batch flush');
-      queue.schedule(() => {
-        console.log('executing batch flush');
-        return flush();
-      });
-    });
-
-    const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
-      {
-        captureBaseDirectory: this.config.captureBaseDirectory,
-        captureId: this.config.captureId,
-      }
-    );
-
-    await fs.ensureDir(diffOutputPaths.base);
-    await flush();
-
-    for await (const item of interactionIterator) {
-      skippedInteractionsCounter = item.skippedInteractionsCounter;
-      diffedInteractionsCounter = item.diffedInteractionsCounter;
-      hasMoreInteractions = item.hasMoreInteractions;
-      if (!hasMoreInteractions) {
-        // @GOTCHA item.interaction.value should not be present when hasMoreInteractions is false
-        break;
-      }
-      if (!item.interaction) {
-        continue;
-      }
-      const { batchId, index } = item.interaction.context;
-      console.time(`serdes ${batchId} ${index}`);
-      const deserializedInteraction = JsonHelper.fromInteraction(
-        item.interaction.value
-      );
-      console.timeEnd(`serdes ${batchId} ${index}`);
-      console.time(`diff ${batchId} ${index}`);
-      diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
-        resolvers,
+      const {
         rfcState,
-        deserializedInteraction,
-        interactionPointerConverter.toPointer(item.interaction.value, {
-          interactionIndex: index,
-          batchId,
-        }),
-        diffs
+        resolvers,
+      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
+        events,
+        commandsContext,
+        opticEngine.CommandSerialization.fromJs(additionalCommands)
       );
-      console.timeEnd(`diff ${batchId} ${index}`);
-      console.time(`count ${batchId} ${index}`);
-      undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
-        deserializedInteraction,
-        undocumentedUrls
+      console.timeEnd('build state');
+      const ignoredRequests = parseIgnore(ignoreRequests);
+
+      function filterIgnoredRequests(interaction: IHttpInteraction) {
+        return !ignoredRequests.shouldIgnore(
+          interaction.request.method,
+          interaction.request.path
+        );
+      }
+
+      function filterByEndpoint(endpoint: { pathId: string; method: string }) {
+        return function (interaction: IHttpInteraction) {
+          const pathId = ScalaJSHelpers.getOrUndefined(
+            undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
+          );
+          return (
+            endpoint.method === interaction.request.method &&
+            endpoint.pathId === pathId &&
+            !ignoredRequests.shouldIgnore(
+              interaction.request.method,
+              interaction.request.path
+            )
+          );
+        };
+      }
+
+      const interactionFilter =
+        filters.length > 0
+          ? filterByEndpoint(filters[0])
+          : filterIgnoredRequests;
+      const interactionIterator = CaptureInteractionIterator(
+        {
+          captureId: this.config.captureId,
+          captureBaseDirectory: this.config.captureBaseDirectory,
+        },
+        interactionFilter
       );
-      console.timeEnd(`count ${batchId} ${index}`);
+
+      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
+      let undocumentedUrls = opticEngine.UndocumentedUrlHelpers.newCounter();
+      const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
+        rfcState
+      );
+      let hasMoreInteractions = true;
+      let diffedInteractionsCounter = BigInt(0);
+      let skippedInteractionsCounter = BigInt(0);
+      const batcher = new Bottleneck.Batcher({
+        maxSize: 100,
+        maxTime: 100,
+      });
+      const diffOutputPaths = getDiffOutputPaths(this.config);
+
+      const queue = new Bottleneck({
+        maxConcurrent: 1,
+      });
+
+      function notifyParent() {
+        const progress = {
+          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+          hasMoreInteractions,
+        };
+        if (process && process.send) {
+          process.send({
+            type: 'progress',
+            data: progress,
+          });
+        } else {
+          console.log(progress);
+        }
+      }
+
+      async function flush() {
+        const c = diffedInteractionsCounter.toString();
+
+        console.time(`flushing ${c}`);
+        const outputDiff = safeWriteJson(
+          diffOutputPaths.diffs,
+          opticEngine.DiffWithPointersJsonSerializer.toJs(diffs)
+        );
+        const outputCount = safeWriteJson(
+          diffOutputPaths.undocumentedUrls,
+          opticEngine.UrlCounterJsonSerializer.toFriendlyJs(undocumentedUrls)
+        );
+        const outputStats = safeWriteJson(diffOutputPaths.stats, {
+          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+          isDone: !hasMoreInteractions,
+        });
+
+        await Promise.all([outputDiff, outputCount, outputStats]);
+
+        notifyParent();
+
+        console.timeEnd(`flushing ${c}`);
+      }
+
+      batcher.on('batch', () => {
+        console.log('scheduling batch flush');
+        queue.schedule(() => {
+          console.log('executing batch flush');
+          return flush().catch((e) => {
+            notifyParentOfError(e);
+          });
+        });
+      });
+
+      const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
+        {
+          captureBaseDirectory: this.config.captureBaseDirectory,
+          captureId: this.config.captureId,
+        }
+      );
+
+      await fs.ensureDir(diffOutputPaths.base);
+      await flush();
+
+      for await (const item of interactionIterator) {
+        skippedInteractionsCounter = item.skippedInteractionsCounter;
+        diffedInteractionsCounter = item.diffedInteractionsCounter;
+        hasMoreInteractions = item.hasMoreInteractions;
+        if (!hasMoreInteractions) {
+          // @GOTCHA item.interaction.value should not be present when hasMoreInteractions is false
+          break;
+        }
+        if (!item.interaction) {
+          continue;
+        }
+        const { batchId, index } = item.interaction.context;
+        console.time(`serdes ${batchId} ${index}`);
+        const deserializedInteraction = JsonHelper.fromInteraction(
+          item.interaction.value
+        );
+        console.timeEnd(`serdes ${batchId} ${index}`);
+        console.time(`diff ${batchId} ${index}`);
+        diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
+          resolvers,
+          rfcState,
+          deserializedInteraction,
+          interactionPointerConverter.toPointer(item.interaction.value, {
+            interactionIndex: index,
+            batchId,
+          }),
+          diffs
+        );
+        console.timeEnd(`diff ${batchId} ${index}`);
+        console.time(`count ${batchId} ${index}`);
+        undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
+          deserializedInteraction,
+          undocumentedUrls
+        );
+        console.timeEnd(`count ${batchId} ${index}`);
+        batcher.add(null);
+      }
+      hasMoreInteractions = false;
       batcher.add(null);
+    } catch (e) {
+      notifyParentOfError(e);
     }
-    hasMoreInteractions = false;
-    batcher.add(null);
   }
 }

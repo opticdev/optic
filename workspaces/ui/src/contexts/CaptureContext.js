@@ -148,8 +148,13 @@ export class CaptureStateStore extends React.Component {
     if (config.notificationsUrl) {
       notificationChannel = new EventSource(config.notificationsUrl);
       notificationChannel.onmessage = (event) => {
-        const { data } = JSON.parse(event.data);
-        this.state.reloadDebounce(data);
+        const { type, data } = JSON.parse(event.data);
+        if (type === 'message') {
+          this.state.reloadDebounce(data);
+        } else if (type === 'error') {
+          console.error(data);
+          debugger;
+        }
       };
       notificationChannel.onerror = (e) => {
         console.error(e);
