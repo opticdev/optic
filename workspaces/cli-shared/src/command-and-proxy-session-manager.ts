@@ -16,6 +16,7 @@ class CommandAndProxySessionManager {
     const opticServiceConfig = {
       OPTIC_API_PORT: servicePort.toString(),
       OPTIC_API_HOST: serviceHost.toString(),
+      OPTIC_PROXY_PORT: this.config.proxyConfig.port.toString()
     };
 
     await persistenceManager.init();
