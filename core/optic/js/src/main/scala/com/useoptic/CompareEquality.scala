@@ -43,6 +43,13 @@ object CompareEquality {
     }
   }
   def betweenSelectedDiffs(aBodyRegions: js.UndefOr[BodyDiff], bBodyRegions: js.UndefOr[BodyDiff]): Boolean = {
-    aBodyRegions.toOption != bBodyRegions.toOption
+    val a = aBodyRegions.toOption
+    val b = bBodyRegions.toOption
+
+    if ( (a.isDefined && b.isEmpty) || (a.isEmpty && b.isDefined) ) {
+      false
+    } else {
+      a.map(_.diff) == b.map(_.diff) && a.map(_.firstInteractionPointer) == b.map(_.firstInteractionPointer)
+    }
   }
 }

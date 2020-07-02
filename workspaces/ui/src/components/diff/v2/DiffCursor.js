@@ -60,7 +60,8 @@ export class DiffCursor extends React.Component {
         this.props.selectedDiff || undefined,
         nextProps.selectedDiff || undefined
       ) ||
-      this.state.showAllDiffs !== nextState.showAllDiffs
+      this.state.showAllDiffs !== nextState.showAllDiffs ||
+      (nextProps.selectedDiff === null && nextProps.diffs.length > 0)
     );
   }
 
@@ -77,6 +78,8 @@ export class DiffCursor extends React.Component {
     const { selectedDiff, setSelectedDiff, diffs } = this.props;
     const diffCount = diffs.length;
     const { showAllDiffs } = this.state;
+
+    console.log('rendering cursor ', { diffCount, selectedDiff });
 
     if (diffCount === 0 || !selectedDiff) {
       return null;

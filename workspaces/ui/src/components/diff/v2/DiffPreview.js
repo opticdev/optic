@@ -98,7 +98,7 @@ export default function DiffPreview() {
 }
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff, endpointPurpose, method, fullPath } = props;
+  const { newRegions, ignoreDiff } = props;
 
   const classes = useStyles();
 

@@ -24,6 +24,7 @@ import { BreadcumbX } from './DiffPreview';
 import { primary } from '../../../theme';
 import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { DiffReviewLoading } from './LoadingNextDiff';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,7 +73,6 @@ export default (props) => {
   const { diff } = props;
 
   const ds = diff.toString();
-  console.log('diff string ', ds);
 
   const description = useDiffDescription(diff);
 
@@ -101,7 +101,7 @@ export default (props) => {
   );
 
   if (!currentInteraction || !description) {
-    return null;
+    return <DiffReviewLoading show={true} />;
   }
 
   const { interaction, interactionScala } = currentInteraction;
