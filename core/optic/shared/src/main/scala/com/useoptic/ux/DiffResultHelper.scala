@@ -1,5 +1,6 @@
 package com.useoptic.ux
 
+import com.useoptic.contexts.requests.Commands
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.projections.AllEndpointsProjection
 import com.useoptic.contexts.rfc.RfcState
@@ -12,6 +13,7 @@ import com.useoptic.diff.shapes.resolvers.ShapesResolvers
 import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.{Body, HttpInteraction}
 import com.useoptic.dsa.OpticIds
+
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
 
@@ -79,7 +81,18 @@ object DiffResultHelper {
   }
 
 
-  def groupEndpointDiffsByRegion(diffs: Map[InteractionDiffResult, Seq[String]]): EndpointDiffGrouping = {
+  def groupEndpointDiffsByRegion(diffs: Map[InteractionDiffResult, Seq[String]], rfcState: RfcState, method: String, pathId: PathComponentId): EndpointDiffGrouping = {
+
+
+    val allRequests = rfcState.requestsState.requests.collect {
+      case (id, request) if !request.isRemoved && request.requestDescriptor.pathComponentId == pathId && request.requestDescriptor.httpMethod == method  => request
+    }
+
+
+    val allResponses = rfcState.requestsState.responses.collect {
+      case (id, response) if !response.isRemoved && response.responseDescriptor.pathId == pathId && response.responseDescriptor.httpMethod == method => response
+    }
+
 
     val regions = newRegionDiffs(diffs)
     val body = bodyDiffs(diffs)
@@ -88,15 +101,51 @@ object DiffResultHelper {
       EndpointBodyDiffRegion(i._1, None, i._2.toVector)
     })
 
-    val responseBodyDiffs = body.collect { case i if i.inResponse => i }.groupBy(i => (i.contentType, i.statusCode) ).map(i => {
-      val (ct, sc) = i._1
-      EndpointBodyDiffRegion(ct, sc, i._2.toVector)
+    val otherRequests = allRequests.flatMap(i => {
+      val contentTypeOption = i.requestDescriptor.bodyDescriptor match {
+        case Commands.UnsetBodyDescriptor() => None
+        case Commands.ShapedBodyDescriptor(httpContentType, shapeId, isRemoved) => Some(httpContentType)
+      }
+      if (requestBodyDiffs.exists(_.contentType == contentTypeOption)) {
+        None
+      } else {
+        Some(EndpointBodyDiffRegion(contentTypeOption, None, Seq.empty))
+      }
     })
 
 
+    val collectResponses = body.collect { case i if i.inResponse => i }.groupBy(i => (i.contentType, i.statusCode) ).map(i => {
+      val (ct, sc) = i._1
+      EndpointBodyDiffRegion(ct, sc, i._2.toVector)
+    }).groupBy(_.statusCode.get)
+
+    val allKnownStatusCodes = allResponses.map(_.responseDescriptor.httpStatusCode).filterNot(sc => collectResponses.keySet.contains(sc))
+
+    val combinedResponses = (collectResponses ++ allKnownStatusCodes.map(i => (i, Iterable.empty)))
+    val responseBodyDiffs = combinedResponses.map(i => {
+
+      val contentTypeResponses = i._2.toSeq
+
+      val otherResponsesForStatusCode = allResponses.filter(_.responseDescriptor.httpStatusCode == i._1).flatMap(res => {
+        val contentTypeOption = res.responseDescriptor.bodyDescriptor match {
+          case Commands.UnsetBodyDescriptor() => None
+          case Commands.ShapedBodyDescriptor(httpContentType, _, __) => Some(httpContentType)
+        }
+        if (contentTypeResponses.exists(_.contentType == contentTypeOption)) {
+          None
+        } else {
+          Some(EndpointBodyDiffRegion(contentTypeOption, Some(i._1), Seq.empty))
+        }
+      })
+
+      EndpointResponseRegion(i._1, (contentTypeResponses ++ otherResponsesForStatusCode).sortBy(_.contentType.getOrElse("")))
+    })
+
+
+
     EndpointDiffGrouping(
-      requestBodyDiffs.toVector,
-      responseBodyDiffs.toVector,
+      (requestBodyDiffs ++ otherRequests).toSeq.sortBy(_.contentType.getOrElse("")),
+      responseBodyDiffs.toSeq.sortBy(_.statusCode),
       regions
     )
   }
@@ -324,13 +373,35 @@ abstract class BodyDiff {
 
 @JSExportAll
 case class EndpointDiffGrouping(requestDiffs: Seq[EndpointBodyDiffRegion],
-                                responseDiffs: Seq[EndpointBodyDiffRegion],
+                                responseDiffs: Seq[EndpointResponseRegion],
                                 newRegions: Seq[NewRegionDiff]) {
   def hasNewRegions: Boolean = newRegions.nonEmpty
   def empty: Boolean = requestDiffs.isEmpty && responseDiffs.isEmpty && newRegions.isEmpty
+
+  def newRegionsCount = newRegions.size
+  def requestCount = requestDiffs.size
+  def responseCount = responseDiffs.size
+
+  def firstRequestIdWithDiff: Option[String] = requestDiffs.find(_.bodyDiffs.nonEmpty).map(_.id)
+  def firstResponseIdWithDiff: Option[String] = {
+    val all = responseDiffs.flatMap(_.regions)
+    all.find(_.bodyDiffs.nonEmpty).map(_.id)
+  }
+
+
+  def bodyDiffsForId(id: String): Seq[BodyDiff] = {
+    Seq(requestDiffs.find(_.id == id), responseDiffs.flatMap(_.regions).find(_.id == id)).flatten.headOption.map(_.bodyDiffs)
+      .getOrElse(Seq.empty)
+  }
+
 }
 @JSExportAll
-case class EndpointBodyDiffRegion(contentType: Option[String], statusCode: Option[Int], bodyDiffs: Vector[BodyDiff])
+case class EndpointBodyDiffRegion(contentType: Option[String], statusCode: Option[Int], bodyDiffs: Seq[BodyDiff]) {
+  def id = s"${statusCode.toString} ${contentType.getOrElse("no_body")}"
+  def count = bodyDiffs.size
+}
+@JSExportAll
+case class EndpointResponseRegion(statusCode: Int, regions: Seq[EndpointBodyDiffRegion])
 
 @JSExportAll
 case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggestion: Option[InteractiveDiffInterpretation])

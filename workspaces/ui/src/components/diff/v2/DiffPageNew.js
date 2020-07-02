@@ -38,6 +38,7 @@ import {
 } from '../../../contexts/CaptureContext';
 import { DiffLoading } from './LoadingNextDiff';
 import { DiffCursor } from './DiffCursor';
+import { DiffReviewPage } from './DiffReviewPage';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const { helpers } = diff;
@@ -103,7 +104,8 @@ function DiffPageNew(props) {
         inContextOfDiff={true}
         notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        <DiffPageContent captureId={captureId} />
+        {/*<DiffPageContent captureId={captureId} />*/}
+        <DiffReviewPage captureId={captureId} pathId={pathId} method={method} />
       </EndpointsContextStore>
     </CaptureSessionInlineContext>
   );

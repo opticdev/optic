@@ -39,9 +39,44 @@ export function DiffLoading({ show }) {
   );
 }
 
+export function DiffReviewLoading({ show }) {
+  const classes = useStyles();
+
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className={classes.rootUnder}>
+      <div className={classes.sideBySide}>
+        <Skeleton
+          variant="rect"
+          height={550}
+          component="div"
+          className={classes.textParent}
+        >
+          <Typography
+            component="div"
+            className={classes.text}
+            variant="overline"
+          >
+            Loading Example and Diff...
+          </Typography>
+        </Skeleton>
+        <div style={{ width: 20 }} />
+        <Skeleton variant="rect" width={250} height={200} />
+      </div>
+    </div>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+  },
+  rootUnder: {
+    width: '100%',
+    marginTop: 70,
   },
   text: {
     margin: '0 auto',
