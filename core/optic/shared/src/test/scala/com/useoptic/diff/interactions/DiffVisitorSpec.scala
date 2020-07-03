@@ -6,7 +6,7 @@ import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.ddd.InMemoryEventStore
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes._
@@ -32,7 +32,7 @@ object TestHelpers {
 }
 
 class DiffVisitorSpec extends FunSpec {
-
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
 
   describe("diff visitor") {
     describe("with spec = a simple POST request") {
@@ -40,7 +40,7 @@ class DiffVisitorSpec extends FunSpec {
       val requestId = "req1"
       val responseId = "res1"
       val requestContentType = "ccc"
-      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
       val initialCommands = builtShape._2.flatten ++ Seq(
         AddRequest(requestId, Commands.rootPathId, "POST"),
         SetRequestBodyShape(requestId, ShapedBodyDescriptor(requestContentType, builtShape._1, isRemoved = false)),

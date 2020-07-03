@@ -4,9 +4,11 @@ import com.useoptic.contexts.requests.Commands
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.projections.AllEndpointsProjection
 import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers.InteractionPointersGroupedByDiff
 import com.useoptic.diff.helpers.UndocumentedUrlHelpers.UrlCounter
+import com.useoptic.diff.initial.ShapeBuildingStrategy
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.resolvers.ShapesResolvers
@@ -15,7 +17,7 @@ import com.useoptic.types.capture.{Body, HttpInteraction}
 import com.useoptic.dsa.OpticIds
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-import scala.util.Try
+import scala.util.{Random, Try}
 
 @JSExport
 @JSExportAll
@@ -29,18 +31,22 @@ object DiffResultHelper {
     Vector.empty
   }
 
-  def splitUnmatchedUrls(urls: Seq[NewEndpoint]): SplitUndocumentedUrls = {
+  def splitUnmatchedUrls(urls: Seq[NewEndpoint], endpointDiffs: Seq[EndpointDiffs]): SplitUndocumentedUrls = {
     val random = scala.util.Random
     random.setSeed(stableRandomSeed)
+
+    val undocumented = endpointDiffs.collect {
+      case endpoint if !endpoint.isDocumentedEndpoint => NewEndpoint("", endpoint.method, Some(endpoint.pathId), endpoint.count)
+    }
 
     if (urls.size > 250) {
       import com.useoptic.utilities.DistinctBy._
       //known paths should of course get preference
       val knownPaths = urls.filter(_.pathId.isDefined).distinctByIfDefined(i => (Some(i.pathId, i.method)))
       val urlsToShow = random.shuffle(urls).take(250 - knownPaths.length)
-      SplitUndocumentedUrls( (knownPaths ++ urlsToShow).toVector.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
+      SplitUndocumentedUrls( (knownPaths ++ urlsToShow).toVector.sortBy(_.count).reverse, undocumented, urls.size, urls.map(_.path).distinct)
     } else {
-      SplitUndocumentedUrls(urls.sortBy(_.count).reverse, urls.size, urls.map(_.path).distinct)
+      SplitUndocumentedUrls(urls.sortBy(_.count).reverse, undocumented, urls.size, urls.map(_.path).distinct)
     }
 
   }
@@ -51,7 +57,9 @@ object DiffResultHelper {
       .getOrElse(Map.empty)
   }
 
-  def endpointDiffs(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Vector[EndpointDiffs] = {
+  def endpointDiffs(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Seq[EndpointDiffs] = {
+
+    val allEndpoints = AllEndpointsProjection.fromRfcState(rfcState)
 
     val endpointsFromDiff = {
       diffs.filterNot {
@@ -60,12 +68,13 @@ object DiffResultHelper {
         case _ => false
       }.flatMap {
         case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
-          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers))
+          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers), true)
         })
       }.groupBy(i => (i.pathId, i.method)).map {
         case ((path, method), diffs) => {
-          val diffsForTHisOne = diffs.flatMap(_.diffs).toMap
-          EndpointDiffs(method, path, diffsForTHisOne)
+          val diffsForThisOne = diffs.flatMap(_.diffs).toMap
+          val isADocumentedEndpoint = allEndpoints.exists(i => i.pathId == path && i.method == method)
+          EndpointDiffs(method, path, diffsForThisOne, isADocumentedEndpoint)
         }
       }
     }.toVector
@@ -73,7 +82,7 @@ object DiffResultHelper {
     val additionalEndpointsWithoutDiffs = AllEndpointsProjection.fromRfcState(rfcState).collect {
       //collect other endpoints we know exist, that don't have a diff
       case endpoint if !endpointsFromDiff.exists(i => i.pathId == endpoint.pathId && i.method == endpoint.method) => {
-        EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */)
+        EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */, true)
       }
     }
 
@@ -152,6 +161,7 @@ object DiffResultHelper {
 
   def interactionsWithDiffsCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.flatMap(_._2).toSet.size
   def diffCount(diffs: Map[InteractionDiffResult, Seq[String]]): Int = diffs.size
+  def diffAndInteractionsCount(diffs: Map[InteractionDiffResult, Seq[String]]): String = s"Diffs: ${diffs.size}, Interactions: ${diffs.values.map(_.size).sum}"
 
   def newRegionDiffs(diffs: Map[InteractionDiffResult, Seq[String]]): Seq[NewRegionDiff] = {
     val newRegions = diffs.filterKeys {
@@ -248,18 +258,35 @@ object DiffResultHelper {
   }.toOption
 
   def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, currentRfcState: RfcState): Option[SideBySideRenderHelper] = {
+
     val simulatedDiffPreviewer = new DiffPreviewer(currentRfcState)
-    val diff = bodyDiff.diff.asInstanceOf[InteractionDiffResult]
+
+    val targetDiff = bodyDiff.diff.asInstanceOf[InteractionDiffResult]
+
+    val denormalized = denormalizeDiff(targetDiff, currentRfcState, anInteraction)
+
+    if (denormalized.isEmpty) {
+      println("COULD NOT DE-NORMALIZE DIFF" + bodyDiff.diff)
+      return None
+    }
+
+    val firstDiff = denormalized.minBy(_.interactionTrail.toString) // in theory this will make the first diff the first in the trail (all else being equal)
+
     //@todo review this interface
-    def previewForBodyAndDiff(body: Body) = {
+    def previewForBodyAndDiff(body: Body): Option[SideBySideRenderHelper] = {
       simulatedDiffPreviewer.previewDiff(
         BodyUtilities.parseBody(body),
-        Some(diff.shapeDiffResultOption.get.shapeTrail.rootShapeId),
-        Set(diff.shapeDiffResultOption).flatten,
+        Some(firstDiff.shapeDiffResultOption.get.shapeTrail.rootShapeId),
+        denormalized.flatMap(_.shapeDiffResultOption),
         Set.empty)
     }
 
     previewForBodyAndDiff(if (bodyDiff.inRequest) anInteraction.request.body else anInteraction.response.body)
+  }
+
+  def denormalizeDiff(targetDiff: InteractionDiffResult, rfcState: RfcState, anInteraction: HttpInteraction): Set[InteractionDiffResult] = {
+    val diffs = DiffHelpers.groupByDiffs(ShapesResolvers.newResolver(rfcState), rfcState, Vector(anInteraction))
+    diffs.keySet.filter(i => i.normalize() == targetDiff) // only return diffs that normalize to normalized diff
   }
 
   def previewBody(body: Body, currentRfcState: RfcState): Option[SideBySideRenderHelper] = {
@@ -281,7 +308,7 @@ object DiffResultHelper {
 @JSExportAll
 case class NewEndpoint(path: String, method: String, pathId: Option[PathComponentId], count: Int)
 @JSExportAll
-case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[InteractionDiffResult, Seq[String]]) {
+case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[InteractionDiffResult, Seq[String]], isDocumentedEndpoint: Boolean) {
   def count = diffs.keys.size
 }
 
@@ -303,6 +330,8 @@ abstract class NewRegionDiff {
 
   def firstInteractionPointer: String = interactionPointers.head
   def interactionsCount: Int = interactionPointers.size
+
+  def randomPointers: Seq[String] = Random.shuffle(interactionPointers).take(100)
 
   def previewBodyRender(currentInteraction: HttpInteraction): Option[SideBySideRenderHelper] = {
     val body = if (inRequest) {
@@ -328,9 +357,11 @@ abstract class NewRegionDiff {
 
     if (inferPolymorphism) {
       val bodies = interactions.map(getBody).flatMap(BodyUtilities.parseBody)
+      implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
       PreviewShapeAndCommands(preview.map(_._2), toSuggestion(Vector(interactions.head), rfcState, inferPolymorphism).headOption)
     } else {
+      implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten)
       PreviewShapeAndCommands(preview.map(_._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption)
     }
@@ -376,11 +407,11 @@ case class EndpointDiffGrouping(requestDiffs: Seq[EndpointBodyDiffRegion],
                                 responseDiffs: Seq[EndpointResponseRegion],
                                 newRegions: Seq[NewRegionDiff]) {
   def hasNewRegions: Boolean = newRegions.nonEmpty
-  def empty: Boolean = requestDiffs.isEmpty && responseDiffs.isEmpty && newRegions.isEmpty
+  def empty: Boolean = requestDiffs.flatMap(_.bodyDiffs).isEmpty && responseDiffs.flatMap(_.regions.flatMap(_.bodyDiffs)).isEmpty && newRegions.isEmpty
 
   def newRegionsCount = newRegions.size
-  def requestCount = requestDiffs.size
-  def responseCount = responseDiffs.size
+  def requestCount = requestDiffs.flatMap(_.bodyDiffs).size
+  def responseCount = responseDiffs.flatMap(_.regions.flatMap(_.bodyDiffs)).size
 
   def firstRequestIdWithDiff: Option[String] = requestDiffs.find(_.bodyDiffs.nonEmpty).map(_.id)
   def firstResponseIdWithDiff: Option[String] = {
@@ -408,6 +439,6 @@ case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggest
 
 
 @JSExportAll
-case class SplitUndocumentedUrls(urls: Seq[NewEndpoint], totalCount: Int, allPaths: Seq[String]) {
+case class SplitUndocumentedUrls(urls: Seq[NewEndpoint], undocumented: Seq[NewEndpoint], totalCount: Int, allPaths: Seq[String]) {
    def showing: Int = urls.length
 }

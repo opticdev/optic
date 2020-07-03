@@ -8,7 +8,10 @@ import Fab from '@material-ui/core/Fab';
 import DoneIcon from '@material-ui/icons/Done';
 import { EndpointsContext } from '../../../contexts/EndpointContext';
 import { PathAndMethod, PathAndMethodOverflowFriendly } from './PathAndMethod';
-import { CaptureContext } from '../../../contexts/CaptureContext';
+import {
+  CaptureContext,
+  useCaptureContext,
+} from '../../../contexts/CaptureContext';
 import {
   DiffResultHelper,
   getOrUndefined,
@@ -16,28 +19,37 @@ import {
   mapScala,
 } from '@useoptic/domain';
 import { DiffContext } from './DiffContext';
-import { NewRegions } from './DiffPreview';
+import { NewRegions } from './DiffNewRegions';
 import { DiffCursor } from './DiffCursor';
 import DiffReviewExpanded from './DiffReviewExpanded';
 import { RfcContext } from '../../../contexts/RfcContext';
-const newRegionsConst = 'new_regions';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Fade from '@material-ui/core/Fade';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { DiffStats } from './Stats';
+import { DiffLoading } from './LoadingNextDiff';
+import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
+import FinalizeDialog from './Finalize';
+import Button from '@material-ui/core/Button';
+
+export const newRegionsConst = 'new_regions';
 
 export function DiffReviewPage(props) {
   const { captureId, method, pathId } = props;
   const classes = useStyles();
 
   const { rfcId, rfcService } = useContext(RfcContext);
+  const { reset } = useContext(DiffContext);
+  const { acceptedSuggestions } = useContext(SuggestionsContext);
   const rfcState = rfcService.currentState(rfcId);
 
   const { endpointDescriptor } = useContext(EndpointsContext);
-  const {
-    diffsForThisEndpoint,
-    completed,
-    setSelectedDiff,
-    selectedDiff,
-  } = useContext(DiffContext);
+  const { diffsForThisEndpoint, completed } = useContext(DiffContext);
 
   const [currentTab, setCurrentTab] = useState(null);
+  const [showFinalize, setShowFinalize] = useState(false);
+
+  const { ignoreDiff } = useContext(IgnoreDiffContext);
 
   const regions = DiffResultHelper.groupEndpointDiffsByRegion(
     diffsForThisEndpoint,
@@ -56,7 +68,7 @@ export function DiffReviewPage(props) {
         regions.firstResponseIdWithDiff
       );
 
-      if (regions.newRegionCount > 0) {
+      if (regions.newRegionsCount > 0) {
         setCurrentTab(newRegionsConst);
       } else if (firstRequestIdWithDiff) {
         setCurrentTab(firstRequestIdWithDiff);
@@ -103,7 +115,7 @@ export function DiffReviewPage(props) {
         <div className={classes.navRoot}>
           <div className={classes.header}>
             <Typography variant="subtitle2" className={classes.title}>
-              {endpointDescriptor.endpointPurpose}
+              {endpointDescriptor.endpointPurpose || 'Unnamed Endpoint'}
             </Typography>
             <PathAndMethodOverflowFriendly
               method={endpointDescriptor.httpMethod}
@@ -113,13 +125,39 @@ export function DiffReviewPage(props) {
 
           <DocDivider />
 
+          <div className={classes.suggestionsBox}>
+            <Typography variant="caption" className={classes.suggestionsCount}>
+              {acceptedSuggestions.length} approved
+            </Typography>
+            <div style={{ flex: 1 }} />
+            <Button
+              size="small"
+              color="primary"
+              onClick={reset}
+              classes={{ root: classes.buttonSmall }}
+            >
+              Reset
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => setShowFinalize(true)}
+              classes={{ root: classes.buttonSmall }}
+            >
+              Finalize
+            </Button>
+          </div>
+
+          <DocDivider />
+
           <div className={classes.tabScroll}>
             <Tabs
               orientation="vertical"
               className={classes.tabs}
               onChange={(_, value) => {
-                setSelectedDiff(null);
-                setCurrentTab(value);
+                if (value !== currentTab) {
+                  setCurrentTab(value);
+                }
               }}
               value={currentTab}
             >
@@ -136,7 +174,7 @@ export function DiffReviewPage(props) {
                 style={{ marginBottom: 17 }}
               />
 
-              {regions.requestCount && (
+              {requestBodyTabs.length > 0 && (
                 <Typography
                   variant="overline"
                   className={classes.sectionHeader}
@@ -147,52 +185,45 @@ export function DiffReviewPage(props) {
 
               {requestBodyTabs}
 
-              {regions.requestCount && (
+              {requestBodyTabs.length > 0 && (
                 <DocDivider style={{ marginTop: 16, marginBottom: 16 }} />
               )}
 
               {responseBodyTabs}
             </Tabs>
           </div>
+          <DiffStats />
         </div>
       </div>
       <div className={classes.pageContainer}>
         <div className={classes.center}>
+          {!currentTab && !completed && <DiffLoading show={true} />}
+
           {currentTab === newRegionsConst && (
             <NewRegions
-              // ignoreDiff={ignoreDiff}
+              ignoreDiff={ignoreDiff}
               newRegions={JsonHelper.seqToJsArray(regions.newRegions)}
             />
           )}
 
           {currentTab && currentTab !== newRegionsConst && (
-            <>
-              <DiffCursor
-                diffs={JsonHelper.seqToJsArray(
-                  regions.bodyDiffsForId(currentTab)
-                )}
-                setSelectedDiff={setSelectedDiff}
-                selectedDiff={selectedDiff}
-                completed={completed}
-              />
-              {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
-            </>
+            <DiffCursor
+              key={currentTab}
+              diffs={JsonHelper.seqToJsArray(
+                regions.bodyDiffsForId(currentTab)
+              )}
+              completed={completed}
+              tab={currentTab}
+            />
           )}
-
-          <Fab
-            variant="extended"
-            className={classes.fab}
-            color="primary"
-            size="small"
-            classes={{
-              label: classes.fabLabel,
-            }}
-          >
-            <DoneIcon fontSize="small" style={{ marginRight: 5 }} />
-            Finalize
-          </Fab>
         </div>
       </div>
+      <FinalizeDialog
+        captureId={captureId}
+        open={showFinalize || (completed && regions.empty)}
+        canOnlyReset={regions.empty && completed}
+        close={() => setShowFinalize(false)}
+      />
     </div>
   );
 }
@@ -209,11 +240,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   pageContainer: {
-    display: 'flex',
-    flex: 1,
     overflow: 'scroll',
     height: '100vh',
     justifyContent: 'center',
+    flexGrow: 1,
   },
   navRoot: {
     flexGrow: 1,
@@ -225,6 +255,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
     background: theme.palette.grey[100],
+    zIndex: 1000,
   },
   chips: {
     marginLeft: 10,
@@ -245,18 +276,23 @@ const useStyles = makeStyles((theme) => ({
   },
   center: {
     flex: 1,
-    paddingBottom: 300,
     maxWidth: 1200,
     paddingLeft: 20,
     paddingRight: 20,
-    paddingTop: 22,
+    paddingTop: 20,
+    paddingBottom: 400,
+    margin: '0 auto',
   },
   statsSection: {
-    paddingBottom: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    paddingLeft: theme.spacing(1),
   },
   progressStats: {
     paddingLeft: theme.spacing(1),
     color: DocDarkGrey,
+    flex: 1,
   },
   progressWrapper: {
     height: 6,
@@ -267,7 +303,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     flexShrink: 1,
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'left',
     justifyContent: 'center',
     paddingBottom: 6,
     margin: theme.spacing(1),
@@ -340,7 +376,25 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: 14,
     padding: 7,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 4,
+  },
+  suggestionsBox: {
+    display: 'flex',
+    paddingLeft: 18,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingRight: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  suggestionsCount: {
+    fontSize: 10,
+    color: DocDarkGrey,
+  },
+  buttonSmall: {
+    fontSize: 10,
+    padding: 4,
+    minWidth: 40,
   },
 }));

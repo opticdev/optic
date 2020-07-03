@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.{Commands, ShapesAggregate}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NullableKind, OneOfKind, OptionalKind}
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
@@ -19,6 +19,7 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
 
   private val basicInterpretations = new BasicInterpretations(rfcState)
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
 
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {

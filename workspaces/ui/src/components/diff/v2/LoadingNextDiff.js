@@ -39,6 +39,44 @@ export function DiffLoading({ show }) {
   );
 }
 
+export function DiffLoadingOverview({ show }) {
+  const classes = useStyles();
+
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className={classes.rootOverview}>
+      <Skeleton
+        variant="rect"
+        height={60}
+        component="div"
+        style={{ marginTop: 12 }}
+      />
+
+      <Skeleton
+        variant="rect"
+        height={60}
+        component="div"
+        style={{ marginTop: 12 }}
+      />
+      <Skeleton
+        variant="rect"
+        height={60}
+        component="div"
+        style={{ marginTop: 12 }}
+      />
+      <Skeleton
+        variant="rect"
+        height={60}
+        component="div"
+        style={{ marginTop: 12 }}
+      />
+    </div>
+  );
+}
+
 export function DiffReviewLoading({ show }) {
   const classes = useStyles();
 
@@ -73,6 +111,10 @@ export function DiffReviewLoading({ show }) {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+  },
+  rootOverview: {
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   rootUnder: {
     width: '100%',

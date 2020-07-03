@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { GenericContextFactory } from './GenericContextFactory';
 import {
   createEndpointDescriptor,
   getEndpointId,
 } from '../utilities/EndpointUtilities';
-import { withRfcContext } from './RfcContext';
+import { RfcContext, withRfcContext } from './RfcContext';
 import { commandsForUpdatingContribution } from '../engine/routines';
+import {
+  asPathTrail,
+  getNameWithFormattedParameters,
+} from '../components/utilities/PathUtilities';
 
 const {
   Context: EndpointsContext,
@@ -65,3 +69,34 @@ const EndpointsContextStore = withRfcContext(
 );
 
 export { EndpointsContextStore, EndpointsContext, withEndpointsContext };
+
+export function PathNameFromId({ pathId }) {
+  const { cachedQueryResults } = useContext(RfcContext);
+
+  const { pathsById } = cachedQueryResults;
+
+  if (!pathId) {
+    return null;
+  }
+
+  let pathParameters = [];
+
+  //try to resolve this path
+  const pathTrail = asPathTrail(pathId, pathsById);
+  const pathTrailComponents = pathTrail.map((pathId) => pathsById[pathId]);
+
+  const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
+    const pathComponentName = getNameWithFormattedParameters(pathComponent);
+    const pathComponentId = pathComponent.pathId;
+    return {
+      pathComponentName,
+      pathComponentId,
+    };
+  });
+
+  const fullPath = pathTrailWithNames
+    .map(({ pathComponentName }) => pathComponentName)
+    .join('/');
+
+  return <>{fullPath}</>;
+}

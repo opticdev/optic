@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeProvider}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
@@ -16,6 +16,9 @@ import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
+
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {

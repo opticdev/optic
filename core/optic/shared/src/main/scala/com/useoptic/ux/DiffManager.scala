@@ -6,6 +6,7 @@ import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.{ChangeType, DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers
+import com.useoptic.diff.initial.ShapeBuildingStrategy
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.ShapeDiffResult
@@ -264,6 +265,9 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
 @JSExportAll
 abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMethod: String)(implicit val interactionsGroupedByDiffs: DiffsToInteractionsMap, ungroupedShapeDiffs: Set[ShapeDiffResult], rfcState: RfcState, resolvers: ShapesResolvers, diffPreviewer: DiffPreviewer) {
+
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
+
   def updatedRfcState(rfcState: RfcState, resolvers: ShapesResolvers): Unit
 
   def suggestionsForDiff(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {

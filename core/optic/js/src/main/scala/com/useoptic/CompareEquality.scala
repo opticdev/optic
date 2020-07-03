@@ -14,8 +14,6 @@ object CompareEquality {
   def between(a: InteractionDiffResult, b: InteractionDiffResult): Boolean = a == b
   def between(a: DiffResult, b: DiffResult): Boolean = a == b
   def between(a: ShapeDiffResult, b: ShapeDiffResult): Boolean = a == b
-  def between(a: DiffBlock, b: DiffBlock): Boolean = a == b
-  def between(a: BodyShapeDiffBlock, b: BodyShapeDiffBlock): Boolean = a == b
   def between(a: InteractiveDiffInterpretation, b: InteractiveDiffInterpretation): Boolean = a == b
 
   def betweenWithoutCommands(a: InteractiveDiffInterpretation, b: InteractiveDiffInterpretation): Boolean = {
@@ -42,6 +40,11 @@ object CompareEquality {
       false
     }
   }
+
+  def containsDiff(bodyDiffs: js.Array[BodyDiff], diff: BodyDiff): Boolean = {
+    bodyDiffs.contains(diff)
+  }
+
   def betweenSelectedDiffs(aBodyRegions: js.UndefOr[BodyDiff], bBodyRegions: js.UndefOr[BodyDiff]): Boolean = {
     val a = aBodyRegions.toOption
     val b = bBodyRegions.toOption
