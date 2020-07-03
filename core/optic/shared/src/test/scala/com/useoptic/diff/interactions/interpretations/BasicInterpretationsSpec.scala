@@ -4,7 +4,7 @@ import com.useoptic.contexts.requests.Commands
 import com.useoptic.contexts.requests.Commands.ShapedBodyDescriptor
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.interpreters.BasicInterpreters
 import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, ResponseBody, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, TestHelpers, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, Url}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
@@ -82,7 +82,9 @@ object InteractionHelpers {
 class BasicInterpretationsSpec extends FunSpec {
   describe("AddRequestBodyContentType") {
 
-    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator)
+    implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
+
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
     val initialCommands = Seq(
       Commands.AddRequest("request1", "root", "PUT")
     ) ++ builtShape._2.flatten ++ Seq(
@@ -114,8 +116,8 @@ class BasicInterpretationsSpec extends FunSpec {
     }
   }
   describe("AddResponseBodyContentType") {
-
-    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator)
+    implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
     val initialCommands = Seq(
       Commands.AddRequest("request1", "root", "GET")
     ) ++ builtShape._2.flatten ++ Seq(
@@ -147,8 +149,9 @@ class BasicInterpretationsSpec extends FunSpec {
     }
   }
   describe("ChangeShape") {
+    implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
     describe("changing a field's shape") {
-      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":1}""").get))(OpticIds.newDeterministicIdGenerator)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":1}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
       val initialCommands = Seq(
         Commands.AddRequest("request1", "root", "PUT")
       ) ++ builtShape._2.flatten ++ Seq(
@@ -175,7 +178,8 @@ class BasicInterpretationsSpec extends FunSpec {
       }
     }
     describe("changing a list item's shape") {
-      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":[1]}""").get))(OpticIds.newDeterministicIdGenerator)
+      implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"k":[1]}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
 
       val initialCommands = Seq(
         Commands.AddRequest("request1", "root", "PUT")

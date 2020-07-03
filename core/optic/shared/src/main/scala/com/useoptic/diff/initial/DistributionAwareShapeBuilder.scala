@@ -14,9 +14,9 @@ import scala.util.Random
 
 object DistributionAwareShapeBuilder {
 
-  def streaming(implicit ids: OpticDomainIds) = new StreamingShapeBuilder()
+  def streaming(implicit ids: OpticDomainIds, shapeBuildingStrategy: ShapeBuildingStrategy) = new StreamingShapeBuilder()
 
-  def toCommands(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds): (ShapeId, ImmutableCommandStream) = {
+  def toCommands(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds, shapeBuildingStrategy: ShapeBuildingStrategy): (ShapeId, ImmutableCommandStream) = {
 
     val aggregator = aggregateTrailsAndValues(bodies)
 
@@ -101,9 +101,9 @@ object DistributionAwareShapeBuilder {
     }
   }
 
-  def aggregateTrailsAndValues(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds): TrailValueMap = {
+  def aggregateTrailsAndValues(bodies: Vector[JsonLike])(implicit ids: OpticDomainIds, shapeBuildingStrategy: ShapeBuildingStrategy): TrailValueMap = {
 
-    val aggregator = new TrailValueMap()
+    val aggregator = new TrailValueMap(shapeBuildingStrategy)
 
     val visitor = new ShapeBuilderVisitor(aggregator)
 
@@ -117,9 +117,9 @@ object DistributionAwareShapeBuilder {
   def toShapes(trailValues: TrailValueMap): ShapesToMake = trailValues.getRoot.toShape
 }
 
-class StreamingShapeBuilder()(implicit ids: OpticDomainIds) {
+class StreamingShapeBuilder()(implicit ids: OpticDomainIds, shapeBuildingStrategy: ShapeBuildingStrategy) {
 
-  private val aggregator = new TrailValueMap()
+  private val aggregator = new TrailValueMap(shapeBuildingStrategy)
   private val visitor = new ShapeBuilderVisitor(aggregator)
   private val jsonLikeTraverser = new JsonLikeTraverser(RfcState.empty, visitor)
 
@@ -148,8 +148,15 @@ case class FieldWithShape(key: String, shape: ShapesToMake, trail: JsonTrail, id
 case class PrimitiveKind(baseShape: CoreShapeKind, trail: JsonTrail, id: String) extends ShapesToMake
 case class Unknown(trail: JsonTrail, id: String) extends ShapesToMake
 
+/// Strategy
+case class ShapeBuildingStrategy(learnFromFirstOccurrenceOnly: Boolean)
+object ShapeBuildingStrategy {
+  val learnASingleInteraction = ShapeBuildingStrategy(true)
+  val inferPolymorphism = ShapeBuildingStrategy(false)
+}
 
-class TrailValueMap()(implicit ids: OpticDomainIds) {
+
+class TrailValueMap(strategy: ShapeBuildingStrategy)(implicit ids: OpticDomainIds) {
 
 
   class ValueAffordanceMap(var trail: JsonTrail) {
@@ -239,27 +246,32 @@ class TrailValueMap()(implicit ids: OpticDomainIds) {
   private val _internal = scala.collection.mutable.Map[JsonTrail, ValueAffordanceMap]()
 
   def putValue(trail: JsonTrail, value: JsonLike): Unit = {
-    val affordanceMap = _internal.getOrElseUpdate(trail, new ValueAffordanceMap(trail))
 
-    if (value.isString) {
-      affordanceMap.wasString = true
-    }
-    if (value.isNumber) {
-      affordanceMap.wasNumber = true
-    }
-    if (value.isBoolean) {
-      affordanceMap.wasBoolean = true
-    }
-    if (value.isNull) {
-      affordanceMap.wasNull = true
-    }
-    if (value.isArray) {
-      affordanceMap.wasArray = true
-    }
-    if (value.isObject) {
-      affordanceMap.touchObject(value.fields.keySet)
-    }
+    if (_internal.get(trail).isDefined && strategy.learnFromFirstOccurrenceOnly) {
+      return Unit
+    } else {
 
+      val affordanceMap = _internal.getOrElseUpdate(trail, new ValueAffordanceMap(trail))
+
+      if (value.isString) {
+        affordanceMap.wasString = true
+      }
+      if (value.isNumber) {
+        affordanceMap.wasNumber = true
+      }
+      if (value.isBoolean) {
+        affordanceMap.wasBoolean = true
+      }
+      if (value.isNull) {
+        affordanceMap.wasNull = true
+      }
+      if (value.isArray) {
+        affordanceMap.wasArray = true
+      }
+      if (value.isObject) {
+        affordanceMap.touchObject(value.fields.keySet)
+      }
+    }
   }
 
   def getRoot: ValueAffordanceMap = _internal(JsonTrail(Seq.empty))

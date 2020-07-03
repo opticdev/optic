@@ -53,15 +53,17 @@ const useStyles = makeStyles((theme) => ({
 
 export const DiffHelperCard = (props) => {
   const classes = useStyles();
-  const { inRequest, inResponse, description, currentInteraction } = props;
   const {
+    inRequest,
+    inResponse,
+    description,
+    currentInteraction,
     selectedInterpretation,
-    setSelectedDiff,
     setSelectedInterpretation,
+    setSelectedDiff,
     selectedDiff,
-    acceptSuggestion,
-    clearPreview,
-  } = useContext(DiffContext);
+  } = props;
+  const { acceptSuggestion, clearPreview } = useContext(DiffContext);
 
   const suggestions = useSuggestionsForDiff(selectedDiff, currentInteraction);
 
@@ -144,7 +146,10 @@ export const DiffHelperCard = (props) => {
             color="primary"
             size="small"
             disabled={!selectedInterpretation}
-            onClick={() => acceptSuggestion(selectedInterpretation)}
+            onClick={() => {
+              setSelectedDiff(null);
+              acceptSuggestion(selectedInterpretation);
+            }}
           >
             Approve
           </Button>

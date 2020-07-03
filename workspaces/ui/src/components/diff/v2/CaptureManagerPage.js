@@ -33,6 +33,7 @@ import { RfcContext } from '../../../contexts/RfcContext';
 import classNames from 'classnames';
 import {
   DiffResultHelper,
+  getOrUndefined,
   JsonHelper,
   lengthScala,
   mapScala,
@@ -43,6 +44,7 @@ import { Show, ShowSpan } from '../../shared/Show';
 import {
   EndpointsContext,
   EndpointsContextStore,
+  PathNameFromId,
 } from '../../../contexts/EndpointContext';
 import MoreRecentCapture from './MoreRecentCapture';
 import Page from '../../Page';
@@ -66,6 +68,8 @@ import { CustomNavTab } from './CustomNavTab';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
+import { DiffLoadingOverview } from './LoadingNextDiff';
+import { DiffStats } from './Stats';
 
 const {
   Context: AllCapturesContext,
@@ -193,9 +197,12 @@ function CaptureChooserComponent(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const realEndpointDiffCount = endpointDiffs.filter((i) => i.count > 0).length;
-  //these numbers are a bit funcky because it also counts requests/reponses the other count does not
-  const totalEndpoints = endpointDiffs.length;
+  const realEndpointDiffCount = endpointDiffs.filter(
+    (i) => i.count > 0 && i.isDocumentedEndpoint
+  ).length;
+
+  const totalEndpoints = endpointDiffs.filter((i) => i.isDocumentedEndpoint)
+    .length;
 
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
 
@@ -203,9 +210,16 @@ function CaptureChooserComponent(props) {
     global.debugOptic = debugDump(specService, captureId);
   });
 
+  useEffect(() => {
+    if (totalEndpoints === 0 && unrecognizedUrls.length > 0) {
+      setTab(subtabs.UNDOCUMENTED_URL);
+    }
+  }, [totalEndpoints, unrecognizedUrls.length]);
+
   function handleChange(event) {
     const captureId = event.target.value;
     history.push(`${baseUrl}/diffs/${captureId}`);
+    window.location.reload();
   }
 
   return (
@@ -225,6 +239,7 @@ function CaptureChooserComponent(props) {
 
           <FormControl className={classes.formControl} fullWidth>
             <Select
+              size="small"
               placeholder="Select Capture"
               value={captureId}
               onChange={handleChange}
@@ -274,28 +289,7 @@ function CaptureChooserComponent(props) {
 
           <div style={{ flex: 1 }} />
 
-          <div className={classes.statsSection}>
-            <div className={classes.progressWrapper}>
-              <Fade in={!completed}>
-                <LinearProgress variant="indeterminate" />
-              </Fade>
-            </div>
-            <Typography
-              component="div"
-              variant="overline"
-              style={{ marginTop: 12 }}
-              className={classes.progressStats}
-            >
-              {processed} processed {' | '} {skipped} skipped
-            </Typography>
-            <Typography
-              component="div"
-              variant="overline"
-              className={classes.progressStats}
-            >
-              Last observation {'9 minutes ago'}
-            </Typography>
-          </div>
+          <DiffStats showSkipped={true} />
         </div>
       </div>
       <div className={classes.pageContainer}>
@@ -374,11 +368,17 @@ function CaptureDiffStat() {
 function EndpointDiffs(props) {
   const { captureId } = props;
   const classes = useStyles();
-  const { endpointDiffs } = useCaptureContext();
+  const { endpointDiffs, completed } = useCaptureContext();
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const realCount = endpointDiffs.filter((i) => i.count > 0).length;
+  const realCount = endpointDiffs.filter(
+    (i) => i.count > 0 && i.isDocumentedEndpoint
+  ).length;
+
+  if (realCount === 0 && !completed) {
+    return <DiffLoadingOverview show={true} />;
+  }
 
   //also available
   // stats.captureCompleted
@@ -394,6 +394,11 @@ function EndpointDiffs(props) {
       </div>
       <List style={{ padding: 13, paddingTop: 4 }}>
         {endpointDiffs.map((i) => {
+          //skip undocumented
+          if (!i.isDocumentedEndpoint) {
+            return null;
+          }
+
           const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
           return (
             <EndpointsContextStore key={to} pathId={i.pathId} method={i.method}>
@@ -461,15 +466,21 @@ function UnrecognizedUrls(props) {
   const { captureId } = props;
   const classes = useStyles();
   const history = useHistory();
-  const { unrecognizedUrls } = useCaptureContext();
+  const { unrecognizedUrls, endpointDiffs, completed } = useCaptureContext();
   const baseUrl = useBaseUrl();
 
   const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
-    JsonHelper.jsArrayToSeq(unrecognizedUrls)
+    JsonHelper.jsArrayToSeq(unrecognizedUrls),
+    JsonHelper.jsArrayToSeq(endpointDiffs)
   );
 
+  const undocumented = JsonHelper.seqToJsArray(urlsSplit.undocumented);
   const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
   const urls = JsonHelper.seqToJsArray(urlsSplit.urls);
+
+  if (urls.length === 0 && undocumented.length === 0 && !completed) {
+    return <DiffLoadingOverview show={true} />;
+  }
 
   return (
     <>
@@ -489,6 +500,59 @@ function UnrecognizedUrls(props) {
         </div>
       </Show>
 
+      <Show when={undocumented.length}>
+        <Typography variant="subtitle2" color="primary" style={{ padding: 9 }}>
+          Ready to Document
+        </Typography>
+        <List>
+          {undocumented.map((i) => {
+            return (
+              <NewUrlModal
+                key={i.toString()}
+                allUnmatchedPaths={allUnmatchedPaths}
+                newUrl={i}
+                onAdd={(result) => {
+                  const { pathId, method } = result;
+                  const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
+                  history.push(to);
+                }}
+              >
+                <ListItem button className={classes.row} divider={true}>
+                  <div className={classes.listItemInner}>
+                    <PathAndMethod
+                      method={i.method}
+                      path={
+                        <PathNameFromId pathId={getOrUndefined(i.pathId)} />
+                      }
+                    />
+                  </div>
+                  <ListItemSecondaryAction>
+                    <Chip
+                      className={classes.chips}
+                      size="small"
+                      label={i.count}
+                      style={{
+                        backgroundColor: AddedGreenBackground,
+                      }}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              </NewUrlModal>
+            );
+          })}
+        </List>
+
+        {urls.length && (
+          <Typography
+            variant="subtitle2"
+            color="primary"
+            style={{ padding: 9 }}
+          >
+            Unrecognized URLs
+          </Typography>
+        )}
+      </Show>
+
       <List>
         {urls.map((i) => {
           return (
@@ -502,7 +566,7 @@ function UnrecognizedUrls(props) {
                 history.push(to);
               }}
             >
-              <ListItem button className={classes.row}>
+              <ListItem button className={classes.row} divider={true}>
                 <div className={classes.listItemInner}>
                   <PathAndMethod method={i.method} path={i.path} />
                 </div>
@@ -634,7 +698,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   row: {
-    marginBottom: 11,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   disabled: {
     pointerEvents: 'none',

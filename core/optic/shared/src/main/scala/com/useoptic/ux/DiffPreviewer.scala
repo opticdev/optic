@@ -7,7 +7,7 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
@@ -80,13 +80,14 @@ class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
     })
   }
 
-  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike]): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
+  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike])(implicit shapeBuildingStrategy: ShapeBuildingStrategy): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
 
     if (bodies.isEmpty) {
       return None
     }
 
-    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)(ids = OpticIds.generator)
+
+    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)(ids = OpticIds.generator, shapeBuildingStrategy)
     val flattenedCommands = commands.flatten
 
     val simulatedId = "simulated"

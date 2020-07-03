@@ -4,7 +4,7 @@ import com.useoptic.contexts.requests.Commands.ShapedBodyDescriptor
 import com.useoptic.contexts.requests.{Commands => RequestsCommands}
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecResponseBody, TestHelpers, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
@@ -22,10 +22,12 @@ class SpecHelpers {
   val responseIdGenerator = new SequentialIdGenerator("response")
   val shapeIdPrefixGenerator = new SequentialIdGenerator("s")
 
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
+
   def simpleGet(responseBody: Json): Seq[RfcCommand] = {
     val requestId = requestIdGenerator.nextId()
     val responseId = responseIdGenerator.nextId()
-    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(responseBody).get))(OpticIds.newDeterministicIdGenerator)
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(responseBody).get))(OpticIds.newDeterministicIdGenerator, ShapeBuildingStrategy.inferPolymorphism)
     builtShape._2.flatten ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "GET"),
       RequestsCommands.AddResponse(responseId, requestId, 200),
@@ -36,7 +38,7 @@ class SpecHelpers {
   def simplePost(requestBody: Json): Seq[RfcCommand] = {
     val requestId = requestIdGenerator.nextId()
     val responseId = responseIdGenerator.nextId()
-    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(requestBody).get))(OpticIds.newDeterministicIdGenerator)
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(requestBody).get))(OpticIds.newDeterministicIdGenerator, ShapeBuildingStrategy.inferPolymorphism)
     builtShape._2.flatten ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "POST"),
       RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor("application/json", builtShape._1, isRemoved = false)),

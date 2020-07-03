@@ -60,43 +60,6 @@ import {
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
 
-export default function DiffPreview() {
-  const classes = useStyles();
-
-  return (
-    <Paper className={classes.wrapper} elevation={2}>
-      <div className={classes.header}>
-        <Typography style={{ marginLeft: 11 }} variant="subtitle2">
-          The Field X was added
-        </Typography>
-        <div style={{ flex: 1 }} />
-        {addition}
-        {update}
-        {removal}
-        <Button style={{ marginLeft: 5 }}>Resolve</Button>
-      </div>
-      <div className={classes.diffs}>
-        <div className={classes.hunk}>
-          <div className={classes.hunkHeader}>
-            <Typography
-              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
-              variant="subtitle2"
-            >
-              Request Body
-            </Typography>
-            <Typography
-              style={{ marginLeft: 11, fontSize: 11, fontWeight: 200 }}
-              variant="subtitle2"
-            >
-              application/json
-            </Typography>
-          </div>
-        </div>
-      </div>
-    </Paper>
-  );
-}
-
 function _NewRegions(props) {
   const { newRegions, ignoreDiff } = props;
 
@@ -106,6 +69,7 @@ function _NewRegions(props) {
   const { diffService, captureService } = useCaptureContext();
 
   const [deselected, setDeselected] = useState([]);
+  const [finished, setFinished] = useState(false);
   const [showExpanded, setShowExpanded] = useState(false);
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
@@ -126,11 +90,13 @@ function _NewRegions(props) {
   };
 
   const onApply = async () => {
+    setFinished(true);
     const allIgnored = newRegions
-      .map((diffBlock) => isDeselected(diffBlock))
+      .filter((diffBlock) => isDeselected(diffBlock))
       .map((i) => i.diff);
 
     ignoreDiff(...allIgnored);
+
     const allApproved = await Promise.all(
       newRegions
         .filter((diffBlock) => !isDeselected(diffBlock))
@@ -158,37 +124,41 @@ function _NewRegions(props) {
     ignoreDiff(...allIgnored);
   };
 
-  const newRequests = newRegions
-    .map((diff) => {
-      if (diff.inRequest) {
-        return (
-          <PreviewNewBodyRegion
-            diff={diff}
-            key={diff.diff.toString()}
-            isDeselected={isDeselected}
-            onChange={onChange}
-            inferPolymorphism={inferPolymorphism}
-          />
-        );
-      }
-    })
-    .filter((i) => !!i);
+  const newRequests =
+    !finished &&
+    newRegions
+      .map((diff) => {
+        if (diff.inRequest) {
+          return (
+            <PreviewNewBodyRegion
+              diff={diff}
+              key={diff.diff.toString()}
+              isDeselected={isDeselected}
+              onChange={onChange}
+              inferPolymorphism={inferPolymorphism}
+            />
+          );
+        }
+      })
+      .filter((i) => !!i);
 
-  const newResponses = newRegions
-    .map((diff) => {
-      if (diff.inResponse) {
-        return (
-          <PreviewNewBodyRegion
-            diff={diff}
-            isDeselected={isDeselected}
-            onChange={onChange}
-            key={diff.diff.toString()}
-            inferPolymorphism={inferPolymorphism}
-          />
-        );
-      }
-    })
-    .filter((i) => !!i);
+  const newResponses =
+    !finished &&
+    newRegions
+      .map((diff) => {
+        if (diff.inResponse) {
+          return (
+            <PreviewNewBodyRegion
+              diff={diff}
+              isDeselected={isDeselected}
+              onChange={onChange}
+              key={diff.diff.toString()}
+              inferPolymorphism={inferPolymorphism}
+            />
+          );
+        }
+      })
+      .filter((i) => !!i);
 
   const copy =
     newResponses.length > 0 &&
@@ -203,83 +173,105 @@ function _NewRegions(props) {
     newResponses.length + newRequests.length - deselected.length;
 
   return (
-    <Card className={classes.wrapper} elevation={2}>
-      <div className={classes.header}>
-        <Typography variant="h5" color="primary">
-          Generate Initial Documentation
-        </Typography>
-        <Typography variant="body2" color="textSecondary">{`New ${
-          copy || copyFallback
-        } types observed. Review them, then click Document Bodies`}</Typography>
-        {/*<div>*/}
-        {/*  <Typography variant="h6">{endpointPurpose}</Typography>*/}
-        {/*  <PathAndMethod method={method}*/}
-        {/*                 path={fullPath}/>*/}
-        {/*</div>*/}
-      </div>
-
-      <div style={{ float: 'right', marginTop: -55 }}>
-        <PulsingOptic />
-      </div>
-
-      <div className={classes.approveNewRegions}>
-        <LightTooltip title="Use all example requests to infer all the Optional, Nullable and OneOfs in your bodies automatically. If you leave this option disabled, Optic will allow you to review the polymorphism in your API manually.">
-          <FormControlLabel
-            style={{ marginRight: 12 }}
-            control={
-              <Switch
-                checked={inferPolymorphism}
-                onChange={(e) => setInferPolymorphism(e.target.checked)}
-                color="primary"
-              />
+    <>
+      <Card className={classes.header} elevation={2}>
+        <div style={{ flex: 1 }}>
+          <Typography variant="h5" color="primary" style={{ fontSize: 22 }}>
+            Generate Initial Documentation
+          </Typography>
+        </div>
+        <div className={classes.approveNewRegions}>
+          <LightTooltip
+            title={
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                When you turn this option on, Optic will try to infer which
+                fields are Optional, Nullable or OneOfs in your bodies. This can
+                save you a lot of time when documenting large APIs. Leave this
+                option disabled to review the polymorphism in your API manually.
+                <Typography
+                  variant="caption"
+                  style={{ marginTop: 12, color: DocDarkGrey }}
+                >
+                  A random 100 examples from this capture will be used for the
+                  inference, it may not catch everything.{' '}
+                </Typography>
+              </div>
             }
-            labelPlacement="start"
-            label={
-              <Typography variant="body1" color="textSecondary">
-                Infer Polymorphism
-              </Typography>
-            }
-          />
-        </LightTooltip>
-        <Button color="default" onClick={ignoreAll} style={{ marginRight: 10 }}>
-          Ignore All
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={approveCount === 0}
-          onClick={onApply}
-        >
-          Document ({approveCount}) bodies
-        </Button>
-      </div>
+          >
+            <FormControlLabel
+              style={{ marginRight: 12 }}
+              control={
+                <Switch
+                  size="medium"
+                  checked={inferPolymorphism}
+                  disabled={finished}
+                  onChange={(e) => setInferPolymorphism(e.target.checked)}
+                  color="primary"
+                />
+              }
+              labelPlacement="start"
+              label={
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  style={{ fontSize: 12 }}
+                >
+                  Infer Polymorphism
+                </Typography>
+              }
+            />
+          </LightTooltip>
+          <Button
+            size="small"
+            color="default"
+            onClick={ignoreAll}
+            disabled={finished}
+            style={{ marginRight: 10 }}
+          >
+            Ignore All
+          </Button>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            disabled={approveCount === 0}
+            disabled={finished}
+            onClick={onApply}
+          >
+            Document ({approveCount}) bodies
+          </Button>
+        </div>
+        {finished && <LinearProgress />}
+      </Card>
 
-      <DocDivider style={{ marginTop: 20, marginBottom: 20 }} />
+      {!finished && (
+        <div className={classes.wrapper}>
+          <div className={classes.diffsNewRegion}>
+            {newRequests.length > 0 && (
+              <div className={classes.region}>
+                <Typography variant="h6" color="primary">
+                  Requests
+                </Typography>
+                {newRequests}
+              </div>
+            )}
 
-      <div className={classes.diffsNewRegion}>
-        {newRequests.length > 0 && (
-          <div className={classes.region}>
-            <Typography variant="h6" color="primary">
-              Requests
-            </Typography>
-            {newRequests}
+            <Show when={newRequests.length}>
+              <DocDivider style={{ marginTop: 30, marginBottom: 20 }} />
+            </Show>
+
+            {newResponses.length > 0 && (
+              <div className={classes.region}>
+                <Typography variant="h6" color="primary">
+                  Responses
+                </Typography>
+                {newResponses}
+              </div>
+            )}
           </div>
-        )}
-
-        <Show when={newRequests.length}>
-          <DocDivider style={{ marginTop: 30, marginBottom: 20 }} />
-        </Show>
-
-        {newResponses.length > 0 && (
-          <div className={classes.region}>
-            <Typography variant="h6" color="primary">
-              Responses
-            </Typography>
-            {newResponses}
-          </div>
-        )}
-      </div>
-    </Card>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -349,13 +341,13 @@ const PreviewNewBodyRegion = ({
     currentInteractionPointer
   );
 
-  const initialBody = useInitialBodyPreview(
+  const { preview: initialBody, loadingInferPoly } = useInitialBodyPreview(
     diff,
     currentInteraction && currentInteraction.interactionScala,
     inferPolymorphism
   );
 
-  if (!currentInteraction || !initialBody) {
+  if (!currentInteraction || !initialBody || loadingInferPoly) {
     return <LinearProgress />;
   }
 
@@ -456,29 +448,27 @@ const useStyles = makeStyles((theme) => ({
     pointerEvents: 'none',
   },
   header: {
-    paddingLeft: 20,
-    paddingRight: 10,
-    paddingTop: 10,
-    paddingBottom: 5,
-    fontWeight: 800,
+    backgroundColor: 'white',
+    padding: 8,
+    paddingLeft: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    position: 'sticky',
+    top: 0,
+    zIndex: 500,
+    alignItems: 'center',
   },
   region: {
-    padding: 18,
+    padding: 5,
   },
   regionHeader: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: 16,
+    paddingRight: 12,
   },
   approveNewRegions: {
-    position: 'sticky',
-    top: 0,
-    width: '100%',
-    height: 55,
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    paddingRight: 20,
+    paddingRight: 10,
   },
   newContentPreview: {
     paddingTop: 16,
@@ -500,7 +490,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 5,
     color: '#25292e',
     minHeight: 40,
-    backgroundColor: '#eaebff',
     fontWeight: 800,
     display: 'flex',
     flexDirection: 'row',
@@ -529,7 +518,7 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper: {
     overflow: 'hidden',
-    borderLeft: `3px solid ${UpdatedBlue}`,
+    paddingTop: 18,
   },
   hunk: {
     backgroundColor: 'white',

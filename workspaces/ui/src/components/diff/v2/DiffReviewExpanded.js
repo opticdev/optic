@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
@@ -20,7 +20,7 @@ import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { PathAndMethod } from './PathAndMethod';
 import { DiffHelperCard } from './DiffHelperCard';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import { BreadcumbX } from './DiffPreview';
+import { BreadcumbX } from './DiffNewRegions';
 import { primary } from '../../../theme';
 import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -70,13 +70,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default (props) => {
   const classes = useStyles();
-  const { diff } = props;
-
-  const ds = diff.toString();
+  const { diff, selectedDiff, setSelectedDiff } = props;
 
   const description = useDiffDescription(diff);
 
-  const { selectedInterpretation } = useContext(DiffContext);
+  const [selectedInterpretation, setSelectedInterpretation] = useState(null);
+  useEffect(() => {
+    // when diff changes, remove selection
+    setSelectedInterpretation(null);
+  }, [diff && diff.diff.toString()]);
+
   const { rfcId, rfcService, cachedQueryResults, eventStore } = useContext(
     RfcContext
   );
@@ -88,7 +91,8 @@ export default (props) => {
   useEffect(() => {
     //reset interactions cursor whenever diff is updated. (it's 1 instead of 0 before of Pagination widget)
     setInteractionIndex(1);
-  }, [diff]);
+  }, [diff && diff.diff.toString()]);
+
   const currentRfcState = rfcService.currentState(rfcId);
   const { shapesResolvers } = cachedQueryResults;
 
@@ -208,6 +212,12 @@ export default (props) => {
                   inRequest
                   description={description}
                   currentInteraction={interactionScala}
+                  {...{
+                    selectedDiff,
+                    setSelectedDiff,
+                    selectedInterpretation,
+                    setSelectedInterpretation,
+                  }}
                 />
               }
             />
@@ -290,41 +300,17 @@ export default (props) => {
                   inResponse
                   description={description}
                   currentInteraction={interactionScala}
+                  {...{
+                    selectedDiff,
+                    setSelectedDiff,
+                    selectedInterpretation,
+                    setSelectedInterpretation,
+                  }}
                 />
               }
             />
           </Show>
         </div>
-        {/*  <div className={classes.leftContent}>*/}
-        {/*    <div>{method} {url}</div>*/}
-        {/*    <Show when={request}>*/}
-        {/*      <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Request*/}
-        {/*        Body</Typography>}>*/}
-
-        {/*        <Scrolling>*/}
-        {/*          <DiffHunkViewer suggestion={suggestion}*/}
-        {/*                          diff={diff}*/}
-        {/*                          exampleOnly={exampleOnly}*/}
-        {/*                          preview={request}*/}
-        {/*                          diffDescription={diffDescription}/>*/}
-        {/*        </Scrolling>*/}
-        {/*      </DocSubGroup>*/}
-        {/*    </Show>*/}
-        {/*    <Show when={response}>*/}
-        {/*      <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Response*/}
-        {/*        Body</Typography>}>*/}
-
-        {/*        <Scrolling>*/}
-        {/*          <DiffHunkViewer suggestion={suggestion}*/}
-        {/*                          diff={diff}*/}
-        {/*                          exampleOnly={exampleOnly}*/}
-        {/*                          preview={response}*/}
-        {/*                          diffDescription={diffDescription}/>*/}
-        {/*        </Scrolling>*/}
-        {/*      </DocSubGroup>*/}
-        {/*    </Show>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
       </div>
     </ShapeExpandedStore>
   );

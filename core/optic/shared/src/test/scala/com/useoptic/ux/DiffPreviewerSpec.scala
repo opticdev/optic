@@ -3,7 +3,7 @@ package com.useoptic.ux
 import com.useoptic.contexts.rfc.{RfcAggregate, RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult}
 import com.useoptic.diff.shapes.resolvers.DefaultShapesResolvers
 import com.useoptic.diff.{ChangeType, DiffResult, JsonFileFixture}
@@ -114,7 +114,7 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
   it("render simulated spec json") {
     val rfcState = RfcAggregate.initialState
     val resolvers = new DefaultShapesResolvers(rfcState)
-    val (commands, shapeOnly) = new DiffPreviewer(resolvers, rfcState).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get)).get
+    val (commands, shapeOnly) = new DiffPreviewer(resolvers, rfcState).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get))(ShapeBuildingStrategy.inferPolymorphism).get
     assert(shapeOnly.specShapes.size == 3)
   }
 

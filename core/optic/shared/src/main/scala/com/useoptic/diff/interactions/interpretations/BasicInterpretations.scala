@@ -8,7 +8,7 @@ import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInSha
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, ShapeTrail, UnknownTrail}
@@ -21,6 +21,7 @@ import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
 
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
 
   def AddResponse(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
     val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get

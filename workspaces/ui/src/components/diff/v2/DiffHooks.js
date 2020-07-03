@@ -54,6 +54,7 @@ export function useSuggestionsForDiff(diff, currentInteraction) {
 
   useEffect(() => {
     let mounted = true;
+    console.log('look here ', mounted);
     const getSuggestions = async () => {
       if (diff) {
         const result = await diffService.listSuggestions(
@@ -71,7 +72,7 @@ export function useSuggestionsForDiff(diff, currentInteraction) {
     };
     getSuggestions();
     return () => (mounted = false);
-  }, [diff.toString()]);
+  }, [diff && diff.diff.toString()]);
 
   return suggestions;
 }
@@ -84,21 +85,27 @@ export function useInitialBodyPreview(
   const { diffService } = useCaptureContext();
 
   const [preview, setPreview] = useState(null);
+  const [loadingInferPoly, setLoadingInferPoly] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     const getInitialPreview = async () => {
       if (diff && currentInteraction) {
+        if (inferPolymorphism) {
+          setLoadingInferPoly(true);
+        }
         const result = await diffService.loadInitialPreview(
           diff,
           currentInteraction,
           inferPolymorphism
         );
         if (mounted) {
+          setLoadingInferPoly(false);
           setPreview(result);
         }
       } else {
         if (mounted) {
+          setLoadingInferPoly(false);
           setPreview(null);
         }
       }
@@ -108,7 +115,8 @@ export function useInitialBodyPreview(
   }, [
     diff.diff.toString(),
     currentInteraction && currentInteraction.toString(),
+    inferPolymorphism,
   ]);
 
-  return preview;
+  return { preview, loadingInferPoly };
 }

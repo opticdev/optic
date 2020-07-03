@@ -88,11 +88,11 @@ export class LocalCliDiffService implements IDiffService {
     inferPolymorphism: boolean
   ) {
     const bodyPreview = diff.previewBodyRender(currentInteraction);
-
+    //@todo check what this does for 'No Body' Nothing to infer. seems wasteful to load...
     let interactions = [];
     if (inferPolymorphism) {
       interactions = await Promise.all(
-        ScalaJSHelpers.toJsArray(diff.interactionPointers).map(async (i) => {
+        ScalaJSHelpers.toJsArray(diff.randomPointers).map(async (i) => {
           const { interaction } = await this.captureService.loadInteraction(i);
           return JsonHelper.fromInteraction(interaction);
         })
