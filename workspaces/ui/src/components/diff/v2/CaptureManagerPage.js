@@ -335,9 +335,17 @@ function CaptureDiffWrapper(props) {
   const services = useServices();
 
   return (
-    <CaptureContextStore captureId={captureId} {...services}>
-      <CaptureChooserComponent captureId={captureId} />
-    </CaptureContextStore>
+    <IgnoreDiffContext.Consumer>
+      {({ ignoredDiffs, resetIgnored }) => (
+        <CaptureContextStore
+          captureId={captureId}
+          ignoredDiffs={ignoredDiffs}
+          {...services}
+        >
+          <CaptureChooserComponent captureId={captureId} />
+        </CaptureContextStore>
+      )}
+    </IgnoreDiffContext.Consumer>
   );
 }
 

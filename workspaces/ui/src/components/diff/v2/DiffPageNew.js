@@ -230,6 +230,7 @@ class _CaptureSessionInlineContext extends React.Component {
                       captureId={captureId}
                       pathId={pathId}
                       method={method}
+                      ignoredDiffs={ignoredDiffs}
                       {...services}
                     >
                       <InnerDiffWrapper

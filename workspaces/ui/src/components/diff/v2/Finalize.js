@@ -88,7 +88,7 @@ export default function FinalizeDialog(props) {
   const pluralIf = (collection) => (collection.length !== 1 ? 's' : '');
   const pluralIfI = (i) => (i !== 1 ? 's' : '');
 
-  const hasChanges = acceptedSuggestions.length > 0 || ignoredDiffs.length > 0;
+  const hasChanges = acceptedSuggestions.length > 0;
 
   return (
     <Dialog
