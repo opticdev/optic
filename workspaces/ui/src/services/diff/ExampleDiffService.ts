@@ -18,6 +18,7 @@ import {
   JsonHelper,
   RfcCommandContext,
   ScalaJSHelpers,
+  UrlCounterHelper,
 } from '@useoptic/domain/build';
 import uuidv4 from 'uuid/v4';
 import { getOrUndefined, opticEngine } from '@useoptic/domain';
@@ -82,7 +83,9 @@ export class ExampleDiffService implements IDiffService {
     );
     const urls = opticEngine.UrlCounterJsonSerializer.toFriendlyJs(counter);
 
-    return Promise.resolve({ urls });
+    const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
+
+    return Promise.resolve(result);
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {

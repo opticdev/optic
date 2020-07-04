@@ -133,6 +133,8 @@ class _CaptureContextStore extends React.Component {
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
 
+    console.log('look here ', ScalaJSHelpers.eventsJsArray(events));
+
     console.log('trying to start a new diff');
     const config = await captureService.startDiff(
       ScalaJSHelpers.eventsJsArray(events),
@@ -143,7 +145,19 @@ class _CaptureContextStore extends React.Component {
 
     console.log('Starting new Diff ', config);
 
+    const rfcState = rfcService.currentState(rfcId);
+
+    const diffService = await diffServiceFactory(
+      specService,
+      captureService,
+      rfcState,
+      this.state.additionalCommands,
+      config,
+      captureId
+    );
+
     let notificationChannel = null;
+    let stats_SIMULATED = undefined;
     if (config.notificationsUrl) {
       notificationChannel = new EventSource(config.notificationsUrl);
       notificationChannel.onmessage = (event) => {
@@ -161,18 +175,10 @@ class _CaptureContextStore extends React.Component {
       notificationChannel.onopen = (e) => {
         console.log(e);
       };
+    } else {
+      const stats = await diffService.loadStats();
+      stats_SIMULATED = { hasMoreInteractions: false, ...stats };
     }
-
-    const rfcState = rfcService.currentState(rfcId);
-
-    const diffService = await diffServiceFactory(
-      specService,
-      captureService,
-      rfcState,
-      this.state.additionalCommands,
-      config,
-      captureId
-    );
 
     this.setState(
       {
@@ -182,7 +188,7 @@ class _CaptureContextStore extends React.Component {
         notificationChannel,
         pendingUpdates: false,
       },
-      () => this.reload()
+      () => this.reload(stats_SIMULATED)
     );
   };
 
