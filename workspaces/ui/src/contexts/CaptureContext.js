@@ -2,7 +2,13 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useServices } from './SpecServiceContext';
 import { RfcContext, withRfcContext } from './RfcContext';
-import { commandsToJson, ScalaJSHelpers } from '@useoptic/domain';
+import {
+  commandsToJson,
+  CompareEquality,
+  DiffResultHelper,
+  JsonHelper,
+  ScalaJSHelpers,
+} from '@useoptic/domain';
 import debounce from 'lodash.debounce';
 export const CaptureContext = React.createContext(null);
 
@@ -200,11 +206,16 @@ class _CaptureContextStore extends React.Component {
       processed,
     } = this.state;
 
+    const endpointDiffsWithoutIgnored = CompareEquality.filterIgnored(
+      endpointDiffs,
+      this.props.ignoredDiffs
+    );
+
     const value = {
       pendingUpdates,
       config,
       lastUpdate,
-      endpointDiffs,
+      endpointDiffs: endpointDiffsWithoutIgnored,
       unrecognizedUrls,
       diffService,
       captureService,
@@ -216,12 +227,6 @@ class _CaptureContextStore extends React.Component {
 
     return (
       <CaptureContext.Provider value={value}>
-        {/*{JSON.stringify({*/}
-        {/*  pendingUpdates,*/}
-        {/*  lastUpdate,*/}
-        {/*  endpointDiffs: endpointDiffs.length,*/}
-        {/*  unrecognizedUrls: unrecognizedUrls.length,*/}
-        {/*})}*/}
         {this.props.children}
       </CaptureContext.Provider>
     );

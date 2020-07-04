@@ -67,6 +67,14 @@ export class DiffCursor extends React.Component {
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
     console.log('rendering this one inside', prevProps);
+
+    if (this.props.diffs.length === 0) {
+      if (this.state.selectedDiff) {
+        this.setState({ selectedDiff: null });
+      }
+      return;
+    }
+
     if (this.state.selectedDiff) {
       if (
         !CompareEquality.containsDiff(this.props.diffs, this.state.selectedDiff)

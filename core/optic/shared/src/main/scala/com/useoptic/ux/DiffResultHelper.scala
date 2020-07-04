@@ -89,7 +89,6 @@ object DiffResultHelper {
     (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
   }
 
-
   def groupEndpointDiffsByRegion(diffs: Map[InteractionDiffResult, Seq[String]], rfcState: RfcState, method: String, pathId: PathComponentId): EndpointDiffGrouping = {
 
 
