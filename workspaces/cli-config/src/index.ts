@@ -9,6 +9,7 @@ import {
   parseIgnore,
   IIgnoreRunnable,
 } from './helpers/ignore-parser';
+import { IQueryParserConfig } from './helpers/query-config-interfaces';
 
 export interface IUserCredentials {
   token: string;
@@ -37,6 +38,10 @@ export interface IApiCliConfig {
     [key: string]: IOpticTask;
   };
   ignoreRequests?: string[];
+
+  interpreters?: {
+    query?: IQueryParserConfig;
+  };
 }
 
 export async function readApiConfig(
