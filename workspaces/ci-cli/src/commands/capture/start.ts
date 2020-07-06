@@ -14,9 +14,10 @@ import {
 } from '@useoptic/saas-types';
 
 export default class Start extends Command {
-  static description = 'describe the command here';
+  static description = 'starts an Optic CI capture session and returns a capture configuration which can be fed to optic-agent';
 
-  static examples = [`$ optic-ci capture:start ???`];
+  static examples = [`$ optic-ci capture:start --deployment-id=<version_number> --build-id=<changeset_hash> --environment=<environment_name> --config=optic.yml`,
+    `$ CAPTURE_CONFIG=$(optic-ci capture:start --deployment-id=<...> --build-id=<...> --environment=<...> --config=optic.yml)`];
 
   static flags = {
     'deployment-id': flags.string({
