@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import './App.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { appTheme } from './theme';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, useLocation } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
 import TopLevelRoutes from './entrypoints';
@@ -32,7 +32,7 @@ class App extends React.Component {
       </React.Fragment>
     );
   }
-  // Life cylce methods
+  // Life cycle methods
   // ------------------
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
@@ -105,5 +105,6 @@ function AppError() {
     </div>
   );
 }
+
 
 export default App;

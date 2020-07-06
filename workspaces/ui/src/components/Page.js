@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
+import { useLocation } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 
 const PageContext = React.createContext(null);
@@ -32,6 +33,14 @@ export default function Page(props) {
     if (!document || !title) return;
     document.title = `${title} - Optic`;
   }, [title]);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (props.scrollToTop) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
 
   return (
     <PageContext.Provider value={pageContext}>
