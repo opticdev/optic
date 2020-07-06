@@ -2,7 +2,7 @@ import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
-import { developerDebugLogger, ICaptureSaver, userDebugLogger } from './index';
+import { developerDebugLogger, ICaptureSaver, userDebugLogger, fromOptic } from './index';
 import url from 'url';
 
 class CommandAndProxySessionManager {
@@ -56,8 +56,8 @@ class CommandAndProxySessionManager {
     userDebugLogger(
       `All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`
     );
-    
-    console.log(`Your API is being monitored by optic at ${this.config.serviceConfig.host}:${this.config.proxyConfig.port}`);
+
+    console.log(fromOptic(`Optic is monitoring requests made to ${this.config.proxyConfig.protocol}//${this.config.proxyConfig.host}:${this.config.proxyConfig.port}`));
     
     const promises = [];
     developerDebugLogger(this.config);
