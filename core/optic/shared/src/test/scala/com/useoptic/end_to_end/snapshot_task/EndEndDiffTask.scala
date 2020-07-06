@@ -59,7 +59,7 @@ class EndEndDiffTask
 
     val shapesResolvers = ShapesResolvers.newResolver(rfcState)
 
-    val diffs = DiffHelpers.groupByNormalizedDiffs(shapesResolvers, rfcState, input.interpretations).toVector.sortBy(_.toString)
+    val diffs = DiffHelpers.groupByDiffs(shapesResolvers, rfcState, input.interpretations).toVector.sortBy(_.toString)
 
 
     DiffOutput(diffs.map(i => {
