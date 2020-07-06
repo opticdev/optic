@@ -1,6 +1,6 @@
 package com.useoptic.dsa
 
-import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
+import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId}
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId, ShapeParameterId}
 
 import scala.util.Random
@@ -31,7 +31,8 @@ abstract class OpticDomainIds {
   def newPathId: PathComponentId
   def newRequestId: RequestId
   def newResponseId: ResponseId
-  def newParameterId: ShapeParameterId
+  def newRequestParameterId: RequestParameterId
+  def newShapeParameterId: ShapeParameterId
   def newFieldId: FieldId
 }
 
@@ -50,11 +51,14 @@ object OpticIds {
     private val _response = new SequentialIdGenerator("response", "_")
     override def newResponseId: ResponseId = _response.nextId()
 
-    private val _parameter = new SequentialIdGenerator("parameter", "_")
-    override def newParameterId: ShapeParameterId = _parameter.nextId()
+    private val _shapeParameter = new SequentialIdGenerator("shape-parameter", "_")
+    override def newShapeParameterId: ShapeParameterId = _shapeParameter.nextId()
+
+    private val _requestParameter = new SequentialIdGenerator("request-parameter", "_")
+    override def newRequestParameterId: RequestParameterId = _requestParameter.nextId()
 
     private val _field = new SequentialIdGenerator("field", "_")
-    override def newFieldId: FieldId = _parameter.nextId()
+    override def newFieldId: FieldId = _field.nextId()
   }
 
   def newRandomIdGenerator = new OpticDomainIds {
@@ -70,11 +74,14 @@ object OpticIds {
     private val _response = new RandomAlphanumericIdGenerator("response", "_")
     override def newResponseId: ResponseId = _response.nextId()
 
-    private val _parameter = new RandomAlphanumericIdGenerator("shape-parameter", "_")
-    override def newParameterId: ShapeParameterId = _parameter.nextId()
+    private val _shapeParameter = new RandomAlphanumericIdGenerator("shape-parameter", "_")
+    override def newShapeParameterId: ShapeParameterId = _shapeParameter.nextId()
+
+    private val _requestParameter = new RandomAlphanumericIdGenerator("request-parameter", "_")
+    override def newRequestParameterId: RequestParameterId = _requestParameter.nextId()
 
     private val _field = new RandomAlphanumericIdGenerator("field", "_")
-    override def newFieldId: FieldId = _parameter.nextId()
+    override def newFieldId: FieldId = _field.nextId()
   }
 
   def generator: OpticDomainIds = {

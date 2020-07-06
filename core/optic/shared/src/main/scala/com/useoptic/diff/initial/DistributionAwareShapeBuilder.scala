@@ -71,7 +71,7 @@ object DistributionAwareShapeBuilder {
       case s: OneOfShape => {
         s.branches.foreach(branch => {
           buildCommandsFor(branch, Some(s))
-          val paramId = ids.newParameterId
+          val paramId = ids.newShapeParameterId
           commands.appendDescribe(AddShapeParameter(paramId, s.id, ""))
           commands.appendDescribe(SetParameterShape(
             if (inField) {

@@ -89,7 +89,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           val existingRequests = Resolvers.resolveRequests(state, c.pathId, c.httpMethod)
           if (existingRequests.isEmpty) {
             val shapeId = ids.newShapeId
-            val queryStringParameterId = ids.newParameterId
+            val queryStringParameterId = ids.newRequestParameterId
             persist(Vector(
               Events.RequestParameterAddedByPathAndMethod(queryStringParameterId, c.pathId, c.httpMethod, "query", "queryString", eventContext),
               ShapeAdded(shapeId, ObjectKind.baseShapeId, DynamicParameterList(Seq.empty), "", eventContext),
