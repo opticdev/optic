@@ -34,6 +34,16 @@ export class DefaultQueryParser implements IQueryParser {
   }
 
   parseToKeysAndValues(rawQueryString: string): IQueryStringKeyValues {
-    return querystring.parse(rawQueryString) as IQueryStringKeyValues;
+    const final: IQueryStringKeyValues = {};
+    Object.entries(querystring.parse(rawQueryString)).map((i) => {
+      const [key, value_s] = i;
+      if (Array.isArray(value_s)) {
+        final[key] = value_s;
+      } else {
+        final[key] = [value_s as string];
+      }
+    });
+
+    return final;
   }
 }
