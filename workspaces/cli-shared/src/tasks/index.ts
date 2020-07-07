@@ -17,7 +17,7 @@ export class CliTaskSession {
       if (!task) {
         throw new TaskNotFoundError(taskName);
       }
-      const taskConfig = await TaskToStartConfig(task);
+      const taskConfig = await TaskToStartConfig(config, task);
       await this.runner.run(cli, config, taskConfig);
     } catch (e) {
       if (e instanceof TargetPortUnavailableError) {
