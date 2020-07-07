@@ -48,6 +48,10 @@ export const NewUrlModal = withRfcContext((props) => {
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
+  if (open) {
+    console.log('here plz', newUrl.toString());
+  }
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -124,7 +128,8 @@ export const NewUrlModal = withRfcContext((props) => {
         onClose={handleClose}
         fullWidth
         maxWidth="md"
-        aria-labelledby="form-dialog-title"
+        transitionDuration={0}
+        key={'dialog' + newUrl.toString()}
       >
         <form>
           <DialogTitle>Add New Endpoint</DialogTitle>
@@ -166,15 +171,16 @@ export const NewUrlModal = withRfcContext((props) => {
   }
 
   return (
-    <>
+    <div key={newUrl.toString()}>
       {/*@TODO: investigate this as the cause of broken tabbing */}
       <div onClick={handleClickOpen}>{children}</div>
       {naming ? (
-        <NamingDialog />
+        <NamingDialog key={'naming one' + newUrl.toString()} />
       ) : (
         <Dialog
           open={open}
           onClose={handleClose}
+          key={'path to' + newUrl.toString()}
           fullWidth
           maxWidth="md"
           aria-labelledby="form-dialog-title"
@@ -233,7 +239,7 @@ export const NewUrlModal = withRfcContext((props) => {
           </form>
         </Dialog>
       )}
-    </>
+    </div>
   );
 });
 

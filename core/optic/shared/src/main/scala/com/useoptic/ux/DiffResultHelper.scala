@@ -298,6 +298,10 @@ object DiffResultHelper {
     basicInterpreter.interpret(bodyDiff.diff, Vector(anInteraction))
   }
 
+  def quickComputeInteractions(endpointDiffs: Seq[EndpointDiffs]): Seq[String] = {
+    val interactions = endpointDiffs.flatMap(_.diffs.values.headOption).flatten
+    interactions.take(10)// take up to 10
+  }
 
 }
 
