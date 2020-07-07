@@ -10,6 +10,7 @@ import { IBody, IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from 'shape-hash';
 import { developerDebugLogger } from './index';
+import { OpticException } from './exceptions';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -184,10 +185,13 @@ export class HttpToolkitCapturingProxy {
         endPort: config.proxyPort,
       });
       developerDebugLogger(`proxy started on port ${proxy.port}`);
+      throw Error('This is an error that has been thrown!');
     } catch (e) {
-      throw new Error(
-        `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`
-      );
+        throw OpticException(e, 
+          `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`);
+      //developerDebugLogger(e);
+      //throw new Error(
+      //  `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`
     }
   }
 
