@@ -93,7 +93,7 @@ export default (props) => {
     setInteractionIndex(1);
   }, [diff && diff.diff.toString()]);
 
-  const currentRfcState = rfcService.currentState(rfcId);
+  const outerRfcState = rfcService.currentState(rfcId);
   const { shapesResolvers } = cachedQueryResults;
 
   const currentInteractionPointer = getIndex(diff.interactionPointers)(
@@ -176,6 +176,7 @@ export default (props) => {
                               const preview = DiffResultHelper.previewDiff(
                                 diff,
                                 interactionScala,
+                                outerRfcState,
                                 currentRfcState
                               );
 
@@ -198,7 +199,7 @@ export default (props) => {
                           preview={getOrUndefined(
                             DiffResultHelper.previewBody(
                               interactionScala.request.body,
-                              currentRfcState
+                              outerRfcState
                             )
                           )}
                         />
@@ -265,6 +266,7 @@ export default (props) => {
                               const preview = DiffResultHelper.previewDiff(
                                 diff,
                                 interactionScala,
+                                outerRfcState,
                                 currentRfcState
                               );
                               return (
@@ -286,7 +288,7 @@ export default (props) => {
                           preview={getOrUndefined(
                             DiffResultHelper.previewBody(
                               interactionScala.response.body,
-                              currentRfcState
+                              outerRfcState
                             )
                           )}
                         />

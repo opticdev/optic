@@ -256,17 +256,16 @@ object DiffResultHelper {
     descriptionInterpreters.interpret(diff, anInteraction)
   }.toOption
 
-  def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, currentRfcState: RfcState): Option[SideBySideRenderHelper] = {
+  def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, diffRfcState: RfcState, simulatedRfcState: RfcState): Option[SideBySideRenderHelper] = {
 
-    val simulatedDiffPreviewer = new DiffPreviewer(currentRfcState)
+    val simulatedDiffPreviewer = new DiffPreviewer(simulatedRfcState)
 
     val targetDiff = bodyDiff.diff.asInstanceOf[InteractionDiffResult]
 
-    val denormalized = denormalizeDiff(targetDiff, currentRfcState, anInteraction)
+    val denormalized = denormalizeDiff(targetDiff, diffRfcState, anInteraction)
 
     if (denormalized.isEmpty) {
-      println("COULD NOT DE-NORMALIZE DIFF" + bodyDiff.diff)
-      return None
+      throw new Error(s"COULD NOT DE-NORMALIZE DIFF: ${bodyDiff.diff.toString} \n\n from computed diffs: "+ DiffHelpers.groupByDiffs(ShapesResolvers.newResolver(diffRfcState), diffRfcState, Vector(anInteraction)).keys.toSeq)
     }
 
     val firstDiff = denormalized.minBy(_.interactionTrail.toString) // in theory this will make the first diff the first in the trail (all else being equal)

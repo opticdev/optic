@@ -512,12 +512,15 @@ function UnrecognizedUrls(props) {
         <Typography variant="subtitle2" color="primary" style={{ padding: 9 }}>
           Ready to Document
         </Typography>
-        <List>
+        <List style={{ marginBottom: 12 }}>
           {undocumented.map((i) => {
+            const url = <PathNameFromId pathId={getOrUndefined(i.pathId)} />;
+
             return (
               <NewUrlModal
                 key={i.toString()}
                 allUnmatchedPaths={allUnmatchedPaths}
+                urlOverride={url}
                 newUrl={i}
                 onAdd={(result) => {
                   const { pathId, method } = result;
@@ -527,12 +530,7 @@ function UnrecognizedUrls(props) {
               >
                 <ListItem button className={classes.row} divider={true}>
                   <div className={classes.listItemInner}>
-                    <PathAndMethod
-                      method={i.method}
-                      path={
-                        <PathNameFromId pathId={getOrUndefined(i.pathId)} />
-                      }
-                    />
+                    <PathAndMethod method={i.method} path={url} />
                   </div>
                   <ListItemSecondaryAction>
                     <Chip

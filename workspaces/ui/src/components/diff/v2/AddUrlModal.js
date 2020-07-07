@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const NewUrlModal = withRfcContext((props) => {
-  const { children, newUrl, allUnmatchedPaths, onAdd } = props;
+  const { children, newUrl, urlOverride, allUnmatchedPaths, onAdd } = props;
   const classes = useStyles();
   const { cachedQueryResults, handleCommands } = useContext(RfcContext);
   const knownPathId = getOrUndefined(newUrl.pathId);
@@ -129,7 +129,10 @@ export const NewUrlModal = withRfcContext((props) => {
         <form>
           <DialogTitle>Add New Endpoint</DialogTitle>
           <DialogContent style={{ marginTop: -20 }}>
-            <PathAndMethod method={newUrl.method} path={pathExpression} />
+            <PathAndMethod
+              method={newUrl.method}
+              path={urlOverride || pathExpression}
+            />
             <DialogContentText style={{ marginTop: 12 }}>
               What does this endpoint do?
             </DialogContentText>
@@ -151,7 +154,7 @@ export const NewUrlModal = withRfcContext((props) => {
               type="submit"
               onClick={() => handleCreate(purpose)}
               color="secondary"
-              disabled={!matches}
+              disabled={!matches && !knownPathId && purpose !== ''}
               endIcon={<NavigateNextIcon />}
             >
               Finish
