@@ -3,6 +3,7 @@ import {
   IQueryStringKeyValues,
   IQueryStringValueParser,
 } from '../../query-parser-interfaces';
+import querystring from 'querystring';
 import { DefaultValueParserInstance } from '../values/DefaultValueParser';
 
 export class DefaultQueryParser implements IQueryParser {
@@ -33,48 +34,6 @@ export class DefaultQueryParser implements IQueryParser {
   }
 
   parseToKeysAndValues(rawQueryString: string): IQueryStringKeyValues {
-    return querystring(rawQueryString);
-  }
-}
-
-function querystring(query: string): IQueryStringKeyValues {
-  let parser = /([^=?&]+)=?([^&]*)/g,
-    result = {},
-    part;
-
-  const pastKeys: string[] = [];
-
-  while ((part = parser.exec(query))) {
-    let key = decode(part[1]),
-      value = decode(part[2]);
-
-    if (
-      key === null ||
-      value === null ||
-      (key in result && !pastKeys.includes(key))
-    ) {
-      console.log(`skipping extra ${key}`);
-      continue;
-    }
-
-    // @ts-ignore
-    if (result[key]) {
-      // @ts-ignore
-      result[key].push(value);
-    } else {
-      pastKeys.push(key);
-      // @ts-ignore
-      result[key] = [value];
-    }
-  }
-
-  return result;
-}
-
-function decode(input: string) {
-  try {
-    return decodeURIComponent(input.replace(/\+/g, ' '));
-  } catch (e) {
-    return null;
+    return querystring.parse(rawQueryString) as IQueryStringKeyValues;
   }
 }

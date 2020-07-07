@@ -128,9 +128,11 @@ export interface IOpticTaskRunnerConfig {
     protocol: string;
     basePath: string;
   };
+  queryParserConfig?: IQueryParserConfig;
 }
 
 export async function TaskToStartConfig(
+  apiConfig: IApiCliConfig,
   task: IOpticTask
 ): Promise<IOpticTaskRunnerConfig> {
   const baseUrl = url.parse(task.baseUrl);
@@ -170,6 +172,7 @@ export async function TaskToStartConfig(
     command: task.command,
     serviceConfig,
     proxyConfig,
+    queryParserConfig: apiConfig.interpreters?.query,
   };
 }
 

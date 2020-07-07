@@ -4,6 +4,7 @@ import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
 import { developerDebugLogger, ICaptureSaver, userDebugLogger } from './index';
 import url from 'url';
+import { buildQueryStringParser } from './query/build-query-string-parser';
 
 class CommandAndProxySessionManager {
   constructor(private config: IOpticTaskRunnerConfig) {}
@@ -45,6 +46,7 @@ class CommandAndProxySessionManager {
           ? undefined
           : target,
       proxyPort: this.config.proxyConfig.port,
+      queryParser: buildQueryStringParser(this.config.queryParserConfig),
     });
 
     userDebugLogger(
