@@ -3,10 +3,6 @@ export interface IQueryParser {
   parseToKeysAndValues(rawQueryString: string): IQueryStringKeyValues;
 }
 
-export interface IQueryValueParser {
-  parse(key: string, values: string): any;
-}
-
 export interface IQueryStringKeyValues {
   [key: string]: string[];
 }
