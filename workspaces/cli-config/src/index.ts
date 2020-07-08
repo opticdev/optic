@@ -126,7 +126,6 @@ export interface IOpticTaskRunnerConfig {
 }
 
 export async function TaskToStartConfig(
-  apiConfig: IApiCliConfig,
   task: IOpticTask
 ): Promise<IOpticTaskRunnerConfig> {
   const baseUrl = url.parse(task.baseUrl);

@@ -40,7 +40,7 @@ export function verifyTask(cli: Command, taskName: string): void {
           const task = config.tasks[taskName];
           foundTask = task;
           if (foundTask) {
-            startConfig = await TaskToStartConfig(config, task);
+            startConfig = await TaskToStartConfig(task);
           }
           return Boolean(task);
         });
