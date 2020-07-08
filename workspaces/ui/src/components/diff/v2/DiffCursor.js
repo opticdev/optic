@@ -13,7 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import { makeStyles } from '@material-ui/core/styles';
 import { UpdatedBlue } from '../../../theme';
-import DiffReviewExpanded from './DiffReviewExpanded';
+import DiffReviewExpanded, {
+  DiffReviewExpandedCached,
+} from './DiffReviewExpanded';
 
 const useStyles = makeStyles((theme) => ({
   diffCursor: {
@@ -51,12 +53,12 @@ export class DiffCursor extends React.Component {
     selectedDiff: null,
   };
 
-  setSelectedDiff = (selectedDiff) => this.setState({ selectedDiff });
+  setSelectedDiff = (selectedDiff) =>
+    this.setState({ selectedDiff, showAllDiffs: false });
 
   toggle = (value) => this.setState({ showAllDiffs: value });
 
   shouldComponentUpdate = (nextProps, nextState, nextContext) => {
-    console.log('rendering this one', nextProps);
     return (
       !CompareEquality.betweenBodyDiffs(this.props.diffs, nextProps.diffs) ||
       this.state.showAllDiffs !== nextState.showAllDiffs ||
@@ -66,8 +68,6 @@ export class DiffCursor extends React.Component {
   };
 
   componentDidUpdate = (prevProps, prevState, snapshot) => {
-    console.log('rendering this one inside', prevProps);
-
     if (this.props.diffs.length === 0) {
       if (this.state.selectedDiff) {
         this.setState({ selectedDiff: null });
@@ -97,7 +97,6 @@ export class DiffCursor extends React.Component {
     const { showAllDiffs, selectedDiff } = this.state;
 
     if (diffCount === 0 || !selectedDiff) {
-      console.log('feels empty to me');
       return null;
     }
 
@@ -109,14 +108,11 @@ export class DiffCursor extends React.Component {
       showAllDiffs,
       toggle: this.toggle,
     };
-
-    console.log('rendering this one   drawing');
-
     return (
       <div key={this.props.key}>
         <Cursor {...props} />
-        <DiffReviewExpanded
-          diff={selectedDiff}
+        <DiffReviewExpandedCached
+          key={selectedDiff.diff.toString()}
           {...{ selectedDiff, setSelectedDiff: this.setSelectedDiff }}
         />
       </div>
@@ -140,7 +136,7 @@ const Cursor = ({
         {!showAllDiffs && selectedDiff && (
           <DiffItem button={false} diff={selectedDiff} />
         )}
-        <Collapse in={showAllDiffs}>
+        <Collapse in={showAllDiffs} timeout={0}>
           <Typography
             variant="subtitle2"
             style={{ paddingLeft: 12, paddingTop: 12 }}
@@ -193,7 +189,6 @@ const DiffItem = ({ diff, button, setSelectedDiff, toggle }) => {
       className={classes.diffItem}
       onClick={() => {
         setSelectedDiff(diff);
-        toggle(false);
       }}
     >
       {description && (

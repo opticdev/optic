@@ -67,6 +67,8 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
         maxWidth: 220,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
+        wordBreak: 'break-all',
+        whiteSpace: 'nowrap',
       }}
     >
       {path}

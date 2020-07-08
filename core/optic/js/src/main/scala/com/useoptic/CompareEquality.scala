@@ -3,6 +3,7 @@ package com.useoptic
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.diff.shapes.ShapeDiffResult
+import com.useoptic.types.capture.HttpInteraction
 import com.useoptic.ux.{BodyDiff, BodyShapeDiffBlock, DiffBlock, EndpointDiffs, NewRegionDiff}
 
 import scala.scalajs.js
@@ -40,6 +41,40 @@ object CompareEquality {
     } else {
       false
     }
+  }
+  def betweenBodyDiff(a: js.UndefOr[BodyDiff], b: js.UndefOr[BodyDiff]): Boolean = {
+    if (Seq(a.toOption, b.toOption).flatten.size == 1) {
+      return false
+    }
+
+    if (a.isDefined && b.isDefined) {
+      return a.get.isSameAs(b.get)
+    }
+
+    false
+  }
+
+  def betweenInteractions(a: js.UndefOr[HttpInteraction], b: js.UndefOr[HttpInteraction]): Boolean = {
+    if (Seq(a.toOption, b.toOption).flatten.size == 1) {
+      return false
+    }
+
+    if (a.isDefined && b.isDefined) {
+      return a.get == b.get
+    }
+
+    false
+  }
+  def betweenSuggestions(a: js.UndefOr[InteractiveDiffInterpretation], b: js.UndefOr[InteractiveDiffInterpretation]): Boolean = {
+    if (Seq(a.toOption, b.toOption).flatten.size == 1) {
+      return false
+    }
+
+    if (a.isDefined && b.isDefined) {
+      return betweenWithoutCommands(a.get, b.get)
+    }
+
+    false
   }
 
   def containsDiff(bodyDiffs: js.Array[BodyDiff], diff: BodyDiff): Boolean = {

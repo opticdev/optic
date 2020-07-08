@@ -77,6 +77,21 @@ object DiffHelpers {
     groupInteractionPointersByNormalizedDiffs(resolvers, rfcState, Seq(interaction), (_) => pointer, initial)
   }
 
+  def groupInteractionPointersByDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interactions: Seq[HttpInteraction], toPointer: InteractionToPointer, initial: InteractionPointersGroupedByDiff = Map.empty): InteractionPointersGroupedByDiff = {
+    interactions.foldLeft(initial)((acc, interaction) => {
+      val diffs = diff(resolvers, rfcState, interaction)
+      val changedItems =
+        diffs.map((diff) => {
+          (diff -> (acc.getOrElse(diff, Seq.empty) :+ toPointer(interaction)))
+        }).toMap
+      acc ++ changedItems
+    })
+  }
+
+  def groupInteractionPointerByDiffs(resolvers: ShapesResolvers, rfcState: RfcState, interaction: HttpInteraction, pointer: String, initial: InteractionPointersGroupedByDiff = Map.empty): InteractionPointersGroupedByDiff = {
+    groupInteractionPointersByDiffs(resolvers, rfcState, Seq(interaction), (_) => pointer, initial)
+  }
+
   def emptyInteractionsGroupedByDiff(): InteractionsGroupedByDiff = Map.empty
 
   def emptyInteractionPointersGroupedByDiff(): InteractionPointersGroupedByDiff = Map.empty

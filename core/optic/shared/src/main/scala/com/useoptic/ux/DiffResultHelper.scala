@@ -6,7 +6,7 @@ import com.useoptic.contexts.requests.projections.AllEndpointsProjection
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
-import com.useoptic.diff.helpers.DiffHelpers.InteractionPointersGroupedByDiff
+import com.useoptic.diff.helpers.DiffHelpers.{InteractionPointersGroupedByDiff, diff}
 import com.useoptic.diff.helpers.UndocumentedUrlHelpers.UrlCounter
 import com.useoptic.diff.initial.ShapeBuildingStrategy
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
@@ -51,30 +51,41 @@ object DiffResultHelper {
 
   }
 
-  def diffsForPathAndMethod(allEndpointDiffs: Seq[EndpointDiffs], pathId: PathComponentId, method: String, ignoredDiffs: Seq[DiffResult]): Map[InteractionDiffResult, Seq[String]] = {
+  def diffsForPathAndMethod(allEndpointDiffs: Seq[EndpointDiffs], pathId: PathComponentId, method: String, ignoredDiffs: Seq[DiffResult]): Option[EndpointDiffs] = {
     allEndpointDiffs.find(i => i.method == method && i.pathId == pathId)
-      .map(i => i.diffs)
-      .getOrElse(Map.empty)
   }
 
   def endpointDiffs(diffs: InteractionPointersGroupedByDiff, rfcState: RfcState): Seq[EndpointDiffs] = {
 
     val allEndpoints = AllEndpointsProjection.fromRfcState(rfcState)
 
+    println("total diffs "+ diffs.size)
+
+    val normalizedDiffs = {
+      val groupedByNormalized = diffs.groupBy(_._1.normalize())
+
+      groupedByNormalized.keys
+        .map(i => i -> (groupedByNormalized(i).flatMap(_._2))
+          .toSeq.distinct)
+        .toMap
+    }
+
+    println("total diffs normalized "+ normalizedDiffs.size)
+
     val endpointsFromDiff = {
-      diffs.filterNot {
+      normalizedDiffs.filterNot {
         case (a: UnmatchedRequestUrl, _) => true
         case (a: UnmatchedRequestMethod, _) => true
         case _ => false
       }.flatMap {
         case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
-          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers), true)
+          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers), normalizedDiffs.filterKeys(_.normalize() == diff), true)
         })
       }.groupBy(i => (i.pathId, i.method)).map {
         case ((path, method), diffs) => {
           val diffsForThisOne = diffs.flatMap(_.diffs).toMap
           val isADocumentedEndpoint = allEndpoints.exists(i => i.pathId == path && i.method == method)
-          EndpointDiffs(method, path, diffsForThisOne, isADocumentedEndpoint)
+          EndpointDiffs(method, path, diffsForThisOne, diffs.flatMap(_.denormalizedDiffs).toMap, isADocumentedEndpoint)
         }
       }
     }.toVector
@@ -82,14 +93,16 @@ object DiffResultHelper {
     val additionalEndpointsWithoutDiffs = AllEndpointsProjection.fromRfcState(rfcState).collect {
       //collect other endpoints we know exist, that don't have a diff
       case endpoint if !endpointsFromDiff.exists(i => i.pathId == endpoint.pathId && i.method == endpoint.method) => {
-        EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty /* always empty */, true)
+        EndpointDiffs(endpoint.method, endpoint.pathId, Map.empty, Map.empty /* always empty */, isDocumentedEndpoint = true)
       }
     }
 
     (endpointsFromDiff ++ additionalEndpointsWithoutDiffs).sortBy(_.count).reverse
   }
 
-  def groupEndpointDiffsByRegion(diffs: Map[InteractionDiffResult, Seq[String]], rfcState: RfcState, method: String, pathId: PathComponentId): EndpointDiffGrouping = {
+  def groupEndpointDiffsByRegion(endpointDiffs: Option[EndpointDiffs], rfcState: RfcState, method: String, pathId: PathComponentId): EndpointDiffGrouping = {
+    val diffs = endpointDiffs.map(_.diffs).getOrElse(Map.empty)
+    val denormalizedDiffs = endpointDiffs.map(_.denormalizedDiffs).getOrElse(Map.empty)
 
 
     val allRequests = rfcState.requestsState.requests.collect {
@@ -103,7 +116,7 @@ object DiffResultHelper {
 
 
     val regions = newRegionDiffs(diffs)
-    val body = bodyDiffs(diffs)
+    val body = bodyDiffs(diffs, denormalizedDiffs)
 
     val requestBodyDiffs = body.collect { case i if i.inRequest => i }.groupBy(_.contentType).map(i => {
       EndpointBodyDiffRegion(i._1, None, i._2.toVector)
@@ -196,7 +209,7 @@ object DiffResultHelper {
     }}.toVector.sortBy(_.statusCode)
   }
 
-  def bodyDiffs(diffs: Map[InteractionDiffResult, Seq[String]]): Seq[BodyDiff] = {
+  def bodyDiffs(diffs: Map[InteractionDiffResult, Seq[String]], allDenormalizedDiffs: Map[InteractionDiffResult, Seq[String]]): Seq[BodyDiff] = {
     val bodyRegions = diffs.filterKeys {
       case _: UnmatchedRequestBodyShape => true
       case _: UnmatchedResponseBodyShape => true
@@ -212,12 +225,14 @@ object DiffResultHelper {
 
       new BodyDiff {
         override val diff = _diff
+        override def denormalizedDiffs: Seq[InteractionDiffResult] = allDenormalizedDiffs.keySet.filter(_.normalize() == _diff).toSeq.distinct
         override val location = _location
         override val interactionPointers = _interactionPointers
         override val inRequest: Boolean = _inRequest
         override val inResponse: Boolean = _inResponse
         override val contentType: Option[String] = if (_inRequest) _diff.interactionTrail.requestBodyContentTypeOption() else _diff.interactionTrail.responseBodyContentTypeOption()
         override val statusCode: Option[Int] = Try(_diff.interactionTrail.statusCode()).toOption
+
       }
     }}.toVector
   }
@@ -251,40 +266,27 @@ object DiffResultHelper {
     case _ => None
   }
 
-  def descriptionFromDiff(diff: InteractionDiffResult, rfcState: RfcState, anInteraction: HttpInteraction): Option[DiffDescription] = Try {
+  def descriptionFromDiff(diff: BodyDiff, rfcState: RfcState, anInteraction: HttpInteraction): Option[DiffDescription] = Try {
     val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
-    descriptionInterpreters.interpret(diff, anInteraction)
+    val firstDiff = diff.denormalizedDiffs.minBy(_.shapeDiffResultOption.map(_.jsonTrail.toString).head)
+    descriptionInterpreters.interpret(firstDiff, anInteraction)
   }.toOption
 
-  def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, diffRfcState: RfcState, simulatedRfcState: RfcState): Option[SideBySideRenderHelper] = {
+  def previewDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, simulatedRfcState: RfcState): Option[SideBySideRenderHelper] = {
 
     val simulatedDiffPreviewer = new DiffPreviewer(simulatedRfcState)
 
-    val targetDiff = bodyDiff.diff.asInstanceOf[InteractionDiffResult]
+    val targetDiff = bodyDiff.denormalizedDiffs.flatMap(_.shapeDiffResultOption).sortBy(_.jsonTrail.toString).headOption
 
-    val denormalized = denormalizeDiff(targetDiff, diffRfcState, anInteraction)
-
-    if (denormalized.isEmpty) {
-      throw new Error(s"COULD NOT DE-NORMALIZE DIFF: ${bodyDiff.diff.toString} \n\n from computed diffs: "+ DiffHelpers.groupByDiffs(ShapesResolvers.newResolver(diffRfcState), diffRfcState, Vector(anInteraction)).keys.toSeq)
-    }
-
-    val firstDiff = denormalized.minBy(_.interactionTrail.toString) // in theory this will make the first diff the first in the trail (all else being equal)
-
-    //@todo review this interface
     def previewForBodyAndDiff(body: Body): Option[SideBySideRenderHelper] = {
       simulatedDiffPreviewer.previewDiff(
         BodyUtilities.parseBody(body),
-        Some(firstDiff.shapeDiffResultOption.get.shapeTrail.rootShapeId),
-        denormalized.flatMap(_.shapeDiffResultOption),
-        Set.empty)
+        targetDiff.map(_.shapeTrail.rootShapeId),
+        Set(targetDiff).flatten,
+        bodyDiff.denormalizedDiffs.flatMap(_.shapeDiffResultOption).toSet)
     }
 
     previewForBodyAndDiff(if (bodyDiff.inRequest) anInteraction.request.body else anInteraction.response.body)
-  }
-
-  def denormalizeDiff(targetDiff: InteractionDiffResult, rfcState: RfcState, anInteraction: HttpInteraction): Set[InteractionDiffResult] = {
-    val diffs = DiffHelpers.groupByDiffs(ShapesResolvers.newResolver(rfcState), rfcState, Vector(anInteraction))
-    diffs.keySet.filter(i => i.normalize() == targetDiff) // only return diffs that normalize to normalized diff
   }
 
   def previewBody(body: Body, currentRfcState: RfcState): Option[SideBySideRenderHelper] = {
@@ -310,7 +312,7 @@ object DiffResultHelper {
 @JSExportAll
 case class NewEndpoint(path: String, method: String, pathId: Option[PathComponentId], count: Int)
 @JSExportAll
-case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[InteractionDiffResult, Seq[String]], isDocumentedEndpoint: Boolean) {
+case class EndpointDiffs(method: String, pathId: PathComponentId, diffs: Map[InteractionDiffResult, Seq[String]], denormalizedDiffs: Map[InteractionDiffResult, Seq[String]], isDocumentedEndpoint: Boolean) {
   def count = diffs.keys.size
 }
 
@@ -391,6 +393,7 @@ abstract class BodyDiff {
   def isSameAs(b: BodyDiff): Boolean = this.diff == b.diff
 
   val diff: InteractionDiffResult
+  def denormalizedDiffs: Seq[InteractionDiffResult]
   val location: Seq[String]
   val interactionPointers: Seq[String]
   val contentType: Option[String]

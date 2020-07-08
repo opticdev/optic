@@ -246,7 +246,7 @@ export class DiffWorker {
         );
         console.timeEnd(`serdes ${batchId} ${index}`);
         console.time(`diff ${batchId} ${index}`);
-        diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
+        diffs = DiffHelpers.groupInteractionPointerByDiffs(
           resolvers,
           rfcState,
           deserializedInteraction,

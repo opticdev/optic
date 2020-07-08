@@ -58,10 +58,23 @@ optic_build() {
     optic_workspace_build
   )
 }
+
+optic_build_for_release() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+
+    yarn install
+    yarn run build-domain-optimized
+    optic_workspace_clean
+    optic_workspace_build
+  )
+}
+
 optic_build_and_publish_locally() {
   (
     set -o errexit
-    optic_build
+    optic_build_for_release
     cd "$OPTIC_SRC_DIR"
     yarn run publish-local
   )

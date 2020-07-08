@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 import {
+  CompareEquality,
   DiffPreviewer,
   DiffResultHelper,
   getIndex,
@@ -25,6 +26,7 @@ import { primary } from '../../../theme';
 import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
+import { DiffViewSimulation } from './DiffViewSimulation';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,9 +70,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default (props) => {
+export class DiffReviewExpandedCached extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !CompareEquality.betweenBodyDiff(
+      nextProps.selectedDiff || undefined,
+      this.props.selectedDiff || undefined
+    );
+  }
+
+  render() {
+    const { selectedDiff, setSelectedDiff } = this.props;
+    return (
+      <DiffReviewExpanded
+        diff={selectedDiff}
+        {...{ selectedDiff, setSelectedDiff }}
+      />
+    );
+  }
+}
+
+export const DiffReviewExpanded = (props) => {
   const classes = useStyles();
-  const { diff, selectedDiff, setSelectedDiff } = props;
+  const { diff, selectedDiff, setSelectedDiff, rfcContext } = props;
 
   const description = useDiffDescription(diff);
 
@@ -153,59 +174,15 @@ export default (props) => {
                     />
                   }
                 >
-                  {(() => {
-                    if (diff.inRequest) {
-                      const simulatedCommands = selectedInterpretation
-                        ? JsonHelper.seqToJsArray(
-                            selectedInterpretation.commands
-                          )
-                        : [];
-                      return (
-                        <SimulatedCommandContext
-                          rfcId={rfcId}
-                          eventStore={eventStore.getCopy(rfcId)}
-                          commands={simulatedCommands}
-                          shouldSimulate={true}
-                        >
-                          <RfcContext.Consumer>
-                            {({ rfcService, rfcId }) => {
-                              const currentRfcState = rfcService.currentState(
-                                rfcId
-                              );
-
-                              const preview = DiffResultHelper.previewDiff(
-                                diff,
-                                interactionScala,
-                                outerRfcState,
-                                currentRfcState
-                              );
-
-                              return (
-                                <DiffHunkViewer
-                                  suggestion={selectedInterpretation}
-                                  diff={diff}
-                                  preview={getOrUndefined(preview)}
-                                  diffDescription={description}
-                                />
-                              );
-                            }}
-                          </RfcContext.Consumer>
-                        </SimulatedCommandContext>
-                      );
-                    } else {
-                      return (
-                        <DiffHunkViewer
-                          exampleOnly
-                          preview={getOrUndefined(
-                            DiffResultHelper.previewBody(
-                              interactionScala.request.body,
-                              outerRfcState
-                            )
-                          )}
-                        />
-                      );
-                    }
-                  })()}
+                  <DiffViewSimulation
+                    renderDiff={diff.inRequest}
+                    diff={diff}
+                    interactionScala={interactionScala}
+                    description={description}
+                    body={interactionScala.response.body}
+                    outerRfcState={outerRfcState}
+                    selectedInterpretation={selectedInterpretation}
+                  />
                 </ShapeBox>
               }
               right={
@@ -244,57 +221,15 @@ export default (props) => {
                     />
                   }
                 >
-                  {(() => {
-                    if (diff.inResponse) {
-                      const simulatedCommands = selectedInterpretation
-                        ? JsonHelper.seqToJsArray(
-                            selectedInterpretation.commands
-                          )
-                        : [];
-                      return (
-                        <SimulatedCommandContext
-                          rfcId={rfcId}
-                          eventStore={eventStore.getCopy(rfcId)}
-                          commands={simulatedCommands}
-                          shouldSimulate={true}
-                        >
-                          <RfcContext.Consumer>
-                            {({ rfcService, rfcId }) => {
-                              const currentRfcState = rfcService.currentState(
-                                rfcId
-                              );
-                              const preview = DiffResultHelper.previewDiff(
-                                diff,
-                                interactionScala,
-                                outerRfcState,
-                                currentRfcState
-                              );
-                              return (
-                                <DiffHunkViewer
-                                  suggestion={selectedInterpretation}
-                                  diff={diff}
-                                  preview={getOrUndefined(preview)}
-                                  diffDescription={description}
-                                />
-                              );
-                            }}
-                          </RfcContext.Consumer>
-                        </SimulatedCommandContext>
-                      );
-                    } else {
-                      return (
-                        <DiffHunkViewer
-                          exampleOnly
-                          preview={getOrUndefined(
-                            DiffResultHelper.previewBody(
-                              interactionScala.response.body,
-                              outerRfcState
-                            )
-                          )}
-                        />
-                      );
-                    }
-                  })()}
+                  <DiffViewSimulation
+                    renderDiff={diff.inResponse}
+                    diff={diff}
+                    interactionScala={interactionScala}
+                    description={description}
+                    body={interactionScala.response.body}
+                    outerRfcState={outerRfcState}
+                    selectedInterpretation={selectedInterpretation}
+                  />
                 </ShapeBox>
               }
               right={

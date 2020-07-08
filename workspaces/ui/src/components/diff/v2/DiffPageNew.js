@@ -137,33 +137,6 @@ const InnerDiffWrapper = function (props) {
     jsonHelper.jsArrayToSeq(ignoredDiffs)
   );
 
-  // global.opticDebug.diffContext = {
-  //   samples: session ? session.samples : [],
-  //   samplesSeq: jsonHelper.jsArrayToSeq(
-  //     (session ? session.samples : []).map((x) =>
-  //       jsonHelper.fromInteraction(x)
-  //     )
-  //   ),
-  //   // diffResults,
-  //   acceptedSuggestions,
-  //   suggestionToPreview,
-  //   // regions,
-  //   // getInteractionsForDiff,
-  //   // interpreter,
-  //   // interpretationsForDiffAndInteraction,
-  //   simulatedCommands,
-  //   eventStore,
-  //   initialEventStore,
-  //   rfcState,
-  //   opticEngine,
-  //   StableHasher,
-  // };
-  /*
-const converter = new opticDebug.diffContext.opticEngine.com.useoptic.CoverageReportConverter(opticDebug.diffContext.StableHasher)
-const report = opticDebug.diffContext.opticEngine.com.useoptic.diff.helpers.CoverageHelpers().getCoverage(opticDebug.diffContext.rfcState, opticDebug.diffContext.samples)
-converter.toJs(report)
- */
-
   return (
     <DiffContextStore
       diffId={diffId}
