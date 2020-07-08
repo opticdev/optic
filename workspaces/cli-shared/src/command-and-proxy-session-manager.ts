@@ -57,7 +57,7 @@ class CommandAndProxySessionManager {
       `All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`
     );
 
-    console.log(fromOptic(`Optic is monitoring requests made to ${this.config.proxyConfig.protocol}//${this.config.proxyConfig.host}:${this.config.proxyConfig.port}`));
+    console.log(fromOptic(`Optic is observing requests made to ${this.config.proxyConfig.protocol}//${this.config.proxyConfig.host}:${this.config.proxyConfig.port}`));
     
     const promises = [];
     developerDebugLogger(this.config);
