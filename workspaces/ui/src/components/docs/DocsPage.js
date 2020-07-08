@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 export const DocsPage = ({ match, specService }) => {
   const routerPaths = useRouterPaths();
   return (
-    <Page title="Documentation">
+    <Page title="Documentation" scrollToTop={true}>
       <Page.Navbar mini={true} />
       <Page.Body>
         <Switch>
