@@ -16,7 +16,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
     responseBody = json"""{ "firstName": "Aidan", "lastName": "C", "age": 26, "cities": ["San Fransisco", "New York", "Durham"]}""")
 
   val baselineEvents = {
-    implicit val ids = OpticIds.newDeterministicIdGenerator
+    implicit val ids = OpticIds.newPrefixedDeterministicIdGenerator("baseline")
     new TestDataHelper("root-shape-is-object-with-keys").learnBaselineEvents(
       path = Vector("users", ":userId", "profile"),
       interactions = Vector(personInteraction))

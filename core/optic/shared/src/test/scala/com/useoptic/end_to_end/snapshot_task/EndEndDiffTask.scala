@@ -18,10 +18,11 @@ import io.circe.Json
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
+import com.useoptic.dsa.OpticDomainIds
 
 
 object EndEndDiffTask {
-  case class Input(events: Vector[RfcEvent], interpretations: Vector[HttpInteraction])
+  case class Input(events: Vector[RfcEvent], interpretations: Vector[HttpInteraction], ids: OpticDomainIds = OpticIds.newPrefixedDeterministicIdGenerator("testing"))
 
   case class SuggestionSlim(title: String, commandsJson: Json)
   case class DiffWithDescriptionAndUX(diff: InteractionDiffResult, title: String, suggestions: Vector[SuggestionSlim], preview: Option[Json])
@@ -36,6 +37,7 @@ class EndEndDiffTask
     val events = json.asObject.get("events").get
     EventSerialization.fromJson(events)
     val interpretations = json.asObject.get("interpretations").get.asArray.get.map(InteractionSerialization.fromJson)
+    
     Input(EventSerialization.fromJson(events).get, interpretations)
   }
   override def serializeInput(input: EndEndDiffTask.Input): Json = {
@@ -50,7 +52,7 @@ class EndEndDiffTask
   }
 
   override def transform(input: EndEndDiffTask.Input): EndEndDiffTask.DiffOutput = {
-    implicit val ids = OpticIds.newDeterministicIdGenerator
+    implicit val ids = input.ids
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcId = "testRfcId"
     eventStore.append(rfcId, input.events)

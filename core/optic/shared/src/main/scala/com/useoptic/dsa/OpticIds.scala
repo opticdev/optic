@@ -61,6 +61,29 @@ object OpticIds {
     override def newFieldId: FieldId = _field.nextId()
   }
 
+  def newPrefixedDeterministicIdGenerator(prefix: String) = new OpticDomainIds {
+    private val _shape = new SequentialIdGenerator(s"${prefix}-shape", "_")
+    override def newShapeId: ShapeId = _shape.nextId()
+
+    private val _path = new SequentialIdGenerator(s"${prefix}-path", "_")
+    override def newPathId: PathComponentId = _path.nextId()
+
+    private val _request = new SequentialIdGenerator(s"${prefix}-request", "_")
+    override def newRequestId: RequestId = _request.nextId()
+
+    private val _response = new SequentialIdGenerator(s"${prefix}-response", "_")
+    override def newResponseId: ResponseId = _response.nextId()
+
+    private val _shapeParameter = new SequentialIdGenerator(s"${prefix}-shape-parameter", "_")
+    override def newShapeParameterId: ShapeParameterId = _shapeParameter.nextId()
+
+    private val _requestParameter = new SequentialIdGenerator(s"${prefix}-request-parameter", "_")
+    override def newRequestParameterId: RequestParameterId = _requestParameter.nextId()
+
+    private val _field = new SequentialIdGenerator(s"${prefix}-field", "_")
+    override def newFieldId: FieldId = _field.nextId()
+  }
+
   def newRandomIdGenerator = new OpticDomainIds {
     private val _shape = new RandomAlphanumericIdGenerator("shape", "_")
     override def newShapeId: ShapeId = _shape.nextId()
