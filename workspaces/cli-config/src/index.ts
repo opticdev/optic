@@ -9,7 +9,6 @@ import {
   parseIgnore,
   IIgnoreRunnable,
 } from './helpers/ignore-parser';
-import { IQueryParserConfig } from './helpers/query-config-interfaces';
 
 export interface IUserCredentials {
   token: string;
@@ -38,10 +37,6 @@ export interface IApiCliConfig {
     [key: string]: IOpticTask;
   };
   ignoreRequests?: string[];
-
-  interpreters?: {
-    query?: IQueryParserConfig;
-  };
 }
 
 export async function readApiConfig(
@@ -128,7 +123,6 @@ export interface IOpticTaskRunnerConfig {
     protocol: string;
     basePath: string;
   };
-  queryParserConfig?: IQueryParserConfig;
 }
 
 export async function TaskToStartConfig(
@@ -172,7 +166,6 @@ export async function TaskToStartConfig(
     command: task.command,
     serviceConfig,
     proxyConfig,
-    queryParserConfig: apiConfig.interpreters?.query,
   };
 }
 

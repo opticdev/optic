@@ -8,10 +8,6 @@ class DefaultValueParser implements IQueryStringValueParser {
       return values[values.length - 1];
     }
   }
-
-  shouldHandle(key: string, values: string[]): boolean {
-    return true;
-  }
 }
 
 export const DefaultValueParserInstance = new DefaultValueParser();

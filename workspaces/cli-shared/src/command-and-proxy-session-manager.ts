@@ -46,7 +46,7 @@ class CommandAndProxySessionManager {
           ? undefined
           : target,
       proxyPort: this.config.proxyConfig.port,
-      queryParser: buildQueryStringParser(this.config.queryParserConfig),
+      queryParser: buildQueryStringParser(),
     });
 
     userDebugLogger(

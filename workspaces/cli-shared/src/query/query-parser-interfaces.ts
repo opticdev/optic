@@ -11,5 +11,4 @@ export interface IQueryStringKeyValues {
 
 export interface IQueryStringValueParser {
   parse(key: string, values: string[]): any;
-  shouldHandle(key: string, values: string[]): boolean;
 }
