@@ -39,16 +39,18 @@ class JsonLikeAndSpecTraverser(resolvers: ShapesResolvers, spec: RfcState, visit
       visitors.objectVisitor.visit(bodyJson, bodyTrail, trailOrigin, trailChoices, (choicesForObject, choicesForObjectKey) => {
 
         visitors.objectKeyVisitor.visit(bodyTrail, bodyJson.fields, choicesForObject)
-        bodyJson.fields.foreach(entry => {
-          val (key, value) = entry
-          val itemTrail: JsonTrail = bodyTrail.withChild(JsonObjectKey(key))
-          val choices = choicesForObjectKey(key)
-          val newTrailOrigin = choices.headOption match {
-            case Some(choice) => choice.parentTrail
-            case None => trailOrigin
-          }
-          traverse(Some(value), itemTrail, newTrailOrigin, choicesForObjectKey(key))
-        })
+        if (choicesForObject.nonEmpty) {
+          bodyJson.fields.foreach(entry => {
+            val (key, value) = entry
+            val itemTrail: JsonTrail = bodyTrail.withChild(JsonObjectKey(key))
+            val choices = choicesForObjectKey(key)
+            val newTrailOrigin = choices.headOption match {
+              case Some(choice) => choice.parentTrail
+              case None => trailOrigin
+            }
+            traverse(Some(value), itemTrail, newTrailOrigin, choicesForObjectKey(key))
+          })
+        }
       })
     }
     else {
