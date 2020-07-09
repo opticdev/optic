@@ -1,0 +1,68 @@
+# Releases the latest version of Optic on NPM/Brew/Debian
+# Assumes the version has been updated
+# Triggers on all changes to the release branch
+
+name: Release
+
+env:
+  HOMEBREW_REPO: opticdev/homebrew-optic
+  BUCKET_NAME: optic-deb-packages
+  PACKAGE_NAME: api
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # requires repo:write scope (https://github.com/peter-evans/repository-dispatch#token)
+
+on: 
+  push:
+    branches:
+      - release
+
+jobs:
+  # Deploys the current version to NPM, and also verifies that the version is correct in the process
+  # All Jobs rely on this job because it verifies the version
+  release-npm:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "NPM Release has not been configured yet"
+    # - uses: actions/checkout@v2
+    # - uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 12
+    # - run: npm run publish
+  
+  # Creates debian package for users to install, hosted on s3
+  release-deb:
+    needs: release-npm
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Debian Release has not been configured yet"
+      # - uses: actions/checkout@v2
+      # - uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 12
+      # - run: npm ci
+      # - name: Install APT Utils
+      #   run: sudo apt-get install apt-utils
+      # - run: sudo npm i -g @oclif/dev-cli
+      # - run: sudo oclif-dev pack:deb
+      # - uses: actions/setup-ruby@v1
+      #   with:
+      #     ruby-version: '2.6'
+      # - run: sudo gem install deb-s3
+      # - name: Upload to s3
+      #   run: sudo deb-s3 upload --access-key-id=${{ env.AWS_ACCESS_KEY_ID }} --secret-access-key=${{ env.AWS_SECRET_ACCESS_KEY }} --bucket $BUCKET_NAME --codename ${{ env.PACKAGE_NAME }} --preserve-versions dist/deb/legume_$(npm view ${{ env.PACKAGE_NAME }} version)-1_amd64.deb
+  
+  # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
+  # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
+  trigger-brew-release:
+    needs: release-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1.1.0
+        with:
+          token: ${{ env.REPO_ACCESS_TOKEN }}
+          repository: ${{ env.HOMEBREW_REPO }}
+          event-type: version-update
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
