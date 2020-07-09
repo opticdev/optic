@@ -68,7 +68,10 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
 
           s"perform task" in {
             output = Try(transform(input.get))
-            assert(output.isSuccess, if (output.isFailure) "Failed to transform: "+ output.failed.get.getMessage.toString else "")
+            assert(output.isSuccess, if (output.isFailure) "Failed to transform: "+ {
+              output.failed.get.printStackTrace()
+              output.failed.get.getMessage.toString
+            } else "")
           }
 
           s"match snapshot" in {

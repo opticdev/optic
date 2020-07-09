@@ -2,7 +2,7 @@
   "events" : [
     {
       "PathComponentAdded" : {
-        "pathId" : "path_1",
+        "pathId" : "baseline-path_1",
         "parentPathId" : "root",
         "name" : "users",
         "eventContext" : {
@@ -15,15 +15,15 @@
     },
     {
       "PathParameterAdded" : {
-        "pathId" : "path_2",
-        "parentPathId" : "path_1",
+        "pathId" : "baseline-path_2",
+        "parentPathId" : "baseline-path_1",
         "name" : ":userId",
         "eventContext" : null
       }
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_9",
+        "shapeId" : "baseline-shape_9",
         "baseShapeId" : "$string",
         "parameters" : {
           "DynamicParameterList" : {
@@ -37,9 +37,9 @@
     },
     {
       "PathParameterShapeSet" : {
-        "pathId" : "path_2",
+        "pathId" : "baseline-path_2",
         "shapeDescriptor" : {
-          "shapeId" : "shape_9",
+          "shapeId" : "baseline-shape_9",
           "isRemoved" : false
         },
         "eventContext" : null
@@ -47,8 +47,8 @@
     },
     {
       "PathComponentAdded" : {
-        "pathId" : "path_3",
-        "parentPathId" : "path_2",
+        "pathId" : "baseline-path_3",
+        "parentPathId" : "baseline-path_2",
         "name" : "profile",
         "eventContext" : {
           "clientId" : "ccc",
@@ -60,8 +60,8 @@
     },
     {
       "RequestParameterAddedByPathAndMethod" : {
-        "parameterId" : "parameter_5",
-        "pathId" : "path_3",
+        "parameterId" : "baseline-request-parameter_1",
+        "pathId" : "baseline-path_3",
         "httpMethod" : "GET",
         "parameterLocation" : "query",
         "name" : "queryString",
@@ -75,7 +75,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_10",
+        "shapeId" : "baseline-shape_10",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -94,9 +94,9 @@
     },
     {
       "RequestParameterShapeSet" : {
-        "parameterId" : "parameter_5",
+        "parameterId" : "baseline-request-parameter_1",
         "parameterDescriptor" : {
-          "shapeId" : "shape_10",
+          "shapeId" : "baseline-shape_10",
           "isRemoved" : false
         },
         "eventContext" : {
@@ -109,8 +109,8 @@
     },
     {
       "RequestAdded" : {
-        "requestId" : "request_1",
-        "pathId" : "path_3",
+        "requestId" : "baseline-request_1",
+        "pathId" : "baseline-path_3",
         "httpMethod" : "GET",
         "eventContext" : {
           "clientId" : "ccc",
@@ -122,8 +122,8 @@
     },
     {
       "ResponseAddedByPathAndMethod" : {
-        "responseId" : "response_1",
-        "pathId" : "path_3",
+        "responseId" : "baseline-response_1",
+        "pathId" : "baseline-path_3",
         "httpMethod" : "GET",
         "httpStatusCode" : 200,
         "eventContext" : {
@@ -136,7 +136,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_8",
+        "shapeId" : "baseline-shape_8",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -155,7 +155,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_2",
+        "shapeId" : "baseline-shape_2",
         "baseShapeId" : "$number",
         "parameters" : {
           "DynamicParameterList" : {
@@ -174,13 +174,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_1",
-        "shapeId" : "shape_8",
+        "fieldId" : "baseline-field_1",
+        "shapeId" : "baseline-shape_8",
         "name" : "age",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_1",
-            "shapeId" : "shape_2"
+            "fieldId" : "baseline-field_1",
+            "shapeId" : "baseline-shape_2"
           }
         },
         "eventContext" : {
@@ -193,7 +193,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_4",
+        "shapeId" : "baseline-shape_4",
         "baseShapeId" : "$string",
         "parameters" : {
           "DynamicParameterList" : {
@@ -212,7 +212,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_5",
+        "shapeId" : "baseline-shape_5",
         "baseShapeId" : "$list",
         "parameters" : {
           "DynamicParameterList" : {
@@ -231,13 +231,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_2",
-        "shapeId" : "shape_8",
+        "fieldId" : "baseline-field_2",
+        "shapeId" : "baseline-shape_8",
         "name" : "cities",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_2",
-            "shapeId" : "shape_5"
+            "fieldId" : "baseline-field_2",
+            "shapeId" : "baseline-shape_5"
           }
         },
         "eventContext" : {
@@ -250,7 +250,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_6",
+        "shapeId" : "baseline-shape_6",
         "baseShapeId" : "$string",
         "parameters" : {
           "DynamicParameterList" : {
@@ -269,13 +269,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_3",
-        "shapeId" : "shape_8",
+        "fieldId" : "baseline-field_3",
+        "shapeId" : "baseline-shape_8",
         "name" : "firstName",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_3",
-            "shapeId" : "shape_6"
+            "fieldId" : "baseline-field_3",
+            "shapeId" : "baseline-shape_6"
           }
         },
         "eventContext" : {
@@ -288,7 +288,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_7",
+        "shapeId" : "baseline-shape_7",
         "baseShapeId" : "$string",
         "parameters" : {
           "DynamicParameterList" : {
@@ -307,13 +307,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_4",
-        "shapeId" : "shape_8",
+        "fieldId" : "baseline-field_4",
+        "shapeId" : "baseline-shape_8",
         "name" : "lastName",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_4",
-            "shapeId" : "shape_7"
+            "fieldId" : "baseline-field_4",
+            "shapeId" : "baseline-shape_7"
           }
         },
         "eventContext" : {
@@ -328,10 +328,10 @@
       "ShapeParameterShapeSet" : {
         "shapeDescriptor" : {
           "ProviderInShape" : {
-            "shapeId" : "shape_5",
+            "shapeId" : "baseline-shape_5",
             "providerDescriptor" : {
               "ShapeProvider" : {
-                "shapeId" : "shape_4"
+                "shapeId" : "baseline-shape_4"
               }
             },
             "consumingParameterId" : "$listItem"
@@ -347,10 +347,10 @@
     },
     {
       "ResponseBodySet" : {
-        "responseId" : "response_1",
+        "responseId" : "baseline-response_1",
         "bodyDescriptor" : {
           "httpContentType" : "application/json",
-          "shapeId" : "shape_8",
+          "shapeId" : "baseline-shape_8",
           "isRemoved" : false
         },
         "eventContext" : {

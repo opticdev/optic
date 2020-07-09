@@ -1,27 +1,12 @@
 package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.{
-  AddField,
-  FieldShapeFromShape,
-  ProviderInShape,
-  SetParameterShape,
-  ShapeProvider
-}
+import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeProvider}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{
-  ListKind,
-  ObjectKind,
-  UnknownKind
-}
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.interactions.{
-  InteractionDiffResult,
-  InteractionTrail,
-  UnmatchedRequestBodyShape,
-  UnmatchedResponseBodyShape
-}
+import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes._
@@ -37,6 +22,9 @@ class UnspecifiedShapeDiffInterpreter(
     rfcState: RfcState
 )(implicit ids: OpticDomainIds)
     extends InteractiveDiffInterpreter[InteractionDiffResult] {
+
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
+
   override def interpret(
       diff: InteractionDiffResult,
       interaction: HttpInteraction
@@ -93,7 +81,7 @@ class UnspecifiedShapeDiffInterpreter(
             val key =
               shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
             val (inlineShapeId, newCommands) =
-              DistributionAwareShapeBuilder.toCommands(Vector(json.get))(ids)
+              DistributionAwareShapeBuilder.toCommands(Vector(json.get))(ids, shapeBuildingStrategy)
 
             val fieldId = ids.newFieldId
             val commands = newCommands.flatten ++ Seq(

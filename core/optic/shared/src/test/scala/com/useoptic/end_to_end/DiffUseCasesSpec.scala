@@ -46,15 +46,13 @@ class DiffUseCasesSpec extends EndEndDiffTask {
       })
     )))
 
-    /// there should only be one diff, "add favorite color" that creates the initial shape.
-    when_KNOWN_ISSUE("an extra field is provided as an object", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
+    when("an extra field is provided as an object", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
       personInteraction.forkResponseBody(json => {
         Json.fromJsonObject(json.asObject.get.add("favoriteColor", json"""{ "first": "orange", "second": "red"}"""))
       })
     )))
 
-    //Diff is wrong, Shape at index 0 when at index 1, suggestion is either "a string or String"
-    when_KNOWN_ISSUE("field is array of strings, and 1 item does not match expected type", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
+    when("field is array of strings, and 1 item does not match expected type", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
       personInteraction.forkResponseBody(json => {
         Json.fromJsonObject(json.asObject.get.add("cities", Json.fromValues(Seq(
           Json.fromString("San Fransisco"),
@@ -64,8 +62,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
       })
     )))
 
-    //Diff is wrong. Shape at index 0 when at index 2 and 4, suggestion is either "a string or String"
-    when_KNOWN_ISSUE("field is array of strings, and > 1 items does not match expected type", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
+    when("field is array of strings, and > 1 items does not match expected type", () => EndEndDiffTask.Input(baselineEvents._1, Vector(
       personInteraction.forkResponseBody(json => {
         Json.fromJsonObject(json.asObject.get.add("cities", Json.fromValues(Seq(
           Json.fromString("San Fransisco"),
@@ -106,8 +103,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
   }))
 
 
-  // suggestions is empty, it should give you the ability to add the field
-  when_KNOWN_ISSUE("a new field is provided in an optional nested object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
+  when("a new field is provided in an optional nested object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(secondCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "coordinates": {"format": "DMS", "lat": "37.7749° N", "long": "122.4194° W"} } } }"""
     }))
@@ -119,29 +115,25 @@ class DiffUseCasesSpec extends EndEndDiffTask {
     }))
   }))
 
-  // diff issue, json path casting
-  when_KNOWN_ISSUE("a new field is provided as an array with any contents", () => EndEndDiffTask.Input(baselineCityEvents._1, {
+  when("a new field is provided as an array with any contents", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(secondCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "array": [1,2,3] } } }"""
     }))
   }))
 
-  // cannot transform diff crash!
   when_KNOWN_ISSUE("a primitive type is provided to an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(firstCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "coordinates": "N/A" } } }"""
     }))
   }))
 
-  // cannot transform diff crash!
-  when_KNOWN_ISSUE("an array type is provided to an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
+  when("an array type is provided to an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(firstCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "coordinates": [1,2,3] } } }"""
     }))
   }))
 
-  // cannot transform diff crash!
-  when_KNOWN_ISSUE("required fields are omitted in an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
+  when("required fields are omitted in an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(firstCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "coordinates": {  } } } }"""
     }))
@@ -179,7 +171,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
   }))
 
   // diff error -> JsonArrayItem issue
-  when_KNOWN_ISSUE("an required object field is provided with an array", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
+  when("an required object field is provided with an array", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
     Vector(personWithStats.forkResponseBody(j => {
       json"""{"name":{"first":"Bob","last":"C"},"rivals":["user1","user2","user3"], "stats": [12,34] }"""
     }))
@@ -191,15 +183,13 @@ class DiffUseCasesSpec extends EndEndDiffTask {
     }))
   }))
 
-  // improper diff, should allow you to change the ListItem to an object (with initial shape) or a one of, second diff "food" observed should not exist
-  when_KNOWN_ISSUE("a required array field of strings provided with an object", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
+  when("a required array field of strings provided with an object", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
     Vector(personWithStats.forkResponseBody(j => {
       json"""{"name":{"first":"Bob","last":"C"},"rivals":[{"food": "rice"}, {"food": "cookies"}],"stats":{"rank":1}}"""
     }))
   }))
 
-  // improper diff + suggestions, tries to add 'nemesis' before parent set to object
-  when_KNOWN_ISSUE("a required array field is an object", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
+  when("a required array field is an object", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
     Vector(personWithStats.forkResponseBody(j => {
       json"""{"name":{"first":"Bob","last":"C"},"rivals":{"nemesis": "Brad"},"stats":{"rank":1}}"""
     }))
@@ -226,7 +216,6 @@ class DiffUseCasesSpec extends EndEndDiffTask {
   }))
 
 
-  // foo should not get a diff, only first diff (one of array or object is valid)
   when_KNOWN_ISSUE("root array is provided with object", () => EndEndDiffTask.Input(baselineArrayEvents._1, {
     Vector(emptyArray.forkResponseBody(j => {
       json"""{"foo": "bar"}"""
@@ -258,7 +247,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
   }))
 
   // diff error
-  when_KNOWN_ISSUE("array with object listitem is provided with one matching and one primitive", () => EndEndDiffTask.Input(baselineObjectArrayEvents._1, {
+  when("array with object listitem is provided with one matching and one primitive", () => EndEndDiffTask.Input(baselineObjectArrayEvents._1, {
     Vector(objectArray.forkResponseBody(j => {
       json"""[{"name": "joe", "age": "thirty", "colors": ["red", "green", "yellow"]}, "hello"]"""
     }))
@@ -279,7 +268,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
 
 
   //diff error!
-  when_KNOWN_ISSUE("array with object listitem is provided an sub array of numbers", () => EndEndDiffTask.Input(baselineObjectArrayEvents._1, {
+  when("array with object listitem is provided an sub array of numbers", () => EndEndDiffTask.Input(baselineObjectArrayEvents._1, {
     Vector(objectArray.forkResponseBody(j => {
       json"""[[1,2,3]]"""
     }))

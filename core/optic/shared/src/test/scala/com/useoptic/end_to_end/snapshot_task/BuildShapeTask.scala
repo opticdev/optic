@@ -3,7 +3,7 @@ package com.useoptic.end_to_end.snapshot_task
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.diff.MutableCommandStream
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapesToMake}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy, ShapesToMake}
 import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.dsa.OpticIds
 import com.useoptic.serialization.CommandSerialization
@@ -35,6 +35,7 @@ class BuildShapeTask
 
   override def transform(input: BuildShapeTask.Input): BuildShapeTask.Output = {
     implicit val ids = OpticIds.newDeterministicIdGenerator
+    implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
     val shape = DistributionAwareShapeBuilder.aggregateTrailsAndValues(input.inputJsons.flatMap(JsonLikeFrom.json)).getRoot.toShape
 
     implicit val commands = new MutableCommandStream

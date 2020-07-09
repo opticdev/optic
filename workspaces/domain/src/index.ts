@@ -99,3 +99,4 @@ export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer;
 export const DiffHelpers = opticEngine.com.useoptic.diff.helpers.DiffHelpers();
 export const DiffResultHelper = opticEngine.com.useoptic.ux.DiffResultHelper();
 export const UrlCounterHelper = opticEngine.com.useoptic.UrlCounterHelper();
+export const OpticIds = opticEngine.com.useoptic.OpticIdsJs();

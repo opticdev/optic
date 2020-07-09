@@ -26,6 +26,7 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { track } from '../../../Analytics';
+import { OpticIds } from '../../../OpticIdsUI';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -47,10 +48,6 @@ export const NewUrlModal = withRfcContext((props) => {
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
-
-  if (open) {
-    console.log('here plz', newUrl.toString());
-  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -81,7 +78,8 @@ export const NewUrlModal = withRfcContext((props) => {
       const { toAdd, lastMatch } = resolvePath(pathComponents, pathsById);
       lastParentPathId = lastMatch.pathId;
       toAdd.forEach((addition) => {
-        const pathId = RequestsHelper.newPathId();
+        const pathId = OpticIds.newPathId();
+        console.log('made a new id', pathId);
         const command = (addition.isParameter
           ? RequestsCommands.AddPathParameter
           : RequestsCommands.AddPathComponent)(
@@ -93,6 +91,8 @@ export const NewUrlModal = withRfcContext((props) => {
         lastParentPathId = pathId;
       });
     }
+
+    debugger;
     //name it
     commands.push(
       RfcCommands.AddContribution(

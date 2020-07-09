@@ -60,7 +60,7 @@
     },
     {
       "RequestParameterAddedByPathAndMethod" : {
-        "parameterId" : "parameter_7",
+        "parameterId" : "request-parameter_1",
         "pathId" : "path_3",
         "httpMethod" : "GET",
         "parameterLocation" : "query",
@@ -94,7 +94,7 @@
     },
     {
       "RequestParameterShapeSet" : {
-        "parameterId" : "parameter_7",
+        "parameterId" : "request-parameter_1",
         "parameterDescriptor" : {
           "shapeId" : "shape_12",
           "isRemoved" : false
@@ -193,12 +193,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_1",
+        "fieldId" : "field_1",
         "shapeId" : "shape_4",
         "name" : "first",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_1",
+            "fieldId" : "field_1",
             "shapeId" : "shape_2"
           }
         },
@@ -231,12 +231,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_2",
+        "fieldId" : "field_2",
         "shapeId" : "shape_4",
         "name" : "last",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_2",
+            "fieldId" : "field_2",
             "shapeId" : "shape_3"
           }
         },
@@ -250,12 +250,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_3",
+        "fieldId" : "field_3",
         "shapeId" : "shape_10",
         "name" : "name",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_3",
+            "fieldId" : "field_3",
             "shapeId" : "shape_4"
           }
         },
@@ -307,12 +307,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_4",
+        "fieldId" : "field_4",
         "shapeId" : "shape_10",
         "name" : "rivals",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_4",
+            "fieldId" : "field_4",
             "shapeId" : "shape_7"
           }
         },
@@ -364,12 +364,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_5",
+        "fieldId" : "field_5",
         "shapeId" : "shape_9",
         "name" : "rank",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_5",
+            "fieldId" : "field_5",
             "shapeId" : "shape_8"
           }
         },
@@ -383,12 +383,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_6",
+        "fieldId" : "field_6",
         "shapeId" : "shape_10",
         "name" : "stats",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_6",
+            "fieldId" : "field_6",
             "shapeId" : "shape_9"
           }
         },

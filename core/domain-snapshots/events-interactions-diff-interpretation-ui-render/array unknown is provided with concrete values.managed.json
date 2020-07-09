@@ -15,7 +15,7 @@
     },
     {
       "RequestParameterAddedByPathAndMethod" : {
-        "parameterId" : "parameter_1",
+        "parameterId" : "request-parameter_1",
         "pathId" : "path_1",
         "httpMethod" : "GET",
         "parameterLocation" : "query",
@@ -49,7 +49,7 @@
     },
     {
       "RequestParameterShapeSet" : {
-        "parameterId" : "parameter_1",
+        "parameterId" : "request-parameter_1",
         "parameterDescriptor" : {
           "shapeId" : "shape_4",
           "isRemoved" : false

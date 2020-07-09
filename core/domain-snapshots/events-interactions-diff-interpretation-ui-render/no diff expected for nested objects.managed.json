@@ -23,7 +23,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_11",
+        "shapeId" : "shape_7",
         "baseShapeId" : "$string",
         "parameters" : {
           "DynamicParameterList" : {
@@ -39,7 +39,7 @@
       "PathParameterShapeSet" : {
         "pathId" : "path_2",
         "shapeDescriptor" : {
-          "shapeId" : "shape_11",
+          "shapeId" : "shape_7",
           "isRemoved" : false
         },
         "eventContext" : null
@@ -47,7 +47,7 @@
     },
     {
       "RequestParameterAddedByPathAndMethod" : {
-        "parameterId" : "parameter_8",
+        "parameterId" : "request-parameter_1",
         "pathId" : "path_2",
         "httpMethod" : "GET",
         "parameterLocation" : "query",
@@ -62,7 +62,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_12",
+        "shapeId" : "shape_8",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -81,9 +81,9 @@
     },
     {
       "RequestParameterShapeSet" : {
-        "parameterId" : "parameter_8",
+        "parameterId" : "request-parameter_1",
         "parameterDescriptor" : {
-          "shapeId" : "shape_12",
+          "shapeId" : "shape_8",
           "isRemoved" : false
         },
         "eventContext" : {
@@ -123,7 +123,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_10",
+        "shapeId" : "shape_6",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -142,7 +142,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_9",
+        "shapeId" : "shape_5",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -161,7 +161,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_8",
+        "shapeId" : "shape_4",
         "baseShapeId" : "$object",
         "parameters" : {
           "DynamicParameterList" : {
@@ -199,12 +199,12 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_1",
-        "shapeId" : "shape_8",
+        "fieldId" : "field_1",
+        "shapeId" : "shape_4",
         "name" : "city",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_1",
+            "fieldId" : "field_1",
             "shapeId" : "shape_2"
           }
         },
@@ -218,140 +218,7 @@
     },
     {
       "ShapeAdded" : {
-        "shapeId" : "shape_5",
-        "baseShapeId" : "$object",
-        "parameters" : {
-          "DynamicParameterList" : {
-            "shapeParameterIds" : [
-            ]
-          }
-        },
-        "name" : "",
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "ShapeAdded" : {
         "shapeId" : "shape_3",
-        "baseShapeId" : "$string",
-        "parameters" : {
-          "DynamicParameterList" : {
-            "shapeParameterIds" : [
-            ]
-          }
-        },
-        "name" : "",
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "FieldAdded" : {
-        "fieldId" : "parameter_2",
-        "shapeId" : "shape_5",
-        "name" : "lat",
-        "shapeDescriptor" : {
-          "FieldShapeFromShape" : {
-            "fieldId" : "parameter_2",
-            "shapeId" : "shape_3"
-          }
-        },
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "ShapeAdded" : {
-        "shapeId" : "shape_4",
-        "baseShapeId" : "$string",
-        "parameters" : {
-          "DynamicParameterList" : {
-            "shapeParameterIds" : [
-            ]
-          }
-        },
-        "name" : "",
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "FieldAdded" : {
-        "fieldId" : "parameter_3",
-        "shapeId" : "shape_5",
-        "name" : "long",
-        "shapeDescriptor" : {
-          "FieldShapeFromShape" : {
-            "fieldId" : "parameter_3",
-            "shapeId" : "shape_4"
-          }
-        },
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "ShapeAdded" : {
-        "shapeId" : "shape_6",
-        "baseShapeId" : "$optional",
-        "parameters" : {
-          "DynamicParameterList" : {
-            "shapeParameterIds" : [
-            ]
-          }
-        },
-        "name" : "",
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "FieldAdded" : {
-        "fieldId" : "parameter_4",
-        "shapeId" : "shape_8",
-        "name" : "coordinates",
-        "shapeDescriptor" : {
-          "FieldShapeFromShape" : {
-            "fieldId" : "parameter_4",
-            "shapeId" : "shape_6"
-          }
-        },
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "ShapeAdded" : {
-        "shapeId" : "shape_7",
         "baseShapeId" : "$number",
         "parameters" : {
           "DynamicParameterList" : {
@@ -370,13 +237,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_5",
-        "shapeId" : "shape_8",
+        "fieldId" : "field_2",
+        "shapeId" : "shape_4",
         "name" : "population",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_5",
-            "shapeId" : "shape_7"
+            "fieldId" : "field_2",
+            "shapeId" : "shape_3"
           }
         },
         "eventContext" : {
@@ -389,13 +256,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_6",
-        "shapeId" : "shape_9",
+        "fieldId" : "field_3",
+        "shapeId" : "shape_5",
         "name" : "principality",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_6",
-            "shapeId" : "shape_8"
+            "fieldId" : "field_3",
+            "shapeId" : "shape_4"
           }
         },
         "eventContext" : {
@@ -408,34 +275,13 @@
     },
     {
       "FieldAdded" : {
-        "fieldId" : "parameter_7",
-        "shapeId" : "shape_10",
+        "fieldId" : "field_4",
+        "shapeId" : "shape_6",
         "name" : "location",
         "shapeDescriptor" : {
           "FieldShapeFromShape" : {
-            "fieldId" : "parameter_7",
-            "shapeId" : "shape_9"
-          }
-        },
-        "eventContext" : {
-          "clientId" : "ccc",
-          "clientSessionId" : "sss",
-          "clientCommandBatchId" : "bbb",
-          "createdAt" : "NOW"
-        }
-      }
-    },
-    {
-      "ShapeParameterShapeSet" : {
-        "shapeDescriptor" : {
-          "ProviderInField" : {
-            "fieldId" : "parameter_4",
-            "providerDescriptor" : {
-              "ShapeProvider" : {
-                "shapeId" : "shape_5"
-              }
-            },
-            "consumingParameterId" : "$optionalInner"
+            "fieldId" : "field_4",
+            "shapeId" : "shape_5"
           }
         },
         "eventContext" : {
@@ -451,7 +297,7 @@
         "responseId" : "response_1",
         "bodyDescriptor" : {
           "httpContentType" : "application/json",
-          "shapeId" : "shape_10",
+          "shapeId" : "shape_6",
           "isRemoved" : false
         },
         "eventContext" : {
