@@ -25,6 +25,7 @@ export interface IHttpToolkitCapturingProxyConfig {
     includeJsonBody: boolean;
     includeTextBody: boolean;
     includeShapeHash: boolean;
+    includeQueryString: boolean;
   };
   queryParser: IQueryParser;
 }
@@ -199,18 +200,18 @@ export class HttpToolkitCapturingProxy {
 
   extractQueryParameters(req: mockttp.CompletedRequest): IArbitraryData {
     const rawQuery = url.parse(req.url).query;
-    developerDebugLogger('extracting query params', { rawQuery, url: req.url });
+
+    developerDebugLogger('extracting query params', { rawQuery });
+
     if (rawQuery) {
       const jsonLikeValue = this.config.queryParser.parse(rawQuery);
       return {
-        asJsonString: this.config.flags.includeShapeHash
-          ? null
-          : JSON.stringify(jsonLikeValue),
-        asText: rawQuery,
+        asJsonString: this.config.flags.includeQueryString
+          ? JSON.stringify(jsonLikeValue)
+          : null,
+        asText: this.config.flags.includeQueryString && rawQuery,
         shapeHashV1Base64:
-          this.config.flags.includeShapeHash && jsonLikeValue
-            ? toBytes(jsonLikeValue).toString('base64')
-            : null,
+          jsonLikeValue && toBytes(jsonLikeValue).toString('base64'),
       };
     } else {
       return {
