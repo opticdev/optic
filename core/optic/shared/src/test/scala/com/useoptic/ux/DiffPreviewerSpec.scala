@@ -74,12 +74,6 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       //      assert(rootshape.items.count(_.diffs.nonEmpty) == 9)
     }
 
-    it("can render a diff in nested object with unknown child fields") {
-      val preview = diffPreview(ShapeExamples.nestedSimple, JsonExamples.nestedSimpleNew)
-      val root = preview.get.getRootShape.get
-      assert(root.field("novelField").exampleShape.get.fields.size == 1)
-    }
-
   }
 
   it("shape only render") {

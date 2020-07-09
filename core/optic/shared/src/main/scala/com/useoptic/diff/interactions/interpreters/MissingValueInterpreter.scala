@@ -56,7 +56,6 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
       if (resolved.get.isNull) {
         Seq(
           WrapWithNullable(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
-          RemoveFromSpec(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
         )
       } else {
         Seq(

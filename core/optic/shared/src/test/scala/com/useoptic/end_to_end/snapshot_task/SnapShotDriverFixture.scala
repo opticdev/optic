@@ -55,7 +55,7 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
   def runSuite = {
     s"${snapshotName} snapshot tests" should {
       println("Snapshot Results "+ snapshotName)
-      snapshotDirectory.list.filter(i =>
+      snapshotDirectory.list.toVector.sortBy(_.name).filter(i =>
         i.isRegularFile && (only.isEmpty || only.contains(i.nameWithoutExtension)))
         .foreach { case file =>
 
@@ -84,8 +84,15 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
               val snapshot = dir / file.name
               if (snapshot.exists) {
                 val snapshotValue = deserializeOutput(parse(snapshot.contentAsString).right.get)
-                assert(compare(output.get, snapshotValue), s"(${dir.name} / ${file.name}) snapshot does not match")
-                println(s" - PASSED: ${file.nameWithoutExtension}")
+                if (compare(output.get, snapshotValue)) {
+                  println(s" - PASSED: ${file.nameWithoutExtension}")
+                } else {
+                  println(s"(${dir.name} / ${file.name}) snapshot does not match")
+                  println(serializeOutput(output.get).noSpaces)
+                  println(serializeOutput(snapshotValue).noSpaces)
+
+                  assert(false, "snapshot does not match")
+                }
                 val s = summary(input.get, output.get)
                 if (s.nonEmpty) {
                   println(s)

@@ -96,6 +96,8 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
 
+          implicit val shapeBuildingStrategy = if (interactions.size > 1) ShapeBuildingStrategy.inferPolymorphism else ShapeBuildingStrategy.learnASingleInteraction
+
           val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.request.body)))
           val commands = baseCommands ++ buildCommands.flatten ++ Seq(
             RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, rootShapeId, isRemoved = false))
@@ -142,7 +144,7 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
         val jsonBody = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-
+          implicit val shapeBuildingStrategy = if (interactions.size > 1) ShapeBuildingStrategy.inferPolymorphism else ShapeBuildingStrategy.learnASingleInteraction
           val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.response.body)))
 
           val commands = baseCommands ++ buildCommands.flatten ++ Seq(

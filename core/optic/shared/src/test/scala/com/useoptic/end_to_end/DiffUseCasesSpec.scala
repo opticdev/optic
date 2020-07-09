@@ -91,12 +91,6 @@ class DiffUseCasesSpec extends EndEndDiffTask with JsonFileFixture {
       interactions = Vector(firstCityInteraction, secondCityInteraction))
   }
 
-  when("no diff expected for nested objects", () => EndEndDiffTask.Input(baselineCityEvents._1, {
-    Vector(firstCityInteraction, secondCityInteraction)
-  }))
-
-
-
   when("a new field is provided in a required nested object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(firstCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "motto": "Experientia Docet", "city": "San Fransisco", "population": 830000 } } }"""
@@ -122,7 +116,7 @@ class DiffUseCasesSpec extends EndEndDiffTask with JsonFileFixture {
     }))
   }))
 
-  when_KNOWN_ISSUE("a primitive type is provided to an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
+  when("a primitive type is provided to an optional object", () => EndEndDiffTask.Input(baselineCityEvents._1, {
     Vector(firstCityInteraction.forkResponseBody(j => {
       json"""{ "location": { "principality": { "city": "San Fransisco", "population": 830000, "coordinates": "N/A" } } }"""
     }))
@@ -217,7 +211,7 @@ class DiffUseCasesSpec extends EndEndDiffTask with JsonFileFixture {
   }))
 
 
-  when_KNOWN_ISSUE("root array is provided with object", () => EndEndDiffTask.Input(baselineArrayEvents._1, {
+  when("root array is provided with object", () => EndEndDiffTask.Input(baselineArrayEvents._1, {
     Vector(emptyArray.forkResponseBody(j => {
       json"""{"foo": "bar"}"""
     }))
@@ -275,7 +269,7 @@ class DiffUseCasesSpec extends EndEndDiffTask with JsonFileFixture {
     }))
   }))
 
-  whenOnly("deeply nested fields inside of arrays", () => {
+  when("deeply nested fields inside of arrays", () => {
 
     val events = eventsFrom("ergast")
 
