@@ -1,12 +1,27 @@
 package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape, ProviderInShape, SetParameterShape, ShapeProvider}
+import com.useoptic.contexts.shapes.Commands.{
+  AddField,
+  FieldShapeFromShape,
+  ProviderInShape,
+  SetParameterShape,
+  ShapeProvider
+}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind, UnknownKind}
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
+import com.useoptic.contexts.shapes.ShapesHelper.{
+  ListKind,
+  ObjectKind,
+  UnknownKind
+}
+import com.useoptic.diff.initial.DistributionAwareShapeBuilder
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
+import com.useoptic.diff.interactions.{
+  InteractionDiffResult,
+  InteractionTrail,
+  UnmatchedRequestBodyShape,
+  UnmatchedResponseBodyShape
+}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes._
@@ -14,12 +29,18 @@ import com.useoptic.diff.shapes.resolvers.{JsonLikeResolvers, ShapesResolvers}
 import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
+import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
+import com.useoptic.contexts.shapes.ShapesHelper.NullableKind
 
-class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
-
-  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
-
-  override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+class UnspecifiedShapeDiffInterpreter(
+    resolvers: ShapesResolvers,
+    rfcState: RfcState
+)(implicit ids: OpticDomainIds)
+    extends InteractiveDiffInterpreter[InteractionDiffResult] {
+  override def interpret(
+      diff: InteractionDiffResult,
+      interaction: HttpInteraction
+  ): Seq[InteractiveDiffInterpretation] = {
     diff match {
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiffResult match {
@@ -42,59 +63,93 @@ class UnspecifiedShapeDiffInterpreter(resolvers: ShapesResolvers, rfcState: RfcS
     }
   }
 
-  def interpretUnspecifiedShape(interactionTrail: InteractionTrail, shapeDiff: UnspecifiedShape, interaction: HttpInteraction) = {
-    // if our shapeTrail points to an object and jsonTrail points to a key
-    val resolved = resolvers.resolveTrailToCoreShape(shapeDiff.shapeTrail, Map.empty) //@TODO: check bindings
-    Logger.log("sentinel-interpretUnspecifiedShape")
-    Logger.log(resolved.shapeEntity)
-    Logger.log(resolved.coreShapeKind)
-    resolved.coreShapeKind match {
-      case ListKind => {
-        val json = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
-        val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(json.get))
-        val commands = newCommands.flatten ++ Seq(
-          SetParameterShape(
-            ProviderInShape(
-              resolved.shapeEntity.shapeId,
-              ShapeProvider(inlineShapeId),
-              ListKind.innerParam
+  def interpretUnspecifiedShape(
+      interactionTrail: InteractionTrail,
+      shapeDiff: UnspecifiedShape,
+      interaction: HttpInteraction
+  ) = {
+    val choices = resolvers.listTrailChoices(shapeDiff.shapeTrail, Map.empty)
+    choices.foreach(Logger.log)
+    val choiceWithUnspecifiedShape = choices.find(choice => {
+      choice.coreShapeKind match {
+        case ObjectKind => true
+        case ListKind   => true
+        case NullableKind =>
+          false //@TODO: support going from Nullable<Unknown> to Nullable<T>
+        case _ => false
+      }
+    })
+    choiceWithUnspecifiedShape match {
+      case Some(c) => {
+        c.coreShapeKind match {
+          case ObjectKind => {
+            Logger.log(shapeDiff.jsonTrail)
+            val json = JsonLikeResolvers.tryResolveJsonLike(
+              interactionTrail,
+              shapeDiff.jsonTrail,
+              interaction
             )
-          )
-        )
-        Seq(
-          InteractiveDiffInterpretation(
-            s"Set the shape",
-            s"Set the shape to ...",
-            commands,
-            ChangeType.Addition
-          )
-        )
-      }
+            Logger.log(json.get)
+            val key =
+              shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
+            val (inlineShapeId, newCommands) =
+              DistributionAwareShapeBuilder.toCommands(Vector(json.get))(ids)
 
-      case ObjectKind => {
-        Logger.log(shapeDiff.jsonTrail)
-        val json = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
-        Logger.log(json.get)
-        val key = shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
-        val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(json.get))
+            val fieldId = ids.newFieldId
+            val commands = newCommands.flatten ++ Seq(
+              AddField(
+                fieldId,
+                c.shapeId,
+                key,
+                FieldShapeFromShape(fieldId, inlineShapeId)
+              )
+            )
+            Seq(
+              InteractiveDiffInterpretation(
+                s"Add ${key}",
+                s"Add ${key} to the object",
+                commands,
+                ChangeType.Addition
+              )
+            )
+          }
+          case ListKind => {
+            val json = JsonLikeResolvers.tryResolveJsonLike(
+              interactionTrail,
+              shapeDiff.jsonTrail,
+              interaction
+            )
+            val (inlineShapeId, newCommands) =
+              DistributionAwareShapeBuilder.toCommands(Vector(json.get))
+            val commands = newCommands.flatten ++ Seq(
+              SetParameterShape(
+                ProviderInShape(
+                  c.shapeId,
+                  ShapeProvider(inlineShapeId),
+                  ListKind.innerParam
+                )
+              )
+            )
+            Seq(
+              InteractiveDiffInterpretation(
+                s"Set the list item shape",
+                s"Set the list item shape",
+                commands,
+                ChangeType.Addition
+              )
+            )
 
-        val fieldId = ids.newFieldId
-        val commands = newCommands.flatten ++ Seq(
-          AddField(fieldId, resolved.shapeEntity.shapeId, key, FieldShapeFromShape(fieldId, inlineShapeId))
-        )
-        Seq(
-          InteractiveDiffInterpretation(
-            s"Add ${key}",
-            s"Add ${key} to the specification",
-            commands,
-            ChangeType.Addition
-          )
-        )
+          }
+          case _ => Seq.empty
+        }
       }
-      //@TODO: support Nullable<Unknown> (when you have only seen null and then see something else)
-      case _ => Seq.empty
+      case None => Seq.empty
     }
+
   }
 
-  override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = interpret(diff, interactions.head)
+  override def interpret(
+      diff: InteractionDiffResult,
+      interactions: Vector[HttpInteraction]
+  ): Seq[InteractiveDiffInterpretation] = interpret(diff, interactions.head)
 }

@@ -1,0 +1,344 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "baseline-response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnmatchedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "cities"
+                    }
+                  },
+                  {
+                    "JsonArrayItem" : {
+                      "index" : 1
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "baseline-shape_8",
+                "path" : [
+                  {
+                    "ObjectFieldTrail" : {
+                      "fieldId" : "baseline-field_2",
+                      "fieldShapeId" : "baseline-shape_5"
+                    }
+                  },
+                  {
+                    "ListItemTrail" : {
+                      "listShapeId" : "baseline-shape_5",
+                      "itemShapeId" : "baseline-shape_4"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "shape at index 1 in the 200 Response body was not a string",
+      "suggestions" : [
+        {
+          "title" : "Allow shape at index 1 to be either a string or Number",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_2",
+                "baseShapeId" : "$number",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_1",
+                "baseShapeId" : "$oneOf",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_1",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_2",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_2"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_2"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "baseline-shape_4"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_1"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "baseline-shape_5",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_1"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title" : "Change shape to Number",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_3",
+                "baseShapeId" : "$number",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "baseline-shape_5",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_3"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleObject(List(),Some(baseline-shape_8),List(List(JsonObjectKey(age)), List(JsonObjectKey(cities)), List(JsonObjectKey(firstName)), List(JsonObjectKey(lastName))),List(),List(),Set())), (List(JsonObjectKey(age)),ExamplePrimitive(List(JsonObjectKey(age)),$number,Some(baseline-shape_2),26,Set())), (List(JsonObjectKey(cities)),ExampleArray(List(JsonObjectKey(cities)),Some(baseline-shape_5),Some(baseline-shape_4),Vector(List(JsonObjectKey(cities), JsonArrayItem(0)), List(JsonObjectKey(cities), JsonArrayItem(1)), List(JsonObjectKey(cities), JsonArrayItem(2)), List(JsonObjectKey(cities), JsonArrayItem(3)), List(JsonObjectKey(cities), JsonArrayItem(4))),Set())), (List(JsonObjectKey(cities), JsonArrayItem(0)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(0)),$string,Some(baseline-shape_4),\"San Fransisco\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(1)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(1)),$number,None,17584,Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(1)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (List(JsonObjectKey(cities), JsonArrayItem(2)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(2)),$string,Some(baseline-shape_4),\"Boston\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(3)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(3)),$number,None,16573,Set())), (List(JsonObjectKey(cities), JsonArrayItem(4)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(4)),$string,Some(baseline-shape_4),\"Chicago\",Set())), (List(JsonObjectKey(firstName)),ExamplePrimitive(List(JsonObjectKey(firstName)),$string,Some(baseline-shape_6),\"Aidan\",Set())), (List(JsonObjectKey(lastName)),ExamplePrimitive(List(JsonObjectKey(lastName)),$string,Some(baseline-shape_7),\"C\",Set())))",
+        "Vector((List(JsonObjectKey(age)),KnownExampleField(List(JsonObjectKey(age)),age,baseline-field_1,baseline-shape_2,26,Set())), (List(JsonObjectKey(cities)),KnownExampleField(List(JsonObjectKey(cities)),cities,baseline-field_2,baseline-shape_5,[\n  \"San Fransisco\",\n  17584,\n  \"Boston\",\n  16573,\n  \"Chicago\"\n],Set())), (List(JsonObjectKey(firstName)),KnownExampleField(List(JsonObjectKey(firstName)),firstName,baseline-field_3,baseline-shape_6,\"Aidan\",Set())), (List(JsonObjectKey(lastName)),KnownExampleField(List(JsonObjectKey(lastName)),lastName,baseline-field_4,baseline-shape_7,\"C\",Set())))",
+        "Vector((List(JsonObjectKey(cities), JsonArrayItem(0)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(0)),0,\"San Fransisco\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(1)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(1)),1,17584,Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(1)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (List(JsonObjectKey(cities), JsonArrayItem(2)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(2)),2,\"Boston\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(3)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(3)),3,16573,Set())), (List(JsonObjectKey(cities), JsonArrayItem(4)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(4)),4,\"Chicago\",Set())))",
+        "Vector((baseline-shape_2,SpecPrimitive(baseline-shape_2,$number,RenderName(List(NameComponent(Number,NumberColor,,None,None))),Set())), (baseline-shape_4,SpecPrimitive(baseline-shape_4,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(1)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (baseline-shape_5,SpecArray(baseline-shape_5,baseline-shape_4,RenderName(List(NameComponent(List of ,ListColor,,Some(baseline-shape_4),Some(baseline-shape_4)))),Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(1)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (baseline-shape_6,SpecPrimitive(baseline-shape_6,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (baseline-shape_7,SpecPrimitive(baseline-shape_7,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (baseline-shape_8,SpecObject(baseline-shape_8,List(SpecField(age,baseline-field_1,baseline-shape_2,Set()), SpecField(cities,baseline-field_2,baseline-shape_5,Set()), SpecField(firstName,baseline-field_3,baseline-shape_6,Set()), SpecField(lastName,baseline-field_4,baseline-shape_7,Set())),Set())))"
+      ]
+    },
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "baseline-response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnmatchedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "cities"
+                    }
+                  },
+                  {
+                    "JsonArrayItem" : {
+                      "index" : 3
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "baseline-shape_8",
+                "path" : [
+                  {
+                    "ObjectFieldTrail" : {
+                      "fieldId" : "baseline-field_2",
+                      "fieldShapeId" : "baseline-shape_5"
+                    }
+                  },
+                  {
+                    "ListItemTrail" : {
+                      "listShapeId" : "baseline-shape_5",
+                      "itemShapeId" : "baseline-shape_4"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "shape at index 3 in the 200 Response body was not a string",
+      "suggestions" : [
+        {
+          "title" : "Allow shape at index 3 to be either a string or Number",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_5",
+                "baseShapeId" : "$number",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_4",
+                "baseShapeId" : "$oneOf",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_3",
+                "shapeId" : "testing-shape_4",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_4",
+                "shapeId" : "testing-shape_4",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_4",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_5"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_4"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_4",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "baseline-shape_4"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_3"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "baseline-shape_5",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_4"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title" : "Change shape to Number",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_6",
+                "baseShapeId" : "$number",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "baseline-shape_5",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_6"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleObject(List(),Some(baseline-shape_8),List(List(JsonObjectKey(age)), List(JsonObjectKey(cities)), List(JsonObjectKey(firstName)), List(JsonObjectKey(lastName))),List(),List(),Set())), (List(JsonObjectKey(age)),ExamplePrimitive(List(JsonObjectKey(age)),$number,Some(baseline-shape_2),26,Set())), (List(JsonObjectKey(cities)),ExampleArray(List(JsonObjectKey(cities)),Some(baseline-shape_5),Some(baseline-shape_4),Vector(List(JsonObjectKey(cities), JsonArrayItem(0)), List(JsonObjectKey(cities), JsonArrayItem(1)), List(JsonObjectKey(cities), JsonArrayItem(2)), List(JsonObjectKey(cities), JsonArrayItem(3)), List(JsonObjectKey(cities), JsonArrayItem(4))),Set())), (List(JsonObjectKey(cities), JsonArrayItem(0)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(0)),$string,Some(baseline-shape_4),\"San Fransisco\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(1)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(1)),$number,None,17584,Set())), (List(JsonObjectKey(cities), JsonArrayItem(2)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(2)),$string,Some(baseline-shape_4),\"Boston\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(3)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(3)),$number,None,16573,Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(3)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (List(JsonObjectKey(cities), JsonArrayItem(4)),ExamplePrimitive(List(JsonObjectKey(cities), JsonArrayItem(4)),$string,Some(baseline-shape_4),\"Chicago\",Set())), (List(JsonObjectKey(firstName)),ExamplePrimitive(List(JsonObjectKey(firstName)),$string,Some(baseline-shape_6),\"Aidan\",Set())), (List(JsonObjectKey(lastName)),ExamplePrimitive(List(JsonObjectKey(lastName)),$string,Some(baseline-shape_7),\"C\",Set())))",
+        "Vector((List(JsonObjectKey(age)),KnownExampleField(List(JsonObjectKey(age)),age,baseline-field_1,baseline-shape_2,26,Set())), (List(JsonObjectKey(cities)),KnownExampleField(List(JsonObjectKey(cities)),cities,baseline-field_2,baseline-shape_5,[\n  \"San Fransisco\",\n  17584,\n  \"Boston\",\n  16573,\n  \"Chicago\"\n],Set())), (List(JsonObjectKey(firstName)),KnownExampleField(List(JsonObjectKey(firstName)),firstName,baseline-field_3,baseline-shape_6,\"Aidan\",Set())), (List(JsonObjectKey(lastName)),KnownExampleField(List(JsonObjectKey(lastName)),lastName,baseline-field_4,baseline-shape_7,\"C\",Set())))",
+        "Vector((List(JsonObjectKey(cities), JsonArrayItem(0)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(0)),0,\"San Fransisco\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(1)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(1)),1,17584,Set())), (List(JsonObjectKey(cities), JsonArrayItem(2)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(2)),2,\"Boston\",Set())), (List(JsonObjectKey(cities), JsonArrayItem(3)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(3)),3,16573,Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(3)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (List(JsonObjectKey(cities), JsonArrayItem(4)),ExampleItem(List(JsonObjectKey(cities), JsonArrayItem(4)),4,\"Chicago\",Set())))",
+        "Vector((baseline-shape_2,SpecPrimitive(baseline-shape_2,$number,RenderName(List(NameComponent(Number,NumberColor,,None,None))),Set())), (baseline-shape_4,SpecPrimitive(baseline-shape_4,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(3)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (baseline-shape_5,SpecArray(baseline-shape_5,baseline-shape_4,RenderName(List(NameComponent(List of ,ListColor,,Some(baseline-shape_4),Some(baseline-shape_4)))),Set(UnmatchedShape(List(JsonObjectKey(cities), JsonArrayItem(3)),ShapeTrail(baseline-shape_8,List(ObjectFieldTrail(baseline-field_2,baseline-shape_5), ListItemTrail(baseline-shape_5,baseline-shape_4))))))), (baseline-shape_6,SpecPrimitive(baseline-shape_6,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (baseline-shape_7,SpecPrimitive(baseline-shape_7,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (baseline-shape_8,SpecObject(baseline-shape_8,List(SpecField(age,baseline-field_1,baseline-shape_2,Set()), SpecField(cities,baseline-field_2,baseline-shape_5,Set()), SpecField(firstName,baseline-field_3,baseline-shape_6,Set()), SpecField(lastName,baseline-field_4,baseline-shape_7,Set())),Set())))"
+      ]
+    }
+  ]
+}

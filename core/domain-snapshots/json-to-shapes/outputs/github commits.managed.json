@@ -1,0 +1,1484 @@
+{
+  "shape" : "ListOfShape(ObjectWithFields(Vector(FieldWithShape(author,NullableShape(ObjectWithFields(Vector(FieldWithShape(avatar_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(avatar_url)),shape_78),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(avatar_url)),parameter_71), FieldWithShape(events_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(events_url)),shape_79),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(events_url)),parameter_72), FieldWithShape(followers_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(followers_url)),shape_80),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(followers_url)),parameter_73), FieldWithShape(following_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(following_url)),shape_81),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(following_url)),parameter_74), FieldWithShape(gists_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(gists_url)),shape_82),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(gists_url)),parameter_75), FieldWithShape(gravatar_id,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(gravatar_id)),shape_83),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(gravatar_id)),parameter_76), FieldWithShape(html_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(html_url)),shape_84),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(html_url)),parameter_77), FieldWithShape(id,PrimitiveKind(NumberKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(id)),shape_85),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(id)),parameter_78), FieldWithShape(login,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(login)),shape_86),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(login)),parameter_79), FieldWithShape(node_id,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(node_id)),shape_87),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(node_id)),parameter_80), FieldWithShape(organizations_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(organizations_url)),shape_88),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(organizations_url)),parameter_81), FieldWithShape(received_events_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(received_events_url)),shape_89),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(received_events_url)),parameter_82), FieldWithShape(repos_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(repos_url)),shape_90),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(repos_url)),parameter_83), FieldWithShape(site_admin,PrimitiveKind(BooleanKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(site_admin)),shape_91),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(site_admin)),parameter_84), FieldWithShape(starred_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(starred_url)),shape_92),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(starred_url)),parameter_85), FieldWithShape(subscriptions_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(subscriptions_url)),shape_93),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(subscriptions_url)),parameter_86), FieldWithShape(type,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(type)),shape_94),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(type)),parameter_87), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(url)),shape_95),List(JsonArrayItem(0), JsonObjectKey(author), JsonObjectKey(url)),parameter_88)),List(JsonArrayItem(0), JsonObjectKey(author)),shape_96),List(JsonArrayItem(0), JsonObjectKey(author)),shape_97),List(JsonArrayItem(0), JsonObjectKey(author)),parameter_89), FieldWithShape(comments_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(comments_url)),shape_98),List(JsonArrayItem(0), JsonObjectKey(comments_url)),parameter_90), FieldWithShape(commit,ObjectWithFields(Vector(FieldWithShape(author,ObjectWithFields(Vector(FieldWithShape(date,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(date)),shape_99),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(date)),parameter_91), FieldWithShape(email,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(email)),shape_100),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(email)),parameter_92), FieldWithShape(name,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(name)),shape_101),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author), JsonObjectKey(name)),parameter_93)),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author)),shape_102),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(author)),parameter_94), FieldWithShape(comment_count,PrimitiveKind(NumberKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(comment_count)),shape_103),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(comment_count)),parameter_95), FieldWithShape(committer,ObjectWithFields(Vector(FieldWithShape(date,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(date)),shape_104),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(date)),parameter_96), FieldWithShape(email,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(email)),shape_105),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(email)),parameter_97), FieldWithShape(name,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(name)),shape_106),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer), JsonObjectKey(name)),parameter_98)),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer)),shape_107),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(committer)),parameter_99), FieldWithShape(message,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(message)),shape_108),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(message)),parameter_100), FieldWithShape(tree,ObjectWithFields(Vector(FieldWithShape(sha,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree), JsonObjectKey(sha)),shape_109),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree), JsonObjectKey(sha)),parameter_101), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree), JsonObjectKey(url)),shape_110),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree), JsonObjectKey(url)),parameter_102)),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree)),shape_111),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(tree)),parameter_103), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(url)),shape_112),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(url)),parameter_104), FieldWithShape(verification,ObjectWithFields(Vector(FieldWithShape(payload,NullableShape(PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(payload)),shape_113),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(payload)),shape_114),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(payload)),parameter_105), FieldWithShape(reason,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(reason)),shape_115),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(reason)),parameter_106), FieldWithShape(signature,NullableShape(PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(signature)),shape_116),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(signature)),shape_117),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(signature)),parameter_107), FieldWithShape(verified,PrimitiveKind(BooleanKind,List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(verified)),shape_118),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification), JsonObjectKey(verified)),parameter_108)),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification)),shape_119),List(JsonArrayItem(0), JsonObjectKey(commit), JsonObjectKey(verification)),parameter_109)),List(JsonArrayItem(0), JsonObjectKey(commit)),shape_120),List(JsonArrayItem(0), JsonObjectKey(commit)),parameter_110), FieldWithShape(committer,NullableShape(ObjectWithFields(Vector(FieldWithShape(avatar_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(avatar_url)),shape_121),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(avatar_url)),parameter_111), FieldWithShape(events_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(events_url)),shape_122),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(events_url)),parameter_112), FieldWithShape(followers_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(followers_url)),shape_123),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(followers_url)),parameter_113), FieldWithShape(following_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(following_url)),shape_124),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(following_url)),parameter_114), FieldWithShape(gists_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(gists_url)),shape_125),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(gists_url)),parameter_115), FieldWithShape(gravatar_id,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(gravatar_id)),shape_126),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(gravatar_id)),parameter_116), FieldWithShape(html_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(html_url)),shape_127),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(html_url)),parameter_117), FieldWithShape(id,PrimitiveKind(NumberKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(id)),shape_128),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(id)),parameter_118), FieldWithShape(login,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(login)),shape_129),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(login)),parameter_119), FieldWithShape(node_id,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(node_id)),shape_130),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(node_id)),parameter_120), FieldWithShape(organizations_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(organizations_url)),shape_131),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(organizations_url)),parameter_121), FieldWithShape(received_events_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(received_events_url)),shape_132),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(received_events_url)),parameter_122), FieldWithShape(repos_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(repos_url)),shape_133),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(repos_url)),parameter_123), FieldWithShape(site_admin,PrimitiveKind(BooleanKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(site_admin)),shape_134),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(site_admin)),parameter_124), FieldWithShape(starred_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(starred_url)),shape_135),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(starred_url)),parameter_125), FieldWithShape(subscriptions_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(subscriptions_url)),shape_136),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(subscriptions_url)),parameter_126), FieldWithShape(type,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(type)),shape_137),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(type)),parameter_127), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(url)),shape_138),List(JsonArrayItem(0), JsonObjectKey(committer), JsonObjectKey(url)),parameter_128)),List(JsonArrayItem(0), JsonObjectKey(committer)),shape_139),List(JsonArrayItem(0), JsonObjectKey(committer)),shape_140),List(JsonArrayItem(0), JsonObjectKey(committer)),parameter_129), FieldWithShape(html_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(html_url)),shape_141),List(JsonArrayItem(0), JsonObjectKey(html_url)),parameter_130), FieldWithShape(node_id,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(node_id)),shape_142),List(JsonArrayItem(0), JsonObjectKey(node_id)),parameter_131), FieldWithShape(parents,ListOfShape(ObjectWithFields(Vector(FieldWithShape(html_url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(html_url)),shape_147),List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(html_url)),parameter_135), FieldWithShape(sha,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(sha)),shape_148),List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(sha)),parameter_136), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(url)),shape_149),List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0), JsonObjectKey(url)),parameter_137)),List(JsonArrayItem(0), JsonObjectKey(parents), JsonArrayItem(0)),shape_150),List(JsonArrayItem(0), JsonObjectKey(parents)),shape_151),List(JsonArrayItem(0), JsonObjectKey(parents)),parameter_138), FieldWithShape(sha,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(sha)),shape_152),List(JsonArrayItem(0), JsonObjectKey(sha)),parameter_139), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonArrayItem(0), JsonObjectKey(url)),shape_153),List(JsonArrayItem(0), JsonObjectKey(url)),parameter_140)),List(JsonArrayItem(0)),shape_154),List(),shape_155)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_154",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_96",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_78",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_71",
+        "shapeId" : "shape_96",
+        "name" : "avatar_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_71",
+            "shapeId" : "shape_78"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_79",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_72",
+        "shapeId" : "shape_96",
+        "name" : "events_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_72",
+            "shapeId" : "shape_79"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_80",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_73",
+        "shapeId" : "shape_96",
+        "name" : "followers_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_73",
+            "shapeId" : "shape_80"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_81",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_74",
+        "shapeId" : "shape_96",
+        "name" : "following_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_74",
+            "shapeId" : "shape_81"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_82",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_75",
+        "shapeId" : "shape_96",
+        "name" : "gists_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_75",
+            "shapeId" : "shape_82"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_83",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_76",
+        "shapeId" : "shape_96",
+        "name" : "gravatar_id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_76",
+            "shapeId" : "shape_83"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_84",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_77",
+        "shapeId" : "shape_96",
+        "name" : "html_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_77",
+            "shapeId" : "shape_84"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_85",
+        "baseShapeId" : "$number",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_78",
+        "shapeId" : "shape_96",
+        "name" : "id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_78",
+            "shapeId" : "shape_85"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_86",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_79",
+        "shapeId" : "shape_96",
+        "name" : "login",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_79",
+            "shapeId" : "shape_86"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_87",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_80",
+        "shapeId" : "shape_96",
+        "name" : "node_id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_80",
+            "shapeId" : "shape_87"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_88",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_81",
+        "shapeId" : "shape_96",
+        "name" : "organizations_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_81",
+            "shapeId" : "shape_88"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_89",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_82",
+        "shapeId" : "shape_96",
+        "name" : "received_events_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_82",
+            "shapeId" : "shape_89"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_90",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_83",
+        "shapeId" : "shape_96",
+        "name" : "repos_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_83",
+            "shapeId" : "shape_90"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_91",
+        "baseShapeId" : "$boolean",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_84",
+        "shapeId" : "shape_96",
+        "name" : "site_admin",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_84",
+            "shapeId" : "shape_91"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_92",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_85",
+        "shapeId" : "shape_96",
+        "name" : "starred_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_85",
+            "shapeId" : "shape_92"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_93",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_86",
+        "shapeId" : "shape_96",
+        "name" : "subscriptions_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_86",
+            "shapeId" : "shape_93"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_94",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_87",
+        "shapeId" : "shape_96",
+        "name" : "type",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_87",
+            "shapeId" : "shape_94"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_95",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_88",
+        "shapeId" : "shape_96",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_88",
+            "shapeId" : "shape_95"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_97",
+        "baseShapeId" : "$nullable",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_89",
+        "shapeId" : "shape_154",
+        "name" : "author",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_89",
+            "shapeId" : "shape_97"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_98",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_90",
+        "shapeId" : "shape_154",
+        "name" : "comments_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_90",
+            "shapeId" : "shape_98"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_120",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_102",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_99",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_91",
+        "shapeId" : "shape_102",
+        "name" : "date",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_91",
+            "shapeId" : "shape_99"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_100",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_92",
+        "shapeId" : "shape_102",
+        "name" : "email",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_92",
+            "shapeId" : "shape_100"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_101",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_93",
+        "shapeId" : "shape_102",
+        "name" : "name",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_93",
+            "shapeId" : "shape_101"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_94",
+        "shapeId" : "shape_120",
+        "name" : "author",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_94",
+            "shapeId" : "shape_102"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_103",
+        "baseShapeId" : "$number",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_95",
+        "shapeId" : "shape_120",
+        "name" : "comment_count",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_95",
+            "shapeId" : "shape_103"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_107",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_104",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_96",
+        "shapeId" : "shape_107",
+        "name" : "date",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_96",
+            "shapeId" : "shape_104"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_105",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_97",
+        "shapeId" : "shape_107",
+        "name" : "email",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_97",
+            "shapeId" : "shape_105"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_106",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_98",
+        "shapeId" : "shape_107",
+        "name" : "name",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_98",
+            "shapeId" : "shape_106"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_99",
+        "shapeId" : "shape_120",
+        "name" : "committer",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_99",
+            "shapeId" : "shape_107"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_108",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_100",
+        "shapeId" : "shape_120",
+        "name" : "message",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_100",
+            "shapeId" : "shape_108"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_111",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_109",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_101",
+        "shapeId" : "shape_111",
+        "name" : "sha",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_101",
+            "shapeId" : "shape_109"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_110",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_102",
+        "shapeId" : "shape_111",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_102",
+            "shapeId" : "shape_110"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_103",
+        "shapeId" : "shape_120",
+        "name" : "tree",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_103",
+            "shapeId" : "shape_111"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_112",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_104",
+        "shapeId" : "shape_120",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_104",
+            "shapeId" : "shape_112"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_119",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_113",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_114",
+        "baseShapeId" : "$nullable",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_105",
+        "shapeId" : "shape_119",
+        "name" : "payload",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_105",
+            "shapeId" : "shape_114"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_115",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_106",
+        "shapeId" : "shape_119",
+        "name" : "reason",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_106",
+            "shapeId" : "shape_115"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_116",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_117",
+        "baseShapeId" : "$nullable",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_107",
+        "shapeId" : "shape_119",
+        "name" : "signature",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_107",
+            "shapeId" : "shape_117"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_118",
+        "baseShapeId" : "$boolean",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_108",
+        "shapeId" : "shape_119",
+        "name" : "verified",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_108",
+            "shapeId" : "shape_118"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_109",
+        "shapeId" : "shape_120",
+        "name" : "verification",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_109",
+            "shapeId" : "shape_119"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_110",
+        "shapeId" : "shape_154",
+        "name" : "commit",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_110",
+            "shapeId" : "shape_120"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_139",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_121",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_111",
+        "shapeId" : "shape_139",
+        "name" : "avatar_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_111",
+            "shapeId" : "shape_121"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_122",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_112",
+        "shapeId" : "shape_139",
+        "name" : "events_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_112",
+            "shapeId" : "shape_122"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_123",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_113",
+        "shapeId" : "shape_139",
+        "name" : "followers_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_113",
+            "shapeId" : "shape_123"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_124",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_114",
+        "shapeId" : "shape_139",
+        "name" : "following_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_114",
+            "shapeId" : "shape_124"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_125",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_115",
+        "shapeId" : "shape_139",
+        "name" : "gists_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_115",
+            "shapeId" : "shape_125"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_126",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_116",
+        "shapeId" : "shape_139",
+        "name" : "gravatar_id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_116",
+            "shapeId" : "shape_126"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_127",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_117",
+        "shapeId" : "shape_139",
+        "name" : "html_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_117",
+            "shapeId" : "shape_127"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_128",
+        "baseShapeId" : "$number",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_118",
+        "shapeId" : "shape_139",
+        "name" : "id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_118",
+            "shapeId" : "shape_128"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_129",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_119",
+        "shapeId" : "shape_139",
+        "name" : "login",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_119",
+            "shapeId" : "shape_129"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_130",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_120",
+        "shapeId" : "shape_139",
+        "name" : "node_id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_120",
+            "shapeId" : "shape_130"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_131",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_121",
+        "shapeId" : "shape_139",
+        "name" : "organizations_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_121",
+            "shapeId" : "shape_131"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_132",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_122",
+        "shapeId" : "shape_139",
+        "name" : "received_events_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_122",
+            "shapeId" : "shape_132"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_133",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_123",
+        "shapeId" : "shape_139",
+        "name" : "repos_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_123",
+            "shapeId" : "shape_133"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_134",
+        "baseShapeId" : "$boolean",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_124",
+        "shapeId" : "shape_139",
+        "name" : "site_admin",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_124",
+            "shapeId" : "shape_134"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_135",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_125",
+        "shapeId" : "shape_139",
+        "name" : "starred_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_125",
+            "shapeId" : "shape_135"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_136",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_126",
+        "shapeId" : "shape_139",
+        "name" : "subscriptions_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_126",
+            "shapeId" : "shape_136"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_137",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_127",
+        "shapeId" : "shape_139",
+        "name" : "type",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_127",
+            "shapeId" : "shape_137"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_138",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_128",
+        "shapeId" : "shape_139",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_128",
+            "shapeId" : "shape_138"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_140",
+        "baseShapeId" : "$nullable",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_129",
+        "shapeId" : "shape_154",
+        "name" : "committer",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_129",
+            "shapeId" : "shape_140"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_141",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_130",
+        "shapeId" : "shape_154",
+        "name" : "html_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_130",
+            "shapeId" : "shape_141"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_142",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_131",
+        "shapeId" : "shape_154",
+        "name" : "node_id",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_131",
+            "shapeId" : "shape_142"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_150",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_147",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_135",
+        "shapeId" : "shape_150",
+        "name" : "html_url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_135",
+            "shapeId" : "shape_147"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_148",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_136",
+        "shapeId" : "shape_150",
+        "name" : "sha",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_136",
+            "shapeId" : "shape_148"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_149",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_137",
+        "shapeId" : "shape_150",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_137",
+            "shapeId" : "shape_149"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_151",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_138",
+        "shapeId" : "shape_154",
+        "name" : "parents",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_138",
+            "shapeId" : "shape_151"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_152",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_139",
+        "shapeId" : "shape_154",
+        "name" : "sha",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_139",
+            "shapeId" : "shape_152"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_153",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_140",
+        "shapeId" : "shape_154",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_140",
+            "shapeId" : "shape_153"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_155",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_89",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_96"
+              }
+            },
+            "consumingParameterId" : "$nullableInner"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_105",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_113"
+              }
+            },
+            "consumingParameterId" : "$nullableInner"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_107",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_116"
+              }
+            },
+            "consumingParameterId" : "$nullableInner"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_129",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_139"
+              }
+            },
+            "consumingParameterId" : "$nullableInner"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_151",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_150"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_155",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_154"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    }
+  ]
+}

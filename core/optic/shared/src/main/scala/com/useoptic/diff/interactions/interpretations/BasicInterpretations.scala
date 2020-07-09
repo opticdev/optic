@@ -17,6 +17,9 @@ import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
+import com.useoptic.diff.shapes.OptionalItemTrail
+import com.useoptic.diff.shapes.OptionalTrail
+import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
 
 class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
 
@@ -202,6 +205,17 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
           Logger.log("sentinel-ChangeShape-OneOfItemTrail")
           Seq(
             ShapesCommands.SetParameterShape(ProviderInShape(t.oneOfId, ShapeProvider(inlineShapeId), t.parameterId))
+          )
+        }
+        case t: OptionalTrail => {
+          //@TODO
+          Seq()
+        }
+        case t: OptionalItemTrail => {
+          //@TODO
+          Seq(
+            ShapesCommands.SetParameterShape(ProviderInShape(t.innerShapeId, ShapeProvider(inlineShapeId), OptionalKind.innerParam))
+
           )
         }
       }

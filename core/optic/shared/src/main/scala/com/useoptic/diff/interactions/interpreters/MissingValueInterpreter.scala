@@ -199,8 +199,8 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
   def WrapWithOneOf(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val resolved = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
     val wrapperShapeId = ids.newShapeId
-    val p1 = ids.newParameterId
-    val p2 = ids.newParameterId
+    val p1 = ids.newShapeParameterId
+    val p2 = ids.newShapeParameterId
     val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(resolved.get))
     val baseCommands = newCommands.flatten ++ Seq(
       AddShape(wrapperShapeId, OneOfKind.baseShapeId, ""),

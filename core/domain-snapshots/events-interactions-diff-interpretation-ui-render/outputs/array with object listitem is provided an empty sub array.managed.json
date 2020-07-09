@@ -1,0 +1,207 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnmatchedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonArrayItem" : {
+                      "index" : 0
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "shape_19",
+                "path" : [
+                  {
+                    "ListItemTrail" : {
+                      "listShapeId" : "shape_19",
+                      "itemShapeId" : "shape_18"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "shape at index 0 in the 200 Response body was not a Object",
+      "suggestions" : [
+        {
+          "title" : "Allow shape at index 0 to be either a Object or List",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "shape_3",
+                "baseShapeId" : "$unknown",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "shape_4",
+                "baseShapeId" : "$list",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_4",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_3"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "shape_1",
+                "baseShapeId" : "$oneOf",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "parameter_1",
+                "shapeId" : "shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "parameter_2",
+                "shapeId" : "shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_4"
+                      }
+                    },
+                    "consumingParameterId" : "parameter_2"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_18"
+                      }
+                    },
+                    "consumingParameterId" : "parameter_1"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_19",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_1"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title" : "Change shape to List",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "shape_6",
+                "baseShapeId" : "$unknown",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "shape_7",
+                "baseShapeId" : "$list",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_7",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_6"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_19",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_7"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleArray(List(),Some(shape_19),Some(shape_18),Vector(List(JsonArrayItem(0))),Set())), (List(JsonArrayItem(0)),ExampleArray(List(JsonArrayItem(0)),None,None,Vector(),Set())))",
+        "Vector()",
+        "Vector((List(JsonArrayItem(0)),ExampleItem(List(JsonArrayItem(0)),0,[\n],Set(UnmatchedShape(List(JsonArrayItem(0)),ShapeTrail(shape_19,List(ListItemTrail(shape_19,shape_18))))))))",
+        "Vector((shape_10,SpecPrimitive(shape_10,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_11,SpecPrimitive(shape_11,$number,RenderName(List(NameComponent(Number,NumberColor,,None,None))),Set())), (shape_12,SpecOneOf(shape_12,RenderName(List(NameComponent(,modifier,, ,Some(shape_11),Some(shape_11)), NameComponent(or ,modifier,,Some(shape_10),Some(shape_10)))),List(shape_11, shape_10),Set())), (shape_14,SpecPrimitive(shape_14,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_15,SpecArray(shape_15,shape_14,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_14),Some(shape_14)))),Set())), (shape_16,WrappedType(shape_16,$optional,RenderName(List(NameComponent(,modifier, (optional),Some(shape_15),None))),shape_15,Set())), (shape_17,SpecPrimitive(shape_17,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_18,SpecObject(shape_18,List(SpecField(age,parameter_4,shape_12,Set()), SpecField(colors,parameter_5,shape_16,Set()), SpecField(name,parameter_6,shape_17,Set())),Set(UnmatchedShape(List(JsonArrayItem(0)),ShapeTrail(shape_19,List(ListItemTrail(shape_19,shape_18))))))), (shape_19,SpecArray(shape_19,shape_18,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_18),Some(shape_18)))),Set(UnmatchedShape(List(JsonArrayItem(0)),ShapeTrail(shape_19,List(ListItemTrail(shape_19,shape_18))))))))"
+      ]
+    }
+  ]
+}

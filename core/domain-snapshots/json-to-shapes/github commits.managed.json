@@ -1,0 +1,1881 @@
+{
+  "inputJsons" : [
+    [
+      {
+        "sha" : "821e8fb5ba119cde825fd6c1e11e22542acd65f9",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjgyMWU4ZmI1YmExMTljZGU4MjVmZDZjMWUxMWUyMjU0MmFjZDY1Zjk=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-24T20:00:22Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-24T20:00:22Z"
+          },
+          "message" : "Merge pull request #225 from acunniffe/api-check-analytics\n\nAPI Check failures should be reported",
+          "tree" : {
+            "sha" : "0b2d8e9060c75fef9b6ed4386e514902c4a89463",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/0b2d8e9060c75fef9b6ed4386e514902c4a89463"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/821e8fb5ba119cde825fd6c1e11e22542acd65f9",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe87DXCRBK7hj4Ov3rIwAAdHIIAEVDJrNgDNEHIzK50w2UynFm\nNvQWkMMMYtKzsihscjCrSThcTi3BoTM0Mjap0ESTCdOvu1y/hypBcFB6HxRdVDP9\n+Fs3VrGDJ2I6vyMZtfRcTNueVoRmKKQAMRgNZtNAH9LVpjfyBW5QByFHGh7lhoZ1\n5qKUn7+mZuvLNIydWM7Yu6DSK3tqjP4RznuahQd/9tgLSPnrrUsdbGruE/pAEBJm\ndKyTWJcPI+2kL9B81gIFDcE/0PiGZvAoQa6K49Y7WeTsVxT0a/2yvLbpuFuO/OgF\nHvI0d1rjAVOt+nomMPQCNEJzLRNrKk/gi8SMSmDV540cyFBKYRZJ2JgZ8fimdrw=\n=4flw\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 0b2d8e9060c75fef9b6ed4386e514902c4a89463\nparent 79c9751c7293dd76f5b0549b850aa8ed7f0a29b5\nparent e2ea26beb3f375aab05c401a42c2ee534b2c5312\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1593028822 -0400\ncommitter GitHub <noreply@github.com> 1593028822 -0400\n\nMerge pull request #225 from acunniffe/api-check-analytics\n\nAPI Check failures should be reported"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/821e8fb5ba119cde825fd6c1e11e22542acd65f9",
+        "html_url" : "https://github.com/opticdev/optic/commit/821e8fb5ba119cde825fd6c1e11e22542acd65f9",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/821e8fb5ba119cde825fd6c1e11e22542acd65f9/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+            "html_url" : "https://github.com/opticdev/optic/commit/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5"
+          },
+          {
+            "sha" : "e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+            "html_url" : "https://github.com/opticdev/optic/commit/e2ea26beb3f375aab05c401a42c2ee534b2c5312"
+          }
+        ]
+      },
+      {
+        "sha" : "e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmUyZWEyNmJlYjNmMzc1YWFiMDVjNDAxYTQyYzJlZTUzNGIyYzUzMTI=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T19:40:11Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T19:40:11Z"
+          },
+          "message" : "Merge branch 'api-check-analytics' of https://github.com/acunniffe/optic into api-check-analytics",
+          "tree" : {
+            "sha" : "0b2d8e9060c75fef9b6ed4386e514902c4a89463",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/0b2d8e9060c75fef9b6ed4386e514902c4a89463"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+        "html_url" : "https://github.com/opticdev/optic/commit/e2ea26beb3f375aab05c401a42c2ee534b2c5312",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/e2ea26beb3f375aab05c401a42c2ee534b2c5312/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+            "html_url" : "https://github.com/opticdev/optic/commit/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47"
+          },
+          {
+            "sha" : "438609fd68cc388ffa94dcb0895828d219deef33",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/438609fd68cc388ffa94dcb0895828d219deef33",
+            "html_url" : "https://github.com/opticdev/optic/commit/438609fd68cc388ffa94dcb0895828d219deef33"
+          }
+        ]
+      },
+      {
+        "sha" : "eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmVhZWU2OTRkOWQ4ZGQyN2MyY2M0NDNiYWM2YjY4YjA0MmYxZWViNDc=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T19:39:43Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T19:39:43Z"
+          },
+          "message" : "added same config exploder to the task runner",
+          "tree" : {
+            "sha" : "d77550e1c004ec9d9f2e2b06900999ef0c3bff1a",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/d77550e1c004ec9d9f2e2b06900999ef0c3bff1a"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+        "html_url" : "https://github.com/opticdev/optic/commit/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/eaee694d9d8dd27c2cc443bac6b68b042f1eeb47/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "1cafa499228f1a596b98f3b20905546768647bff",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/1cafa499228f1a596b98f3b20905546768647bff",
+            "html_url" : "https://github.com/opticdev/optic/commit/1cafa499228f1a596b98f3b20905546768647bff"
+          }
+        ]
+      },
+      {
+        "sha" : "438609fd68cc388ffa94dcb0895828d219deef33",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjQzODYwOWZkNjhjYzM4OGZmYTk0ZGNiMDg5NTgyOGQyMTlkZWVmMzM=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-24T14:53:13Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-24T14:53:13Z"
+          },
+          "message" : "Merge branch 'develop' into api-check-analytics",
+          "tree" : {
+            "sha" : "f7d28da5dd55d0edc813d926fcc21b954d8ae935",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/f7d28da5dd55d0edc813d926fcc21b954d8ae935"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/438609fd68cc388ffa94dcb0895828d219deef33",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe82jZCRBK7hj4Ov3rIwAAdHIIAHmlgpBQc1jsIuuI8DfDP2wI\nUb7k3pabe8G8IoCMHjPB0dVm4AcG1RteQ3dfCqcMpD6K2XlKj01dNormarmbbQY0\nQBwsgR8/hbi0YwBHljsknmvn3QqkimkSU9VN6F/MNDQeUL36yaskNS66TtT/5TBO\nCAM36tSVWXPCQBuKyfqhY0zKfGObqslNia9USdhDXKzUcI5KNleV3PqYAdD098nT\n4obnMGw9Q7YnLF8Wy1D671omoStWNw+RMSxOOk15+fJ0LH0N2Ue4GxRG9W7frpzq\niLE7MCoPcF5iRM90LYd5m5T4aScYPPcPOOUXt411kefLFILjh14WtsJKbzWiCTM=\n=18AY\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree f7d28da5dd55d0edc813d926fcc21b954d8ae935\nparent 1cafa499228f1a596b98f3b20905546768647bff\nparent 79c9751c7293dd76f5b0549b850aa8ed7f0a29b5\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1593010393 -0400\ncommitter GitHub <noreply@github.com> 1593010393 -0400\n\nMerge branch 'develop' into api-check-analytics"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/438609fd68cc388ffa94dcb0895828d219deef33",
+        "html_url" : "https://github.com/opticdev/optic/commit/438609fd68cc388ffa94dcb0895828d219deef33",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/438609fd68cc388ffa94dcb0895828d219deef33/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "1cafa499228f1a596b98f3b20905546768647bff",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/1cafa499228f1a596b98f3b20905546768647bff",
+            "html_url" : "https://github.com/opticdev/optic/commit/1cafa499228f1a596b98f3b20905546768647bff"
+          },
+          {
+            "sha" : "79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+            "html_url" : "https://github.com/opticdev/optic/commit/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5"
+          }
+        ]
+      },
+      {
+        "sha" : "79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1Ojc5Yzk3NTFjNzI5M2RkNzZmNWIwNTQ5Yjg1MGFhOGVkN2YwYTI5YjU=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-24T14:53:01Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-24T14:53:01Z"
+          },
+          "message" : "Merge pull request #223 from acunniffe/make-ids-deterministic\n\nMake ids deterministic",
+          "tree" : {
+            "sha" : "20ecd3410a4300f9f988c313eb05a43ce06aa431",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/20ecd3410a4300f9f988c313eb05a43ce06aa431"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe82jNCRBK7hj4Ov3rIwAAdHIIACwnhFk6RjzHIGLNB6e6eVLJ\nKy3Tye7bOheOyZUuvwaz90wCuFQuZFOSsc/fIURh4gnLSgci789vSnZLZe40Pb1n\nF3TBHzX/1ynA19p20hSvBMt754w2s4UiW8byoDtsYHkQl5ERRQfCSR1ECo0kNIDu\nstKA4k71injrotoqwkwKJvWxFgL8qQUHy5osOKxqxjda95GX8RobJ6JvLCyaCNbh\nSztAYQB7HrzUcjfsry9XjBRlbITMNXHX5mZTHoKxjUgYvulA+zz2NRY20E+ArNWV\nQW6lp0tA7q8yIniEKqNVHJlqT/G8PYeJgrJZmqa45nI8HnC++KybymMLhNA5um0=\n=vZOk\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 20ecd3410a4300f9f988c313eb05a43ce06aa431\nparent 1647413024116fc176536fdfe5cc737f95e592cb\nparent 99604d76e2b077e67b27709cdcebd54ce9777312\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1593010381 -0400\ncommitter GitHub <noreply@github.com> 1593010381 -0400\n\nMerge pull request #223 from acunniffe/make-ids-deterministic\n\nMake ids deterministic"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+        "html_url" : "https://github.com/opticdev/optic/commit/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/79c9751c7293dd76f5b0549b850aa8ed7f0a29b5/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "1647413024116fc176536fdfe5cc737f95e592cb",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/1647413024116fc176536fdfe5cc737f95e592cb",
+            "html_url" : "https://github.com/opticdev/optic/commit/1647413024116fc176536fdfe5cc737f95e592cb"
+          },
+          {
+            "sha" : "99604d76e2b077e67b27709cdcebd54ce9777312",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/99604d76e2b077e67b27709cdcebd54ce9777312",
+            "html_url" : "https://github.com/opticdev/optic/commit/99604d76e2b077e67b27709cdcebd54ce9777312"
+          }
+        ]
+      },
+      {
+        "sha" : "1cafa499228f1a596b98f3b20905546768647bff",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjFjYWZhNDk5MjI4ZjFhNTk2Yjk4ZjNiMjA5MDU1NDY3Njg2NDdiZmY=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T14:28:38Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-24T14:28:38Z"
+          },
+          "message" : "Ensured errors make it to the analytics pipeline",
+          "tree" : {
+            "sha" : "0fe600b49c2642565c6928d5639fca3d9cc57d7b",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/0fe600b49c2642565c6928d5639fca3d9cc57d7b"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/1cafa499228f1a596b98f3b20905546768647bff",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/1cafa499228f1a596b98f3b20905546768647bff",
+        "html_url" : "https://github.com/opticdev/optic/commit/1cafa499228f1a596b98f3b20905546768647bff",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/1cafa499228f1a596b98f3b20905546768647bff/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "1647413024116fc176536fdfe5cc737f95e592cb",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/1647413024116fc176536fdfe5cc737f95e592cb",
+            "html_url" : "https://github.com/opticdev/optic/commit/1647413024116fc176536fdfe5cc737f95e592cb"
+          }
+        ]
+      },
+      {
+        "sha" : "99604d76e2b077e67b27709cdcebd54ce9777312",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1Ojk5NjA0ZDc2ZTJiMDc3ZTY3YjI3NzA5Y2RjZWJkNTRjZTk3NzczMTI=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-23T20:41:23Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-23T20:41:23Z"
+          },
+          "message" : "Merge branch 'develop' into make-ids-deterministic",
+          "tree" : {
+            "sha" : "20ecd3410a4300f9f988c313eb05a43ce06aa431",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/20ecd3410a4300f9f988c313eb05a43ce06aa431"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/99604d76e2b077e67b27709cdcebd54ce9777312",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe8mjzCRBK7hj4Ov3rIwAAdHIIAJmDimdThP2bykwM3fD5Obwf\nQMFkVkzg+CXjoV2TzYCgt3xFsWvtqW1FNplImib3cg00PLS1uRnG1be8gcE9VJM0\nX0q3aHZUVuVHpedI76a8Z8qNPWlEh2ozE0hTKOdY8Mxg7J+1c4qjIyWftKoIwyyO\no1Qk8uWVN5h6YkE6ndhaMMjjxYFdB0XmdP/mXUwk0lUaWx7n3yNOLEWe99xqkdl6\nGdbZfwoi6ZYfObGqN1aKDMHs65nSclZcsJCZN6GQkGR3uG5tVr7fiBx0G994kJGy\nBbSN9qHXy1DOInAUlyDp3CsO+TT2x8vuWLsJyZ5fd5ZnadI2vc04jfMVPQKH1uY=\n=LRfW\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 20ecd3410a4300f9f988c313eb05a43ce06aa431\nparent e769026c73841089c3f906c9f2cd97107e723f64\nparent 1647413024116fc176536fdfe5cc737f95e592cb\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1592944883 -0400\ncommitter GitHub <noreply@github.com> 1592944883 -0400\n\nMerge branch 'develop' into make-ids-deterministic"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/99604d76e2b077e67b27709cdcebd54ce9777312",
+        "html_url" : "https://github.com/opticdev/optic/commit/99604d76e2b077e67b27709cdcebd54ce9777312",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/99604d76e2b077e67b27709cdcebd54ce9777312/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "e769026c73841089c3f906c9f2cd97107e723f64",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/e769026c73841089c3f906c9f2cd97107e723f64",
+            "html_url" : "https://github.com/opticdev/optic/commit/e769026c73841089c3f906c9f2cd97107e723f64"
+          },
+          {
+            "sha" : "1647413024116fc176536fdfe5cc737f95e592cb",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/1647413024116fc176536fdfe5cc737f95e592cb",
+            "html_url" : "https://github.com/opticdev/optic/commit/1647413024116fc176536fdfe5cc737f95e592cb"
+          }
+        ]
+      },
+      {
+        "sha" : "1647413024116fc176536fdfe5cc737f95e592cb",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjE2NDc0MTMwMjQxMTZmYzE3NjUzNmZkZmU1Y2M3MzdmOTVlNTkyY2I=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap van Hardeveld",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T13:56:18Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-23T13:56:18Z"
+          },
+          "message" : "Merge pull request #224 from JaapRood/feature/local-transparent-proxy-config\n\nPrevent tasks with no command and target info from passing task config verification",
+          "tree" : {
+            "sha" : "6f7c6153e5da84aa306eb225af5c6cad979c6d73",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/6f7c6153e5da84aa306eb225af5c6cad979c6d73"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/1647413024116fc176536fdfe5cc737f95e592cb",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe8goCCRBK7hj4Ov3rIwAAdHIIAGnqMjO0Kx3N0uHCz8BJjWMi\nuOLmWfryRmBInPD49ezTO6gd8Kz+9dqt03W789A3qrcOMz27Eh0+URD1m/w6Qrl+\nUGXjo+cJ40EF+c8iPcHDGxa/XjcisbhAQg8LK7eivDrlmrFNRJYT8XO3D1jPls6P\nnRCp1ZltNbWp2HqdNIr4+BffT0Q5yHUngWXxXQDdT/k28Q68Hwddx2FGpQUvib/F\nNqCNAMvcXco26y+hflHYw6t9bTz/v8D/FkcT+n7Oce6d2pnfvUQY6LkTYtwI3d3S\nEBo6i1a8adS6hoS111EIPmEBvUES0oVJlpounW/a+tQEY3iR4hMthpa2OhmHuy8=\n=oZW3\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 6f7c6153e5da84aa306eb225af5c6cad979c6d73\nparent 5c11863d3c63f4ffc36251be198b6ac653c3273c\nparent 32c31f5e59ac39db31310be3ef84b1541e763cae\nauthor Jaap van Hardeveld <jaap@jaaprood.nl> 1592920578 +0200\ncommitter GitHub <noreply@github.com> 1592920578 +0200\n\nMerge pull request #224 from JaapRood/feature/local-transparent-proxy-config\n\nPrevent tasks with no command and target info from passing task config verification"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/1647413024116fc176536fdfe5cc737f95e592cb",
+        "html_url" : "https://github.com/opticdev/optic/commit/1647413024116fc176536fdfe5cc737f95e592cb",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/1647413024116fc176536fdfe5cc737f95e592cb/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "html_url" : "https://github.com/opticdev/optic/commit/5c11863d3c63f4ffc36251be198b6ac653c3273c"
+          },
+          {
+            "sha" : "32c31f5e59ac39db31310be3ef84b1541e763cae",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/32c31f5e59ac39db31310be3ef84b1541e763cae",
+            "html_url" : "https://github.com/opticdev/optic/commit/32c31f5e59ac39db31310be3ef84b1541e763cae"
+          }
+        ]
+      },
+      {
+        "sha" : "32c31f5e59ac39db31310be3ef84b1541e763cae",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjMyYzMxZjVlNTlhYzM5ZGIzMTMxMGJlM2VmODRiMTU0MWU3NjNjYWU=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T13:44:59Z"
+          },
+          "committer" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T13:45:29Z"
+          },
+          "message" : "Prevent tasks with no command and target info from passing task config verification",
+          "tree" : {
+            "sha" : "6f7c6153e5da84aa306eb225af5c6cad979c6d73",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/6f7c6153e5da84aa306eb225af5c6cad979c6d73"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/32c31f5e59ac39db31310be3ef84b1541e763cae",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/32c31f5e59ac39db31310be3ef84b1541e763cae",
+        "html_url" : "https://github.com/opticdev/optic/commit/32c31f5e59ac39db31310be3ef84b1541e763cae",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/32c31f5e59ac39db31310be3ef84b1541e763cae/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "html_url" : "https://github.com/opticdev/optic/commit/5c11863d3c63f4ffc36251be198b6ac653c3273c"
+          }
+        ]
+      },
+      {
+        "sha" : "e769026c73841089c3f906c9f2cd97107e723f64",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmU3NjkwMjZjNzM4NDEwODljM2Y5MDZjOWYyY2Q5NzEwN2U3MjNmNjQ=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:35:40Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:35:40Z"
+          },
+          "message" : "Merge branch 'make-ids-deterministic' of https://github.com/acunniffe/optic into make-ids-deterministic",
+          "tree" : {
+            "sha" : "0359a90d99c5fd8598924d086201be3df9b20c43",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/0359a90d99c5fd8598924d086201be3df9b20c43"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/e769026c73841089c3f906c9f2cd97107e723f64",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/e769026c73841089c3f906c9f2cd97107e723f64",
+        "html_url" : "https://github.com/opticdev/optic/commit/e769026c73841089c3f906c9f2cd97107e723f64",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/e769026c73841089c3f906c9f2cd97107e723f64/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+            "html_url" : "https://github.com/opticdev/optic/commit/044ff0b82fd63f150ec12eb2d0f62fb6648e4183"
+          },
+          {
+            "sha" : "b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+            "html_url" : "https://github.com/opticdev/optic/commit/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34"
+          }
+        ]
+      },
+      {
+        "sha" : "044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjA0NGZmMGI4MmZkNjNmMTUwZWMxMmViMmQwZjYyZmI2NjQ4ZTQxODM=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:34:37Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:34:37Z"
+          },
+          "message" : "removed dead test data package",
+          "tree" : {
+            "sha" : "6b7c0f570d5c0623c7ecffef1b16fbb21c44cf8c",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/6b7c0f570d5c0623c7ecffef1b16fbb21c44cf8c"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+        "html_url" : "https://github.com/opticdev/optic/commit/044ff0b82fd63f150ec12eb2d0f62fb6648e4183",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/044ff0b82fd63f150ec12eb2d0f62fb6648e4183/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+            "html_url" : "https://github.com/opticdev/optic/commit/bd0d0dcc638d7f7e478adef7275166f60cf427ae"
+          }
+        ]
+      },
+      {
+        "sha" : "bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmJkMGQwZGNjNjM4ZDdmN2U0NzhhZGVmNzI3NTE2NmY2MGNmNDI3YWU=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:34:29Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:34:29Z"
+          },
+          "message" : "Removed dead test data package",
+          "tree" : {
+            "sha" : "2aebfe17749fa248969635f037c2bab0a8524818",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/2aebfe17749fa248969635f037c2bab0a8524818"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+        "html_url" : "https://github.com/opticdev/optic/commit/bd0d0dcc638d7f7e478adef7275166f60cf427ae",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/bd0d0dcc638d7f7e478adef7275166f60cf427ae/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+            "html_url" : "https://github.com/opticdev/optic/commit/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6"
+          }
+        ]
+      },
+      {
+        "sha" : "b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmI1Y2RmZmMzNzhmZjY1NzRlYThhM2MwZDA0YWU4ZDhiNGEwYmFmMzQ=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-23T13:29:54Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-23T13:29:54Z"
+          },
+          "message" : "Merge branch 'develop' into make-ids-deterministic",
+          "tree" : {
+            "sha" : "2c7c881744e8630a511958c9e1794848a29542fd",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/2c7c881744e8630a511958c9e1794848a29542fd"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe8gPSCRBK7hj4Ov3rIwAAdHIIACRodW1qSkcFnasU/ZMH7Vn/\nWEloyFJCHP7lv5QAgdmhbDbgWRMxcSNwJTbpAwr4E9ynEHoWsHWyUsXU3OxVuTjb\noLkwConUfqtn460AlbbclbS4W8h46maBhWq9MEcEzqisZxqqvK0rna2InUkZUNdS\npJaU7b0fViGw+hDj2qmYpO3gV4+jo3dq2cku/aP107g7MURTVKPSpAV063waIgyo\n36GK2mkm6ktxMklllfO8UZcDX17Sd2j3XQDtcA47JOcKQKW4X+rBlHeyNysMw1vo\nf8BQ3HnwQp4m/Rha9bQTHvfoyE5RRhS/lJ1zoJef5up8XY95DP7Si8gLLxt401c=\n=aE66\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 2c7c881744e8630a511958c9e1794848a29542fd\nparent 66b988153d4ab5e1f04e74ebf068da2ddf8b14c6\nparent 5c11863d3c63f4ffc36251be198b6ac653c3273c\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1592918994 -0400\ncommitter GitHub <noreply@github.com> 1592918994 -0400\n\nMerge branch 'develop' into make-ids-deterministic"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+        "html_url" : "https://github.com/opticdev/optic/commit/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/b5cdffc378ff6574ea8a3c0d04ae8d8b4a0baf34/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+            "html_url" : "https://github.com/opticdev/optic/commit/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6"
+          },
+          {
+            "sha" : "5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+            "html_url" : "https://github.com/opticdev/optic/commit/5c11863d3c63f4ffc36251be198b6ac653c3273c"
+          }
+        ]
+      },
+      {
+        "sha" : "66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjY2Yjk4ODE1M2Q0YWI1ZTFmMDRlNzRlYmYwNjhkYTJkZGY4YjE0YzY=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:26:32Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-23T13:26:32Z"
+          },
+          "message" : "added streaming distribution aware shape hash",
+          "tree" : {
+            "sha" : "e29524115846772bad72a0e7a7e93c129d171abc",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/e29524115846772bad72a0e7a7e93c129d171abc"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+        "html_url" : "https://github.com/opticdev/optic/commit/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/66b988153d4ab5e1f04e74ebf068da2ddf8b14c6/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "519a5eb04b73e702964a30e544de938a44defd23",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/519a5eb04b73e702964a30e544de938a44defd23",
+            "html_url" : "https://github.com/opticdev/optic/commit/519a5eb04b73e702964a30e544de938a44defd23"
+          }
+        ]
+      },
+      {
+        "sha" : "5c11863d3c63f4ffc36251be198b6ac653c3273c",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjVjMTE4NjNkM2M2M2Y0ZmZjMzYyNTFiZTE5OGI2YWM2NTNjMzI3M2M=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap van Hardeveld",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T13:10:19Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-23T13:10:19Z"
+          },
+          "message" : "Merge pull request #222 from JaapRood/feature/local-transparent-proxy-config\n\nAdd support for `targetUrl` in optic.yml",
+          "tree" : {
+            "sha" : "49e0f075e021b3cbf26e6cf76caf91aa5a0d4b8f",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/49e0f075e021b3cbf26e6cf76caf91aa5a0d4b8f"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe8f87CRBK7hj4Ov3rIwAAdHIIAGT1pT5n8pRODKZ4ueQCB5Cb\nXSCP30gqXRkXp2h83Ju+snvOF6igw/rs8BenVC4+OerrIhbC05LAqp/3k9mngPS4\ng3LdP/RRRdYSGBfliI+2zp8gnaWIjDtEbNwyBwExt7PvZ+Kuupm5sMl1RMdbjZ6V\nCtrUd/jwZh5atAdKsdaS+s12IbuCuRlLwtEBWztziwAmj/ksPAPTBlQ5BxRhs/ft\nW9u6hmjTsahvLximU259m5qHdL/4Vi8M1AOEFSIHdTGj1aCkPBwEux6wauwA6R2k\nHAKHLpLHnlOBIqRYSPJay6IBUYvQ9BLSK3xMB0maopUdJSfVuAIU1KdSdzbQnSE=\n=gLWA\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 49e0f075e021b3cbf26e6cf76caf91aa5a0d4b8f\nparent 528cdf933d3785d359ff2667218b434bb05b590b\nparent 2cb2bdecd5bfba87c3f24defefaa959ea9602727\nauthor Jaap van Hardeveld <jaap@jaaprood.nl> 1592917819 +0200\ncommitter GitHub <noreply@github.com> 1592917819 +0200\n\nMerge pull request #222 from JaapRood/feature/local-transparent-proxy-config\n\nAdd support for `targetUrl` in optic.yml"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+        "html_url" : "https://github.com/opticdev/optic/commit/5c11863d3c63f4ffc36251be198b6ac653c3273c",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/5c11863d3c63f4ffc36251be198b6ac653c3273c/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "528cdf933d3785d359ff2667218b434bb05b590b",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+            "html_url" : "https://github.com/opticdev/optic/commit/528cdf933d3785d359ff2667218b434bb05b590b"
+          },
+          {
+            "sha" : "2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+            "html_url" : "https://github.com/opticdev/optic/commit/2cb2bdecd5bfba87c3f24defefaa959ea9602727"
+          }
+        ]
+      },
+      {
+        "sha" : "2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjJjYjJiZGVjZDViZmJhODdjM2YyNGRlZmVmYWE5NTllYTk2MDI3Mjc=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T10:59:11Z"
+          },
+          "committer" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T10:59:11Z"
+          },
+          "message" : "Support proxy as an alias for targetUrl, without deprecation warning for now",
+          "tree" : {
+            "sha" : "49e0f075e021b3cbf26e6cf76caf91aa5a0d4b8f",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/49e0f075e021b3cbf26e6cf76caf91aa5a0d4b8f"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+        "html_url" : "https://github.com/opticdev/optic/commit/2cb2bdecd5bfba87c3f24defefaa959ea9602727",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/2cb2bdecd5bfba87c3f24defefaa959ea9602727/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+            "html_url" : "https://github.com/opticdev/optic/commit/2f71d7ad36c55a13095d4290721f1ee19ed4173b"
+          }
+        ]
+      },
+      {
+        "sha" : "2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjJmNzFkN2FkMzZjNTVhMTMwOTVkNDI5MDcyMWYxZWUxOWVkNDE3M2I=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T10:33:24Z"
+          },
+          "committer" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T10:33:24Z"
+          },
+          "message" : "Disable the verifying of a command when there isn't one through api check",
+          "tree" : {
+            "sha" : "055dcfaf198b0676fe48b5f39fa69c47fa425a7b",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/055dcfaf198b0676fe48b5f39fa69c47fa425a7b"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+        "html_url" : "https://github.com/opticdev/optic/commit/2f71d7ad36c55a13095d4290721f1ee19ed4173b",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/2f71d7ad36c55a13095d4290721f1ee19ed4173b/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+            "html_url" : "https://github.com/opticdev/optic/commit/69de581bf91cc0bd96d1494129bf793a1b7b9a9f"
+          }
+        ]
+      },
+      {
+        "sha" : "69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjY5ZGU1ODFiZjkxY2MwYmQ5NmQxNDk0MTI5YmY3OTNhMWI3YjlhOWY=",
+        "commit" : {
+          "author" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T09:17:54Z"
+          },
+          "committer" : {
+            "name" : "Jaap Rood",
+            "email" : "jaap@jaaprood.nl",
+            "date" : "2020-06-23T09:17:54Z"
+          },
+          "message" : "Add support for `targetUrl` in optic.yml, allowing control over where proxy points to",
+          "tree" : {
+            "sha" : "e86998b6a07f042570d96570a2784128ebf2e4a4",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/e86998b6a07f042570d96570a2784128ebf2e4a4"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+        "html_url" : "https://github.com/opticdev/optic/commit/69de581bf91cc0bd96d1494129bf793a1b7b9a9f",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/69de581bf91cc0bd96d1494129bf793a1b7b9a9f/comments",
+        "author" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "JaapRood",
+          "id" : 857549,
+          "node_id" : "MDQ6VXNlcjg1NzU0OQ==",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/857549?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/JaapRood",
+          "html_url" : "https://github.com/JaapRood",
+          "followers_url" : "https://api.github.com/users/JaapRood/followers",
+          "following_url" : "https://api.github.com/users/JaapRood/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/JaapRood/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/JaapRood/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/JaapRood/subscriptions",
+          "organizations_url" : "https://api.github.com/users/JaapRood/orgs",
+          "repos_url" : "https://api.github.com/users/JaapRood/repos",
+          "events_url" : "https://api.github.com/users/JaapRood/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/JaapRood/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "528cdf933d3785d359ff2667218b434bb05b590b",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+            "html_url" : "https://github.com/opticdev/optic/commit/528cdf933d3785d359ff2667218b434bb05b590b"
+          }
+        ]
+      },
+      {
+        "sha" : "519a5eb04b73e702964a30e544de938a44defd23",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjUxOWE1ZWIwNGI3M2U3MDI5NjRhMzBlNTQ0ZGU5MzhhNDRkZWZkMjM=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T15:08:46Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T15:08:46Z"
+          },
+          "message" : "Commit snapshots",
+          "tree" : {
+            "sha" : "0af9a5d332d96fceb10ff1c9c4ce31f5cd11bd6a",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/0af9a5d332d96fceb10ff1c9c4ce31f5cd11bd6a"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/519a5eb04b73e702964a30e544de938a44defd23",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/519a5eb04b73e702964a30e544de938a44defd23",
+        "html_url" : "https://github.com/opticdev/optic/commit/519a5eb04b73e702964a30e544de938a44defd23",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/519a5eb04b73e702964a30e544de938a44defd23/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "2fda9b180b0456840cd2a6c8b93b5684cda77646",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/2fda9b180b0456840cd2a6c8b93b5684cda77646",
+            "html_url" : "https://github.com/opticdev/optic/commit/2fda9b180b0456840cd2a6c8b93b5684cda77646"
+          }
+        ]
+      },
+      {
+        "sha" : "2fda9b180b0456840cd2a6c8b93b5684cda77646",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjJmZGE5YjE4MGIwNDU2ODQwY2QyYTZjOGI5M2I1Njg0Y2RhNzc2NDY=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T15:06:23Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T15:06:23Z"
+          },
+          "message" : "Merge remote-tracking branch 'aidan-upstream/distribution-aware-shape-hash-rethink' into make-ids-deterministic",
+          "tree" : {
+            "sha" : "c2f993b10db2d10d2f5131a32f09383ad73f793e",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/c2f993b10db2d10d2f5131a32f09383ad73f793e"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/2fda9b180b0456840cd2a6c8b93b5684cda77646",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/2fda9b180b0456840cd2a6c8b93b5684cda77646",
+        "html_url" : "https://github.com/opticdev/optic/commit/2fda9b180b0456840cd2a6c8b93b5684cda77646",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/2fda9b180b0456840cd2a6c8b93b5684cda77646/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+            "html_url" : "https://github.com/opticdev/optic/commit/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831"
+          },
+          {
+            "sha" : "efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+            "html_url" : "https://github.com/opticdev/optic/commit/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5"
+          }
+        ]
+      },
+      {
+        "sha" : "4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjRjMzE3YjU0NTc1NzY3ZTI2YWQ2YTc0YmRjOWVlYjllOWM4ZjY4MzE=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T14:47:29Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T14:47:29Z"
+          },
+          "message" : "making ids deterministic",
+          "tree" : {
+            "sha" : "b539f92f119fba107212ad5b49040861dc209069",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/b539f92f119fba107212ad5b49040861dc209069"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+        "html_url" : "https://github.com/opticdev/optic/commit/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/4c317b54575767e26ad6a74bdc9eeb9e9c8f6831/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+            "html_url" : "https://github.com/opticdev/optic/commit/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f"
+          }
+        ]
+      },
+      {
+        "sha" : "6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjZhYjRjYmEyN2Y1YTJiNDdlNzg5NjZlZDFlMWM3Mzc3MWMyMDFlOWY=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T14:47:19Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-18T14:47:19Z"
+          },
+          "message" : "making ids deterministic",
+          "tree" : {
+            "sha" : "ae53e9ff304c94739412e9312e176218b8dfdd09",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/ae53e9ff304c94739412e9312e176218b8dfdd09"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+        "html_url" : "https://github.com/opticdev/optic/commit/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/6ab4cba27f5a2b47e78966ed1e1c73771c201e9f/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "528cdf933d3785d359ff2667218b434bb05b590b",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+            "html_url" : "https://github.com/opticdev/optic/commit/528cdf933d3785d359ff2667218b434bb05b590b"
+          }
+        ]
+      },
+      {
+        "sha" : "efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmVmZDVhNDhhZjNlMmFmNjVkOGU0ZTk4NWU1ZWZlZTc1YmJmOWNlZjU=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-14T17:41:08Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-14T17:41:08Z"
+          },
+          "message" : "distribution aware shape builder should be memory efficient",
+          "tree" : {
+            "sha" : "b23bf0275d53ddf596e17c70a312ac33caa36e83",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/b23bf0275d53ddf596e17c70a312ac33caa36e83"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+        "html_url" : "https://github.com/opticdev/optic/commit/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/efd5a48af3e2af65d8e4e985e5efee75bbf9cef5/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "528cdf933d3785d359ff2667218b434bb05b590b",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+            "html_url" : "https://github.com/opticdev/optic/commit/528cdf933d3785d359ff2667218b434bb05b590b"
+          }
+        ]
+      },
+      {
+        "sha" : "528cdf933d3785d359ff2667218b434bb05b590b",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjUyOGNkZjkzM2QzNzg1ZDM1OWZmMjY2NzIxOGI0MzRiYjA1YjU5MGI=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-05T20:40:32Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-05T20:40:32Z"
+          },
+          "message" : "Merge pull request #220 from acunniffe/diff-manager-performance\n\nPartition diffs by pathId and method",
+          "tree" : {
+            "sha" : "967739f4d0395bdf708ad9a9eecd98497ff89185",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/967739f4d0395bdf708ad9a9eecd98497ff89185"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe2q3ACRBK7hj4Ov3rIwAAdHIIAIqfSK+vBmm10W8aGjMpgkFr\n2lrJZahXSpI06IdV+ws1pxBvmKZT/ZBb3+MyW2CZ7uiMxmL716KtgomQySUavFAa\nzvi1RTOJVx17u0XEAPf5ZX+0UyF+h+Q4qbY6fpZqmSIR4kvYcLdmkFW+cDB+V6oZ\ntXG2HuW61OSCRMAdIdxEFhUeMpukOwSFHpTYjuQ9xRRortBmmQ7hWFBzu7Q5sAQ5\nMi1fDtdl0DVqTrW+oIogeF02arSDsijGMD62UOERtAioRYIY0QEliSl2oNBaGBc0\nGlHGRLUj06uNu8MWsrrbmDSawHUd2cAbbBdmZw/BsmrEW638nYbffz5ubaScSoA=\n=CENH\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 967739f4d0395bdf708ad9a9eecd98497ff89185\nparent 2fe98ec33767389a022670f33791a3a57a402e38\nparent 3c96b5cd6a4d8d979115b97521b525e715859879\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1591389632 -0400\ncommitter GitHub <noreply@github.com> 1591389632 -0400\n\nMerge pull request #220 from acunniffe/diff-manager-performance\n\nPartition diffs by pathId and method"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b",
+        "html_url" : "https://github.com/opticdev/optic/commit/528cdf933d3785d359ff2667218b434bb05b590b",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/528cdf933d3785d359ff2667218b434bb05b590b/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "2fe98ec33767389a022670f33791a3a57a402e38",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/2fe98ec33767389a022670f33791a3a57a402e38",
+            "html_url" : "https://github.com/opticdev/optic/commit/2fe98ec33767389a022670f33791a3a57a402e38"
+          },
+          {
+            "sha" : "3c96b5cd6a4d8d979115b97521b525e715859879",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/3c96b5cd6a4d8d979115b97521b525e715859879",
+            "html_url" : "https://github.com/opticdev/optic/commit/3c96b5cd6a4d8d979115b97521b525e715859879"
+          }
+        ]
+      },
+      {
+        "sha" : "3c96b5cd6a4d8d979115b97521b525e715859879",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjNjOTZiNWNkNmE0ZDhkOTc5MTE1Yjk3NTIxYjUyNWU3MTU4NTk4Nzk=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T20:32:40Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T20:32:40Z"
+          },
+          "message" : "Merge branch 'diff-manager-performance' of https://github.com/acunniffe/optic into diff-manager-performance",
+          "tree" : {
+            "sha" : "967739f4d0395bdf708ad9a9eecd98497ff89185",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/967739f4d0395bdf708ad9a9eecd98497ff89185"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/3c96b5cd6a4d8d979115b97521b525e715859879",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/3c96b5cd6a4d8d979115b97521b525e715859879",
+        "html_url" : "https://github.com/opticdev/optic/commit/3c96b5cd6a4d8d979115b97521b525e715859879",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/3c96b5cd6a4d8d979115b97521b525e715859879/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+            "html_url" : "https://github.com/opticdev/optic/commit/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e"
+          },
+          {
+            "sha" : "5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+            "html_url" : "https://github.com/opticdev/optic/commit/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3"
+          }
+        ]
+      },
+      {
+        "sha" : "ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OmVmM2VhMzc3MjljMzA0YzJjMmEwNDE0YWEyMjRkMGE0YzY1YmJmN2U=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T20:31:52Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T20:31:52Z"
+          },
+          "message" : "fixed incorrect name in optic-ci",
+          "tree" : {
+            "sha" : "cc2a22552387f9b55979fefccdcb2bd09a9884b2",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/cc2a22552387f9b55979fefccdcb2bd09a9884b2"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+        "html_url" : "https://github.com/opticdev/optic/commit/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/ef3ea37729c304c2c2a0414aa224d0a4c65bbf7e/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+            "html_url" : "https://github.com/opticdev/optic/commit/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94"
+          }
+        ]
+      },
+      {
+        "sha" : "5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjVlYzM3NmJmNGU0ZWExOGMwZDViZjlmYjgzM2U4MTJhNzE0MTM5YjM=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-05T20:22:59Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-05T20:22:59Z"
+          },
+          "message" : "Merge branch 'develop' into diff-manager-performance",
+          "tree" : {
+            "sha" : "9738112e493a143e6943464b769229dbee4d8f47",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/9738112e493a143e6943464b769229dbee4d8f47"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe2qmjCRBK7hj4Ov3rIwAAdHIIAAdBdVfYCgX8tyxjIGL2nTkl\nFCjtmgciD2qG/aHqKksj1p8pOH58p8Yjb8fPy/MvnAI+WCmDovHX3pa4mX64xzBD\npIunTsvUzWhNcAlBCsRUXh9PNBHiYzyMZ/7EJMNKX+Sv9QrsRZ76a0wbz0+b2qWW\nlRQk4h7P11gQFkJH1rahAZTIi7MsiEUy8fSnkfDVkSpA+xfZWSNa6qq8S7vMBAlN\nlP6zXQ07ku4R1EOi1QkmY9u/oHYrshzARTTCZVKhF6XX71YiOYIxcaqBycWXneBl\nriKISNXeVi+3FhS4BoMX9VMIbjPdLPylZk7/cy35k1/VavFFSBnW9HHCw6H6gKM=\n=PwFy\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 9738112e493a143e6943464b769229dbee4d8f47\nparent 121000d75ccc57c3d2b3ad05e5a26fa0b2191e94\nparent 2fe98ec33767389a022670f33791a3a57a402e38\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1591388579 -0400\ncommitter GitHub <noreply@github.com> 1591388579 -0400\n\nMerge branch 'develop' into diff-manager-performance"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+        "html_url" : "https://github.com/opticdev/optic/commit/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/5ec376bf4e4ea18c0d5bf9fb833e812a714139b3/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+            "html_url" : "https://github.com/opticdev/optic/commit/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94"
+          },
+          {
+            "sha" : "2fe98ec33767389a022670f33791a3a57a402e38",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/2fe98ec33767389a022670f33791a3a57a402e38",
+            "html_url" : "https://github.com/opticdev/optic/commit/2fe98ec33767389a022670f33791a3a57a402e38"
+          }
+        ]
+      },
+      {
+        "sha" : "121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjEyMTAwMGQ3NWNjYzU3YzNkMmIzYWQwNWU1YTI2ZmEwYjIxOTFlOTQ=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T17:30:57Z"
+          },
+          "committer" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "aidan@useoptic.com",
+            "date" : "2020-06-05T17:30:57Z"
+          },
+          "message" : "Partition diffs by pathId and method",
+          "tree" : {
+            "sha" : "31e5a44b8a0c37b58b90adf2084a77d5a128b60f",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/31e5a44b8a0c37b58b90adf2084a77d5a128b60f"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : false,
+            "reason" : "unsigned",
+            "signature" : null,
+            "payload" : null
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+        "html_url" : "https://github.com/opticdev/optic/commit/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/121000d75ccc57c3d2b3ad05e5a26fa0b2191e94/comments",
+        "author" : null,
+        "committer" : null,
+        "parents" : [
+          {
+            "sha" : "b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "html_url" : "https://github.com/opticdev/optic/commit/b2644945b854f7c351a9c944eaf8726ddb055b5e"
+          }
+        ]
+      },
+      {
+        "sha" : "2fe98ec33767389a022670f33791a3a57a402e38",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1OjJmZTk4ZWMzMzc2NzM4OWEwMjI2NzBmMzM3OTFhM2E1N2E0MDJlMzg=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-05T17:21:53Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-05T17:21:53Z"
+          },
+          "message" : "Merge pull request #219 from acunniffe/changes-pre-release\n\nChanges for 8.1 release",
+          "tree" : {
+            "sha" : "10e9ff36b2f66343cd57b8da89317860b63d476c",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/10e9ff36b2f66343cd57b8da89317860b63d476c"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/2fe98ec33767389a022670f33791a3a57a402e38",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe2n8xCRBK7hj4Ov3rIwAAdHIIACAx1CSBk0TbRilQBhCazSmn\nHtuIi0zvam6wjpitcPdvRDErxFJ9bZ3kcc1yKoW+xitEXKnMn7wknx2KWHmczT2V\nRSmfV3TQPUIBMkTbdu/btvPfke2Wsu9k3mhXd2bGiUKkzHJkaUuazK1bl2l00Dfg\nqt3Mb5j/FQ5xTg0+k1kfTkENzMkHLJy7TVO2pLMiEZNDt3HqvPtmI/92Zhbyzgtp\nEBEepR6C7m+fTkxa8KAMs61laZxT5nzv0PIIjGqWHS+vW6eYKMPPTBUPmVUo+6ZC\nt7TxEWtmeHKX68fpVgxF7jEmKrhI/BYMqqFAsB1HBeNAfS3yAIHOs4dMWJ+FiEA=\n=1EQg\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 10e9ff36b2f66343cd57b8da89317860b63d476c\nparent b2644945b854f7c351a9c944eaf8726ddb055b5e\nparent 766e1258f2585affbef466dfd11ee80019725179\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1591377713 -0400\ncommitter GitHub <noreply@github.com> 1591377713 -0400\n\nMerge pull request #219 from acunniffe/changes-pre-release\n\nChanges for 8.1 release "
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/2fe98ec33767389a022670f33791a3a57a402e38",
+        "html_url" : "https://github.com/opticdev/optic/commit/2fe98ec33767389a022670f33791a3a57a402e38",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/2fe98ec33767389a022670f33791a3a57a402e38/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "html_url" : "https://github.com/opticdev/optic/commit/b2644945b854f7c351a9c944eaf8726ddb055b5e"
+          },
+          {
+            "sha" : "766e1258f2585affbef466dfd11ee80019725179",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/766e1258f2585affbef466dfd11ee80019725179",
+            "html_url" : "https://github.com/opticdev/optic/commit/766e1258f2585affbef466dfd11ee80019725179"
+          }
+        ]
+      },
+      {
+        "sha" : "766e1258f2585affbef466dfd11ee80019725179",
+        "node_id" : "MDY6Q29tbWl0MTIzNjA2NzY1Ojc2NmUxMjU4ZjI1ODVhZmZiZWY0NjZkZmQxMWVlODAwMTk3MjUxNzk=",
+        "commit" : {
+          "author" : {
+            "name" : "Aidan Cunniffe",
+            "email" : "acunniffe@gmail.com",
+            "date" : "2020-06-05T16:45:06Z"
+          },
+          "committer" : {
+            "name" : "GitHub",
+            "email" : "noreply@github.com",
+            "date" : "2020-06-05T16:45:06Z"
+          },
+          "message" : "Merge branch 'develop' into changes-pre-release",
+          "tree" : {
+            "sha" : "10e9ff36b2f66343cd57b8da89317860b63d476c",
+            "url" : "https://api.github.com/repos/opticdev/optic/git/trees/10e9ff36b2f66343cd57b8da89317860b63d476c"
+          },
+          "url" : "https://api.github.com/repos/opticdev/optic/git/commits/766e1258f2585affbef466dfd11ee80019725179",
+          "comment_count" : 0,
+          "verification" : {
+            "verified" : true,
+            "reason" : "valid",
+            "signature" : "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJe2naSCRBK7hj4Ov3rIwAAdHIIAJg+zZ4x590V9CTl+KQM2vNc\nqo1SshrjUPmgpLPuCVJxmYzleH00LM/3fG8y0BwQfg27rI/zw8/NxzMlSbQSVRGs\ne8yBj9mVJRGko6I3QziZuIbaidvV02lZ67qDl7y8hOE0lIl1cDsYPh63l1ZLqIcx\nFvYL4YgQPI/lnsLIObGCVWgPmwLmIMwMCoQv9+Xmzl7Nl18mBC6cJulxhLxJSKz6\nfrh7jLnfUvbmAERMEYtdw46//pBWmFvnAVaMPtnIx4u/cHOBUhcVlgm9gAnFdlgg\nd9uHfFxEJGVNTjBxsxYDd2634xCu74hdb5Roxd2DTMf8gzgNpx1fNKnb9IWGTIs=\n=caOt\n-----END PGP SIGNATURE-----\n",
+            "payload" : "tree 10e9ff36b2f66343cd57b8da89317860b63d476c\nparent 5ea76af7a0e30692ab6ff65343d1fd59bfca8a3f\nparent b2644945b854f7c351a9c944eaf8726ddb055b5e\nauthor Aidan Cunniffe <acunniffe@gmail.com> 1591375506 -0400\ncommitter GitHub <noreply@github.com> 1591375506 -0400\n\nMerge branch 'develop' into changes-pre-release"
+          }
+        },
+        "url" : "https://api.github.com/repos/opticdev/optic/commits/766e1258f2585affbef466dfd11ee80019725179",
+        "html_url" : "https://github.com/opticdev/optic/commit/766e1258f2585affbef466dfd11ee80019725179",
+        "comments_url" : "https://api.github.com/repos/opticdev/optic/commits/766e1258f2585affbef466dfd11ee80019725179/comments",
+        "author" : {
+          "login" : "acunniffe",
+          "id" : 5900338,
+          "node_id" : "MDQ6VXNlcjU5MDAzMzg=",
+          "avatar_url" : "https://avatars1.githubusercontent.com/u/5900338?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/acunniffe",
+          "html_url" : "https://github.com/acunniffe",
+          "followers_url" : "https://api.github.com/users/acunniffe/followers",
+          "following_url" : "https://api.github.com/users/acunniffe/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/acunniffe/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/acunniffe/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/acunniffe/subscriptions",
+          "organizations_url" : "https://api.github.com/users/acunniffe/orgs",
+          "repos_url" : "https://api.github.com/users/acunniffe/repos",
+          "events_url" : "https://api.github.com/users/acunniffe/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/acunniffe/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "committer" : {
+          "login" : "web-flow",
+          "id" : 19864447,
+          "node_id" : "MDQ6VXNlcjE5ODY0NDQ3",
+          "avatar_url" : "https://avatars3.githubusercontent.com/u/19864447?v=4",
+          "gravatar_id" : "",
+          "url" : "https://api.github.com/users/web-flow",
+          "html_url" : "https://github.com/web-flow",
+          "followers_url" : "https://api.github.com/users/web-flow/followers",
+          "following_url" : "https://api.github.com/users/web-flow/following{/other_user}",
+          "gists_url" : "https://api.github.com/users/web-flow/gists{/gist_id}",
+          "starred_url" : "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+          "subscriptions_url" : "https://api.github.com/users/web-flow/subscriptions",
+          "organizations_url" : "https://api.github.com/users/web-flow/orgs",
+          "repos_url" : "https://api.github.com/users/web-flow/repos",
+          "events_url" : "https://api.github.com/users/web-flow/events{/privacy}",
+          "received_events_url" : "https://api.github.com/users/web-flow/received_events",
+          "type" : "User",
+          "site_admin" : false
+        },
+        "parents" : [
+          {
+            "sha" : "5ea76af7a0e30692ab6ff65343d1fd59bfca8a3f",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/5ea76af7a0e30692ab6ff65343d1fd59bfca8a3f",
+            "html_url" : "https://github.com/opticdev/optic/commit/5ea76af7a0e30692ab6ff65343d1fd59bfca8a3f"
+          },
+          {
+            "sha" : "b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "url" : "https://api.github.com/repos/opticdev/optic/commits/b2644945b854f7c351a9c944eaf8726ddb055b5e",
+            "html_url" : "https://github.com/opticdev/optic/commit/b2644945b854f7c351a9c944eaf8726ddb055b5e"
+          }
+        ]
+      }
+    ]
+  ]
+}

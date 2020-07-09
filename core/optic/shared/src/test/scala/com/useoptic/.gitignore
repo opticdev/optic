@@ -1,0 +1,5 @@
+# exclude everything
+debug_user_issues/*
+
+# exception to the rule
+!debug_user_issues/.gitkeep

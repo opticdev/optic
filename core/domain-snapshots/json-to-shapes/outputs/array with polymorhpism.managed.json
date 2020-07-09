@@ -1,0 +1,92 @@
+{
+  "shape" : "ListOfShape(OneOfShape(Vector(PrimitiveKind(NumberKind,List(JsonArrayItem(0)),shape_5), PrimitiveKind(StringKind,List(JsonArrayItem(0)),shape_4)),List(JsonArrayItem(0)),shape_6),List(),shape_7)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_5",
+        "baseShapeId" : "$number",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_4",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_6",
+        "baseShapeId" : "$oneOf",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_7",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "AddShapeParameter" : {
+        "shapeParameterId" : "parameter_1",
+        "shapeId" : "shape_6",
+        "name" : ""
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_6",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_5"
+              }
+            },
+            "consumingParameterId" : "parameter_1"
+          }
+        }
+      }
+    },
+    {
+      "AddShapeParameter" : {
+        "shapeParameterId" : "parameter_2",
+        "shapeId" : "shape_6",
+        "name" : ""
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_6",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_4"
+              }
+            },
+            "consumingParameterId" : "parameter_2"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_7",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_6"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    }
+  ]
+}

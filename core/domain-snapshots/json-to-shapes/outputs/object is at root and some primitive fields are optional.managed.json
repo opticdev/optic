@@ -1,0 +1,116 @@
+{
+  "shape" : "ObjectWithFields(Vector(FieldWithShape(description,OptionalShape(PrimitiveKind(StringKind,List(JsonObjectKey(description)),shape_1),List(JsonObjectKey(description)),shape_2),List(JsonObjectKey(description)),parameter_1), FieldWithShape(isDone,OptionalShape(PrimitiveKind(BooleanKind,List(JsonObjectKey(isDone)),shape_3),List(JsonObjectKey(isDone)),shape_4),List(JsonObjectKey(isDone)),parameter_2), FieldWithShape(message,PrimitiveKind(StringKind,List(JsonObjectKey(message)),shape_5),List(JsonObjectKey(message)),parameter_3)),List(),shape_6)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_6",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_1",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_2",
+        "baseShapeId" : "$optional",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_1",
+        "shapeId" : "shape_6",
+        "name" : "description",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_1",
+            "shapeId" : "shape_2"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_3",
+        "baseShapeId" : "$boolean",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_4",
+        "baseShapeId" : "$optional",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_2",
+        "shapeId" : "shape_6",
+        "name" : "isDone",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_2",
+            "shapeId" : "shape_4"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_5",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "parameter_3",
+        "shapeId" : "shape_6",
+        "name" : "message",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "parameter_3",
+            "shapeId" : "shape_5"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_1",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_1"
+              }
+            },
+            "consumingParameterId" : "$optionalInner"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInField" : {
+            "fieldId" : "parameter_2",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_3"
+              }
+            },
+            "consumingParameterId" : "$optionalInner"
+          }
+        }
+      }
+    }
+  ]
+}

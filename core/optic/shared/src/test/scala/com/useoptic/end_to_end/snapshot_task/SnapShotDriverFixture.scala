@@ -5,6 +5,8 @@ import io.circe._
 import io.circe.parser._
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 
+import scala.util.Try
+
 abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, snapshotName: String) extends WordSpec with BeforeAndAfterAll {
 
   private val md = java.security.MessageDigest.getInstance("SHA-1")
@@ -22,6 +24,21 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
     inputFile.writeText(serializeInput(block()).spaces2)
   }
 
+  private val knownIssues = scala.collection.mutable.ListBuffer[String]()
+
+  def when_KNOWN_ISSUE(staticName: String, block: () => InputJson) = {
+    knownIssues.append(staticName)
+    when(staticName, block)
+  }
+
+
+  private var only: Option[String] = None
+
+  def whenOnly(staticName: String, block: () => InputJson) = {
+    when(staticName, block)
+    only = Some(staticName)
+  }
+
   setEnv("TESTS_ARE_RUNNING", "TRUE")
 
   def serializeOutput(output: OutputJson): Json
@@ -33,44 +50,55 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
   def transform(input: InputJson): OutputJson
   def compare(result: OutputJson, snapshot: OutputJson) : Boolean = result == snapshot
 
+  def summary(input: InputJson, result: OutputJson): String = ""
 
   def runSuite = {
     s"${snapshotName} snapshot tests" should {
-      println(snapshotDirectory.list)
-      snapshotDirectory.list.filter(_.isRegularFile).foreach { case file =>
+      println("Snapshot Results "+ snapshotName)
+      snapshotDirectory.list.filter(i =>
+        i.isRegularFile && (only.isEmpty || only.contains(i.nameWithoutExtension)))
+        .foreach { case file =>
+
         s"${file.nameWithoutExtension}" should {
-
           var input: Option[InputJson] = None
-          var output: Option[OutputJson] = None
-
-          s"input should deserialize properly" in {
-            println(file)
+          var output: Try[OutputJson] = null
+          s"deserialize the input" in {
             input = Some(deserializeInput(parse(file.contentAsString).right.get))
           }
 
-          s"input yields valid output" in {
-            output = Some(transform(input.get))
+          s"perform task" in {
+            output = Try(transform(input.get))
+            assert(output.isSuccess, if (output.isFailure) "Failed to transform: "+ output.failed.get.getMessage.toString else "")
           }
 
-          s"Matches Snapshot" in {
-
-            if (output.isDefined) {
+          s"match snapshot" in {
+            if (output.isSuccess) {
+              if (!knownIssues.contains(file.nameWithoutExtension)) {
+                println("THIS IS A KNOWN ISSUE:")
+              }
               val dir = snapshotOutputDirectory
               dir.createIfNotExists(asDirectory = true)
               val snapshot = dir / file.name
               if (snapshot.exists) {
                 val snapshotValue = deserializeOutput(parse(snapshot.contentAsString).right.get)
                 assert(compare(output.get, snapshotValue), s"(${dir.name} / ${file.name}) snapshot does not match")
+                println(s" - PASSED: ${file.nameWithoutExtension}")
+                val s = summary(input.get, output.get)
+                if (s.nonEmpty) {
+                  println(s)
+                }
               } else {
                 val pendingDirectory = dir / "pending"
                 pendingDirectory.createIfNotExists(asDirectory = true)
                 val pendingSnapshot = pendingDirectory / file.name
-                println(s"A pending snapshot has been written. To approve move it out of the pending folder${pendingSnapshot}")
+                println(s" - PENDING: ${file.nameWithoutExtension}. To approve move it out of the pending folder")
+                val s = summary(input.get, output.get)
+                if (s.nonEmpty) {
+                  println(s)
+                }
                 pendingSnapshot.write(serializeOutput(output.get).spaces2)
                 assert(false, "Pending Snapshot. Must be approved before test will pass")
               }
-            } else {
-              assert(false, "Transform failed")
             }
           }
         }

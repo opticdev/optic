@@ -226,7 +226,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
         val wasTheListMatched = matches.nonEmpty
         if (wasTheListMatched) {
           val expected = resolvers.resolveTrailToCoreShape(trailOrigin, Map.empty)
-          val resolvedListItem = resolvers.resolveParameterToShape(expected.shapeEntity.shapeId, ListKind.innerParam, expected.bindings)
+          val resolvedListItem = matches.head
 
           val ids = json.items.zipWithIndex.map {
             case (i, index) => {
@@ -244,7 +244,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
           pushShape(ExampleArray(
             jsonTrail.toString,
             Some(expected.shapeEntity.shapeId),
-            resolvedListItem.map(_.shapeId),
+            Some(resolvedListItem.shapeId),
             ids,
             diffs = diffsByTrail(jsonTrail)
           ))

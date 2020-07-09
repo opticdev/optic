@@ -80,6 +80,13 @@ class SideBySideRenderHelper(val exampleShapes: Map[ExampleShapeId, ExampleShape
     RenderShape(exampleArray.exampleArrayId, exampleArray.baseShapeId, s.getSpecShape(exampleArray.specArrayId), Seq.empty, items, Json.arr(), exampleArray.diffs)
   }
 
+  def toJson: Json = {
+    Json.fromValues(Seq(
+    Json.fromString(exampleShapes.toVector.sortBy(_._1).toString),
+    Json.fromString(exampleFields.toVector.sortBy(_._1).toString),
+    Json.fromString(exampleItems.toVector.sortBy(_._1).toString),
+    Json.fromString(specShapes.toVector.sortBy(_._1).toString)))
+  }
 }
 
 @JSExportAll
@@ -169,7 +176,7 @@ case class RenderItem(exampleItemId: ExampleItemId, index: Int, exampleShape: Re
 case class RenderField(fieldName: String, example: Option[Json], exampleShape: Option[RenderShape], specShape: Option[RenderSpecBase], display: String, diffs: Set[DiffResult]) extends Renderable
 
 @JSExportAll
-trait RenderSpecBase {
+sealed trait RenderSpecBase {
   def baseShapeId: String
   def isObject = baseShapeId == ObjectKind.baseShapeId
   def isOptional = baseShapeId == OptionalKind.baseShapeId

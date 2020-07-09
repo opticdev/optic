@@ -88,12 +88,13 @@ class DiffVisitorSpec extends FunSpec {
               SpecPath("root")
             ),
             UnmatchedResponseBodyContentType(
-              InteractionTrail(Seq(ResponseStatusCode(204))),
+              InteractionTrail(Seq(Method("GET"),ResponseStatusCode(204))),
               SpecPath("root")
             )
           ))
         }
       }
+
       describe("with interaction not matching content type") {
         it("should yield UnmatchedRequestContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
@@ -137,7 +138,7 @@ class DiffVisitorSpec extends FunSpec {
               SpecRequestBody(requestId),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0))),
-                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3")))
+                ShapeTrail("shape_4", Seq(ObjectFieldTrail("field_1", "shape_3"), ListItemTrail("shape_3", "shape_2")))
               )
             )
           ))
@@ -161,7 +162,7 @@ class DiffVisitorSpec extends FunSpec {
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
-              InteractionTrail(Seq(ResponseStatusCode(304))),
+              InteractionTrail(Seq(Method("POST"),ResponseStatusCode(304))),
               SpecPath("root")
             )
           ))
@@ -187,7 +188,7 @@ class DiffVisitorSpec extends FunSpec {
           traverser.traverse(interaction)
           assert(diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
-              InteractionTrail(Seq(ResponseBody("bbb222", 200))),
+              InteractionTrail(Seq(Method("POST"),ResponseBody("bbb222", 200))),
               SpecPath("root")
             )
           ))
@@ -217,7 +218,7 @@ class DiffVisitorSpec extends FunSpec {
               SpecResponseBody(responseId),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0))),
-                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3")))
+                ShapeTrail("shape_4", Seq(ObjectFieldTrail("field_1", "shape_3"), ListItemTrail("shape_3", "shape_2")))
               )
             )
           ))

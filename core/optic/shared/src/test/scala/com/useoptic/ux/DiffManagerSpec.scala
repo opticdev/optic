@@ -10,6 +10,9 @@ import com.useoptic.types.capture.{ArbitraryData, Body, HttpInteraction, JsonLik
 import io.circe.Json
 import org.scalatest.FunSpec
 
+
+//pending deletion
+
 class DiffManagerSpec extends FunSpec with JsonFileFixture {
 
   val interactionIdGenerator = new SequentialIdGenerator("interaction")

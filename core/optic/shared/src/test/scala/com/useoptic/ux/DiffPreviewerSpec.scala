@@ -80,23 +80,6 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
       assert(root.field("novelField").exampleShape.get.fields.size == 1)
     }
 
-    it("can render Racecar") {
-      val preview = diffPreview(ShapeExamples.racecar, JsonExamples.racecar) // it has internal polymorphism :)
-      val rootshape = preview.get.getRootShape.get
-      val races = rootshape.field("MRData")
-        .exampleShape.field("RaceTable")
-        .exampleShape.field("Races")
-        .exampleShape.get.items.head
-        .exampleShape.field("Results")
-        .exampleShape.get.itemsWithHidden(false)
-
-      val display = races.map(_.display)
-
-      //      assert(display(14) == "visible")
-
-      val givenName = races.map(race => race.exampleShape.field("Driver").exampleShape.field("givenName").exampleShape.get.example)
-      assert(givenName.distinct.size == givenName.size) //all are different
-    }
   }
 
   it("shape only render") {
@@ -117,11 +100,4 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
     val (commands, shapeOnly) = new DiffPreviewer(resolvers, rfcState).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.json(JsonExamples.basicTodo).get))(ShapeBuildingStrategy.inferPolymorphism).get
     assert(shapeOnly.specShapes.size == 3)
   }
-
-  //  it("isolated") {
-  //    val (commands, shapeOnly) = new DiffPreviewer(resolvers, ).shapeOnlyFromShapeBuilder(Vector(JsonLikeFrom.rawJson("{\"then\": [[\"string\", \"string\", \"string\", \"string\"]]}").get)).get
-  //
-  //
-  //  }
-
 }

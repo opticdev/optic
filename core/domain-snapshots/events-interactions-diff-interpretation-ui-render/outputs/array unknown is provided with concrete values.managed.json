@@ -1,0 +1,79 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnspecifiedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonArrayItem" : {
+                      "index" : 0
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "shape_3",
+                "path" : [
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "Shape at index 0 observed in the 200 Response body",
+      "suggestions" : [
+        {
+          "title" : "Set the shape",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "shape_1",
+                "baseShapeId" : "$number",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_3",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_1"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleArray(List(),None,None,Vector(List(JsonArrayItem(0)), List(JsonArrayItem(1)), List(JsonArrayItem(2)), List(JsonArrayItem(3)), List(JsonArrayItem(4))),Set())), (List(JsonArrayItem(0)),ExamplePrimitive(List(JsonArrayItem(0)),$number,None,1,Set(UnspecifiedShape(List(JsonArrayItem(0)),ShapeTrail(shape_3,List()))))), (List(JsonArrayItem(1)),ExamplePrimitive(List(JsonArrayItem(1)),$number,None,2,Set())), (List(JsonArrayItem(2)),ExamplePrimitive(List(JsonArrayItem(2)),$number,None,3,Set())), (List(JsonArrayItem(3)),ExamplePrimitive(List(JsonArrayItem(3)),$number,None,4,Set())), (List(JsonArrayItem(4)),ExamplePrimitive(List(JsonArrayItem(4)),$number,None,5,Set())))",
+        "Vector()",
+        "Vector((List(JsonArrayItem(0)),ExampleItem(List(JsonArrayItem(0)),0,1,Set())), (List(JsonArrayItem(1)),ExampleItem(List(JsonArrayItem(1)),1,2,Set())), (List(JsonArrayItem(2)),ExampleItem(List(JsonArrayItem(2)),2,3,Set())), (List(JsonArrayItem(3)),ExampleItem(List(JsonArrayItem(3)),3,4,Set())), (List(JsonArrayItem(4)),ExampleItem(List(JsonArrayItem(4)),4,5,Set())))",
+        "Vector((shape_2,SpecPrimitive(shape_2,$unknown,RenderName(List()),Set())), (shape_3,SpecArray(shape_3,shape_2,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_2),Some(shape_2)))),Set())))"
+      ]
+    }
+  ]
+}

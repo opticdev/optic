@@ -126,6 +126,8 @@ class DiffDescriptionInterpreters(rfcState: RfcState)(implicit ids: OpticDomainI
       case t: OneOfItemTrail => shapeName(t.itemShapeId)
       case t: NullableTrail => "nullable shape?"
       case t: NullableItemTrail => shapeName(t.innerShapeId)
+      case t: OptionalTrail => "optional"
+      case t: OptionalItemTrail => shapeName(t.innerShapeId)
       //case UnknownTrail() => "unknown?"
     }
     case None => shapeName(shapeTrail.rootShapeId)
