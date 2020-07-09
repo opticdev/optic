@@ -31,7 +31,9 @@ class JsonLikeAndSpecTraverser(resolvers: ShapesResolvers, spec: RfcState, visit
             case Some(choice) => choice.parentTrail
             case None => trailOrigin
           }
+          if (choicesForArrayItems.nonEmpty) {
           traverse(Some(item), itemTrail, newTrailOrigin, choicesForArrayItems)
+          }
         })
       })
     }
