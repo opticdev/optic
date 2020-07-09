@@ -37,7 +37,7 @@ class EndEndDiffTask
     val events = json.asObject.get("events").get
     EventSerialization.fromJson(events)
     val interpretations = json.asObject.get("interpretations").get.asArray.get.map(InteractionSerialization.fromJson)
-    
+
     Input(EventSerialization.fromJson(events).get, interpretations)
   }
   override def serializeInput(input: EndEndDiffTask.Input): Json = {
@@ -62,7 +62,6 @@ class EndEndDiffTask
     val shapesResolvers = ShapesResolvers.newResolver(rfcState)
 
     val diffs = DiffHelpers.groupByDiffs(shapesResolvers, rfcState, input.interpretations).toVector.sortBy(_.toString)
-
 
     DiffOutput(diffs.map(i => {
       val (diff, interactions) = i

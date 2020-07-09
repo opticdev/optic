@@ -81,8 +81,6 @@ export const NewUrlModal = withRfcContext((props) => {
       lastParentPathId = lastMatch.pathId;
       toAdd.forEach((addition) => {
         const pathId = OpticIds.newPathId();
-        debugger;
-        console.log('made a new id', pathId);
         const command = (addition.isParameter
           ? RequestsCommands.AddPathParameter
           : RequestsCommands.AddPathComponent)(
@@ -95,7 +93,6 @@ export const NewUrlModal = withRfcContext((props) => {
       });
     }
 
-    debugger;
     //name it
     commands.push(
       RfcCommands.AddContribution(

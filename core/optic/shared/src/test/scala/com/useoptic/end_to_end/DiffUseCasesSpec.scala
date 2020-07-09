@@ -1,5 +1,6 @@
 package com.useoptic.end_to_end
 
+import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObject
 import com.useoptic.dsa.OpticIds
 import com.useoptic.end_to_end.fixtures.InteractionHelpers._
@@ -8,7 +9,7 @@ import io.circe.Json
 import io.circe.literal._
 
 
-class DiffUseCasesSpec extends EndEndDiffTask {
+class DiffUseCasesSpec extends EndEndDiffTask with JsonFileFixture {
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// Basic Objects
@@ -158,6 +159,7 @@ class DiffUseCasesSpec extends EndEndDiffTask {
     }))
   }))
 
+
   when("an required object field is null, suggests nullable", () => EndEndDiffTask.Input(baselinePWSEvents._1, {
     Vector(personWithStats.forkResponseBody(j => {
       json"""{"name":{"first":"Bob","last":"C"},"rivals":["user1","user2","user3"], "stats": null}"""
@@ -194,7 +196,6 @@ class DiffUseCasesSpec extends EndEndDiffTask {
       json"""{"name":{"first":"Bob","last":"C"},"rivals":{"nemesis": "Brad"},"stats":{"rank":1}}"""
     }))
   }))
-
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// Arrays
@@ -273,6 +274,16 @@ class DiffUseCasesSpec extends EndEndDiffTask {
       json"""[[1,2,3]]"""
     }))
   }))
+
+  whenOnly("deeply nested fields inside of arrays", () => {
+
+    val events = eventsFrom("ergast")
+
+    val raceResults = newInteraction("GET", "/api/f1/2019/drivers/max_verstappen/results", 200,
+      responseBody = fromFile("race-result"))
+
+    EndEndDiffTask.Input(events, Vector(raceResults))
+  })
 
 
   // todo! Nullables, Unknown conversions

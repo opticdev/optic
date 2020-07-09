@@ -37,6 +37,8 @@ class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
       case diff: ShapeDiffResult if diffs.contains(diff) => diff -> allDiffs.filter(_.shapeTrail == diff.shapeTrail).map(_.jsonTrail).toSet
     }.toMap
 
+    println("xxxx SHOWING RELATED DIFFS at JSON trails "+ relatedDiffs.values.flatten.mkString("\n"))
+
 
     val shapeRenderVisitor = new ShapeRenderVisitor(resolvers, spec, diffs)
     //first traverse the example
@@ -117,7 +119,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
       case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => sd
     }
     //add back in groupings
-    matching.toSet ///++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
+    matching.toSet ++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
   }
 
   override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {
@@ -356,9 +358,10 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
 class ShapeRenderVisitor(resolvers: ShapesResolvers, spec: RfcState, diffs: Set[ShapeDiffResult]) extends ShapeVisitors with SpecRenderVisitorHelper {
 
   def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = {
-    diffs.collect {
-      case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => sd
-    }
+//    diffs.collect {
+//      case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => sd
+//    }
+    Set.empty
   }
 
 

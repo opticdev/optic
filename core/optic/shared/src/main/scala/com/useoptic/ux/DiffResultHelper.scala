@@ -79,7 +79,7 @@ object DiffResultHelper {
         case _ => false
       }.flatMap {
         case (diff, interactionPointers) => getLocationForDiff(diff, rfcState).map(location => {
-          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers), normalizedDiffs.filterKeys(_.normalize() == diff), true)
+          EndpointDiffs(location.method, location.pathId,  Map(diff -> interactionPointers), diffs.filterKeys(_.normalize() == diff), true)
         })
       }.groupBy(i => (i.pathId, i.method)).map {
         case ((path, method), diffs) => {
@@ -296,8 +296,9 @@ object DiffResultHelper {
 
   def suggestionsForDiff(bodyDiff: BodyDiff, anInteraction: HttpInteraction, currentRfcState: RfcState): Seq[InteractiveDiffInterpretation] = {
     val resolvers = ShapesResolvers.newResolver(currentRfcState)
+    val firstDiff = bodyDiff.denormalizedDiffs.minBy(_.shapeDiffResultOption.map(_.jsonTrail.toString).head)
     val basicInterpreter = new DefaultInterpreters(resolvers, currentRfcState)
-    basicInterpreter.interpret(bodyDiff.diff, Vector(anInteraction))
+    basicInterpreter.interpret(firstDiff, Vector(anInteraction))
   }
 
   def quickComputeInteractions(endpointDiffs: Seq[EndpointDiffs]): Seq[String] = {
