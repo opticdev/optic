@@ -19,6 +19,7 @@ import {
   RequestsCommands,
   RequestsHelper,
   RfcCommands,
+  OpticIds,
 } from '@useoptic/domain';
 import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
 import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
@@ -26,7 +27,6 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { track } from '../../../Analytics';
-import { OpticIds } from '../../../OpticIdsUI';
 
 const useStyles = makeStyles((theme) => ({
   container: {
