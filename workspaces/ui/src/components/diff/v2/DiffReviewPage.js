@@ -144,7 +144,7 @@ export function DiffReviewPage(props) {
               onClick={() => setShowFinalize(true)}
               classes={{ root: classes.buttonSmall }}
             >
-              Finalize
+              Commit
             </Button>
           </div>
 
