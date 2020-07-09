@@ -1,0 +1,163 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnmatchedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonArrayItem" : {
+                      "index" : 1
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "shape_13",
+                "path" : [
+                  {
+                    "ListItemTrail" : {
+                      "listShapeId" : "shape_13",
+                      "itemShapeId" : "shape_12"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "shape at index 1 in the 200 Response body was not a Object",
+      "suggestions" : [
+        {
+          "title" : "Allow shape at index 1 to be either a Object or String",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_2",
+                "baseShapeId" : "$string",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_1",
+                "baseShapeId" : "$oneOf",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_1",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_2",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_2"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_2"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "shape_12"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_1"
+                  }
+                }
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_13",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_1"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title" : "Change shape to String",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_3",
+                "baseShapeId" : "$string",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "shape_13",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_3"
+                      }
+                    },
+                    "consumingParameterId" : "$listItem"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleArray(List(),Some(shape_13),Some(shape_12),Vector(List(JsonArrayItem(0)), List(JsonArrayItem(1))),Set())), (List(JsonArrayItem(0)),ExampleObject(List(JsonArrayItem(0)),Some(shape_12),List(List(JsonArrayItem(0), JsonObjectKey(age)), List(JsonArrayItem(0), JsonObjectKey(colors)), List(JsonArrayItem(0), JsonObjectKey(name))),List(),List(),Set())), (List(JsonArrayItem(0), JsonObjectKey(age)),ExamplePrimitive(List(JsonArrayItem(0), JsonObjectKey(age)),$string,Some(shape_7),\"thirty\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors)),ExampleArray(List(JsonArrayItem(0), JsonObjectKey(colors)),Some(shape_10),Some(shape_9),Vector(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(0)), List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(1)), List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(2))),Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(0)),ExamplePrimitive(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(0)),$string,Some(shape_9),\"red\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(1)),ExamplePrimitive(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(1)),$string,Some(shape_9),\"green\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(2)),ExamplePrimitive(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(2)),$string,Some(shape_9),\"yellow\",Set())), (List(JsonArrayItem(0), JsonObjectKey(name)),ExamplePrimitive(List(JsonArrayItem(0), JsonObjectKey(name)),$string,Some(shape_11),\"joe\",Set())), (List(JsonArrayItem(1)),ExamplePrimitive(List(JsonArrayItem(1)),$string,None,\"hello\",Set(UnmatchedShape(List(JsonArrayItem(1)),ShapeTrail(shape_13,List(ListItemTrail(shape_13,shape_12))))))))",
+        "Vector((List(JsonArrayItem(0), JsonObjectKey(age)),KnownExampleField(List(JsonArrayItem(0), JsonObjectKey(age)),age,field_4,shape_7,\"thirty\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors)),KnownExampleField(List(JsonArrayItem(0), JsonObjectKey(colors)),colors,field_5,shape_10,[\n  \"red\",\n  \"green\",\n  \"yellow\"\n],Set())), (List(JsonArrayItem(0), JsonObjectKey(name)),KnownExampleField(List(JsonArrayItem(0), JsonObjectKey(name)),name,field_6,shape_11,\"joe\",Set())))",
+        "Vector((List(JsonArrayItem(0)),ExampleItem(List(JsonArrayItem(0)),0,{\n  \"name\" : \"joe\",\n  \"age\" : \"thirty\",\n  \"colors\" : [\n    \"red\",\n    \"green\",\n    \"yellow\"\n  ]\n},Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(0)),ExampleItem(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(0)),0,\"red\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(1)),ExampleItem(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(1)),1,\"green\",Set())), (List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(2)),ExampleItem(List(JsonArrayItem(0), JsonObjectKey(colors), JsonArrayItem(2)),2,\"yellow\",Set())), (List(JsonArrayItem(1)),ExampleItem(List(JsonArrayItem(1)),1,\"hello\",Set(UnmatchedShape(List(JsonArrayItem(1)),ShapeTrail(shape_13,List(ListItemTrail(shape_13,shape_12))))))))",
+        "Vector((shape_10,SpecArray(shape_10,shape_9,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_9),Some(shape_9)))),Set())), (shape_11,SpecPrimitive(shape_11,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_12,SpecObject(shape_12,List(SpecField(age,field_4,shape_7,Set()), SpecField(colors,field_5,shape_10,Set()), SpecField(name,field_6,shape_11,Set())),Set(UnmatchedShape(List(JsonArrayItem(1)),ShapeTrail(shape_13,List(ListItemTrail(shape_13,shape_12))))))), (shape_13,SpecArray(shape_13,shape_12,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_12),Some(shape_12)))),Set(UnmatchedShape(List(JsonArrayItem(1)),ShapeTrail(shape_13,List(ListItemTrail(shape_13,shape_12))))))), (shape_7,SpecPrimitive(shape_7,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_9,SpecPrimitive(shape_9,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())))"
+      ]
+    }
+  ]
+}
