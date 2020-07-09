@@ -39,6 +39,7 @@ class CommandAndProxySessionManager {
         includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeShapeHash: true,
+        includeQueryString: true,
       },
       host: this.config.proxyConfig.host,
       proxyTarget:

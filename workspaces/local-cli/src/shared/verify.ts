@@ -174,6 +174,7 @@ export function verifyTask(cli: Command, taskName: string): void {
             includeTextBody: true,
             includeJsonBody: true,
             includeShapeHash: true,
+            includeQueryString: true,
           },
           host: proxyConfig.host,
           proxyTarget:
