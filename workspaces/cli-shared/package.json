@@ -4,7 +4,7 @@
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "jest"
+    "ws:test": "echo cli-shared"
   },
   "repository": {
     "type": "git",
