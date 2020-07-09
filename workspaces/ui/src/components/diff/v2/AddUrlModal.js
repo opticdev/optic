@@ -40,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+window.OpticIds = OpticIds;
+
 export const NewUrlModal = withRfcContext((props) => {
   const { children, newUrl, urlOverride, allUnmatchedPaths, onAdd } = props;
   const classes = useStyles();
@@ -79,6 +81,7 @@ export const NewUrlModal = withRfcContext((props) => {
       lastParentPathId = lastMatch.pathId;
       toAdd.forEach((addition) => {
         const pathId = OpticIds.newPathId();
+        debugger;
         console.log('made a new id', pathId);
         const command = (addition.isParameter
           ? RequestsCommands.AddPathParameter

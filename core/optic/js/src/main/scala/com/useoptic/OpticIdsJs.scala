@@ -19,7 +19,3 @@ class OpticIdsJs() {
   def newRequestParameterId(): RequestParameterId = ids.newRequestParameterId
   def newFieldId(): FieldId = ids.newFieldId
 }
-
-object OpticIdsJs {
-  def newSharedInstance = new OpticIdsJs()
-}
