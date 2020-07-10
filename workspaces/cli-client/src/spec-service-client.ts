@@ -1,6 +1,7 @@
 import Bottleneck from 'bottleneck';
 import { EventEmitter } from 'events';
 import { JsonHttpClient } from '@useoptic/client-utilities';
+import { IApiCliConfig } from '@useoptic/cli-config';
 
 const outgoingPoll = new Bottleneck({
   maxConcurrent: 1,
@@ -21,6 +22,7 @@ type ListCapturedSamplesResponse = any;
 type GetCaptureSummaryResponse = any;
 
 export interface ISpecService {
+  loadConfig(): Promise<{ config: IApiCliConfig }>;
   listEvents(): Promise<string>;
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
@@ -40,6 +42,12 @@ export class Client implements ISpecService {
     private eventEmitter: EventEmitter,
     private baseUrl: string = '/api'
   ) {}
+
+  loadConfig(): Promise<{ config: IApiCliConfig }> {
+    return JsonHttpClient.getJson(
+      `${this.baseUrl}/specs/${this.specId}/config`
+    );
+  }
 
   listEvents() {
     return JsonHttpClient.getJsonAsText(

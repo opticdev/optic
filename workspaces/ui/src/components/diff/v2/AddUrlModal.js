@@ -19,6 +19,7 @@ import {
   RequestsCommands,
   RequestsHelper,
   RfcCommands,
+  OpticIds,
 } from '@useoptic/domain';
 import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
 import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
@@ -26,6 +27,7 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { track } from '../../../Analytics';
+import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,10 +41,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+window.OpticIds = OpticIds;
+
 export const NewUrlModal = withRfcContext((props) => {
-  const { children, newUrl, allUnmatchedPaths, onAdd } = props;
+  const { children, newUrl, urlOverride, allUnmatchedPaths, onAdd } = props;
   const classes = useStyles();
   const { cachedQueryResults, handleCommands } = useContext(RfcContext);
+  const { captureId } = useContext(CaptureContext);
   const knownPathId = getOrUndefined(newUrl.pathId);
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
@@ -50,6 +55,12 @@ export const NewUrlModal = withRfcContext((props) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    track('Clicked Undocumented Url', {
+      captureId: captureId,
+      method: newUrl.method,
+      path: newUrl.path,
+      knownPathId,
+    });
   };
 
   const handleClose = () => {
@@ -64,6 +75,7 @@ export const NewUrlModal = withRfcContext((props) => {
   const handleCreate = (purpose) => {
     track('Documented New URL', {
       purpose,
+      captureId,
       method: newUrl.method,
       pathExpression,
     });
@@ -77,7 +89,7 @@ export const NewUrlModal = withRfcContext((props) => {
       const { toAdd, lastMatch } = resolvePath(pathComponents, pathsById);
       lastParentPathId = lastMatch.pathId;
       toAdd.forEach((addition) => {
-        const pathId = RequestsHelper.newPathId();
+        const pathId = OpticIds.newPathId();
         const command = (addition.isParameter
           ? RequestsCommands.AddPathParameter
           : RequestsCommands.AddPathComponent)(
@@ -89,6 +101,7 @@ export const NewUrlModal = withRfcContext((props) => {
         lastParentPathId = pathId;
       });
     }
+
     //name it
     commands.push(
       RfcCommands.AddContribution(
@@ -124,12 +137,16 @@ export const NewUrlModal = withRfcContext((props) => {
         onClose={handleClose}
         fullWidth
         maxWidth="md"
-        aria-labelledby="form-dialog-title"
+        transitionDuration={0}
+        key={'dialog' + newUrl.toString()}
       >
         <form>
           <DialogTitle>Add New Endpoint</DialogTitle>
           <DialogContent style={{ marginTop: -20 }}>
-            <PathAndMethod method={newUrl.method} path={pathExpression} />
+            <PathAndMethod
+              method={newUrl.method}
+              path={urlOverride || pathExpression}
+            />
             <DialogContentText style={{ marginTop: 12 }}>
               What does this endpoint do?
             </DialogContentText>
@@ -151,7 +168,7 @@ export const NewUrlModal = withRfcContext((props) => {
               type="submit"
               onClick={() => handleCreate(purpose)}
               color="secondary"
-              disabled={!matches}
+              disabled={!matches && !knownPathId && purpose !== ''}
               endIcon={<NavigateNextIcon />}
             >
               Finish
@@ -163,15 +180,16 @@ export const NewUrlModal = withRfcContext((props) => {
   }
 
   return (
-    <>
+    <div key={newUrl.toString()}>
       {/*@TODO: investigate this as the cause of broken tabbing */}
       <div onClick={handleClickOpen}>{children}</div>
       {naming ? (
-        <NamingDialog />
+        <NamingDialog key={'naming one' + newUrl.toString()} />
       ) : (
         <Dialog
           open={open}
           onClose={handleClose}
+          key={'path to' + newUrl.toString()}
           fullWidth
           maxWidth="md"
           aria-labelledby="form-dialog-title"
@@ -230,7 +248,7 @@ export const NewUrlModal = withRfcContext((props) => {
           </form>
         </Dialog>
       )}
-    </>
+    </div>
   );
 });
 

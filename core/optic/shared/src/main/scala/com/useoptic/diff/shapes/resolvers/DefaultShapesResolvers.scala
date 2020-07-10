@@ -121,7 +121,7 @@ class DefaultShapesResolvers(spec: RfcState) extends ShapesResolvers {
             resolveParameterToShape(c.listShapeId, ListKind.innerParam, parent.bindings) match {
               case Some(value) => {
                 val (shapeId, coreShapeKind) = toCoreAndBaseShape(value, shapesState)
-                ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, Map(ListKind.innerParam -> shapesState.bindingsByShapeId.getOrElse(shapeId, Map.empty).get(ListKind.innerParam)))
+                ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, Map(ListKind.innerParam -> Some(ShapeProvider(shapeId))))
               }
               case None => throw new Error("expected list item to resolve to a shape")
             }

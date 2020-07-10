@@ -10,7 +10,7 @@ class JvmStableHashableSpec extends FunSpec {
         InteractionTrail(Seq(Url(), Method("GET"))),
         SpecPath("path_wYt9lgNJVf")
       )
-      assert(diff.toHash()(JvmStableHashable.hash) == "03bbd8f6b62f7fa0661fa2040dbacc1a914a2970")
+      assert(diff.toHash()(JvmStableHashable.hash) == "756c80f2212b17c3da0c4a24079469644c9dac62")
     }
   }
 }

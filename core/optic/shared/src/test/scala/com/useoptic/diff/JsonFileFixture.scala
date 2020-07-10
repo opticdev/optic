@@ -40,6 +40,13 @@ trait JsonFileFixture {
     eventsAndInteractionsFrom(json)
   }
 
+  def universeFromUserSession(slug: String): Universe = {
+    import better.files._
+    val filePath = ("../workspaces/ui/public/private-sessions/"+slug+".json").toFile
+    val json = parseFile(filePath.toJava).right.get
+    eventsAndInteractionsFrom(json)
+  }
+
   def universeFromFilePath(path: String): Universe = {
     import better.files._
     val filePath = (path).toFile

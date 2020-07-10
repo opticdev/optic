@@ -1,0 +1,153 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnmatchedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "shape_3",
+                "path" : [
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "shape in the 200 Response body was not a List",
+      "suggestions" : [
+        {
+          "title" : "Allow shape to be either a  or Object",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_3",
+                "baseShapeId" : "$object",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_2",
+                "baseShapeId" : "$string",
+                "name" : ""
+              }
+            },
+            {
+              "AddField" : {
+                "fieldId" : "testing-field_1",
+                "shapeId" : "testing-shape_3",
+                "name" : "foo",
+                "shapeDescriptor" : {
+                  "FieldShapeFromShape" : {
+                    "fieldId" : "testing-field_1",
+                    "shapeId" : "testing-shape_2"
+                  }
+                }
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_1",
+                "baseShapeId" : "$oneOf",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_1",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "AddShapeParameter" : {
+                "shapeParameterId" : "testing-shape-parameter_2",
+                "shapeId" : "testing-shape_1",
+                "name" : ""
+              }
+            },
+            {
+              "SetParameterShape" : {
+                "shapeDescriptor" : {
+                  "ProviderInShape" : {
+                    "shapeId" : "testing-shape_1",
+                    "providerDescriptor" : {
+                      "ShapeProvider" : {
+                        "shapeId" : "testing-shape_3"
+                      }
+                    },
+                    "consumingParameterId" : "testing-shape-parameter_2"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title" : "Change shape to Object",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_5",
+                "baseShapeId" : "$object",
+                "name" : ""
+              }
+            },
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_4",
+                "baseShapeId" : "$string",
+                "name" : ""
+              }
+            },
+            {
+              "AddField" : {
+                "fieldId" : "testing-field_2",
+                "shapeId" : "testing-shape_5",
+                "name" : "foo",
+                "shapeDescriptor" : {
+                  "FieldShapeFromShape" : {
+                    "fieldId" : "testing-field_2",
+                    "shapeId" : "testing-shape_4"
+                  }
+                }
+              }
+            },
+            {
+              "SetBaseShape" : {
+                "shapeId" : "shape_3",
+                "baseShapeId" : "testing-shape_5"
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleObject(List(),None,List(),List(),List(List(JsonObjectKey(foo))),Set())))",
+        "Vector((List(JsonObjectKey(foo)),UnexpectedExampleField(List(JsonObjectKey(foo)),foo,\"bar\",Set())))",
+        "Vector()",
+        "Vector((shape_2,SpecPrimitive(shape_2,$unknown,RenderName(List()),Set())), (shape_3,SpecArray(shape_3,shape_2,RenderName(List(NameComponent(List of ,ListColor,,Some(shape_2),Some(shape_2)))),Set())))"
+      ]
+    }
+  ]
+}

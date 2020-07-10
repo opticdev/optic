@@ -1,9 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
 import {
+  CompareEquality,
   DiffPreviewer,
+  DiffResultHelper,
   getIndex,
   getOrUndefined,
   JsonHelper,
@@ -19,8 +21,13 @@ import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { PathAndMethod } from './PathAndMethod';
 import { DiffHelperCard } from './DiffHelperCard';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import { BreadcumbX } from './DiffPreview';
+import { BreadcumbX } from './DiffNewRegions';
 import { primary } from '../../../theme';
+import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { DiffReviewLoading } from './LoadingNextDiff';
+import { DiffViewSimulation } from './DiffViewSimulation';
+import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,30 +71,84 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default (props) => {
-  const classes = useStyles();
-  const { diff } = props;
-  const { description, interactions } = diff;
+export class DiffReviewExpandedCached extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !CompareEquality.betweenBodyDiff(
+      nextProps.selectedDiff || undefined,
+      this.props.selectedDiff || undefined
+    );
+  }
 
-  const { selectedInterpretation } = useContext(DiffContext);
+  render() {
+    const { selectedDiff, captureId, setSelectedDiff } = this.props;
+    return (
+      <DiffReviewExpanded
+        diff={selectedDiff}
+        captureId={captureId}
+        {...{ selectedDiff, setSelectedDiff }}
+      />
+    );
+  }
+}
+
+export const DiffReviewExpanded = (props) => {
+  const classes = useStyles();
+  const { diff, selectedDiff, setSelectedDiff, rfcContext, captureId } = props;
+
+  const description = useDiffDescription(diff);
+
+  const [selectedInterpretation, setSelectedInterpretationInner] = useState(
+    null
+  );
+
+  const setSelectedInterpretation = (s) => {
+    if (description && s) {
+      track('Previewing Suggestion', {
+        captureId,
+        diff: description.title,
+        diffAssertion: description.assertion,
+        suggestion: s.action,
+      });
+    }
+    setSelectedInterpretationInner(s);
+  };
+  useEffect(() => {
+    // when diff changes, remove selection
+    setSelectedInterpretation(null);
+  }, [diff && diff.diff.toString()]);
+
   const { rfcId, rfcService, cachedQueryResults, eventStore } = useContext(
     RfcContext
   );
 
-  const length = lengthScala(interactions);
+  const length = diff.interactionsCount;
 
   const [interactionIndex, setInteractionIndex] = React.useState(1);
 
   useEffect(() => {
     //reset interactions cursor whenever diff is updated. (it's 1 instead of 0 before of Pagination widget)
     setInteractionIndex(1);
-  }, [diff]);
-  const currentRfcState = rfcService.currentState(rfcId);
+  }, [diff && diff.diff.toString()]);
+
+  const outerRfcState = rfcService.currentState(rfcId);
   const { shapesResolvers } = cachedQueryResults;
 
-  const currentInteraction = getIndex(interactions)(interactionIndex - 1);
-  const { method, path } = currentInteraction.request;
-  const diffPreviewer = new DiffPreviewer(shapesResolvers, currentRfcState);
+  const currentInteractionPointer = getIndex(diff.interactionPointers)(
+    interactionIndex - 1
+  );
+
+  const currentInteraction = useInteractionWithPointer(
+    currentInteractionPointer
+  );
+
+  if (!currentInteraction || !description) {
+    return <DiffReviewLoading show={true} />;
+  }
+
+  const { interaction, interactionScala } = currentInteraction;
+
+  const { method, path } = interactionScala.request;
+
   return (
     <ShapeExpandedStore>
       <div>
@@ -113,7 +174,7 @@ export default (props) => {
         <PathAndMethod path={path} method={method} />
 
         <div className={classes.content}>
-          <Show when={currentInteraction.request.body.nonEmpty}>
+          <Show when={interactionScala.request.body.nonEmpty}>
             <InnerRow
               left={
                 <ShapeBox
@@ -123,64 +184,36 @@ export default (props) => {
                       location={[
                         `Request Body`,
                         getOrUndefined(
-                          currentInteraction.request.body.contentType
+                          interactionScala.request.body.contentType
                         ),
                       ]}
                     />
                   }
                 >
-                  {(() => {
-                    if (diff.inRequest) {
-                      const simulatedCommands = selectedInterpretation
-                        ? JsonHelper.seqToJsArray(
-                            selectedInterpretation.commands
-                          )
-                        : [];
-                      return (
-                        <SimulatedCommandContext
-                          rfcId={rfcId}
-                          eventStore={eventStore.getCopy(rfcId)}
-                          commands={simulatedCommands}
-                          shouldSimulate={true}
-                        >
-                          <RfcContext.Consumer>
-                            {({ rfcService, rfcId }) => {
-                              const currentRfcState = rfcService.currentState(
-                                rfcId
-                              );
-
-                              const preview = diff.previewRender(
-                                currentInteraction,
-                                toOption(currentRfcState)
-                              );
-                              return (
-                                <DiffHunkViewer
-                                  suggestion={selectedInterpretation}
-                                  diff={diff}
-                                  preview={preview}
-                                  diffDescription={description}
-                                />
-                              );
-                            }}
-                          </RfcContext.Consumer>
-                        </SimulatedCommandContext>
-                      );
-                    } else {
-                      return (
-                        <DiffHunkViewer
-                          exampleOnly
-                          preview={getOrUndefined(
-                            diffPreviewer.previewBody(
-                              currentInteraction.request.body
-                            )
-                          )}
-                        />
-                      );
-                    }
-                  })()}
+                  <DiffViewSimulation
+                    renderDiff={diff.inRequest}
+                    diff={diff}
+                    interactionScala={interactionScala}
+                    description={description}
+                    body={interactionScala.response.body}
+                    outerRfcState={outerRfcState}
+                    selectedInterpretation={selectedInterpretation}
+                  />
                 </ShapeBox>
               }
-              right={<DiffHelperCard inRequest />}
+              right={
+                <DiffHelperCard
+                  inRequest
+                  description={description}
+                  currentInteraction={interactionScala}
+                  {...{
+                    selectedDiff,
+                    setSelectedDiff,
+                    selectedInterpretation,
+                    setSelectedInterpretation,
+                  }}
+                />
+              }
             />
 
             <div style={{ marginTop: 20, marginBottom: 20 }}>
@@ -188,7 +221,7 @@ export default (props) => {
             </div>
           </Show>
 
-          <Show when={currentInteraction.response.body.nonEmpty}>
+          <Show when={interactionScala.response.body.nonEmpty}>
             <InnerRow
               left={
                 <ShapeBox
@@ -196,98 +229,41 @@ export default (props) => {
                     <BreadcumbX
                       itemStyles={{ fontSize: 13, color: 'white' }}
                       location={[
-                        `${currentInteraction.response.statusCode} Response Body`,
+                        `${interactionScala.response.statusCode} Response Body`,
                         getOrUndefined(
-                          currentInteraction.response.body.contentType
+                          interactionScala.response.body.contentType
                         ),
                       ]}
                     />
                   }
                 >
-                  {(() => {
-                    if (diff.inResponse) {
-                      const simulatedCommands = selectedInterpretation
-                        ? JsonHelper.seqToJsArray(
-                            selectedInterpretation.commands
-                          )
-                        : [];
-                      return (
-                        <SimulatedCommandContext
-                          rfcId={rfcId}
-                          eventStore={eventStore.getCopy(rfcId)}
-                          commands={simulatedCommands}
-                          shouldSimulate={true}
-                        >
-                          <RfcContext.Consumer>
-                            {({ rfcService, rfcId }) => {
-                              const currentRfcState = rfcService.currentState(
-                                rfcId
-                              );
-                              const preview = diff.previewRender(
-                                currentInteraction,
-                                toOption(currentRfcState)
-                              );
-                              return (
-                                <DiffHunkViewer
-                                  suggestion={selectedInterpretation}
-                                  diff={diff}
-                                  preview={preview}
-                                  diffDescription={description}
-                                />
-                              );
-                            }}
-                          </RfcContext.Consumer>
-                        </SimulatedCommandContext>
-                      );
-                    } else {
-                      return (
-                        <DiffHunkViewer
-                          exampleOnly
-                          preview={getOrUndefined(
-                            diffPreviewer.previewBody(
-                              currentInteraction.response.body
-                            )
-                          )}
-                        />
-                      );
-                    }
-                  })()}
+                  <DiffViewSimulation
+                    renderDiff={diff.inResponse}
+                    diff={diff}
+                    interactionScala={interactionScala}
+                    description={description}
+                    body={interactionScala.response.body}
+                    outerRfcState={outerRfcState}
+                    selectedInterpretation={selectedInterpretation}
+                  />
                 </ShapeBox>
               }
-              right={<DiffHelperCard inResponse />}
+              right={
+                <DiffHelperCard
+                  inResponse
+                  description={description}
+                  currentInteraction={interactionScala}
+                  {...{
+                    selectedDiff,
+                    setSelectedDiff,
+                    selectedInterpretation,
+                    setSelectedInterpretation,
+                  }}
+                />
+              }
             />
           </Show>
         </div>
-        {/*  <div className={classes.leftContent}>*/}
-        {/*    <div>{method} {url}</div>*/}
-        {/*    <Show when={request}>*/}
-        {/*      <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Request*/}
-        {/*        Body</Typography>}>*/}
-
-        {/*        <Scrolling>*/}
-        {/*          <DiffHunkViewer suggestion={suggestion}*/}
-        {/*                          diff={diff}*/}
-        {/*                          exampleOnly={exampleOnly}*/}
-        {/*                          preview={request}*/}
-        {/*                          diffDescription={diffDescription}/>*/}
-        {/*        </Scrolling>*/}
-        {/*      </DocSubGroup>*/}
-        {/*    </Show>*/}
-        {/*    <Show when={response}>*/}
-        {/*      <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Response*/}
-        {/*        Body</Typography>}>*/}
-
-        {/*        <Scrolling>*/}
-        {/*          <DiffHunkViewer suggestion={suggestion}*/}
-        {/*                          diff={diff}*/}
-        {/*                          exampleOnly={exampleOnly}*/}
-        {/*                          preview={response}*/}
-        {/*                          diffDescription={diffDescription}/>*/}
-        {/*        </Scrolling>*/}
-        {/*      </DocSubGroup>*/}
-        {/*    </Show>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
       </div>
     </ShapeExpandedStore>
   );
