@@ -7,7 +7,7 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.DiffResult
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Stuff.{ArrayItemChoiceCallback, ObjectKeyChoiceCallback}
@@ -36,6 +36,8 @@ class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
     val relatedDiffs: Map[ShapeDiffResult, Set[JsonTrail]] = diffs.collect {
       case diff: ShapeDiffResult if diffs.contains(diff) => diff -> allDiffs.filter(_.shapeTrail == diff.shapeTrail).map(_.jsonTrail).toSet
     }.toMap
+
+    println("xxxx SHOWING RELATED DIFFS at JSON trails "+ relatedDiffs.values.flatten.mkString("\n"))
 
 
     val shapeRenderVisitor = new ShapeRenderVisitor(resolvers, spec, diffs)
@@ -80,13 +82,14 @@ class DiffPreviewer(resolvers: ShapesResolvers, spec: RfcState) {
     })
   }
 
-  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike]): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
+  def shapeOnlyFromShapeBuilder(bodies: Vector[JsonLike])(implicit shapeBuildingStrategy: ShapeBuildingStrategy): Option[(Vector[RfcCommand], ShapeOnlyRenderHelper)] = {
 
     if (bodies.isEmpty) {
       return None
     }
 
-    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)(ids = OpticIds.generator)
+
+    val (shapeId, commands) = DistributionAwareShapeBuilder.toCommands(bodies)(ids = OpticIds.generator, shapeBuildingStrategy)
     val flattenedCommands = commands.flatten
 
     val simulatedId = "simulated"
@@ -116,7 +119,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
       case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => sd
     }
     //add back in groupings
-    matching.toSet ///++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
+    matching.toSet ++ Set(relatedDiffs.filter(i => diffs.contains(i._1)).find(i => i._2.contains(bodyTrail)).map(i => i._1)).flatten
   }
 
   override val objectVisitor: JlasObjectVisitor = new JlasObjectVisitor {
@@ -225,7 +228,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
         val wasTheListMatched = matches.nonEmpty
         if (wasTheListMatched) {
           val expected = resolvers.resolveTrailToCoreShape(trailOrigin, Map.empty)
-          val resolvedListItem = resolvers.resolveParameterToShape(expected.shapeEntity.shapeId, ListKind.innerParam, expected.bindings)
+          val resolvedListItem = matches.head
 
           val ids = json.items.zipWithIndex.map {
             case (i, index) => {
@@ -243,7 +246,7 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
           pushShape(ExampleArray(
             jsonTrail.toString,
             Some(expected.shapeEntity.shapeId),
-            resolvedListItem.map(_.shapeId),
+            Some(resolvedListItem.shapeId),
             ids,
             diffs = diffsByTrail(jsonTrail)
           ))
@@ -355,9 +358,10 @@ class ExampleRenderVisitorNew(resolvers: ShapesResolvers, spec: RfcState, diffs:
 class ShapeRenderVisitor(resolvers: ShapesResolvers, spec: RfcState, diffs: Set[ShapeDiffResult]) extends ShapeVisitors with SpecRenderVisitorHelper {
 
   def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = {
-    diffs.collect {
-      case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => sd
-    }
+//    diffs.collect {
+//      case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => sd
+//    }
+    Set.empty
   }
 
 

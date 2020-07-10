@@ -1,0 +1,32 @@
+{
+  "shape" : "ObjectWithFields(Vector(FieldWithShape(value,PrimitiveKind(StringKind,List(JsonObjectKey(value)),shape_1),List(JsonObjectKey(value)),field_1)),List(),shape_2)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_2",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_1",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_1",
+        "shapeId" : "shape_2",
+        "name" : "value",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_1",
+            "shapeId" : "shape_1"
+          }
+        }
+      }
+    }
+  ]
+}

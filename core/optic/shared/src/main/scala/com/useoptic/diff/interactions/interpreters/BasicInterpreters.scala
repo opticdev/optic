@@ -2,6 +2,7 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.InteractiveDiffInterpretation
+import com.useoptic.diff.initial.ShapeBuildingStrategy
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
@@ -14,6 +15,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExport
 @JSExportAll
 class BasicInterpreters(rfcState: RfcState)(implicit ids: OpticDomainIds) extends InteractiveDiffInterpreter[InteractionDiffResult] {
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
   override def interpret(diff: InteractionDiffResult, interactions: Vector[HttpInteraction]): Seq[InteractiveDiffInterpretation] = {
     val interpretations = new BasicInterpretations(rfcState)
     diff match {

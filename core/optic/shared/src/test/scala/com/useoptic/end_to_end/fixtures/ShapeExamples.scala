@@ -2,7 +2,7 @@ package com.useoptic.end_to_end.fixtures
 
 import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapeEntity
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.dsa.OpticIds
 import com.useoptic.types.capture.JsonLikeFrom
 import io.circe.Json
@@ -16,7 +16,7 @@ object ShapeExamples {
 
   private
   def buildBasicShapeFrom(json: Json): (ShapeEntity, RfcState) = {
-    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json).get))(OpticIds.newDeterministicIdGenerator)
+    val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json).get))(OpticIds.newDeterministicIdGenerator, ShapeBuildingStrategy.inferPolymorphism)
 
 
     val rfcId: String = "rfc-1"

@@ -2,7 +2,7 @@ package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.shapes.Commands.ShapeProvider
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NumberKind, ObjectKind}
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.TestHelpers
 import org.scalatest.FunSpec
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
@@ -14,9 +14,10 @@ import io.circe.literal._
 
 
 class ResolverSpec extends FunSpec {
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
   describe("resolving trails") {
     describe("given a spec with a request body that is an object") {
-      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""{"f":[123]}""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
       val rfcState = TestHelpers.fromCommands(builtShape._2.flatten)
       val resolvers = new DefaultShapesResolvers(rfcState)
 
@@ -36,7 +37,7 @@ class ResolverSpec extends FunSpec {
       }
     }
     describe("given a spec with a request body that is an array") {
-      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""[{"id": 1}]""").get))(OpticIds.newDeterministicIdGenerator)
+      val builtShape = DistributionAwareShapeBuilder.toCommands(Vector(JsonLikeFrom.json(json"""[{"id": 1}]""").get))(OpticIds.newDeterministicIdGenerator, shapeBuildingStrategy)
       val rfcState = TestHelpers.fromCommands(builtShape._2.flatten)
       val resolvers = new DefaultShapesResolvers(rfcState)
       it("should resolve the root as a list") {

@@ -19,7 +19,7 @@ import { HeadingContribution, MarkdownContribution } from './DocContribution';
 import { DESCRIPTION, PURPOSE } from '../../ContributionKeys';
 import groupBy from 'lodash.groupby';
 import ContentTabs, { RequestTabsContextStore } from './ContentTabs';
-import { BreadcumbX } from '../diff/v2/DiffPreview';
+import { BreadcumbX } from '../diff/v2/DiffNewRegions';
 import { ShapeExpandedStore } from '../diff/v2/shape_viewers/ShapeRenderContext';
 import { ShapeOnlyViewer } from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
 import { ShapeBox } from '../diff/v2/DiffReviewExpanded';

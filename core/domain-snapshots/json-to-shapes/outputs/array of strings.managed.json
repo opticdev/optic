@@ -1,0 +1,34 @@
+{
+  "shape" : "ListOfShape(PrimitiveKind(StringKind,List(JsonArrayItem(0)),shape_2),List(),shape_3)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_2",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_3",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_3",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_2"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    }
+  ]
+}
