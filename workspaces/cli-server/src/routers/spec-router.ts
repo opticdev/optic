@@ -4,21 +4,15 @@ import {
   readApiConfig,
   readTestingConfig,
 } from '@useoptic/cli-config';
-import { parseIgnore } from '@useoptic/cli-config';
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
 import { ICliServerSession } from '../server';
 import sortBy from 'lodash.sortby';
-import {
-  developerDebugLogger,
-  FileSystemAvroCaptureLoader,
-  ICaptureLoader,
-} from '@useoptic/cli-shared';
-import * as http from 'http';
-import * as url from 'url';
-
+import { DefaultIdGenerator, developerDebugLogger } from '@useoptic/cli-shared';
+import { makeRouter as makeCaptureRouter } from './capture-router';
+import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 type CaptureId = string;
 type Iso8601Timestamp = string;
 export type InvalidCaptureState = {
@@ -177,21 +171,26 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.sendStatus(404);
       return;
     }
-
-    const paths = await getPathsRelativeToCwd(session.path);
-    const { configPath, capturesPath, exampleRequestsPath } = paths;
-    const config = await readApiConfig(configPath);
-    const capturesHelpers = new CapturesHelpers(capturesPath);
-    const exampleRequestsHelpers = new ExampleRequestsHelpers(
-      exampleRequestsPath
-    );
-    req.optic = {
-      config,
-      paths,
-      capturesHelpers,
-      exampleRequestsHelpers,
-    };
-    next();
+    try {
+      const paths = await getPathsRelativeToCwd(session.path);
+      const { configPath, capturesPath, exampleRequestsPath } = paths;
+      const config = await readApiConfig(configPath);
+      const capturesHelpers = new CapturesHelpers(capturesPath);
+      const exampleRequestsHelpers = new ExampleRequestsHelpers(
+        exampleRequestsPath
+      );
+      req.optic = {
+        config,
+        paths,
+        capturesHelpers,
+        exampleRequestsHelpers,
+      };
+      next();
+    } catch (e) {
+      res.status(500).json({
+        message: e.message,
+      });
+    }
   }
 
   const router = express.Router({ mergeParams: true });
@@ -268,68 +267,21 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         })),
     });
   });
-  router.put(
-    '/captures/:captureId/status',
-    bodyParser.json({ limit: '1kb' }),
-    async (req, res) => {
-      const { status } = req.body;
-      if (status !== 'completed') {
-        debugger;
-        return res.sendStatus(400);
-      }
-      try {
-        const { captureId } = req.params;
-        const captureInfo = await req.optic.capturesHelpers.loadCaptureState(
-          captureId
-        );
-        captureInfo.status = 'completed';
-        await req.optic.capturesHelpers.updateCaptureState(captureInfo);
-        res.sendStatus(204);
-      } catch (e) {
-        console.error(e);
-        debugger;
-        return res.sendStatus(400);
-      }
-    }
-  );
-  router.get('/captures/:captureId/status', async (req, res) => {
-    try {
-      const { captureId } = req.params;
-      const captureInfo = await req.optic.capturesHelpers.loadCaptureState(
-        captureId
-      );
-      const captureSummary = await req.optic.capturesHelpers.loadCaptureSummary(
-        captureId
-      );
-      res.json({
-        status: captureInfo.status,
-        diffsCount: captureSummary.diffsCount,
-        interactionsCount: captureSummary.interactionsCount,
-      });
-    } catch (e) {
-      return res.sendStatus(400);
-    }
-  });
-  router.get('/captures/:captureId/samples', async (req, res) => {
-    const { captureId } = req.params;
 
-    const loader: ICaptureLoader = new FileSystemAvroCaptureLoader({
-      captureId,
-      captureBaseDirectory: req.optic.paths.capturesPath,
+  router.get('/config', async (req, res) => {
+    res.json({
+      config: req.optic.config,
     });
-    try {
-      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
-      const capture = await loader.loadWithFilter(filter);
-      res.json({
-        metadata: {},
-        samples: capture.samples,
-        links: [{ rel: 'next', href: '' }],
-      });
-    } catch (e) {
-      console.error(e);
-      res.sendStatus(500);
-    }
   });
+
+  const captureRouter = makeCaptureRouter({
+    idGenerator: new DefaultIdGenerator(),
+    interactionPointerConverterFactory: (config: {
+      captureId: CaptureId;
+      captureBaseDirectory: string;
+    }) => new LocalCaptureInteractionPointerConverter(config),
+  });
+  router.use('/captures/:captureId', captureRouter);
 
   router.get('/testing-credentials', async (req, res) => {
     const { paths } = req.optic;

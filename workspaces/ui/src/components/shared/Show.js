@@ -1,17 +1,15 @@
 import React from 'react';
 
-export function Show({when, children, style}) {
+export function Show({ when, children, style }) {
   return (
-    <div style={{display: !when && 'none', ...style}}>
-      {when && children}
-    </div>
-  )
+    <div style={{ display: !when && 'none', ...style }}>{when && children}</div>
+  );
 }
 
-export function ShowSpan({when, children, style}) {
+export function ShowSpan({ when, children, style }) {
   return (
-    <span style={{display: !when && 'none', ...style}}>
+    <span style={{ display: !when && 'none', ...style }}>
       {when && children}
     </span>
-  )
+  );
 }

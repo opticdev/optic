@@ -1,0 +1,396 @@
+{
+  "events":[],
+  "session": {
+    "samples": [
+      {
+        "uuid": "8eff95b1-4f6d-4d3c-ba71-5e3792780ce4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 502,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "fa0def96-abf8-41a7-ba1f-7fd09c509090",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 502,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "1c0b722f-107c-4082-abe7-f3cdd1d92475",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggC",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2488a433-85f6-4b1f-bd80-23c2c46a5c87",
+        "request": {
+          "host": "localhost",
+          "method": "PATCH",
+          "path": "/todos/5exvbk000",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "1c47baf2-0b1d-43a1-a5c5-64f9249801a5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggC",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "a5eaf726-5548-4e37-8bc8-d5fb2accb2e9",
+        "request": {
+          "host": "localhost",
+          "method": "POST",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "e930e3f5-a006-46d8-85ae-447ce3150906",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "75f97fe4-4b0c-47e3-834f-ba991dd525a7",
+        "request": {
+          "host": "localhost",
+          "method": "PATCH",
+          "path": "/todos/5exvbk000",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "a3af782f-8e44-4e17-806d-025c8fb0a4fd",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "metadata": {}
+  },
+  "examples": {}
+}

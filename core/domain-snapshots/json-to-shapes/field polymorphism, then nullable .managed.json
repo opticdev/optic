@@ -1,0 +1,13 @@
+{
+  "inputJsons" : [
+    {
+      "value" : "String"
+    },
+    {
+      "value" : 123
+    },
+    {
+      "value" : null
+    }
+  ]
+}

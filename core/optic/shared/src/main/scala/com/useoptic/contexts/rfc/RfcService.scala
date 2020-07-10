@@ -5,7 +5,7 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.ddd._
 import com.useoptic.dsa.{OpticDomainIds, OpticIds}
 import com.useoptic.logging.Logger
-import com.useoptic.serialization.CommandSerialization
+import com.useoptic.serialization.{CommandSerialization, EventSerialization}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try

@@ -1,76 +1,48 @@
 import React from 'react';
-import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import {withRequestTabsContext} from '../../docs/ContentTabs';
+import { GenericContextFactory } from '../../../contexts/GenericContextFactory';
+import { withRequestTabsContext } from '../../docs/ContentTabs';
 
 const {
   Context: DiffContext,
-  withContext: withDiffContext
+  withContext: withDiffContext,
 } = GenericContextFactory();
 
-
 class _DiffContextStore extends React.Component {
-
   state = {
-    selectedDiff: null,
-    selectedInterpretation: null,
-    isFinishing: false
+    isFinishing: false,
   };
-
 
   render() {
     const {
-      endpointDiffManger,
-      setSuggestionToPreview,
       acceptSuggestion,
       acceptedSuggestions,
-      setTabTo
+      diffsForThisEndpoint,
+      completed,
     } = this.props;
-
-    const setSelectedDiff = (diff) => {
-      this.setState({selectedDiff: diff || null, selectedInterpretation: null})
-    };
-    const setSelectedInterpretation = (interpretation) => {
-      setSuggestionToPreview(interpretation);
-      this.setState({selectedInterpretation: interpretation});
-    };
 
     // const setIsFinishing = (bool) => this.setState({isFinishing: bool});
 
     const context = {
-      endpointDiffManger,
-      // regions,
-      // getDiffDescription,
-      // getInteractionsForDiff,
-      //selected diff
-      selectedDiff: this.state.selectedDiff,
-      setSelectedDiff,
+      diffsForThisEndpoint,
+      completed,
       isFinishing: this.state.isFinishing,
 
-      // setIsFinishing,
       clearPreview: () => {
         this.setState({
-          selectedDiff: null,
           exampleInteractions: [],
-          selectedInterpretation: null,
-          selectedInterpretationIndex: null,
-          isFinishing: false
+          isFinishing: false,
         });
       },
       reset: () => {
         this.props.reset();
         this.setState({
-          selectedDiff: null,
           exampleInteractions: [],
-          selectedInterpretation: null,
-          selectedInterpretationIndex: null,
-          isFinishing: false
+          isFinishing: false,
         });
       },
 
-      selectedInterpretation: this.state.selectedInterpretation,
-      setSelectedInterpretation,
       acceptSuggestion,
-      acceptedSuggestions
+      acceptedSuggestions,
     };
 
     return (
@@ -81,10 +53,6 @@ class _DiffContextStore extends React.Component {
   }
 }
 
-const DiffContextStore = withRequestTabsContext(_DiffContextStore)
+const DiffContextStore = withRequestTabsContext(_DiffContextStore);
 
-export {
-  DiffContext,
-  withDiffContext,
-  DiffContextStore
-};
+export { DiffContext, withDiffContext, DiffContextStore };
