@@ -24,6 +24,7 @@ export default function LocalCli(props) {
   const diffServiceFactory = async function (
     specService,
     captureService,
+    events,
     rfcState,
     additionalCommands,
     config,

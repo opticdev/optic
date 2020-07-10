@@ -33,6 +33,7 @@ export default function TestingSessions(props) {
   const diffServiceFactory = async (
     specService,
     captureService,
+    _events,
     _rfcState,
     additionalCommands,
     config,
@@ -40,8 +41,6 @@ export default function TestingSessions(props) {
   ) => {
     async function computeInitialDiff() {
       const capture = await specService.listCapturedSamples(captureId);
-      const events = await specService.listEvents();
-
       const commandContext = new RfcCommandContext(
         'simulated',
         'simulated',
@@ -52,13 +51,13 @@ export default function TestingSessions(props) {
         resolvers,
         rfcState,
       } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        JSON.parse(events),
+          _events,
         commandContext,
         additionalCommands
       );
       let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
       for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByNormalizedDiffs(
+          diffs = DiffHelpers.groupInteractionPointerByDiffs(
           resolvers,
           rfcState,
           JsonHelper.fromInteraction(interaction),

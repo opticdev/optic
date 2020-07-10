@@ -160,9 +160,10 @@ class _CaptureContextStore extends React.Component {
       additionalCommandsLength: this.state.additionalCommands.length,
       captureId,
     });
+    const eventsAsArray = ScalaJSHelpers.eventsJsArray(events);
 
     const config = await captureService.startDiff(
-      ScalaJSHelpers.eventsJsArray(events),
+      eventsAsArray,
       apiConfig.config.ignoreRequests || [],
       commandsToJson(this.state.additionalCommands), //commands serialize me
       pathId && method ? [{ pathId, method }] : [] // partition diff when on an endpoint page
@@ -173,6 +174,7 @@ class _CaptureContextStore extends React.Component {
     const diffService = await diffServiceFactory(
       specService,
       captureService,
+      eventsAsArray,
       rfcState,
       this.state.additionalCommands,
       config,

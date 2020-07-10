@@ -104,7 +104,7 @@ export class ExampleDiffService implements IDiffService {
     if (interaction.interaction) {
       return getOrUndefined(
         DiffResultHelper.descriptionFromDiff(
-          diff.diff,
+          diff,
           this.rfcState,
           JsonHelper.fromInteraction(interaction.interaction)
         )
