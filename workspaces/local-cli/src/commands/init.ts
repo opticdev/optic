@@ -44,12 +44,13 @@ export default class Init extends Command {
 name: ${name}
 tasks:
   # The default task, invoke using \`api run start\`
-  # Learn how to finish setting up Optic at http://docs.useoptic.com/setup
+  # Learn how to finish setting up Optic at https://docs.useoptic.com/setup
   start:
     command: echo "Setup A Valid Command to Start your API!"
     baseUrl: http://localhost:4000
 ignoreRequests:
-- OPTIONS *`.trimLeft();
+# For more information on configuration, visit https://docs.useoptic.com/captures
+- OPTIONS (.*)`.trimLeft();
 
     // const token: string = await Promise.resolve('token-from-backend')
 
