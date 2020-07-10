@@ -14,6 +14,9 @@ import {
 } from './authentication-server';
 import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
 
+const packageJson = require('../../package.json');
+const opticVersion = packageJson.version;
+
 const token = 'RvYGmY1bZqlbMukS8pP9DPEifG6CEBEs';
 const analytics = new Analytics(token, {
   flushAt: 1,
@@ -55,7 +58,10 @@ export function trackAndSpawn(event: string, properties: any = {}) {
       JSON.stringify({
         userId: user ? user.sub : 'anon',
         event,
-        properties,
+        properties: {
+          ...properties,
+          opticVersion,
+        },
       })
     );
   });
