@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.{Commands, ShapesAggregate}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NullableKind, OneOfKind, OptionalKind}
-import com.useoptic.diff.initial.DistributionAwareShapeBuilder
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
@@ -19,6 +19,7 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
 
   private val basicInterpretations = new BasicInterpretations(rfcState)
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
 
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     diff match {
@@ -55,7 +56,6 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
       if (resolved.get.isNull) {
         Seq(
           WrapWithNullable(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
-          RemoveFromSpec(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
         )
       } else {
         Seq(
@@ -198,8 +198,8 @@ class MissingValueInterpreter(rfcState: RfcState)(implicit ids: OpticDomainIds) 
   def WrapWithOneOf(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     val resolved = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
     val wrapperShapeId = ids.newShapeId
-    val p1 = ids.newParameterId
-    val p2 = ids.newParameterId
+    val p1 = ids.newShapeParameterId
+    val p2 = ids.newShapeParameterId
     val (inlineShapeId, newCommands) = DistributionAwareShapeBuilder.toCommands(Vector(resolved.get))
     val baseCommands = newCommands.flatten ++ Seq(
       AddShape(wrapperShapeId, OneOfKind.baseShapeId, ""),

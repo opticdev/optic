@@ -1,4 +1,7 @@
 import { Client } from '@useoptic/cli-client';
+import packageJson from '../package.json';
+
+const opticVersion = packageJson.version;
 
 let isAnalyticsEnabled = window.opticAnalyticsEnabled;
 
@@ -37,6 +40,8 @@ export async function touchAnalytics() {
 export async function track(event, props) {
   await readyPromise;
   if (isAnalyticsEnabled) {
-    window.analytics.track(event, props);
+    const allProps = { ...props, opticVersion };
+    window.analytics.track(event, allProps);
+    window.FS.event(event, allProps);
   }
 }

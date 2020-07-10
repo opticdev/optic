@@ -8,10 +8,12 @@ export const AddedGreenBackground = 'rgba(0,196,70,0.3)';
 export const ChangedYellowBackground = 'rgba(252,171,16,0.3)';
 export const RemovedRedBackground = 'rgba(248,51,60,0.3)';
 export const AddedGreen = '#17c8a3';
+export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
 
 export const methodColors = {
+  OPTIONS: '#686868',
   GET: '#52e2a3',
   POST: '#5aaad1',
   PUT: '#ee7517',
@@ -20,6 +22,7 @@ export const methodColors = {
 };
 
 export const methodColorsDark = {
+  OPTIONS: '#686868',
   GET: '#276c4e',
   POST: '#264859',
   PUT: '#69340a',
@@ -36,6 +39,7 @@ export const appTheme = createMuiTheme({
     removed: { main: RemovedRed, background: RemovedRedBackground },
 
     httpMethods: {
+      OPTIONS: { main: methodColors.OPTIONS, dark: methodColorsDark.OPTIONS },
       GET: { main: methodColors.GET, dark: methodColorsDark.GET },
       POST: { main: methodColors.POST, dark: methodColorsDark.POST },
       PUT: { main: methodColors.PUT, dark: methodColorsDark.PUT },

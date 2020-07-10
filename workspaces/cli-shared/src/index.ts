@@ -114,3 +114,17 @@ export async function delay(milliseconds: number) {
     setTimeout(resolve, milliseconds);
   });
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+import * as uuid from 'uuid';
+
+export interface IdGenerator<T> {
+  nextId(): T;
+}
+
+export class DefaultIdGenerator implements IdGenerator<string> {
+  nextId() {
+    return uuid.v4();
+  }
+}

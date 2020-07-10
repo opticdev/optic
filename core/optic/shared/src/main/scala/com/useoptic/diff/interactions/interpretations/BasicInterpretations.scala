@@ -8,7 +8,7 @@ import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInSha
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
-import com.useoptic.diff.initial.{DistributionAwareShapeBuilder}
+import com.useoptic.diff.initial.{DistributionAwareShapeBuilder, ShapeBuildingStrategy}
 import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, ShapeTrail, UnknownTrail}
@@ -17,10 +17,17 @@ import com.useoptic.diff.shapes.resolvers.JsonLikeResolvers
 import com.useoptic.dsa.OpticDomainIds
 import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
+import com.useoptic.diff.shapes.OptionalItemTrail
+import com.useoptic.diff.shapes.OptionalTrail
+import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
+import com.useoptic.diff.shapes.NullableItemTrail
+import com.useoptic.diff.shapes.NullableTrail
+import com.useoptic.diff.shapes.OneOfTrail
 
 class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
 
   private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+  implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
 
   def AddResponse(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
     val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
@@ -92,6 +99,8 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
 
+          implicit val shapeBuildingStrategy = if (interactions.size > 1) ShapeBuildingStrategy.inferPolymorphism else ShapeBuildingStrategy.learnASingleInteraction
+
           val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.request.body)))
           val commands = baseCommands ++ buildCommands.flatten ++ Seq(
             RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, rootShapeId, isRemoved = false))
@@ -138,7 +147,7 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
         val jsonBody = JsonLikeResolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), baseInteraction)
         val actuallyHasBody = jsonBody.isDefined
         if (actuallyHasBody) {
-
+          implicit val shapeBuildingStrategy = if (interactions.size > 1) ShapeBuildingStrategy.inferPolymorphism else ShapeBuildingStrategy.learnASingleInteraction
           val (rootShapeId, buildCommands) = DistributionAwareShapeBuilder.toCommands(interactions.flatMap(i =>  BodyUtilities.parseBody(i.response.body)))
 
           val commands = baseCommands ++ buildCommands.flatten ++ Seq(
@@ -202,6 +211,39 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
           Seq(
             ShapesCommands.SetParameterShape(ProviderInShape(t.oneOfId, ShapeProvider(inlineShapeId), t.parameterId))
           )
+        }
+        case t: OptionalTrail => {
+          //@TODO
+          Seq.empty
+        }
+        case t: OptionalItemTrail => {
+          //@TODO
+          Seq(
+            ShapesCommands.SetParameterShape(ProviderInShape(t.innerShapeId, ShapeProvider(inlineShapeId), OptionalKind.innerParam))
+          )
+        }
+        case t: NullableTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: NullableItemTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: OneOfTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: OneOfItemTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: UnknownTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case _ => {
+          Seq.empty
         }
       }
       case None => Seq(

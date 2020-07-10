@@ -53,6 +53,7 @@ object JsonHelper {
   def jsArrayToSeq(x: js.Array[Any]): Seq[Any] = {
     x.toSeq
   }
+
   def jsArrayToVector(x: js.Array[Any]): Vector[Any] = {
     x.toVector
   }

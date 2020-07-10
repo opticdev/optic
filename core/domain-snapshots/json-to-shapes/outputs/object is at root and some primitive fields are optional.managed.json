@@ -1,0 +1,52 @@
+{
+  "shape" : "ObjectWithFields(Vector(FieldWithShape(isDone,PrimitiveKind(BooleanKind,List(JsonObjectKey(isDone)),shape_1),List(JsonObjectKey(isDone)),field_1), FieldWithShape(message,PrimitiveKind(StringKind,List(JsonObjectKey(message)),shape_2),List(JsonObjectKey(message)),field_2)),List(),shape_3)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_3",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_1",
+        "baseShapeId" : "$boolean",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_1",
+        "shapeId" : "shape_3",
+        "name" : "isDone",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_1",
+            "shapeId" : "shape_1"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_2",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_2",
+        "shapeId" : "shape_3",
+        "name" : "message",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_2",
+            "shapeId" : "shape_2"
+          }
+        }
+      }
+    }
+  ]
+}

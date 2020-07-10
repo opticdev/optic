@@ -147,7 +147,6 @@ function BaseRfcStore(props) {
   const cachedQueryResults = stuffFromQueries(queries);
   const { specService } = props;
   const value = {
-    specService,
     rfcId,
     clientSessionId,
     clientId,

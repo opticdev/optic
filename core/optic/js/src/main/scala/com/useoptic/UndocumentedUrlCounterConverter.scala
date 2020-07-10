@@ -1,13 +1,20 @@
 package com.useoptic
 
+import com.useoptic.UrlCounterDeserializer.fromJson
+import com.useoptic.contexts.requests.Utilities
+import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.UndocumentedUrlHelpers.{MethodAndPath, UrlCounter}
+import com.useoptic.diff.interactions.Resolvers
+import com.useoptic.types.capture.HttpInteraction
+import com.useoptic.ux.NewEndpoint
 import io.circe.{Decoder, Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.syntax._
 import io.circe.generic.auto._
 
+import scala.collection.immutable
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 
 @JSExportTopLevel("UrlCounterJsonSerializer")
@@ -56,5 +63,23 @@ object UrlCounterDeserializer {
 
   def fromJs(x: js.Any) = {
     fromJson(convertJsToJson(x).right.get)
+  }
+
+
+}
+
+@JSExport
+@JSExportAll
+object UrlCounterHelper {
+  import UrlCounterDeserializer._
+  def fromJsonToSeq(jsJson: js.Any, rfcState: RfcState): js.Array[NewEndpoint] = {
+
+    val undocumented = convertJsToJson(jsJson).right.get.as[Seq[NewEndpoint]].right.get.map(i => {
+      //add back path Id for quick adding
+      val pathId = Utilities.resolvePath(i.path, rfcState.requestsState.pathComponents)
+      i.copy(pathId = pathId)
+    })
+
+    js.Array.apply(undocumented:_*)
   }
 }

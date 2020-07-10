@@ -13,9 +13,9 @@ class App extends React.Component {
   state = { hasError: false };
 
   render() {
-    const { hasError } = this.state;
+    const { hasError, error } = this.state;
 
-    if (hasError) return <AppError />;
+    if (hasError) return <AppError error={error} />;
 
     return (
       <React.Fragment>
@@ -36,7 +36,7 @@ class App extends React.Component {
   // ------------------
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    return { hasError: true, error: error };
   }
 
   componentDidMount() {
@@ -44,14 +44,17 @@ class App extends React.Component {
   }
 }
 
-function AppError() {
+function AppError(props) {
   const onClickRefresh = useCallback((e) => {
     e.preventDefault();
     window && window.location && window.location.reload(true);
   });
 
   useEffect(() => {
-    track('In-App-Error');
+    track('In-App-Error', {
+      message: props.error.message,
+      stack: props.error.stack,
+    });
   });
 
   // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched
@@ -105,6 +108,5 @@ function AppError() {
     </div>
   );
 }
-
 
 export default App;
