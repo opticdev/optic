@@ -209,7 +209,7 @@ export class HttpToolkitCapturingProxy {
         asJsonString: this.config.flags.includeQueryString
           ? JSON.stringify(jsonLikeValue)
           : null,
-        asText: this.config.flags.includeQueryString && rawQuery,
+        asText: this.config.flags.includeQueryString ? rawQuery : null,
         shapeHashV1Base64:
           jsonLikeValue && toBytes(jsonLikeValue).toString('base64'),
       };
