@@ -172,15 +172,6 @@ function _NewRegions(props) {
     });
   }
 
-  const copy =
-    newResponses.length > 0 &&
-    newRequests.length > 0 &&
-    'request and response types';
-  const copyFallback =
-    newResponses.length > 0 && newRequests.length === 0
-      ? 'response types'
-      : 'request types';
-
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
 

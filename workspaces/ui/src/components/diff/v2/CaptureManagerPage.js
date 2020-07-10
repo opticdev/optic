@@ -548,7 +548,7 @@ function UnrecognizedUrls(props) {
           })}
         </List>
 
-        {urls.length && (
+        {urls.length > 0 && (
           <Typography
             variant="subtitle2"
             color="primary"
