@@ -1,0 +1,110 @@
+{
+  "diffs" : [
+    {
+      "diff" : {
+        "UnmatchedResponseBodyShape" : {
+          "interactionTrail" : {
+            "path" : [
+              {
+                "ResponseBody" : {
+                  "contentType" : "application/json",
+                  "statusCode" : 200
+                }
+              }
+            ]
+          },
+          "requestsTrail" : {
+            "SpecResponseBody" : {
+              "responseId" : "response_1"
+            }
+          },
+          "shapeDiffResult" : {
+            "UnspecifiedShape" : {
+              "jsonTrail" : {
+                "path" : [
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "location"
+                    }
+                  },
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "principality"
+                    }
+                  },
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "coordinates"
+                    }
+                  },
+                  {
+                    "JsonObjectKey" : {
+                      "key" : "format"
+                    }
+                  }
+                ]
+              },
+              "shapeTrail" : {
+                "rootShapeId" : "shape_10",
+                "path" : [
+                  {
+                    "ObjectFieldTrail" : {
+                      "fieldId" : "field_7",
+                      "fieldShapeId" : "shape_9"
+                    }
+                  },
+                  {
+                    "ObjectFieldTrail" : {
+                      "fieldId" : "field_6",
+                      "fieldShapeId" : "shape_8"
+                    }
+                  },
+                  {
+                    "ObjectFieldTrail" : {
+                      "fieldId" : "field_4",
+                      "fieldShapeId" : "shape_6"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "title" : "'format' observed in the 200 Response body",
+      "suggestions" : [
+        {
+          "title" : "Add format",
+          "commandsJson" : [
+            {
+              "AddShape" : {
+                "shapeId" : "testing-shape_1",
+                "baseShapeId" : "$string",
+                "name" : ""
+              }
+            },
+            {
+              "AddField" : {
+                "fieldId" : "testing-field_1",
+                "shapeId" : "shape_5",
+                "name" : "format",
+                "shapeDescriptor" : {
+                  "FieldShapeFromShape" : {
+                    "fieldId" : "testing-field_1",
+                    "shapeId" : "testing-shape_1"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "preview" : [
+        "Vector((List(),ExampleObject(List(),Some(shape_10),List(List(JsonObjectKey(location))),List(),List(),Set())), (List(JsonObjectKey(location)),ExampleObject(List(JsonObjectKey(location)),Some(shape_9),List(List(JsonObjectKey(location), JsonObjectKey(principality))),List(),List(),Set())), (List(JsonObjectKey(location), JsonObjectKey(principality)),ExampleObject(List(JsonObjectKey(location), JsonObjectKey(principality)),Some(shape_8),List(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(city)), List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates)), List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(population))),List(),List(),Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(city)),ExamplePrimitive(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(city)),$string,Some(shape_2),\"San Fransisco\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates)),ExampleObject(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates)),Some(shape_5),List(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(lat)), List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(long))),List(),List(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format))),Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),ExamplePrimitive(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),$string,None,\"DMS\",Set(UnspecifiedShape(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),ShapeTrail(shape_10,List(ObjectFieldTrail(field_7,shape_9), ObjectFieldTrail(field_6,shape_8), ObjectFieldTrail(field_4,shape_6))))))), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(lat)),ExamplePrimitive(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(lat)),$string,Some(shape_3),\"37.7749° N\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(long)),ExamplePrimitive(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(long)),$string,Some(shape_4),\"122.4194° W\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(population)),ExamplePrimitive(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(population)),$number,Some(shape_7),830000,Set())))",
+        "Vector((List(JsonObjectKey(location)),KnownExampleField(List(JsonObjectKey(location)),location,field_7,shape_9,{\n  \"principality\" : {\n    \"city\" : \"San Fransisco\",\n    \"population\" : 830000,\n    \"coordinates\" : {\n      \"format\" : \"DMS\",\n      \"lat\" : \"37.7749° N\",\n      \"long\" : \"122.4194° W\"\n    }\n  }\n},Set())), (List(JsonObjectKey(location), JsonObjectKey(principality)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality)),principality,field_6,shape_8,{\n  \"city\" : \"San Fransisco\",\n  \"population\" : 830000,\n  \"coordinates\" : {\n    \"format\" : \"DMS\",\n    \"lat\" : \"37.7749° N\",\n    \"long\" : \"122.4194° W\"\n  }\n},Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(city)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(city)),city,field_1,shape_2,\"San Fransisco\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates)),coordinates,field_4,shape_6,{\n  \"format\" : \"DMS\",\n  \"lat\" : \"37.7749° N\",\n  \"long\" : \"122.4194° W\"\n},Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),UnexpectedExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),format,\"DMS\",Set(UnspecifiedShape(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(format)),ShapeTrail(shape_10,List(ObjectFieldTrail(field_7,shape_9), ObjectFieldTrail(field_6,shape_8), ObjectFieldTrail(field_4,shape_6))))))), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(lat)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(lat)),lat,field_2,shape_3,\"37.7749° N\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(long)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(coordinates), JsonObjectKey(long)),long,field_3,shape_4,\"122.4194° W\",Set())), (List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(population)),KnownExampleField(List(JsonObjectKey(location), JsonObjectKey(principality), JsonObjectKey(population)),population,field_5,shape_7,830000,Set())))",
+        "Vector()",
+        "Vector((shape_10,SpecObject(shape_10,List(SpecField(location,field_7,shape_9,Set())),Set())), (shape_2,SpecPrimitive(shape_2,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_3,SpecPrimitive(shape_3,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_4,SpecPrimitive(shape_4,$string,RenderName(List(NameComponent(String,StringColor,,None,None))),Set())), (shape_5,SpecObject(shape_5,List(SpecField(lat,field_2,shape_3,Set()), SpecField(long,field_3,shape_4,Set())),Set())), (shape_6,WrappedType(shape_6,$optional,RenderName(List(NameComponent(,modifier, (optional),Some(shape_5),None))),shape_5,Set())), (shape_7,SpecPrimitive(shape_7,$number,RenderName(List(NameComponent(Number,NumberColor,,None,None))),Set())), (shape_8,SpecObject(shape_8,List(SpecField(city,field_1,shape_2,Set()), SpecField(coordinates,field_4,shape_6,Set()), SpecField(population,field_5,shape_7,Set())),Set())), (shape_9,SpecObject(shape_9,List(SpecField(principality,field_6,shape_8,Set())),Set())))"
+      ]
+    }
+  ]
+}

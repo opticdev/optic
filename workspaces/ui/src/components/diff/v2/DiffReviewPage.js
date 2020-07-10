@@ -202,12 +202,14 @@ export function DiffReviewPage(props) {
           {currentTab === newRegionsConst && (
             <NewRegions
               ignoreDiff={ignoreDiff}
+              captureId={captureId}
               newRegions={JsonHelper.seqToJsArray(regions.newRegions)}
             />
           )}
 
           {currentTab && currentTab !== newRegionsConst && (
             <DiffCursor
+              captureId={captureId}
               key={currentTab}
               diffs={JsonHelper.seqToJsArray(
                 regions.bodyDiffsForId(currentTab)

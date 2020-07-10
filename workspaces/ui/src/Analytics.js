@@ -38,5 +38,6 @@ export async function track(event, props) {
   await readyPromise;
   if (isAnalyticsEnabled) {
     window.analytics.track(event, props);
+    window.FS.event(event, props);
   }
 }

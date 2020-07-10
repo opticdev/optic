@@ -1,0 +1,368 @@
+{
+  "events" : [
+    {
+      "PathComponentAdded" : {
+        "pathId" : "path_1",
+        "parentPathId" : "root",
+        "name" : "people",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod" : {
+        "parameterId" : "request-parameter_1",
+        "pathId" : "path_1",
+        "httpMethod" : "GET",
+        "parameterLocation" : "query",
+        "name" : "queryString",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_14",
+        "baseShapeId" : "$object",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet" : {
+        "parameterId" : "request-parameter_1",
+        "parameterDescriptor" : {
+          "shapeId" : "shape_14",
+          "isRemoved" : false
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestAdded" : {
+        "requestId" : "request_1",
+        "pathId" : "path_1",
+        "httpMethod" : "GET",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod" : {
+        "responseId" : "response_1",
+        "pathId" : "path_1",
+        "httpMethod" : "GET",
+        "httpStatusCode" : 200,
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_12",
+        "baseShapeId" : "$object",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_7",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "field_4",
+        "shapeId" : "shape_12",
+        "name" : "age",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_4",
+            "shapeId" : "shape_7"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_9",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_10",
+        "baseShapeId" : "$list",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "field_5",
+        "shapeId" : "shape_12",
+        "name" : "colors",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_5",
+            "shapeId" : "shape_10"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_11",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "field_6",
+        "shapeId" : "shape_12",
+        "name" : "name",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_6",
+            "shapeId" : "shape_11"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "shape_13",
+        "baseShapeId" : "$list",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_10",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_9"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_13",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_12"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet" : {
+        "responseId" : "response_1",
+        "bodyDescriptor" : {
+          "httpContentType" : "application/json",
+          "shapeId" : "shape_13",
+          "isRemoved" : false
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    }
+  ],
+  "interpretations" : [
+    {
+      "uuid" : "id",
+      "request" : {
+        "host" : "example.com",
+        "method" : "GET",
+        "path" : "/people",
+        "query" : {
+          "shapeHashV1Base64" : null,
+          "asJsonString" : null,
+          "asText" : null
+        },
+        "headers" : {
+          "shapeHashV1Base64" : null,
+          "asJsonString" : null,
+          "asText" : null
+        },
+        "body" : {
+          "contentType" : null,
+          "value" : {
+            "shapeHashV1Base64" : null,
+            "asJsonString" : null,
+            "asText" : null
+          }
+        }
+      },
+      "response" : {
+        "statusCode" : 200,
+        "headers" : {
+          "shapeHashV1Base64" : null,
+          "asJsonString" : null,
+          "asText" : null
+        },
+        "body" : {
+          "contentType" : "application/json",
+          "value" : {
+            "shapeHashV1Base64" : null,
+            "asJsonString" : "[[]]",
+            "asText" : "[[]]"
+          }
+        }
+      },
+      "tags" : [
+      ]
+    }
+  ]
+}

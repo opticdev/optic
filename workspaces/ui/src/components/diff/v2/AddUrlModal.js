@@ -27,6 +27,7 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { track } from '../../../Analytics';
+import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -46,6 +47,7 @@ export const NewUrlModal = withRfcContext((props) => {
   const { children, newUrl, urlOverride, allUnmatchedPaths, onAdd } = props;
   const classes = useStyles();
   const { cachedQueryResults, handleCommands } = useContext(RfcContext);
+  const { captureId } = useContext(CaptureContext);
   const knownPathId = getOrUndefined(newUrl.pathId);
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
@@ -53,6 +55,12 @@ export const NewUrlModal = withRfcContext((props) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    track('Clicked Undocumented Url', {
+      captureId: captureId,
+      method: newUrl.method,
+      path: newUrl.path,
+      knownPathId,
+    });
   };
 
   const handleClose = () => {
@@ -67,6 +75,7 @@ export const NewUrlModal = withRfcContext((props) => {
   const handleCreate = (purpose) => {
     track('Documented New URL', {
       purpose,
+      captureId,
       method: newUrl.method,
       pathExpression,
     });

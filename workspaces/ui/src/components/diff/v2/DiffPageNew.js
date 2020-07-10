@@ -27,6 +27,7 @@ import {
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import { DiffReviewPage } from './DiffReviewPage';
+import { track } from '../../../Analytics';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
@@ -107,7 +108,7 @@ function flatten(acc, array) {
 }
 
 const InnerDiffWrapper = function (props) {
-  const { isLoading, session } = props;
+  const { isLoading, session, captureId } = props;
   const { children } = props;
   const {
     endpointDiffs,
@@ -146,6 +147,9 @@ const InnerDiffWrapper = function (props) {
         updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
+        track('Diff Reset', {
+          captureId,
+        });
       }}
       acceptSuggestion={(...suggestions) => {
         if (suggestions) {
@@ -155,6 +159,12 @@ const InnerDiffWrapper = function (props) {
             .map((x) => jsonHelper.seqToJsArray(x.commands))
             .reduce(flatten, []);
           updatedAdditionalCommands(simulatedCommands);
+          suggestions.map((i) => {
+            track('Accept Suggestion', {
+              captureId,
+              suggestion: i.action,
+            });
+          });
         }
       }}
       acceptedSuggestions={acceptedSuggestions}
@@ -209,6 +219,7 @@ class _CaptureSessionInlineContext extends React.Component {
                       <InnerDiffWrapper
                         pathId={pathId}
                         method={method}
+                        captureId={captureId}
                         ignoredDiffs={ignoredDiffs}
                         resetIgnored={resetIgnored}
                         resetAccepted={resetAccepted}

@@ -1,0 +1,1236 @@
+{
+  "shape" : "ObjectWithFields(Vector(FieldWithShape(MRData,ObjectWithFields(Vector(FieldWithShape(RaceTable,ObjectWithFields(Vector(FieldWithShape(Races,ListOfShape(ObjectWithFields(Vector(FieldWithShape(Circuit,ObjectWithFields(Vector(FieldWithShape(Location,ObjectWithFields(Vector(FieldWithShape(country,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(country)),shape_84),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(country)),field_81), FieldWithShape(lat,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(lat)),shape_85),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(lat)),field_82), FieldWithShape(locality,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(locality)),shape_86),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(locality)),field_83), FieldWithShape(long,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(long)),shape_87),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location), JsonObjectKey(long)),field_84)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location)),shape_88),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(Location)),field_85), FieldWithShape(circuitId,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(circuitId)),shape_89),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(circuitId)),field_86), FieldWithShape(circuitName,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(circuitName)),shape_90),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(circuitName)),field_87), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(url)),shape_91),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit), JsonObjectKey(url)),field_88)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit)),shape_92),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Circuit)),field_89), FieldWithShape(Results,ListOfShape(ObjectWithFields(Vector(FieldWithShape(Constructor,ObjectWithFields(Vector(FieldWithShape(constructorId,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(constructorId)),shape_126),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(constructorId)),field_122), FieldWithShape(name,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(name)),shape_127),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(name)),field_123), FieldWithShape(nationality,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(nationality)),shape_128),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(nationality)),field_124), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(url)),shape_129),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor), JsonObjectKey(url)),field_125)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor)),shape_130),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Constructor)),field_126), FieldWithShape(Driver,ObjectWithFields(Vector(FieldWithShape(code,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(code)),shape_131),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(code)),field_127), FieldWithShape(dateOfBirth,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(dateOfBirth)),shape_132),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(dateOfBirth)),field_128), FieldWithShape(driverId,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(driverId)),shape_133),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(driverId)),field_129), FieldWithShape(familyName,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(familyName)),shape_134),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(familyName)),field_130), FieldWithShape(givenName,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(givenName)),shape_135),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(givenName)),field_131), FieldWithShape(nationality,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(nationality)),shape_136),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(nationality)),field_132), FieldWithShape(permanentNumber,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(permanentNumber)),shape_137),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(permanentNumber)),field_133), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(url)),shape_138),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver), JsonObjectKey(url)),field_134)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver)),shape_139),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Driver)),field_135), FieldWithShape(FastestLap,ObjectWithFields(Vector(FieldWithShape(AverageSpeed,ObjectWithFields(Vector(FieldWithShape(speed,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed), JsonObjectKey(speed)),shape_140),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed), JsonObjectKey(speed)),field_136), FieldWithShape(units,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed), JsonObjectKey(units)),shape_141),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed), JsonObjectKey(units)),field_137)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed)),shape_142),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(AverageSpeed)),field_138), FieldWithShape(Time,ObjectWithFields(Vector(FieldWithShape(time,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(Time), JsonObjectKey(time)),shape_143),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(Time), JsonObjectKey(time)),field_139)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(Time)),shape_144),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(Time)),field_140), FieldWithShape(lap,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(lap)),shape_145),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(lap)),field_141), FieldWithShape(rank,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(rank)),shape_146),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap), JsonObjectKey(rank)),field_142)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap)),shape_147),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(FastestLap)),field_143), FieldWithShape(Time,ObjectWithFields(Vector(FieldWithShape(millis,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time), JsonObjectKey(millis)),shape_148),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time), JsonObjectKey(millis)),field_144), FieldWithShape(time,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time), JsonObjectKey(time)),shape_149),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time), JsonObjectKey(time)),field_145)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time)),shape_150),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(Time)),field_146), FieldWithShape(grid,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(grid)),shape_151),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(grid)),field_147), FieldWithShape(laps,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(laps)),shape_152),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(laps)),field_148), FieldWithShape(number,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(number)),shape_153),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(number)),field_149), FieldWithShape(points,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(points)),shape_154),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(points)),field_150), FieldWithShape(position,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(position)),shape_155),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(position)),field_151), FieldWithShape(positionText,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(positionText)),shape_156),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(positionText)),field_152), FieldWithShape(status,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(status)),shape_157),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0), JsonObjectKey(status)),field_153)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results), JsonArrayItem(0)),shape_158),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results)),shape_159),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(Results)),field_154), FieldWithShape(date,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(date)),shape_160),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(date)),field_155), FieldWithShape(raceName,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(raceName)),shape_161),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(raceName)),field_156), FieldWithShape(round,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(round)),shape_162),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(round)),field_157), FieldWithShape(season,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(season)),shape_163),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(season)),field_158), FieldWithShape(time,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(time)),shape_164),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(time)),field_159), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(url)),shape_165),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0), JsonObjectKey(url)),field_160)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races), JsonArrayItem(0)),shape_166),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races)),shape_167),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(Races)),field_161), FieldWithShape(round,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(round)),shape_168),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(round)),field_162), FieldWithShape(season,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(season)),shape_169),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable), JsonObjectKey(season)),field_163)),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable)),shape_170),List(JsonObjectKey(MRData), JsonObjectKey(RaceTable)),field_164), FieldWithShape(limit,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(limit)),shape_171),List(JsonObjectKey(MRData), JsonObjectKey(limit)),field_165), FieldWithShape(offset,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(offset)),shape_172),List(JsonObjectKey(MRData), JsonObjectKey(offset)),field_166), FieldWithShape(series,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(series)),shape_173),List(JsonObjectKey(MRData), JsonObjectKey(series)),field_167), FieldWithShape(total,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(total)),shape_174),List(JsonObjectKey(MRData), JsonObjectKey(total)),field_168), FieldWithShape(url,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(url)),shape_175),List(JsonObjectKey(MRData), JsonObjectKey(url)),field_169), FieldWithShape(xmlns,PrimitiveKind(StringKind,List(JsonObjectKey(MRData), JsonObjectKey(xmlns)),shape_176),List(JsonObjectKey(MRData), JsonObjectKey(xmlns)),field_170)),List(JsonObjectKey(MRData)),shape_177),List(JsonObjectKey(MRData)),field_171)),List(),shape_178)",
+  "commandsJson" : [
+    {
+      "AddShape" : {
+        "shapeId" : "shape_178",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_177",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_170",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_166",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_92",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_88",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_84",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_81",
+        "shapeId" : "shape_88",
+        "name" : "country",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_81",
+            "shapeId" : "shape_84"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_85",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_82",
+        "shapeId" : "shape_88",
+        "name" : "lat",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_82",
+            "shapeId" : "shape_85"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_86",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_83",
+        "shapeId" : "shape_88",
+        "name" : "locality",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_83",
+            "shapeId" : "shape_86"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_87",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_84",
+        "shapeId" : "shape_88",
+        "name" : "long",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_84",
+            "shapeId" : "shape_87"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_85",
+        "shapeId" : "shape_92",
+        "name" : "Location",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_85",
+            "shapeId" : "shape_88"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_89",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_86",
+        "shapeId" : "shape_92",
+        "name" : "circuitId",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_86",
+            "shapeId" : "shape_89"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_90",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_87",
+        "shapeId" : "shape_92",
+        "name" : "circuitName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_87",
+            "shapeId" : "shape_90"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_91",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_88",
+        "shapeId" : "shape_92",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_88",
+            "shapeId" : "shape_91"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_89",
+        "shapeId" : "shape_166",
+        "name" : "Circuit",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_89",
+            "shapeId" : "shape_92"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_158",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_130",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_126",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_122",
+        "shapeId" : "shape_130",
+        "name" : "constructorId",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_122",
+            "shapeId" : "shape_126"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_127",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_123",
+        "shapeId" : "shape_130",
+        "name" : "name",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_123",
+            "shapeId" : "shape_127"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_128",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_124",
+        "shapeId" : "shape_130",
+        "name" : "nationality",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_124",
+            "shapeId" : "shape_128"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_129",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_125",
+        "shapeId" : "shape_130",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_125",
+            "shapeId" : "shape_129"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_126",
+        "shapeId" : "shape_158",
+        "name" : "Constructor",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_126",
+            "shapeId" : "shape_130"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_139",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_131",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_127",
+        "shapeId" : "shape_139",
+        "name" : "code",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_127",
+            "shapeId" : "shape_131"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_132",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_128",
+        "shapeId" : "shape_139",
+        "name" : "dateOfBirth",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_128",
+            "shapeId" : "shape_132"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_133",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_129",
+        "shapeId" : "shape_139",
+        "name" : "driverId",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_129",
+            "shapeId" : "shape_133"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_134",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_130",
+        "shapeId" : "shape_139",
+        "name" : "familyName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_130",
+            "shapeId" : "shape_134"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_135",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_131",
+        "shapeId" : "shape_139",
+        "name" : "givenName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_131",
+            "shapeId" : "shape_135"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_136",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_132",
+        "shapeId" : "shape_139",
+        "name" : "nationality",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_132",
+            "shapeId" : "shape_136"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_137",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_133",
+        "shapeId" : "shape_139",
+        "name" : "permanentNumber",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_133",
+            "shapeId" : "shape_137"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_138",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_134",
+        "shapeId" : "shape_139",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_134",
+            "shapeId" : "shape_138"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_135",
+        "shapeId" : "shape_158",
+        "name" : "Driver",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_135",
+            "shapeId" : "shape_139"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_147",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_142",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_140",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_136",
+        "shapeId" : "shape_142",
+        "name" : "speed",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_136",
+            "shapeId" : "shape_140"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_141",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_137",
+        "shapeId" : "shape_142",
+        "name" : "units",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_137",
+            "shapeId" : "shape_141"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_138",
+        "shapeId" : "shape_147",
+        "name" : "AverageSpeed",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_138",
+            "shapeId" : "shape_142"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_144",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_143",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_139",
+        "shapeId" : "shape_144",
+        "name" : "time",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_139",
+            "shapeId" : "shape_143"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_140",
+        "shapeId" : "shape_147",
+        "name" : "Time",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_140",
+            "shapeId" : "shape_144"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_145",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_141",
+        "shapeId" : "shape_147",
+        "name" : "lap",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_141",
+            "shapeId" : "shape_145"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_146",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_142",
+        "shapeId" : "shape_147",
+        "name" : "rank",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_142",
+            "shapeId" : "shape_146"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_143",
+        "shapeId" : "shape_158",
+        "name" : "FastestLap",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_143",
+            "shapeId" : "shape_147"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_150",
+        "baseShapeId" : "$object",
+        "name" : ""
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_148",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_144",
+        "shapeId" : "shape_150",
+        "name" : "millis",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_144",
+            "shapeId" : "shape_148"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_149",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_145",
+        "shapeId" : "shape_150",
+        "name" : "time",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_145",
+            "shapeId" : "shape_149"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_146",
+        "shapeId" : "shape_158",
+        "name" : "Time",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_146",
+            "shapeId" : "shape_150"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_151",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_147",
+        "shapeId" : "shape_158",
+        "name" : "grid",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_147",
+            "shapeId" : "shape_151"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_152",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_148",
+        "shapeId" : "shape_158",
+        "name" : "laps",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_148",
+            "shapeId" : "shape_152"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_153",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_149",
+        "shapeId" : "shape_158",
+        "name" : "number",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_149",
+            "shapeId" : "shape_153"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_154",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_150",
+        "shapeId" : "shape_158",
+        "name" : "points",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_150",
+            "shapeId" : "shape_154"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_155",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_151",
+        "shapeId" : "shape_158",
+        "name" : "position",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_151",
+            "shapeId" : "shape_155"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_156",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_152",
+        "shapeId" : "shape_158",
+        "name" : "positionText",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_152",
+            "shapeId" : "shape_156"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_157",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_153",
+        "shapeId" : "shape_158",
+        "name" : "status",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_153",
+            "shapeId" : "shape_157"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_159",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_154",
+        "shapeId" : "shape_166",
+        "name" : "Results",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_154",
+            "shapeId" : "shape_159"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_160",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_155",
+        "shapeId" : "shape_166",
+        "name" : "date",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_155",
+            "shapeId" : "shape_160"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_161",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_156",
+        "shapeId" : "shape_166",
+        "name" : "raceName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_156",
+            "shapeId" : "shape_161"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_162",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_157",
+        "shapeId" : "shape_166",
+        "name" : "round",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_157",
+            "shapeId" : "shape_162"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_163",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_158",
+        "shapeId" : "shape_166",
+        "name" : "season",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_158",
+            "shapeId" : "shape_163"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_164",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_159",
+        "shapeId" : "shape_166",
+        "name" : "time",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_159",
+            "shapeId" : "shape_164"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_165",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_160",
+        "shapeId" : "shape_166",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_160",
+            "shapeId" : "shape_165"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_167",
+        "baseShapeId" : "$list",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_161",
+        "shapeId" : "shape_170",
+        "name" : "Races",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_161",
+            "shapeId" : "shape_167"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_168",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_162",
+        "shapeId" : "shape_170",
+        "name" : "round",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_162",
+            "shapeId" : "shape_168"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_169",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_163",
+        "shapeId" : "shape_170",
+        "name" : "season",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_163",
+            "shapeId" : "shape_169"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_164",
+        "shapeId" : "shape_177",
+        "name" : "RaceTable",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_164",
+            "shapeId" : "shape_170"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_171",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_165",
+        "shapeId" : "shape_177",
+        "name" : "limit",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_165",
+            "shapeId" : "shape_171"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_172",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_166",
+        "shapeId" : "shape_177",
+        "name" : "offset",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_166",
+            "shapeId" : "shape_172"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_173",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_167",
+        "shapeId" : "shape_177",
+        "name" : "series",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_167",
+            "shapeId" : "shape_173"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_174",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_168",
+        "shapeId" : "shape_177",
+        "name" : "total",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_168",
+            "shapeId" : "shape_174"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_175",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_169",
+        "shapeId" : "shape_177",
+        "name" : "url",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_169",
+            "shapeId" : "shape_175"
+          }
+        }
+      }
+    },
+    {
+      "AddShape" : {
+        "shapeId" : "shape_176",
+        "baseShapeId" : "$string",
+        "name" : ""
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_170",
+        "shapeId" : "shape_177",
+        "name" : "xmlns",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_170",
+            "shapeId" : "shape_176"
+          }
+        }
+      }
+    },
+    {
+      "AddField" : {
+        "fieldId" : "field_171",
+        "shapeId" : "shape_178",
+        "name" : "MRData",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "field_171",
+            "shapeId" : "shape_177"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_159",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_158"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    },
+    {
+      "SetParameterShape" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "shape_167",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "shape_166"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        }
+      }
+    }
+  ]
+}

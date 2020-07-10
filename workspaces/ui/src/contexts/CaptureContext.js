@@ -7,9 +7,11 @@ import {
   CompareEquality,
   DiffResultHelper,
   JsonHelper,
+  lengthScala,
   ScalaJSHelpers,
 } from '@useoptic/domain';
 import debounce from 'lodash.debounce';
+import { track } from '../Analytics';
 export const CaptureContext = React.createContext(null);
 
 export function useCaptureContext() {
@@ -61,12 +63,22 @@ class _CaptureContextStore extends React.Component {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
         if (!notifData.hasMoreInteractions) {
           console.log('completed diff');
+          track('Completed Diff', {
+            captureId: this.props.captureId,
+          });
         }
-        return {
+        const stats = {
           completed: !notifData.hasMoreInteractions,
           skipped: notifData.skippedInteractionsCounter,
           processed: notifData.diffedInteractionsCounter,
         };
+
+        track('Diff Progress', {
+          captureId: this.props.captureId,
+          ...stats,
+        });
+
+        return stats;
       } else {
         return {};
       }
@@ -81,6 +93,13 @@ class _CaptureContextStore extends React.Component {
       ]);
 
       console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
+
+      track('Diff Incremental Results', {
+        captureId: this.props.captureId,
+        diffs: diffsResponse.diffs.length,
+        newUrls: urlsResponse.length,
+      });
+
       this.setState({
         endpointDiffs: diffsResponse.diffs,
         unrecognizedUrls: urlsResponse,
@@ -136,17 +155,18 @@ class _CaptureContextStore extends React.Component {
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
 
-    console.log('look here ', ScalaJSHelpers.eventsJsArray(events));
+    track('Starting Diff', {
+      eventsLength: events.length,
+      additionalCommandsLength: this.state.additionalCommands.length,
+      captureId,
+    });
 
-    console.log('trying to start a new diff');
     const config = await captureService.startDiff(
       ScalaJSHelpers.eventsJsArray(events),
       apiConfig.config.ignoreRequests || [],
       commandsToJson(this.state.additionalCommands), //commands serialize me
       pathId && method ? [{ pathId, method }] : [] // partition diff when on an endpoint page
     );
-
-    console.log('Starting new Diff ', config);
 
     const rfcState = rfcService.currentState(rfcId);
 
@@ -222,6 +242,7 @@ class _CaptureContextStore extends React.Component {
 
     const value = {
       pendingUpdates,
+      captureId: this.props.captureId,
       config,
       lastUpdate,
       endpointDiffs: endpointDiffsWithoutIgnored,

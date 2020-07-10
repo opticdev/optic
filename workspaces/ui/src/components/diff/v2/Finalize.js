@@ -51,6 +51,7 @@ export default function FinalizeDialog(props) {
   const commit = async () => {
     track('Committed Changes to Endpoint', {
       message: commitMessage,
+      captureId,
       suggestions: acceptedSuggestions.length,
     });
     const newEventStore = initialEventStore.getCopy(rfcId);

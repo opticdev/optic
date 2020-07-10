@@ -386,6 +386,8 @@ abstract class NewRegionDiff {
 
   override def toString(): String = diff.toString + interactionPointers.toString()
 
+  def locationString = Seq(contentType, statusCode).flatten.toString()
+
 }
 
 @JSExportAll

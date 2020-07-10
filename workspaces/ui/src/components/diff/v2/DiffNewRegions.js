@@ -59,9 +59,10 @@ import {
   useInteractionWithPointer,
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
+import { track } from '../../../Analytics';
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff } = props;
+  const { newRegions, ignoreDiff, captureId } = props;
 
   const classes = useStyles();
 
@@ -160,6 +161,17 @@ function _NewRegions(props) {
       })
       .filter((i) => !!i);
 
+  if (newRequests.length || newResponses.length) {
+    track('Diff New Bodies', {
+      requestCount: newRequests.length,
+      responseCount: newResponses.length,
+      regions: [
+        newRequests.map((i) => i.locationString),
+        newResponses.map((i) => i.locationString),
+      ],
+    });
+  }
+
   const copy =
     newResponses.length > 0 &&
     newRequests.length > 0 &&
@@ -205,7 +217,12 @@ function _NewRegions(props) {
                   size="medium"
                   checked={inferPolymorphism}
                   disabled={finished}
-                  onChange={(e) => setInferPolymorphism(e.target.checked)}
+                  onChange={(e) => {
+                    setInferPolymorphism(e.target.checked);
+                    if (e.target.checked) {
+                      track('Infer polymorhpism', { captureId });
+                    }
+                  }}
                   color="primary"
                 />
               }
@@ -234,8 +251,7 @@ function _NewRegions(props) {
             size="small"
             color="primary"
             variant="contained"
-            disabled={approveCount === 0}
-            disabled={finished}
+            disabled={approveCount === 0 || finished}
             onClick={onApply}
           >
             Document ({approveCount}) bodies

@@ -27,6 +27,7 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
+import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,10 +80,11 @@ export class DiffReviewExpandedCached extends React.Component {
   }
 
   render() {
-    const { selectedDiff, setSelectedDiff } = this.props;
+    const { selectedDiff, captureId, setSelectedDiff } = this.props;
     return (
       <DiffReviewExpanded
         diff={selectedDiff}
+        captureId={captureId}
         {...{ selectedDiff, setSelectedDiff }}
       />
     );
@@ -91,11 +93,25 @@ export class DiffReviewExpandedCached extends React.Component {
 
 export const DiffReviewExpanded = (props) => {
   const classes = useStyles();
-  const { diff, selectedDiff, setSelectedDiff, rfcContext } = props;
+  const { diff, selectedDiff, setSelectedDiff, rfcContext, captureId } = props;
 
   const description = useDiffDescription(diff);
 
-  const [selectedInterpretation, setSelectedInterpretation] = useState(null);
+  const [selectedInterpretation, setSelectedInterpretationInner] = useState(
+    null
+  );
+
+  const setSelectedInterpretation = (s) => {
+    if (description && s) {
+      track('Previewing Suggestion', {
+        captureId,
+        diff: description.title,
+        diffAssertion: description.assertion,
+        suggestion: s.action,
+      });
+    }
+    setSelectedInterpretationInner(s);
+  };
   useEffect(() => {
     // when diff changes, remove selection
     setSelectedInterpretation(null);
