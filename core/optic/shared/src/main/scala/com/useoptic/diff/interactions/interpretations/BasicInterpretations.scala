@@ -20,6 +20,9 @@ import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 import com.useoptic.diff.shapes.OptionalItemTrail
 import com.useoptic.diff.shapes.OptionalTrail
 import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
+import com.useoptic.diff.shapes.NullableItemTrail
+import com.useoptic.diff.shapes.NullableTrail
+import com.useoptic.diff.shapes.OneOfTrail
 
 class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
 
@@ -211,14 +214,36 @@ class BasicInterpretations(rfcState: RfcState)(implicit ids: OpticDomainIds) {
         }
         case t: OptionalTrail => {
           //@TODO
-          Seq()
+          Seq.empty
         }
         case t: OptionalItemTrail => {
           //@TODO
           Seq(
             ShapesCommands.SetParameterShape(ProviderInShape(t.innerShapeId, ShapeProvider(inlineShapeId), OptionalKind.innerParam))
-
           )
+        }
+        case t: NullableTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: NullableItemTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: OneOfTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: OneOfItemTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case t: UnknownTrail => {
+          //@TODO:
+          Seq.empty
+        }
+        case _ => {
+          Seq.empty
         }
       }
       case None => Seq(
