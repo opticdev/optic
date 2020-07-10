@@ -109,7 +109,7 @@ export class DiffCursor extends React.Component {
       toggle: this.toggle,
     };
     return (
-      <div key={this.props.key}>
+      <div key={this.props.tab}>
         <Cursor {...props} />
         <DiffReviewExpandedCached
           captureId={captureId}
