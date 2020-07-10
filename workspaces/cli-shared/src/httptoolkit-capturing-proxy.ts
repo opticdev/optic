@@ -59,8 +59,9 @@ export class HttpToolkitCapturingProxy {
     this.config = config;
     const tempBasePath = path.join(os.tmpdir(), 'optic-');
     const configPath = await fs.mkdtemp(tempBasePath);
+    const keyBitLength = 2048;
     const certificateInfo = await mockttp.generateCACertificate({
-      bits: 2048,
+      bits: keyBitLength,
       commonName: 'Optic Labs Corp',
     });
     const certificatePath = path.join(configPath, '.optic', 'certificates');
@@ -72,6 +73,7 @@ export class HttpToolkitCapturingProxy {
     const https = {
       certPath,
       keyPath,
+      keyLength: keyBitLength,
     };
 
     const proxy = mockttp.getLocal({
