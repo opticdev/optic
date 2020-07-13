@@ -84,10 +84,13 @@ export function useSuggestionsForDiff(diff, currentInteraction) {
   return suggestions;
 }
 
+window.naiveCache = {};
+
 export function useInitialBodyPreview(
   diff,
   currentInteraction,
-  inferPolymorphism = false
+  inferPolymorphism = false,
+  endpointId
 ) {
   const { diffService } = useCaptureContext();
 
@@ -95,20 +98,31 @@ export function useInitialBodyPreview(
   const [loadingInferPoly, setLoadingInferPoly] = useState(false);
 
   useEffect(() => {
+    window.naiveCache = {};
+  }, [endpointId]);
+
+  useEffect(() => {
     let mounted = true;
+    const cacheKey = diff.toString() + inferPolymorphism.toString();
+    console.log('cache key ' + cacheKey);
     const getInitialPreview = async () => {
       if (diff && currentInteraction) {
         if (inferPolymorphism) {
           setLoadingInferPoly(true);
         }
-        const result = await diffService.loadInitialPreview(
-          diff,
-          currentInteraction,
-          inferPolymorphism
-        );
+
+        const result = window.naiveCache[cacheKey]
+          ? await Promise.resolve(window.naiveCache[cacheKey])
+          : await diffService.loadInitialPreview(
+              diff,
+              currentInteraction,
+              inferPolymorphism
+            );
+
         if (mounted) {
           setLoadingInferPoly(false);
           setPreview(result);
+          window.naiveCache[cacheKey] = result;
         }
       } else {
         if (mounted) {
