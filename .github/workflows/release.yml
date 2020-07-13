@@ -24,12 +24,13 @@ jobs:
   release-npm:
     runs-on: ubuntu-latest
     steps:
-    - run: echo "NPM Release has not been configured yet"
-    # - uses: actions/checkout@v2
-    # - uses: actions/setup-node@v1
-    #   with:
-    #     node-version: 12
-    # - run: npm run publish
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - run: npm run publish
+      env:
+        NPM_TOKEN: ${{ secrets.PUBLISH_NPM_OPTIC_BOT }}
   
   # Creates debian package for users to install, hosted on s3
   release-deb:

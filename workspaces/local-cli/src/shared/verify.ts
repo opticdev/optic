@@ -19,6 +19,7 @@ import waitOn from 'wait-on';
 import { opticTaskToProps, track, trackAndSpawn } from './analytics';
 import { fromOptic } from '@useoptic/cli-shared';
 import url from 'url';
+import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
 
 export function verifyTask(cli: Command, taskName: string): void {
   cli.log(fromOptic(colors.bold(`Testing task '${taskName}' `)));
@@ -173,6 +174,7 @@ export function verifyTask(cli: Command, taskName: string): void {
             includeTextBody: true,
             includeJsonBody: true,
             includeShapeHash: true,
+            includeQueryString: true,
           },
           host: proxyConfig.host,
           proxyTarget:
@@ -180,6 +182,7 @@ export function verifyTask(cli: Command, taskName: string): void {
               ? undefined
               : target,
           proxyPort: proxyConfig.port,
+          queryParser: buildQueryStringParser(),
         });
 
         const proxyRunningPromise = await new Promise(async (resolve) => {

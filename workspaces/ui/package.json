@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ui",
-  "version": "8.2.0",
+  "version": "8.2.1",
   "files": [
     "build",
     "index.js",
@@ -15,9 +15,9 @@
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.46",
-    "@useoptic/cli-client": "8.2.0",
-    "@useoptic/domain": "8.2.0",
-    "@useoptic/domain-utilities": "8.2.0",
+    "@useoptic/cli-client": "8.2.1",
+    "@useoptic/domain": "8.2.1",
+    "@useoptic/domain-utilities": "8.2.1",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",
     "classnames": "^2.2.6",

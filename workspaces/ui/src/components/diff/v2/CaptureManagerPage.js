@@ -204,6 +204,11 @@ function CaptureChooserComponent(props) {
   const totalEndpoints = endpointDiffs.filter((i) => i.isDocumentedEndpoint)
     .length;
 
+  const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
+    JsonHelper.jsArrayToSeq(unrecognizedUrls),
+    JsonHelper.jsArrayToSeq(endpointDiffs)
+  );
+
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
 
   useEffect(() => {
@@ -280,7 +285,7 @@ function CaptureChooserComponent(props) {
               value={subtabs.ENDPOINT_DIFF}
             />
             <CustomNavTab
-              label={`Undocumented URLs (${unrecognizedUrls.length})`}
+              label={`Undocumented URLs (${urlsSplit.total})`}
               value={subtabs.UNDOCUMENTED_URL}
             />
           </Tabs>
@@ -298,7 +303,7 @@ function CaptureChooserComponent(props) {
             <EndpointDiffs captureId={captureId} />
           )}
           {subtabs.UNDOCUMENTED_URL === tab && (
-            <UnrecognizedUrls captureId={captureId} />
+            <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
           )}
         </div>
       </div>
@@ -333,6 +338,8 @@ function CaptureDiffWrapper(props) {
 
   const rfcContext = useContext(RfcContext);
   const services = useServices();
+
+  window.debugOptic = debugDump(services.specService, captureId);
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -471,16 +478,11 @@ function EndpointDiffs(props) {
 }
 
 function UnrecognizedUrls(props) {
-  const { captureId } = props;
+  const { captureId, urlsSplit } = props;
   const classes = useStyles();
   const history = useHistory();
   const { unrecognizedUrls, endpointDiffs, completed } = useCaptureContext();
   const baseUrl = useBaseUrl();
-
-  const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
-    JsonHelper.jsArrayToSeq(unrecognizedUrls),
-    JsonHelper.jsArrayToSeq(endpointDiffs)
-  );
 
   const undocumented = JsonHelper.seqToJsArray(urlsSplit.undocumented);
   const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
@@ -536,7 +538,7 @@ function UnrecognizedUrls(props) {
                     <Chip
                       className={classes.chips}
                       size="small"
-                      label={i.count}
+                      label={i.count + ' observations'}
                       style={{
                         backgroundColor: AddedGreenBackground,
                       }}
@@ -580,7 +582,7 @@ function UnrecognizedUrls(props) {
                   <Chip
                     className={classes.chips}
                     size="small"
-                    label={i.count}
+                    label={i.count + ' observations'}
                     style={{
                       backgroundColor: AddedGreenBackground,
                     }}

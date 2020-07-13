@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/domain-types",
-  "version": "8.2.0",
+  "version": "8.2.1",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose && cp -R ./src/avro-schemas/ ./build/avro-schemas",
     "ws:clean": "rm -rf build/*",

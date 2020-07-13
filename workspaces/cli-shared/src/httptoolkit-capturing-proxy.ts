@@ -6,10 +6,16 @@ import fs from 'fs-extra';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';
-import { IBody, IHttpInteraction } from '@useoptic/domain-types';
+import {
+  IArbitraryData,
+  IBody,
+  IHttpInteraction,
+} from '@useoptic/domain-types';
 //@ts-ignore
 import { toBytes } from 'shape-hash';
 import { developerDebugLogger } from './index';
+import url from 'url';
+import { IQueryParser } from './query/query-parser-interfaces';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -19,7 +25,9 @@ export interface IHttpToolkitCapturingProxyConfig {
     includeJsonBody: boolean;
     includeTextBody: boolean;
     includeShapeHash: boolean;
+    includeQueryString: boolean;
   };
+  queryParser: IQueryParser;
 }
 
 export interface IRequestFilter {
@@ -136,6 +144,7 @@ export class HttpToolkitCapturingProxy {
         if (!req) {
           return;
         }
+
         developerDebugLogger(req);
         const sample: IHttpInteraction = {
           tags: [],
@@ -149,11 +158,7 @@ export class HttpToolkitCapturingProxy {
               asText: null,
               shapeHashV1Base64: null,
             },
-            query: {
-              asJsonString: null,
-              asText: null,
-              shapeHashV1Base64: null,
-            },
+            query: this.extractQueryParameters(req),
             body: this.extractBody(req),
           },
           response: {
@@ -190,6 +195,30 @@ export class HttpToolkitCapturingProxy {
       throw new Error(
         `Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`
       );
+    }
+  }
+
+  extractQueryParameters(req: mockttp.CompletedRequest): IArbitraryData {
+    const rawQuery = url.parse(req.url).query;
+
+    developerDebugLogger('extracting query params', { rawQuery });
+
+    if (rawQuery) {
+      const jsonLikeValue = this.config.queryParser.parse(rawQuery);
+      return {
+        asJsonString: this.config.flags.includeQueryString
+          ? JSON.stringify(jsonLikeValue)
+          : null,
+        asText: this.config.flags.includeQueryString ? rawQuery : null,
+        shapeHashV1Base64:
+          jsonLikeValue && toBytes(jsonLikeValue).toString('base64'),
+      };
+    } else {
+      return {
+        asJsonString: null,
+        asText: null,
+        shapeHashV1Base64: null,
+      };
     }
   }
 
