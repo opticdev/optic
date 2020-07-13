@@ -38,9 +38,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install sbt -y
         . ./sourceme.sh && optic_build
-    - run: npm run publish
+    - run: node ./workspaces/scripts/publish.js
       env:
         NPM_TOKEN: ${{ secrets.PUBLISH_NPM_OPTIC_BOT }}
+        OPTIC_PUBLISH_SCOPE: public
   
   # Creates debian package for users to install, hosted on s3
   release-deb:
