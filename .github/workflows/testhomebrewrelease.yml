@@ -1,0 +1,24 @@
+name: test homebrew release
+
+env:
+  HOMEBREW_REPO: opticdev/homebrew-optic
+
+on: 
+  push:
+    branches:
+      - feature/brew-release-flow
+
+jobs:
+  # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
+  # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
+  test-trigger-brew-release:
+    needs: release-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1.1.0
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: ${{ env.HOMEBREW_REPO }}
+          event-type: version-update
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
