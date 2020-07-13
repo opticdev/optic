@@ -38,7 +38,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install sbt -y
         . ./sourceme.sh && optic_build
-    - run: node ./workspaces/scripts/publish.js
+    - run: export OPTIC_PUBLISH_SCOPE=public && node ./workspaces/scripts/publish.js
       env:
         NPM_TOKEN: ${{ secrets.PUBLISH_NPM_OPTIC_BOT }}
         OPTIC_PUBLISH_SCOPE: public
