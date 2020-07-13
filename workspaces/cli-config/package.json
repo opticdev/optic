@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-config",
-  "version": "8.1.0",
+  "version": "8.2.0",
   "scripts": {
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose",
