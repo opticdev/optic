@@ -45,14 +45,13 @@ export async function readApiConfig(
   const rawFile = await fs.readFile(configPath);
   let parsed = null;
   try {
-    parsed = yaml.safeLoad(rawFile.toString());
+    // @ts-ignore
+    return (parsed = yaml.safeLoad(rawFile.toString()));
   } catch (e) {
     throw new InvalidOpticConfigurationSyntaxError(
       '`optic.yml` will not parse. Make sure it is valid YAML.'
     );
   }
-
-  return parsed;
 }
 
 export async function readTestingConfig(
