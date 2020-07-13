@@ -12,7 +12,6 @@ jobs:
   # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
   test-trigger-brew-release:
-    needs: release-npm
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch
