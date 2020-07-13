@@ -30,3 +30,7 @@ version-resolver:
 template: |
   ## Changes
   $CHANGES
+
+  ```
+    yarn global add @useoptic/cli@$NEXT_PATCH_VERSION
+  ```
