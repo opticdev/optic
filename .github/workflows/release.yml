@@ -26,10 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+          ref: release
     - uses: actions/setup-node@v1
       with:
         node-version: 12
-    - name: Build Optic
+    - name: Install Dependencies and Build Optic
       run:  |
         sudo apt-get update
         sudo apt-get install apt-transport-https -y
@@ -39,9 +41,8 @@ jobs:
         sudo apt-get install sbt -y
         . ./sourceme.sh && optic_build
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
-    - run: export OPTIC_PUBLISH_SCOPE=public && node ./workspaces/scripts/publish.js
+    - run: node ./workspaces/scripts/publish.js
       env:
-        NPM_TOKEN: ${{ secrets.PUBLISH_NPM_OPTIC_BOT }}
         OPTIC_PUBLISH_SCOPE: public
   
   # Creates debian package for users to install, hosted on s3
