@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { IHttpInteraction } from '@useoptic/domain-types';
+//@ts-ignore
 import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
 
@@ -38,7 +39,7 @@ async function main(inputFilePath: string, outputBaseDirectory: string) {
         console.log('done');
         resolve();
       })
-      .on('fail', function (e) {
+      .on('fail', function (e: any) {
         console.error(e);
         reject(e);
       });

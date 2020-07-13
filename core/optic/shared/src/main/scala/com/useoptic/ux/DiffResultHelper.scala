@@ -59,8 +59,6 @@ object DiffResultHelper {
 
     val allEndpoints = AllEndpointsProjection.fromRfcState(rfcState)
 
-    println("total diffs "+ diffs.size)
-
     val normalizedDiffs = {
       val groupedByNormalized = diffs.groupBy(_._1.normalize())
 
@@ -69,9 +67,7 @@ object DiffResultHelper {
           .toSeq.distinct)
         .toMap
     }
-
-    println("total diffs normalized "+ normalizedDiffs.size)
-
+    
     val endpointsFromDiff = {
       normalizedDiffs.filterNot {
         case (a: UnmatchedRequestUrl, _) => true
@@ -448,5 +444,6 @@ case class PreviewShapeAndCommands(shape: Option[ShapeOnlyRenderHelper], suggest
 
 @JSExportAll
 case class SplitUndocumentedUrls(urls: Seq[NewEndpoint], undocumented: Seq[NewEndpoint], totalCount: Int, allPaths: Seq[String]) {
-   def showing: Int = urls.length
+  def showing: Int = urls.length
+  def total: Int = undocumented.length + urls.length
 }

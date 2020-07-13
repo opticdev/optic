@@ -4,6 +4,7 @@ import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
 import { developerDebugLogger, ICaptureSaver, userDebugLogger, fromOptic } from './index';
 import url from 'url';
+import { buildQueryStringParser } from './query/build-query-string-parser';
 
 class CommandAndProxySessionManager {
   constructor(private config: IOpticTaskRunnerConfig) {}
@@ -39,6 +40,7 @@ class CommandAndProxySessionManager {
         includeTextBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeJsonBody: process.env.OPTIC_ENABLE_CAPTURE_BODY === 'yes',
         includeShapeHash: true,
+        includeQueryString: true,
       },
       host: this.config.proxyConfig.host,
       proxyTarget:
@@ -46,6 +48,7 @@ class CommandAndProxySessionManager {
           ? undefined
           : target,
       proxyPort: this.config.proxyConfig.port,
+      queryParser: buildQueryStringParser(),
     });
 
     userDebugLogger(
