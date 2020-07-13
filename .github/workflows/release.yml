@@ -17,7 +17,6 @@ on:
   push:
     branches:
       - release
-      - ronakshah/test-npm
 
 jobs:
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
