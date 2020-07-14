@@ -17,7 +17,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1.1.0
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
           repository: ${{ env.HOMEBREW_REPO }}
           event-type: version-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
