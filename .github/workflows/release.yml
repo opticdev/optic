@@ -8,8 +8,6 @@ env:
   HOMEBREW_REPO: opticdev/homebrew-optic
   BUCKET_NAME: optic-packages
   PACKAGE_NAME: api
-  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # requires repo:write scope (https://github.com/peter-evans/repository-dispatch#token)
 
