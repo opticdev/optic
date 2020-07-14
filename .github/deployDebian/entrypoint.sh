@@ -1,6 +1,5 @@
 #!/bin/bash
 echo "Installing Essentials"
-echo $INPUT_NPM_PACKAGE_NAME
 apt update
 apt install -y git default-jre sudo apt-utils apt-transport-https
 npm install -g @oclif/dev-cli
@@ -26,10 +25,5 @@ oclif-dev pack:deb
 echo "Installing Ruby"
 apt install ruby-full -y
 gem install deb-s3
-cd /tmp/optic/workspaces/local-cli/dist/deb/
 export PATH_TO_DEB="/tmp/optic/workspaces/local-cli/dist/deb/api_$(npm view $INPUT_NPM_PACKAGE_NAME version)-1_amd64.deb"
-echo $PATH_TO_DEB
-# ls $PATH_TO_DEB
-# du $PATH_TO_DEB
-/bin/bash
-# deb-s3 upload -e --access-key-id=$INPUT_AWS_ACCESS_KEY_ID --secret-access-key=$INPUT_AWS_SECRET_ACCESS_KEY --bucket $INPUT_BUCKET_NAME $INPUT_PACKAGE_NAME --preserve-versions $PATH_TO_DEB
+deb-s3 upload -e --access-key-id=$INPUT_AWS_ACCESS_KEY_ID --secret-access-key=$INPUT_AWS_SECRET_ACCESS_KEY --bucket $INPUT_BUCKET_NAME --codename $INPUT_PACKAGE_NAME --preserve-versions $PATH_TO_DEB
