@@ -22,3 +22,4 @@ jobs:
           BUCKET_NAME: optic-packages
           PACKAGE_NAME: api
           NPM_PACKAGE_NAME: "@useoptic/cli"
+          PREFIX_NAME: deb

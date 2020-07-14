@@ -13,6 +13,9 @@ inputs:
   PACKAGE_NAME:
     description: "PACKAGE_NAME"
     required: true
+  PREFIX_NAME:
+    description: "The prefix for the package"
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
