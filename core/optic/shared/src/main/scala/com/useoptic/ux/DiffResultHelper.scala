@@ -1,7 +1,7 @@
 package com.useoptic.ux
 
 import com.useoptic.contexts.requests.Commands
-import com.useoptic.contexts.requests.Commands.PathComponentId
+import com.useoptic.contexts.requests.Commands.{PathComponentId, SetRequestBodyShape, SetResponseBodyShape}
 import com.useoptic.contexts.requests.projections.AllEndpointsProjection
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers
@@ -67,7 +67,7 @@ object DiffResultHelper {
           .toSeq.distinct)
         .toMap
     }
-    
+
     val endpointsFromDiff = {
       normalizedDiffs.filterNot {
         case (a: UnmatchedRequestUrl, _) => true
@@ -360,11 +360,11 @@ abstract class NewRegionDiff {
       val bodies = interactions.map(getBody).flatMap(BodyUtilities.parseBody)
       implicit val shapeBuildingStrategy = ShapeBuildingStrategy.inferPolymorphism
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(bodies)
-      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(Vector(interactions.head), rfcState, inferPolymorphism).headOption)
+      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption)
     } else {
       implicit val shapeBuildingStrategy = ShapeBuildingStrategy.learnASingleInteraction
       val preview = diffPreviewer.shapeOnlyFromShapeBuilder(Vector(BodyUtilities.parseBody(getBody(firstInteraction))).flatten)
-      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(interactions, rfcState, inferPolymorphism).headOption)
+      PreviewShapeAndCommands(preview.map(_._2), toSuggestion(Vector(firstInteraction), rfcState, inferPolymorphism).headOption)
     }
   }
 
