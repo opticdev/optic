@@ -203,6 +203,7 @@ export function DiffReviewPage(props) {
             <NewRegions
               ignoreDiff={ignoreDiff}
               captureId={captureId}
+              endpointId={pathId + method}
               newRegions={JsonHelper.seqToJsArray(regions.newRegions)}
             />
           )}

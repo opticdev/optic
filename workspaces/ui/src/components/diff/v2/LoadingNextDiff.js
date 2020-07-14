@@ -8,9 +8,9 @@ import { DocDarkGrey } from '../../docs/DocConstants';
 export function DiffLoading({ show }) {
   const classes = useStyles();
 
-  if (!show) {
-    return null;
-  }
+  // if (!show) {
+  //   return null;
+  // }
 
   return (
     <div className={classes.root}>
@@ -92,11 +92,15 @@ export function DiffReviewLoading({ show }) {
           height={550}
           component="div"
           className={classes.textParent}
+          withChildren={{
+            withChildren: classes.withChildren,
+          }}
         >
           <Typography
             component="div"
             className={classes.text}
             variant="overline"
+            style={{ visibility: 'inherit' }}
           >
             Loading Example and Diff...
           </Typography>
@@ -125,11 +129,13 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 20,
     fontWeight: 400,
     color: '#959191',
+    visibility: 'inherit !important',
   },
   textParent: {
     display: 'flex',
     justifyContent: 'center',
     flex: 1,
+    maxWidth: 'inherit',
     alignItems: 'center',
   },
   top: {
@@ -137,6 +143,10 @@ const useStyles = makeStyles((theme) => ({
   },
   sideBySide: {
     display: 'flex',
+    maxWidth: 'inherit',
     flexDirection: 'row',
+  },
+  withChildren: {
+    visibility: 'inherit',
   },
 }));
