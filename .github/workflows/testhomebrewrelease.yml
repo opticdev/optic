@@ -1,8 +1,5 @@
 name: test homebrew release
 
-env:
-  HOMEBREW_REPO: opticdev/homebrew-optic
-
 on: 
   push:
     branches:
@@ -18,6 +15,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v1.1.0
         with:
           token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
-          repository: ${{ env.HOMEBREW_REPO }}
+          repository: opticdev/homebrew-optic
           event-type: version-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
