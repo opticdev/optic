@@ -14,7 +14,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v1.1.0
         with:
-          token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
+          token: ${{ secrets.HOMEBREW_REPO_ACCESS_TOKEN }}
           repository: opticdev/homebrew-optic
           event-type: version-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
