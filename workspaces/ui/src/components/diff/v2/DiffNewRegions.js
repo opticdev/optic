@@ -62,7 +62,7 @@ import { Show } from '../../shared/Show';
 import { track } from '../../../Analytics';
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff, captureId } = props;
+  const { newRegions, ignoreDiff, captureId, endpointId } = props;
 
   const classes = useStyles();
 
@@ -107,11 +107,16 @@ function _NewRegions(props) {
             i.firstInteractionPointer
           );
 
-          const { suggestion } = await diffService.loadInitialPreview(
-            i,
-            JsonHelper.fromInteraction(interaction),
-            inferPolymorphism
-          );
+          const cacheKey = i.toString() + inferPolymorphism.toString();
+          const cached = window.naiveCache && window.naiveCache[cacheKey];
+          //@todo this dups something large. @dev good spot for the state chart
+          const { suggestion } = cached
+            ? cached
+            : await diffService.loadInitialPreview(
+                i,
+                JsonHelper.fromInteraction(interaction),
+                inferPolymorphism
+              );
 
           return getOrUndefined(suggestion);
         })
@@ -137,6 +142,7 @@ function _NewRegions(props) {
               isDeselected={isDeselected}
               onChange={onChange}
               inferPolymorphism={inferPolymorphism}
+              endpointId={endpointId}
             />
           );
         }
@@ -155,6 +161,7 @@ function _NewRegions(props) {
               onChange={onChange}
               key={diff.diff.toString()}
               inferPolymorphism={inferPolymorphism}
+              endpointId={endpointId}
             />
           );
         }
@@ -245,7 +252,7 @@ function _NewRegions(props) {
             disabled={approveCount === 0 || finished}
             onClick={onApply}
           >
-            Document ({approveCount}) bodies
+            Document ({approveCount || ''}) bodies
           </Button>
         </div>
         {finished && <LinearProgress />}
@@ -329,6 +336,7 @@ const PreviewNewBodyRegion = ({
   inferPolymorphism,
   isDeselected,
   onChange,
+  endpointId,
 }) => {
   const isChecked = !isDeselected(diff);
   const classes = useStyles();
@@ -351,7 +359,8 @@ const PreviewNewBodyRegion = ({
   const { preview: initialBody, loadingInferPoly } = useInitialBodyPreview(
     diff,
     currentInteraction && currentInteraction.interactionScala,
-    inferPolymorphism
+    inferPolymorphism,
+    endpointId
   );
 
   if (!currentInteraction || !initialBody || loadingInferPoly) {

@@ -109,6 +109,7 @@ function AllCapturesStore(props) {
 
   useEffect(() => {
     global.opticDump = dumpSpecServiceState(specService);
+    global.dumpEvents = async () => await specService.listEvents();
   }, []);
 
   function dismissCapture(captureId) {
@@ -387,9 +388,7 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const realCount = endpointDiffs.filter(
-    (i) => i.count > 0 && i.isDocumentedEndpoint
-  ).length;
+  const realCount = endpointDiffs.filter((i) => i.isDocumentedEndpoint).length;
 
   if (realCount === 0 && !completed) {
     return <DiffLoadingOverview show={true} />;
