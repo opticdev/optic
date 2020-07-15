@@ -5,13 +5,9 @@
 name: Release
 
 env:
-  HOMEBREW_REPO: opticdev/homebrew-optic
   BUCKET_NAME: optic-packages
   PACKAGE_NAME: api
-  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # requires repo:write scope (https://github.com/peter-evans/repository-dispatch#token)
 
 on: 
   push:
@@ -69,14 +65,12 @@ jobs:
   # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
   trigger-brew-release:
-    needs: release-npm
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Brew Release has not been configured yet"
-      # - name: Repository Dispatch
-      #   uses: peter-evans/repository-dispatch@v1.1.0
-      #   with:
-      #     token: ${{ env.REPO_ACCESS_TOKEN }}
-      #     repository: ${{ env.HOMEBREW_REPO }}
-      #     event-type: version-update
-      #     client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1.1.0
+        with:
+          token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
+          repository: opticdev/homebrew-optic
+          event-type: version-update
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
