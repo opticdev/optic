@@ -42,25 +42,19 @@ jobs:
   
   # Creates debian package for users to install, hosted on s3
   release-deb:
-    needs: release-npm
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Debian Release has not been configured yet"
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v1
-      #   with:
-      #     node-version: 12
-      # - run: npm ci
-      # - name: Install APT Utils
-      #   run: sudo apt-get install apt-utils
-      # - run: sudo npm i -g @oclif/dev-cli
-      # - run: sudo oclif-dev pack:deb
-      # - uses: actions/setup-ruby@v1
-      #   with:
-      #     ruby-version: '2.6'
-      # - run: sudo gem install deb-s3
-      # - name: Upload to s3
-      #   run: sudo deb-s3 upload -e --access-key-id=${{ env.AWS_ACCESS_KEY_ID }} --secret-access-key=${{ env.AWS_SECRET_ACCESS_KEY }} --bucket $BUCKET_NAME --codename ${{ env.PACKAGE_NAME }} --preserve-versions dist/deb/legume_$(npm view ${{ env.PACKAGE_NAME }} version)-1_amd64.deb
+      - uses: actions/checkout@v2 # this part is required for github actions on the site
+        with:
+          ref: feature/debian-release-flow
+      - uses: ./.github/deployDebian/
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME: optic-packages
+          PACKAGE_NAME: api
+          NPM_PACKAGE_NAME: "@useoptic/cli"
+          PREFIX_NAME: deb
   
   # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
