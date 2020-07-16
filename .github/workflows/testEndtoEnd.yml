@@ -1,0 +1,28 @@
+name: Test end to end
+
+on:
+  push:
+    branches:
+      - ronakshah/better-release-test
+
+jobs:
+  better-release-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Docker Compose
+      run: |
+        apt-get update
+        apt-get install sudo -y
+        sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+    - uses: actions/checkout@v2
+      with:
+          repository: opticdev/optic-end-end-tests
+          token: ${{ secrets.END_TO_END_ACCESS_KEY }}
+    - uses: actions/setup-node@v1
+      with:
+          node-version: 12
+    - run: npm install
+    - run: npm test
+      with:
+          DEBUG: "*" # Helps with tracing errors
