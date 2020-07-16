@@ -28,15 +28,15 @@ jobs:
         sudo chmod +x /usr/local/bin/docker-compose
     - uses: actions/checkout@v2
       with:
-          repository: opticdev/optic-end-end-tests
-          token: ${{ secrets.END_TO_END_ACCESS_KEY }}
+        repository: opticdev/optic-end-end-tests
+        token: ${{ secrets.END_TO_END_ACCESS_KEY }}
     - uses: actions/setup-node@v1
       with:
-          node-version: 12
+        node-version: 12
     - run: npm install
     - run: npm test
       with:
-          DEBUG: "*" # Helps with tracing errors
+        DEBUG: "*" # Helps with tracing errors
 
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
   # All Jobs rely on this job because it verifies the version and because it depends on test-optic
@@ -46,7 +46,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-          ref: release
+        ref: release
     - uses: actions/setup-node@v1
       with:
         node-version: 12
