@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.2.2",
+  "version": "8.2.3",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -16,12 +16,12 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/cli-client": "8.2.2",
-    "@useoptic/cli-config": "8.2.2",
-    "@useoptic/cli-scripts": "8.2.2",
-    "@useoptic/cli-server": "8.2.2",
-    "@useoptic/cli-shared": "8.2.2",
-    "@useoptic/domain": "8.2.2",
+    "@useoptic/cli-client": "8.2.3",
+    "@useoptic/cli-config": "8.2.3",
+    "@useoptic/cli-scripts": "8.2.3",
+    "@useoptic/cli-server": "8.2.3",
+    "@useoptic/cli-shared": "8.2.3",
+    "@useoptic/domain": "8.2.3",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
@@ -83,7 +83,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "tsc -b --verbose",

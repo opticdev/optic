@@ -68,7 +68,7 @@ This error may be seen when running `npm start` to build and run a UI workspace.
 - If you run into further problems, please let us know the tools you are using, and the errors you are seeing, for reference. While we can't support every environment, it can be helpful to know where problems exist. In the mean time...
 - If you still see workspace-specific module resolution issues, run `yarn install` in the target workspace. Include this output in your issue report for reference.
 - Running `yarn run ws:build` in all workspaces should resolve the issue for the entire project:
-    - `domain-types`, `domain`, `domain-utilities`, `cli-config`, `cli-shared`, `client-utilities`, `proxy`, `cli-client`, `ui`, `cli-scripts`, `cli-server`, `test-data`, `local-cli`, `agent-cli`, `ci-cli`
+    - `cli-config`, `cli-shared`, `client-utilities`, `proxy`, `cli-client`, `ui`, `cli-scripts`, `cli-server`, `test-data`, `local-cli`, `agent-cli`, `ci-cli`
     - If `yarn run ws:build` throws errors about dependencies for one of the workspaces, it's possible Yarn didn't install the dependencies as expected. Try `yarn install` followed by another `yarn run ws:build` and let us know which workspace threw this error.
 
 ### Additional Notes
