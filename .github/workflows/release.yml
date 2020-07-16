@@ -35,7 +35,7 @@ jobs:
         node-version: 12
     - run: npm install
     - run: npm test
-      with:
+      env:
         DEBUG: "*" # Helps with tracing errors
 
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
