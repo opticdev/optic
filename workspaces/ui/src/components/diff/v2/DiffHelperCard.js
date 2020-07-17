@@ -13,6 +13,7 @@ import { CompareEquality, mapScala } from '@useoptic/domain';
 import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
+import { DiffCopy } from './DiffCopy';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,9 +80,7 @@ export const DiffHelperCard = (props) => {
     <div className={classes.root}>
       <Card elevation={3}>
         <div className={classes.header}>
-          <Typography className={classes.font} variant="subtitle1">
-            {description.summary}
-          </Typography>
+          <DiffCopy copy={description.summary} />
           <div style={{ flex: 1, minWidth: 20 }} />
           <PulsingOptic />
         </div>
@@ -109,14 +108,7 @@ export const DiffHelperCard = (props) => {
                       )}
                     />
                   }
-                  label={
-                    <Typography
-                      variant="subtitle2"
-                      className={classes.suggestion}
-                    >
-                      {suggestion.action}
-                    </Typography>
-                  }
+                  label={<DiffCopy copy={suggestion.copyPair.action} />}
                 />
               );
             })}
