@@ -2835,6 +2835,8 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
+<<<<<<< HEAD
+=======
 "@useoptic/cli-client@8.2.3":
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@useoptic/cli-client/-/cli-client-8.2.3.tgz#5e190b05c31aa599aae471af0af6772575a62382"
@@ -2924,11 +2926,14 @@
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.2.3.tgz#fc4788e85f3326beed988db0853078fbc60c4e94"
   integrity sha512-izxH/sfwF6MBwWhvAmQpCyDhHCMur5T9cjIjb+hhW/sHQOUBKMGomJSemw3Mby7NSwMr8F6ag6BS7F5mJopE/g==
 
+>>>>>>> develop
 "@useoptic/domain-types@8.3.0":
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.3.0.tgz#0c24c8b1586d9c1f1d15535853ba5bf21fe9baa4"
   integrity sha512-mxAfkcWjdGE1+TzCrMEuypMXM+DEzwhTOQil5ubuct2Hch0xjb6kO+26FJTZ1bVHTnUE067t/7tBHkUIHdjI2Q==
 
+<<<<<<< HEAD
+=======
 "@useoptic/domain-utilities@8.2.3":
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.2.3.tgz#db3aef4b829ee512b167f3e1f7329f8edccc85cb"
@@ -2936,6 +2941,7 @@
   dependencies:
     "@useoptic/domain" "8.2.1"
 
+>>>>>>> develop
 "@useoptic/domain-utilities@8.3.0":
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.3.0.tgz#c9a4468511b3ca5c42fa7644287d6318690b437d"
@@ -2943,6 +2949,12 @@
   dependencies:
     "@useoptic/domain" "8.3.0"
 
+<<<<<<< HEAD
+"@useoptic/domain@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.3.0.tgz#75d6681c41d303d099b1e8d0731266a1d48a2954"
+  integrity sha512-lr70WJnFUkvRC3evw2htt62vUE7oNMUCov5EG5cilv0efgjjeGIg3DeXvqmCIuUpXyZYXDu82xEpFT1q8EEuKA==
+=======
 "@useoptic/domain@8.2.1":
   version "8.2.1"
   resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.1.tgz#f13018cb3aa6ef4271ab76bc674196032b20c295"
@@ -2952,6 +2964,7 @@
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.3.tgz#feee0588137387076a4701222a1ebd2a17b4614f"
   integrity sha512-OCG5gYq2pJZYaiBP6M7xH7lEfQO8dHtkQ3N3q1svZfpFWysJtBKsXmJrp2a2rrf50i3H1o5QceBcCXWI2kGrzQ==
+>>>>>>> develop
 
 "@useoptic/domain@8.3.0":
   version "8.3.0"
@@ -8285,6 +8298,11 @@ http-errors@~1.7.2:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
+http-https@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/http-https/-/http-https-1.0.0.tgz#2f908dd5f1db4068c058cd6e6d4ce392c913389b"
+  integrity sha1-L5CN1fHbQGjAWM1ubUzjkskTOJs=
+
 http-parser-js@>=0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/http-parser-js/-/http-parser-js-0.5.2.tgz#da2e31d237b393aae72ace43882dd7e270a8ff77"
@@ -11199,6 +11217,13 @@ object.values@^1.1.0:
     es-abstract "^1.17.0-next.1"
     function-bind "^1.1.1"
     has "^1.0.3"
+
+oboe@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/oboe/-/oboe-2.1.5.tgz#5554284c543a2266d7a38f17e073821fbde393cd"
+  integrity sha1-VVQoTFQ6ImbXo48X4HOCH73jk80=
+  dependencies:
+    http-https "^1.0.0"
 
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"

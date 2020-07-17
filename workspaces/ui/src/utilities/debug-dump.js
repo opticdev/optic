@@ -1,5 +1,6 @@
 export function debugDump(specService, captureId) {
   return async function () {
+    debugger;
     const events = await specService.listEvents();
     const session = await specService.listCapturedSamples(captureId);
     const sessionCleaned = JSON.parse(JSON.stringify(session));
