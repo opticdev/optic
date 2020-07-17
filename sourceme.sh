@@ -87,7 +87,7 @@ optic_build_and_publish_locally() {
     optic_build_for_release
     cd "$OPTIC_SRC_DIR"
     npm-cli-login -u testUser -p testPass -e test@example.com -r http://localhost:4873
-    yarn run publish-local
+    OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
   )
 }
 optic_release_and_install_locally() {
