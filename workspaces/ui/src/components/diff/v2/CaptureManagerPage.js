@@ -340,8 +340,6 @@ function CaptureDiffWrapper(props) {
   const rfcContext = useContext(RfcContext);
   const services = useServices();
 
-  window.debugOptic = debugDump(services.specService, captureId);
-
   return (
     <IgnoreDiffContext.Consumer>
       {({ ignoredDiffs, resetIgnored }) => (
