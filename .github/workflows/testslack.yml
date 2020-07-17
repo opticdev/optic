@@ -1,0 +1,31 @@
+# Releases the latest version of Optic on NPM/Brew/Debian
+# Assumes the version has been updated
+# Triggers on all changes to the release branch
+
+name: Release
+
+env:
+  BUCKET_NAME: optic-packages
+  PACKAGE_NAME: api
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+on: 
+  push:
+    branches:
+      - ronakshah/notify-slack
+
+jobs:
+  # Tells slack a release has happened
+  notify-slack:
+    runs-on: ubuntu-latest
+    # needs: release-npm
+    name: Message Slack that Release has happened
+    steps:
+      - uses: actions/setup-node@v2-beta
+        name: Setup Node (to determine latest version of Optic)
+        with:
+            node-version: 12
+      - run: echo ::set-env name=MESSAGE::"trulyronak released version $(npm view @useoptic/cli version) Publish Release Notes <a href="https://github.com/opticdev/optic/releases"> here</a>"
+      - name: Send message to Slack API
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
