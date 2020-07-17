@@ -57,20 +57,15 @@ optic_build() {
     optic_workspace_build
   )
 }
+
 optic_build_with_linked_core() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
-
-    yarn link @useoptic/domain
-    yarn link @useoptic/domain-types
-    yarn link @useoptic/domain-utilities
-
-    yarn install
-
     optic_workspace_clean
+    yarn workspaces run ws:linkDomain
+    yarn install
     optic_workspace_build
-
   )
 }
 
@@ -91,7 +86,8 @@ optic_build_and_publish_locally() {
     set -o errexit
     optic_build_for_release
     cd "$OPTIC_SRC_DIR"
-    yarn run publish-local
+    npm-cli-login -u testUser -p testPass -e test@example.com -r http://localhost:4873
+    OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
   )
 }
 optic_release_and_install_locally() {
@@ -118,3 +114,17 @@ optic_install_from_local_registry() {
   )
 }
 # DEBUG=optic* apidev daemon:stop && DEBUG=optic* apidev agent:start
+optic_local_registry_start() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    cd docker/private-npm-registry
+    yarn global add verdaccio-memory npm-cli-login
+    docker-compose up &
+
+    cd "$OPTIC_SRC_DIR"
+    yarn install
+    yarn wait-on http://localhost:4873
+    printf "local npm registry started on http://localhost:4873 \n"
+  )
+}

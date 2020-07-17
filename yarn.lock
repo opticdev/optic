@@ -2835,10 +2835,99 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
+"@useoptic/cli-client@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-client/-/cli-client-8.2.3.tgz#5e190b05c31aa599aae471af0af6772575a62382"
+  integrity sha512-RW8ROJ/ZQdVHxVtrHgld3CK8Vus5KVscWDeuiCsJ8qrEICmvQKPnIuxu/SruteT5oxJscIcrUs5svH7tgEW+/Q==
+  dependencies:
+    "@useoptic/cli-config" "8.2.3"
+    "@useoptic/client-utilities" "8.2.3"
+    bottleneck "^2.19.5"
+    cross-fetch "^3.0.4"
+
+"@useoptic/cli-config@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-config/-/cli-config-8.2.3.tgz#7a8c0b7494c5f8be643397a1441734bba3b98963"
+  integrity sha512-AUxhxqE8ns/kA57axZaj9ZTajdFJ3wO8SwqsfN9xyS9MqS/ienLPXgmmoBmNxo8yYdcOr65XJJF1bch/1wcAeQ==
+  dependencies:
+    find-up "^4.1.0"
+    get-port "^5.1.0"
+    js-yaml "^3.13.1"
+    path-to-regexp "^3.0.0"
+
+"@useoptic/cli-scripts@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-scripts/-/cli-scripts-8.2.3.tgz#22e579449d21e4756f377f76b0956a557fda64b5"
+  integrity sha512-z8K0za7vjVNo37K8//qux45rREMNWpvnniU8Npb2SAY8oed6CE/+TGC7kXSe2+EAbEJ8PxJWy2EX6IGi9jPNKw==
+  dependencies:
+    "@useoptic/cli-shared" "8.2.3"
+    analytics-node "^3.4.0-beta.1"
+    node-notifier "^7.0.0"
+
+"@useoptic/cli-server@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-server/-/cli-server-8.2.3.tgz#37e9bdde1772900192d7d7b64d1f54a19db00ead"
+  integrity sha512-nbdkDvIEWW43OCWw1K9/uK/1EWsC0olh0zYPx3nSnNnaQ4rmAR3g+aALQng7HTbeSs20LQPs1cJnqIDbKAR5aw==
+  dependencies:
+    "@useoptic/cli-client" "8.2.3"
+    "@useoptic/cli-config" "8.2.3"
+    "@useoptic/cli-scripts" "8.2.3"
+    "@useoptic/cli-shared" "8.2.3"
+    "@useoptic/ui" "8.2.3"
+    avsc "^5.4.18"
+    body-parser "^1.19.0"
+    cors "^2.8.5"
+    express "^4.17.1"
+    find-process "^1.4.3"
+    fs-extra "^9.0.0"
+    get-port "^5.1.0"
+    http-proxy-middleware "^1.0.4"
+    lodash.sortby "^4.7.0"
+    node-fetch "^2.6.0"
+    proper-lockfile "^4.1.1"
+    uuid "^8.0.0"
+    wait-on "^4.0.0"
+
+"@useoptic/cli-shared@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-shared/-/cli-shared-8.2.3.tgz#158f03df0eda133cf4494a3d3b0add0259388b60"
+  integrity sha512-ytfx6KJ1R8uwOEpdARxfGiPXxltdlkVp99sxoo6sAWMX6+uiyFaf9l6jql5wNEsnE0bwlbdzlbu11e34rMGVwg==
+  dependencies:
+    "@oclif/command" "^1.6.1"
+    "@useoptic/cli-client" "8.2.3"
+    "@useoptic/cli-config" "8.2.3"
+    "@useoptic/client-utilities" "8.2.3"
+    "@useoptic/domain" "8.2.3"
+    "@useoptic/domain-types" "8.2.3"
+    "@useoptic/domain-utilities" "8.2.3"
+    avsc "^5.4.21"
+    bottleneck "^2.19.5"
+    colors "^1.4.0"
+    fs-extra "^9.0.0"
+    mockttp "^0.19.2"
+    ora "^4.0.4"
+    proper-lockfile "^4.1.1"
+    shape-hash "^1.0.6"
+    tree-kill "^1.2.2"
+    uuid "^8.0.0"
+    whatwg-mimetype "^2.3.0"
+
+"@useoptic/client-utilities@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/client-utilities/-/client-utilities-8.2.3.tgz#9ffcdc4d602540d5e6d87ab7b3cb1ed26e3dc4fb"
+  integrity sha512-V+DtwILeINe8ei8D9mLGPdnAwvzZStcilS7u9RcF+vRw4ss3YG0rDID8cxaKxduh8Q3IE20BwGtguREuwm6bTw==
+  dependencies:
+    cross-fetch "^3.0.4"
+
 "@useoptic/domain-types@8.2.3":
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.2.3.tgz#fc4788e85f3326beed988db0853078fbc60c4e94"
   integrity sha512-izxH/sfwF6MBwWhvAmQpCyDhHCMur5T9cjIjb+hhW/sHQOUBKMGomJSemw3Mby7NSwMr8F6ag6BS7F5mJopE/g==
+
+"@useoptic/domain-types@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.3.0.tgz#0c24c8b1586d9c1f1d15535853ba5bf21fe9baa4"
+  integrity sha512-mxAfkcWjdGE1+TzCrMEuypMXM+DEzwhTOQil5ubuct2Hch0xjb6kO+26FJTZ1bVHTnUE067t/7tBHkUIHdjI2Q==
 
 "@useoptic/domain-utilities@8.2.3":
   version "8.2.3"
@@ -2846,6 +2935,13 @@
   integrity sha512-2YacJ5TQvYjW3TF3zCOaZ7GC98uaMWY1aIpnJoF451vR4oAQare6gMwJaygOrpnd4mDRRoUvX8HAMz6GOYfSBQ==
   dependencies:
     "@useoptic/domain" "8.2.1"
+
+"@useoptic/domain-utilities@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.3.0.tgz#c9a4468511b3ca5c42fa7644287d6318690b437d"
+  integrity sha512-xgNilPsUVXRcIVo4ELzka/9bZzCQzkv38GA/QwtKvEk5bGHTseUVqpkiszWbmqO7y66xsYV9T4xhm0G4f+wt5Q==
+  dependencies:
+    "@useoptic/domain" "8.3.0"
 
 "@useoptic/domain@8.2.1":
   version "8.2.1"
@@ -2856,6 +2952,52 @@
   version "8.2.3"
   resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.3.tgz#feee0588137387076a4701222a1ebd2a17b4614f"
   integrity sha512-OCG5gYq2pJZYaiBP6M7xH7lEfQO8dHtkQ3N3q1svZfpFWysJtBKsXmJrp2a2rrf50i3H1o5QceBcCXWI2kGrzQ==
+
+"@useoptic/domain@8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.3.0.tgz#75d6681c41d303d099b1e8d0731266a1d48a2954"
+  integrity sha512-lr70WJnFUkvRC3evw2htt62vUE7oNMUCov5EG5cilv0efgjjeGIg3DeXvqmCIuUpXyZYXDu82xEpFT1q8EEuKA==
+
+"@useoptic/ui@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/ui/-/ui-8.2.3.tgz#bd5dcd3c9f2ccf3f0a1c26e5cdc882c856ff6eb6"
+  integrity sha512-7mI5igTpDAszdzDarVGnneMVVyLLtxPZoant+LiI2k+NV/CEPNQu4GyttEkO6jkKdYeQBQlQXMZrNBjL830/EA==
+  dependencies:
+    "@material-ui/core" "^4.9.7"
+    "@material-ui/icons" "^4.9.1"
+    "@material-ui/lab" "^4.0.0-alpha.46"
+    "@useoptic/cli-client" "8.2.3"
+    "@useoptic/domain" "8.2.3"
+    "@useoptic/domain-utilities" "8.2.3"
+    bottleneck "^2.19.5"
+    camelcase "^5.2.0"
+    classnames "^2.2.6"
+    color "^3.1.2"
+    date-fns "^2.11.1"
+    lodash.compose "^2.4.1"
+    lodash.debounce "^4.0.8"
+    lodash.groupby "^4.6.0"
+    lodash.sortby "^4.7.0"
+    memoize-weak "^1.0.2"
+    mini-css-extract-plugin "0.5.0"
+    node-sha1 "^1.0.1"
+    notistack "^0.8.6"
+    path-to-regexp "^3.0.0"
+    prop-types latest
+    react "^16.8.6"
+    react-ace "^8.0.0"
+    react-dom "^16.8.6"
+    react-helmet "5.2.1"
+    react-hook-form "^3.27.0"
+    react-markdown "^4.2.2"
+    react-minimal-pie-chart "^6.0.1"
+    react-router-dom "^5.1.2"
+    react-scroll-into-view-if-needed "^2.1.7"
+    resolve "1.10.0"
+    scroll-into-view-if-needed "^2.2.24"
+    time-ago "^0.2.1"
+    ts-pnp "1.1.2"
+    url-loader "1.1.2"
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"

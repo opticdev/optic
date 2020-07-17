@@ -16,6 +16,7 @@ import { UpdatedBlue } from '../../../theme';
 import DiffReviewExpanded, {
   DiffReviewExpandedCached,
 } from './DiffReviewExpanded';
+import { DiffCopy } from './DiffCopy';
 
 const useStyles = makeStyles((theme) => ({
   diffCursor: {
@@ -193,11 +194,10 @@ const DiffItem = ({ diff, button, setSelectedDiff, toggle }) => {
       }}
     >
       {description && (
-        <Typography variant="h5" className={classes.diffTitle}>
-          {button && ' • '}
-          {description.title}
-          {/*{diff.toString()}*/}
-        </Typography>
+        <div style={{ display: 'flex', flexDirection: 'row', paddingLeft: 7 }}>
+          {button && <div style={{ marginRight: 7 }}>{' • '}</div>}
+          <DiffCopy copy={description.titleCopy} fontSize={15} />
+        </div>
       )}
     </ListItem>
   );
