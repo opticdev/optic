@@ -1,0 +1,51 @@
+import React from 'react';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import { track } from './../Analytics';
+
+export const DemoModal = (props) => {
+  const [open, setOpen] = React.useState(true);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  console.log('wowza!')
+  return (
+    <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          fullWidth
+          maxWidth="md"
+          aria-labelledby="form-dialog-title"
+        >
+          <form>
+            <DialogTitle>Enjoying Optic?</DialogTitle>
+            <DialogContent style={{ marginTop: -20 }}>
+              <DialogContentText style={{ marginTop: 12 }}>
+                Start integrating Optic into your own projects
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>I just want to use this amazing demo</Button>
+              <Button
+                autoFocus={false}
+                type="submit"
+                onClick={() => {window.open("https://auth.useoptic.com/login")}}
+                color="secondary"
+                endIcon={<NavigateNextIcon />}
+              >
+                Lets Go
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
+    </div>
+  )
+};

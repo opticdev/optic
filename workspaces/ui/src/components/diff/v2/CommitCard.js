@@ -60,7 +60,7 @@ export const CommitCard = ({
         .join('\n');
       setCommitMessage(`\n\nChanges:\n${pastTenseChanges}`);
     }
-  }, [finalizeWithOverride]);
+  }, [acceptedSuggestions, finalizeWithOverride]);
 
   if (acceptedSuggestions.length === 0 && ignoredDiffs.length === 0) {
     return null;
