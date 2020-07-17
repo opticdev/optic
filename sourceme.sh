@@ -57,20 +57,15 @@ optic_build() {
     optic_workspace_build
   )
 }
+
 optic_build_with_linked_core() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
-
-    yarn link @useoptic/domain
-    yarn link @useoptic/domain-types
-    yarn link @useoptic/domain-utilities
-
-    yarn install
-
     optic_workspace_clean
+    yarn workspaces run ws:linkDomain
+    yarn install
     optic_workspace_build
-
   )
 }
 

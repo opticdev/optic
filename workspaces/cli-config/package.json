@@ -1,10 +1,11 @@
 {
   "name": "@useoptic/cli-config",
-  "version": "8.2.4",
+  "version": "8.2.5",
   "scripts": {
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:clean": "rm -rf build/*"
+    "ws:clean": "rm -rf build/*",
+    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
   },
   "repository": {
     "type": "git",
