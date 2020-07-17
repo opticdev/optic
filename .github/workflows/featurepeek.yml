@@ -16,8 +16,6 @@ jobs:
       run: yarn run bump "0.1.0-pr.$GITHUB_RUN_ID"
     - name: "yarn install, post version changes"
       run: yarn install
-    - name: "build domain"
-      run: yarn run build-domain
     - name: "build workspaces"
       run: yarn wsrun --stages --report --fast-exit ws:build
     - name: Install dependencies

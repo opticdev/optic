@@ -1,0 +1,21 @@
+name: 'Build Optic'
+description: 'Builds Optic'
+inputs:
+  AWS_ACCESS_KEY_ID:
+    description: "AWS_ACCESS_KEY_ID"
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: "AWS_SECRET_ACCESS_KEY"
+    required: true
+  BUCKET_NAME:
+    description: "BUCKET_NAME"
+    required: true
+  PACKAGE_NAME:
+    description: "PACKAGE_NAME"
+    required: true
+  PREFIX_NAME:
+    description: "The prefix for the package"
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

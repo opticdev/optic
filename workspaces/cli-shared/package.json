@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "8.2.2",
+  "version": "8.2.4",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -15,17 +15,18 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "8.2.2",
-    "@useoptic/cli-config": "8.2.2",
-    "@useoptic/client-utilities": "8.2.2",
-    "@useoptic/domain": "8.2.2",
-    "@useoptic/domain-types": "8.2.2",
-    "@useoptic/domain-utilities": "8.2.2",
+    "@useoptic/cli-client": "8.2.4",
+    "@useoptic/cli-config": "8.2.4",
+    "@useoptic/client-utilities": "8.2.4",
+    "@useoptic/domain": "8.3.0",
+    "@useoptic/domain-types": "8.3.0",
+    "@useoptic/domain-utilities": "8.3.0",
     "avsc": "^5.4.21",
     "proper-lockfile": "^4.1.1",
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",
     "fs-extra": "^9.0.0",
+    "mockttp": "^0.19.2",
     "ora": "^4.0.4",
     "tree-kill": "^1.2.2",
     "uuid": "^8.0.0",
@@ -33,8 +34,7 @@
     "whatwg-mimetype": "^2.3.0"
   },
   "devDependencies": {
-    "@types/whatwg-mimetype": "^2.1.0",
-    "mockttp": "^0.19.2"
+    "@types/whatwg-mimetype": "^2.1.0"
   },
   "files": [
     "/build"

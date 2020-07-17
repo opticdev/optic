@@ -15,12 +15,10 @@
     "publish-local": "OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js",
     "publish-github": "OPTIC_PUBLISH_SCOPE=github node ./workspaces/scripts/publish.js",
     "publish": "OPTIC_PUBLISH_SCOPE=public node ./workspaces/scripts/publish.js",
-    "bump": "node ./workspaces/scripts/bump.js"
+    "bump": "node ./workspaces/scripts/bump.js",
+    "bump-core": "node ./workspaces/scripts/bump-core.js"
   },
   "workspaces": [
-    "workspaces/domain-types",
-    "workspaces/domain",
-    "workspaces/domain-utilities",
     "workspaces/saas-types",
     "workspaces/cli-config",
     "workspaces/cli-shared",

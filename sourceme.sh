@@ -53,9 +53,24 @@ optic_build() {
     cd "$OPTIC_SRC_DIR"
 
     yarn install
-    yarn run build-domain
     optic_workspace_clean
     optic_workspace_build
+  )
+}
+optic_build_with_linked_core() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+
+    yarn link @useoptic/domain
+    yarn link @useoptic/domain-types
+    yarn link @useoptic/domain-utilities
+
+    yarn install
+
+    optic_workspace_clean
+    optic_workspace_build
+
   )
 }
 
@@ -65,7 +80,7 @@ optic_build_for_release() {
     cd "$OPTIC_SRC_DIR"
 
     yarn install
-    yarn run build-domain-optimized
+
     optic_workspace_clean
     optic_workspace_build
   )
