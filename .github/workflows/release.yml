@@ -68,7 +68,7 @@ jobs:
           repository: opticdev/homebrew-optic
           event-type: version-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
-
+ 
   # Tells slack a release has happened
   notify-slack:
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ jobs:
         name: Setup Node (to determine latest version of Optic)
         with:
             node-version: 12
-      - run: echo ::set-env name=MESSAGE::"trulyronak released version $(npm view @useoptic/cli version) Publish Release Notes <a href="https://github.com/opticdev/optic/releases"> here</a>"
+      - run: echo ::set-env name=MESSAGE::"${{ github.event.pusher.name }} released version $(npm view @useoptic/cli version) \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>"
       - name: Send message to Slack API
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
