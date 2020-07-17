@@ -2835,6 +2835,28 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
+"@useoptic/domain-types@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.2.3.tgz#fc4788e85f3326beed988db0853078fbc60c4e94"
+  integrity sha512-izxH/sfwF6MBwWhvAmQpCyDhHCMur5T9cjIjb+hhW/sHQOUBKMGomJSemw3Mby7NSwMr8F6ag6BS7F5mJopE/g==
+
+"@useoptic/domain-utilities@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.2.3.tgz#db3aef4b829ee512b167f3e1f7329f8edccc85cb"
+  integrity sha512-2YacJ5TQvYjW3TF3zCOaZ7GC98uaMWY1aIpnJoF451vR4oAQare6gMwJaygOrpnd4mDRRoUvX8HAMz6GOYfSBQ==
+  dependencies:
+    "@useoptic/domain" "8.2.1"
+
+"@useoptic/domain@8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.1.tgz#f13018cb3aa6ef4271ab76bc674196032b20c295"
+  integrity sha512-dxyuaIJaGvKG8XcoZqW3hzwv3QIbY1WPLY/YhapA1HnVta+m5/mw+b9Yo1IbP0uusc+UI8DeBsYj4zY6JMrejw==
+
+"@useoptic/domain@8.2.3":
+  version "8.2.3"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.3.tgz#feee0588137387076a4701222a1ebd2a17b4614f"
+  integrity sha512-OCG5gYq2pJZYaiBP6M7xH7lEfQO8dHtkQ3N3q1svZfpFWysJtBKsXmJrp2a2rrf50i3H1o5QceBcCXWI2kGrzQ==
+
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"
