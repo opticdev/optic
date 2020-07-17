@@ -1,10 +1,11 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "8.2.3",
+  "version": "8.2.5",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "echo cli-server"
+    "ws:test": "echo cli-server",
+    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
   },
   "repository": {
     "type": "git",
@@ -14,11 +15,11 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/cli-client": "8.2.3",
-    "@useoptic/cli-config": "8.2.3",
-    "@useoptic/cli-scripts": "8.2.3",
-    "@useoptic/cli-shared": "8.2.3",
-    "@useoptic/ui": "8.2.3",
+    "@useoptic/cli-client": "8.2.5",
+    "@useoptic/cli-config": "8.2.5",
+    "@useoptic/cli-scripts": "8.2.5",
+    "@useoptic/cli-shared": "8.2.5",
+    "@useoptic/ui": "8.2.5",
     "avsc": "^5.4.18",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
