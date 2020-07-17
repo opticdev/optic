@@ -1,6 +1,7 @@
 import {
   getPathsRelativeToCwd,
   IOpticTaskRunnerConfig,
+  parseIgnore,
   readApiConfig,
   readTestingConfig,
 } from '@useoptic/cli-config';
@@ -10,7 +11,12 @@ import path from 'path';
 import fs from 'fs-extra';
 import { ICliServerSession } from '../server';
 import sortBy from 'lodash.sortby';
-import { DefaultIdGenerator, developerDebugLogger } from '@useoptic/cli-shared';
+import {
+  DefaultIdGenerator,
+  developerDebugLogger,
+  FileSystemAvroCaptureLoader,
+  ICaptureLoader,
+} from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 type CaptureId = string;
@@ -282,6 +288,27 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     }) => new LocalCaptureInteractionPointerConverter(config),
   });
   router.use('/captures/:captureId', captureRouter);
+
+  router.get('/captures/:captureId/samples', async (req, res) => {
+    const { captureId } = req.params;
+
+    const loader: ICaptureLoader = new FileSystemAvroCaptureLoader({
+      captureId,
+      captureBaseDirectory: req.optic.paths.capturesPath,
+    });
+    try {
+      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
+      const capture = await loader.loadWithFilter(filter);
+      res.json({
+        metadata: {},
+        samples: capture.samples,
+        links: [{ rel: 'next', href: '' }],
+      });
+    } catch (e) {
+      console.error(e);
+      res.sendStatus(500);
+    }
+  });
 
   router.get('/testing-credentials', async (req, res) => {
     const { paths } = req.optic;
