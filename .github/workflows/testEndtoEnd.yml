@@ -9,19 +9,26 @@ jobs:
   better-release-test:
     runs-on: ubuntu-latest
     steps:
-    # - name: Install Docker Compose
-    #   run: |
-    #     sudo apt-get update
-    #     sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    #     sudo chmod +x /usr/local/bin/docker-compose
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - name: Check out Optic Repo
+      uses: actions/checkout@v2
+      with:
+        path: ./optic-repo
+    - name: Release Optic Locally
+      run: |
+        source sourceme.sh && optic_local_registry_start
+        source sourceme.sh && optic_build_and_publish_locally
+      working-directory: ./optic-repo
     - uses: actions/checkout@v2
       with:
         repository: opticdev/optic-end-end-tests
         token: ${{ secrets.END_TO_END_ACCESS_KEY }}
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 12
+        path: ./tests
     - run: npm install
+      working-directory: ./tests
     - run: npm test
+      working-directory: ./tests
       env:
-        DEBUG: "*" # Helps with tracing errors
+        DEBUG: "*,-babel*" # Helps with tracing errors

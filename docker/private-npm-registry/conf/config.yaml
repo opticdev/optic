@@ -1,8 +1,11 @@
-storage: /verdaccio/storage
+store:
+  memory:
+    limit: 1000
 packages:
   '@useoptic/*':
       access: $all
       publish: $all
+      proxy: npmjs
   '*/*':
       access: $all
       proxy: npmjs
