@@ -13,8 +13,8 @@ echo "Cloning Optic"
 cd /tmp
 git clone https://github.com/trulyronak/optic
 cd optic
-echo "Checking out specific branch (eventually this will just be release)"
-git checkout feature/debian-release-flow
+echo "Checking out specific branch"
+git checkout release
 echo "Building Optic"
 source sourceme.sh
 optic_build

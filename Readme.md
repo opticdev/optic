@@ -96,7 +96,9 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 
 ## Documentation [https://docs.useoptic.com](https://docs.useoptic.com)
 
-Read the full docs at: [docs.useoptic.com](https://docs.useoptic.com)
+- Read the full docs at: [docs.useoptic.com](https://docs.useoptic.com).
+- Want to contribute? Check out the [Contribution Guidelines](Contributing.md).
+- To get set up working on the project, please review our [Developer Setup](Developer-setup.md) guide as well.
 
 ## License 
 MIT

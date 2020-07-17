@@ -1,14 +1,15 @@
 {
   "name": "@useoptic/saas-types",
   "description": "interfaces and types for Optic SaaS surface area",
-  "version": "8.2.4",
+  "version": "8.2.5",
   "main": "build/index.js",
   "files": [
     "build"
   ],
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build/*"
+    "ws:clean": "rm -rf build/*",
+    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
   },
   "dependencies": {},
   "devDependencies": {}
