@@ -12,6 +12,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: 12
+    - run: echo "::add-path::$(yarn global bin)"
     - name: Check out Optic Repo
       uses: actions/checkout@v2
       with:
