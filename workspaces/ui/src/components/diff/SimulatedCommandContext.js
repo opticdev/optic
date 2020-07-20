@@ -1,7 +1,7 @@
 import React from 'react';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
-import { commandsToJson } from '@useoptic/domain-utilities';
+import { commandsToJson } from '@useoptic/domain';
 import { withSpecServiceContext } from '../../contexts/SpecServiceContext';
 import compose from 'lodash.compose';
 import sha1 from 'node-sha1';
