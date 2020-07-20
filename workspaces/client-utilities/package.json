@@ -1,11 +1,10 @@
 {
   "name": "@useoptic/client-utilities",
-  "version": "8.2.6",
+  "version": "8.2.7",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "echo client-utilities",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:test": "echo client-utilities"
   },
   "repository": {
     "type": "git",

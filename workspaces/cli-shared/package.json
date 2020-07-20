@@ -1,11 +1,10 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "8.2.6",
+  "version": "8.2.7",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "echo cli-shared",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:test": "echo cli-shared"
   },
   "repository": {
     "type": "git",
@@ -16,19 +15,20 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "8.2.6",
-    "@useoptic/cli-config": "8.2.6",
-    "@useoptic/client-utilities": "8.2.6",
-    "@useoptic/domain": "8.3.1",
-    "@useoptic/domain-types": "8.3.1",
-    "@useoptic/domain-utilities": "8.3.1",
+    "@useoptic/cli-client": "8.2.7",
+    "@useoptic/cli-config": "8.2.7",
+    "@useoptic/client-utilities": "8.2.7",
+    "@useoptic/domain": "10.0.3",
+    "@useoptic/domain-types": "10.0.3",
+    "@useoptic/domain-utilities": "10.0.3",
     "avsc": "^5.4.21",
-    "proper-lockfile": "^4.1.1",
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",
     "fs-extra": "^9.0.0",
     "mockttp": "^0.19.2",
+    "oboe": "^2.1.5",
     "ora": "^4.0.4",
+    "proper-lockfile": "^4.1.1",
     "tree-kill": "^1.2.2",
     "uuid": "^8.0.0",
     "shape-hash": "^1.0.6",
