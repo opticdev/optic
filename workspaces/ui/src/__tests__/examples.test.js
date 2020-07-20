@@ -1,18 +1,25 @@
-import {Facade, RfcCommandContext} from '@useoptic/domain';
-import fs from 'fs'
+import { Facade, RfcCommandContext } from '@useoptic/domain-utilities';
+import fs from 'fs';
 
 xdescribe('Example loading', function () {
-    const examples = [
-        './public/example-commands/mattermost-commands.json'
-    ]
+  const examples = ['./public/example-commands/mattermost-commands.json'];
 
-    examples.forEach(function (exampleFileName) {
-        it('should parse the commands', function () {
-            const rfcId = 'rrr'
-            const eventStore = Facade.makeEventStore()
-            const initialCommandsString = fs.readFileSync(exampleFileName)
-            const commandContext = new RfcCommandContext('userId', 'sessionId', 'batchId')
-            const service = Facade.fromJsonCommands(eventStore, rfcId, commandContext, initialCommandsString)
-        });
-    })
+  examples.forEach(function (exampleFileName) {
+    it('should parse the commands', function () {
+      const rfcId = 'rrr';
+      const eventStore = Facade.makeEventStore();
+      const initialCommandsString = fs.readFileSync(exampleFileName);
+      const commandContext = new RfcCommandContext(
+        'userId',
+        'sessionId',
+        'batchId'
+      );
+      const service = Facade.fromJsonCommands(
+        eventStore,
+        rfcId,
+        commandContext,
+        initialCommandsString
+      );
+    });
+  });
 });
