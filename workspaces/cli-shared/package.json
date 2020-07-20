@@ -4,8 +4,7 @@
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "echo cli-shared",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:test": "echo cli-shared"
   },
   "repository": {
     "type": "git",
@@ -19,9 +18,9 @@
     "@useoptic/cli-client": "8.2.6",
     "@useoptic/cli-config": "8.2.6",
     "@useoptic/client-utilities": "8.2.6",
-    "@useoptic/domain": "8.3.1",
-    "@useoptic/domain-types": "8.3.1",
-    "@useoptic/domain-utilities": "8.3.1",
+    "@useoptic/domain": "10.0.3",
+    "@useoptic/domain-types": "10.0.3",
+    "@useoptic/domain-utilities": "10.0.3",
     "avsc": "^5.4.21",
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",

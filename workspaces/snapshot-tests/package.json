@@ -4,8 +4,7 @@
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "node build/index.js",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:test": "node build/index.js"
   },
   "repository": {
     "type": "git",
@@ -13,9 +12,9 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/domain-types": "8.3.1",
-    "@useoptic/domain": "8.3.1",
-    "@useoptic/domain-utilities": "8.3.1",
+    "@useoptic/domain-types": "10.0.3",
+    "@useoptic/domain": "10.0.3",
+    "@useoptic/domain-utilities": "10.0.3",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
   },

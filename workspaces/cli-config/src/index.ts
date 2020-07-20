@@ -31,6 +31,12 @@ export interface IOpticTask {
   targetUrl?: string;
 }
 
+export interface IOpticTaskAliases {
+  inboundUrl?: string;
+}
+
+export type IOpticTaskAliased = Partial<IOpticTask> & IOpticTaskAliases;
+
 export interface IApiCliConfig {
   name: string;
   tasks: {
@@ -125,8 +131,10 @@ export interface IOpticTaskRunnerConfig {
 }
 
 export async function TaskToStartConfig(
-  task: IOpticTask
+  aliasedTask: IOpticTaskAliased
 ): Promise<IOpticTaskRunnerConfig> {
+  const task = normalizeTask(aliasedTask);
+
   const baseUrl = url.parse(task.baseUrl);
   const targetUrl =
     (task.targetUrl && url.parse(task.targetUrl)) ||
@@ -164,6 +172,17 @@ export async function TaskToStartConfig(
     command: task.command,
     serviceConfig,
     proxyConfig,
+  };
+}
+
+function normalizeTask(aliased: IOpticTaskAliased): IOpticTask {
+  const baseUrl = aliased.baseUrl || aliased.inboundUrl;
+  if (!baseUrl)
+    throw new Error('Task definition must have baseUrl (aliases: inboundUrl)');
+
+  return {
+    ...aliased,
+    baseUrl,
   };
 }
 

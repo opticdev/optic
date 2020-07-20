@@ -44,17 +44,23 @@ const useStyles = makeStyles((theme) => ({
 window.OpticIds = OpticIds;
 
 export const NewUrlModal = withRfcContext((props) => {
-  const { children, newUrl, urlOverride, allUnmatchedPaths, onAdd } = props;
+  const {
+    children,
+    newUrl,
+    urlOverride,
+    onClose,
+    allUnmatchedPaths,
+    onAdd,
+  } = props;
+
   const classes = useStyles();
   const { cachedQueryResults, handleCommands } = useContext(RfcContext);
   const { captureId } = useContext(CaptureContext);
   const knownPathId = getOrUndefined(newUrl.pathId);
-  const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
   const handleClickOpen = () => {
-    setOpen(true);
     track('Clicked Undocumented Url', {
       captureId: captureId,
       method: newUrl.method,
@@ -65,7 +71,7 @@ export const NewUrlModal = withRfcContext((props) => {
 
   const handleClose = () => {
     setPathExpression(newUrl.path);
-    setOpen(false);
+    onClose();
   };
 
   const handleChange = ({ pathExpression }) => {
@@ -118,6 +124,7 @@ export const NewUrlModal = withRfcContext((props) => {
       pathId: lastParentPathId,
       method: newUrl.method,
     });
+    onClose();
   };
 
   const regex = completePathMatcherRegex(
@@ -133,7 +140,7 @@ export const NewUrlModal = withRfcContext((props) => {
 
     return (
       <Dialog
-        open={open}
+        open={true}
         onClose={handleClose}
         fullWidth
         maxWidth="md"
@@ -187,7 +194,7 @@ export const NewUrlModal = withRfcContext((props) => {
         <NamingDialog key={'naming one' + newUrl.toString()} />
       ) : (
         <Dialog
-          open={open}
+          open={true}
           onClose={handleClose}
           key={'path to' + newUrl.toString()}
           fullWidth
