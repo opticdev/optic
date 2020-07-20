@@ -63,6 +63,21 @@ optic_build_with_linked_core() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     optic_workspace_clean
+    yarn run bump-core-snapshot
+    yarn install
+    optic_workspace_build
+  )
+}
+bump_domain() {
+  if [[ -z "$1" ]]; then
+    echo "No version provided"
+    exit 1
+  fi
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    optic_workspace_clean
+    yarn run bump-core $1
     yarn install
     optic_workspace_build
   )
