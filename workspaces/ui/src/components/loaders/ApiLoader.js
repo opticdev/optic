@@ -23,11 +23,12 @@ export function ApiSpecServiceLoader(props) {
       setService(specService);
       specService.eventEmitter.on('events-updated', async () => {
         const events = await specService.listEvents();
+        props.eventCallback()
         setEvents(events);
       });
     };
     task();
-  }, [debugData.available, debugData.loading]);
+  }, [debugData.available, debugData.data, debugData.loading, props]);
 
   useEffect(() => {
     if (service) {
@@ -39,7 +40,7 @@ export function ApiSpecServiceLoader(props) {
     }
   }, [service]);
 
-  if (!service) {
+  if (!events) {
     return <LinearProgress />;
   }
 

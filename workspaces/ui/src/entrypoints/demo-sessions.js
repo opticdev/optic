@@ -14,6 +14,7 @@ import {
   ExampleDiffService,
 } from '../services/diff/ExampleDiffService';
 import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
+import { useSnackbar } from 'notistack';
 import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
   normalizedDiffFromRfcStateAndInteractions,
@@ -23,8 +24,10 @@ export default function DemoSessions(props) {
   const match = useRouteMatch();
   const { sessionId } = useParams();
   const [showModal, setShowModal] = useState(false);
+  const [actionsCompleted, setActions] = useState(0);
+  const [snack, setSnack] = useState(null);
 
-  setTimeout(() => {
+  setInterval(() => {
     setShowModal(true);
   }, 180000)
 
@@ -89,18 +92,49 @@ export default function DemoSessions(props) {
       rfcState
     );
   };
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  console.log(closeSnackbar)
+  // const [snackId, setSnackId] = useSnackbar(0);
+
+  // setting the right info box
+  let message = "nothing";
+
+  if (props.location.pathname.includes("diffs")) {
+    message = "Start by selecting some undocumented URLs"
+  } else if (props.location.pathname.includes("documentation/paths")) {
+    message = "We can add a description and inspect the shape of the expected response and request"
+  } else if (props.location.pathname.includes("documentation")) {
+    message = "Select some of the existing documentation and add some details"
+  } else if (props.location.pathname.includes("testing/captures")) {
+    message = "Here is an example of our contract testing page"
+  }
+  console.log(props.location)
+
+  // if (snackId !== null) {
+  //   closeSnackbar(snackId);
+  // }
+
+  if (message !== "nothing") {
+    enqueueSnackbar(message, { variant: "info", preventDuplicate: true});
+  }
 
   return (
-    <BaseUrlContext value={{ path: match.path, url: match.url }}>
-      <DebugSessionContextProvider value={session}>
-        <ApiSpecServiceLoader
-          captureServiceFactory={captureServiceFactory}
-          diffServiceFactory={diffServiceFactory}
-        >
-          <ApiRoutes />
-          { showModal && <DemoModal/>}
-        </ApiSpecServiceLoader>
-      </DebugSessionContextProvider>
-    </BaseUrlContext>
+    <>
+      <BaseUrlContext value={{ path: match.path, url: match.url }}>
+        <DebugSessionContextProvider value={session}>
+          <ApiSpecServiceLoader
+            eventCallback={(data) => {
+              setActions(actionsCompleted + 1)
+              console.log(data)
+            }}
+            captureServiceFactory={captureServiceFactory}
+            diffServiceFactory={diffServiceFactory}
+          >
+            <ApiRoutes />
+            { (actionsCompleted >= 2 || showModal) && <DemoModal onCancel={() => {setActions(0); setShowModal(false);}} />}
+          </ApiSpecServiceLoader>
+        </DebugSessionContextProvider>
+      </BaseUrlContext>
+    </>
   );
 }

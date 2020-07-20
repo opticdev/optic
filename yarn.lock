@@ -106,7 +106,16 @@
     lodash "^4.17.13"
     source-map "^0.5.0"
 
-"@babel/helper-annotate-as-pure@^7.10.4":
+"@babel/generator@^7.10.5":
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.10.5.tgz#1b903554bc8c583ee8d25f1e8969732e6b829a69"
+  integrity sha512-3vXxr3FEW7E7lJZiWQ3bM4+v/Vyr9C+hpolQ8BGFr9Y8Ri2tFLWTixmwKBafDujO1WVah4fhZBeU1bieKdghig==
+  dependencies:
+    "@babel/types" "^7.10.5"
+    jsesc "^2.5.1"
+    source-map "^0.5.0"
+
+"@babel/helper-annotate-as-pure@^7.0.0", "@babel/helper-annotate-as-pure@^7.10.4":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.10.4.tgz#5bf0d495a3f757ac3bda48b5bf3b3ba309c72ba3"
   integrity sha512-XQlqKQP4vXFB7BN8fEEerrmYvHp3fK/rBkRFz9jaJbzK0B1DSfej9Kc7ZzE8Z/OnId1jpJdNAZ3BFQjWG68rcA==
@@ -329,6 +338,11 @@
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.10.4.tgz#9eedf27e1998d87739fb5028a5120557c06a1a64"
   integrity sha512-8jHII4hf+YVDsskTF6WuMB3X4Eh+PsUkC2ljq22so5rHvH+T8BzyL94VOdyFLNR8tBSVXOTbNHOKpR4TfRxVtA==
+
+"@babel/parser@^7.10.5":
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.10.5.tgz#e7c6bf5a7deff957cec9f04b551e2762909d826b"
+  integrity sha512-wfryxy4bE1UivvQKSQDU4/X6dr+i8bctjUjj8Zyt3DQy7NtPizJXT8M52nqpNKL+nq2PW8lxk4ZqLj0fD4B4hQ==
 
 "@babel/plugin-proposal-async-generator-functions@^7.10.4", "@babel/plugin-proposal-async-generator-functions@^7.8.3":
   version "7.10.4"
@@ -1152,6 +1166,21 @@
     globals "^11.1.0"
     lodash "^4.17.13"
 
+"@babel/traverse@^7.4.5":
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.10.5.tgz#77ce464f5b258be265af618d8fddf0536f20b564"
+  integrity sha512-yc/fyv2gUjPqzTz0WHeRJH2pv7jA9kA7mBX2tXl/x5iOE81uaVPuGPtaYk7wmkx4b67mQ7NqI8rmT2pF47KYKQ==
+  dependencies:
+    "@babel/code-frame" "^7.10.4"
+    "@babel/generator" "^7.10.5"
+    "@babel/helper-function-name" "^7.10.4"
+    "@babel/helper-split-export-declaration" "^7.10.4"
+    "@babel/parser" "^7.10.5"
+    "@babel/types" "^7.10.5"
+    debug "^4.1.0"
+    globals "^11.1.0"
+    lodash "^4.17.19"
+
 "@babel/types@^7.0.0", "@babel/types@^7.10.4", "@babel/types@^7.3.0", "@babel/types@^7.4.0", "@babel/types@^7.4.4", "@babel/types@^7.7.0", "@babel/types@^7.9.0":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.10.4.tgz#369517188352e18219981efd156bfdb199fff1ee"
@@ -1159,6 +1188,15 @@
   dependencies:
     "@babel/helper-validator-identifier" "^7.10.4"
     lodash "^4.17.13"
+    to-fast-properties "^2.0.0"
+
+"@babel/types@^7.10.5":
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.10.5.tgz#d88ae7e2fde86bfbfe851d4d81afa70a997b5d15"
+  integrity sha512-ixV66KWfCI6GKoA/2H9v6bQdbfXEwwpOdQ8cRvb4F+eyvhlaHxWFMQB4+3d9QFJXZsiiiqVrewNV0DFEQpyT4Q==
+  dependencies:
+    "@babel/helper-validator-identifier" "^7.10.4"
+    lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
 "@cnakazawa/watch@^1.0.3":
@@ -1215,7 +1253,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
-"@emotion/is-prop-valid@0.8.8":
+"@emotion/is-prop-valid@0.8.8", "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
   integrity sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==
@@ -1261,12 +1299,12 @@
     "@emotion/styled-base" "^10.0.27"
     babel-plugin-emotion "^10.0.27"
 
-"@emotion/stylis@0.8.5":
+"@emotion/stylis@0.8.5", "@emotion/stylis@^0.8.4":
   version "0.8.5"
   resolved "https://registry.yarnpkg.com/@emotion/stylis/-/stylis-0.8.5.tgz#deacb389bd6ee77d1e7fcaccce9e16c5c7e78e04"
   integrity sha512-h6KtPihKFn3T9fuIrwvXXUOwlx3rfUvfZIcP5a6rh8Y7zjE3O06hT5Ss4S/YI1AYhuZ1kjaE/5EaOOI2NqSylQ==
 
-"@emotion/unitless@0.7.5":
+"@emotion/unitless@0.7.5", "@emotion/unitless@^0.7.4":
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
@@ -1806,6 +1844,11 @@
     invariant "^2.2.3"
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
+
+"@rooks/use-mutation-observer@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@rooks/use-mutation-observer/-/use-mutation-observer-3.4.0.tgz#5e4c122401ae1f790a24c64763a2910d0199a909"
+  integrity sha512-q10+v3WbvSt5fj55VMikTPaUZ9Yl+IYDsymodWr2+cKx0PD97VBeWYjk3xHJPqJgejBHwnrwiNkJKGFY5iW+WQ==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -2835,182 +2878,22 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-<<<<<<< HEAD
-=======
-"@useoptic/cli-client@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-client/-/cli-client-8.2.3.tgz#5e190b05c31aa599aae471af0af6772575a62382"
-  integrity sha512-RW8ROJ/ZQdVHxVtrHgld3CK8Vus5KVscWDeuiCsJ8qrEICmvQKPnIuxu/SruteT5oxJscIcrUs5svH7tgEW+/Q==
+"@useoptic/domain-types@8.3.1":
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.3.1.tgz#4f5a262d33fa387603898001af30c0c35f6e5c7d"
+  integrity sha512-eEnItYjhZqCvEYVRohP1TmWKroD4V44EMijXqsFtSQEK0sdtySaodtwyJo+DqbI7YeAanc3to5tYRh+CnT/baA==
+
+"@useoptic/domain-utilities@8.3.1":
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.3.1.tgz#65ce00e725ecec1eacf9854acc3d3f9e00a1cb31"
+  integrity sha512-NykOswW9XzNKpTYqUvw7MYWmSZmLcXCBFoeTPlEXE7WF7MTUK3Vswdjz53ilrYhMXVNzbum1slCyzwGaDeb57Q==
   dependencies:
-    "@useoptic/cli-config" "8.2.3"
-    "@useoptic/client-utilities" "8.2.3"
-    bottleneck "^2.19.5"
-    cross-fetch "^3.0.4"
+    "@useoptic/domain" "8.3.1"
 
-"@useoptic/cli-config@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-config/-/cli-config-8.2.3.tgz#7a8c0b7494c5f8be643397a1441734bba3b98963"
-  integrity sha512-AUxhxqE8ns/kA57axZaj9ZTajdFJ3wO8SwqsfN9xyS9MqS/ienLPXgmmoBmNxo8yYdcOr65XJJF1bch/1wcAeQ==
-  dependencies:
-    find-up "^4.1.0"
-    get-port "^5.1.0"
-    js-yaml "^3.13.1"
-    path-to-regexp "^3.0.0"
-
-"@useoptic/cli-scripts@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-scripts/-/cli-scripts-8.2.3.tgz#22e579449d21e4756f377f76b0956a557fda64b5"
-  integrity sha512-z8K0za7vjVNo37K8//qux45rREMNWpvnniU8Npb2SAY8oed6CE/+TGC7kXSe2+EAbEJ8PxJWy2EX6IGi9jPNKw==
-  dependencies:
-    "@useoptic/cli-shared" "8.2.3"
-    analytics-node "^3.4.0-beta.1"
-    node-notifier "^7.0.0"
-
-"@useoptic/cli-server@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-server/-/cli-server-8.2.3.tgz#37e9bdde1772900192d7d7b64d1f54a19db00ead"
-  integrity sha512-nbdkDvIEWW43OCWw1K9/uK/1EWsC0olh0zYPx3nSnNnaQ4rmAR3g+aALQng7HTbeSs20LQPs1cJnqIDbKAR5aw==
-  dependencies:
-    "@useoptic/cli-client" "8.2.3"
-    "@useoptic/cli-config" "8.2.3"
-    "@useoptic/cli-scripts" "8.2.3"
-    "@useoptic/cli-shared" "8.2.3"
-    "@useoptic/ui" "8.2.3"
-    avsc "^5.4.18"
-    body-parser "^1.19.0"
-    cors "^2.8.5"
-    express "^4.17.1"
-    find-process "^1.4.3"
-    fs-extra "^9.0.0"
-    get-port "^5.1.0"
-    http-proxy-middleware "^1.0.4"
-    lodash.sortby "^4.7.0"
-    node-fetch "^2.6.0"
-    proper-lockfile "^4.1.1"
-    uuid "^8.0.0"
-    wait-on "^4.0.0"
-
-"@useoptic/cli-shared@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-shared/-/cli-shared-8.2.3.tgz#158f03df0eda133cf4494a3d3b0add0259388b60"
-  integrity sha512-ytfx6KJ1R8uwOEpdARxfGiPXxltdlkVp99sxoo6sAWMX6+uiyFaf9l6jql5wNEsnE0bwlbdzlbu11e34rMGVwg==
-  dependencies:
-    "@oclif/command" "^1.6.1"
-    "@useoptic/cli-client" "8.2.3"
-    "@useoptic/cli-config" "8.2.3"
-    "@useoptic/client-utilities" "8.2.3"
-    "@useoptic/domain" "8.2.3"
-    "@useoptic/domain-types" "8.2.3"
-    "@useoptic/domain-utilities" "8.2.3"
-    avsc "^5.4.21"
-    bottleneck "^2.19.5"
-    colors "^1.4.0"
-    fs-extra "^9.0.0"
-    mockttp "^0.19.2"
-    ora "^4.0.4"
-    proper-lockfile "^4.1.1"
-    shape-hash "^1.0.6"
-    tree-kill "^1.2.2"
-    uuid "^8.0.0"
-    whatwg-mimetype "^2.3.0"
-
-"@useoptic/client-utilities@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/client-utilities/-/client-utilities-8.2.3.tgz#9ffcdc4d602540d5e6d87ab7b3cb1ed26e3dc4fb"
-  integrity sha512-V+DtwILeINe8ei8D9mLGPdnAwvzZStcilS7u9RcF+vRw4ss3YG0rDID8cxaKxduh8Q3IE20BwGtguREuwm6bTw==
-  dependencies:
-    cross-fetch "^3.0.4"
-
-"@useoptic/domain-types@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.2.3.tgz#fc4788e85f3326beed988db0853078fbc60c4e94"
-  integrity sha512-izxH/sfwF6MBwWhvAmQpCyDhHCMur5T9cjIjb+hhW/sHQOUBKMGomJSemw3Mby7NSwMr8F6ag6BS7F5mJopE/g==
-
->>>>>>> develop
-"@useoptic/domain-types@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-8.3.0.tgz#0c24c8b1586d9c1f1d15535853ba5bf21fe9baa4"
-  integrity sha512-mxAfkcWjdGE1+TzCrMEuypMXM+DEzwhTOQil5ubuct2Hch0xjb6kO+26FJTZ1bVHTnUE067t/7tBHkUIHdjI2Q==
-
-<<<<<<< HEAD
-=======
-"@useoptic/domain-utilities@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.2.3.tgz#db3aef4b829ee512b167f3e1f7329f8edccc85cb"
-  integrity sha512-2YacJ5TQvYjW3TF3zCOaZ7GC98uaMWY1aIpnJoF451vR4oAQare6gMwJaygOrpnd4mDRRoUvX8HAMz6GOYfSBQ==
-  dependencies:
-    "@useoptic/domain" "8.2.1"
-
->>>>>>> develop
-"@useoptic/domain-utilities@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-8.3.0.tgz#c9a4468511b3ca5c42fa7644287d6318690b437d"
-  integrity sha512-xgNilPsUVXRcIVo4ELzka/9bZzCQzkv38GA/QwtKvEk5bGHTseUVqpkiszWbmqO7y66xsYV9T4xhm0G4f+wt5Q==
-  dependencies:
-    "@useoptic/domain" "8.3.0"
-
-<<<<<<< HEAD
-"@useoptic/domain@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.3.0.tgz#75d6681c41d303d099b1e8d0731266a1d48a2954"
-  integrity sha512-lr70WJnFUkvRC3evw2htt62vUE7oNMUCov5EG5cilv0efgjjeGIg3DeXvqmCIuUpXyZYXDu82xEpFT1q8EEuKA==
-=======
-"@useoptic/domain@8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.1.tgz#f13018cb3aa6ef4271ab76bc674196032b20c295"
-  integrity sha512-dxyuaIJaGvKG8XcoZqW3hzwv3QIbY1WPLY/YhapA1HnVta+m5/mw+b9Yo1IbP0uusc+UI8DeBsYj4zY6JMrejw==
-
-"@useoptic/domain@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.2.3.tgz#feee0588137387076a4701222a1ebd2a17b4614f"
-  integrity sha512-OCG5gYq2pJZYaiBP6M7xH7lEfQO8dHtkQ3N3q1svZfpFWysJtBKsXmJrp2a2rrf50i3H1o5QceBcCXWI2kGrzQ==
->>>>>>> develop
-
-"@useoptic/domain@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.3.0.tgz#75d6681c41d303d099b1e8d0731266a1d48a2954"
-  integrity sha512-lr70WJnFUkvRC3evw2htt62vUE7oNMUCov5EG5cilv0efgjjeGIg3DeXvqmCIuUpXyZYXDu82xEpFT1q8EEuKA==
-
-"@useoptic/ui@8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/ui/-/ui-8.2.3.tgz#bd5dcd3c9f2ccf3f0a1c26e5cdc882c856ff6eb6"
-  integrity sha512-7mI5igTpDAszdzDarVGnneMVVyLLtxPZoant+LiI2k+NV/CEPNQu4GyttEkO6jkKdYeQBQlQXMZrNBjL830/EA==
-  dependencies:
-    "@material-ui/core" "^4.9.7"
-    "@material-ui/icons" "^4.9.1"
-    "@material-ui/lab" "^4.0.0-alpha.46"
-    "@useoptic/cli-client" "8.2.3"
-    "@useoptic/domain" "8.2.3"
-    "@useoptic/domain-utilities" "8.2.3"
-    bottleneck "^2.19.5"
-    camelcase "^5.2.0"
-    classnames "^2.2.6"
-    color "^3.1.2"
-    date-fns "^2.11.1"
-    lodash.compose "^2.4.1"
-    lodash.debounce "^4.0.8"
-    lodash.groupby "^4.6.0"
-    lodash.sortby "^4.7.0"
-    memoize-weak "^1.0.2"
-    mini-css-extract-plugin "0.5.0"
-    node-sha1 "^1.0.1"
-    notistack "^0.8.6"
-    path-to-regexp "^3.0.0"
-    prop-types latest
-    react "^16.8.6"
-    react-ace "^8.0.0"
-    react-dom "^16.8.6"
-    react-helmet "5.2.1"
-    react-hook-form "^3.27.0"
-    react-markdown "^4.2.2"
-    react-minimal-pie-chart "^6.0.1"
-    react-router-dom "^5.1.2"
-    react-scroll-into-view-if-needed "^2.1.7"
-    resolve "1.10.0"
-    scroll-into-view-if-needed "^2.2.24"
-    time-ago "^0.2.1"
-    ts-pnp "1.1.2"
-    url-loader "1.1.2"
+"@useoptic/domain@8.3.1":
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-8.3.1.tgz#7a10e9e89d9289d96da22b8a74425c7b7af75081"
+  integrity sha512-g2vhWrpGb7zy/Zsn9ipIoM5JDexLa1Xl/MmIo805onWHnTSxb/XFocD6dyf/DzZ7ExMEGBCKUerViXX64+2Ccw==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
@@ -4141,6 +4024,16 @@ babel-plugin-react-docgen@^4.0.0:
     react-docgen "^5.0.0"
     recast "^0.14.7"
 
+"babel-plugin-styled-components@>= 1":
+  version "1.10.7"
+  resolved "https://registry.yarnpkg.com/babel-plugin-styled-components/-/babel-plugin-styled-components-1.10.7.tgz#3494e77914e9989b33cc2d7b3b29527a949d635c"
+  integrity sha512-MBMHGcIA22996n9hZRf/UJLVVgkEOITuR2SvjHLb5dSTUyR4ZRGn+ngITapes36FI3WLxZHfRhkA1ffHxihOrg==
+  dependencies:
+    "@babel/helper-annotate-as-pure" "^7.0.0"
+    "@babel/helper-module-imports" "^7.0.0"
+    babel-plugin-syntax-jsx "^6.18.0"
+    lodash "^4.17.11"
+
 babel-plugin-syntax-jsx@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-jsx/-/babel-plugin-syntax-jsx-6.18.0.tgz#0af32a9a6e13ca7a3fd5069e62d7b0f58d0d8946"
@@ -4799,6 +4692,11 @@ camelcase@^5.0.0, camelcase@^5.2.0, camelcase@^5.3.1:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
+camelize@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/camelize/-/camelize-1.0.0.tgz#164a5483e630fa4321e5af07020e531831b2609b"
+  integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
+
 can-use-dom@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/can-use-dom/-/can-use-dom-0.1.0.tgz#22cc4a34a0abc43950f42c6411024a3f6366b45a"
@@ -5016,7 +4914,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5, classnames@^2.2.6:
+classnames@2.2.6, classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -5651,6 +5549,11 @@ css-blank-pseudo@^0.1.4:
   dependencies:
     postcss "^7.0.5"
 
+css-color-keywords@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"
+  integrity sha1-/qJhbcZ2spYmhrOvjb2+GAskTgU=
+
 css-color-names@0.0.4, css-color-names@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/css-color-names/-/css-color-names-0.0.4.tgz#808adc2e79cf84738069b646cb20ec27beb629e0"
@@ -5739,6 +5642,15 @@ css-select@^2.0.0:
     css-what "^3.2.1"
     domutils "^1.7.0"
     nth-check "^1.0.2"
+
+css-to-react-native@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/css-to-react-native/-/css-to-react-native-3.0.0.tgz#62dbe678072a824a689bcfee011fc96e02a7d756"
+  integrity sha512-Ro1yETZA813eoyUp2GDBhG2j+YggidUmzO1/v9eYBKR2EHVEniE2MI/NqpTQ954BMpTPZFsGNPm46qFB9dpaPQ==
+  dependencies:
+    camelize "^1.0.0"
+    css-color-keywords "^1.0.0"
+    postcss-value-parser "^4.0.2"
 
 css-tree@1.0.0-alpha.37:
   version "1.0.0-alpha.37"
@@ -7379,10 +7291,20 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
+focus-lock@^0.6.6:
+  version "0.6.8"
+  resolved "https://registry.yarnpkg.com/focus-lock/-/focus-lock-0.6.8.tgz#61985fadfa92f02f2ee1d90bc738efaf7f3c9f46"
+  integrity sha512-vkHTluRCoq9FcsrldC0ulQHiyBYgVJB2CX53I8r0nTC6KnEij7Of0jpBspjt3/CuNb6fyoj3aOh9J2HgQUM0og==
+
 focus-lock@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/focus-lock/-/focus-lock-0.7.0.tgz#b2bfb0ca7beacc8710a1ff74275fe0dc60a1d88a"
   integrity sha512-LI7v2mH02R55SekHYdv9pRHR9RajVNyIJ2N5IEkWbg7FT5ZmJ9Hw4mWxHeEUcd+dJo0QmzztHvDvWcc7prVFsw==
+
+focus-outline-manager@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/focus-outline-manager/-/focus-outline-manager-1.0.2.tgz#7bf3658865341fb6b08d042a037b9d2868b119b5"
+  integrity sha1-e/NliGU0H7awjQQqA3udKGixGbU=
 
 follow-redirects@1.5.10:
   version "1.5.10"
@@ -8110,7 +8032,7 @@ hmac-drbg@^1.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
-hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.2:
+hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -10073,7 +9995,7 @@ lodash.compose@^2.4.1:
   dependencies:
     lodash.isfunction "~2.4.1"
 
-lodash.debounce@^4.0.8:
+lodash.debounce@4.0.8, lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
@@ -10117,6 +10039,11 @@ lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.pick@4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.snakecase@^4.0.1:
   version "4.1.1"
@@ -12607,7 +12534,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@^15.5.4, prop-types@^15.5.7, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@latest:
+prop-types@15.7.2, prop-types@^15.5.4, prop-types@^15.5.7, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@latest:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -12967,6 +12894,18 @@ react-fast-compare@^3.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
   integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
 
+react-focus-lock@2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-focus-lock/-/react-focus-lock-2.2.1.tgz#1d12887416925dc53481914b7cedd39494a3b24a"
+  integrity sha512-47g0xYcCTZccdzKRGufepY8oZ3W1Qg+2hn6u9SHZ0zUB6uz/4K4xJe7yYFNZ1qT6m+2JDm82F6QgKeBTbjW4PQ==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    focus-lock "^0.6.6"
+    prop-types "^15.6.2"
+    react-clientside-effect "^1.2.2"
+    use-callback-ref "^1.2.1"
+    use-sidecar "^1.0.1"
+
 react-focus-lock@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-focus-lock/-/react-focus-lock-2.4.0.tgz#11235eff41f47567288d7ef574e5b006527739d5"
@@ -13166,6 +13105,21 @@ react@^16.8.3, react@^16.8.6:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
+
+reactour@^1.18.0:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.18.0.tgz#a5e7a037b147ec22306f98d42c40d8022520f903"
+  integrity sha512-de0Pa5NkDU6I8IyGl+7+rWdDcx3AskmJYK/yIKU11D9EPIN79qzn852gjJgvH/jXZqeEfa+rmMWg72vA0UkmgA==
+  dependencies:
+    "@rooks/use-mutation-observer" "3.4.0"
+    classnames "2.2.6"
+    focus-outline-manager "^1.0.2"
+    lodash.debounce "4.0.8"
+    lodash.pick "4.4.0"
+    prop-types "15.7.2"
+    react-focus-lock "2.2.1"
+    scroll-smooth "1.1.0"
+    scrollparent "2.0.1"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -13748,6 +13702,16 @@ scroll-into-view-if-needed@^2.2.24:
   integrity sha512-C8RKJPq9lK7eubwGpLbUkw3lklcG3Ndjmea2PyauzrA0i4DPlzAmVMGxaZrBFqCrVLfvJmP80IyHnv4jxvg1OQ==
   dependencies:
     compute-scroll-into-view "^1.0.14"
+
+scroll-smooth@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/scroll-smooth/-/scroll-smooth-1.1.0.tgz#467994d5bb57ffe7407e9a85bd0303b3d4524ded"
+  integrity sha512-68OUOXKN/ykM/Dbp4Lhza3O9QQUuW/c01WTsZzDOUyVgb1I5QjT/awOHCCbuYTSV1QnExUQ9w+KcxmVxlXIiAg==
+
+scrollparent@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/scrollparent/-/scrollparent-2.0.1.tgz#715d5b9cc57760fb22bdccc3befb5bfe06b1a317"
+  integrity sha1-cV1bnMV3YPsivczDvvtb/gaxoxc=
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -14564,6 +14528,22 @@ style-loader@^1.0.0:
     loader-utils "^2.0.0"
     schema-utils "^2.6.6"
 
+styled-components@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.1.1.tgz#96dfb02a8025794960863b9e8e365e3b6be5518d"
+  integrity sha512-1ps8ZAYu2Husx+Vz8D+MvXwEwvMwFv+hqqUwhNlDN5ybg6A+3xyW1ECrAgywhvXapNfXiz79jJyU0x22z0FFTg==
+  dependencies:
+    "@babel/helper-module-imports" "^7.0.0"
+    "@babel/traverse" "^7.4.5"
+    "@emotion/is-prop-valid" "^0.8.8"
+    "@emotion/stylis" "^0.8.4"
+    "@emotion/unitless" "^0.7.4"
+    babel-plugin-styled-components ">= 1"
+    css-to-react-native "^3.0.0"
+    hoist-non-react-statics "^3.0.0"
+    shallowequal "^1.1.0"
+    supports-color "^5.5.0"
+
 stylehacks@^4.0.0:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/stylehacks/-/stylehacks-4.0.3.tgz#6718fcaf4d1e07d8a1318690881e8d96726a71d5"
@@ -14603,7 +14583,7 @@ supports-color@^2.0.0:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
   integrity sha1-U10EXOa2Nj+kARcIRimZXp3zJMc=
 
-supports-color@^5.0.0, supports-color@^5.3.0:
+supports-color@^5.0.0, supports-color@^5.3.0, supports-color@^5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-5.5.0.tgz#e2e69a44ac8772f78a1ec0b35b689df6530efc8f"
   integrity sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==

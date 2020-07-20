@@ -625,6 +625,49 @@
             "tags": []
         },
         {
+          "uuid": "20",
+          "request": {
+            "host": "localhost",
+            "method": "PUT",
+            "path": "/api/todos",
+            "query": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            },
+            "headers": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            },
+            "body": {
+              "contentType": null,
+              "value": {
+                "asJsonString": "{\"something\":\"Finish WOw API\",\"createdAt\":1594939342922,\"completed\":false}",
+                "asText": null,
+                "asShapeHashBytes": null
+              }
+            }
+          },
+          "response": {
+            "statusCode": 200,
+            "headers": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            },
+            "body": {
+              "contentType": "application/json",
+              "value": {
+                "asJsonString": "{\"response\":\"success\",\"id\":\"edsfsd908fds\"}",
+                "asText": null,
+                "asShapeHashBytes": null
+              }
+            }
+          },
+          "tags": []
+      },
+        {
         "uuid": "3",
         "request": {
             "host": "localhost",
