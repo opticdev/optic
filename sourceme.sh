@@ -63,7 +63,6 @@ optic_build_with_linked_core() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     optic_workspace_clean
-    yarn workspaces run ws:linkDomain
     yarn install
     optic_workspace_build
   )
