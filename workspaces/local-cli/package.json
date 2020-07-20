@@ -21,7 +21,7 @@
     "@useoptic/cli-scripts": "8.2.6",
     "@useoptic/cli-server": "8.2.6",
     "@useoptic/cli-shared": "8.2.6",
-    "@useoptic/domain": "10.0.2",
+    "@useoptic/domain": "10.0.3",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
@@ -89,7 +89,6 @@
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf lib/*",
     "ws:test": "echo local-cli",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities",
     "postinstall": "api daemon:stop || exit 0"
   },
   "types": "lib/index.d.ts"

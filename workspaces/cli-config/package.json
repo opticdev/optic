@@ -4,8 +4,7 @@
   "scripts": {
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:clean": "rm -rf build/*"
   },
   "repository": {
     "type": "git",

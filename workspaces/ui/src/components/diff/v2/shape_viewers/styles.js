@@ -265,6 +265,7 @@ export const useColor = {
   BooleanColor: '#E3662E',
   ObjectColor: '#30B1C4',
   ListColor: '#c47078',
+  UnknownColor: '#ffc176',
   modifier: '#d5d4ff',
 };
 

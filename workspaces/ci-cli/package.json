@@ -68,7 +68,6 @@
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf lib",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities",
     "ws:test": "echo skipping tests"
   },
   "types": "lib/index.d.ts"

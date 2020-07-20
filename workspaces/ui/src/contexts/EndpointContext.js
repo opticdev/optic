@@ -98,5 +98,5 @@ export function PathNameFromId({ pathId }) {
     .map(({ pathComponentName }) => pathComponentName)
     .join('/');
 
-  return <>{fullPath}</>;
+  return <>{fullPath || '/'}</>;
 }
