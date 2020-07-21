@@ -34,6 +34,7 @@
     "nice-try": "^2.0.1",
     "react-dev-utils": "^10.0.0",
     "slugify": "^1.4.0",
+    "strip-ansi": "^6.0.0",
     "tslib": "^1",
     "url-join": "^4.0.1",
     "uuid": "^8.0.0"
