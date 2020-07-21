@@ -10,6 +10,10 @@ import {
   IIgnoreRunnable,
 } from './helpers/ignore-parser';
 
+import { debug } from 'debug';
+
+export const warnDeprecation = debug('optic-cli-config-deprecations');
+
 export interface IUserCredentials {
   token: string;
 }
@@ -139,6 +143,12 @@ export async function TaskToStartConfig(
   const targetUrl =
     (task.targetUrl && url.parse(task.targetUrl)) ||
     (task.proxy && url.parse(task.proxy)); // TODO: add deprecation warning
+
+  if (task.proxy) {
+    warnDeprecation(
+      `task.proxy field has been deprecated in favor of task.targetUrl field.`
+    );
+  }
 
   const serviceProtocol =
     (targetUrl && targetUrl.protocol) || baseUrl.protocol || 'http:';
