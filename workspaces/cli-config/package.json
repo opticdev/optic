@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-config",
-  "version": "8.2.7",
+  "version": "8.2.8",
   "scripts": {
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose",
@@ -14,6 +14,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
+    "debug": "^4.1.1",
     "find-up": "^4.1.0",
     "get-port": "^5.1.0",
     "js-yaml": "^3.13.1",

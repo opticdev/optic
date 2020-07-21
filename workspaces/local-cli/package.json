@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.2.7",
+  "version": "8.2.8",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -16,11 +16,11 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/cli-client": "8.2.7",
-    "@useoptic/cli-config": "8.2.7",
-    "@useoptic/cli-scripts": "8.2.7",
-    "@useoptic/cli-server": "8.2.7",
-    "@useoptic/cli-shared": "8.2.7",
+    "@useoptic/cli-client": "8.2.8",
+    "@useoptic/cli-config": "8.2.8",
+    "@useoptic/cli-scripts": "8.2.8",
+    "@useoptic/cli-server": "8.2.8",
+    "@useoptic/cli-shared": "8.2.8",
     "@useoptic/domain": "10.0.3",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
@@ -34,6 +34,7 @@
     "nice-try": "^2.0.1",
     "react-dev-utils": "^10.0.0",
     "slugify": "^1.4.0",
+    "strip-ansi": "^6.0.0",
     "tslib": "^1",
     "url-join": "^4.0.1",
     "uuid": "^8.0.0"
