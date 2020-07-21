@@ -99,7 +99,9 @@ export default function DemoSessions(props) {
   // setting the right info box
   let message = "nothing";
 
-  if (props.location.pathname.includes("diffs")) {
+  if (props.location.pathname.includes("diffs/example-session/paths")) {
+    message = "Here, we can see the different requests that this route has experienced, and we can document it"
+  } else if (props.location.pathname.includes("diffs")) {
     message = "Start by selecting some undocumented URLs"
   } else if (props.location.pathname.includes("documentation/paths")) {
     message = "We can add a description and inspect the shape of the expected response and request"
@@ -115,7 +117,15 @@ export default function DemoSessions(props) {
   // }
 
   if (message !== "nothing") {
-    enqueueSnackbar(message, { variant: "info", preventDuplicate: true});
+    enqueueSnackbar(message, { variant: "info", preventDuplicate: true, anchorOrigin: {
+      horizontal: "center",
+      vertical: "bottom"
+    }});
+  }
+
+  const demoEventCallback = (data) => {
+    setActions(actionsCompleted + 1)
+    console.log(data)
   }
 
   return (
@@ -123,14 +133,11 @@ export default function DemoSessions(props) {
       <BaseUrlContext value={{ path: match.path, url: match.url }}>
         <DebugSessionContextProvider value={session}>
           <ApiSpecServiceLoader
-            eventCallback={(data) => {
-              setActions(actionsCompleted + 1)
-              console.log(data)
-            }}
+            demoEventCallback={demoEventCallback}
             captureServiceFactory={captureServiceFactory}
             diffServiceFactory={diffServiceFactory}
           >
-            <ApiRoutes />
+            <ApiRoutes demoEventCallback={demoEventCallback} />
             { (actionsCompleted >= 2 || showModal) && <DemoModal onCancel={() => {setActions(0); setShowModal(false);}} />}
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>

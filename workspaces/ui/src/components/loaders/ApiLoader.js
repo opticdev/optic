@@ -23,12 +23,11 @@ export function ApiSpecServiceLoader(props) {
       setService(specService);
       specService.eventEmitter.on('events-updated', async () => {
         const events = await specService.listEvents();
-        props.eventCallback()
         setEvents(events);
       });
     };
     task();
-  }, [debugData.available, debugData.data, debugData.loading, props]);
+  }, [debugData.available, debugData.loading]);
 
   useEffect(() => {
     if (service) {
