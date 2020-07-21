@@ -27,12 +27,13 @@ export default class Run extends Command {
   static flags = {
     command: flags.string({
       required: false,
-      description: 'the command to start your API',
+      description: '(required, or --targetUrl) the command to start your API',
       exclusive: ['targetUrl'],
     }),
     targetUrl: flags.string({
       required: false,
-      description: 'the url where your service is available',
+      description:
+        '(required, or --command) the url where your service is available',
       exclusive: ['command'],
     }),
     listen: flags.string({
