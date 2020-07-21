@@ -37,7 +37,21 @@ export default class Run extends Command {
     }),
     listen: flags.string({
       required: true,
-      description: 'host:port Optic should listen on',
+      description:
+        'host:port Optic should listen on (aliases: --baseUrl, --inboundUrl)',
+      default: ({ flags }: { flags: { [k: string]: string } }) => {
+        return flags.baseUrl || flags.inboundUrl;
+      },
+    }),
+    baseUrl: flags.string({
+      required: false,
+      hidden: true,
+      description: 'alias for --listen',
+    }),
+    inboundUrl: flags.string({
+      required: false,
+      hidden: true,
+      description: 'alias for --listen',
     }),
     config: flags.string({
       required: true,
