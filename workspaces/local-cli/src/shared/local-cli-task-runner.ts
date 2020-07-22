@@ -6,7 +6,7 @@ import {
   IOpticTaskRunnerConfig,
   IPathMapping,
   TargetPortUnavailableError,
-  warnDeprecation,
+  deprecationLogger,
 } from '@useoptic/cli-config';
 import { opticTaskToProps, trackAndSpawn } from './analytics';
 import { lockFilePath } from './paths';
@@ -38,15 +38,15 @@ import { Debugger } from 'debug';
 
 export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   // hijack the config deprecation log to format nicely for the CLI
-  warnDeprecation.log = (msg: string) => {
+  deprecationLogger.log = (msg: string) => {
     cli.log(
       warningFromOptic(
         'optic.yml deprecation: ' +
-          stripAnsi(msg).replace(warnDeprecation.namespace, '').trim()
+          stripAnsi(msg).replace(deprecationLogger.namespace, '').trim()
       )
     );
   };
-  warnDeprecation.enabled = true;
+  deprecationLogger.enabled = true;
 
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
