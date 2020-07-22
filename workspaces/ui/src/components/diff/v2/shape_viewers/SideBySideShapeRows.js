@@ -630,20 +630,29 @@ function useCompassTargetTracker(isEnabled) {
     const isBelow = boundingRect.top - viewportHeight > 0;
     const { x, width } = boundingRect;
 
-    if (
-      isAbove !== compassState.isAbove ||
-      isBelow !== compassState.isBelow ||
-      x !== compassState.x ||
-      width !== compassState.width
-    ) {
-      setCompassState({
-        isAbove,
-        isBelow,
-        x,
-        width,
-      });
-    }
-
+    setCompassState((current) => {
+      if (
+        isAbove !== current.isAbove ||
+        isBelow !== current.isBelow ||
+        x !== current.x ||
+        width !== current.width
+      ) {
+        // console.log(
+        //   'compass state has changed',
+        //   Object.entries({
+        //     isAbove: [isAbove, current.isAbove],
+        //     isBelow: [isBelow, current.isBelow],
+        //     x: [x, current.x],
+        //     width: [width, current.width],
+        //   })
+        //     .filter(([key, [next, prev]]) => next !== prev)
+        //     .map(([key, [next, prev]]) => `${key} ${prev} -> ${next}`)
+        // );
+        return { isAbove, isBelow, x, width };
+      } else {
+        return current;
+      }
+    });
     animationRaf.current = requestAnimationFrame(onAnimationFrame);
   }, [
     compassState.isAbove,
