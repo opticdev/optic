@@ -70,6 +70,7 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
+import { track } from '../../../Analytics';
 
 const {
   Context: AllCapturesContext,
@@ -211,6 +212,10 @@ function CaptureChooserComponent(props) {
   );
 
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
+  
+  useEffect(() => {
+    track(`Changed to ${tab}`, tab)
+  }, [tab])
 
   useEffect(() => {
     global.debugOptic = debugDump(specService, captureId);

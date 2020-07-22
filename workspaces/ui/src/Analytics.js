@@ -1,6 +1,6 @@
 import { Client } from '@useoptic/cli-client';
+import EventEmitter from 'events';
 import packageJson from '../package.json';
-
 const opticVersion = packageJson.version;
 
 let isAnalyticsEnabled = window.opticAnalyticsEnabled;
@@ -37,6 +37,10 @@ export async function touchAnalytics() {
   console.log('analytics loaded');
 }
 
+class EventTrackingEmitter extends EventEmitter {}
+
+export const trackEmitter = new EventTrackingEmitter();
+
 export async function track(event, props) {
   await readyPromise;
   if (isAnalyticsEnabled) {
@@ -44,4 +48,5 @@ export async function track(event, props) {
     window.analytics.track(event, allProps);
     window.FS.event(event, allProps);
   }
+  trackEmitter.emit('event', event, props);
 }

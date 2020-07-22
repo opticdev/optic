@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -130,7 +130,7 @@ export const NewUrlModal = withRfcContext((props) => {
 
   function NamingDialog() {
     const [purpose, setPurpose] = React.useState('');
-
+    track("Naming Endpoint", { path: newUrl.path, method: newUrl.method });
     return (
       <Dialog
         open={open}
