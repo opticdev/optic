@@ -124,6 +124,8 @@ export default function DemoSessions(props) {
     } 
   }, [props.location.pathname])
 
+  // TODO - modify diff page to say Optic detected a change in the spec
+  
   // useEffect(() => {
   //   if (props.location.pathname.includes("diffs") && hasCommited) {
   //     setMessage(`Now that you've committed changes, let's take a look at the <a href="/demos/todo/documentation">documentation you created</a>!`)

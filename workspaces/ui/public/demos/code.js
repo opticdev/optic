@@ -4,7 +4,7 @@ const putRequestNoPriority = {
     title: "Get Milk",
 }
 
-const putResponseNoPriorityId = crypto.randomBytes(16).toString("hex")
+const putResponseNoPriorityId = crypto.randomBytes(4).toString("hex")
 const putResponseNoPriority = {
     status: "success",
     id: putResponseNoPriorityId,
@@ -24,14 +24,15 @@ const putRequestWithPriority = {
 
 const putResponseWithPriority = {
     status: "success",
-    id: crypto.randomBytes(16).toString("hex"),
+    id: crypto.randomBytes(4).toString("hex"),
     created: {
         title: "Recommend Optic to Team",
         createdAt: Date.now(),
         completed: false,
         priority: "high",
-        id: crypto.randomBytes(16).toString("hex"),
+        id: crypto.randomBytes(4).toString("hex"),
     },
+    added: "to ensure a diff"
 }
 
 const postRequestAdjustTitle = {
@@ -104,7 +105,7 @@ const samples = [
         createdAt: Date.now(),
         completed: false,
         priority: "high",
-        id: crypto.randomBytes(16).toString("hex")
+        id: crypto.randomBytes(4).toString("hex")
     }])),
     Sample(methods.put, "/api/todos", putRequestNoPriority, putResponseNoPriority),
     Sample(methods.put, "/api/todos", putRequestWithPriority, putResponseWithPriority),
@@ -126,7 +127,7 @@ console.log(JSON.stringify(samples))
 
 function Sample(method, path, requestBody, responseBody) {
     return {
-        "uuid": crypto.randomBytes(16).toString("hex"),
+        "uuid": crypto.randomBytes(4).toString("hex"),
         "request": {
         "host": "localhost",
         "method": method,
