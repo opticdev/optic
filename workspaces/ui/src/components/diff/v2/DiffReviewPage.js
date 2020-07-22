@@ -30,6 +30,7 @@ import { DiffStats } from './Stats';
 import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
+import { track } from '../../../Analytics'
 import Button from '@material-ui/core/Button';
 
 export const newRegionsConst = 'new_regions';
@@ -108,6 +109,12 @@ export function DiffReviewPage(props) {
       <DocDivider style={{ marginTop: 16, marginBottom: 16 }} />,
     ];
   });
+
+  useEffect(() => {
+    if (showFinalize || (completed && regions.empty)) {
+      track("Rendered Finalize Card")
+    }
+  }, [showFinalize, completed, regions.empty])
 
   return (
     <div className={classes.container}>

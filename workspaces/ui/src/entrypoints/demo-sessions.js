@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouteMatch, matchPath } from 'react-router-dom';
+import { useParams, useRouteMatch, matchPath, useHistory } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
 import { LightTooltip } from '../components/tooltips/LightTooltip';
 import { DemoModal } from '../components/DemoModal';
@@ -20,6 +20,8 @@ import {
   normalizedDiffFromRfcStateAndInteractions,
 } from '@useoptic/domain-utilities';
 import { trackEmitter } from "../Analytics"
+import SetupLink from '../components/testing/SetupLink';
+import { Button } from '@material-ui/core';
 
 export default function DemoSessions(props) {
   const match = useRouteMatch();
@@ -27,6 +29,7 @@ export default function DemoSessions(props) {
   const [showModal, setShowModal] = useState(false);
   const [actionsCompleted, setActions] = useState(0);
   const [snack, setSnack] = useState(null);
+  const history = useHistory()
 
   setInterval(() => {
     setShowModal(true);
@@ -99,58 +102,102 @@ export default function DemoSessions(props) {
 
   // setting the right info box
   const [message, setMessage] = useState("nothing")
-
-  console.log(props.location)
+  const [action, setAction] = useState(null)
+  const [hasCommited, setHasCommited] = useState(false) 
 
   useEffect(() => {
     if (props.location.pathname.includes("diffs/example-session/paths")) {
       setMessage("Here, we can see the different requests that this route has experienced, and we can document it")
-    } else if (props.location.pathname.includes("diffs/example-session")) {
-      setMessage("Welcome to Optic! Let's start by selecting an undocumented URL!")
+      setAction(null)
     } else if (props.location.pathname.includes("documentation/paths")) {
       setMessage("We can add a description and inspect the shape of the expected response and request")
+      setAction(null)
     } else if (props.location.pathname.includes("documentation")) {
       setMessage("Select some of the existing documentation and add some details")
+      setAction(null)
     } else if (props.location.pathname.includes("testing/captures") && props.location.pathname.includes("endpoints")) {
       setMessage("We can see that there is an undocumented field")
+      setAction(null)
     } else if (props.location.pathname.includes("testing/captures")) {
       setMessage("Choose an endpoint to see if it's fufilling its contract")
+      setAction(null)
     } 
   }, [props.location.pathname])
 
-  trackEmitter.on('event', (event, props) => {
+  // useEffect(() => {
+  //   if (props.location.pathname.includes("diffs") && hasCommited) {
+  //     setMessage(`Now that you've committed changes, let's take a look at the <a href="/demos/todo/documentation">documentation you created</a>!`)
+  //     setAction(null)
+  //   }
+  // }, [hasCommited, props.location.pathname])
+
+  trackEmitter.on('event', (event, eventProps) => {
+    console.log(`hasCommitted = ${hasCommited}, ${props.location.pathname}`)
     switch (event) {
       case "Changed to UNDOCUMENTED_URL": {
-        setMessage("Here, we can see all routes that have not been documented yet. Let's select one to document")
+        if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
+          setMessage("Here, we can see all routes that have not been documented yet. Let's select one to document")
+          setAction(null)
+        }
         break
       }
       case "Changed to ENDPOINT_DIFF": {
-        setMessage("Here, we can see all if the endpoints are following the behavior we previously documented. Let's select a diff to review")
+        if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
+          setMessage(`Here, we can see all if the endpoints are following the behavior we previously documented. Let's select a diff to review`)
+          setAction(null)
+        }
         break
       }
-      case "Adding Endpoint" : {
-        setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${props.path.split("/").pop()} and change it to say "todo_id"`)
+      case "Clicked Undocumented Url" : {
+        setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${eventProps.path.split("/").pop()} and change it to say "todo_id"`)
+        setAction(null)
         break
       }
       case "Naming Endpoint" : {
-        // const exampleEndpointName = props.method === "GET" ? "Get specific TODO Item" : "Update Specific TODO Item"
-        setMessage(`Now, let's give it a name. For example, we can call this endpoint "${"exampleEndpointName"}"`)
+        const exampleEndpointName = eventProps.method === "GET" ? "Get specific TODO Item" : "Update Specific TODO Item"
+        setMessage(`Now, let's give it a name. For example, we can call this endpoint "${exampleEndpointName}"`)
+        setAction(null)
+        break
+      }
+      case "Rendered Finalize Card": {
+        setMessage("Optic documents changes in API Behavior, not just code. Now that we've documented changes, we can mark this change in behavior")
+        setAction(null)
+        break
+      }
+      case "Committed Changes to Endpoint": {
+        setHasCommited(true)
+        setAction({
+          onClick: () => {
+            setAction(null)
+            history.push("/demos/todo/documentation")
+          },
+          title: "See Documentation"
+        })
+        setMessage(`Now that you've committed changes, let's take a look at the documentation!`)
         break
       }
       default: {
         break
       }
     }
-    // console.log("event:")
-    // console.log(event)
+    console.log("event:")
+    console.log(event)
     // console.log(props)
   })
 
   if (message !== "nothing" /*&& info*/) {
-    enqueueSnackbar(message, { variant: "info", preventDuplicate: true, persist: true, anchorOrigin: {
-      horizontal: "center",
-      vertical: "bottom",
-    }});
+    if (action) {
+      const button = () => <Button onClick={action.onClick}>{action.title}</Button>
+      enqueueSnackbar(message, { variant: "info", preventDuplicate: true, autoHideDuration: null, anchorOrigin: {
+        horizontal: "center",
+        vertical: "bottom",
+      }, action: button});
+    } else {
+      enqueueSnackbar(message, { variant: "info", preventDuplicate: true, autoHideDuration: null, anchorOrigin: {
+        horizontal: "center",
+        vertical: "bottom",
+      }});
+    }
   }
 
   // if (needToCheckInfo) {

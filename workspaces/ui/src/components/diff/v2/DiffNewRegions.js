@@ -121,6 +121,7 @@ function _NewRegions(props) {
           return getOrUndefined(suggestion);
         })
     );
+    track("Documented Changes")
 
     acceptSuggestion(...allApproved);
   };

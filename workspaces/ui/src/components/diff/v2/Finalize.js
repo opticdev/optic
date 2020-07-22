@@ -49,11 +49,6 @@ export default function FinalizeDialog(props) {
     history.push(`${baseUrl}/diffs/${captureId}`);
   };
   const commit = async () => {
-    track('Committed Changes to Endpoint', {
-      message: commitMessage,
-      captureId,
-      suggestions: acceptedSuggestions.length,
-    });
     const newEventStore = initialEventStore.getCopy(rfcId);
     const {
       StartBatchCommit,
@@ -76,7 +71,16 @@ export default function FinalizeDialog(props) {
       JsonHelper.jsArrayToVector([EndBatchCommit(batchId)])
     );
     await specService.saveEvents(newEventStore, rfcId);
-    setTimeout(() => history.push(`${baseUrl}/diffs/${captureId}`), 500);
+    setTimeout(() => {
+      history.push(`${baseUrl}/diffs/${captureId}`)
+    }, 500);
+    setTimeout(() => {
+      track('Committed Changes to Endpoint', {
+        message: commitMessage,
+        captureId,
+        suggestions: acceptedSuggestions.length,
+      });
+    }, 1000)
   };
 
   useEffect(() => {
