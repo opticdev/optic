@@ -9,6 +9,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
 import { LightTooltip } from '../tooltips/LightTooltip';
+import { track } from '../../Analytics';
 
 const drawerWidth = 270;
 
@@ -106,6 +107,7 @@ export default function Navbar(props) {
             component={Link}
             to={i.link}
             placement="right"
+            onClick={() => track(`Navigating to ${i.name}`, i)}
           >
             <IconButton className={classes.navButton}>{i.icon}</IconButton>
           </LightTooltip>

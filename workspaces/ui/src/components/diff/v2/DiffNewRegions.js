@@ -180,6 +180,8 @@ function _NewRegions(props) {
     });
   }
 
+  track("Show Initial Documentation Page", props)
+
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
 

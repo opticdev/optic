@@ -71,9 +71,11 @@ export default function FinalizeDialog(props) {
       JsonHelper.jsArrayToVector([EndBatchCommit(batchId)])
     );
     await specService.saveEvents(newEventStore, rfcId);
+    
     setTimeout(() => {
       history.push(`${baseUrl}/diffs/${captureId}`)
     }, 500);
+
     setTimeout(() => {
       track('Committed Changes to Endpoint', {
         message: commitMessage,

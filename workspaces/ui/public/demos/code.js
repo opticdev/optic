@@ -32,7 +32,6 @@ const putResponseWithPriority = {
         priority: "high",
         id: crypto.randomBytes(4).toString("hex"),
     },
-    added: "to ensure a diff"
 }
 
 const postRequestAdjustTitle = {
@@ -129,44 +128,44 @@ function Sample(method, path, requestBody, responseBody) {
     return {
         "uuid": crypto.randomBytes(4).toString("hex"),
         "request": {
-        "host": "localhost",
-        "method": method,
-        "path": path,
-        "query": {
-          "asJsonString": null,
-          "asText": null,
-          "asShapeHashBytes": null
+            "host": "localhost",
+            "method": method,
+            "path": path,
+            "query": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+            },
+            "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+            },
+            "body": {
+                "contentType": requestBody ? "application/json" : null,
+                "value": {
+                    "asJsonString": requestBody ? JSON.stringify(requestBody) : null,
+                    "asText": null,
+                    "asShapeHashBytes": null
+                }
+            }
         },
-        "headers": {
-          "asJsonString": null,
-          "asText": null,
-          "asShapeHashBytes": null
+        "response": {
+            "statusCode": 200,
+            "headers": {
+                "asJsonString": null,
+                "asText": null,
+                "asShapeHashBytes": null
+            },
+            "body": {
+                "contentType": "application/json",
+                "value": {
+                    "asJsonString": responseBody ? JSON.stringify(responseBody) : null,
+                    "asText": null,
+                    "asShapeHashBytes": null
+                }
+            }
         },
-        "body": {
-          "contentType": null,
-          "value": {
-            "asJsonString": requestBody ? JSON.stringify(requestBody) : null,
-            "asText": null,
-            "asShapeHashBytes": null
-          }
-        }
-      },
-      "response": {
-        "statusCode": 200,
-        "headers": {
-          "asJsonString": null,
-          "asText": null,
-          "asShapeHashBytes": null
-        },
-        "body": {
-          "contentType": "application/json",
-          "value": {
-            "asJsonString": responseBody ? JSON.stringify(responseBody) : null,
-            "asText": null,
-            "asShapeHashBytes": null
-          }
-        }
-      },
-      "tags": []
-  }
+        "tags": []
+    }
 }
