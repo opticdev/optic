@@ -395,7 +395,9 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const realCount = endpointDiffs.filter((i) => i.isDocumentedEndpoint).length;
+  const real = endpointDiffs.filter((i) => i.isDocumentedEndpoint);
+  const realCount = real.length;
+  const anyHaveDiffs = real.some((i) => i.count > 0);
 
   if (realCount === 0 && !completed) {
     return <DiffLoadingOverview show={true} />;
@@ -408,7 +410,7 @@ function EndpointDiffs(props) {
     <>
       <div className={classes.stats}>
         <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
-          {realCount > 0
+          {anyHaveDiffs
             ? 'Some endpoints are exhibiting undocumented behavior'
             : 'All endpoints are working as specified'}
         </Typography>
@@ -499,12 +501,27 @@ function UnrecognizedUrls(props) {
   const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
   const urls = JsonHelper.seqToJsArray(urlsSplit.urls);
 
+  const [pendingUrl, setPendingUrl] = useState(null);
+
   if (urls.length === 0 && undocumented.length === 0 && !completed) {
     return <DiffLoadingOverview show={true} />;
   }
 
   return (
     <>
+      {pendingUrl && (
+        <NewUrlModal
+          onClose={() => setPendingUrl(null)}
+          allUnmatchedPaths={allUnmatchedPaths}
+          urlOverride={pendingUrl.override}
+          newUrl={pendingUrl}
+          onAdd={(result) => {
+            const { pathId, method } = result;
+            const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
+            history.push(to);
+          }}
+        />
+      )}
       <div className={classes.stats}>
         <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
           Optic observed{' '}
@@ -530,33 +547,33 @@ function UnrecognizedUrls(props) {
             const url = <PathNameFromId pathId={getOrUndefined(i.pathId)} />;
 
             return (
-              <NewUrlModal
-                key={i.toString()}
-                allUnmatchedPaths={allUnmatchedPaths}
-                urlOverride={url}
-                newUrl={i}
-                onAdd={(result) => {
-                  const { pathId, method } = result;
-                  const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
-                  history.push(to);
+              <ListItem
+                button
+                className={classes.row}
+                divider={true}
+                onClick={() => {
+                  setPendingUrl({
+                    pathId: i.pathId,
+                    path: i.path,
+                    method: i.method,
+                    override: url,
+                  });
                 }}
               >
-                <ListItem button className={classes.row} divider={true}>
-                  <div className={classes.listItemInner}>
-                    <PathAndMethod method={i.method} path={url} />
-                  </div>
-                  <ListItemSecondaryAction>
-                    <Chip
-                      className={classes.chips}
-                      size="small"
-                      label={i.count + ' observations'}
-                      style={{
-                        backgroundColor: AddedGreenBackground,
-                      }}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              </NewUrlModal>
+                <div className={classes.listItemInner}>
+                  <PathAndMethod method={i.method} path={url} />
+                </div>
+                <ListItemSecondaryAction>
+                  <Chip
+                    className={classes.chips}
+                    size="small"
+                    label={i.count + ' observations'}
+                    style={{
+                      backgroundColor: AddedGreenBackground,
+                    }}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
             );
           })}
         </List>
@@ -575,32 +592,28 @@ function UnrecognizedUrls(props) {
       <List>
         {urls.map((i) => {
           return (
-            <NewUrlModal
-              key={i.toString()}
-              allUnmatchedPaths={allUnmatchedPaths}
-              newUrl={i}
-              onAdd={(result) => {
-                const { pathId, method } = result;
-                const to = `${baseUrl}/diffs/${captureId}/paths/${pathId}/methods/${method}`;
-                history.push(to);
+            <ListItem
+              button
+              className={classes.row}
+              divider={true}
+              onClick={() => {
+                setPendingUrl(i);
               }}
             >
-              <ListItem button className={classes.row} divider={true}>
-                <div className={classes.listItemInner}>
-                  <PathAndMethod method={i.method} path={i.path} />
-                </div>
-                <ListItemSecondaryAction>
-                  <Chip
-                    className={classes.chips}
-                    size="small"
-                    label={i.count + ' observations'}
-                    style={{
-                      backgroundColor: AddedGreenBackground,
-                    }}
-                  />
-                </ListItemSecondaryAction>
-              </ListItem>
-            </NewUrlModal>
+              <div className={classes.listItemInner}>
+                <PathAndMethod method={i.method} path={i.path} />
+              </div>
+              <ListItemSecondaryAction>
+                <Chip
+                  className={classes.chips}
+                  size="small"
+                  label={i.count + ' observations'}
+                  style={{
+                    backgroundColor: AddedGreenBackground,
+                  }}
+                />
+              </ListItemSecondaryAction>
+            </ListItem>
           );
         })}
       </List>

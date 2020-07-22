@@ -118,6 +118,8 @@ function _NewRegions(props) {
                 inferPolymorphism
               );
 
+          debugger;
+
           return getOrUndefined(suggestion);
         })
     );
@@ -205,7 +207,7 @@ function _NewRegions(props) {
                   variant="caption"
                   style={{ marginTop: 12, color: DocDarkGrey }}
                 >
-                  A random 100 examples from this capture will be used for the
+                  A random 20 examples from this capture will be used for the
                   inference, it may not catch everything.{' '}
                 </Typography>
               </div>

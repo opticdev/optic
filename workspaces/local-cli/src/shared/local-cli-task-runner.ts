@@ -6,11 +6,13 @@ import {
   IOpticTaskRunnerConfig,
   IPathMapping,
   TargetPortUnavailableError,
+  deprecationLogger,
 } from '@useoptic/cli-config';
 import { opticTaskToProps, trackAndSpawn } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
+import stripAnsi from 'strip-ansi';
 
 import {
   getCredentials,
@@ -25,14 +27,27 @@ import {
   IOpticTaskRunner,
   loadPathsAndConfig,
   makeUiBaseUrl,
+  warningFromOptic,
 } from '@useoptic/cli-shared';
 import * as uuid from 'uuid';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
 import { Config } from '../config';
+import { Debugger } from 'debug';
 
 export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
+  // hijack the config deprecation log to format nicely for the CLI
+  deprecationLogger.log = (msg: string) => {
+    cli.log(
+      warningFromOptic(
+        'optic.yml deprecation: ' +
+          stripAnsi(msg).replace(deprecationLogger.namespace, '').trim()
+      )
+    );
+  };
+  deprecationLogger.enabled = true;
+
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
   const runner = new LocalCliTaskRunner(captureId, paths);

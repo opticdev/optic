@@ -18,8 +18,11 @@ export function runManagedScript(modulePath: string, ...args: string[]) {
 
   const isDebuggingEnabled =
     process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
-  const execArgv = isDebuggingEnabled ? ['--inspect=63694'] : [];
-  const child = cp.fork(modulePath, args, { execArgv });
+  // const execArgv = isDebuggingEnabled ? ['--inspect=63694'] : []; // not in spawn
+  const child = cp.spawn(process.argv0, [modulePath, ...args], {
+    windowsHide: true,
+    stdio: ['ipc'],
+  });
   return child;
 }
 

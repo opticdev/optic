@@ -1,11 +1,10 @@
 {
   "name": "@useoptic/cli-config",
-  "version": "8.2.6",
+  "version": "8.2.8",
   "scripts": {
     "ws:test": "echo config",
     "ws:build": "yarn run tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
-    "ws:linkDomain": "yarn link @useoptic/domain @useoptic/domain-types @useoptic/domain-utilities"
+    "ws:clean": "rm -rf build/*"
   },
   "repository": {
     "type": "git",
@@ -15,6 +14,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
+    "debug": "^4.1.1",
     "find-up": "^4.1.0",
     "get-port": "^5.1.0",
     "js-yaml": "^3.13.1",

@@ -10,6 +10,9 @@ import {
   IIgnoreRunnable,
 } from './helpers/ignore-parser';
 
+import Deprecations, { warnDeprecation } from './deprecations';
+export { deprecationLogger } from './deprecations';
+
 export interface IUserCredentials {
   token: string;
 }
@@ -139,6 +142,10 @@ export async function TaskToStartConfig(
   const targetUrl =
     (task.targetUrl && url.parse(task.targetUrl)) ||
     (task.proxy && url.parse(task.proxy)); // TODO: add deprecation warning
+
+  if (task.proxy) {
+    warnDeprecation(Deprecations.taskProxyField);
+  }
 
   const serviceProtocol =
     (targetUrl && targetUrl.protocol) || baseUrl.protocol || 'http:';
