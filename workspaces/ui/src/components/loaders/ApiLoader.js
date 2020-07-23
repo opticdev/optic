@@ -39,7 +39,7 @@ export function ApiSpecServiceLoader(props) {
     }
   }, [service]);
 
-  if (!service) {
+  if (!events) {
     return <LinearProgress />;
   }
 
