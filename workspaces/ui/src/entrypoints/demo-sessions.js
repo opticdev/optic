@@ -131,7 +131,7 @@ export default function DemoSessions(props) {
       case "Changed to UNDOCUMENTED_URL": {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
         const undocumentedUrlCount = eventProps.undocumentedUrlCount
-        console.log(`undocumentedUrlCount: ${undocumentedUrlCount}`)
+
         if (undocumentedUrlCount > 0) {
             setAction(null)
             setMessage("Here, we can see all routes that have not been documented yet. Let's select one to document")
@@ -153,7 +153,7 @@ export default function DemoSessions(props) {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
           setAction(null)
           const diffAmount = eventProps.diffCount
-          console.log(`diffAmount: ${diffAmount}`)
+
           if (diffAmount > 0) {
             setMessage(`Here, we can see all if the endpoints are following the behavior we previously documented. Let's select a diff to review`)
           } else {
@@ -196,14 +196,12 @@ export default function DemoSessions(props) {
         break
       }
       default: {
-        // console.log(event)
         break
       }
     }
   })
 
   useEffect(() => {
-    console.log("snackbar time")
     if (message !== "nothing" /*&& info*/) {
       if (action) {
         const button = () => <Button onClick={action.onClick}>{action.title}</Button>
