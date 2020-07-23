@@ -227,7 +227,7 @@ export default function DemoSessions(props) {
             captureServiceFactory={captureServiceFactory}
             diffServiceFactory={diffServiceFactory}
           >
-            <ApiRoutes />
+            <ApiRoutes demo={true} />
             { (actionsCompleted >= 2 || showModal) && <DemoModal onCancel={() => {setActions(0); setShowDemoModal(false);}} />}
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>

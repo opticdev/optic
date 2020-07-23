@@ -41,7 +41,7 @@ export function ApiRoutes(props) {
             />
           )}
 
-        <Redirect to={routerPaths.docsRoot} />
+        <Redirect to={props.demo ? routerPaths.diffsRoot : routerPaths.docsRoot} />
       </Switch>
     </Suspense>
   );
