@@ -72,17 +72,15 @@ export default function FinalizeDialog(props) {
     );
     await specService.saveEvents(newEventStore, rfcId);
     
-    setTimeout(() => {
-      history.push(`${baseUrl}/diffs/${captureId}`)
-    }, 500);
-
+    history.push(`${baseUrl}/diffs/${captureId}`);
+    
     setTimeout(() => {
       track('Committed Changes to Endpoint', {
         message: commitMessage,
         captureId,
         suggestions: acceptedSuggestions.length,
       });
-    }, 1000)
+    }, 500);
   };
 
   useEffect(() => {

@@ -438,9 +438,7 @@ function EndpointDiffs(props) {
                       component={Link}
                       to={to}
                       onClick={() => {
-                        if (i.count > 0) {
-                          setTimeout(() => track("Viewing Endpoint Diff", i), 500)
-                        }
+                        track("Viewing Endpoint Diff", i)
                       }}
                     >
                       <div className={classes.listItemInner}>
