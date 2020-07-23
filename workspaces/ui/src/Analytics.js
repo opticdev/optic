@@ -48,5 +48,5 @@ export async function track(event, props) {
     window.analytics.track(event, allProps);
     window.FS.event(event, allProps);
   }
-  trackEmitter.emit('event', event, props);
+  trackEmitter.emit('event', event, props || {});
 }

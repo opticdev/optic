@@ -107,10 +107,10 @@ export default function DemoSessions(props) {
       setMessage("Here, we can see the different requests that this route has experienced, and we can document it")
     } else */if (props.location.pathname.includes("documentation/paths")) {
       setAction(null)
-      setMessage("We can add a description and inspect the shape of the expected response and request")
+      setMessage("Descriptions can be added to the endpoint, to the request and responses, and to individual fields. Note the field types (collectively, the traffic shape) is already documented.")
     } else if (props.location.pathname.includes("documentation")) {
       setAction(null)
-      setMessage("Select some of the existing documentation and add some details")
+      setMessage(`Details can be added to existing documentation. Click the "Full Documentation" drop-down on an endpoint above.`)
     } else if (props.location.pathname.includes("testing/captures") && props.location.pathname.includes("endpoints")) {
       setAction(null)
       setMessage("We can see that there is an undocumented field")
@@ -122,19 +122,21 @@ export default function DemoSessions(props) {
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
+    console.log(event)
     switch (event) {
       case "Show Initial Documentation Page" : {
         setAction(null)
-        setMessage("Here, we can see the different requests that this route has experienced, and we can document it")
+        setMessage(`Optic will show you the requests and responses to this endpoint, and the automatically documented traffic shape. Click "Document Bodies" to commit the new documentation to the specification, accepting the changes and making fields optional.`)
         break
       }
+      case "Closed AddUrlModal" :
       case "Changed to UNDOCUMENTED_URL": {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
-        const undocumentedUrlCount = eventProps.undocumentedUrlCount
+        const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1
 
         if (undocumentedUrlCount > 0) {
             setAction(null)
-            setMessage("Here, we can see all routes that have not been documented yet. Let's select one to document")
+            setMessage("The Undocumented URLs page shows all traffic Optic observed to undocumented routes. Click a route to begin.")
           } else {
             setAction({
               onClick: () => {
@@ -155,16 +157,18 @@ export default function DemoSessions(props) {
           const diffAmount = eventProps.diffCount
 
           if (diffAmount > 0) {
-            setMessage(`Here, we can see all if the endpoints are following the behavior we previously documented. Let's select a diff to review`)
+            setMessage(`Optic will show you all of the documented endpoints, and if any traffic shows undocumented behavior. Click "Creates a new TODO Item" to investigate.`)
           } else {
             setMessage(`Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`)
           }
         }
         break
       }
+      case "On Undocumented Url" :
       case "Clicked Undocumented Url" : {
         setAction(null)
-        setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${eventProps.path.split("/").pop()} and change it to say "todo_id"`)
+        setMessage("If an API path has parameters, they can be documented for consumers. Click the last component of the path, which is an example of a `todo_id`, and click Next.")
+        // setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${eventProps.path.split("/").pop()} and change it to say "todo_id"`)
         break
       }
       case "Naming Endpoint" : {
@@ -175,7 +179,7 @@ export default function DemoSessions(props) {
       }
       case "Rendered Finalize Card": {
         setAction(null)
-        setMessage("Optic documents changes in API Behavior, not just code. Now that we've documented changes, we can mark this change in behavior")
+        setMessage("Optic tracks changes in API behavior, somewhat like Git tracks changes in code. Now that we've documented changes in the API behavior, those changes are committed to the API specification.")
         break
       }
       case "Committed Changes to Endpoint": {
@@ -187,12 +191,12 @@ export default function DemoSessions(props) {
           },
           title: "See Documentation"
         })
-        setMessage(`Now that you've committed changes, let's take a look at the documentation!`)
+        setMessage(`Awesome! Now that you've committed changes, let's take a look at the documentation!`)
         break
       }
       case "Viewing Endpoint Diff" : {
         setAction(null)
-        setMessage(`Optic detected a change from the previously documented behavior here. Now, we can update the documentation and commit that change in behavior. Let's add priority as a field, and make it optional.`)
+        setMessage(`Optic detected a change from the previously documented behavior. We can update the documentation and commit that change in behavior to the specification. Let's add priority as a field. Then, make it optional.`)
         break
       }
       default: {
