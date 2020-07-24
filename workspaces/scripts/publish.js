@@ -90,7 +90,7 @@ promise
                 'npm',
                 isPrivatePublish
                   ? ['publish', '--registry', registry]
-                  : ['publish', '--access', 'public'],
+                  : ['publish', '--access', 'public', '-ddd'],
                 {
                   cwd,
                   stdio: 'inherit',
