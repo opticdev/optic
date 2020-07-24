@@ -122,7 +122,6 @@ export default function DemoSessions(props) {
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
-    console.log(event)
     switch (event) {
       case "Show Initial Documentation Page" : {
         setAction(null)
@@ -231,7 +230,7 @@ export default function DemoSessions(props) {
             captureServiceFactory={captureServiceFactory}
             diffServiceFactory={diffServiceFactory}
           >
-            <ApiRoutes demo={true} />
+            <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
             { (actionsCompleted >= 2 || showModal) && <DemoModal onCancel={() => {setActions(0); setShowDemoModal(false);}} />}
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
