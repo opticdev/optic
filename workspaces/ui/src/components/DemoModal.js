@@ -26,14 +26,14 @@ export const DemoModal = (props) => {
           aria-labelledby="form-dialog-title"
         >
           <form>
-            <DialogTitle>Enjoying Optic?</DialogTitle>
+            <DialogTitle>Ready to integrate Optic with your API?</DialogTitle>
             <DialogContent style={{ marginTop: -20 }}>
               <DialogContentText style={{ marginTop: 12 }}>
-                Start integrating Optic into your own projects
+              Keep exploring the Optic demo, or start integrating Optic into your own projects
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>I just want to use this amazing demo</Button>
+              <Button onClick={handleClose}>Show me more</Button>
               <Button
                 autoFocus={false}
                 type="submit"
