@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "8.2.8",
+  "version": "8.2.9",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -15,9 +15,9 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "8.2.8",
-    "@useoptic/cli-config": "8.2.8",
-    "@useoptic/client-utilities": "8.2.8",
+    "@useoptic/cli-client": "8.2.9",
+    "@useoptic/cli-config": "8.2.9",
+    "@useoptic/client-utilities": "8.2.9",
     "@useoptic/domain": "10.0.3",
     "@useoptic/domain-types": "10.0.3",
     "@useoptic/domain-utilities": "10.0.3",
