@@ -22,9 +22,9 @@ class App extends React.Component {
         <CssBaseline />
         <ThemeProvider theme={appTheme}>
           <SnackbarProvider maxSnack={1}>
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
               <>
-                <Route path="/" component={TopLevelRoutes} />
+                <Route path="/" component={() => <TopLevelRoutes demo={this.props.demo}/>} />
               </>
             </BrowserRouter>
           </SnackbarProvider>

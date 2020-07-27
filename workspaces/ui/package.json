@@ -58,6 +58,7 @@
     "start-local": "node --max-old-space-size=8192 scripts/start-local.js",
     "build": "node --max-old-space-size=8192 scripts/build.js",
     "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
+    "build-demo": "node --max-old-space-size=8192 scripts/build-demo.js",
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
