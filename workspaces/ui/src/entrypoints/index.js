@@ -6,7 +6,7 @@ import WelcomePage from '../components/support/WelcomePage';
 import PrivateSessions from './private-sessions';
 import DemoSessions from './demo-sessions';
 
-export default function TopLevelRoutes({demo}) {
+export default function TopLevelRoutes() {
   return (
     <Switch>
       <Route
@@ -26,9 +26,7 @@ export default function TopLevelRoutes({demo}) {
       />
       <Route strict path="/apis/:apiId" component={LocalCli} />
       
-      { demo ? <Redirect strict path={'/'} to={process.env.PUBLIC_URL + '/demos/todo'} />
-      : <Route strict path={'/'} component={WelcomePage} />
-      }
+      <Route strict path={'/'} component={WelcomePage} />
     </Switch>
   );
 }

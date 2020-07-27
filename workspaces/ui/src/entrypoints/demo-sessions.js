@@ -99,7 +99,7 @@ export default function DemoSessions(props) {
   setInterval(() => {
     closeSnackbar()
     setShowDemoModal(true);
-  }, 18000)
+  }, 180000) // 60 seconds/minute * 3 minutes *  1000 ms/second = 180,000
 
 
   // path specific info boxes
