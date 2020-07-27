@@ -89,16 +89,18 @@ export default function DemoSessions(props) {
     );
   };
 
-  // show demo modal after 3 Minutes
-  setInterval(() => {
-    setShowDemoModal(true);
-  }, 180000)
-
   // info boxes / guides for the demo
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [message, setMessage] = useState("nothing")
   const [action, setAction] = useState(null)
   const [hasCommited, setHasCommited] = useState(false) 
+
+  // show demo modal after 3 Minutes
+  setInterval(() => {
+    closeSnackbar()
+    setShowDemoModal(true);
+  }, 18000)
+
 
   // path specific info boxes
   useEffect(() => {

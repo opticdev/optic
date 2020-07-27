@@ -7,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { track } from './../Analytics';
+import demoGraphic from '../assets/demoGraphic.svg'
 
 export const DemoModal = (props) => {
   const [open, setOpen] = React.useState(true);
@@ -27,10 +28,11 @@ export const DemoModal = (props) => {
         >
           <form>
             <DialogTitle>Ready to integrate Optic with your API?</DialogTitle>
-            <DialogContent style={{ marginTop: -20 }}>
+            <DialogContent style={{ marginTop: -20 , textAlign: 'center'}}>
               <DialogContentText style={{ marginTop: 12 }}>
               Keep exploring the Optic demo, or start integrating Optic into your own projects
               </DialogContentText>
+              <img src={demoGraphic} />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Show me more</Button>
