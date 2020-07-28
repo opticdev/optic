@@ -21,7 +21,7 @@ class App extends React.Component {
         <CssBaseline />
         <ThemeProvider theme={appTheme}>
           <SnackbarProvider maxSnack={1}>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <BrowserRouter>
               <>
                 <Route path="/" component={this.props.topLevelRoutes} />
               </>
