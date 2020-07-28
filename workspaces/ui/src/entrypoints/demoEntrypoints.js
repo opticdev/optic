@@ -11,7 +11,7 @@ export default function DemoTopLevelRoutes() {
         component={DemoSessions}
       />
         
-        <Redirect strict path={'/'} to={process.env.PUBLIC_URL + '/demos/todo'} />
+        <Redirect strict path={'/'} to={'/demos/todo'} />
     </Switch>
   );
 }
