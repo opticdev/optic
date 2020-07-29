@@ -27,7 +27,7 @@ export const DemoModal = (props) => {
           aria-labelledby="form-dialog-title"
         >
           <form>
-            <DialogTitle>Ready to integrate Optic with your API?</DialogTitle>
+            <DialogTitle style={{ textAlign: 'center' }}>Ready to integrate Optic with your API?</DialogTitle>
             <DialogContent style={{ marginTop: -20 , textAlign: 'center'}}>
               <DialogContentText style={{ marginTop: 12 }}>
               Keep exploring the Optic demo, or start integrating Optic into your own projects
