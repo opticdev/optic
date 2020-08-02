@@ -70,6 +70,7 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
+import { track } from '../../../Analytics';
 
 const {
   Context: AllCapturesContext,
@@ -211,6 +212,13 @@ function CaptureChooserComponent(props) {
   );
 
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
+  
+  useEffect(() => {
+    track(`Changed to ${tab}`, {
+      diffCount: realEndpointDiffCount,
+      undocumentedUrlCount: urlsSplit.total
+    })
+  }, [tab, realEndpointDiffCount, urlsSplit.total])
 
   useEffect(() => {
     global.debugOptic = debugDump(specService, captureId);
@@ -315,6 +323,7 @@ function CaptureChooserComponent(props) {
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
   const classes = useStyles();
+  
   return (
     // sessionId={props.match.params.captureId}
     // specService={specService}
@@ -428,6 +437,9 @@ function EndpointDiffs(props) {
                       className={classes.row}
                       component={Link}
                       to={to}
+                      onClick={() => {
+                        track("Viewing Endpoint Diff", i)
+                      }}
                     >
                       <div className={classes.listItemInner}>
                         <Typography component="div" variant="subtitle2">

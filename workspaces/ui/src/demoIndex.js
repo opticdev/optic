@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import TopLevelRoutes from './entrypoints';
 import * as serviceWorker from './serviceWorker';
+import DemoTopLevelRoutes from './entrypoints/demoEntrypoints';
 
 global.opticDebug = {};
 
-ReactDOM.render(<App topLevelRoutes={TopLevelRoutes} />, document.getElementById('root'));
+ReactDOM.render(<App topLevelRoutes={DemoTopLevelRoutes} />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

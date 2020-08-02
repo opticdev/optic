@@ -68,6 +68,7 @@ export class ExampleDiffService implements IDiffService {
     const endpointDiffs = ScalaJSHelpers.toJsArray(
       DiffResultHelper.endpointDiffs(this.diffs, this.rfcState)
     );
+
     return Promise.resolve({ diffs: endpointDiffs });
   }
 

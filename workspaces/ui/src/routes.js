@@ -15,6 +15,8 @@ const TestindDashboardTeaserPage = React.lazy(() =>
 
 export function ApiRoutes(props) {
   const routerPaths = useRouterPaths();
+  const defaultRoute = props.getDefaultRoute ? props.getDefaultRoute(routerPaths) : routerPaths.docsRoot
+
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
@@ -41,7 +43,7 @@ export function ApiRoutes(props) {
             />
           )}
 
-        <Redirect to={routerPaths.docsRoot} />
+        <Redirect to={defaultRoute} />
       </Switch>
     </Suspense>
   );
