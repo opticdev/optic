@@ -3,5 +3,5 @@
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 process.env.REACT_APP_TESTING_DASHBOARD = 'false'
-process.env.CUSTOM_INDEX_JS = 'src/demoIndex';
+process.env.CUSTOM_INDEX_JS = 'src/specIndex';
 require('./build');

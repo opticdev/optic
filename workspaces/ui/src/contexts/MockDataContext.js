@@ -30,6 +30,53 @@ function createDebugSession({ exampleSessionCollection, sessionId }) {
   };
 }
 
+function createSpecSession(specId) {
+  let fetchedData = null;
+  async function getData(refresh = false) {
+    if (!fetchedData || refresh) {
+      // only fetch data once
+      // only for testing, we'll do the fetch to a local folder. replace with s3
+      fetchedData = fetch(`/specs/${specId}.json`, {
+        headers: { accept: 'application/json' },
+      }).then((response) => {
+        if (response.ok) {
+          // format specification.json to be in the right format
+          console.log(response.json)
+
+          const data = async () => {
+            return {
+              events: await response.json(),
+              examples: {},
+              "session": {
+                "metadata": {
+                  "completed": true
+                },
+                "samples": [],
+                "links": [
+                  {
+                    "rel": "next",
+                    "href": ""
+                  }
+                ]
+              }
+            }
+          }
+          console.log(data)
+          return data()
+        }
+
+        throw new Error();
+      });
+    }
+    return await fetchedData;
+  }
+
+  return {
+    specId,
+    getData,
+  };
+}
+
 // Hooks
 // -----
 
@@ -37,6 +84,14 @@ export function useMockSession({ sessionId, exampleSessionCollection }) {
   const dashboardContext = useMemo(
     () => createDebugSession({ sessionId, exampleSessionCollection }),
     [sessionId]
+  );
+  return dashboardContext;
+}
+
+export function useSpecSession(specId) {
+  const dashboardContext = useMemo(
+    () => createSpecSession(specId),
+    [specId]
   );
   return dashboardContext;
 }

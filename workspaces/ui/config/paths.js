@@ -65,6 +65,10 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+const determineIndexJs = () => {
+  
+}
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
@@ -73,7 +77,7 @@ module.exports = {
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   privateSessions: resolveApp('public/private-sessions'),
-  appIndexJs: process.env.OPTIC_DEMO_MODE_ENABLED ? resolveModule(resolveApp, 'src/demoIndex') : resolveModule(resolveApp, 'src/index'),
+  appIndexJs: resolveModule(resolveApp, process.env.CUSTOM_INDEX_JS || 'src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),

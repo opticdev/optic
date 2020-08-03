@@ -5,6 +5,7 @@ import LocalCli from './localcli';
 import WelcomePage from '../components/support/WelcomePage';
 import PrivateSessions from './private-sessions';
 import DemoSessions from './demo-sessions';
+import SpecViewer from './spec-viewer';
 
 export default function TopLevelRoutes() {
   return (
@@ -23,6 +24,11 @@ export default function TopLevelRoutes() {
         strict
         path="/demos/:sessionId"
         component={DemoSessions}
+      />
+      <Route
+        strict
+        path="/specs/:specId"
+        component={SpecViewer}
       />
       <Route strict path="/apis/:apiId" component={LocalCli} />
       
