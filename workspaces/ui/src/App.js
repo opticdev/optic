@@ -5,7 +5,6 @@ import { appTheme } from './theme';
 import { BrowserRouter, Route, useLocation } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
-import TopLevelRoutes from './entrypoints';
 import { touchAnalytics, track } from './Analytics';
 import * as SupportLinks from './components/support/Links';
 
@@ -24,7 +23,7 @@ class App extends React.Component {
           <SnackbarProvider maxSnack={1}>
             <BrowserRouter>
               <>
-                <Route path="/" component={TopLevelRoutes} />
+                <Route path="/" component={this.props.topLevelRoutes} />
               </>
             </BrowserRouter>
           </SnackbarProvider>

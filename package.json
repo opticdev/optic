@@ -6,6 +6,7 @@
     "build-domain-optimized": "cd ./core && ./scripts/package-optimized.sh",
     "copy-domain": "echo copied",
     "build-ui": "cd workspaces/ui && yarn run build-local",
+    "build-demo": "cd workspaces/ui && yarn run build-demo",
     "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
     "postpull": "printf 'Run these commands:\n$ source sourceme.sh\n$ optic_build\n'",
     "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
