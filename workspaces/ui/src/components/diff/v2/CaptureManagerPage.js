@@ -136,17 +136,6 @@ function AllCapturesStore(props) {
 export function CaptureManagerPage(props) {
   const routerPaths = useRouterPaths();
 
-  // set scrolling
-  useEffect(() => {
-    // on component mount
-    document.body.style.overflow = "hidden"
-
-    // on component unmount
-    return () => {
-      document.body.style.overflow = "visible"
-    }
-  }, [])
-
   return (
     <Page title="Review API Diffs">
       <Page.Navbar mini={true} />
