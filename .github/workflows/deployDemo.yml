@@ -5,7 +5,7 @@ on:
       - feature/demo
       - release
 jobs:
-  build-and-push:
+  build-demo-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
           if [ "$BRANCH" = "release" ]; then
             echo ::set-env name=BUCKET::optic-demo-website-production
             echo ::set-env name=SITE_URL::https://demo.useoptic.com
-          else if [ "$BRANCH" = "feature/demo" ]; then
+          elif [ "$BRANCH" = "feature/demo" ]; then
             echo ::set-env name=BUCKET::optic-demo-website-staging
             echo ::set-env name=SITE_URL::https://demo.o3c.info
           fi
