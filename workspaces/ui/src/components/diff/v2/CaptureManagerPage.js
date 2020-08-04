@@ -632,7 +632,6 @@ const Stat = ({ number, label }) => {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    height: '100vh',
     overflow: 'hidden',
   },
   navigationContainer: {
@@ -644,8 +643,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexGrow: 1,
     flexShrink: 1,
-    overflow: 'scroll',
-    height: '100vh',
     justifyContent: 'center',
   },
   navRoot: {
@@ -653,7 +650,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     width: 'inherit',
     height: '100vh',
-    overflowY: 'scroll',
+    overflowY: 'visible',
+    overflowX: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
@@ -667,7 +665,6 @@ const useStyles = makeStyles((theme) => ({
   },
   center: {
     flex: 1,
-    paddingBottom: 300,
     maxWidth: 1200,
   },
   statsSection: {
@@ -728,7 +725,7 @@ const useStyles = makeStyles((theme) => ({
   },
   diffContainer: {
     display: 'flex',
-    height: '100vh',
+    
     paddingLeft: 32,
     paddingRight: 32,
     flexDirection: 'row',

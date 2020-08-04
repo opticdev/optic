@@ -234,7 +234,6 @@ export function DiffReviewPage(props) {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    height: '100vh',
     overflow: 'hidden',
   },
   navigationContainer: {
@@ -243,8 +242,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   pageContainer: {
-    overflow: 'scroll',
-    height: '100vh',
     justifyContent: 'center',
     flexGrow: 1,
   },
@@ -253,7 +250,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     width: 'inherit',
     height: '100vh',
-    overflowY: 'scroll',
+    overflowY: 'visible',
+    overflowX: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
@@ -267,7 +265,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 16,
     flexGrow: 1,
     flexShirnk: 1,
-    overflow: 'scroll',
   },
   tabs: {
     marginLeft: theme.spacing(2),
@@ -283,7 +280,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 20,
-    paddingBottom: 400,
+    paddingBottom: 100,
     margin: '0 auto',
   },
   statsSection: {
