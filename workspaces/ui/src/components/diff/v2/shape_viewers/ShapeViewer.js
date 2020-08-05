@@ -34,6 +34,39 @@ export default function ShapeViewer({ shape }) {
       />
       <Row indent={2} type="object_close" />
       <Row indent={1} type="object_close" />
+      <Row indent={1} fieldName="Results" type="array_open" />
+
+      <Row indent={2} seqIndex={0} type="object_open" />
+      <Row
+        indent={3}
+        fieldName="constructorId"
+        fieldValue="red_bull"
+        type="string"
+      />
+      <Row
+        indent={3}
+        fieldName="driverId"
+        fieldValue="max_verstappen"
+        type="string"
+      />
+      <Row indent={2} type="object_close" />
+
+      <Row indent={2} seqIndex={1} type="object_open" />
+      <Row
+        indent={3}
+        fieldName="constructorId"
+        fieldValue="mercedes_amg"
+        type="string"
+      />
+      <Row
+        indent={3}
+        fieldName="driverId"
+        fieldValue="lewis_hamilton"
+        type="string"
+      />
+      <Row indent={2} type="object_close" />
+
+      <Row indent={1} type="array_close" />
       <Row indent={0} type="object_close" />
     </div>
   );
@@ -42,7 +75,16 @@ export default function ShapeViewer({ shape }) {
 export function Row(props) {
   const classes = useStyles();
   const generalClasses = useShapeViewerStyles();
-  const { indent, fieldName, type, fieldValue, onLeftClick, missing } = props;
+  const {
+    indent,
+    seqIndex,
+    fieldName,
+    fieldValue,
+    missing,
+    type,
+
+    onLeftClick,
+  } = props;
 
   const indentPadding = ' '.repeat(indent * 2);
 
@@ -57,6 +99,7 @@ export function Row(props) {
         <div className={classes.rowContent}>
           {indentPadding}
           <RowFieldName type={type} name={fieldName} missing={!!missing} />
+          <RowSeqIndex type={type} index={seqIndex} missing={!!missing} />
           {!missing && <RowValue type={type} value={fieldValue} />}
         </div>
       </div>
@@ -149,6 +192,20 @@ function RowFieldName({ type, name, missing }) {
   );
 }
 
+function RowSeqIndex({ type, index, missing }) {
+  const classes = useStyles();
+  if (!index && index !== 0) return null;
+  return (
+    <span
+      className={classNames(classes.fieldIndex, {
+        [classes.isMissing]: !!missing,
+      })}
+    >
+      {index}:{' '}
+    </span>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   rowContent: {
     fontSize: 12,
@@ -185,6 +242,19 @@ const useStyles = makeStyles((theme) => ({
   fieldName: {
     fontWeight: 600,
     color: '#cfcfcf',
+    fontSize: 12,
+    fontFamily: "'Source Code Pro', monospace",
+
+    opacity: 1,
+
+    '&$isMissing': {
+      opacity: 0.4,
+    },
+  },
+
+  fieldIndex: {
+    fontWeight: 500,
+    color: '#9cdcfe',
     fontSize: 12,
     fontFamily: "'Source Code Pro', monospace",
 
