@@ -258,7 +258,7 @@ const useStyles = makeStyles((theme) => ({
     width: 'inherit',
     height: '100vh',
     overflowY: 'visible',
-    overflowX: 'hidden',
+    overflowX: 'visible',
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
@@ -287,7 +287,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 20,
-    paddingBottom: 100,
+    paddingBottom: theme.spacing(1),
     margin: '0 auto',
   },
   statsSection: {
