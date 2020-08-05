@@ -22,7 +22,7 @@ export default function ShapeViewer({ shape }) {
   return (
     <div className={generalClasses.root}>
       {rows.map((row, index) => (
-        <Row key={index} {...row} />
+        <Row key={row.id} {...row} />
       ))}
     </div>
   );
@@ -224,15 +224,26 @@ const useStyles = makeStyles((theme) => ({
   isMissing: {},
 }));
 
+// creating rows is a mutative process, to prevent a lot of re-alloctions for big bodies
 function createRows(shape) {
-  return shapeRows(shape);
+  const rows = shapeRows(shape);
+  for (let row of rows) {
+    row.id = `${row.trail.join('.') || 'root'}-${row.type}`;
+  }
+
+  return rows;
 }
 
 function shapeRows(
   shape,
   rows = [],
   indent = 0,
-  field = { fieldName: null, fieldValue: undefined, seqIndex: undefined }
+  field = {
+    fieldName: null,
+    fieldValue: undefined,
+    seqIndex: undefined,
+    trail: [],
+  }
 ) {
   if (!shape) return [];
 
@@ -262,11 +273,13 @@ function shapeRows(
 
 function objectRows(objectShape, rows, indent, field) {
   const fields = objectShape.fields;
+  const { trail } = field;
 
   rows.push({
     type: 'object_open',
     fieldName: field.fieldName,
     seqIndex: field.seqIndex,
+    trail,
     indent,
   });
 
@@ -278,20 +291,23 @@ function objectRows(objectShape, rows, indent, field) {
     return shapeRows(fieldShape, rows, indent + 1, {
       fieldName,
       fieldValue,
+      trail: [...trail, fieldName],
     });
   });
 
-  rows.push({ type: 'object_close', indent });
+  rows.push({ type: 'object_close', indent, trail });
 }
 function listRows(listShape, rows, indent, field) {
   const listId = listShape.id;
   const items = listShape.items;
+  const { trail } = field;
 
   rows.push({
     type: 'array_open',
     indent,
     fieldName: field.fieldName,
     seqIndex: field.seqIndex,
+    trail,
   });
 
   mapScala(items)((item, index) => {
@@ -301,10 +317,11 @@ function listRows(listShape, rows, indent, field) {
     return shapeRows(itemShape, rows, indent + 1, {
       seqIndex: index,
       fieldValue,
+      trail: [...trail, index],
     });
   });
 
-  rows.push({ type: 'array_close', indent });
+  rows.push({ type: 'array_close', indent, trail });
 }
 
 function getFieldType(fieldValue) {
