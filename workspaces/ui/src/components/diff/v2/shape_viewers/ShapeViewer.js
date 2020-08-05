@@ -3,6 +3,17 @@ import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
 
+import {
+  getOrUndefined,
+  getOrUndefinedJson,
+  headOrUndefined,
+  JsonHelper,
+  lengthScala,
+  mapScala,
+  getJson,
+  toOption,
+} from '@useoptic/domain';
+
 export default function ShapeViewer({ shape }) {
   const generalClasses = useShapeViewerStyles();
 
@@ -10,64 +21,9 @@ export default function ShapeViewer({ shape }) {
 
   return (
     <div className={generalClasses.root}>
-      <Row indent={0} type="object_open" />
-      <Row indent={1} fieldName="Circuit" type="object_open" />
-      <Row
-        indent={2}
-        fieldName="circuitId"
-        type="string"
-        fieldValue="albert_park"
-      />
-      <Row
-        indent={2}
-        fieldName="circuitName"
-        fieldValue="Albert Park Grand Prix Circuit"
-        type="string"
-      />
-      <Row indent={2} fieldName="circuitTimeZone" missing={true} />
-      <Row indent={2} fieldName="Location" type="object_open" />
-      <Row
-        indent={3}
-        fieldName="country"
-        type="string"
-        fieldValue="Australia"
-      />
-      <Row indent={2} type="object_close" />
-      <Row indent={1} type="object_close" />
-      <Row indent={1} fieldName="Results" type="array_open" />
-
-      <Row indent={2} seqIndex={0} type="object_open" />
-      <Row
-        indent={3}
-        fieldName="constructorId"
-        fieldValue="red_bull"
-        type="string"
-      />
-      <Row
-        indent={3}
-        fieldName="driverId"
-        fieldValue="max_verstappen"
-        type="string"
-      />
-      <Row indent={2} type="object_close" />
-
-      <Row indent={2} seqIndex={1} type="object_open" />
-      <Row
-        indent={3}
-        fieldName="constructorId"
-        fieldValue="mercedes_amg"
-        type="string"
-      />
-      <Row
-        indent={3}
-        fieldName="driverId"
-        fieldValue="lewis_hamilton"
-        type="string"
-      />
-      <Row indent={2} type="object_close" />
-
-      <Row indent={1} type="array_close" />
-      <Row indent={0} type="object_close" />
+      {rows.map((row, index) => (
+        <Row key={index} {...row} />
+      ))}
     </div>
   );
 }
@@ -268,7 +224,109 @@ const useStyles = makeStyles((theme) => ({
   isMissing: {},
 }));
 
-function createRows(shape) {}
+function createRows(shape) {
+  return shapeRows(shape);
+}
 
-function objectRows(objectShape) {}
-function listRows(listShape) {}
+function shapeRows(
+  shape,
+  rows = [],
+  indent = 0,
+  field = { fieldName: null, fieldValue: undefined, seqIndex: undefined }
+) {
+  if (!shape) return [];
+
+  switch (shape.baseShapeId) {
+    case '$object':
+      // debugger;
+      objectRows(shape, rows, indent, field);
+      break;
+    case '$list':
+      // debugger;
+      listRows(shape, rows, indent, field);
+      break;
+    default:
+      // debugger;
+      if (shape.isOptional || shape.isNullable) {
+        shapeRows(shape.innerShape, rows, indent, field);
+      } else {
+        let type = getFieldType(field.fieldValue);
+        let row = { type, ...field, indent };
+        rows.push(row);
+      }
+      break;
+  }
+
+  return rows;
+}
+
+function objectRows(objectShape, rows, indent, field) {
+  const fields = objectShape.fields;
+
+  rows.push({
+    type: 'object_open',
+    fieldName: field.fieldName,
+    seqIndex: field.seqIndex,
+    indent,
+  });
+
+  mapScala(fields)((field) => {
+    const fieldName = field.fieldName;
+    const fieldShape = getOrUndefined(field.exampleShape);
+    const fieldValue = getOrUndefinedJson(field.example);
+
+    return shapeRows(fieldShape, rows, indent + 1, {
+      fieldName,
+      fieldValue,
+    });
+  });
+
+  rows.push({ type: 'object_close', indent });
+}
+function listRows(listShape, rows, indent, field) {
+  const listId = listShape.id;
+  const items = listShape.items;
+
+  rows.push({
+    type: 'array_open',
+    indent,
+    fieldName: field.fieldName,
+    seqIndex: field.seqIndex,
+  });
+
+  mapScala(items)((item, index) => {
+    const itemShape = item.exampleShape;
+    const fieldValue = getJson(item.example);
+
+    return shapeRows(itemShape, rows, indent + 1, {
+      seqIndex: index,
+      fieldValue,
+    });
+  });
+
+  rows.push({ type: 'array_close', indent });
+}
+
+function getFieldType(fieldValue) {
+  if (typeof fieldValue === 'undefined') {
+    return 'undefined';
+  }
+
+  const jsTypeString = Object.prototype.toString.call(fieldValue);
+
+  switch (jsTypeString) {
+    case '[object Null]':
+      return 'null';
+    case '[object String]':
+      return 'string';
+    case '[object Boolean]':
+      return 'boolean';
+    case '[object Number]':
+      return 'number';
+    default:
+      debugger;
+      throw new Error(
+        `Can not return field type for fieldValue with type string '${jsTypeString}'`
+      );
+  }
+}
