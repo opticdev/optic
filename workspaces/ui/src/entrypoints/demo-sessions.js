@@ -199,7 +199,7 @@ export default function DemoSessions(props) {
   useEffect(() => {
     if (message !== "nothing" /*&& info*/) {
       if (action) {
-        const button = () => <Button onClick={action.onClick}>{action.title}</Button>
+        const button = () => <Button style={{color: "white"}} onClick={action.onClick}>{action.title}</Button>
         enqueueSnackbar(message, { variant: "info", preventDuplicate: true, autoHideDuration: null, anchorOrigin: {
           horizontal: "center",
           vertical: "bottom",
