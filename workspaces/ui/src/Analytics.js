@@ -42,8 +42,8 @@ class EventTrackingEmitter extends EventEmitter {}
 export const trackEmitter = new EventTrackingEmitter();
 
 export async function track(event, props) {
-  await readyPromise;
   trackEmitter.emit('event', event, props || {});
+  await readyPromise;
   if (isAnalyticsEnabled) {
     const allProps = { ...props, opticVersion };
     window.analytics.track(event, allProps);
