@@ -123,6 +123,7 @@ function _NewRegions(props) {
           return getOrUndefined(suggestion);
         })
     );
+    track("Documented Changes")
 
     acceptSuggestion(...allApproved);
   };
@@ -180,6 +181,8 @@ function _NewRegions(props) {
       ],
     });
   }
+
+  track("Show Initial Documentation Page", props)
 
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
