@@ -43,10 +43,10 @@ export const trackEmitter = new EventTrackingEmitter();
 
 export async function track(event, props) {
   await readyPromise;
+  trackEmitter.emit('event', event, props || {});
   if (isAnalyticsEnabled) {
     const allProps = { ...props, opticVersion };
     window.analytics.track(event, allProps);
     window.FS.event(event, allProps);
   }
-  trackEmitter.emit('event', event, props || {});
 }
