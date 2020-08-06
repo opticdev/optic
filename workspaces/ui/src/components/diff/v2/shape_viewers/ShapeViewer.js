@@ -14,10 +14,13 @@ import {
   toOption,
 } from '@useoptic/domain';
 
-export default function ShapeViewer({ shape }) {
+export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
 
-  const rows = useMemo(() => createRows(shape), [shape]);
+  const rows = useMemo(() => createRows({ diff, interaction }), [
+    diff,
+    interaction,
+  ]);
 
   return (
     <div className={generalClasses.root}>
@@ -225,7 +228,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // creating rows is a mutative process, to prevent a lot of re-alloctions for big bodies
-function createRows(shape) {
+function createRows({ diff, interaction }) {
+  let body = diff.inRequest
+    ? interaction.request.body
+    : interaction.response.body;
+
+  const shape = JsonHelper.toJs(body.jsonOption);
+
   const rows = shapeRows(shape);
   for (let row of rows) {
     row.id = `${row.trail.join('.') || 'root'}-${row.type}`;
@@ -247,12 +256,14 @@ function shapeRows(
 ) {
   if (!shape) return [];
 
-  switch (shape.baseShapeId) {
-    case '$object':
+  const typeString = Object.prototype.toString.call(shape);
+
+  switch (typeString) {
+    case '[object Object]':
       // debugger;
       objectRows(shape, rows, indent, field);
       break;
-    case '$list':
+    case '[object Array]':
       // debugger;
       listRows(shape, rows, indent, field);
       break;
@@ -272,7 +283,6 @@ function shapeRows(
 }
 
 function objectRows(objectShape, rows, indent, field) {
-  const fields = objectShape.fields;
   const { trail } = field;
 
   rows.push({
@@ -283,23 +293,19 @@ function objectRows(objectShape, rows, indent, field) {
     indent,
   });
 
-  mapScala(fields)((field) => {
-    const fieldName = field.fieldName;
-    const fieldShape = getOrUndefined(field.exampleShape);
-    const fieldValue = getOrUndefinedJson(field.example);
+  Object.entries(objectShape).forEach(([key, value]) => {
+    const fieldName = key;
 
-    return shapeRows(fieldShape, rows, indent + 1, {
+    return shapeRows(value, rows, indent + 1, {
       fieldName,
-      fieldValue,
+      fieldValue: value,
       trail: [...trail, fieldName],
     });
   });
 
   rows.push({ type: 'object_close', indent, trail });
 }
-function listRows(listShape, rows, indent, field) {
-  const listId = listShape.id;
-  const items = listShape.items;
+function listRows(list, rows, indent, field) {
   const { trail } = field;
 
   rows.push({
@@ -310,13 +316,10 @@ function listRows(listShape, rows, indent, field) {
     trail,
   });
 
-  mapScala(items)((item, index) => {
-    const itemShape = item.exampleShape;
-    const fieldValue = getJson(item.example);
-
-    return shapeRows(itemShape, rows, indent + 1, {
+  list.forEach((item, index) => {
+    return shapeRows(item, rows, indent + 1, {
       seqIndex: index,
-      fieldValue,
+      fieldValue: item,
       trail: [...trail, index],
     });
   });
