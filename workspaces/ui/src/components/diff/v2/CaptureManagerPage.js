@@ -171,6 +171,13 @@ export const CaptureManager = ({}) => {
         path={routerPaths.captureRequestDiffsRoot}
         component={RequestDiffWrapper}
       />
+      {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' && (
+        <Route
+          exact
+          path={routerPaths.captureRequestDiffsRootWithViewer}
+          component={RequestDiffWrapper}
+        />
+      )}
       {captures.length && (
         <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
       )}
@@ -212,13 +219,13 @@ function CaptureChooserComponent(props) {
   );
 
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
-  
+
   useEffect(() => {
     track(`Changed to ${tab}`, {
       diffCount: realEndpointDiffCount,
-      undocumentedUrlCount: urlsSplit.total
-    })
-  }, [tab, realEndpointDiffCount, urlsSplit.total])
+      undocumentedUrlCount: urlsSplit.total,
+    });
+  }, [tab, realEndpointDiffCount, urlsSplit.total]);
 
   useEffect(() => {
     global.debugOptic = debugDump(specService, captureId);
@@ -323,7 +330,7 @@ function CaptureChooserComponent(props) {
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
   const classes = useStyles();
-  
+
   return (
     // sessionId={props.match.params.captureId}
     // specService={specService}
@@ -438,7 +445,7 @@ function EndpointDiffs(props) {
                       component={Link}
                       to={to}
                       onClick={() => {
-                        track("Viewing Endpoint Diff", i)
+                        track('Viewing Endpoint Diff', i);
                       }}
                     >
                       <div className={classes.listItemInner}>
