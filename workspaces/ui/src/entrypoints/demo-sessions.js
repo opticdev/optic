@@ -99,7 +99,7 @@ export default function DemoSessions(props) {
       setMessage("Here, we can see the different requests that this route has experienced, and we can document it")
     } else */if (props.location.pathname.includes("documentation/paths")) {
       setAction(null)
-      setMessage("Descriptions can be added to the endpoint, to the request and responses, and to individual fields. Note the field types (collectively, the traffic shape) is already documented.")
+      setMessage("Descriptions can be added to the endpoint, to the request and responses, and to individual fields.")
     } else if (props.location.pathname.includes("documentation")) {
       setAction(null)
       setMessage(`Details can be added to existing documentation. Click the "Full Documentation" drop-down on an endpoint above.`)
