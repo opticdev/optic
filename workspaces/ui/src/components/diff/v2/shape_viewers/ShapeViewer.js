@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
+import _isEqual from 'lodash.isequal';
 
 import {
   getOrUndefined,
@@ -16,15 +17,45 @@ import {
 
 export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
-
-  const rows = useMemo(() => createRows({ diff, interaction }), [
-    diff,
-    interaction,
+  const [collapsedHunks, setCollapsedHunks] = useState([
+    ['MRData', 'RaceTable', 'Races', 0, 'Results', 0],
   ]);
+
+  const rows = useMemo(() => createRows({ diff, interaction }), []); // assume for now interaction won't change, so won't initial rows
+  const visibleRows = useMemo(() => {
+    let visible = [];
+    let remainingRows = [...rows];
+    let i = 0; // for safety: this should never take more passes than the amount of hunks we're collapsing
+
+    while (remainingRows.length > 0 && i <= collapsedHunks.length) {
+      i++;
+      let nextCollapsedIndex = remainingRows.findIndex(
+        (row) =>
+          (row.type === 'object_open' || row.type === 'array_open') &&
+          collapsedHunks.some((collapsedTrail) =>
+            _isEqual(collapsedTrail, row.trail)
+          )
+      );
+
+      if (nextCollapsedIndex < 0) {
+        visible.push(...remainingRows);
+        remainingRows.splice(0, remainingRows.length);
+      } else {
+        let collapsedRow = remainingRows[nextCollapsedIndex];
+        visible.push(...remainingRows.splice(0, nextCollapsedIndex + 1));
+        let endIndex = remainingRows.findIndex(
+          (row) => row.indent <= collapsedRow.indent // maybe safer to match on exact trail?
+        );
+        remainingRows.splice(0, endIndex);
+      }
+    }
+
+    return visible;
+  }, [collapsedHunks]); // we use rows too, but for now we're assuming base collection of rows won't change
 
   return (
     <div className={generalClasses.root}>
-      {rows.map((row, index) => (
+      {visibleRows.map((row, index) => (
         <Row key={row.id} {...row} />
       ))}
     </div>
