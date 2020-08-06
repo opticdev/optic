@@ -64,20 +64,8 @@ class _DiffViewSimulation extends React.Component {
                 const currentRfcState = rfcService.currentState(rfcId);
 
                 if (viewer === 'flattened') {
-                  console.time('Making preview ' + renderKey);
-                  let preview = getOrUndefined(
-                    DiffResultHelper.previewDiff(
-                      diff,
-                      interactionScala,
-                      currentRfcState
-                    )
-                  );
-                  console.timeEnd('Making preview ' + renderKey);
-
                   return (
-                    <ShapeViewer
-                      shape={preview && getOrUndefined(preview.getRootShape)}
-                    />
+                    <ShapeViewer diff={diff} interaction={interactionScala} />
                   );
                 } else {
                   console.time('Making preview ' + renderKey);
