@@ -293,18 +293,31 @@ function objectRows(objectShape, rows, indent, field) {
     indent,
   });
 
-  Object.entries(objectShape).forEach(([key, value]) => {
-    const fieldName = key;
+  Object.entries(objectShape)
+    .sort(alphabetizeEntryKeys)
+    .forEach(([key, value]) => {
+      const fieldName = key;
 
-    return shapeRows(value, rows, indent + 1, {
-      fieldName,
-      fieldValue: value,
-      trail: [...trail, fieldName],
+      return shapeRows(value, rows, indent + 1, {
+        fieldName,
+        fieldValue: value,
+        trail: [...trail, fieldName],
+      });
     });
-  });
 
   rows.push({ type: 'object_close', indent, trail });
 }
+
+function alphabetizeEntryKeys([keyA], [keyB]) {
+  if (keyA > keyB) {
+    return 1;
+  } else if (keyB > keyA) {
+    return -1;
+  }
+
+  return 0;
+}
+
 function listRows(list, rows, indent, field) {
   const { trail } = field;
 
