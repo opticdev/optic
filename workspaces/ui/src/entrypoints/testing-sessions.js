@@ -40,6 +40,7 @@ export default function TestingSessions(props) {
     captureId
   ) => {
     async function computeInitialDiff() {
+
       const capture = await specService.listCapturedSamples(captureId);
       const commandContext = new RfcCommandContext(
         'simulated',

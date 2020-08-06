@@ -38,6 +38,7 @@ function DiffPageNew(props) {
   const services = useServices();
 
   const { pathId, method, captureId } = props.match.params;
+  const viewer = props.match.params.viewer || null;
 
   return (
     <CaptureSessionInlineContext
@@ -53,8 +54,12 @@ function DiffPageNew(props) {
         inContextOfDiff={true}
         notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        {/*<DiffPageContent captureId={captureId} />*/}
-        <DiffReviewPage captureId={captureId} pathId={pathId} method={method} />
+        <DiffReviewPage
+          captureId={captureId}
+          pathId={pathId}
+          method={method}
+          viewer={viewer}
+        />
       </EndpointsContextStore>
     </CaptureSessionInlineContext>
   );

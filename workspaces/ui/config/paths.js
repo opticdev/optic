@@ -73,7 +73,7 @@ module.exports = {
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   privateSessions: resolveApp('public/private-sessions'),
-  appIndexJs: resolveModule(resolveApp, 'src/index'),
+  appIndexJs: process.env.OPTIC_DEMO_MODE_ENABLED ? resolveModule(resolveApp, 'src/demoIndex') : resolveModule(resolveApp, 'src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),

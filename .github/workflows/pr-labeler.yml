@@ -7,7 +7,7 @@ jobs:
   pr-labeler:
     runs-on: ubuntu-latest
     steps:
-      - uses: TimonVS/pr-labeler-action@v3
+      - uses: TimonVS/pr-labeler-action@bd0b592a410983316a454e3d48444608f028ec8e # https://github.com/TimonVS/pr-labeler-action/commits/v3
         with:
           configuration-path: .github/pr-labeler.yml
         env:

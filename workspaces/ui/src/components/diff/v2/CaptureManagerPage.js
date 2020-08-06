@@ -70,6 +70,7 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
+import { track } from '../../../Analytics';
 
 const {
   Context: AllCapturesContext,
@@ -170,6 +171,13 @@ export const CaptureManager = ({}) => {
         path={routerPaths.captureRequestDiffsRoot}
         component={RequestDiffWrapper}
       />
+      {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' && (
+        <Route
+          exact
+          path={routerPaths.captureRequestDiffsRootWithViewer}
+          component={RequestDiffWrapper}
+        />
+      )}
       {captures.length && (
         <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
       )}
@@ -211,6 +219,13 @@ function CaptureChooserComponent(props) {
   );
 
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
+
+  useEffect(() => {
+    track(`Changed to ${tab}`, {
+      diffCount: realEndpointDiffCount,
+      undocumentedUrlCount: urlsSplit.total,
+    });
+  }, [tab, realEndpointDiffCount, urlsSplit.total]);
 
   useEffect(() => {
     global.debugOptic = debugDump(specService, captureId);
@@ -315,6 +330,7 @@ function CaptureChooserComponent(props) {
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
   const classes = useStyles();
+
   return (
     // sessionId={props.match.params.captureId}
     // specService={specService}
@@ -428,6 +444,9 @@ function EndpointDiffs(props) {
                       className={classes.row}
                       component={Link}
                       to={to}
+                      onClick={() => {
+                        track('Viewing Endpoint Diff', i);
+                      }}
                     >
                       <div className={classes.listItemInner}>
                         <Typography component="div" variant="subtitle2">
@@ -632,7 +651,6 @@ const Stat = ({ number, label }) => {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    height: '100vh',
     overflow: 'hidden',
   },
   navigationContainer: {
@@ -644,8 +662,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexGrow: 1,
     flexShrink: 1,
-    overflow: 'scroll',
-    height: '100vh',
     justifyContent: 'center',
   },
   navRoot: {
@@ -653,7 +669,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     width: 'inherit',
     height: '100vh',
-    overflowY: 'scroll',
+    overflowY: 'visible',
+    overflowX: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
@@ -667,7 +684,6 @@ const useStyles = makeStyles((theme) => ({
   },
   center: {
     flex: 1,
-    paddingBottom: 300,
     maxWidth: 1200,
   },
   statsSection: {
@@ -728,7 +744,7 @@ const useStyles = makeStyles((theme) => ({
   },
   diffContainer: {
     display: 'flex',
-    height: '100vh',
+    
     paddingLeft: 32,
     paddingRight: 32,
     flexDirection: 'row',

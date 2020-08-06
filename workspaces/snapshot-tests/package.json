@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/snapshot-tests",
-  "version": "8.2.8",
+  "version": "8.2.9",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
