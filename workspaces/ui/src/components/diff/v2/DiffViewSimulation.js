@@ -8,6 +8,7 @@ import {
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
 import DiffHunkViewer from './DiffHunkViewer';
+import ShapeViewer from './shape_viewers/ShapeViewer';
 
 class _DiffViewSimulation extends React.Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -40,6 +41,7 @@ class _DiffViewSimulation extends React.Component {
       selectedInterpretation,
       rfcId,
       eventStore,
+      viewer,
     } = this.props;
 
     const renderKey = 'render ' + diff.diff.toString() + interactionScala.uuid;
@@ -61,22 +63,39 @@ class _DiffViewSimulation extends React.Component {
               {({ rfcService, rfcId }) => {
                 const currentRfcState = rfcService.currentState(rfcId);
 
-                console.time('Making preview ' + renderKey);
-                const preview = DiffResultHelper.previewDiff(
-                  diff,
-                  interactionScala,
-                  currentRfcState
-                );
-                console.timeEnd('Making preview ' + renderKey);
+                if (viewer === 'flattened') {
+                  console.time('Making preview ' + renderKey);
+                  let preview = getOrUndefined(
+                    DiffResultHelper.previewDiff(
+                      diff,
+                      interactionScala,
+                      currentRfcState
+                    )
+                  );
+                  console.timeEnd('Making preview ' + renderKey);
 
-                return (
-                  <DiffHunkViewer
-                    suggestion={selectedInterpretation}
-                    diff={diff}
-                    preview={getOrUndefined(preview)}
-                    diffDescription={description}
-                  />
-                );
+                  return (
+                    <ShapeViewer
+                      shape={preview && getOrUndefined(preview.getRootShape)}
+                    />
+                  );
+                } else {
+                  console.time('Making preview ' + renderKey);
+                  let preview = DiffResultHelper.previewDiff(
+                    diff,
+                    interactionScala,
+                    currentRfcState
+                  );
+                  console.timeEnd('Making preview ' + renderKey);
+                  return (
+                    <DiffHunkViewer
+                      suggestion={selectedInterpretation}
+                      diff={diff}
+                      preview={getOrUndefined(preview)}
+                      diffDescription={description}
+                    />
+                  );
+                }
               }}
             </RfcContext.Consumer>
           </SimulatedCommandContext>
