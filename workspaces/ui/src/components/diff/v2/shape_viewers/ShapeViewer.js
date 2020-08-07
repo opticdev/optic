@@ -106,7 +106,7 @@ function RowValue({ type, value }) {
   }
 
   if (type === 'array_item_collapsed') {
-    return <span>COLLAPSED</span>;
+    return <span className={classes.collapsedSymbol}>{'⋯'}</span>;
   }
 
   if (type === 'array_close') {
@@ -189,6 +189,15 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "'Source Code Pro', monospace",
     whiteSpace: 'pre',
     color: SymbolColor,
+  },
+
+  collapsedSymbol: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    color: '#070707',
+    fontSize: 10,
+    backgroundColor: '#ababab',
+    borderRadius: 12,
   },
 
   booleanContent: {
