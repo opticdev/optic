@@ -17,45 +17,17 @@ import {
 
 export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
-  const [collapsedHunks, setCollapsedHunks] = useState([
-    ['MRData', 'RaceTable', 'Races', 0, 'Results', 0],
-  ]);
 
-  const rows = useMemo(() => createRows({ diff, interaction }), []); // assume for now interaction won't change, so won't initial rows
-  const visibleRows = useMemo(() => {
-    let visible = [];
-    let remainingRows = [...rows];
-    let i = 0; // for safety: this should never take more passes than the amount of hunks we're collapsing
+  const [rows, collapsedTrails] = useMemo(
+    () => createRows({ diff, interaction }),
+    []
+  ); // assume for now interaction won't change, so won't initial rows
 
-    while (remainingRows.length > 0 && i <= collapsedHunks.length) {
-      i++;
-      let nextCollapsedIndex = remainingRows.findIndex(
-        (row) =>
-          (row.type === 'object_open' || row.type === 'array_open') &&
-          collapsedHunks.some((collapsedTrail) =>
-            _isEqual(collapsedTrail, row.trail)
-          )
-      );
-
-      if (nextCollapsedIndex < 0) {
-        visible.push(...remainingRows);
-        remainingRows.splice(0, remainingRows.length);
-      } else {
-        let collapsedRow = remainingRows[nextCollapsedIndex];
-        visible.push(...remainingRows.splice(0, nextCollapsedIndex + 1));
-        let endIndex = remainingRows.findIndex(
-          (row) => row.indent <= collapsedRow.indent // maybe safer to match on exact trail?
-        );
-        remainingRows.splice(0, endIndex);
-      }
-    }
-
-    return visible;
-  }, [collapsedHunks]); // we use rows too, but for now we're assuming base collection of rows won't change
+  console.log({ collapsedTrails, rows });
 
   return (
     <div className={generalClasses.root}>
-      {visibleRows.map((row, index) => (
+      {rows.map((row, index) => (
         <Row key={row.id} {...row} />
       ))}
     </div>
@@ -120,6 +92,10 @@ function RowValue({ type, value }) {
         {'['}
       </span>
     );
+  }
+
+  if (type === 'array_item_collapsed') {
+    return <span>COLLAPSED</span>;
   }
 
   if (type === 'array_close') {
@@ -266,17 +242,18 @@ function createRows({ diff, interaction }) {
 
   const shape = JsonHelper.toJs(body.jsonOption);
 
-  const rows = shapeRows(shape);
+  const [rows, trails] = shapeRows(shape);
   for (let row of rows) {
     row.id = `${row.trail.join('.') || 'root'}-${row.type}`;
   }
 
-  return rows;
+  return [rows, trails];
 }
 
 function shapeRows(
   shape,
   rows = [],
+  collapsedTrails = [],
   indent = 0,
   field = {
     fieldName: null,
@@ -292,16 +269,16 @@ function shapeRows(
   switch (typeString) {
     case '[object Object]':
       // debugger;
-      objectRows(shape, rows, indent, field);
+      objectRows(shape, rows, collapsedTrails, indent, field);
       break;
     case '[object Array]':
       // debugger;
-      listRows(shape, rows, indent, field);
+      listRows(shape, rows, collapsedTrails, indent, field);
       break;
     default:
       // debugger;
       if (shape.isOptional || shape.isNullable) {
-        shapeRows(shape.innerShape, rows, indent, field);
+        shapeRows(shape.innerShape, rows, collapsedTrails, indent, field);
       } else {
         let type = getFieldType(field.fieldValue);
         let row = { type, ...field, indent };
@@ -310,10 +287,10 @@ function shapeRows(
       break;
   }
 
-  return rows;
+  return [rows, collapsedTrails];
 }
 
-function objectRows(objectShape, rows, indent, field) {
+function objectRows(objectShape, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
   rows.push({
@@ -329,7 +306,7 @@ function objectRows(objectShape, rows, indent, field) {
     .forEach(([key, value]) => {
       const fieldName = key;
 
-      return shapeRows(value, rows, indent + 1, {
+      return shapeRows(value, rows, collapsedTrails, indent + 1, {
         fieldName,
         fieldValue: value,
         trail: [...trail, fieldName],
@@ -349,7 +326,7 @@ function alphabetizeEntryKeys([keyA], [keyB]) {
   return 0;
 }
 
-function listRows(list, rows, indent, field) {
+function listRows(list, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
   rows.push({
@@ -361,11 +338,30 @@ function listRows(list, rows, indent, field) {
   });
 
   list.forEach((item, index) => {
-    return shapeRows(item, rows, indent + 1, {
-      seqIndex: index,
-      fieldValue: item,
-      trail: [...trail, index],
-    });
+    let itemTypeString = Object.prototype.toString.call(item);
+    let itemTrail = [...trail, index];
+    let itemIndent = indent + 1;
+
+    // debugger;
+
+    if (
+      index === 0 ||
+      (itemTypeString !== '[object Object]' &&
+        itemTypeString !== '[object Array]')
+    ) {
+      shapeRows(item, rows, collapsedTrails, itemIndent, {
+        seqIndex: index,
+        fieldValue: item,
+        trail: itemTrail,
+      });
+    } else {
+      rows.push({
+        type: 'array_item_collapsed',
+        indent: itemIndent,
+        trail: itemTrail,
+      });
+      collapsedTrails.push(itemTrail);
+    }
   });
 
   rows.push({ type: 'array_close', indent, trail });
