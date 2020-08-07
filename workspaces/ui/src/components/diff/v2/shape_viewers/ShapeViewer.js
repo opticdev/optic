@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
@@ -21,54 +21,18 @@ export default function ShapeViewer({ diff, interaction }) {
 
   // const initialState = useMemo(() => createRows({ diff, interaction }), []); // based on diff and interaction, we build initial state once
 
-  const [{ rows, collapsedTrails }, setDisplayState] = useState(() =>
-    createRows({ diff, interaction })
+  const [{ rows, collapsedTrails }, dispatch] = useReducer(
+    updateState,
+    { diff, interaction },
+    createInitialState
   );
-
-  const onClickRow = useCallback((index) => {
-    setDisplayState((currentState) => {
-      let row = currentState.rows[index];
-
-      if (row.type === 'array_item_collapsed') {
-        let collapsedShape = _get(currentState.body, row.trail);
-        let rowField = {
-          fieldValue: row.fieldValue,
-          fieldName: row.fieldName,
-          seqIndex: row.seqIndex,
-          trail: [...row.trail],
-        };
-
-        let [replacementRows, newCollapsedTrails] = shapeRows(
-          collapsedShape,
-          [],
-          [],
-          row.indent,
-          rowField
-        );
-        let updatedRows = [...currentState.rows];
-        updatedRows.splice(index, 1, ...replacementRows);
-        let updatedCollapsedTrails = currentState.collapsedTrails
-          .filter((trail) => !_isEqual(trail, row.trail))
-          .concat(newCollapsedTrails);
-
-        return {
-          ...currentState,
-          rows: updatedRows,
-          collapsedTrails: updatedCollapsedTrails,
-        };
-      }
-
-      // nothing else happened, so nothing must change
-      return currentState;
-    });
-  }, []);
 
   console.log({ collapsedTrails, rows });
 
   return (
     <div className={generalClasses.root}>
       {rows.map((row, index) => (
-        <Row key={row.id} index={index} {...row} onLeftClick={onClickRow} />
+        <Row key={row.id} index={index} {...row} dispatch={dispatch} />
       ))}
     </div>
   );
@@ -86,15 +50,17 @@ export function Row(props) {
     missing,
     type,
 
-    onLeftClick,
+    dispatch,
   } = props;
 
   const onRowClick = useCallback(
     (e) => {
       e.preventDefault();
-      return onLeftClick(index);
+      if (type === 'array_item_collapsed') {
+        dispatch({ type: 'unfold', payload: index });
+      }
     },
-    [index, onLeftClick]
+    [index, type, dispatch]
   );
 
   const indentPadding = ' '.repeat(indent * 2);
@@ -284,7 +250,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // creating rows is a mutative process, to prevent a lot of re-alloctions for big bodies
-function createRows({ diff, interaction }) {
+function createInitialState({ diff, interaction }) {
   let body = diff.inRequest
     ? interaction.request.body
     : interaction.response.body;
@@ -297,6 +263,50 @@ function createRows({ diff, interaction }) {
   }
 
   return { body: shape, rows, collapsedTrails };
+}
+
+function updateState(state, action) {
+  switch (action.type) {
+    case 'unfold':
+      let index = action.payload;
+      return unfoldRows(state, index);
+    default:
+      throw new Error(
+        `State cannot be updated through action of type '${action.type}'`
+      );
+  }
+}
+
+function unfoldRows(currentState, index) {
+  const row = currentState.rows[index];
+  if (row.type !== 'array_item_collapsed') return currentState;
+
+  const collapsedShape = _get(currentState.body, row.trail);
+  const rowField = {
+    fieldValue: row.fieldValue,
+    fieldName: row.fieldName,
+    seqIndex: row.seqIndex,
+    trail: [...row.trail],
+  };
+
+  const [replacementRows, newCollapsedTrails] = shapeRows(
+    collapsedShape,
+    [],
+    [],
+    row.indent,
+    rowField
+  );
+  const updatedRows = [...currentState.rows];
+  updatedRows.splice(index, 1, ...replacementRows);
+  const updatedCollapsedTrails = currentState.collapsedTrails
+    .filter((trail) => !_isEqual(trail, row.trail))
+    .concat(newCollapsedTrails);
+
+  return {
+    ...currentState,
+    rows: updatedRows,
+    collapsedTrails: updatedCollapsedTrails,
+  };
 }
 
 function shapeRows(
