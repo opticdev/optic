@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
 import _isEqual from 'lodash.isequal';
+import _get from 'lodash.get';
 
 import {
   getOrUndefined,
@@ -18,17 +19,56 @@ import {
 export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
 
-  const [rows, collapsedTrails] = useMemo(
-    () => createRows({ diff, interaction }),
-    []
-  ); // assume for now interaction won't change, so won't initial rows
+  // const initialState = useMemo(() => createRows({ diff, interaction }), []); // based on diff and interaction, we build initial state once
+
+  const [{ rows, collapsedTrails }, setDisplayState] = useState(() =>
+    createRows({ diff, interaction })
+  );
+
+  const onClickRow = useCallback((index) => {
+    setDisplayState((currentState) => {
+      let row = currentState.rows[index];
+
+      if (row.type === 'array_item_collapsed') {
+        let collapsedShape = _get(currentState.body, row.trail);
+        let rowField = {
+          fieldValue: row.fieldValue,
+          fieldName: row.fieldName,
+          seqIndex: row.seqIndex,
+          trail: [...row.trail],
+        };
+
+        let [replacementRows, newCollapsedTrails] = shapeRows(
+          collapsedShape,
+          [],
+          [],
+          row.indent,
+          rowField
+        );
+        let updatedRows = [...currentState.rows];
+        updatedRows.splice(index, 1, ...replacementRows);
+        let updatedCollapsedTrails = currentState.collapsedTrails
+          .filter((trail) => !_isEqual(trail, row.trail))
+          .concat(newCollapsedTrails);
+
+        return {
+          ...currentState,
+          rows: updatedRows,
+          collapsedTrails: updatedCollapsedTrails,
+        };
+      }
+
+      // nothing else happened, so nothing must change
+      return currentState;
+    });
+  }, []);
 
   console.log({ collapsedTrails, rows });
 
   return (
     <div className={generalClasses.root}>
       {rows.map((row, index) => (
-        <Row key={row.id} {...row} />
+        <Row key={row.id} index={index} {...row} onLeftClick={onClickRow} />
       ))}
     </div>
   );
@@ -39,6 +79,7 @@ export function Row(props) {
   const generalClasses = useShapeViewerStyles();
   const {
     indent,
+    index,
     seqIndex,
     fieldName,
     fieldValue,
@@ -47,6 +88,14 @@ export function Row(props) {
 
     onLeftClick,
   } = props;
+
+  const onRowClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      return onLeftClick(index);
+    },
+    [index, onLeftClick]
+  );
 
   const indentPadding = ' '.repeat(indent * 2);
 
@@ -57,7 +106,7 @@ export function Row(props) {
         [generalClasses.isTracked]: !!props.tracked, // important for the compass to work
       })}
     >
-      <div className={generalClasses.left} onClick={onLeftClick}>
+      <div className={generalClasses.left} onClick={onRowClick}>
         <div className={classes.rowContent}>
           {indentPadding}
           <RowFieldName type={type} name={fieldName} missing={!!missing} />
@@ -242,12 +291,12 @@ function createRows({ diff, interaction }) {
 
   const shape = JsonHelper.toJs(body.jsonOption);
 
-  const [rows, trails] = shapeRows(shape);
+  const [rows, collapsedTrails] = shapeRows(shape);
   for (let row of rows) {
     row.id = `${row.trail.join('.') || 'root'}-${row.type}`;
   }
 
-  return [rows, trails];
+  return { body: shape, rows, collapsedTrails };
 }
 
 function shapeRows(
@@ -357,6 +406,7 @@ function listRows(list, rows, collapsedTrails, indent, field) {
     } else {
       rows.push({
         type: 'array_item_collapsed',
+        seqIndex: index,
         indent: itemIndent,
         trail: itemTrail,
       });

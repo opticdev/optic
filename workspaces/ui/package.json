@@ -25,6 +25,7 @@
     "date-fns": "^2.11.1",
     "lodash.compose": "^2.4.1",
     "lodash.debounce": "^4.0.8",
+    "lodash.get": "^4.4.2",
     "lodash.groupby": "^4.6.0",
     "lodash.isequal": "^4.5.0",
     "lodash.sortby": "^4.7.0",
