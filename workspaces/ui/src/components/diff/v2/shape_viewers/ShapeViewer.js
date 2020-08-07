@@ -19,15 +19,11 @@ import {
 export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
 
-  // const initialState = useMemo(() => createRows({ diff, interaction }), []); // based on diff and interaction, we build initial state once
-
-  const [{ rows, collapsedTrails }, dispatch] = useReducer(
+  const [{ rows }, dispatch] = useReducer(
     updateState,
     { diff, interaction },
     createInitialState
   );
-
-  console.log({ collapsedTrails, rows });
 
   return (
     <div className={generalClasses.root}>
@@ -249,7 +245,17 @@ const useStyles = makeStyles((theme) => ({
   isMissing: {},
 }));
 
-// creating rows is a mutative process, to prevent a lot of re-alloctions for big bodies
+// ShapeViewer view model
+// ----------------------
+//
+// We're using a reducer model so we can use pure transformation functions to
+// manage the view model's state. That should especially come in handy when we
+// want to cover this with tests, but will also help in making it into something
+// re-usable, using Typescript to implement it, etc.
+//
+// TODO: consider moving this to it's own module, partly to enable the usecase
+// stated above.
+
 function createInitialState({ diff, interaction }) {
   let body = diff.inRequest
     ? interaction.request.body
@@ -258,9 +264,6 @@ function createInitialState({ diff, interaction }) {
   const shape = JsonHelper.toJs(body.jsonOption);
 
   const [rows, collapsedTrails] = shapeRows(shape);
-  for (let row of rows) {
-    row.id = `${row.trail.join('.') || 'root'}-${row.type}`;
-  }
 
   return { body: shape, rows, collapsedTrails };
 }
@@ -309,6 +312,8 @@ function unfoldRows(currentState, index) {
   };
 }
 
+// Since we've run into performance issue before traversing entire shapes, we're doing this
+// the mutative way to prevent a lot of re-alloctions for big bodies.
 function shapeRows(
   shape,
   rows = [],
@@ -340,8 +345,8 @@ function shapeRows(
         shapeRows(shape.innerShape, rows, collapsedTrails, indent, field);
       } else {
         let type = getFieldType(field.fieldValue);
-        let row = { type, ...field, indent };
-        rows.push(row);
+        let row = createRow({ type, ...field, indent });
+        rows.push(createRow(row));
       }
       break;
   }
@@ -352,13 +357,15 @@ function shapeRows(
 function objectRows(objectShape, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
-  rows.push({
-    type: 'object_open',
-    fieldName: field.fieldName,
-    seqIndex: field.seqIndex,
-    trail,
-    indent,
-  });
+  rows.push(
+    createRow({
+      type: 'object_open',
+      fieldName: field.fieldName,
+      seqIndex: field.seqIndex,
+      trail,
+      indent,
+    })
+  );
 
   Object.entries(objectShape)
     .sort(alphabetizeEntryKeys)
@@ -372,7 +379,7 @@ function objectRows(objectShape, rows, collapsedTrails, indent, field) {
       });
     });
 
-  rows.push({ type: 'object_close', indent, trail });
+  rows.push(createRow({ type: 'object_close', indent, trail }));
 }
 
 function alphabetizeEntryKeys([keyA], [keyB]) {
@@ -388,20 +395,20 @@ function alphabetizeEntryKeys([keyA], [keyB]) {
 function listRows(list, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
-  rows.push({
-    type: 'array_open',
-    indent,
-    fieldName: field.fieldName,
-    seqIndex: field.seqIndex,
-    trail,
-  });
+  rows.push(
+    createRow({
+      type: 'array_open',
+      indent,
+      fieldName: field.fieldName,
+      seqIndex: field.seqIndex,
+      trail,
+    })
+  );
 
   list.forEach((item, index) => {
     let itemTypeString = Object.prototype.toString.call(item);
     let itemTrail = [...trail, index];
     let itemIndent = indent + 1;
-
-    // debugger;
 
     if (
       index === 0 ||
@@ -414,17 +421,19 @@ function listRows(list, rows, collapsedTrails, indent, field) {
         trail: itemTrail,
       });
     } else {
-      rows.push({
-        type: 'array_item_collapsed',
-        seqIndex: index,
-        indent: itemIndent,
-        trail: itemTrail,
-      });
+      rows.push(
+        createRow({
+          type: 'array_item_collapsed',
+          seqIndex: index,
+          indent: itemIndent,
+          trail: itemTrail,
+        })
+      );
       collapsedTrails.push(itemTrail);
     }
   });
 
-  rows.push({ type: 'array_close', indent, trail });
+  rows.push(createRow({ type: 'array_close', indent, trail }));
 }
 
 function getFieldType(fieldValue) {
@@ -449,4 +458,19 @@ function getFieldType(fieldValue) {
         `Can not return field type for fieldValue with type string '${jsTypeString}'`
       );
   }
+}
+
+function createRow(row) {
+  const trail = row && row.trail;
+  const type = row && row.type;
+  if (!trail || !Array.isArray(trail))
+    new TypeError('trail (array) must be known to create a row');
+  if (!type) new TypeError('type must be known to create a row');
+
+  const id = `${row.trail.join('.') || 'root'}-${row.type}`;
+
+  return {
+    id,
+    ...row,
+  };
 }
