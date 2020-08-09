@@ -2878,23 +2878,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.3":
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.3.tgz#9af7d34a336038597a30fc8b82fa9e900a0bd735"
-  integrity sha512-5Yg7MEiLpuKFIz70/EbdZ+KwV/yOyAk7JHOo5mAiZgvj3I1HpBbaMLTf0+a3wacfTUGS0gW7gCu+Yzehux/KhA==
+"@useoptic/domain-types@10.0.5":
+  version "10.0.5"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.5.tgz#8ebfbbe984538c7123d625c6bbfa618e0843d195"
+  integrity sha512-vGIOjquuBd7tiFdHZyeiauV8Wdd+fvl1+ApmUO1ljZrOlhS7VgyikdmRk1v8HtVwhH01yfXp7xg8H21bBWvGRA==
 
-"@useoptic/domain-utilities@10.0.3":
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.3.tgz#c148eeafad2c534e37dbe3caf777739c750749c6"
-  integrity sha512-Sw5sQiY+SraJyFMW+JyeLaAbHi4pKXUqZVbpC1Batv90nuhWOUhOV5IifyLjygO+/np589ebMwy0DOm9USEB+Q==
+"@useoptic/domain-utilities@10.0.5":
+  version "10.0.5"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.5.tgz#7a915670fad80c5d35bcd13f9e38ecc227753b7b"
+  integrity sha512-xElMtKuwkPgvwJO6ne6Yfbw70pi1qBwL96Lbdc07Jh77325o8DmwonQepRFeTZK4a3FF4akXzob58zkUpRQEhQ==
   dependencies:
-    "@useoptic/domain" "10.0.3"
-    "@useoptic/domain-types" "10.0.3"
+    "@useoptic/domain" "10.0.5"
+    "@useoptic/domain-types" "10.0.5"
 
-"@useoptic/domain@10.0.3":
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.3.tgz#ea23254c1d2f66c6ea6b0cccf5f95197c8f38234"
-  integrity sha512-Y1dvzF6cMCj9Z3E0rZ+AbTFYAe9usoFr5tTVTBrUfDRpH7iyxeTim8n6+KhLTXCuO+obEtskEw/yr5xVzUfmqQ==
+"@useoptic/domain@10.0.5":
+  version "10.0.5"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.5.tgz#743e90eab72aae4d187cb04262550cc1df6f7736"
+  integrity sha512-BtjiD03afjXd0qL0iFNJNzmHvCTLGqAS4CSYhbq5Z6vIYJGTVA6WGYprNjfXrlub9nPhvm1HLi0rkzBndnuD6A==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
