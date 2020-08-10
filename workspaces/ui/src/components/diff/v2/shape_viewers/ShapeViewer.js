@@ -11,6 +11,7 @@ import {
   getOrUndefinedJson,
   headOrUndefined,
   JsonHelper,
+  JsonTrailHelper,
   lengthScala,
   mapScala,
   getJson,
@@ -293,12 +294,10 @@ function createInitialState({ diff, interaction }) {
     ? interaction.request.body
     : interaction.response.body;
 
+  const diffTrails = JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
+    JsonTrailHelper.toJs(jsonTrail)
+  );
   const shape = JsonHelper.toJs(body.jsonOption);
-
-  const diffTrails = [
-    ['MRData', 'RaceTable', 'Races', 0, 'Results', 6, 'Time'],
-    ['MRData', 'RaceTable', 'Races', 0, 'Results', 12, 'Time'],
-  ];
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 
@@ -329,7 +328,6 @@ function unfoldRows(currentState, index) {
     trail: [...row.trail],
   };
 
-  debugger;
   const [replacementRows, newCollapsedTrails] = shapeRows(
     collapsedShape,
     currentState.diffTrails,
