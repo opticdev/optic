@@ -65,8 +65,11 @@ class CredentialsServer {
   }
 }
 
-export async function ensureCredentialsServerStarted() {
-  const port = await getPort({ port: getPort.makeRange(3300, 3900) });
+export async function ensureCredentialsServerStarted(
+  overridePort: number | undefined = undefined
+) {
+  const port =
+    overridePort || (await getPort({ port: getPort.makeRange(3300, 3900) }));
   const server = new CredentialsServer();
   await server.start({ port });
   return {
