@@ -28,9 +28,9 @@ export default function ShapeViewer({ diff, interaction }) {
 
   return (
     <div className={generalClasses.root}>
-      {rows.map((row, index) => (
-        <Row key={row.id} index={index} {...row} dispatch={dispatch} />
-      ))}
+      {rows.map((row, index) => {
+        return <Row key={row.id} index={index} {...row} dispatch={dispatch} />;
+      })}
     </div>
   );
 }
@@ -64,9 +64,9 @@ export function Row(props) {
 
   return (
     <div
-      className={classNames(generalClasses.row, {
-        [generalClasses.rowWithHover]: !props.noHover,
+      className={classNames(classes.row, {
         [generalClasses.isTracked]: !!props.tracked, // important for the compass to work
+        [classes.isIncompliant]: !props.compliant,
       })}
     >
       <div className={generalClasses.left} onClick={onRowClick}>
@@ -189,6 +189,23 @@ function RowSeqIndex({ type, index, missing }) {
 }
 
 const useStyles = makeStyles((theme) => ({
+  row: {
+    display: 'flex',
+    padding: 0,
+    paddingLeft: 4,
+    flexDirection: 'row',
+
+    cursor: 'pointer',
+
+    '&:hover': {
+      backgroundColor: 'rgba(78,165,255,0.27)',
+    },
+
+    '&$isIncompliant': {
+      backgroundColor: theme.palette.removed.background,
+    },
+  },
+
   rowContent: {
     fontSize: 12,
     fontFamily: "'Source Code Pro', monospace",
@@ -257,6 +274,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   isMissing: {},
+  isIncompliant: {},
 }));
 
 // ShapeViewer view model
@@ -493,7 +511,7 @@ function getFieldType(fieldValue) {
   }
 }
 
-function createRow(row) {
+function createRow(row, options = {}) {
   const trail = row && row.trail;
   const type = row && row.type;
   if (!trail || !Array.isArray(trail))
@@ -502,8 +520,13 @@ function createRow(row) {
 
   const id = `${row.trail.join('.') || 'root'}-${row.type}`;
 
+  const isCompliant =
+    !options.diffTrails ||
+    !options.diffTrails.some((diffTrail) => _isEqual(diffTrail, trail));
+
   return {
     id,
+    compliant: isCompliant,
     ...row,
   };
 }
