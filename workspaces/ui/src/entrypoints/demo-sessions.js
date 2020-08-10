@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
 import {
@@ -16,8 +16,13 @@ import { useSnackbar } from 'notistack';
 import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
 } from '@useoptic/domain-utilities';
-import { Button } from '@material-ui/core';
+import { Button, Snackbar } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function DemoSessions(props) {
   const match = useRouteMatch();
@@ -87,18 +92,24 @@ export default function DemoSessions(props) {
   };
 
   // info boxes / guides for the demo
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [message, setMessage] = useState("nothing")
   const [action, setAction] = useState(null)
   const [hasCommited, setHasCommited] = useState(false) 
 
   // path specific info boxes
   useEffect(() => {
-    /*if (props.location.pathname.includes("diffs/example-session/paths")) {
+    if (props.location.pathname.includes("diffs/example-session")) {
       setAction(null)
-      setMessage("Here, we can see the different requests that this route has experienced, and we can document it")
-    } else */if (props.location.pathname.includes("documentation/paths")) {
-      setAction(null)
+      setMessage("Optic will show you the requests and responses to this endpoint, and the automatically documented traffic shape.")
+    } else if (props.location.pathname.includes("documentation/paths")) {
+      setAction({
+        onClick: () => {
+          setAction(null)
+          history.push("/demos/todo/diffs")
+        },
+        title: "Checkout Diff Page"
+      })
       setMessage("Descriptions can be added to the endpoint, to the request and responses, and to individual fields.")
     } else if (props.location.pathname.includes("documentation")) {
       setAction(null)
@@ -122,12 +133,12 @@ export default function DemoSessions(props) {
       }
       case "Closed AddUrlModal" :
       case "Changed to UNDOCUMENTED_URL": {
-        if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
-        const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1
 
-        if (undocumentedUrlCount > 0) {
-            setAction(null)
-            setMessage("The Undocumented URLs page shows all traffic Optic observed to undocumented routes. Click a route to begin.")
+        if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
+          const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1
+          if (undocumentedUrlCount > 0) {
+              setAction(null)
+              setMessage("The Undocumented URLs page shows all traffic Optic observed to undocumented routes. Click a route to begin.")
           } else {
             setAction({
               onClick: () => {
@@ -139,14 +150,13 @@ export default function DemoSessions(props) {
             setMessage(`All Undocumented URLs have been added to the specification`)
           }
         }
-        break
+        break;
       }
       case "Navigating to Review Diff":
       case "Changed to ENDPOINT_DIFF": {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
           setAction(null)
           const diffAmount = eventProps.diffCount
-
           if (diffAmount > 0) {
             setMessage(`Optic will show you all of the documented endpoints, and if any traffic shows undocumented behavior. Click "Creates a new TODO Item" to investigate.`)
           } else {
@@ -196,22 +206,24 @@ export default function DemoSessions(props) {
     }
   })
 
-  useEffect(() => {
-    if (message !== "nothing" /*&& info*/) {
-      if (action) {
-        const button = () => <Button style={{color: "white"}} onClick={action.onClick}>{action.title}</Button>
-        enqueueSnackbar(message, { variant: "info", preventDuplicate: true, autoHideDuration: null, anchorOrigin: {
-          horizontal: "center",
-          vertical: "bottom",
-        }, action: button});
-      } else {
-        enqueueSnackbar(message, { variant: "info", preventDuplicate: true, autoHideDuration: null, anchorOrigin: {
-          horizontal: "center",
-          vertical: "bottom",
-        }});
-      }
-    }
-  }, [message, action, enqueueSnackbar])
+  // useEffect(() => {
+  //   if (message !== "nothing" /*&& info*/) {
+  //     console.log(`message is gonna be ${message}`)
+  //     closeSnackbar();
+  //     if (action) {
+  //       const button = () => <Button style={{color: "white"}} onClick={action.onClick}>{action.title}</Button>
+  //       // enqueueSnackbar(message, { variant: "info", preventDuplicate: true, persist: true , autoHideDuration: null, anchorOrigin: {
+  //       //   horizontal: "center",
+  //       //   vertical: "bottom",
+  //       // }, action: button});
+  //     } else {
+  //       // enqueueSnackbar(message, { variant: "info", preventDuplicate: true, persist: true , autoHideDuration: null, anchorOrigin: {
+  //       //   horizontal: "center",
+  //       //   vertical: "bottom",
+  //       // }});
+  //     }
+  //   }
+  // }, [message, action, enqueueSnackbar])
 
 
   return (
@@ -223,7 +235,12 @@ export default function DemoSessions(props) {
             diffServiceFactory={diffServiceFactory}
           >
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
-            
+            <Snackbar open={message !== "nothing"} autoHideDuration={6000}>
+            <Alert severity="info">
+              {message}
+              { action && <Button color="secondary" onClick={action.onClick}>{action.title}</Button>}
+            </Alert>
+          </Snackbar>
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
       </BaseUrlContext>

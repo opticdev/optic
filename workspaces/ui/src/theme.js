@@ -38,6 +38,11 @@ export const appTheme = createMuiTheme({
     updated: { main: UpdatedBlue, background: UpdatedBlueBackground },
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
+    info: {
+      main: OpticBlue,
+      background: OpticBlue
+      
+    },
 
     httpMethods: {
       OPTIONS: { main: methodColors.OPTIONS, dark: methodColorsDark.OPTIONS },
