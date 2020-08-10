@@ -11,6 +11,7 @@ export const AddedGreen = '#17c8a3';
 export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
+export const OpticBlue = '#1B2958';
 
 export const methodColors = {
   OPTIONS: '#686868',
@@ -51,4 +52,14 @@ export const appTheme = createMuiTheme({
     // Use the system font instead of the default Roboto font.
     fontFamily: ['Ubuntu', 'Inter'],
   },
+  overrides: {
+    MuiSnackbarContent: {
+      root: {
+        '&[class*="variantInfo"]': {
+          backgroundColor: OpticBlue,
+          fontWeight: 600
+        },
+      }
+    },
+  }
 });
