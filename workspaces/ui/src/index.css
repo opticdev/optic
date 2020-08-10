@@ -11,3 +11,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
   monospace;
 }
+
+.MuiAlert-message {
+  font-weight: 600;
+}
