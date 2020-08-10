@@ -57,4 +57,14 @@ jobs:
       # `--acl=public-read` is neceesary because the prod account is uploading the files to the staging bucket,
       # which prevents the default bucket policy from applying to these objects
       - name: Upload to S3
-        run: "aws s3 cp ./demoRepo/workspaces/ui/build/ s3://$BUCKET/ --recursive --sse=AES256 --acl=public-read"
+        run: |
+          aws s3 cp ./demoRepo/workspaces/ui/build/index.html "s3://$BUCKET" \
+            --sse=AES256 \
+            --acl=public-read \
+            --metadata='{"Cache-Control":"no-store"}' \
+            --cache-control=no-store
+          aws s3 cp ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
+            --recursive \
+            --exclude=index.html \
+            --sse=AES256 \
+            --acl=public-read
