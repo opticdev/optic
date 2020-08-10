@@ -454,15 +454,28 @@ function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
     })
   );
 
+  const nestedDiffs = diffTrails.filter(
+    (diffTrail) =>
+      diffTrail.length > trail.length &&
+      trail.every((trailComponent, n) => trailComponent === diffTrail[n])
+  );
+
+  const indexesWithDiffs = list
+    .map((item, index) => index)
+    .filter((index) => {
+      return nestedDiffs.some((diffTrail) => index === diffTrail[trail.length]);
+    });
+
   list.forEach((item, index) => {
     let itemTypeString = Object.prototype.toString.call(item);
     let itemTrail = [...trail, index];
     let itemIndent = indent + 1;
 
     if (
-      index === 0 ||
       (itemTypeString !== '[object Object]' &&
-        itemTypeString !== '[object Array]')
+        itemTypeString !== '[object Array]') ||
+      (indexesWithDiffs.length > 0 && indexesWithDiffs[0] === index) ||
+      (indexesWithDiffs.length === 0 && index === 0)
     ) {
       shapeRows(item, diffTrails, rows, collapsedTrails, itemIndent, {
         seqIndex: index,
