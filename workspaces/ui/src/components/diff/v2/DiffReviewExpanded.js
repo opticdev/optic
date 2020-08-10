@@ -80,11 +80,12 @@ export class DiffReviewExpandedCached extends React.Component {
   }
 
   render() {
-    const { selectedDiff, captureId, setSelectedDiff } = this.props;
+    const { selectedDiff, captureId, setSelectedDiff, viewer } = this.props;
     return (
       <DiffReviewExpanded
         diff={selectedDiff}
         captureId={captureId}
+        viewer={viewer}
         {...{ selectedDiff, setSelectedDiff }}
       />
     );
@@ -93,7 +94,14 @@ export class DiffReviewExpandedCached extends React.Component {
 
 export const DiffReviewExpanded = (props) => {
   const classes = useStyles();
-  const { diff, selectedDiff, setSelectedDiff, rfcContext, captureId } = props;
+  const {
+    diff,
+    selectedDiff,
+    setSelectedDiff,
+    rfcContext,
+    captureId,
+    viewer,
+  } = props;
 
   const description = useDiffDescription(diff);
 
@@ -148,7 +156,7 @@ export const DiffReviewExpanded = (props) => {
   const { interaction, interactionScala } = currentInteraction;
 
   const { method, path } = interactionScala.request;
-  track("Display Diff in Behavior Page", props)
+  track('Display Diff in Behavior Page', props);
   return (
     <ShapeExpandedStore>
       <div>
@@ -195,9 +203,10 @@ export const DiffReviewExpanded = (props) => {
                     diff={diff}
                     interactionScala={interactionScala}
                     description={description}
-                    body={interactionScala.response.body}
+                    body={interactionScala.response.body} // TODO: shouldn't this be the request body?
                     outerRfcState={outerRfcState}
                     selectedInterpretation={selectedInterpretation}
+                    viewer={viewer}
                   />
                 </ShapeBox>
               }
@@ -245,6 +254,7 @@ export const DiffReviewExpanded = (props) => {
                     body={interactionScala.response.body}
                     outerRfcState={outerRfcState}
                     selectedInterpretation={selectedInterpretation}
+                    viewer={viewer}
                   />
                 </ShapeBox>
               }
