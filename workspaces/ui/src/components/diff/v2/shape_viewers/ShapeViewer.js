@@ -18,6 +18,8 @@ import {
   toOption,
 } from '@useoptic/domain';
 
+import WarningIcon from '@material-ui/icons/Warning';
+
 export default function ShapeViewer({ diff, interaction }) {
   const generalClasses = useShapeViewerStyles();
 
@@ -40,6 +42,7 @@ export function Row(props) {
   const classes = useStyles();
   const generalClasses = useShapeViewerStyles();
   const {
+    compliant,
     indent,
     index,
     seqIndex,
@@ -67,7 +70,9 @@ export function Row(props) {
     <div
       className={classNames(classes.row, {
         [generalClasses.isTracked]: !!props.tracked, // important for the compass to work
-        [classes.isIncompliant]: !props.compliant,
+        [classes.isIncompliant]: !compliant && type !== 'array_item_collapsed',
+        [classes.isCollapsedIncompliant]:
+          !compliant && type === 'array_item_collapsed',
       })}
     >
       <div className={generalClasses.left} onClick={onRowClick}>
@@ -75,7 +80,9 @@ export function Row(props) {
           {indentPadding}
           <RowFieldName type={type} name={fieldName} missing={!!missing} />
           <RowSeqIndex type={type} index={seqIndex} missing={!!missing} />
-          {!missing && <RowValue type={type} value={fieldValue} />}
+          {!missing && (
+            <RowValue type={type} value={fieldValue} compliant={compliant} />
+          )}
         </div>
       </div>
     </div>
@@ -83,7 +90,7 @@ export function Row(props) {
 }
 Row.displayName = 'ShapeViewer/Row';
 
-function RowValue({ type, value }) {
+function RowValue({ type, value, compliant }) {
   const generalClasses = useShapeViewerStyles();
   const classes = useStyles();
 
@@ -108,7 +115,12 @@ function RowValue({ type, value }) {
   }
 
   if (type === 'array_item_collapsed') {
-    return <span className={classes.collapsedSymbol}>{'⋯'}</span>;
+    return (
+      <span className={classes.collapsedSymbol}>
+        {'⋯'}
+        {!compliant ? <WarningIcon className={classes.collapsedWarning} /> : ''}
+      </span>
+    );
   }
 
   if (type === 'array_close') {
@@ -205,6 +217,10 @@ const useStyles = makeStyles((theme) => ({
     '&$isIncompliant': {
       backgroundColor: theme.palette.removed.background,
     },
+
+    '&$isCollapsedIncompliant:hover': {
+      backgroundColor: theme.palette.removed.background,
+    },
   },
 
   rowContent: {
@@ -214,6 +230,8 @@ const useStyles = makeStyles((theme) => ({
     color: SymbolColor,
   },
 
+  collapsedRowValue: {},
+
   collapsedSymbol: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
@@ -221,6 +239,18 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
     backgroundColor: '#ababab',
     borderRadius: 12,
+
+    '$isCollapsedIncompliant &': {
+      color: theme.palette.removed.main,
+      backgroundColor: theme.palette.removed.background,
+    },
+  },
+
+  collapsedWarning: {
+    width: 10,
+    height: 10,
+    marginLeft: theme.spacing(0.5),
+    color: theme.palette.secondary.main,
   },
 
   booleanContent: {
@@ -276,6 +306,7 @@ const useStyles = makeStyles((theme) => ({
 
   isMissing: {},
   isIncompliant: {},
+  isCollapsedIncompliant: {},
 }));
 
 // ShapeViewer view model
@@ -486,6 +517,7 @@ function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
       rows.push(
         createRow({
           type: 'array_item_collapsed',
+          compliant: !indexesWithDiffs.includes(index),
           seqIndex: index,
           indent: itemIndent,
           trail: itemTrail,
