@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
 import _isEqual from 'lodash.isequal';
 import _get from 'lodash.get';
+import _uniq from 'lodash.uniq';
 
 import {
   getOrUndefined,
@@ -151,6 +152,10 @@ function RowValue({ type, value }) {
     return <span>{value}</span>;
   }
 
+  if (type === 'undefined') {
+    return <span>Missing!</span>;
+  }
+
   throw new Error(`Cannot render RowValue for type '${type}'`);
 }
 RowValue.displayName = 'ShapeViewer/RowValue';
@@ -272,9 +277,14 @@ function createInitialState({ diff, interaction }) {
 
   const shape = JsonHelper.toJs(body.jsonOption);
 
-  const [rows, collapsedTrails] = shapeRows(shape);
+  const diffTrails = [
+    ['MRData', 'RaceTable', 'Races', 0, 'Results', 6, 'Time'],
+    ['MRData', 'RaceTable', 'Races', 0, 'Results', 12, 'Time'],
+  ];
 
-  return { body: shape, rows, collapsedTrails };
+  const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
+
+  return { body: shape, rows, collapsedTrails, diffTrails };
 }
 
 function updateState(state, action) {
@@ -301,8 +311,10 @@ function unfoldRows(currentState, index) {
     trail: [...row.trail],
   };
 
+  debugger;
   const [replacementRows, newCollapsedTrails] = shapeRows(
     collapsedShape,
+    currentState.diffTrails,
     [],
     [],
     row.indent,
@@ -325,6 +337,7 @@ function unfoldRows(currentState, index) {
 // the mutative way to prevent a lot of re-alloctions for big bodies.
 function shapeRows(
   shape,
+  diffTrails = [],
   rows = [],
   collapsedTrails = [],
   indent = 0,
@@ -335,35 +348,36 @@ function shapeRows(
     trail: [],
   }
 ) {
-  if (!shape) return [];
-
   const typeString = Object.prototype.toString.call(shape);
 
   switch (typeString) {
     case '[object Object]':
       // debugger;
-      objectRows(shape, rows, collapsedTrails, indent, field);
+      objectRows(shape, diffTrails, rows, collapsedTrails, indent, field);
       break;
     case '[object Array]':
       // debugger;
-      listRows(shape, rows, collapsedTrails, indent, field);
+      listRows(shape, diffTrails, rows, collapsedTrails, indent, field);
       break;
     default:
-      // debugger;
-      if (shape.isOptional || shape.isNullable) {
-        shapeRows(shape.innerShape, rows, collapsedTrails, indent, field);
-      } else {
-        let type = getFieldType(field.fieldValue);
-        let row = createRow({ type, ...field, indent });
-        rows.push(createRow(row));
-      }
+      // debugger
+      let type = getFieldType(field.fieldValue);
+      let row = createRow({ type, ...field, indent }, { diffTrails });
+      rows.push(createRow(row));
       break;
   }
 
   return [rows, collapsedTrails];
 }
 
-function objectRows(objectShape, rows, collapsedTrails, indent, field) {
+function objectRows(
+  objectShape,
+  diffTrails,
+  rows,
+  collapsedTrails,
+  indent,
+  field
+) {
   const { trail } = field;
 
   rows.push(
@@ -376,32 +390,42 @@ function objectRows(objectShape, rows, collapsedTrails, indent, field) {
     })
   );
 
-  Object.entries(objectShape)
-    .sort(alphabetizeEntryKeys)
-    .forEach(([key, value]) => {
-      const fieldName = key;
+  const nestedDiffs = diffTrails.filter((diffTrail) =>
+    trail.every((trailComponent, n) => trailComponent === diffTrail[n])
+  );
+  const keysWithDiffs = nestedDiffs
+    .filter((nestedDiff) => nestedDiff.length === trail.length + 1)
+    .map((diff) => diff[diff.length - 1]);
+  const objectKeys = _uniq([...Object.keys(objectShape), ...keysWithDiffs]);
 
-      return shapeRows(value, rows, collapsedTrails, indent + 1, {
-        fieldName,
-        fieldValue: value,
-        trail: [...trail, fieldName],
-      });
+  objectKeys.sort(alphabetizeCaseInsensitve).forEach((key) => {
+    const fieldName = key;
+    const value = objectShape[key];
+
+    return shapeRows(value, nestedDiffs, rows, collapsedTrails, indent + 1, {
+      fieldName,
+      fieldValue: value,
+      trail: [...trail, fieldName],
     });
+  });
 
   rows.push(createRow({ type: 'object_close', indent, trail }));
 }
 
-function alphabetizeEntryKeys([keyA], [keyB]) {
-  if (keyA > keyB) {
+function alphabetizeCaseInsensitve(A, B) {
+  const a = A.toLowerCase();
+  const b = B.toLowerCase();
+
+  if (a > b) {
     return 1;
-  } else if (keyB > keyA) {
+  } else if (b > a) {
     return -1;
   }
 
-  return 0;
+  // return 0;
 }
 
-function listRows(list, rows, collapsedTrails, indent, field) {
+function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
   rows.push(
@@ -424,7 +448,7 @@ function listRows(list, rows, collapsedTrails, indent, field) {
       (itemTypeString !== '[object Object]' &&
         itemTypeString !== '[object Array]')
     ) {
-      shapeRows(item, rows, collapsedTrails, itemIndent, {
+      shapeRows(item, diffTrails, rows, collapsedTrails, itemIndent, {
         seqIndex: index,
         fieldValue: item,
         trail: itemTrail,
