@@ -107,10 +107,7 @@ export default function DemoSessions(props) {
 
   // path specific info boxes
   useEffect(() => {
-    if (props.location.pathname.includes("diffs/example-session")) {
-      setAction(null)
-      setMessage("Optic will show you the requests and responses to this endpoint, and the automatically documented traffic shape.")
-    } else if (props.location.pathname.includes("documentation/paths")) {
+    if (props.location.pathname.includes("documentation/paths")) {
       setAction({
         onClick: () => {
           setAction(null)
@@ -212,6 +209,7 @@ export default function DemoSessions(props) {
         break
       }
     }
+    
   })
 
   return (
