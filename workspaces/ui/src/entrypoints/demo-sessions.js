@@ -16,9 +16,16 @@ import { useSnackbar } from 'notistack';
 import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
 } from '@useoptic/domain-utilities';
-import { Button, Snackbar } from '@material-ui/core';
+import { Button, Snackbar, makeStyles, Box } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
+
+const snackbarStyles = makeStyles({
+  snackbar: {
+    border: "1px white solid",
+    fontSize: "1.2em"
+  }
+})
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -96,6 +103,7 @@ export default function DemoSessions(props) {
   const [message, setMessage] = useState("nothing")
   const [action, setAction] = useState(null)
   const [hasCommited, setHasCommited] = useState(false) 
+  const styles = snackbarStyles();
 
   // path specific info boxes
   useEffect(() => {
@@ -206,26 +214,6 @@ export default function DemoSessions(props) {
     }
   })
 
-  // useEffect(() => {
-  //   if (message !== "nothing" /*&& info*/) {
-  //     console.log(`message is gonna be ${message}`)
-  //     closeSnackbar();
-  //     if (action) {
-  //       const button = () => <Button style={{color: "white"}} onClick={action.onClick}>{action.title}</Button>
-  //       // enqueueSnackbar(message, { variant: "info", preventDuplicate: true, persist: true , autoHideDuration: null, anchorOrigin: {
-  //       //   horizontal: "center",
-  //       //   vertical: "bottom",
-  //       // }, action: button});
-  //     } else {
-  //       // enqueueSnackbar(message, { variant: "info", preventDuplicate: true, persist: true , autoHideDuration: null, anchorOrigin: {
-  //       //   horizontal: "center",
-  //       //   vertical: "bottom",
-  //       // }});
-  //     }
-  //   }
-  // }, [message, action, enqueueSnackbar])
-
-
   return (
     <>
       <BaseUrlContext value={{ path: match.path, url: match.url }}>
@@ -235,12 +223,15 @@ export default function DemoSessions(props) {
             diffServiceFactory={diffServiceFactory}
           >
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
+            
+
             <Snackbar open={message !== "nothing"} autoHideDuration={6000}>
-            <Alert severity="info">
-              {message}
-              { action && <Button color="secondary" onClick={action.onClick}>{action.title}</Button>}
-            </Alert>
-          </Snackbar>
+              <Alert className={styles.snackbar} severity="info">
+                {message}
+                { action && <Button color="secondary" onClick={action.onClick}>{action.title}</Button>}
+              </Alert>
+            </Snackbar>
+
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
       </BaseUrlContext>
