@@ -166,7 +166,7 @@ function RowValue({ type, value, compliant }) {
   }
 
   if (type === 'undefined') {
-    return <span>Missing!</span>;
+    return <code className={classes.missingContent}>undefined</code>;
   }
 
   throw new Error(`Cannot render RowValue for type '${type}'`);
@@ -276,6 +276,13 @@ const useStyles = makeStyles((theme) => ({
     overflowWrap: 'break-word',
     fontFamily: "'Source Code Pro', monospace",
     color: useColor.StringColor,
+  },
+
+  missingContent: {
+    fontWeight: 600,
+    fontFamily: "'Source Code Pro', monospace",
+    fontStyle: 'italic',
+    opacity: 0.8,
   },
 
   fieldName: {
