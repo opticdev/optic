@@ -113,7 +113,12 @@ export function Row(props) {
         {indentPadding}
         <RowFieldName type={type} name={fieldName} />
         <RowSeqIndex type={type} index={seqIndex} />
-        <RowValue type={type} value={fieldValue} compliant={compliant} />
+        <RowValue
+          type={type}
+          value={fieldValue}
+          compliant={compliant}
+          changeDescription={diffDetails && diffDetails.changeDescription}
+        />
       </div>
 
       {!compliant && !collapsed && <DiffAssertion {...diffDetails} />}
@@ -122,7 +127,7 @@ export function Row(props) {
 }
 Row.displayName = 'ShapeViewer/Row';
 
-function RowValue({ type, value, compliant }) {
+function RowValue({ type, value, compliant, changeDescription }) {
   const generalClasses = useShapeViewerStyles();
   const classes = useStyles();
 
@@ -150,7 +155,15 @@ function RowValue({ type, value, compliant }) {
     return (
       <span className={classes.collapsedSymbol}>
         {'⋯'}
-        {!compliant ? <WarningIcon className={classes.collapsedWarning} /> : ''}
+        {!compliant ? (
+          changeDescription ? (
+            <CheckCircleIcon className={classes.collapsedChangeIcon} />
+          ) : (
+            <WarningIcon className={classes.collapsedWarning} />
+          )
+        ) : (
+          ''
+        )}
       </span>
     );
   }
@@ -304,6 +317,7 @@ const useStyles = makeStyles((theme) => ({
   collapsedSymbol: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
+    paddingTop: 3,
     color: '#070707',
     fontSize: 10,
     backgroundColor: '#ababab',
@@ -330,6 +344,24 @@ const useStyles = makeStyles((theme) => ({
     height: 10,
     marginLeft: theme.spacing(0.5),
     color: theme.palette.secondary.main,
+  },
+
+  collapsedChangeIcon: {
+    width: 10,
+    height: 10,
+    marginLeft: theme.spacing(0.5),
+
+    '$requiresAddition &': {
+      color: theme.palette.added.main,
+    },
+
+    '$requiresRemoval &': {
+      color: theme.palette.removed.main,
+    },
+
+    '$requiresUpdate &': {
+      color: theme.palette.changed.main,
+    },
   },
 
   booleanContent: {
