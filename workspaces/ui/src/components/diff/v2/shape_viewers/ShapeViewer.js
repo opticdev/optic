@@ -211,23 +211,25 @@ function RowValue({ type, value, compliant, changeDescription }) {
   }
 
   if (type === 'undefined') {
-    return <code className={classes.missingContent}>undefined</code>;
+    return null;
   }
 
   throw new Error(`Cannot render RowValue for type '${type}'`);
 }
 RowValue.displayName = 'ShapeViewer/RowValue';
 
-function RowFieldName({ type, name, missing }) {
+function RowFieldName({ type, name }) {
   const classes = useStyles();
+  const missing = type === 'undefined';
   if (!name) return null;
   return (
     <span
       className={classNames(classes.fieldName, {
-        [classes.isMissing]: !!missing,
+        [classes.isMissing]: type === 'undefined',
       })}
     >
-      {name}:{' '}
+      {name}
+      {!missing && ': '}
     </span>
   );
 }
@@ -405,7 +407,8 @@ const useStyles = makeStyles((theme) => ({
     opacity: 1,
 
     '&$isMissing': {
-      opacity: 0.4,
+      fontStyle: 'italic',
+      opacity: 0.6,
     },
   },
 
