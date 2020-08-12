@@ -20,7 +20,12 @@ import {
 
 import WarningIcon from '@material-ui/icons/Warning';
 
-export default function ShapeViewer({ diff, interaction }) {
+export default function ShapeViewer({
+  diff,
+  diffDescription,
+  interaction,
+  selectedInterpretation,
+}) {
   const generalClasses = useShapeViewerStyles();
 
   const [{ rows }, dispatch] = useReducer(
@@ -29,10 +34,26 @@ export default function ShapeViewer({ diff, interaction }) {
     createInitialState
   );
 
+  const diffDetails = {
+    diffDescription,
+    selectedInterpretation,
+    changeType: selectedInterpretation
+      ? selectedInterpretation.changeTypeAsString
+      : diffDescription.changeTypeAsString,
+  };
+
   return (
     <div className={generalClasses.root}>
       {rows.map((row, index) => {
-        return <Row key={row.id} index={index} {...row} dispatch={dispatch} />;
+        return (
+          <Row
+            key={row.id}
+            index={index}
+            {...row}
+            diffDetails={row.compliant ? {} : diffDetails}
+            dispatch={dispatch}
+          />
+        );
       })}
     </div>
   );
@@ -42,7 +63,9 @@ export function Row(props) {
   const classes = useStyles();
   const generalClasses = useShapeViewerStyles();
   const {
+    collapsed,
     compliant,
+    diffDetails,
     indent,
     index,
     seqIndex,
@@ -55,6 +78,7 @@ export function Row(props) {
 
   const onRowClick = useCallback(
     (e) => {
+      if (!collapsed) return;
       e.preventDefault();
       if (type === 'array_item_collapsed') {
         dispatch({ type: 'unfold', payload: index });
@@ -69,19 +93,25 @@ export function Row(props) {
     <div
       className={classNames(classes.row, {
         [generalClasses.isTracked]: !!props.tracked, // important for the compass to work
-        [classes.isIncompliant]: !compliant && type !== 'array_item_collapsed',
-        [classes.isCollapsedIncompliant]:
-          !compliant && type === 'array_item_collapsed',
+        [classes.isCollapsed]: collapsed,
+        [classes.isIncompliant]: !compliant && !collapsed,
+        [classes.isCollapsedIncompliant]: !compliant && collapsed,
+        [classes.requiresAddition]:
+          diffDetails && diffDetails.changeType === 'Addition',
+        [classes.requiresUpdate]:
+          diffDetails && diffDetails.changeType === 'Update',
+        [classes.requiresRemoval]:
+          diffDetails && diffDetails.changeType === 'Removal',
       })}
     >
-      <div className={generalClasses.left} onClick={onRowClick}>
-        <div className={classes.rowContent}>
-          {indentPadding}
-          <RowFieldName type={type} name={fieldName} />
-          <RowSeqIndex type={type} index={seqIndex} />
-          <RowValue type={type} value={fieldValue} compliant={compliant} />
-        </div>
+      <div className={classes.rowContent} onClick={onRowClick}>
+        {indentPadding}
+        <RowFieldName type={type} name={fieldName} />
+        <RowSeqIndex type={type} index={seqIndex} />
+        <RowValue type={type} value={fieldValue} compliant={compliant} />
       </div>
+
+      {!compliant && !collapsed && <DiffAssertion {...diffDetails} />}
     </div>
   );
 }
@@ -198,29 +228,55 @@ function RowSeqIndex({ type, index, missing }) {
   );
 }
 
+function DiffAssertion({ diffDescription, selectedInterpretation }) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.diffAssertion}>
+      <WarningIcon className={classes.assertionWarningIcon} />
+      <span>{diffDescription.assertion}</span>
+    </div>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   row: {
     display: 'flex',
     padding: 0,
     paddingLeft: 4,
     flexDirection: 'row',
-
-    cursor: 'pointer',
+    alignItems: 'baseline',
 
     '&:hover': {
       backgroundColor: 'rgba(78,165,255,0.27)',
     },
 
-    '&$isIncompliant': {
-      backgroundColor: theme.palette.removed.background,
+    '&$isCollapsed': {
+      cursor: 'pointer',
     },
 
-    '&$isCollapsedIncompliant:hover': {
-      backgroundColor: theme.palette.removed.background,
+    '&$isIncompliant, &$isCollapsedIncompliant:hover': {
+      '&$requiresAddition': {
+        backgroundColor: theme.palette.added.background,
+      },
+
+      '&$requiresRemoval': {
+        backgroundColor: theme.palette.removed.background,
+      },
+
+      '&$requiresUpdate': {
+        backgroundColor: theme.palette.changed.background,
+      },
     },
   },
 
   rowContent: {
+    flexGrow: 1,
+    flexShrink: 1,
+    overflow: 'hidden',
+    padding: theme.spacing(0, 5 / 8),
+
+    lineHeight: '23px',
     fontSize: 12,
     fontFamily: "'Source Code Pro', monospace",
     whiteSpace: 'pre',
@@ -237,9 +293,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#ababab',
     borderRadius: 12,
 
-    '$isCollapsedIncompliant &': {
-      color: theme.palette.removed.main,
+    '$isCollapsedIncompliant$requiresAddition &': {
+      backgroundColor: theme.palette.added.background,
+      color: theme.palette.added.main,
+    },
+
+    '$isCollapsedIncompliant$requiresRemoval &': {
       backgroundColor: theme.palette.removed.background,
+      color: theme.palette.removed.main,
+    },
+
+    '$isCollapsedIncompliant$requiresUpdate &': {
+      backgroundColor: theme.palette.changed.background,
+      color: theme.palette.changed.main,
     },
   },
 
@@ -308,9 +374,29 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  diffAssertion: {
+    flexGrow: 0,
+    flexShrink: 0,
+    padding: theme.spacing(0, 2),
+    color: '#f8edf4',
+    fontSize: 14,
+    fontWeight: 800,
+    fontFamily: "'Source Code Pro', monospace",
+  },
+
+  assertionWarningIcon: {
+    width: 10,
+    height: 10,
+    marginRight: theme.spacing(0.5),
+  },
+
+  isCollapsed: {},
   isMissing: {},
   isIncompliant: {},
   isCollapsedIncompliant: {},
+  requiresAddition: {},
+  requiresUpdate: {},
+  requiresRemoval: {},
 }));
 
 // ShapeViewer view model
@@ -521,6 +607,7 @@ function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
       rows.push(
         createRow({
           type: 'array_item_collapsed',
+          collapsed: true,
           compliant: !indexesWithDiffs.includes(index),
           seqIndex: index,
           indent: itemIndent,
@@ -573,6 +660,7 @@ function createRow(row, options = {}) {
 
   return {
     id,
+    collapsed: false,
     compliant: isCompliant,
     ...row,
   };
