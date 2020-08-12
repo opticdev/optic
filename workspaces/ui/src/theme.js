@@ -61,7 +61,6 @@ export const appTheme = createMuiTheme({
       root: {
         '&[class*="variantInfo"]': {
           backgroundColor: OpticBlue,
-          fontWeight: 600
         },
       }
     },

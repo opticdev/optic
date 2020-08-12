@@ -12,6 +12,11 @@ code {
   monospace;
 }
 
-.MuiAlert-message {
-  font-weight: 600;
+.MuiAlert-icon {
+  align-items: center;
+}
+
+.MuiAlert-icon .MuiSvgIcon-root {
+width: 1.3em;
+  height: 1.3em;
 }

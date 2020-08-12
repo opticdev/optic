@@ -21,7 +21,7 @@ import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
 
 const snackbarStyles = makeStyles({
-  snackbar: {
+  alert: {
     border: "1px white solid",
     fontSize: "1.2em"
   }
@@ -130,6 +130,8 @@ export default function DemoSessions(props) {
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
+    // console.group(event)
+    // console.log(`Message originally ${message}`)
     switch (event) {
       case "Show Initial Documentation Page" : {
         setAction(null)
@@ -163,7 +165,14 @@ export default function DemoSessions(props) {
           setAction(null)
           const diffAmount = eventProps.diffCount
           if (diffAmount > 0) {
-            setMessage(`Optic will show you all of the documented endpoints, and if any traffic shows undocumented behavior. Click "Creates a new TODO Item" to investigate.`)
+            //         // ""
+        // 
+        // <b>Example: Click "Creates a new Todo Item" to Review the Diff
+            setMessage(<p>
+              {`Optic shows all your API endpoints. If any endpoints exhibit undocumented behavior, Optic detects it`}
+              <br/><br/>
+              <b>{`Example: Click "Creates a new Todo Item" to Review the Diff`}</b>
+            </p>);
           } else {
             setMessage(`Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`)
           }
@@ -210,6 +219,8 @@ export default function DemoSessions(props) {
       }
     }
     
+    // console.log(`Message set to ${message}`)
+    // console.groupEnd();
   })
 
   return (
@@ -224,7 +235,7 @@ export default function DemoSessions(props) {
             
 
             <Snackbar open={message !== "nothing"} autoHideDuration={6000}>
-              <Alert className={styles.snackbar} severity="info">
+              <Alert className={styles.alert} severity="info">
                 {message}
                 { action && <Button color="secondary" onClick={action.onClick}>{action.title}</Button>}
               </Alert>
