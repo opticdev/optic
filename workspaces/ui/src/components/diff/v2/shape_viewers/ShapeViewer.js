@@ -48,7 +48,6 @@ export function Row(props) {
     seqIndex,
     fieldName,
     fieldValue,
-    missing,
     type,
 
     dispatch,
@@ -78,11 +77,9 @@ export function Row(props) {
       <div className={generalClasses.left} onClick={onRowClick}>
         <div className={classes.rowContent}>
           {indentPadding}
-          <RowFieldName type={type} name={fieldName} missing={!!missing} />
-          <RowSeqIndex type={type} index={seqIndex} missing={!!missing} />
-          {!missing && (
-            <RowValue type={type} value={fieldValue} compliant={compliant} />
-          )}
+          <RowFieldName type={type} name={fieldName} />
+          <RowSeqIndex type={type} index={seqIndex} />
+          <RowValue type={type} value={fieldValue} compliant={compliant} />
         </div>
       </div>
     </div>
