@@ -117,10 +117,13 @@ export default function DemoSessions(props) {
       href: "/demos/todo",
     }
   })
-  const [action, setAction] = useState(null)
+  const [commits, setCommits] = useState(0)
+  const trackCommit = () => setCommits(commits + 1)
   const [hasCommited, setHasCommited] = useState(false) 
   const [route, setRoute] = useState("");
   const styles = snackbarStyles();
+  const [showTooltips, setShowTooltips] = useState(true);
+  const disableTooltips = () => setShowTooltips(false);
 
   // path specific info boxes
   useEffect(() => {
@@ -150,7 +153,7 @@ export default function DemoSessions(props) {
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
-    // console.group(event)
+    // console.log(event)
     // console.log(eventProps)
     // console.groupEnd()
     switch (event) {
@@ -177,7 +180,7 @@ export default function DemoSessions(props) {
           const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1
           if (undocumentedUrlCount > 0) {
               setMessage({
-                message: "Here, Optic is showing all urls that received traffic but have not been documented. Choose a url to document it"
+                message: "Here, Optic is showing all urls that received traffic but have not been documented. \n\nChoose a url to document it"
               })
           } else {
             setMessage({
@@ -228,6 +231,7 @@ export default function DemoSessions(props) {
       }
       case "Committed Changes to Endpoint": {
         setHasCommited(true)
+        trackCommit()
         // 1 - button is offset
         setMessage({
           message: `Awesome! Now that you've committed changes, let's take a look at the documentation!`,
@@ -298,6 +302,13 @@ export default function DemoSessions(props) {
     }
   })
 
+  const m = (commits > 1) ? {
+    message: "Looks like you've got a hang of things! Feel free to keep poking around",
+    action: {
+      text: "I don't need more suggestions",
+      onClick: disableTooltips,
+    }
+  } : message;
   return (
     <>
       <BaseUrlContext value={{ path: match.path, url: match.url }}>
@@ -308,17 +319,22 @@ export default function DemoSessions(props) {
           >
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
             
+            <Snackbar open={showTooltips && m.message !== "nothing"} autoHideDuration={6000}>
 
-            <Snackbar open={message.message !== "nothing"} autoHideDuration={6000}>
               <Alert className={styles.alert} severity="info">
-                {message.message.split("\n").map((item, key) => {
+                {m.message.split("\n").map((item, key) => {
                   return <span key={key}>{item}<br/></span>
                 })}
-                { message.action && <Button variant="contained" onClick={() => {
-                   history.push(message.action.href)
-                }} color="secondary">{message.action.text}</Button>}
+                { m.action && <Button variant="contained" onClick={() => {
+                  if (m.action.onClick) {
+                    m.action.onClick();
+                  } else {
+                    history.push(m.action.href)
+                  }
+                }} color="secondary">{m.action.text}</Button>}
               </Alert>
             </Snackbar>
+
 
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
