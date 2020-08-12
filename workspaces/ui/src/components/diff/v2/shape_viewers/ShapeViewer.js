@@ -624,8 +624,8 @@ function objectRows(
 }
 
 function alphabetizeCaseInsensitve(A, B) {
-  const a = A.toLowerCase();
-  const b = B.toLowerCase();
+  const a = A.toLowerCase ? A.toLowerCase() : A;
+  const b = B.toLowerCase ? B.toLowerCase() : B;
 
   if (a > b) {
     return 1;
