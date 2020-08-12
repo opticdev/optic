@@ -18,6 +18,7 @@ import {
   toOption,
 } from '@useoptic/domain';
 
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 
 export default function ShapeViewer({
@@ -36,10 +37,14 @@ export default function ShapeViewer({
 
   const diffDetails = {
     diffDescription,
-    selectedInterpretation,
     changeType: selectedInterpretation
       ? selectedInterpretation.changeTypeAsString
       : diffDescription.changeTypeAsString,
+    changeDescription:
+      selectedInterpretation &&
+      JsonHelper.seqToJsArray(
+        selectedInterpretation.copyPair.action
+      ).map(({ value, style }) => ({ value, style })),
   };
 
   return (
@@ -228,13 +233,24 @@ function RowSeqIndex({ type, index, missing }) {
   );
 }
 
-function DiffAssertion({ diffDescription, selectedInterpretation }) {
+function DiffAssertion({ diffDescription, changeDescription }) {
   const classes = useStyles();
 
   return (
     <div className={classes.diffAssertion}>
-      <WarningIcon className={classes.assertionWarningIcon} />
-      <span>{diffDescription.assertion}</span>
+      {changeDescription ? (
+        <>
+          <CheckCircleIcon className={classes.selectectedChangeIcon} />
+          <span className={classes.changeDescription}>
+            {changeDescription.map(({ value }) => value).join(' ')}
+          </span>
+        </>
+      ) : (
+        <>
+          <WarningIcon className={classes.assertionWarningIcon} />
+          <span>{diffDescription.assertion}</span>
+        </>
+      )}
     </div>
   );
 }
@@ -276,7 +292,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'hidden',
     padding: theme.spacing(0, 5 / 8),
 
-    lineHeight: '23px',
+    lineHeight: '25px',
     fontSize: 12,
     fontFamily: "'Source Code Pro', monospace",
     whiteSpace: 'pre',
@@ -377,7 +393,14 @@ const useStyles = makeStyles((theme) => ({
   diffAssertion: {
     flexGrow: 0,
     flexShrink: 0,
+    alignSelf: 'center',
+    minWidth: '35%',
+    maxWidth: '50%',
+
+    display: 'flex',
+    alignItems: 'center',
     padding: theme.spacing(0, 2),
+
     color: '#f8edf4',
     fontSize: 14,
     fontWeight: 800,
@@ -385,9 +408,28 @@ const useStyles = makeStyles((theme) => ({
   },
 
   assertionWarningIcon: {
-    width: 10,
-    height: 10,
-    marginRight: theme.spacing(0.5),
+    width: 14,
+    height: 14,
+    marginRight: theme.spacing(1),
+    color: theme.palette.secondary.main,
+  },
+
+  selectectedChangeIcon: {
+    width: 14,
+    height: 14,
+    marginRight: theme.spacing(1),
+
+    '$requiresAddition &': {
+      color: theme.palette.added.main,
+    },
+
+    '$requiresRemoval &': {
+      color: theme.palette.removed.main,
+    },
+
+    '$requiresUpdate &': {
+      color: theme.palette.changed.main,
+    },
   },
 
   isCollapsed: {},
