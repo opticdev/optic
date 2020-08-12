@@ -81,7 +81,13 @@ export default function FinalizeDialog(props) {
       track('Committed Changes to Endpoint', {
         message: commitMessage,
         captureId,
-        suggestions: acceptedSuggestions.length,
+        suggestions: acceptedSuggestions,
+        newEventStore: newEventStore,
+        rfcId: rfcId,
+        clientId: clientId,
+        clientSessionId: clientSessionId,
+        specContext: specContext,
+        commands: acceptedSuggestions.map(suggestion => JsonHelper.seqToVector(suggestion.commands))
       });
     }, 500);
   };

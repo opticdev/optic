@@ -19,12 +19,23 @@ import {
 import { Button, Snackbar, makeStyles, Box } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
+import { UpdatedBlueBackground } from "../theme"
 
 const snackbarStyles = makeStyles({
   alert: {
     border: "1px white solid",
     fontSize: "1.2em"
-  }
+  },
+  code: {
+    fontFamily: "'Source Code Pro', monospace",
+    fontWeight: 600,
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingTop: 1,
+    paddingBottom: 1,
+    wordBreak: 'break-word',
+    backgroundColor: UpdatedBlueBackground,
+  },
 })
 
 function Alert(props) {
@@ -99,43 +110,64 @@ export default function DemoSessions(props) {
   };
 
   // info boxes / guides for the demo
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const [message, setMessage] = useState("nothing")
+  const [message, setMessage] = useState({
+    message: "informational tooltip is loading",
+    action: {
+      text: "Button Text",
+      href: "/demos/todo",
+    }
+  })
   const [action, setAction] = useState(null)
   const [hasCommited, setHasCommited] = useState(false) 
+  const [route, setRoute] = useState("");
   const styles = snackbarStyles();
 
   // path specific info boxes
   useEffect(() => {
     if (props.location.pathname.includes("documentation/paths")) {
-      setAction({
-        onClick: () => {
-          setAction(null)
-          history.push("/demos/todo/diffs")
-        },
-        title: "Checkout Diff Page"
+      // then be like "Lets document a new endpoint" (force the right tab when you redirect)
+      setMessage({
+        message: `The shape of your data isn't the only thing important to your documentation. You can also add descriptions to the endpoint, to the request and responses, and to individual fields.\n\nClick on any field to add a description`,
       })
-      setMessage("Descriptions can be added to the endpoint, to the request and responses, and to individual fields.")
     } else if (props.location.pathname.includes("documentation")) {
-      setAction(null)
-      setMessage(`Details can be added to existing documentation. Click the "Full Documentation" drop-down on an endpoint above.`)
+      setMessage({
+        message: `Details can be added to existing documentation. Click the "Full Documentation" drop-down on an endpoint above.`,
+      })
     } else if (props.location.pathname.includes("testing/captures") && props.location.pathname.includes("endpoints")) {
-      setAction(null)
-      setMessage("We can see that there is an undocumented field")
+      setMessage({
+        message: "We can see that there is an undocumented field"
+      })
     } else if (props.location.pathname.includes("testing/captures")) {
-      setAction(null)
-      setMessage("Choose an endpoint to see if it's fufilling its contract")
+      setMessage({
+        message: "Choose an endpoint to see if it's fufilling its contract"
+      })
     } 
+    const r = props.location.pathname.match(/paths\/(.*)/);
+    if (r !== null) {
+      setRoute(r.pop());
+    }
   }, [props.location.pathname])
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
     // console.group(event)
-    // console.log(`Message originally ${message}`)
+    // console.log(eventProps)
+    // console.groupEnd()
     switch (event) {
+      case "updateContribution": {
+        setMessage({
+          message: `Great Job! Even your API gets updated and the shapes change, these descriptions stay the same, helping you maintain your specification.\n\nNow that we've written a description, let's check to see if we have any other diffs to review`,
+          action: {
+            text: "Review all diffs",
+            href: "/demos/todo/diffs/example-session"
+          }
+        });
+        break;
+      }
       case "Show Initial Documentation Page" : {
-        setAction(null)
-        setMessage(`Optic will show you the requests and responses to this endpoint, and the automatically documented traffic shape. Click "Document Bodies" to commit the new documentation to the specification, accepting the changes and making fields optional.`)
+        setMessage({
+          message: `On the left, Optic is showing an example request it observed. The right panel shows the shape Optic detected from that request\n\nTo add this to your documentation, simply click "Document Bodies"`
+        })
         break
       }
       case "Closed AddUrlModal" :
@@ -144,17 +176,17 @@ export default function DemoSessions(props) {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
           const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1
           if (undocumentedUrlCount > 0) {
-              setAction(null)
-              setMessage("The Undocumented URLs page shows all traffic Optic observed to undocumented routes. Click a route to begin.")
+              setMessage({
+                message: "Here, Optic is showing all urls that received traffic but have not been documented. Choose a url to document it"
+              })
           } else {
-            setAction({
-              onClick: () => {
-                setAction(null)
-                history.push("/demos/todo/documentation")
-              },
-              title: "See Documentation"
+            setMessage({
+              message: `All Undocumented URLs have been added to the specification`,
+              action: {
+                text: "See Documentation",
+                href: `/demos/todo/documentation/paths/${route}`
+              }
             })
-            setMessage(`All Undocumented URLs have been added to the specification`)
           }
         }
         break;
@@ -162,65 +194,108 @@ export default function DemoSessions(props) {
       case "Navigating to Review Diff":
       case "Changed to ENDPOINT_DIFF": {
         if (!hasCommited && props.location.pathname.includes("diffs")) { // we don't need to keep telling them things they already did
-          setAction(null)
           const diffAmount = eventProps.diffCount
           if (diffAmount > 0) {
-            //         // ""
-        // 
-        // <b>Example: Click "Creates a new Todo Item" to Review the Diff
-            setMessage(<p>
-              {`Optic shows all your API endpoints. If any endpoints exhibit undocumented behavior, Optic detects it`}
-              <br/><br/>
-              <b>{`Example: Click "Creates a new Todo Item" to Review the Diff`}</b>
-            </p>);
+            setMessage({
+              message: `Optic shows all your API endpoints. If any endpoints exhibit undocumented behavior, Optic detects it\n\nExample: Click "Creates a new Todo Item" to Review the Diff`
+            })
           } else {
-            setMessage(`Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`)
+            setMessage({
+              message: `Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`
+            })
           }
         }
         break
       }
       case "On Undocumented Url" :
       case "Clicked Undocumented Url" : {
-        setAction(null)
-        setMessage("If an API path has parameters, they can be documented for consumers. Click the last component of the path, which is an example of a `todo_id`, and click Next.")
+        setMessage({
+          message: "If an API path has parameters, they can be documented for consumers. Click the last component of the path, which is an example of a `todo_id`, and click Next."
+        })
         // setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${eventProps.path.split("/").pop()} and change it to say "todo_id"`)
         break
       }
       case "Naming Endpoint" : {
         const exampleEndpointName = eventProps.method === "GET" ? "Get specific TODO Item" : "Update Specific TODO Item"
-        setAction(null)
-        setMessage(`Now, let's give it a name. For example, we can call this endpoint "${exampleEndpointName}"`)
+        setMessage({
+          message: `Now, let's give it a name. For example, we can call this endpoint "${exampleEndpointName}"`
+        })
         break
       }
       case "Rendered Finalize Card": {
-        setAction(null)
-        setMessage("Optic tracks changes in API behavior, somewhat like Git tracks changes in code. Now that we've documented changes in the API behavior, those changes are committed to the API specification.")
+        setMessage({ message: "To commit these changes to your API Specification, click commit! Optic is recording the history of your API changes, somewhat like Git tracks changes in code."})
         break
       }
       case "Committed Changes to Endpoint": {
         setHasCommited(true)
-        setAction({
-          onClick: () => {
-            setAction(null)
-            history.push("/demos/todo/documentation")
-          },
-          title: "See Documentation"
+        // 1 - button is offset
+        setMessage({
+          message: `Awesome! Now that you've committed changes, let's take a look at the documentation!`,
+          action: {
+            text: "See Documentation",
+            href: `/demos/todo/documentation/paths/${route}`,
+          }
         })
-        setMessage(`Awesome! Now that you've committed changes, let's take a look at the documentation!`)
         break
       }
       case "Viewing Endpoint Diff" : {
-        setAction(null)
-        setMessage(`Optic detected a change from the previously documented behavior. We can update the documentation and commit that change in behavior to the specification. Let's add priority as a field. Then, make it optional.`)
+        // setAction(null)
+        // Optic has detected a new field — priority, meaning that there was a change in behavior. Optic detected this, and will now
+        // help you update the specification.
+        // — onclick —
+        // Optic has documented this field — hit approve to save
+        // on approve (1/2)
+        // Optic has noticed that this field is sometimes ommited. We should tell Optic that it is an optional field.
+        // — onclick —
+        // Optic has noted that priority is optional! — hit approve to save
+        // setMessage(`Optic detected a change from the previously documented behavior. We can update the documentation and commit that change in behavior to the specification. Let's add priority as a field. Then, make it optional.`)
         break
+      }
+      case "Demo - Previewing Suggestion": {
+        let m = ""
+        const addingField = eventProps.suggestion.match(/Add field '(.*)' as/)
+        const optionalField = eventProps.suggestion.match(/Make field '(.*)' optional/)
+        const removeField = eventProps.suggestion.match(/Remove field '(.*)'/)
+        const changeField = eventProps.suggestion.match(/Change field '(.*)'/)
+        
+        if (addingField !== null) {
+          m = `Optic will document adding the field ${addingField.pop()}`
+        } else if (optionalField !== null) {
+          m = `Optic will document that the ${optionalField.pop()} field is optional`
+        } else if (removeField !== null) {
+          m = `Optic will document that the ${removeField.pop()} field is no longer part of the spec`
+        } else if (changeField !== null && changeField.length > 2) {
+          m = `Optic will document that the ${changeField[1]} field is now called ${changeField[2]}`
+        }
+        if (m !== "") {
+          setMessage({
+            message: `${m} — hit approve to save`,
+          })
+        }
+        break;
+      }
+      case "Showing recommendation": {
+        let m = ""
+        const missingField = eventProps.suggestion.match(/Missing (.*) field (.*)/)
+        const newField = eventProps.suggestion.match(/New field (.*)/)
+        
+        if (missingField !== null) {
+          m = `Optic has noticed that ${missingField.pop()} is sometimes ommitted. We should tell Optic that it is an optional field`
+        } else if (newField !== null) {
+          m = `Optic has detected a new field — ${newField.pop()}, meaning that there was a change in behavior. Click "add field" to document this change in behavior`
+        }
+
+        if (m !== "") {
+          setMessage({
+            message: m,
+          })
+        }
+        break;
       }
       default: {
         break
       }
     }
-    
-    // console.log(`Message set to ${message}`)
-    // console.groupEnd();
   })
 
   return (
@@ -234,10 +309,14 @@ export default function DemoSessions(props) {
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
             
 
-            <Snackbar open={message !== "nothing"} autoHideDuration={6000}>
+            <Snackbar open={message.message !== "nothing"} autoHideDuration={6000}>
               <Alert className={styles.alert} severity="info">
-                {message}
-                { action && <Button color="secondary" onClick={action.onClick}>{action.title}</Button>}
+                {message.message.split("\n").map((item, key) => {
+                  return <span key={key}>{item}<br/></span>
+                })}
+                { message.action && <Button variant="contained" onClick={() => {
+                   history.push(message.action.href)
+                }} color="secondary">{message.action.text}</Button>}
               </Alert>
             </Snackbar>
 

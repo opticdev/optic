@@ -74,6 +74,10 @@ function _NewRegions(props) {
   const [showExpanded, setShowExpanded] = useState(false);
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
+  useEffect(() => {
+    track("Show Initial Documentation Page", props)
+  }, [])
+  
   if (newRegions.length === 0) {
     return null;
   }
@@ -181,8 +185,6 @@ function _NewRegions(props) {
       ],
     });
   }
-
-  track("Show Initial Documentation Page", props)
 
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import { DocDivider } from '../../docs/DocConstants';
@@ -14,6 +14,7 @@ import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
 import { DiffCopy } from './DiffCopy';
+import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,7 +94,10 @@ export const DiffHelperCard = (props) => {
               return (
                 <FormControlLabel
                   key={n}
-                  onClick={() => setSelectedInterpretation(suggestion)}
+                  onClick={() => {
+                    track("Demo - Previewing Suggestion", {suggestion: suggestion.action})
+                    setSelectedInterpretation(suggestion)
+                  }}
                   control={
                     <Radio
                       size="small"
