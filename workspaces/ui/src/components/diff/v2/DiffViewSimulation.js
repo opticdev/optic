@@ -8,7 +8,6 @@ import {
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import { RfcContext, withRfcContext } from '../../../contexts/RfcContext';
 import DiffHunkViewer from './DiffHunkViewer';
-import ShapeViewer from './shape_viewers/ShapeViewer';
 
 class _DiffViewSimulation extends React.Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -41,7 +40,6 @@ class _DiffViewSimulation extends React.Component {
       selectedInterpretation,
       rfcId,
       eventStore,
-      viewer,
     } = this.props;
 
     const renderKey = 'render ' + diff.diff.toString() + interactionScala.uuid;
@@ -63,27 +61,21 @@ class _DiffViewSimulation extends React.Component {
               {({ rfcService, rfcId }) => {
                 const currentRfcState = rfcService.currentState(rfcId);
 
-                if (viewer === 'flattened') {
-                  return (
-                    <ShapeViewer diff={diff} interaction={interactionScala} />
-                  );
-                } else {
-                  console.time('Making preview ' + renderKey);
-                  let preview = DiffResultHelper.previewDiff(
-                    diff,
-                    interactionScala,
-                    currentRfcState
-                  );
-                  console.timeEnd('Making preview ' + renderKey);
-                  return (
-                    <DiffHunkViewer
-                      suggestion={selectedInterpretation}
-                      diff={diff}
-                      preview={getOrUndefined(preview)}
-                      diffDescription={description}
-                    />
-                  );
-                }
+                console.time('Making preview ' + renderKey);
+                let preview = DiffResultHelper.previewDiff(
+                  diff,
+                  interactionScala,
+                  currentRfcState
+                );
+                console.timeEnd('Making preview ' + renderKey);
+                return (
+                  <DiffHunkViewer
+                    suggestion={selectedInterpretation}
+                    diff={diff}
+                    preview={getOrUndefined(preview)}
+                    diffDescription={description}
+                  />
+                );
               }}
             </RfcContext.Consumer>
           </SimulatedCommandContext>
