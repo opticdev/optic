@@ -21,7 +21,7 @@ import {
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 
-export default function ShapeViewer({
+export default function InteractionBodyViewer({
   diff,
   diffDescription,
   body,
