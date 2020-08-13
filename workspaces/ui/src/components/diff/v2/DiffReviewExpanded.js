@@ -27,7 +27,7 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
-import ShapeViewer from './shape_viewers/ShapeViewer';
+import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
 import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
@@ -200,10 +200,10 @@ export const DiffReviewExpanded = (props) => {
                   }
                 >
                   {viewer === 'flattened' && diff.inRequest ? (
-                    <ShapeViewer
-                      diff={diff}
+                    <InteractionBodyViewer
+                      diff={diff.inRequest && diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.request.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (
@@ -255,11 +255,11 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' && diff.inResponse ? (
-                    <ShapeViewer
-                      diff={diff}
+                  {viewer === 'flattened' ? (
+                    <InteractionBodyViewer
+                      diff={diff.inResponse && diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.response.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (
