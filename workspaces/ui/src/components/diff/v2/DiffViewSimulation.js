@@ -65,7 +65,12 @@ class _DiffViewSimulation extends React.Component {
 
                 if (viewer === 'flattened') {
                   return (
-                    <ShapeViewer diff={diff} interaction={interactionScala} />
+                    <ShapeViewer
+                      diff={diff}
+                      diffDescription={description}
+                      interaction={interactionScala}
+                      selectedInterpretation={selectedInterpretation}
+                    />
                   );
                 } else {
                   console.time('Making preview ' + renderKey);
