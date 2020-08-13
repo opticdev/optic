@@ -44,6 +44,7 @@ import { DiffToolTip } from './shape_viewers/styles';
 import Pagination from '@material-ui/lab/Pagination';
 import { RfcContext } from '../../../contexts/RfcContext';
 import DiffHunkViewer from './DiffHunkViewer';
+import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
 import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { ShapeBox } from './DiffReviewExpanded';
 import { ShapeOnlyViewer } from './shape_viewers/ShapeOnlyShapeRows';
@@ -62,7 +63,7 @@ import { Show } from '../../shared/Show';
 import { track } from '../../../Analytics';
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff, captureId, endpointId } = props;
+  const { newRegions, ignoreDiff, captureId, endpointId, viewer } = props;
 
   const classes = useStyles();
 
@@ -123,7 +124,7 @@ function _NewRegions(props) {
           return getOrUndefined(suggestion);
         })
     );
-    track("Documented Changes")
+    track('Documented Changes');
 
     acceptSuggestion(...allApproved);
   };
@@ -146,6 +147,7 @@ function _NewRegions(props) {
               onChange={onChange}
               inferPolymorphism={inferPolymorphism}
               endpointId={endpointId}
+              viewer={viewer}
             />
           );
         }
@@ -165,6 +167,7 @@ function _NewRegions(props) {
               key={diff.diff.toString()}
               inferPolymorphism={inferPolymorphism}
               endpointId={endpointId}
+              viewer={viewer}
             />
           );
         }
@@ -182,7 +185,7 @@ function _NewRegions(props) {
     });
   }
 
-  track("Show Initial Documentation Page", props)
+  track('Show Initial Documentation Page', props);
 
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
@@ -342,6 +345,7 @@ const PreviewNewBodyRegion = ({
   isDeselected,
   onChange,
   endpointId,
+  viewer,
 }) => {
   const isChecked = !isDeselected(diff);
   const classes = useStyles();
@@ -420,7 +424,7 @@ const PreviewNewBodyRegion = ({
         })}
       >
         <div style={{ width: '55%', paddingRight: 15 }}>
-          {bodyPreview && (
+          {viewer === 'flattened' && currentInteraction ? (
             <ShapeBox
               header={
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -433,10 +437,34 @@ const PreviewNewBodyRegion = ({
                 </div>
               }
             >
-              <ShapeExpandedStore>
-                <DiffHunkViewer preview={bodyPreview} exampleOnly />
-              </ShapeExpandedStore>
+              <InteractionBodyViewer
+                body={
+                  diff.inRequest
+                    ? currentInteraction.interactionScala.request.body
+                    : currentInteraction.interactionScala.response.body
+                }
+              />
             </ShapeBox>
+          ) : (
+            viewer !== 'flattened' &&
+            bodyPreview && (
+              <ShapeBox
+                header={
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <BreadcumbX
+                      itemStyles={{ fontSize: 13, color: 'white' }}
+                      location={['Example']}
+                    />
+                    <div style={{ flex: 1 }}></div>
+                    <span style={{ color: 'white' }}>⮕</span>
+                  </div>
+                }
+              >
+                <ShapeExpandedStore>
+                  <DiffHunkViewer preview={bodyPreview} exampleOnly />
+                </ShapeExpandedStore>
+              </ShapeBox>
+            )
           )}
         </div>
         <div style={{ flex: 1 }}>

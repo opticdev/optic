@@ -212,6 +212,7 @@ export function DiffReviewPage(props) {
               captureId={captureId}
               endpointId={pathId + method}
               newRegions={JsonHelper.seqToJsArray(regions.newRegions)}
+              viewer={viewer}
             />
           )}
 
