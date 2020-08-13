@@ -201,7 +201,7 @@ export const DiffReviewExpanded = (props) => {
                 >
                   {viewer === 'flattened' && diff.inRequest ? (
                     <InteractionBodyViewer
-                      diff={diff}
+                      diff={diff.inRequest && diff}
                       diffDescription={description}
                       body={interactionScala.request.body}
                       selectedInterpretation={selectedInterpretation}
@@ -255,9 +255,9 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' && diff.inResponse ? (
+                  {viewer === 'flattened' ? (
                     <InteractionBodyViewer
-                      diff={diff}
+                      diff={diff.inResponse && diff}
                       diffDescription={description}
                       body={interactionScala.response.body}
                       selectedInterpretation={selectedInterpretation}
