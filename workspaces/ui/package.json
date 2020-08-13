@@ -35,6 +35,7 @@
     "notistack": "^0.8.6",
     "path-to-regexp": "^3.0.0",
     "prop-types": "latest",
+    "qs": "^6.9.4",
     "react": "^16.8.6",
     "react-ace": "^8.0.0",
     "react-dom": "^16.8.6",

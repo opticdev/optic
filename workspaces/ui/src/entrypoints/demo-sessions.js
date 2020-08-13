@@ -20,6 +20,7 @@ import { Button, Snackbar, makeStyles, Box } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
 import { UpdatedBlueBackground } from "../theme"
+import { subtabs } from "../components/diff/v2/CaptureManagerPage"
 
 const snackbarStyles = makeStyles({
   alert: {
@@ -124,6 +125,7 @@ export default function DemoSessions(props) {
   const styles = snackbarStyles();
   const [showTooltips, setShowTooltips] = useState(true);
   const disableTooltips = () => setShowTooltips(false);
+  const [hasDocumentedAllEndpointDiffs, setDocumentedAllEndpointDiffs] = useState(false);
 
   // path specific info boxes
   useEffect(() => {
@@ -153,16 +155,13 @@ export default function DemoSessions(props) {
 
   // event specific info boxes
   trackEmitter.on('event', (event, eventProps) => {
-    // console.log(event)
-    // console.log(eventProps)
-    // console.groupEnd()
     switch (event) {
       case "updateContribution": {
         setMessage({
-          message: `Great Job! Even your API gets updated and the shapes change, these descriptions stay the same, helping you maintain your specification.\n\nNow that we've written a description, let's check to see if we have any other diffs to review`,
+          message: `Nice! Descriptions will stay attached to their endpoint/fields even when the specification changes!\n\nLet's check back and see if there are any other diffs to approve`,
           action: {
             text: "Review all diffs",
-            href: "/demos/todo/diffs/example-session"
+            href: `/demos/todo/diffs/example-session?tab=${hasDocumentedAllEndpointDiffs ? subtabs.UNDOCUMENTED_URL : subtabs.ENDPOINT_DIFF}`
           }
         });
         break;
@@ -232,6 +231,9 @@ export default function DemoSessions(props) {
       case "Committed Changes to Endpoint": {
         setHasCommited(true)
         trackCommit()
+        if (route.includes("PUT")) {
+          setDocumentedAllEndpointDiffs(true);
+        }
         // 1 - button is offset
         setMessage({
           message: `Awesome! Now that you've committed changes, let's take a look at the documentation!`,
@@ -284,7 +286,7 @@ export default function DemoSessions(props) {
         const newField = eventProps.suggestion.match(/New field (.*)/)
         
         if (missingField !== null) {
-          m = `Optic has detected an optional field in your API: ${newField.pop()}. No need to manually update your spec, just click  "Make Optional" and Optic will make the changes for you`
+          m = `Optic has detected an optional field in your API: ${missingField.pop()}. No need to manually update your spec, just click  "Make Optional" and Optic will make the changes for you`
         } else if (newField !== null) {
           m = `Optic has detected a new field in your API: ${newField.pop()}. No need to manually update your spec, just click  "Add Field" and Optic will make the changes for you`
         }

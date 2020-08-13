@@ -71,6 +71,7 @@ import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
 import { track } from '../../../Analytics';
+import qs from 'qs';
 
 const {
   Context: AllCapturesContext,
@@ -153,7 +154,7 @@ export function CaptureManagerPage(props) {
   );
 }
 
-export const CaptureManager = ({}) => {
+export const CaptureManager = ({location}) => {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
@@ -186,7 +187,7 @@ export const CaptureManager = ({}) => {
   );
 };
 
-const subtabs = {
+export const subtabs = {
   ENDPOINT_DIFF: 'ENDPOINT_DIFF',
   UNDOCUMENTED_URL: 'UNDOCUMENTED_URL',
 };
@@ -218,7 +219,16 @@ function CaptureChooserComponent(props) {
     JsonHelper.jsArrayToSeq(endpointDiffs)
   );
 
-  const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
+  const query = qs.parse(props.location.search, {
+    ignoreQueryPrefix: true
+  })
+
+  let defaultTab = subtabs.ENDPOINT_DIFF;
+
+  if (query.tab === subtabs.UNDOCUMENTED_URL) {
+    defaultTab = subtabs.UNDOCUMENTED_URL;
+  }
+  const [tab, setTab] = useState(defaultTab);
 
   useEffect(() => {
     track(`Changed to ${tab}`, {
@@ -364,7 +374,7 @@ function CaptureDiffWrapper(props) {
           ignoredDiffs={ignoredDiffs}
           {...services}
         >
-          <CaptureChooserComponent captureId={captureId} />
+          <CaptureChooserComponent location={props.location} captureId={captureId} />
         </CaptureContextStore>
       )}
     </IgnoreDiffContext.Consumer>
