@@ -22,7 +22,7 @@ interface ICredentialsServerConfig {
 }
 
 export const loginBaseUrl =
-  process.env.OPTIC_AUTH_UI_HOST || `https://auth.useoptic.com`;
+  process.env.OPTIC_AUTH_UI_HOST || `https://app.useoptic.com`;
 export const tokenReceivedEvent: string = 'tokenReceived';
 
 class CredentialsServer {
@@ -31,7 +31,11 @@ class CredentialsServer {
 
   async start(config: ICredentialsServerConfig) {
     const app = express();
-    const whitelist = [loginBaseUrl];
+    const whitelist = [
+      loginBaseUrl,
+      'https://auth.useoptic.com', // regression
+      'https://app.o3c.info', // staging
+    ];
     const corsOptions: cors.CorsOptions = {
       origin: whitelist,
     };
