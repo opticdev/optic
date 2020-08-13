@@ -63,7 +63,7 @@ export default function InteractionBodyViewer({
       if (!compassTargetRef || !compassTargetRef.current) return;
       compassTargetRef.current = null;
     };
-  }, [diff]);
+  }, [diff, body]);
 
   const diffDetails = diff && {
     diffDescription,
@@ -156,7 +156,9 @@ export function Row(props) {
       </div>
 
       {!compliant && !collapsed && (
-        <DiffAssertion {...diffDetails} onMount={onDiffTargetMount} />
+        <div className={classes.rowDiffAssertion}>
+          <DiffAssertion {...diffDetails} onMount={onDiffTargetMount} />
+        </div>
       )}
     </div>
   );
@@ -307,16 +309,19 @@ function DiffAssertion({ diffDescription, changeDescription, onMount }) {
 }
 
 function RowCompass(props) {
-  const generalClasses = useShapeViewerStyles();
+  const classes = useStyles();
   // const highlightColor = getHighlightColor(props.changeType);
   const { x, width, isAbove, isBelow } = props;
-  const { diffDescription, changeDescription } = props;
+  const { diffDescription, changeDescription, changeType } = props;
 
   return (
     <div
-      className={classNames(generalClasses.rowCompass, {
-        [generalClasses.isAbove]: isAbove,
-        [generalClasses.isBelow]: isBelow,
+      className={classNames(classes.rowCompass, {
+        [classes.isAbove]: isAbove,
+        [classes.isBelow]: isBelow,
+        [classes.requiresAddition]: changeType === 'Addition',
+        [classes.requiresUpdate]: changeType === 'Update',
+        [classes.requiresRemoval]: changeType === 'Removal',
       })}
       style={{
         left: x,
@@ -325,19 +330,19 @@ function RowCompass(props) {
       onClick={props.onClick}
     >
       <div
-        className={generalClasses.rowCompassBody}
+        className={classes.rowCompassBody}
         // style={{ backgroundColor: highlightColor }}
       >
         <ArrowDownwardIcon
           className={classNames(
-            generalClasses.rowCompassDirection,
-            generalClasses.rowCompassDirectionDown
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionDown
           )}
         />
         <ArrowUpwardIcon
           className={classNames(
-            generalClasses.rowCompassDirection,
-            generalClasses.rowCompassDirectionUp
+            classes.rowCompassDirection,
+            classes.rowCompassDirectionUp
           )}
         />
 
@@ -505,12 +510,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
-  diffAssertion: {
+  rowDiffAssertion: {
     flexGrow: 0,
     flexShrink: 0,
     alignSelf: 'center',
     minWidth: '35%',
     maxWidth: '50%',
+    display: 'flex',
+  },
+
+  diffAssertion: {
+    flexGrow: 1,
+    flexShrink: 0,
 
     display: 'flex',
     alignItems: 'center',
@@ -554,6 +565,94 @@ const useStyles = makeStyles((theme) => ({
   requiresAddition: {},
   requiresUpdate: {},
   requiresRemoval: {},
+
+  // row compass
+  rowCompass: {
+    width: '100%', // set at runtime to match $right
+    position: 'fixed',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingLeft: 8,
+
+    cursor: 'pointer',
+    animation: '$compassHover 3s ease-in-out infinite',
+    opacity: 0,
+
+    willChange: 'opacity',
+    transition: '0.1s ease-out opacity',
+
+    '&$isAbove': {
+      top: theme.spacing(15),
+      opacity: 1,
+    },
+    '&$isBelow': {
+      bottom: theme.spacing(4),
+      opacity: 1,
+    },
+  },
+
+  '@keyframes compassHover': {
+    '0%': {
+      transform: 'translateY(-2px)',
+    },
+    '50%': {
+      transform: 'translateY(2px)',
+    },
+    '100%': {
+      transform: 'translateY(-2px)',
+    },
+  },
+
+  isAbove: {},
+  isBelow: {},
+
+  rowCompassBody: {
+    position: 'relative',
+    padding: theme.spacing(0.8, 0),
+    marginRight: theme.spacing(1),
+    flexShrink: 0,
+    flexGrow: 1,
+
+    borderRadius: 15,
+
+    '$requiresAddition &': {
+      backgroundColor: theme.palette.added.background,
+    },
+
+    '$requiresRemoval &': {
+      backgroundColor: theme.palette.removed.background,
+    },
+
+    '$requiresUpdate &': {
+      backgroundColor: theme.palette.changed.background,
+    },
+  },
+
+  rowCompassDirection: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -10,
+    width: theme.typography.pxToRem(20),
+    height: theme.typography.pxToRem(20),
+    flexGrow: 0,
+    flexShrink: 0,
+    fill: '#f8edf4',
+    opacity: 0,
+  },
+
+  rowCompassDirectionDown: {
+    '$isBelow &': {
+      bottom: -28,
+      opacity: 1,
+    },
+  },
+
+  rowCompassDirectionUp: {
+    '$isAbove &': {
+      top: -28,
+      opacity: 1,
+    },
+  },
 }));
 
 // ShapeViewer view model
