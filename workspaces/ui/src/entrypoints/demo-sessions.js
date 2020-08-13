@@ -130,7 +130,7 @@ export default function DemoSessions(props) {
     if (props.location.pathname.includes("documentation/paths")) {
       // then be like "Lets document a new endpoint" (force the right tab when you redirect)
       setMessage({
-        message: `The shape of your data isn't the only thing important to your documentation. You can also add descriptions to the endpoint, to the request and responses, and to individual fields.\n\nClick on any field to add a description`,
+        message: `Here is the specification for your endpoint. You can add custom descriptions anywhere to help explain how the works.`,
       })
     } else if (props.location.pathname.includes("documentation")) {
       setMessage({
@@ -263,17 +263,17 @@ export default function DemoSessions(props) {
         const changeField = eventProps.suggestion.match(/Change field '(.*)'/)
         
         if (addingField !== null) {
-          m = `Optic will document adding the field ${addingField.pop()}`
+          m = `Look! Optic updated the spec to add the field ${addingField.pop()}`
         } else if (optionalField !== null) {
-          m = `Optic will document that the ${optionalField.pop()} field is optional`
+          m = `Look! Optic updated the spec to show the ${optionalField.pop()} field is optional`
         } else if (removeField !== null) {
-          m = `Optic will document that the ${removeField.pop()} field is no longer part of the spec`
+          m = `Look! Optic updated the spec to show the ${removeField.pop()} field is no longer part of the spec`
         } else if (changeField !== null && changeField.length > 2) {
-          m = `Optic will document that the ${changeField[1]} field is now called ${changeField[2]}`
+          m = `Look! Optic updated the spec to show the ${changeField[1]} field is now called ${changeField[2]}`
         }
         if (m !== "") {
           setMessage({
-            message: `${m} — hit approve to save`,
+            message: `${m}. Press "Approve" to save`,
           })
         }
         break;
@@ -284,9 +284,9 @@ export default function DemoSessions(props) {
         const newField = eventProps.suggestion.match(/New field (.*)/)
         
         if (missingField !== null) {
-          m = `Optic has noticed that ${missingField.pop()} is sometimes ommitted. We should tell Optic that it is an optional field`
+          m = `Optic has detected an optional field in your API: ${newField.pop()}. No need to manually update your spec, just click  "Make Optional" and Optic will make the changes for you`
         } else if (newField !== null) {
-          m = `Optic has detected a new field — ${newField.pop()}, meaning that there was a change in behavior. Click "add field" to document this change in behavior`
+          m = `Optic has detected a new field in your API: ${newField.pop()}. No need to manually update your spec, just click  "Add Field" and Optic will make the changes for you`
         }
 
         if (m !== "") {
@@ -305,7 +305,7 @@ export default function DemoSessions(props) {
   const m = (commits > 1) ? {
     message: "Looks like you've got a hang of things! Feel free to keep poking around",
     action: {
-      text: "I don't need more suggestions",
+      text: "End Walkthrough",
       onClick: disableTooltips,
     }
   } : message;
@@ -321,7 +321,7 @@ export default function DemoSessions(props) {
             
             <Snackbar open={showTooltips && m.message !== "nothing"} autoHideDuration={6000}>
 
-              <Alert className={styles.alert} severity="info">
+              <Alert className={styles.alert} severity="info" icon={false}>
                 {m.message.split("\n").map((item, key) => {
                   return <span key={key}>{item}<br/></span>
                 })}
