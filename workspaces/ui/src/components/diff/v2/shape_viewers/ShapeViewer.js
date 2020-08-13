@@ -24,18 +24,18 @@ import WarningIcon from '@material-ui/icons/Warning';
 export default function ShapeViewer({
   diff,
   diffDescription,
-  interaction,
+  body,
   selectedInterpretation,
 }) {
   const generalClasses = useShapeViewerStyles();
 
   const [{ rows }, dispatch] = useReducer(
     updateState,
-    { diff, interaction },
+    { diff, body },
     createInitialState
   );
 
-  const diffDetails = {
+  const diffDetails = diff && {
     diffDescription,
     changeType: selectedInterpretation
       ? selectedInterpretation.changeTypeAsString
@@ -487,14 +487,12 @@ const useStyles = makeStyles((theme) => ({
 // TODO: consider moving this to it's own module, partly to enable the usecase
 // stated above.
 
-function createInitialState({ diff, interaction }) {
-  let body = diff.inRequest
-    ? interaction.request.body
-    : interaction.response.body;
-
-  const diffTrails = JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
-    JsonTrailHelper.toJs(jsonTrail)
-  );
+function createInitialState({ diff, body }) {
+  const diffTrails = diff
+    ? JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
+        JsonTrailHelper.toJs(jsonTrail)
+      )
+    : [];
   const shape = JsonHelper.toJs(body.jsonOption);
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);

@@ -203,7 +203,7 @@ export const DiffReviewExpanded = (props) => {
                     <ShapeViewer
                       diff={diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.request.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (
@@ -259,7 +259,7 @@ export const DiffReviewExpanded = (props) => {
                     <ShapeViewer
                       diff={diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.response.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (
