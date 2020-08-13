@@ -1,4 +1,10 @@
-import React, { useCallback, useReducer } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import { useColor, useShapeViewerStyles, SymbolColor } from './styles';
@@ -18,6 +24,8 @@ import {
   toOption,
 } from '@useoptic/domain';
 
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 
@@ -34,6 +42,28 @@ export default function InteractionBodyViewer({
     { diff, body },
     createInitialState
   );
+
+  const { ref: compassTargetRef, compassState } = useCompassTargetTracker(
+    !!diff
+  );
+
+  const onDiffTargetMount = useCallback(
+    (assertionEl) => {
+      if (!diff) return;
+
+      if (compassTargetRef && compassTargetRef.current) return;
+
+      compassTargetRef.current = assertionEl;
+    },
+    [diff]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (!compassTargetRef || !compassTargetRef.current) return;
+      compassTargetRef.current = null;
+    };
+  }, [diff]);
 
   const diffDetails = diff && {
     diffDescription,
@@ -57,9 +87,12 @@ export default function InteractionBodyViewer({
             {...row}
             diffDetails={row.compliant ? {} : diffDetails}
             dispatch={dispatch}
+            onDiffTargetMount={onDiffTargetMount}
           />
         );
       })}
+
+      {diffDetails && <RowCompass {...diffDetails} {...compassState} />}
     </div>
   );
 }
@@ -79,6 +112,7 @@ export function Row(props) {
     type,
 
     dispatch,
+    onDiffTargetMount,
   } = props;
 
   const onRowClick = useCallback(
@@ -121,7 +155,9 @@ export function Row(props) {
         />
       </div>
 
-      {!compliant && !collapsed && <DiffAssertion {...diffDetails} />}
+      {!compliant && !collapsed && (
+        <DiffAssertion {...diffDetails} onMount={onDiffTargetMount} />
+      )}
     </div>
   );
 }
@@ -248,11 +284,11 @@ function RowSeqIndex({ type, index, missing }) {
   );
 }
 
-function DiffAssertion({ diffDescription, changeDescription }) {
+function DiffAssertion({ diffDescription, changeDescription, onMount }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.diffAssertion}>
+    <div className={classes.diffAssertion} ref={onMount}>
       {changeDescription ? (
         <>
           <CheckCircleIcon className={classes.selectectedChangeIcon} />
@@ -266,6 +302,50 @@ function DiffAssertion({ diffDescription, changeDescription }) {
           <span>{diffDescription.assertion}</span>
         </>
       )}
+    </div>
+  );
+}
+
+function RowCompass(props) {
+  const generalClasses = useShapeViewerStyles();
+  // const highlightColor = getHighlightColor(props.changeType);
+  const { x, width, isAbove, isBelow } = props;
+  const { diffDescription, changeDescription } = props;
+
+  return (
+    <div
+      className={classNames(generalClasses.rowCompass, {
+        [generalClasses.isAbove]: isAbove,
+        [generalClasses.isBelow]: isBelow,
+      })}
+      style={{
+        left: x,
+        width,
+      }}
+      onClick={props.onClick}
+    >
+      <div
+        className={generalClasses.rowCompassBody}
+        // style={{ backgroundColor: highlightColor }}
+      >
+        <ArrowDownwardIcon
+          className={classNames(
+            generalClasses.rowCompassDirection,
+            generalClasses.rowCompassDirectionDown
+          )}
+        />
+        <ArrowUpwardIcon
+          className={classNames(
+            generalClasses.rowCompassDirection,
+            generalClasses.rowCompassDirectionUp
+          )}
+        />
+
+        <DiffAssertion
+          diffDescription={diffDescription}
+          changeDescription={changeDescription}
+        />
+      </div>
     </div>
   );
 }
@@ -738,5 +818,61 @@ function createRow(row, options = {}) {
     collapsed: false,
     compliant: isCompliant,
     ...row,
+  };
+}
+
+// RowCompass state
+// ----------------
+
+function useCompassTargetTracker(isEnabled) {
+  const [compassState, setCompassState] = useState({
+    isAbove: false,
+    isBelow: false,
+    x: null,
+    width: null,
+  });
+  const elementRef = useRef(null);
+  const animationRaf = useRef(null);
+
+  const onAnimationFrame = useCallback(() => {
+    if (!isEnabled || !window) return;
+    const trackedEl = elementRef.current;
+
+    if (!trackedEl) return;
+
+    const viewportHeight = window.innerHeight;
+    const boundingRect = trackedEl.getBoundingClientRect();
+    const isAbove = boundingRect.bottom < 100;
+    const isBelow = boundingRect.top - viewportHeight > 0;
+    const { x, width } = boundingRect;
+
+    setCompassState((current) => {
+      if (
+        isAbove !== current.isAbove ||
+        isBelow !== current.isBelow ||
+        x !== current.x ||
+        width !== current.width
+      ) {
+        return { isAbove, isBelow, x, width };
+      } else {
+        return current;
+      }
+    });
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+  }, [
+    compassState.isAbove,
+    compassState.isBelow,
+    compassState.x,
+    compassState.width,
+  ]);
+
+  useEffect(() => {
+    animationRaf.current = requestAnimationFrame(onAnimationFrame);
+    return () => cancelAnimationFrame(animationRaf.current);
+  }, [onAnimationFrame]);
+
+  return {
+    ref: elementRef,
+    compassState,
   };
 }
