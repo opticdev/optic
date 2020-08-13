@@ -27,6 +27,7 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
+import ShapeViewer from './shape_viewers/ShapeViewer';
 import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
@@ -198,16 +199,24 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  <DiffViewSimulation
-                    renderDiff={diff.inRequest}
-                    diff={diff}
-                    interactionScala={interactionScala}
-                    description={description}
-                    body={interactionScala.response.body} // TODO: shouldn't this be the request body?
-                    outerRfcState={outerRfcState}
-                    selectedInterpretation={selectedInterpretation}
-                    viewer={viewer}
-                  />
+                  {viewer === 'flattened' && diff.inRequest ? (
+                    <ShapeViewer
+                      diff={diff}
+                      diffDescription={description}
+                      interaction={interactionScala}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  ) : (
+                    <DiffViewSimulation
+                      renderDiff={diff.inRequest}
+                      diff={diff}
+                      interactionScala={interactionScala}
+                      description={description}
+                      body={interactionScala.response.body} // TODO: shouldn't this be the request body?
+                      outerRfcState={outerRfcState}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  )}
                 </ShapeBox>
               }
               right={
@@ -246,16 +255,24 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  <DiffViewSimulation
-                    renderDiff={diff.inResponse}
-                    diff={diff}
-                    interactionScala={interactionScala}
-                    description={description}
-                    body={interactionScala.response.body}
-                    outerRfcState={outerRfcState}
-                    selectedInterpretation={selectedInterpretation}
-                    viewer={viewer}
-                  />
+                  {viewer === 'flattened' && diff.inResponse ? (
+                    <ShapeViewer
+                      diff={diff}
+                      diffDescription={description}
+                      interaction={interactionScala}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  ) : (
+                    <DiffViewSimulation
+                      renderDiff={diff.inResponse}
+                      diff={diff}
+                      interactionScala={interactionScala}
+                      description={description}
+                      body={interactionScala.response.body}
+                      outerRfcState={outerRfcState}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  )}
                 </ShapeBox>
               }
               right={
