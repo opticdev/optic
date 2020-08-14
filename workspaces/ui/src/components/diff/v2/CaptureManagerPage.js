@@ -171,13 +171,6 @@ export const CaptureManager = ({}) => {
         path={routerPaths.captureRequestDiffsRoot}
         component={RequestDiffWrapper}
       />
-      {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' && (
-        <Route
-          exact
-          path={routerPaths.captureRequestDiffsRootWithViewer}
-          component={RequestDiffWrapper}
-        />
-      )}
       {captures.length && (
         <Redirect to={`${baseUrl}/diffs/${captures[0].captureId}`} />
       )}
@@ -744,7 +737,7 @@ const useStyles = makeStyles((theme) => ({
   },
   diffContainer: {
     display: 'flex',
-    
+
     paddingLeft: 32,
     paddingRight: 32,
     flexDirection: 'row',
