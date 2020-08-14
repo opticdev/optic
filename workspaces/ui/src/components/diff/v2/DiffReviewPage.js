@@ -243,7 +243,6 @@ export function DiffReviewPage(props) {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    overflow: 'hidden',
   },
   navigationContainer: {
     width: 230,
