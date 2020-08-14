@@ -1,0 +1,38 @@
+{
+  "type": "RfcStateAndInteractionsToDiffs",
+  "context": {
+    "universe": "empty",
+    "eventsScenario": "v0.json",
+    "interactionsScenario": "get-root.json"
+  },
+  "inputs": {
+    "interactionsFromFile": {
+      "type": "InteractionsFileToJsTaskSpecification",
+      "context": {
+        "universe": "empty",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "get-root.json"
+      },
+      "inputs": {}
+    },
+    "rfcStateFromEvents": {
+      "type": "EventsToRfcStateTaskSpecification",
+      "context": {
+        "universe": "empty",
+        "eventsScenario": "v0.json",
+        "interactionsScenario": "get-root.json"
+      },
+      "inputs": {
+        "eventsFromFile": {
+          "type": "EventsFileToJsTaskSpecification",
+          "context": {
+            "universe": "empty",
+            "eventsScenario": "v0.json",
+            "interactionsScenario": "get-root.json"
+          },
+          "inputs": {}
+        }
+      }
+    }
+  }
+}

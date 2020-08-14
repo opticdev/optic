@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Can creeate an event type 1`] = `
+Object {
+  "context": Object {
+    "clientAgent": "",
+    "clientId": "",
+    "clientSessionInstanceId": "",
+    "clientTimestamp": "",
+  },
+  "data": Object {
+    "apiName": "Hello World API",
+  },
+  "type": "ApiCreated",
+}
+`;
+
+exports[`Can creeate an event type 2`] = `"An API called Hello World API was created"`;
