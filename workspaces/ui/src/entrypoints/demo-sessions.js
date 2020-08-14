@@ -19,7 +19,7 @@ import {
 import { Button, Snackbar, makeStyles, Box } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
-import { UpdatedBlueBackground } from "../theme"
+import { UpdatedBlueBackground, OpticBlue } from "../theme"
 import { subtabs } from "../components/diff/v2/CaptureManagerPage"
 
 const snackbarStyles = makeStyles({
@@ -36,6 +36,18 @@ const snackbarStyles = makeStyles({
     paddingBottom: 1,
     wordBreak: 'break-word',
     backgroundColor: UpdatedBlueBackground,
+  },
+  buttonWrapper: {
+    display: "flex",
+    justifyContent: "flex-end"
+  },
+  message: {
+    color: OpticBlue,
+    paddingRight: 15
+  },
+  wrapper: {
+    display: "flex",
+    flexDirection: "column"
   },
 })
 
@@ -324,20 +336,28 @@ export default function DemoSessions(props) {
             <Snackbar open={showTooltips && m.message !== "nothing"} autoHideDuration={6000}>
 
               <Alert className={styles.alert} severity="info" icon={false}>
-                {m.message.split("\n").map((item, key) => {
-                  return <span key={key}>{item}<br/></span>
-                })}
-                { m.action && <Button variant="contained" onClick={() => {
+                <div className={styles.wrapper}>
+                  <div className={styles.message}>
+                  {m.message.split("\n").map((item, key) => {
+                    return <span key={key}>{item}<br/></span>
+                  })}
+                  </div>
+
+                  <div className={styles.buttonWrapper}>
+                { m.action && <Button className={styles.ctaButton} variant="contained" onClick={() => {
                   if (m.action.onClick) {
                     m.action.onClick();
                   } else {
                     history.push(m.action.href)
                   }
-                }} color="secondary">{m.action.text}</Button>}
+                }} color="primary">{m.action.text}</Button>}
+                </div>
+                </div>
+
+                
+                
               </Alert>
             </Snackbar>
-
-
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
       </BaseUrlContext>

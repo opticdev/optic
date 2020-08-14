@@ -12,6 +12,7 @@ export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
+export const SubtleBlueBackground = '#F5F6FA';
 
 export const methodColors = {
   OPTIONS: '#686868',
@@ -39,8 +40,8 @@ export const appTheme = createMuiTheme({
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
     info: {
-      main: OpticBlue,
-      background: OpticBlue,
+      background: SubtleBlueBackground,
+      main: SubtleBlueBackground
     },
 
     httpMethods: {
@@ -60,7 +61,7 @@ export const appTheme = createMuiTheme({
     MuiSnackbarContent: {
       root: {
         '&[class*="variantInfo"]': {
-          backgroundColor: OpticBlue,
+          backgroundColor: SubtleBlueBackground,
         },
       }
     },
