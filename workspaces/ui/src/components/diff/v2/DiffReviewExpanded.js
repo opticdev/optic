@@ -81,12 +81,11 @@ export class DiffReviewExpandedCached extends React.Component {
   }
 
   render() {
-    const { selectedDiff, captureId, setSelectedDiff, viewer } = this.props;
+    const { selectedDiff, captureId, setSelectedDiff } = this.props;
     return (
       <DiffReviewExpanded
         diff={selectedDiff}
         captureId={captureId}
-        viewer={viewer}
         {...{ selectedDiff, setSelectedDiff }}
       />
     );
@@ -95,14 +94,7 @@ export class DiffReviewExpandedCached extends React.Component {
 
 export const DiffReviewExpanded = (props) => {
   const classes = useStyles();
-  const {
-    diff,
-    selectedDiff,
-    setSelectedDiff,
-    rfcContext,
-    captureId,
-    viewer,
-  } = props;
+  const { diff, selectedDiff, setSelectedDiff, rfcContext, captureId } = props;
 
   const description = useDiffDescription(diff);
 
@@ -199,7 +191,8 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' && diff.inRequest ? (
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' &&
+                  diff.inRequest ? (
                     <InteractionBodyViewer
                       diff={diff.inRequest && diff}
                       diffDescription={description}
@@ -255,7 +248,7 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' ? (
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' ? (
                     <InteractionBodyViewer
                       diff={diff.inResponse && diff}
                       diffDescription={description}

@@ -63,7 +63,7 @@ import { Show } from '../../shared/Show';
 import { track } from '../../../Analytics';
 
 function _NewRegions(props) {
-  const { newRegions, ignoreDiff, captureId, endpointId, viewer } = props;
+  const { newRegions, ignoreDiff, captureId, endpointId } = props;
 
   const classes = useStyles();
 
@@ -147,7 +147,6 @@ function _NewRegions(props) {
               onChange={onChange}
               inferPolymorphism={inferPolymorphism}
               endpointId={endpointId}
-              viewer={viewer}
             />
           );
         }
@@ -167,7 +166,6 @@ function _NewRegions(props) {
               key={diff.diff.toString()}
               inferPolymorphism={inferPolymorphism}
               endpointId={endpointId}
-              viewer={viewer}
             />
           );
         }
@@ -345,7 +343,6 @@ const PreviewNewBodyRegion = ({
   isDeselected,
   onChange,
   endpointId,
-  viewer,
 }) => {
   const isChecked = !isDeselected(diff);
   const classes = useStyles();
@@ -424,7 +421,8 @@ const PreviewNewBodyRegion = ({
         })}
       >
         <div style={{ width: '55%', paddingRight: 15 }}>
-          {viewer === 'flattened' && currentInteraction ? (
+          {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER == 'true' &&
+          currentInteraction ? (
             <ShapeBox
               header={
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -446,7 +444,7 @@ const PreviewNewBodyRegion = ({
               />
             </ShapeBox>
           ) : (
-            viewer !== 'flattened' &&
+            process.env.REACT_APP_FLATTENED_SHAPE_VIEWER !== 'true' &&
             bodyPreview && (
               <ShapeBox
                 header={

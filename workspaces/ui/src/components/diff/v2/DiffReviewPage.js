@@ -36,7 +36,7 @@ import Button from '@material-ui/core/Button';
 export const newRegionsConst = 'new_regions';
 
 export function DiffReviewPage(props) {
-  const { captureId, method, pathId, viewer } = props;
+  const { captureId, method, pathId } = props;
   const classes = useStyles();
 
   const { rfcId, rfcService } = useContext(RfcContext);
@@ -212,7 +212,6 @@ export function DiffReviewPage(props) {
               captureId={captureId}
               endpointId={pathId + method}
               newRegions={JsonHelper.seqToJsArray(regions.newRegions)}
-              viewer={viewer}
             />
           )}
 
@@ -225,7 +224,6 @@ export function DiffReviewPage(props) {
               )}
               completed={completed}
               tab={currentTab}
-              viewer={viewer}
             />
           )}
         </div>
