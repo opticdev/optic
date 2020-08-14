@@ -93,7 +93,7 @@ export class DiffCursor extends React.Component {
   }
 
   render = () => {
-    const { diffs, captureId, viewer } = this.props;
+    const { diffs, captureId } = this.props;
     const diffCount = diffs.length;
     const { showAllDiffs, selectedDiff } = this.state;
 
@@ -115,7 +115,6 @@ export class DiffCursor extends React.Component {
         <DiffReviewExpandedCached
           captureId={captureId}
           key={selectedDiff.diff.toString()}
-          viewer={viewer}
           {...{ selectedDiff, setSelectedDiff: this.setSelectedDiff }}
         />
       </div>
