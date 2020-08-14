@@ -1,4 +1,5 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, withStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 
 export const primary = '#31366f';
 export const secondary = '#ea4a61';
@@ -40,8 +41,7 @@ export const appTheme = createMuiTheme({
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
     info: {
-      background: SubtleBlueBackground,
-      main: SubtleBlueBackground
+      main: "#323232"
     },
 
     httpMethods: {
@@ -67,3 +67,14 @@ export const appTheme = createMuiTheme({
     },
   }
 });
+
+
+export const ColorButton = withStyles(() => ({
+  root: {
+    color: "white",
+    backgroundColor: "#4696FF",
+    '&:hover': {
+      backgroundColor: "#71ABFF",
+    },
+  },
+}))(Button);

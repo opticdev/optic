@@ -19,13 +19,13 @@ import {
 import { Button, Snackbar, makeStyles, Box } from '@material-ui/core';
 import { trackEmitter } from "../Analytics"
 import MuiAlert from '@material-ui/lab/Alert';
-import { UpdatedBlueBackground, OpticBlue } from "../theme"
+import { UpdatedBlueBackground, ColorButton, SubtleBlueBackground } from "../theme"
 import { subtabs } from "../components/diff/v2/CaptureManagerPage"
 
 const snackbarStyles = makeStyles({
   alert: {
-    border: "1px white solid",
-    fontSize: "1.2em"
+    border: `1px white solid`,
+    fontSize: "1.2em",
   },
   code: {
     fontFamily: "'Source Code Pro', monospace",
@@ -42,13 +42,17 @@ const snackbarStyles = makeStyles({
     justifyContent: "flex-end"
   },
   message: {
-    color: OpticBlue,
+    color: SubtleBlueBackground,
     paddingRight: 15
   },
   wrapper: {
     display: "flex",
     flexDirection: "column"
   },
+  ctaButton: {
+    // color: "white",
+    // backgroundColor: "#4696FF"
+  }
 })
 
 function Alert(props) {
@@ -344,13 +348,13 @@ export default function DemoSessions(props) {
                   </div>
 
                   <div className={styles.buttonWrapper}>
-                { m.action && <Button className={styles.ctaButton} variant="contained" onClick={() => {
+                { m.action && <ColorButton className={styles.ctaButton} color="cta" variant="contained" onClick={() => {
                   if (m.action.onClick) {
                     m.action.onClick();
                   } else {
                     history.push(m.action.href)
                   }
-                }} color="primary">{m.action.text}</Button>}
+                }}>{m.action.text}</ColorButton>}
                 </div>
                 </div>
 
