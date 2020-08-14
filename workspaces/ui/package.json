@@ -23,6 +23,7 @@
     "classnames": "^2.2.6",
     "color": "^3.1.2",
     "date-fns": "^2.11.1",
+    "invariant": "^2.2.4",
     "lodash.compose": "^2.4.1",
     "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
