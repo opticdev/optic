@@ -8,11 +8,15 @@ import {
   TargetPortUnavailableError,
   deprecationLogger,
 } from '@useoptic/cli-config';
-import { opticTaskToProps, trackAndSpawn } from './analytics';
+import { opticTaskToProps, trackUserEvent } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
+import {
+  ExitedTaskWithLocalCLI,
+  StartedTaskWithLocalCLI,
+} from '@useoptic/analytics/lib/events/tasks';
 
 import {
   getCredentials,
@@ -35,6 +39,7 @@ import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/
 import { EventEmitter } from 'events';
 import { Config } from '../config';
 import { Debugger } from 'debug';
+import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 
 export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   // hijack the config deprecation log to format nicely for the CLI
@@ -66,10 +71,12 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
-    trackAndSpawn('Run Task with Local CLI', {
-      ...opticTaskToProps('', taskConfig),
-      captureId: this.captureId,
-    });
+    trackUserEvent(
+      StartedTaskWithLocalCLI.withProps({
+        inputs: opticTaskToProps('', taskConfig),
+        captureId: this.captureId,
+      })
+    );
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -147,12 +154,14 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const summary = await specServiceClient.getCaptureStatus(captureId);
     const sampleCount = summary.interactionsCount;
     const hasDiff = summary.diffsCount > 0;
-    trackAndSpawn('Local Capture Completed', {
-      taskConfig,
-      sampleCount,
-      hasDiff,
-      captureId: this.captureId,
-    });
+
+    trackUserEvent(
+      ExitedTaskWithLocalCLI.withProps({
+        interactionCount: sampleCount,
+        inputs: opticTaskToProps('', taskConfig),
+        captureId: this.captureId,
+      })
+    );
 
     if (hasDiff) {
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;

@@ -2,7 +2,7 @@ import { newAnalyticsEventBus } from '../src/eventbus';
 import { ClientContext } from '../src/interfaces/TrackingEventBase';
 const { ApiCreated } = require('../src/events/onboarding');
 
-const getContext: () => ClientContext = () => {
+const getContext: (batchId: string) => Promise<ClientContext> = async () => {
   return {
     clientId: 'testing',
     clientSessionInstanceId: 'testing',

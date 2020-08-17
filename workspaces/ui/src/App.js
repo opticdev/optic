@@ -5,7 +5,8 @@ import { appTheme } from './theme';
 import { BrowserRouter, Route, useLocation } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { touchAnalytics, track } from './Analytics';
+import { trackUserEvent } from './Analytics';
+import { JavascriptErrorDetectedInFrontend } from '@useoptic/analytics/lib/events/errors';
 import * as SupportLinks from './components/support/Links';
 
 class App extends React.Component {
@@ -37,10 +38,6 @@ class App extends React.Component {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error: error };
   }
-
-  componentDidMount() {
-    touchAnalytics();
-  }
 }
 
 function AppError(props) {
@@ -50,10 +47,12 @@ function AppError(props) {
   });
 
   useEffect(() => {
-    track('In-App-Error', {
-      message: props.error.message,
-      stack: props.error.stack,
-    });
+    trackUserEvent(
+      JavascriptErrorDetectedInFrontend.withProps({
+        message: props.error.message,
+        stack: props.error.stack,
+      })
+    );
   });
 
   // we have to be as conservative as possible here and only use styles from App.css, as we're not sure what subsystems this error has touched

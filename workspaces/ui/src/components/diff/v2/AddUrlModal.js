@@ -15,6 +15,10 @@ import { Show } from '../../shared/Show';
 import { DocSubGroup } from '../../docs/DocSubGroup';
 import { resolvePath } from '../../utilities/PathUtilities';
 import {
+  UserBeganAddingNewUrl,
+  UserFinishedAddingNewUrl,
+} from '@useoptic/analytics/lib/events/diffs';
+import {
   getOrUndefined,
   RequestsCommands,
   RequestsHelper,
@@ -26,7 +30,7 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
 import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,24 +65,32 @@ export const NewUrlModal = withRfcContext((props) => {
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
   const handleClickOpen = () => {
-    track('Clicked Undocumented Url', {
-      captureId: captureId,
-      method: newUrl.method,
-      path: newUrl.path,
-      knownPathId,
-    });
+    trackUserEvent(
+      UserBeganAddingNewUrl.withProps({
+        captureId: captureId,
+        method: newUrl.method,
+        path: newUrl.path,
+        knownPathId,
+      })
+    );
   };
 
   useEffect(() => {
-    if (naming) {
-      track("Naming Endpoint (uE)", { path: newUrl.path, method: newUrl.method });
-    } else {
-      track("On Undocumented Url", { path: newUrl.path, method: newUrl.method });
-    }
-  })
+    // if (naming) {
+    //   track('Naming Endpoint (uE)', {
+    //     path: newUrl.path,
+    //     method: newUrl.method,
+    //   });
+    // } else {
+    //   track('On Undocumented Url', {
+    //     path: newUrl.path,
+    //     method: newUrl.method,
+    //   });
+    // }
+  });
 
   const handleClose = () => {
-    track("Closed AddUrlModal")
+    // track('Closed AddUrlModal');
     setPathExpression(newUrl.path);
     onClose();
   };
@@ -88,12 +100,14 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   const handleCreate = (purpose) => {
-    track('Documented New URL', {
-      purpose,
-      captureId,
-      method: newUrl.method,
-      pathExpression,
-    });
+    trackUserEvent(
+      UserFinishedAddingNewUrl.withProps({
+        purpose,
+        captureId,
+        method: newUrl.method,
+        pathExpression,
+      })
+    );
 
     let lastParentPathId = knownPathId;
     const commands = [];
@@ -146,7 +160,6 @@ export const NewUrlModal = withRfcContext((props) => {
 
   function NamingDialog() {
     const [purpose, setPurpose] = React.useState('');
-    track("Naming Endpoint", { path: newUrl.path, method: newUrl.method });
     return (
       <Dialog
         open={true}

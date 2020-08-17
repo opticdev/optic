@@ -1,7 +1,11 @@
 import { TrackingEventBase } from './TrackingEventBase';
+// @ts-ignore
+import * as Joi from '@hapi/joi';
+import 'joi-extract-type';
 
-export function RegisterEvent<T>(
+function RegisterEvent<T>(
   type: string,
+  schema: any,
   propsToSentence: (propsInstance: T) => string
 ): RegisteredEvent<T> {
   const event = {
@@ -34,4 +38,13 @@ export interface RegisteredEvent<T> {
   eventName: string;
   withProps(properties: T): TrackingEventBase<T>;
   toSentence(example: TrackingEventBase<T>): string;
+}
+
+export function DescribeEvent<A>(
+  name: string,
+  joiSchema: any,
+  propsToSentence: (propsInstance: A) => string
+): RegisteredEvent<A> {
+  const event = RegisterEvent<A>(name, joiSchema, propsToSentence);
+  return event;
 }

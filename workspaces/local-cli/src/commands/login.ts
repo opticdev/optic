@@ -9,7 +9,6 @@ import qs from 'querystring';
 import { ensureDaemonStopped } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';
-import { trackAndSpawn } from '../shared/analytics';
 
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';
@@ -33,7 +32,7 @@ export default class Login extends Command {
         });
       });
 
-      trackAndSpawn('Starting login', { loginFromUseOptic });
+      // trackAndSpawn('Starting login', { loginFromUseOptic });
 
       const queryString = qs.stringify({
         tokenUrl: `http://localhost:${port}/api/token`,
@@ -54,7 +53,7 @@ export default class Login extends Command {
 
       await server.stop();
       await ensureDaemonStopped(lockFilePath);
-      await trackAndSpawn('Logged in from CLI');
+      // await trackAndSpawn('Logged in from CLI');
       this.log(`You are now logged in!`);
     } catch (e) {
       this.error(e);

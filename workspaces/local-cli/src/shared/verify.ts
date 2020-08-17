@@ -16,7 +16,8 @@ import {
   CommandSession,
 } from '@useoptic/cli-shared';
 import waitOn from 'wait-on';
-import { opticTaskToProps, track, trackAndSpawn } from './analytics';
+import { opticTaskToProps, trackUserEvent } from './analytics';
+import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { fromOptic } from '@useoptic/cli-shared';
 import url from 'url';
 import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
@@ -212,10 +213,13 @@ export function verifyTask(cli: Command, taskName: string): void {
   tasks
     .run()
     .then(async () => {
-      await trackAndSpawn('API Check', {
-        ...opticTaskToProps(taskName, startConfig),
-        hasError: false,
-      });
+      trackUserEvent(
+        ApiCheckCompleted.withProps({
+          inputs: opticTaskToProps(taskName, startConfig),
+          hasError: false,
+        })
+      );
+
       cli.log(
         '\n\n' +
           fromOptic(
@@ -244,10 +248,12 @@ export function verifyTask(cli: Command, taskName: string): void {
         )
       );
 
-      await trackAndSpawn('API Check', {
-        ...opticTaskToProps(taskName, startConfig),
-        hasError: true,
-        error: err.message,
-      });
+      trackUserEvent(
+        ApiCheckCompleted.withProps({
+          inputs: opticTaskToProps(taskName, startConfig),
+          hasError: true,
+          error: err.message,
+        })
+      );
     });
 }

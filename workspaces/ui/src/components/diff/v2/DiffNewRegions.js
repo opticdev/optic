@@ -15,6 +15,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import classNames from 'classnames';
 import ListItemText from '@material-ui/core/ListItemText';
+import {
+  NewBodyDiffRendered,
+  InferPolymorphismEnabledSchema,
+} from '@useoptic/analytics/lib/events/diffs';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -60,7 +64,7 @@ import {
   useInteractionWithPointer,
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
 
 function _NewRegions(props) {
   const { newRegions, ignoreDiff, captureId, endpointId } = props;
@@ -119,12 +123,11 @@ function _NewRegions(props) {
                 inferPolymorphism
               );
 
-          debugger;
-
           return getOrUndefined(suggestion);
         })
     );
-    track('Documented Changes');
+
+    // track('Documented Changes');
 
     acceptSuggestion(...allApproved);
   };
@@ -173,17 +176,19 @@ function _NewRegions(props) {
       .filter((i) => !!i);
 
   if (newRequests.length || newResponses.length) {
-    track('Diff New Bodies', {
-      requestCount: newRequests.length,
-      responseCount: newResponses.length,
-      regions: [
-        newRequests.map((i) => i.locationString),
-        newResponses.map((i) => i.locationString),
-      ],
-    });
+    trackUserEvent(
+      NewBodyDiffRendered.withProps({
+        requestCount: newRequests.length,
+        responseCount: newResponses.length,
+        regions: [
+          ...newRequests.map((i) => i.locationString),
+          ...newResponses.map((i) => i.locationString),
+        ],
+      })
+    );
   }
 
-  track('Show Initial Documentation Page', props);
+  // track('Show Initial Documentation Page', props);
 
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
@@ -224,7 +229,12 @@ function _NewRegions(props) {
                   onChange={(e) => {
                     setInferPolymorphism(e.target.checked);
                     if (e.target.checked) {
-                      track('Infer polymorhpism', { captureId });
+                      trackUserEvent(
+                        InferPolymorphismEnabledSchema.withProps({
+                          captureId,
+                          endpointId,
+                        })
+                      );
                     }
                   }}
                   color="primary"

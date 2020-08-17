@@ -21,6 +21,8 @@ import {
 } from './routers/spec-router';
 import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
+import { analyticsEventEmitter, track } from './analytics';
 
 const logFilePath = path.join(os.homedir(), '.optic', 'optic-daemon.log');
 fs.ensureDirSync(path.dirname(logFilePath));
@@ -94,6 +96,38 @@ class CliServer {
         }
       }
     );
+
+    app.post(
+      '/api/tracking/events',
+      bodyParser.json({ limit: '100kb' }),
+      async (req, res: express.Response) => {
+        const events: TrackingEventBase<any>[] = req.body.events;
+        track(...events);
+        console.log('events seen ', events);
+        res.status(200).json({});
+      }
+    );
+
+    app.get('api/tracking/events', async (req, res) => {
+      function emit(data: any) {
+        console.log('emit');
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      }
+
+      const headers = {
+        'Content-Type': 'text/event-stream',
+        Connection: 'keep-alive',
+        'Cache-Control': 'no-cache',
+      };
+      res.writeHead(200, headers);
+      emit({ type: 'message', data: {} });
+
+      analyticsEventEmitter.on('message', (data: any) => {
+        emit({ type: 'message', data });
+      });
+
+      req.on('close', () => {});
+    });
 
     // @REFACTOR sessionsRouter
     app.get('/api/sessions', (req, res: express.Response) => {

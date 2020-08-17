@@ -30,7 +30,6 @@ import { DiffStats } from './Stats';
 import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
-import { track } from '../../../Analytics';
 import Button from '@material-ui/core/Button';
 
 export const newRegionsConst = 'new_regions';
@@ -112,7 +111,7 @@ export function DiffReviewPage(props) {
 
   useEffect(() => {
     if (showFinalize || (completed && regions.empty)) {
-      track('Rendered Finalize Card');
+      // track('Rendered Finalize Card');
     }
   }, [showFinalize, completed, regions.empty]);
 

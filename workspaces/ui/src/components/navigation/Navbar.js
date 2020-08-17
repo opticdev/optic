@@ -107,7 +107,9 @@ export default function Navbar(props) {
             component={Link}
             to={i.link}
             placement="right"
-            onClick={() => track(`Navigating to ${i.name}`, i)}
+            onClick={() => {
+              // track(`Navigating to ${i.name}`, i)
+            }}
           >
             <IconButton className={classes.navButton}>{i.icon}</IconButton>
           </LightTooltip>

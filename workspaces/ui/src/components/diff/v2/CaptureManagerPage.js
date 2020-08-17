@@ -7,6 +7,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import time from 'time-ago';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FormControl from '@material-ui/core/FormControl';
+import { UserChangedCaptureOverviewTab } from '@useoptic/analytics/lib/events/diffs';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
@@ -70,7 +71,7 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
 
 const {
   Context: AllCapturesContext,
@@ -214,10 +215,13 @@ function CaptureChooserComponent(props) {
   const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
 
   useEffect(() => {
-    track(`Changed to ${tab}`, {
-      diffCount: realEndpointDiffCount,
-      undocumentedUrlCount: urlsSplit.total,
-    });
+    trackUserEvent(
+      UserChangedCaptureOverviewTab.withProps({
+        currentTab: tab,
+        diffCount: realEndpointDiffCount,
+        undocumentedUrlCount: urlsSplit.total,
+      })
+    );
   }, [tab, realEndpointDiffCount, urlsSplit.total]);
 
   useEffect(() => {
@@ -438,7 +442,7 @@ function EndpointDiffs(props) {
                       component={Link}
                       to={to}
                       onClick={() => {
-                        track('Viewing Endpoint Diff', i);
+                        // track('Viewing Endpoint Diff', i);
                       }}
                     >
                       <div className={classes.listItemInner}>
