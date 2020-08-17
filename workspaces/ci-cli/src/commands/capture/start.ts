@@ -66,7 +66,7 @@ export default class Start extends Command {
     const { authToken }: ITestingConfig = await fs.readJson(testingConfigPath);
 
     // use the api jwt to get an upload url for the spec
-    const saasClient = new SaasClient(Config.apiBaseUrl, authToken);
+    const saasClient = new SaasClient("http://localhost:4000/api/v1", authToken);
     const { uploadUrl, location } = await saasClient.getSpecUploadUrl();
 
     // upload the spec

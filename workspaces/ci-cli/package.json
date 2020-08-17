@@ -17,6 +17,7 @@
     "@oclif/plugin-help": "^3",
     "@useoptic/cli-config": "8.2.8",
     "@useoptic/cli-shared": "8.2.8",
+    "aws-sdk": "^2.734.0",
     "dotenv": "^8.2.0",
     "jwt-decode": "^2.2.0",
     "tslib": "^1",
