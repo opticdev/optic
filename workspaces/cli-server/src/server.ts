@@ -23,6 +23,7 @@ import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEventEmitter, track } from './analytics';
+import cors from 'cors';
 
 const logFilePath = path.join(os.homedir(), '.optic', 'optic-daemon.log');
 fs.ensureDirSync(path.dirname(logFilePath));
@@ -58,6 +59,13 @@ class CliServer {
   private server!: http.Server;
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
+  private corsOptions: cors.CorsOptions = {
+    origin: [
+      // this needs to be made exclusive in prod
+      'https://app.useoptic.com',
+      'http://localhost:4005',
+    ],
+  };
 
   constructor(private config: ICliServerConfig) {}
 
@@ -66,6 +74,7 @@ class CliServer {
     const reactRoot = path.join(resourceRoot, 'build');
     const indexHtmlPath = path.join(reactRoot, 'index.html');
     app.use(express.static(reactRoot));
+    app.use(bodyParser.json({ limit: '1mb' }));
     app.get('*', (req, res) => {
       res.sendFile(indexHtmlPath);
     });
@@ -73,6 +82,7 @@ class CliServer {
 
   async makeServer() {
     const app = express();
+    app.use(cors(this.corsOptions));
     app.set('etag', false);
     const sessions: ICliServerSession[] = [];
     let user: object | null;
@@ -103,12 +113,11 @@ class CliServer {
       async (req, res: express.Response) => {
         const events: TrackingEventBase<any>[] = req.body.events;
         track(...events);
-        console.log('events seen ', events);
         res.status(200).json({});
       }
     );
 
-    app.get('api/tracking/events', async (req, res) => {
+    app.get('/api/tracking/events', async (req, res) => {
       function emit(data: any) {
         console.log('emit');
         res.write(`data: ${JSON.stringify(data)}\n\n`);
@@ -122,8 +131,8 @@ class CliServer {
       res.writeHead(200, headers);
       emit({ type: 'message', data: {} });
 
-      analyticsEventEmitter.on('message', (data: any) => {
-        emit({ type: 'message', data });
+      analyticsEventEmitter.on('event', (event: any) => {
+        emit({ type: 'message', data: event });
       });
 
       req.on('close', () => {});
