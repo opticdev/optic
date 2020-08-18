@@ -123,20 +123,20 @@ pub struct FieldRemoved {
 
 impl Event for ShapeEvent {
   fn event_type(&self) -> &'static str {
-    match *self {
-      ShapeEvent::ShapeAdded(ref evt) => evt.event_type(),
-      ShapeEvent::BaseShapeSet(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeRenamed(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeRemoved(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeParameterAdded(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeParameterShapeSet(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeParameterRenamed(ref evt) => evt.event_type(),
-      ShapeEvent::ShapeParameterRemoved(ref evt) => evt.event_type(),
+    match self {
+      ShapeEvent::ShapeAdded(evt) => evt.event_type(),
+      ShapeEvent::BaseShapeSet(evt) => evt.event_type(),
+      ShapeEvent::ShapeRenamed(evt) => evt.event_type(),
+      ShapeEvent::ShapeRemoved(evt) => evt.event_type(),
+      ShapeEvent::ShapeParameterAdded(evt) => evt.event_type(),
+      ShapeEvent::ShapeParameterShapeSet(evt) => evt.event_type(),
+      ShapeEvent::ShapeParameterRenamed(evt) => evt.event_type(),
+      ShapeEvent::ShapeParameterRemoved(evt) => evt.event_type(),
 
-      ShapeEvent::FieldAdded(ref evt) => evt.event_type(),
-      ShapeEvent::FieldShapeSet(ref evt) => evt.event_type(),
-      ShapeEvent::FieldRenamed(ref evt) => evt.event_type(),
-      ShapeEvent::FieldRemoved(ref evt) => evt.event_type(),
+      ShapeEvent::FieldAdded(evt) => evt.event_type(),
+      ShapeEvent::FieldShapeSet(evt) => evt.event_type(),
+      ShapeEvent::FieldRenamed(evt) => evt.event_type(),
+      ShapeEvent::FieldRemoved(evt) => evt.event_type(),
     }
   }
 }

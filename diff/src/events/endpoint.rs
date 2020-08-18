@@ -229,37 +229,37 @@ pub struct ResponseRemoved {
 
 impl Event for EndpointEvent {
   fn event_type(&self) -> &'static str {
-    match *self {
-      EndpointEvent::PathComponentAdded(ref evt) => evt.event_type(),
-      EndpointEvent::PathComponentRenamed(ref evt) => evt.event_type(),
-      EndpointEvent::PathComponentRemoved(ref evt) => evt.event_type(),
+    match self {
+      EndpointEvent::PathComponentAdded(evt) => evt.event_type(),
+      EndpointEvent::PathComponentRenamed(evt) => evt.event_type(),
+      EndpointEvent::PathComponentRemoved(evt) => evt.event_type(),
 
       // path parameters
-      EndpointEvent::PathParameterAdded(ref evt) => evt.event_type(),
-      EndpointEvent::PathParameterShapeSet(ref evt) => evt.event_type(),
-      EndpointEvent::PathParameterRenamed(ref evt) => evt.event_type(),
-      EndpointEvent::PathParameterRemoved(ref evt) => evt.event_type(),
+      EndpointEvent::PathParameterAdded(evt) => evt.event_type(),
+      EndpointEvent::PathParameterShapeSet(evt) => evt.event_type(),
+      EndpointEvent::PathParameterRenamed(evt) => evt.event_type(),
+      EndpointEvent::PathParameterRemoved(evt) => evt.event_type(),
 
       // request parameters
-      EndpointEvent::RequestParameterAddedByPathAndMethod(ref evt) => evt.event_type(),
-      EndpointEvent::RequestParameterRenamed(ref evt) => evt.event_type(),
-      EndpointEvent::RequestParameterShapeSet(ref evt) => evt.event_type(),
-      EndpointEvent::RequestParameterShapeUnset(ref evt) => evt.event_type(),
-      EndpointEvent::RequestParameterRemoved(ref evt) => evt.event_type(),
+      EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => evt.event_type(),
+      EndpointEvent::RequestParameterRenamed(evt) => evt.event_type(),
+      EndpointEvent::RequestParameterShapeSet(evt) => evt.event_type(),
+      EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_type(),
+      EndpointEvent::RequestParameterRemoved(evt) => evt.event_type(),
 
       // Request events
-      EndpointEvent::RequestAdded(ref evt) => evt.event_type(),
-      EndpointEvent::RequestContentTypeSet(ref evt) => evt.event_type(),
-      EndpointEvent::RequestBodySet(ref evt) => evt.event_type(),
-      EndpointEvent::RequestBodyUnset(ref evt) => evt.event_type(),
+      EndpointEvent::RequestAdded(evt) => evt.event_type(),
+      EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
+      EndpointEvent::RequestBodySet(evt) => evt.event_type(),
+      EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
 
       // Response events
-      EndpointEvent::ResponseAddedByPathAndMethod(ref evt) => evt.event_type(),
-      EndpointEvent::ResponseStatusCodeSet(ref evt) => evt.event_type(),
-      EndpointEvent::ResponseContentTypeSet(ref evt) => evt.event_type(),
-      EndpointEvent::ResponseBodySet(ref evt) => evt.event_type(),
-      EndpointEvent::ResponseBodyUnset(ref evt) => evt.event_type(),
-      EndpointEvent::ResponseRemoved(ref evt) => evt.event_type(),
+      EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_type(),
+      EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_type(),
+      EndpointEvent::ResponseContentTypeSet(evt) => evt.event_type(),
+      EndpointEvent::ResponseBodySet(evt) => evt.event_type(),
+      EndpointEvent::ResponseBodyUnset(evt) => evt.event_type(),
+      EndpointEvent::ResponseRemoved(evt) => evt.event_type(),
     }
   }
 }
