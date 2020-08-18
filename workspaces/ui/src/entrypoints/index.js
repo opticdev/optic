@@ -27,7 +27,7 @@ export default function TopLevelRoutes() {
       />
       <Route
         strict
-        path="/specs/:specId"
+        path="/public/:specId"
         component={SpecViewer}
       />
       <Route strict path="/apis/:apiId" component={LocalCli} />

@@ -2,9 +2,9 @@ import React from 'react';
 import { useParams, useRouteMatch, matchPath } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
 import {
-  Provider as DebugSessionContextProvider,
   useSpecSession,
-} from '../contexts/MockDataContext';
+} from '../contexts/SpecViewerContext';
+import {Provider as DebugSessionContextProvider} from '../contexts/MockDataContext'
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 import {

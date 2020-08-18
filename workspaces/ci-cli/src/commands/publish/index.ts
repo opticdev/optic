@@ -39,16 +39,14 @@ export default class Publish extends Command {
     const { specStorePath, testingConfigPath } = paths;
     const specFile = await fs.readJson(specStorePath);
 
-    const { authToken }: ITestingConfig = await fs.readJson(testingConfigPath);
-
-    const saasClient = new SaasClient(Config.apiBaseUrl, authToken);
+    const saasClient = new SaasClient(Config.apiBaseUrl);
 
     const { uploadUrl, location } = await saasClient.getShareSpecUploadUrl();
 
     // upload the spec
     const events = await fs.readJson(specStorePath);
     await saasClient.uploadSpec(uploadUrl, events);
-    const specViewer = "https://app.useoptic.com"
+    const specViewer = "http://localhost:3000"
     const specId = uploadUrl.split("?")[0].split("/").pop();
     console.log(`Check out your spec live @ ${specViewer}/public/${specId}`)
   }
