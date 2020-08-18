@@ -7,11 +7,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7aa0974a70f69a9fb578e23983b9ce8e076c41f69a0d3256400b3b3f1f7e2897"
 
 [[package]]
-name = "diff"
+name = "itoa"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc6f3ad7b9d11a0c00842ff8de1b60ee58661048eb8049ed33c73594f359d7e6"
+
+[[package]]
+name = "optic_diff"
 version = "0.1.0"
 dependencies = [
  "cqrs-core",
  "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -33,6 +40,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ryu"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
+
+[[package]]
 name = "serde"
 version = "1.0.115"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -50,6 +63,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.57"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "164eacbdb13512ec2745fb09d51fd5b22b0d65ed294a1dcf7285a360c80a675c"
+dependencies = [
+ "itoa",
+ "ryu",
+ "serde",
 ]
 
 [[package]]
