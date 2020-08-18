@@ -16,6 +16,7 @@ pub enum EndpointEvent {
 
   // path parameters
   PathParameterAdded(PathParameterAdded),
+  PathParameterShapeSet(PathParameterShapeSet),
   PathParameterRenamed(PathParameterRenamed),
   PathParameterRemoved(PathParameterRemoved),
 
@@ -87,6 +88,14 @@ pub struct PathParameterRenamed {
 pub struct PathParameterRemoved {
   path_id: PathComponentId,
   name: String,
+  event_context: Option<EventContext>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PathParameterShapeSet {
+  path_id: PathComponentId,
+  shape_descriptor: ShapedRequestParameterShapeDescriptor,
   event_context: Option<EventContext>,
 }
 
@@ -227,6 +236,7 @@ impl Event for EndpointEvent {
 
       // path parameters
       EndpointEvent::PathParameterAdded(ref evt) => evt.event_type(),
+      EndpointEvent::PathParameterShapeSet(ref evt) => evt.event_type(),
       EndpointEvent::PathParameterRenamed(ref evt) => evt.event_type(),
       EndpointEvent::PathParameterRemoved(ref evt) => evt.event_type(),
 
@@ -257,6 +267,12 @@ impl Event for EndpointEvent {
 impl Event for PathComponentAdded {
   fn event_type(&self) -> &'static str {
     "PathComponentAdded"
+  }
+}
+
+impl Event for PathParameterShapeSet {
+  fn event_type(&self) -> &'static str {
+    "PathParameterShapeSet"
   }
 }
 
