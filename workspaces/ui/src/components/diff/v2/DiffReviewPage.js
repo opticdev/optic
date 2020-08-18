@@ -30,7 +30,7 @@ import { DiffStats } from './Stats';
 import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
-import { track } from '../../../Analytics'
+import { track } from '../../../Analytics';
 import Button from '@material-ui/core/Button';
 
 export const newRegionsConst = 'new_regions';
@@ -112,9 +112,9 @@ export function DiffReviewPage(props) {
 
   useEffect(() => {
     if (showFinalize || (completed && regions.empty)) {
-      track("Rendered Finalize Card")
+      track('Rendered Finalize Card');
     }
-  }, [showFinalize, completed, regions.empty])
+  }, [showFinalize, completed, regions.empty]);
 
   return (
     <div className={classes.container}>
@@ -241,8 +241,6 @@ export function DiffReviewPage(props) {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    height: '100vh',
-    overflow: 'hidden',
   },
   navigationContainer: {
     width: 230,
@@ -250,8 +248,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   pageContainer: {
-    overflow: 'scroll',
-    height: '100vh',
     justifyContent: 'center',
     flexGrow: 1,
   },
@@ -260,7 +256,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     width: 'inherit',
     height: '100vh',
-    overflowY: 'scroll',
+    overflowY: 'visible',
+    overflowX: 'visible',
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.grey[300]}`,
@@ -274,7 +271,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 16,
     flexGrow: 1,
     flexShirnk: 1,
-    overflow: 'scroll',
   },
   tabs: {
     marginLeft: theme.spacing(2),
@@ -290,7 +286,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 20,
-    paddingBottom: 400,
+    paddingBottom: theme.spacing(1),
     margin: '0 auto',
   },
   statsSection: {

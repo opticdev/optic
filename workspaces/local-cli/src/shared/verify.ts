@@ -28,7 +28,7 @@ export function verifyTask(cli: Command, taskName: string): void {
   let foundTask: IOpticTask;
   let startConfig: IOpticTaskRunnerConfig;
 
-  let fixUrl = 'https://docs.useoptic.com/';
+  let fixUrl = 'https://docs.useoptic.com/faqs-and-troubleshooting/';
 
   const tasks = new Listr([
     {

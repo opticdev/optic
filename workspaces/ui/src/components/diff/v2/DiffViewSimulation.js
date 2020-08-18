@@ -62,13 +62,12 @@ class _DiffViewSimulation extends React.Component {
                 const currentRfcState = rfcService.currentState(rfcId);
 
                 console.time('Making preview ' + renderKey);
-                const preview = DiffResultHelper.previewDiff(
+                let preview = DiffResultHelper.previewDiff(
                   diff,
                   interactionScala,
                   currentRfcState
                 );
                 console.timeEnd('Making preview ' + renderKey);
-
                 return (
                   <DiffHunkViewer
                     suggestion={selectedInterpretation}

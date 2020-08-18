@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
-import { DemoModal } from '../components/DemoModal';
 import {
   Provider as DebugSessionContextProvider,
   useMockSession,
@@ -23,8 +22,6 @@ import { trackEmitter } from "../Analytics"
 export default function DemoSessions(props) {
   const match = useRouteMatch();
   const { sessionId } = useParams();
-  const [showModal, setShowDemoModal] = useState(false);
-  const [actionsCompleted, setActions] = useState(0);
   const history = useHistory();
 
   const session = useMockSession({
@@ -90,17 +87,10 @@ export default function DemoSessions(props) {
   };
 
   // info boxes / guides for the demo
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [message, setMessage] = useState("nothing")
   const [action, setAction] = useState(null)
   const [hasCommited, setHasCommited] = useState(false) 
-
-  // show demo modal after 3 Minutes
-  setInterval(() => {
-    closeSnackbar()
-    setShowDemoModal(true);
-  }, 180000) // 60 seconds/minute * 3 minutes *  1000 ms/second = 180,000
-
 
   // path specific info boxes
   useEffect(() => {
@@ -233,7 +223,7 @@ export default function DemoSessions(props) {
             diffServiceFactory={diffServiceFactory}
           >
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
-            { (actionsCompleted >= 2 || showModal) && <DemoModal onCancel={() => {setActions(0); setShowDemoModal(false);}} />}
+            
           </ApiSpecServiceLoader>
         </DebugSessionContextProvider>
       </BaseUrlContext>

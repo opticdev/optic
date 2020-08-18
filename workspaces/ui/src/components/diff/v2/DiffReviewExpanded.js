@@ -27,6 +27,7 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
+import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
 import { track } from '../../../Analytics';
 
 const useStyles = makeStyles((theme) => ({
@@ -148,7 +149,7 @@ export const DiffReviewExpanded = (props) => {
   const { interaction, interactionScala } = currentInteraction;
 
   const { method, path } = interactionScala.request;
-  track("Display Diff in Behavior Page", props)
+  track('Display Diff in Behavior Page', props);
   return (
     <ShapeExpandedStore>
       <div>
@@ -190,15 +191,25 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  <DiffViewSimulation
-                    renderDiff={diff.inRequest}
-                    diff={diff}
-                    interactionScala={interactionScala}
-                    description={description}
-                    body={interactionScala.response.body}
-                    outerRfcState={outerRfcState}
-                    selectedInterpretation={selectedInterpretation}
-                  />
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' &&
+                  diff.inRequest ? (
+                    <InteractionBodyViewer
+                      diff={diff.inRequest && diff}
+                      diffDescription={description}
+                      body={interactionScala.request.body}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  ) : (
+                    <DiffViewSimulation
+                      renderDiff={diff.inRequest}
+                      diff={diff}
+                      interactionScala={interactionScala}
+                      description={description}
+                      body={interactionScala.response.body} // TODO: shouldn't this be the request body?
+                      outerRfcState={outerRfcState}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  )}
                 </ShapeBox>
               }
               right={
@@ -237,15 +248,24 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  <DiffViewSimulation
-                    renderDiff={diff.inResponse}
-                    diff={diff}
-                    interactionScala={interactionScala}
-                    description={description}
-                    body={interactionScala.response.body}
-                    outerRfcState={outerRfcState}
-                    selectedInterpretation={selectedInterpretation}
-                  />
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' ? (
+                    <InteractionBodyViewer
+                      diff={diff.inResponse && diff}
+                      diffDescription={description}
+                      body={interactionScala.response.body}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  ) : (
+                    <DiffViewSimulation
+                      renderDiff={diff.inResponse}
+                      diff={diff}
+                      interactionScala={interactionScala}
+                      description={description}
+                      body={interactionScala.response.body}
+                      outerRfcState={outerRfcState}
+                      selectedInterpretation={selectedInterpretation}
+                    />
+                  )}
                 </ShapeBox>
               }
               right={

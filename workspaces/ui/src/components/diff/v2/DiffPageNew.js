@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Typography } from '@material-ui/core';
 import compose from 'lodash.compose';
+import Invariant from 'invariant';
 import {
   EndpointsContextStore,
   withEndpointsContext,
@@ -39,6 +40,13 @@ function DiffPageNew(props) {
 
   const { pathId, method, captureId } = props.match.params;
 
+  Invariant(pathId, ':pathId param must be matched to render DiffPageNew');
+  Invariant(method, ':method param must be matched to render DiffPageNew');
+  Invariant(
+    captureId,
+    ':captureId param must be matched to render DiffPageNew'
+  );
+
   return (
     <CaptureSessionInlineContext
       specStore={specStore}
@@ -53,7 +61,6 @@ function DiffPageNew(props) {
         inContextOfDiff={true}
         notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        {/*<DiffPageContent captureId={captureId} />*/}
         <DiffReviewPage captureId={captureId} pathId={pathId} method={method} />
       </EndpointsContextStore>
     </CaptureSessionInlineContext>
