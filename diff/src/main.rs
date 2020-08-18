@@ -1,5 +1,8 @@
 #![allow(dead_code, unused_imports)]
+
+mod events;
 mod interactions;
+mod state;
 
 use interactions::{diff, HttpInteraction};
 
