@@ -38,7 +38,7 @@ class Client {
   }
 
   async getShareSpecUploadUrl() {
-    const url = `${this.baseUrl}/sharing/public/upload-urls`;
+    const url = `${this.baseUrl}/sharing/public/spec-urls`;
     return JsonHttpClient.postJsonWithoutBody(url, this.defaultHeaders());
   }
 

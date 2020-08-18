@@ -14,10 +14,10 @@ function createSpecSession(specId) {
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
-		const BucketHost = 'http://localhost:9090';
+		const ApiUrl = 'http://localhost:4000/api/v1';
 		fetchedData = axios({
 			method: 'get',
-			url: `${BucketHost}/shared-specs/${specId}`
+			url: `${ApiUrl}/sharing/public/spec-urls/${specId}`
 		}).then(response => {
 			console.log(response)
 			const data = {
