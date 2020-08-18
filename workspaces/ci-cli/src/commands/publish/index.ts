@@ -41,67 +41,16 @@ export default class Publish extends Command {
 
     const { authToken }: ITestingConfig = await fs.readJson(testingConfigPath);
 
-    const saasClient = new SaasClient("http://localhost:4000/api/v1", authToken);
-    console.log(saasClient)
+    const saasClient = new SaasClient(Config.apiBaseUrl, authToken);
+
     const { uploadUrl, location } = await saasClient.getShareSpecUploadUrl();
-    console.log(uploadUrl)
+
     // upload the spec
     const events = await fs.readJson(specStorePath);
     await saasClient.uploadSpec(uploadUrl, events);
-
-    // // TODO: Upload Spec
-    // const client = new S3({
-    //   accessKeyId: process.env.ACCESS_KEY_ID,
-    //   secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    // });
-    // try {
-    //   const result = await this.putObject(client, specFile);
-    //   console.log(result);
-    // } catch (err) {
-    //   console.error(err);
-    // }
-    
-
-    /*
-    // find the api jwt
-    const testingConfigExists = await fs.pathExists(testingConfigPath);
-    if (!testingConfigExists) {
-      return this.error(
-        `No testing token found at ${testingConfigPath} \nPlease run 'api testing:enable'`
-      );
-    }
-    const { authToken }: ITestingConfig = await fs.readJson(testingConfigPath);
-
-    // use the api jwt to get an upload url for the spec
-    const saasClient = new SaasClient(Config.apiBaseUrl, authToken);
-    const { uploadUrl, location } = await saasClient.getSpecUploadUrl();
-
-    // upload the spec
-    await saasClient.uploadSpec(uploadUrl, specFile);
-
-    // use flags.config to resolve the optic.yml. extract the ignoreRequests from it
-
-    // use the api jwt and the spec url and the flags, etc. to create a capture
-
-    const captureInfo: ICreateCaptureRequest = {
-      specLocation: location,
-      opticConfig: {
-        ignoreRequests: config.ignoreRequests,
-      },
-      captureMetadata: {
-        deploymentId,
-        buildId,
-        environmentName,
-        apiName: config.name || null,
-      },
-    };
-
-    const response: ICreateCaptureResponse = await saasClient.startCapture(
-      captureInfo
-    );
-    // output the capture jwt to standard out so the caller can pass it along to each agent-cli
-    this.log(JSON.stringify(response));
-    */
+    const specViewer = "https://app.useoptic.com"
+    const specId = uploadUrl.split("?")[0].split("/").pop();
+    console.log(`Check out your spec live @ ${specViewer}/public/${specId}`)
   }
 
   async putObject(client:S3, specFile: any) {
