@@ -3,6 +3,19 @@ use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
 use crate::interactions::http_interaction::HttpInteraction;
 
+pub struct DiffVisitors {
+  pub path: DiffPathVisitor,
+  // request body visitor
+}
+
+impl DiffVisitors {
+  pub fn new() -> Self {
+    DiffVisitors {
+      path: DiffPathVisitor::new(),
+    }
+  }
+}
+
 pub struct DiffPathVisitor {
   results: Option<Vec<InteractionDiffResult>>,
 }

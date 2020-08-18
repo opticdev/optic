@@ -1,21 +1,21 @@
 pub struct HttpInteraction {
-  uuid: String,
-  request: Request,
-  response: Response,
-  tags: Vec<HttpInteractionTag>,
+  pub uuid: String,
+  pub request: Request,
+  pub response: Response,
+  pub tags: Vec<HttpInteractionTag>,
 }
 
-struct HttpInteractionTag {
+pub struct HttpInteractionTag {
   name: String,
   value: String,
 }
 
 pub struct Request {
-  host: String,
-  method: String,
-  path: String,
-  query: String,
-  body: Body,
+  pub host: String,
+  pub method: String,
+  pub path: String,
+  pub query: String,
+  pub body: Body,
 }
 
 pub struct Response {
@@ -28,4 +28,4 @@ pub struct Body {
   value: ArbitraryData,
 }
 
-struct ArbitraryData {}
+pub struct ArbitraryData {}
