@@ -1,6 +1,7 @@
-mod diff;
+pub mod diff;
 pub mod http_interaction;
 mod traverser;
+mod visitors;
 
 use diff::InteractionDiffResult;
 pub use http_interaction::HttpInteraction;
@@ -13,7 +14,7 @@ pub fn diff(http_interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
           "GET",
         ))],
       },
-      diff::RequestSpecTrail {},
+      diff::RequestSpecTrail::SpecRoot,
     ));
 
   vec![diff_result]
