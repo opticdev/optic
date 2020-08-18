@@ -29,10 +29,10 @@ pub enum OpticEvent {
 
 impl Event for OpticEvent {
   fn event_type(&self) -> &'static str {
-    match *self {
-      OpticEvent::EndpointEvent(ref evt) => evt.event_type(),
-      OpticEvent::RfcEvent(ref evt) => evt.event_type(),
-      OpticEvent::ShapeEvent(ref evt) => evt.event_type(),
+    match self {
+      OpticEvent::EndpointEvent(evt) => evt.event_type(),
+      OpticEvent::RfcEvent(evt) => evt.event_type(),
+      OpticEvent::ShapeEvent(evt) => evt.event_type(),
     }
   }
 }
