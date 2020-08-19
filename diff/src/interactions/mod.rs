@@ -3,21 +3,18 @@ pub mod http_interaction;
 mod traverser;
 mod visitors;
 
-use diff::InteractionDiffResult;
+pub use diff::InteractionDiffResult;
 pub use http_interaction::HttpInteraction;
 
 pub fn diff(http_interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
-  let diff_result =
-    InteractionDiffResult::UnmatchedRequestMethod(diff::UnmatchedRequestMethod::new(
-      diff::InteractionTrail {
-        path: vec![diff::InteractionTrailPathComponent::Method(String::from(
-          "GET",
-        ))],
-      },
-      diff::RequestSpecTrail::SpecRoot,
-    ));
+  let q = traverser::RequestsQueries {};
+  let interaction_traverser = traverser::Traverser::new(&q);
+  let mut diff_visitors = visitors::diff::DiffVisitors::new();
 
-  vec![diff_result]
+  interaction_traverser.traverse(http_interaction, &mut diff_visitors);
+
+  // TODO: replace by extracting results from visitors
+  vec![]
 }
 
 #[cfg(test)]
