@@ -1,5 +1,5 @@
 use super::visitors::InteractionVisitors;
-use crate::interactions::http_interaction::HttpInteraction;
+use crate::interactions::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
 pub struct RequestsQueries {}

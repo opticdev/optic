@@ -1,7 +1,7 @@
 use super::{InteractionVisitors, PathVisitor, PathVisitorContext};
 use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
-use crate::interactions::http_interaction::HttpInteraction;
+use crate::interactions::HttpInteraction;
 
 pub struct DiffVisitors {
   path: DiffPathVisitor,

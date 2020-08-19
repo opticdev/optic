@@ -1,6 +1,6 @@
 pub mod diff;
 
-use super::http_interaction::HttpInteraction;
+use super::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
 pub trait InteractionVisitors {
