@@ -39,7 +39,8 @@ const snackbarStyles = makeStyles({
   },
   buttonWrapper: {
     display: "flex",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
+    paddingTop: "1em",
   },
   message: {
     color: SubtleBlueBackground,
@@ -50,8 +51,6 @@ const snackbarStyles = makeStyles({
     flexDirection: "column"
   },
   ctaButton: {
-    // color: "white",
-    // backgroundColor: "#4696FF"
   }
 })
 
