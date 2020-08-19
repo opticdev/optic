@@ -11,6 +11,7 @@ pub mod http_interaction;
 pub mod rfc;
 pub mod shape;
 
+pub use endpoint::EndpointEvent;
 pub use http_interaction::HttpInteraction;
 
 #[derive(Deserialize)]
