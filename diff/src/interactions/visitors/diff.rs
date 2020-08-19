@@ -1,10 +1,10 @@
-use super::{PathVisitor, PathVisitorContext};
+use super::{InteractionVisitors, PathVisitor, PathVisitorContext};
 use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
 use crate::interactions::http_interaction::HttpInteraction;
 
 pub struct DiffVisitors {
-  pub path: DiffPathVisitor,
+  path: DiffPathVisitor,
   // request body visitor
 }
 
@@ -13,6 +13,13 @@ impl DiffVisitors {
     DiffVisitors {
       path: DiffPathVisitor::new(),
     }
+  }
+}
+
+impl InteractionVisitors for DiffVisitors {
+  type Path = DiffPathVisitor;
+  fn path(&mut self) -> &mut DiffPathVisitor {
+    &mut self.path
   }
 }
 

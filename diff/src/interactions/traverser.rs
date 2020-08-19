@@ -1,4 +1,4 @@
-use super::visitors::diff::DiffVisitors;
+use super::visitors::InteractionVisitors;
 use crate::interactions::http_interaction::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
@@ -12,18 +12,15 @@ impl RequestsQueries {
 
 pub struct Traverser<'a> {
   requests_queries: &'a RequestsQueries,
-  visitors: DiffVisitors,
 }
 
 impl<'a> Traverser<'a> {
-  pub fn new(q: &'a RequestsQueries) -> Self {
-    Traverser {
-      requests_queries: q,
-      visitors: DiffVisitors::new(),
-    }
+  pub fn new(requests_queries: &'a RequestsQueries) -> Self {
+    Traverser { requests_queries }
   }
 
-  pub fn traverse(&mut self, interaction: HttpInteraction) {
+  pub fn traverse(&self, interaction: HttpInteraction, visitors: &mut impl InteractionVisitors) {
+    let path_visitor = visitors.path();
     let resolved_path = self.requests_queries.resolve_path(interaction.request.path);
   }
 }
