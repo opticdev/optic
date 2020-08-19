@@ -44,6 +44,7 @@ import { DiffToolTip } from './shape_viewers/styles';
 import Pagination from '@material-ui/lab/Pagination';
 import { RfcContext } from '../../../contexts/RfcContext';
 import DiffHunkViewer from './DiffHunkViewer';
+import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
 import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { ShapeBox } from './DiffReviewExpanded';
 import { ShapeOnlyViewer } from './shape_viewers/ShapeOnlyShapeRows';
@@ -127,7 +128,7 @@ function _NewRegions(props) {
           return getOrUndefined(suggestion);
         })
     );
-    track("Documented Changes")
+    track('Documented Changes');
 
     acceptSuggestion(...allApproved);
   };
@@ -185,6 +186,8 @@ function _NewRegions(props) {
       ],
     });
   }
+
+  track('Show Initial Documentation Page', props);
 
   const approveCount =
     newResponses.length + newRequests.length - deselected.length;
@@ -422,7 +425,8 @@ const PreviewNewBodyRegion = ({
         })}
       >
         <div style={{ width: '55%', paddingRight: 15 }}>
-          {bodyPreview && (
+          {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER == 'true' &&
+          currentInteraction ? (
             <ShapeBox
               header={
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -435,10 +439,34 @@ const PreviewNewBodyRegion = ({
                 </div>
               }
             >
-              <ShapeExpandedStore>
-                <DiffHunkViewer preview={bodyPreview} exampleOnly />
-              </ShapeExpandedStore>
+              <InteractionBodyViewer
+                body={
+                  diff.inRequest
+                    ? currentInteraction.interactionScala.request.body
+                    : currentInteraction.interactionScala.response.body
+                }
+              />
             </ShapeBox>
+          ) : (
+            process.env.REACT_APP_FLATTENED_SHAPE_VIEWER !== 'true' &&
+            bodyPreview && (
+              <ShapeBox
+                header={
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <BreadcumbX
+                      itemStyles={{ fontSize: 13, color: 'white' }}
+                      location={['Example']}
+                    />
+                    <div style={{ flex: 1 }}></div>
+                    <span style={{ color: 'white' }}>⮕</span>
+                  </div>
+                }
+              >
+                <ShapeExpandedStore>
+                  <DiffHunkViewer preview={bodyPreview} exampleOnly />
+                </ShapeExpandedStore>
+              </ShapeBox>
+            )
           )}
         </div>
         <div style={{ flex: 1 }}>

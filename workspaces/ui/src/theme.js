@@ -38,6 +38,7 @@ export const appTheme = createMuiTheme({
     primary: { main: primary },
     secondary: { main: secondary },
     updated: { main: UpdatedBlue, background: UpdatedBlueBackground },
+    changed: { main: ChangedYellow, background: ChangedYellowBackground },
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
     info: {

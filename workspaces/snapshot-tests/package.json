@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/snapshot-tests",
-  "version": "8.2.10",
+  "version": "8.2.11",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -12,9 +12,9 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/domain-types": "10.0.5",
-    "@useoptic/domain": "10.0.5",
-    "@useoptic/domain-utilities": "10.0.5",
+    "@useoptic/domain-types": "10.0.7",
+    "@useoptic/domain": "10.0.7",
+    "@useoptic/domain-utilities": "10.0.7",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
   },

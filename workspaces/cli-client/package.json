@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-client",
-  "version": "8.2.10",
+  "version": "8.2.11",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,8 +14,8 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/cli-config": "8.2.10",
-    "@useoptic/client-utilities": "8.2.10",
+    "@useoptic/cli-config": "8.2.11",
+    "@useoptic/client-utilities": "8.2.11",
     "bottleneck": "^2.19.5",
     "cross-fetch": "^3.0.4"
   },

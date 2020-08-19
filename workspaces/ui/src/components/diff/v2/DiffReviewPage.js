@@ -36,7 +36,7 @@ import Button from '@material-ui/core/Button';
 export const newRegionsConst = 'new_regions';
 
 export function DiffReviewPage(props) {
-  const { captureId, method, pathId, viewer } = props;
+  const { captureId, method, pathId } = props;
   const classes = useStyles();
 
   const { rfcId, rfcService } = useContext(RfcContext);
@@ -224,7 +224,6 @@ export function DiffReviewPage(props) {
               )}
               completed={completed}
               tab={currentTab}
-              viewer={viewer}
             />
           )}
         </div>
@@ -242,7 +241,6 @@ export function DiffReviewPage(props) {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    overflow: 'hidden',
   },
   navigationContainer: {
     width: 230,
