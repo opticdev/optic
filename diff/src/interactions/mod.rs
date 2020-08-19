@@ -1,10 +1,9 @@
 pub mod diff;
-pub mod http_interaction;
 mod traverser;
 mod visitors;
 
+pub use crate::events::http_interaction::HttpInteraction;
 pub use diff::InteractionDiffResult;
-pub use http_interaction::HttpInteraction;
 
 pub fn diff(http_interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
   let q = traverser::RequestsQueries {};

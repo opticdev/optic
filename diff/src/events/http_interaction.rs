@@ -1,4 +1,6 @@
+use cqrs_core::Event;
 use serde::Deserialize;
+use serde_json;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
@@ -41,10 +43,21 @@ pub struct Body {
 #[derive(Deserialize, Debug)]
 pub struct ArbitraryData {}
 
+impl Event for HttpInteraction {
+  fn event_type(&self) -> &'static str {
+    "HttpInteraction"
+  }
+}
+
+impl HttpInteraction {
+  fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
+    serde_json::from_str(json)
+  }
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
-  use serde_json;
   #[test]
   fn can_deserialize_interaction() {
     let json = r#"{
@@ -79,7 +92,7 @@ mod test {
       "tags": []
     }"#;
 
-    let interaction: Result<HttpInteraction, _> = serde_json::from_str(json);
+    let interaction = HttpInteraction::from_json_str(&json);
     interaction.expect("Valid JSON should be able to deserialize into an HttpInteraction");
   }
 }

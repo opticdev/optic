@@ -7,8 +7,11 @@ use std::fs;
 use std::io;
 
 pub mod endpoint;
+pub mod http_interaction;
 pub mod rfc;
 pub mod shape;
+
+pub use http_interaction::HttpInteraction;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,29 +24,31 @@ struct EventContext {
 
 #[derive(Deserialize)]
 #[serde(untagged)]
-pub enum OpticEvent {
+pub enum SpecEvent {
   EndpointEvent(endpoint::EndpointEvent),
   RfcEvent(rfc::RfcEvent),
   ShapeEvent(shape::ShapeEvent),
 }
 
-impl Event for OpticEvent {
+impl Event for SpecEvent {
   fn event_type(&self) -> &'static str {
     match self {
-      OpticEvent::EndpointEvent(evt) => evt.event_type(),
-      OpticEvent::RfcEvent(evt) => evt.event_type(),
-      OpticEvent::ShapeEvent(evt) => evt.event_type(),
+      SpecEvent::EndpointEvent(evt) => evt.event_type(),
+      SpecEvent::RfcEvent(evt) => evt.event_type(),
+      SpecEvent::ShapeEvent(evt) => evt.event_type(),
     }
   }
 }
 
-pub fn from_file(filename: &str) -> Result<Vec<OpticEvent>, EventLoadingError> {
-  let file_contents =
-    fs::read_to_string(filename).expect(&format!("File at {} could not be read", &filename));
+impl SpecEvent {
+  pub fn from_file(filename: &str) -> Result<Vec<SpecEvent>, EventLoadingError> {
+    let file_contents =
+      fs::read_to_string(filename).expect(&format!("File at {} could not be read", &filename));
 
-  let events: Vec<OpticEvent> = serde_json::from_str(&file_contents)?;
+    let events: Vec<SpecEvent> = serde_json::from_str(&file_contents)?;
 
-  Ok(events)
+    Ok(events)
+  }
 }
 
 #[derive(Debug)]

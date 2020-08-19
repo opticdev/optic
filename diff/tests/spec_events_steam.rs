@@ -1,8 +1,8 @@
-use optic_diff::events::from_file;
+use optic_diff::events::SpecEvent;
 
 #[test]
 fn can_read_json() {
-  from_file(
+  SpecEvent::from_file(
     std::env::current_dir()
       .unwrap()
       .join("tests/fixtures/ergast-example-spec.json")
