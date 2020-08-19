@@ -3,4 +3,5 @@
 pub mod events;
 pub mod interactions;
 pub mod projections;
+pub mod queries;
 pub mod state;
