@@ -4,7 +4,7 @@ use super::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
 pub trait InteractionVisitors<R> {
-  type Path: PathVisitor<R> + VisitorWithResults<R>;
+  type Path: PathVisitor<R>;
 
   fn path(&mut self) -> &mut Self::Path;
 
@@ -14,7 +14,27 @@ pub trait InteractionVisitors<R> {
   }
 }
 
-pub trait PathVisitor<R> {
+pub trait InteractionVisitor<R> {
+  fn results(&mut self) -> Option<&mut VisitorResults<R>> {
+    None
+  }
+
+  fn push(&mut self, result: R) {
+    if let Some(results) = self.results() {
+      results.push(result);
+    }
+  }
+
+  fn take_results(&mut self) -> Option<Vec<R>> {
+    if let Some(results) = self.results() {
+      results.take_results()
+    } else {
+      None
+    }
+  }
+}
+
+pub trait PathVisitor<R>: InteractionVisitor<R> {
   fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext);
 }
 
@@ -46,19 +66,5 @@ impl<R> VisitorResults<R> {
     let flushed_results = self.results.take();
     self.results = Some(vec![]);
     flushed_results
-  }
-}
-
-pub trait VisitorWithResults<R> {
-  fn results(&mut self) -> &mut VisitorResults<R>;
-
-  fn push(&mut self, result: R) {
-    let results = self.results();
-    results.push(result);
-  }
-
-  fn take_results(&mut self) -> Option<Vec<R>> {
-    let results = self.results();
-    results.take_results()
   }
 }

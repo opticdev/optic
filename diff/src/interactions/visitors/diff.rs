@@ -1,5 +1,5 @@
 use super::{
-  InteractionVisitors, PathVisitor, PathVisitorContext, VisitorResults, VisitorWithResults,
+  InteractionVisitor, InteractionVisitors, PathVisitor, PathVisitorContext, VisitorResults,
 };
 use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
@@ -39,9 +39,9 @@ impl DiffPathVisitor {
   }
 }
 
-impl VisitorWithResults<InteractionDiffResult> for DiffPathVisitor {
-  fn results(&mut self) -> &mut DiffResults {
-    &mut self.results
+impl InteractionVisitor<InteractionDiffResult> for DiffPathVisitor {
+  fn results(&mut self) -> Option<&mut DiffResults> {
+    Some(&mut self.results)
   }
 }
 
