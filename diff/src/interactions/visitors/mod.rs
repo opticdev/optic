@@ -3,13 +3,13 @@ pub mod diff;
 use super::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
-pub trait InteractionVisitors {
-  type Path: PathVisitor;
+pub trait InteractionVisitors<R> {
+  type Path: PathVisitor<R>;
 
   fn path(&mut self) -> &mut Self::Path;
 }
 
-pub trait PathVisitor {
+pub trait PathVisitor<R>: VisitorWithResults<R> {
   fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext);
 }
 
@@ -41,5 +41,19 @@ impl<R> VisitorResults<R> {
     let flushed_results = self.results.take();
     self.results = Some(vec![]);
     flushed_results
+  }
+}
+
+pub trait VisitorWithResults<R> {
+  fn results(&mut self) -> &mut VisitorResults<R>;
+
+  fn push(&mut self, result: R) {
+    let results = self.results();
+    results.push(result);
+  }
+
+  fn take_results(&mut self) -> Option<Vec<R>> {
+    let results = self.results();
+    results.take_results()
   }
 }

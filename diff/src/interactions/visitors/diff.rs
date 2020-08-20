@@ -1,4 +1,6 @@
-use super::{InteractionVisitors, PathVisitor, PathVisitorContext, VisitorResults};
+use super::{
+  InteractionVisitors, PathVisitor, PathVisitorContext, VisitorResults, VisitorWithResults,
+};
 use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
 use crate::interactions::HttpInteraction;
@@ -35,15 +37,11 @@ impl DiffPathVisitor {
       results: DiffResults::new(),
     }
   }
+}
 
-  fn push(&mut self, result: InteractionDiffResult) {
-    self.results.push(result);
-  }
-
-  // TODO: consider moving to an emit / reactor pattern, so we don't own the results
-  // in the first place.
-  fn take_results(&mut self) -> Option<Vec<InteractionDiffResult>> {
-    self.results.take_results()
+impl VisitorWithResults<InteractionDiffResult> for DiffPathVisitor {
+  fn results(&mut self) -> &mut DiffResults {
+    &mut self.results
   }
 }
 
