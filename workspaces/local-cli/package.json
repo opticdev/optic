@@ -13,6 +13,7 @@
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
+    "assert": "^2.0.0",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",

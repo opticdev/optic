@@ -43,8 +43,6 @@ export async function getUser(): Promise<IUser | null> {
 }
 
 export async function trackUserEvent(event: TrackingEventBase<any>) {
-  console.log('abc');
-
   const daemonState = await ensureDaemonStarted(
     lockFilePath,
     Config.apiBaseUrl

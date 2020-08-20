@@ -25,6 +25,8 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 import { analyticsEventEmitter, track } from './analytics';
 import cors from 'cors';
 
+const pJson = require('../package.json');
+
 const logFilePath = path.join(os.homedir(), '.optic', 'optic-daemon.log');
 fs.ensureDirSync(path.dirname(logFilePath));
 export const log = fs.createWriteStream(logFilePath);
@@ -94,6 +96,11 @@ class CliServer {
         res.sendStatus(404);
       }
     });
+
+    app.get('/api/daemon/status', async (req, res: express.Response) => {
+      res.json({ isRunning: true, version: pJson.version });
+    });
+
     app.put(
       '/api/identity',
       bodyParser.json({ limit: '5kb' }),
@@ -129,7 +136,6 @@ class CliServer {
         'Cache-Control': 'no-cache',
       };
       res.writeHead(200, headers);
-      emit({ type: 'message', data: {} });
 
       analyticsEventEmitter.on('event', (event: any) => {
         emit({ type: 'message', data: event });

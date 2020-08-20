@@ -19,7 +19,6 @@ class Client {
 
   postTrackingEvents(events: TrackingEventBase<any>[]) {
     const url = `${this.baseUrl}/tracking/events`;
-    console.log(url);
     return JsonHttpClient.postJson(url, { events });
   }
 
