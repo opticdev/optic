@@ -12,16 +12,17 @@ impl<'a> EndpointQueries<'a> {
     }
   }
   pub fn resolve_path(&self, path: &String) -> Option<&PathComponentId> {
-    self
-      .endpoint_projection
-      .absolute_paths
-      .iter()
-      .find_map(|(path_id, absolute_path)| {
-        if path == absolute_path {
-          Some(path_id)
-        } else {
-          None
-        }
-      })
+    // self
+    //   .endpoint_projection
+    //   .absolute_paths
+    //   .iter()
+    //   .find_map(|(path_id, absolute_path)| {
+    //     if path == absolute_path {
+    //       Some(path_id)
+    //     } else {
+    //       None
+    //     }
+    //   })
+    None
   }
 }
