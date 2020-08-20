@@ -17,10 +17,11 @@ impl<'a> Traverser<'a> {
     interaction: HttpInteraction,
     visitors: &mut impl InteractionVisitors<R>,
   ) {
+    let root_id = String::from("root");
     let path_visitor = visitors.path();
     let resolved_path = self
       .endpoint_queries
-      .resolve_path(&interaction.request.path);
+      .resolve_path(&interaction.request.path, &root_id);
     path_visitor.visit(
       &interaction,
       PathVisitorContext {

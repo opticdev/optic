@@ -8,7 +8,7 @@ fn can_yield_umatched_request_url() {
   let events = SpecEvent::from_file(
     std::env::current_dir()
       .unwrap()
-      .join("tests/fixtures/todos-spec.json")
+      .join("tests/fixtures/ergast-example-spec.json")
       .to_str()
       .unwrap(),
   )
@@ -19,14 +19,16 @@ fn can_yield_umatched_request_url() {
   for event in events {
     events_projection.apply(event)
   }
-
+  for node_index in events_projection.graph.node_indices() {
+    println!("{:?}: {:?}", node_index, events_projection.graph.node_weight(node_index).unwrap())
+  }
   let interaction = HttpInteraction::from_json_str(
     r#"{
     "uuid": "5",
     "request": {
       "host": "localhost",
       "method": "GET",
-      "path": "/todos/abcdefg",
+      "path": "/api/f1/2019/drivers/screw/BAD",
       "query": {
         "asJsonString": null,
         "asText": null,
@@ -55,10 +57,11 @@ fn can_yield_umatched_request_url() {
       }
     },
     "tags": []
-  },"#,
+  }"#,
   )
   .expect("example http interaction should deserialize");
 
   let results = diff(&mut events_projection, interaction);
   assert_eq!(results.len(), 1);
+  
 }

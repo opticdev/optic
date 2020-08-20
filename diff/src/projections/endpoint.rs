@@ -1,16 +1,27 @@
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::PathComponentId;
 use cqrs_core::{Aggregate, AggregateEvent};
+use petgraph::dot::Dot;
+use petgraph::graph::Graph;
 use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
-  pub parent_path_id: PathComponentId,
   pub name: String,
 }
+#[derive(Debug)]
+pub enum Node {
+  PathComponent(PathComponentId, PathComponentDescriptor),
+}
+
+pub enum Edge {
+  IsChildOf,
+}
+
 pub struct EndpointProjection {
-  pub path_components: HashMap<PathComponentId, PathComponentDescriptor>,
+  pub graph: Graph<Node, Edge>,
+  pub node_id_to_index: HashMap<PathComponentId, petgraph::graph::NodeIndex>,
 }
 
 impl EndpointProjection {
@@ -20,15 +31,7 @@ impl EndpointProjection {
     path_id: PathComponentId,
     path_name: String,
   ) {
-    let path_components = &mut self.path_components;
-    path_components.insert(
-      path_id,
-      PathComponentDescriptor {
-        is_parameter: false,
-        name: path_name,
-        parent_path_id: parent_path_id,
-      },
-    );
+    self.with_path_component_node(parent_path_id, path_id, path_name, false);
   }
 
   pub fn with_path_parameter(
@@ -37,31 +40,51 @@ impl EndpointProjection {
     path_id: PathComponentId,
     path_name: String,
   ) {
-    let path_components = &mut self.path_components;
-    path_components.insert(
-      path_id,
-      PathComponentDescriptor {
-        is_parameter: true,
-        name: path_name,
-        parent_path_id: parent_path_id,
-      },
+    self.with_path_component_node(parent_path_id, path_id, path_name, true);
+  }
+
+  fn with_path_component_node(
+    &mut self,
+    parent_path_id: PathComponentId,
+    path_id: PathComponentId,
+    name: String,
+    is_parameter: bool,
+  ) {
+    let node = Node::PathComponent(
+      path_id.clone(),
+      PathComponentDescriptor { is_parameter, name },
     );
+    let node_index = self.graph.add_node(node);
+    self.node_id_to_index.insert(path_id, node_index);
+    let parent_node_index = *self
+      .node_id_to_index
+      .get(&parent_path_id)
+      .expect("expected parent_path_id to have a corresponding node");
+
+    self
+      .graph
+      .add_edge(node_index, parent_node_index, Edge::IsChildOf);
   }
 }
 
 impl Default for EndpointProjection {
   fn default() -> Self {
-    let mut path_components = HashMap::new();
-    let root_id = PathComponentId::from("root");
-    path_components.insert(
-      root_id,
+    let root_id = String::from("root");
+    let mut graph: Graph<Node, Edge> = Graph::new();
+    let root_index = graph.add_node(Node::PathComponent(
+      root_id.clone(),
       PathComponentDescriptor {
         is_parameter: false,
-        parent_path_id: String::from(""),
         name: String::from(""),
       },
-    );
-    EndpointProjection { path_components }
+    ));
+    let mut node_id_to_index = HashMap::new();
+    node_id_to_index.insert(root_id, root_index);
+
+    EndpointProjection {
+      graph,
+      node_id_to_index,
+    }
   }
 }
 
@@ -79,7 +102,7 @@ impl AggregateEvent<EndpointProjection> for SpecEvent {
           aggregate.with_path(e.parent_path_id, e.path_id, e.name);
         }
         EndpointEvent::PathParameterAdded(e) => {
-          aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name);
+          aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
         }
         _ => {}
       }
