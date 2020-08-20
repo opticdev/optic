@@ -1,17 +1,17 @@
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId};
 
 pub enum InteractionDiffResult {
-  UnmatchedRequestMethod(UnmatchedRequestMethod),
+  UnmatchedRequestUrl(UnmatchedRequestUrl),
 }
 
-pub struct UnmatchedRequestMethod {
+pub struct UnmatchedRequestUrl {
   interaction_trail: InteractionTrail,
   requests_trail: RequestSpecTrail,
 }
 
-impl UnmatchedRequestMethod {
+impl UnmatchedRequestUrl {
   pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail) -> Self {
-    return UnmatchedRequestMethod {
+    return UnmatchedRequestUrl {
       interaction_trail,
       requests_trail,
     };

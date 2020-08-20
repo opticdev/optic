@@ -11,13 +11,17 @@ impl<'a> EndpointQueries<'a> {
       endpoint_projection,
     }
   }
-  pub fn resolve_path(&self, path: String) -> Option<PathComponentId> {
-    None
-    // for (path_id, absolute_path) in map.iter {
-    //   if path == absolute_path {
-    //     Some(path_id)
-    //   }
-    //   None
-    // }
+  pub fn resolve_path(&self, path: &String) -> Option<&PathComponentId> {
+    self
+      .endpoint_projection
+      .absolute_paths
+      .iter()
+      .find_map(|(path_id, absolute_path)| {
+        if path == absolute_path {
+          Some(path_id)
+        } else {
+          None
+        }
+      })
   }
 }

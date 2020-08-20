@@ -1,7 +1,7 @@
 use super::{
   InteractionVisitor, InteractionVisitors, PathVisitor, PathVisitorContext, VisitorResults,
 };
-use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestMethod};
+use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestUrl};
 use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
 use crate::interactions::HttpInteraction;
 
@@ -46,11 +46,11 @@ impl InteractionVisitor<InteractionDiffResult> for DiffPathVisitor {
 }
 
 impl PathVisitor<InteractionDiffResult> for DiffPathVisitor {
-  fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext) {
+  fn visit(&mut self, interaction: &HttpInteraction, context: PathVisitorContext) {
     if let None = context.path {
       let interaction_trail = InteractionTrail::empty();
       let requests_trail = RequestSpecTrail::SpecRoot;
-      let diff = InteractionDiffResult::UnmatchedRequestMethod(UnmatchedRequestMethod::new(
+      let diff = InteractionDiffResult::UnmatchedRequestUrl(UnmatchedRequestUrl::new(
         interaction_trail,
         requests_trail,
       ));

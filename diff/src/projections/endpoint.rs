@@ -4,7 +4,7 @@ use cqrs_core::{Aggregate, AggregateEvent};
 use std::collections::HashMap;
 
 pub struct EndpointProjection {
-  absolute_paths: HashMap<PathComponentId, String>,
+  pub absolute_paths: HashMap<PathComponentId, String>,
 }
 
 impl EndpointProjection {

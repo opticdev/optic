@@ -1,4 +1,4 @@
-use super::visitors::InteractionVisitors;
+use super::visitors::{InteractionVisitors, PathVisitor, PathVisitorContext};
 use crate::interactions::HttpInteraction;
 use crate::queries::endpoint::EndpointQueries;
 use crate::state::endpoint::PathComponentId;
@@ -12,9 +12,21 @@ impl<'a> Traverser<'a> {
     Traverser { endpoint_queries }
   }
 
-  pub fn traverse(&self, interaction: HttpInteraction, visitors: &mut impl InteractionVisitors) {
+  pub fn traverse<R>(
+    &self,
+    interaction: HttpInteraction,
+    visitors: &mut impl InteractionVisitors<R>,
+  ) {
     let path_visitor = visitors.path();
-    let resolved_path = self.endpoint_queries.resolve_path(interaction.request.path);
+    let resolved_path = self
+      .endpoint_queries
+      .resolve_path(&interaction.request.path);
+    path_visitor.visit(
+      &interaction,
+      PathVisitorContext {
+        path: resolved_path,
+      },
+    );
   }
 }
 

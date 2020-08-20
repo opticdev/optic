@@ -35,11 +35,11 @@ pub trait InteractionVisitor<R> {
 }
 
 pub trait PathVisitor<R>: InteractionVisitor<R> {
-  fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext);
+  fn visit(&mut self, interaction: &HttpInteraction, context: PathVisitorContext);
 }
 
-pub struct PathVisitorContext {
-  path: Option<PathComponentId>,
+pub struct PathVisitorContext<'a> {
+  pub path: Option<&'a PathComponentId>,
 }
 
 // Results

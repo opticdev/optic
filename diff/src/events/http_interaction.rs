@@ -50,7 +50,7 @@ impl Event for HttpInteraction {
 }
 
 impl HttpInteraction {
-  fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
+  pub fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
     serde_json::from_str(json)
   }
 }
