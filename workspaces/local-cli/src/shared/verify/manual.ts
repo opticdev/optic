@@ -5,37 +5,21 @@ import {
 //@ts-ignore
 import Listr from 'listr';
 //@ts-ignore
-import url from 'url';
-import {
-  CommandSession,
-  HttpToolkitCapturingProxy,
-} from '@useoptic/cli-shared';
 import colors from 'colors';
 import waitOn from 'wait-on';
-import {
-  ApiProcessStartsOnAssignedHost,
-  ApiProcessStartsOnAssignedPort,
-  CheckAssertions,
-  CommandIsLongRunning,
-  failingAssertions,
-  ProxyCanStartAtInboundUrl,
-  ProxyTargetUrlResolves,
-} from './assertions';
+import { failingAssertions } from './assertions';
 import assert from 'assert';
 import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
 import {
   getAssertionsFromCommandSession,
   getAssertionsFromProxyStartPromise,
 } from './recommended';
+import { ProxyTargetUrlResolves } from '@useoptic/analytics/lib/interfaces/ApiCheck';
 
 export async function verifyManual(
   task: IOpticTaskAliased,
   startConfig: IOpticTaskRunnerConfig
-): Promise<{
-  failing: CheckAssertions[];
-  assertions: {};
-  passedAll: boolean;
-}> {
+) {
   const proxyStartPromise = getAssertionsFromProxyStartPromise(startConfig);
 
   console.log(

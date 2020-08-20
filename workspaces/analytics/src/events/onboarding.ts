@@ -3,6 +3,7 @@ import { Events } from '../interfaces/Events';
 // @ts-ignore
 import * as Joi from '@hapi/joi';
 import 'joi-extract-type';
+import { CheckAssertionsResult } from '../interfaces/ApiCheck';
 
 // Sent whenever an API is created
 const ApiCreatedSchema = Joi.object({ apiName: Joi.string().required() });
@@ -30,16 +31,12 @@ export const ApiInitializedInProject = DescribeEvent<
   (props) => `An API called ${props.apiName} was initialized in ${props.cwd}`
 );
 
-const ApiCheckCompletedSchema = Joi.object({
-  hasError: Joi.boolean().required(),
-  error: Joi.string().optional(),
-  inputs: Joi.object().unknown(true),
-});
-type ApiCheckCompletedProperties = Joi.extractType<
-  typeof ApiCheckCompletedSchema
->;
-export const ApiCheckCompleted = DescribeEvent<ApiCheckCompletedProperties>(
+const ApiCheckCompletedSchema = Joi.any();
+export const ApiCheckCompleted = DescribeEvent<CheckAssertionsResult>(
   Events.ApiCheckCompleted,
   ApiCheckCompletedSchema,
-  (props) => `API Check ${props.hasError ? 'failed' : 'succeeded'} `
+  (props) =>
+    `API Check for ${props.mode} task: ${props.taskName} ${
+      props.passed ? 'passed' : 'failed'
+    } `
 );
