@@ -20,7 +20,7 @@ impl DiffVisitors {
 
 type DiffResults = VisitorResults<InteractionDiffResult>;
 
-impl InteractionVisitors for DiffVisitors {
+impl InteractionVisitors<InteractionDiffResult> for DiffVisitors {
   type Path = DiffPathVisitor;
   fn path(&mut self) -> &mut DiffPathVisitor {
     &mut self.path
@@ -45,7 +45,7 @@ impl VisitorWithResults<InteractionDiffResult> for DiffPathVisitor {
   }
 }
 
-impl PathVisitor for DiffPathVisitor {
+impl PathVisitor<InteractionDiffResult> for DiffPathVisitor {
   fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext) {
     if let None = context.path {
       let interaction_trail = InteractionTrail::empty();

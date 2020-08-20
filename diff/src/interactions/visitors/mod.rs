@@ -4,12 +4,17 @@ use super::HttpInteraction;
 use crate::state::endpoint::PathComponentId;
 
 pub trait InteractionVisitors<R> {
-  type Path: PathVisitor<R>;
+  type Path: PathVisitor<R> + VisitorWithResults<R>;
 
   fn path(&mut self) -> &mut Self::Path;
+
+  fn take_results(&mut self) -> Option<Vec<R>> {
+    // TODO: flatten results once we have more types of visitors
+    self.path().take_results()
+  }
 }
 
-pub trait PathVisitor<R>: VisitorWithResults<R> {
+pub trait PathVisitor<R> {
   fn visit(&mut self, interaction: HttpInteraction, context: PathVisitorContext);
 }
 
