@@ -10,3 +10,5 @@ edition = "2018"
 cqrs-core = "0.2.2"
 serde = { version = "1.0.106", features = ["derive"] }
 serde_json = "1.0.57"
+petgraph = "0.5.1"
+petgraph-evcxr = "*"
