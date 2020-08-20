@@ -58,7 +58,7 @@ export default function Navbar(props) {
   const routerPaths = useRouterPaths();
 
   const enabledFeatures = useEnabledFeatures();
-  const shouldShowContractTesting = false; // demo only
+  
   const menuItems = useMemo(
     () => [
       {
@@ -71,11 +71,15 @@ export default function Navbar(props) {
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
         link: routerPaths.docsRoot,
       },
-      (shouldShowContractTesting) && {
-        name: 'Live Contract Testing',
-        icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.testingDashboard,
-      }
+      ...(enabledFeatures && enabledFeatures.TESTING_DASHBOARD
+        ? [
+            {
+              name: 'Live Contract Testing',
+              icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
+              link: routerPaths.testingDashboard,
+            },
+          ]
+        : []),
     ],
     [routerPaths]
   );
