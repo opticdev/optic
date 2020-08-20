@@ -48,55 +48,55 @@ pub struct PathComponentAdded {
   pub path_id: PathComponentId,
   pub parent_path_id: PathComponentId,
   pub name: String,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathComponentRenamed {
-  path_id: PathComponentId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathComponentRemoved {
-  path_id: PathComponentId,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathParameterAdded {
-  path_id: PathComponentId,
-  parent_path_id: PathComponentId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub parent_path_id: PathComponentId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathParameterRenamed {
-  path_id: PathComponentId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathParameterRemoved {
-  path_id: PathComponentId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PathParameterShapeSet {
-  path_id: PathComponentId,
-  shape_descriptor: ShapedRequestParameterShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub path_id: PathComponentId,
+  pub shape_descriptor: ShapedRequestParameterShapeDescriptor,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)] // request parameters

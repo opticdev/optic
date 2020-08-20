@@ -3,8 +3,14 @@ use crate::state::endpoint::PathComponentId;
 use cqrs_core::{Aggregate, AggregateEvent};
 use std::collections::HashMap;
 
+#[derive(Debug)]
+pub struct PathComponentDescriptor {
+  pub is_parameter: bool,
+  pub parent_path_id: PathComponentId,
+  pub name: String,
+}
 pub struct EndpointProjection {
-  pub absolute_paths: HashMap<PathComponentId, String>,
+  pub path_components: HashMap<PathComponentId, PathComponentDescriptor>,
 }
 
 impl EndpointProjection {
@@ -14,21 +20,48 @@ impl EndpointProjection {
     path_id: PathComponentId,
     path_name: String,
   ) {
-    let absolute_paths = &mut self.absolute_paths;
+    let path_components = &mut self.path_components;
+    path_components.insert(
+      path_id,
+      PathComponentDescriptor {
+        is_parameter: false,
+        name: path_name,
+        parent_path_id: parent_path_id,
+      },
+    );
+  }
 
-    let parent_absolute_path = absolute_paths
-      .get(&parent_path_id)
-      .expect("expected parent_path_id to already exist");
-    let absolute_path = format!("{}/{}", &parent_absolute_path, &path_name);
-    absolute_paths.insert(path_id, absolute_path);
+  pub fn with_path_parameter(
+    &mut self,
+    parent_path_id: PathComponentId,
+    path_id: PathComponentId,
+    path_name: String,
+  ) {
+    let path_components = &mut self.path_components;
+    path_components.insert(
+      path_id,
+      PathComponentDescriptor {
+        is_parameter: true,
+        name: path_name,
+        parent_path_id: parent_path_id,
+      },
+    );
   }
 }
 
 impl Default for EndpointProjection {
   fn default() -> Self {
-    let mut absolute_paths = HashMap::new();
-    absolute_paths.insert(PathComponentId::from("root"), String::from(""));
-    EndpointProjection { absolute_paths }
+    let mut path_components = HashMap::new();
+    let root_id = PathComponentId::from("root");
+    path_components.insert(
+      root_id,
+      PathComponentDescriptor {
+        is_parameter: false,
+        parent_path_id: String::from(""),
+        name: String::from(""),
+      },
+    );
+    EndpointProjection { path_components }
   }
 }
 
@@ -44,6 +77,9 @@ impl AggregateEvent<EndpointProjection> for SpecEvent {
       match event {
         EndpointEvent::PathComponentAdded(e) => {
           aggregate.with_path(e.parent_path_id, e.path_id, e.name);
+        }
+        EndpointEvent::PathParameterAdded(e) => {
+          aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name);
         }
         _ => {}
       }

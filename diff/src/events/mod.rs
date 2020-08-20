@@ -16,7 +16,7 @@ pub use http_interaction::HttpInteraction;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct EventContext {
+pub struct EventContext {
   client_id: String,
   client_session_id: String,
   client_command_batch_id: String,
