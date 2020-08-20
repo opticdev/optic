@@ -1,11 +1,11 @@
 pub mod diff;
 mod traverser;
 mod visitors;
-
 pub use crate::events::http_interaction::HttpInteraction;
 pub use crate::projections::endpoint::EndpointProjection;
 pub use crate::queries::endpoint::EndpointQueries;
 pub use diff::InteractionDiffResult;
+use visitors::{InteractionVisitors, PathVisitor};
 
 pub fn diff(
   endpoint_projection: &EndpointProjection,
@@ -17,8 +17,14 @@ pub fn diff(
 
   interaction_traverser.traverse(http_interaction, &mut diff_visitors);
 
-  // TODO: replace by extracting results from visitors
-  vec![]
+  return extract_results(&mut diff_visitors);
+}
+
+//@NOTE it feels weird that I have to do this - not sure the best way to "cast" diff_visitors in line 20 above so I copied this way of doing it.
+fn extract_results(
+  visitors: &mut impl InteractionVisitors<InteractionDiffResult>,
+) -> Vec<InteractionDiffResult> {
+  visitors.take_results().unwrap()
 }
 
 #[cfg(test)]
