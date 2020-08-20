@@ -68,3 +68,29 @@ impl<R> VisitorResults<R> {
     flushed_results
   }
 }
+
+#[cfg(test)]
+mod test {
+  use super::*;
+
+  type TestResults = VisitorResults<u8>;
+
+  #[test]
+  fn can_take_results() {
+    let mut results = TestResults::new();
+
+    results.push(0);
+    results.push(1);
+
+    let taken = results
+      .take_results()
+      .expect("results should have been recorded");
+
+    assert_eq!(taken, vec![0, 1]);
+    assert_eq!(
+      results.take_results().unwrap(),
+      vec![] as Vec<u8>,
+      "taken results are flushed and won't be yielded again"
+    );
+  }
+}
