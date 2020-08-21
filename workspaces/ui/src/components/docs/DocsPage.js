@@ -26,6 +26,7 @@ import { ShapeBox } from '../diff/v2/DiffReviewExpanded';
 import Paper from '@material-ui/core/Paper';
 import EmptyState from '../support/EmptyState';
 import { AddOpticLink, DocumentingYourApi } from '../support/Links';
+import { track } from '../../Analytics'
 
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
@@ -145,6 +146,7 @@ export const DocumentationToc = () => {
                             label="What does this endpoint do?"
                             onChange={(value) => {
                               updateContribution(endpointId, PURPOSE, value);
+                              track("updateContribution", {endpointId, PURPOSE, value})
                             }}
                           />
 
@@ -166,6 +168,7 @@ export const DocumentationToc = () => {
                                 DESCRIPTION,
                                 value
                               );
+                              track("updateContribution", {endpointId, DESCRIPTION, value});
                             }}
                           />
                         </div>
@@ -290,6 +293,7 @@ export const EndpointDocs = (props) => {
                   label="What does this endpoint do?"
                   onChange={(value) => {
                     updateContribution(endpointId, PURPOSE, value);
+                    track("updateContribution", {endpointId, PURPOSE, value})
                   }}
                 />
                 <MarkdownContribution
@@ -297,6 +301,7 @@ export const EndpointDocs = (props) => {
                   label="Detailed Description"
                   onChange={(value) => {
                     updateContribution(endpointId, DESCRIPTION, value);
+                    track("updateContribution", {endpointId, DESCRIPTION, value})
                   }}
                 />
 
@@ -338,6 +343,7 @@ export const EndpointDocs = (props) => {
                           label="Request Body Description"
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
+                            track("updateContribution", {id, DESCRIPTION, value})
                           }}
                         />
                       );
@@ -381,6 +387,7 @@ export const EndpointDocs = (props) => {
                           label={`${statusCode} Response Description`}
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
+                            track("updateContribution", {id, DESCRIPTION, value})
                           }}
                         />
                       );

@@ -14,7 +14,7 @@ import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
 import { DiffCopy } from './DiffCopy';
-import { trackUserEvent } from '../../../Analytics.js'
+import { trackUserEvent, track } from '../../../Analytics.js'
 import { DisplayNextSuggestion } from '@useoptic/analytics/lib/events/diffs'
 
 const useStyles = makeStyles((theme) => ({
@@ -108,6 +108,7 @@ export const DiffHelperCard = (props) => {
                   key={n}
                   onClick={(e) => {
                     e.preventDefault();
+                    track("Demo - Previewing Suggestion", {suggestion: suggestion.action})
                     setSelectedInterpretation(suggestion)
                   }}
                   control={

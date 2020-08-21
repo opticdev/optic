@@ -1,15 +1,11 @@
 import { Client } from '@useoptic/cli-client';
-import EventEmitter from 'events';
 import packageJson from '../package.json';
 import {
-  AnalyticsEventBus,
   newAnalyticsEventBus,
 } from '@useoptic/analytics/lib/eventbus';
 import { consistentAnonymousId } from '@useoptic/analytics/lib/consistentAnonymousId';
-import { ClientContext } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import niceTry from 'nice-try';
 
-const opticVersion = packageJson.version;
 const clientId = `local_cli_${packageJson.version}`;
 
 let isAnalyticsEnabled = window.opticAnalyticsEnabled;
@@ -56,6 +52,11 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
 
 export function trackUserEvent(event) {
   analyticsEvents.emit(event);
+}
+
+export async function track(event, props) {
+  console.group(`Deprecated Event Called ${event}`)
+  console.groupEnd();
 }
 
 // class EventTrackingEmitter extends EventEmitter {}

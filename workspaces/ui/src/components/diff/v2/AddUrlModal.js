@@ -30,7 +30,7 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import { trackUserEvent } from '../../../Analytics';
+import { trackUserEvent, track } from '../../../Analytics';
 import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -76,18 +76,12 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   useEffect(() => {
-    // if (naming) {
-    //   track('Naming Endpoint (uE)', {
-    //     path: newUrl.path,
-    //     method: newUrl.method,
-    //   });
-    // } else {
-    //   track('On Undocumented Url', {
-    //     path: newUrl.path,
-    //     method: newUrl.method,
-    //   });
-    // }
-  });
+    if (naming) {
+      track("Naming Endpoint", { path: newUrl.path, method: newUrl.method });
+    } else {
+      track("On Undocumented Url", { path: newUrl.path, method: newUrl.method });
+    }
+  }, [naming])
 
   const handleClose = () => {
     // track('Closed AddUrlModal');
@@ -160,6 +154,7 @@ export const NewUrlModal = withRfcContext((props) => {
 
   function NamingDialog() {
     const [purpose, setPurpose] = React.useState('');
+
     return (
       <Dialog
         open={true}

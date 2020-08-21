@@ -64,7 +64,7 @@ import {
   useInteractionWithPointer,
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
-import { trackUserEvent } from '../../../Analytics';
+import { trackUserEvent, track } from '../../../Analytics';
 
 function _NewRegions(props) {
   const { newRegions, ignoreDiff, captureId, endpointId } = props;
@@ -79,6 +79,10 @@ function _NewRegions(props) {
   const [showExpanded, setShowExpanded] = useState(false);
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
+  useEffect(() => {
+    track("Show Initial Documentation Page", props)
+  }, [])
+  
   if (newRegions.length === 0) {
     return null;
   }
