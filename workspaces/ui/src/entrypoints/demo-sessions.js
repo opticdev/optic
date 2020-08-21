@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
 import {
@@ -15,6 +15,7 @@ import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Snackbar, makeStyles } from '@material-ui/core';
 import { analyticsEvents } from '../Analytics';
+import * as DiffEvents from '@useoptic/analytics/lib/events/diffs'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
   UpdatedBlueBackground,
@@ -136,7 +137,12 @@ export default function DemoSessions(props) {
   const [commits, setCommits] = useState(0);
   const trackCommit = () => setCommits(commits + 1);
   const [hasCommited, setHasCommited] = useState(false);
-  const [route, setRoute] = useState('');
+  const [route, _setRoute] = useState('');
+  const routeStateRef = useRef(route);
+  const setRoute = (data) => {
+    routeStateRef.current = data;
+    _setRoute(data);
+  }
   const styles = snackbarStyles();
   const [showTooltips, setShowTooltips] = useState(true);
   const disableTooltips = () => setShowTooltips(false);
@@ -175,12 +181,15 @@ export default function DemoSessions(props) {
   }, [props.location.pathname]);
 
   useEffect(() => {
-    analyticsEvents.listen((event) => {
+    console.log("Use effect called");
+    console.trace();
+    const eventsHandler = (event) => {
       console.log(event);
+      console.log(analyticsEvents.eventEmitter.listenerCount('event'))
       const eventProps = event.data;
 
-      switch (event) {
-        case 'updateContribution': {
+      switch (event.type) {
+        case DiffEvents.UpdateContribution.eventName: {
           setMessage({
             message: `Nice! Descriptions will stay attached to their endpoint/fields even when the specification changes!\n\nLet's check back and see if there are any other diffs to approve`,
             action: {
@@ -194,53 +203,51 @@ export default function DemoSessions(props) {
           });
           break;
         }
-        case 'Show Initial Documentation Page': {
+        case DiffEvents.ShowInitialDocumentingView.eventName: {
           setMessage({
             message: `On the left, Optic is showing an example request it observed. The right panel shows the shape Optic detected from that request\n\nTo add this to your documentation, simply click "Document Bodies"`,
           });
           break;
         }
-        case 'Closed AddUrlModal':
-        case 'Changed to UNDOCUMENTED_URL': {
-          if (!hasCommited && props.location.pathname.includes('diffs')) {
-            // we don't need to keep telling them things they already did
-            const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1;
-            if (undocumentedUrlCount > 0) {
-              setMessage({
-                message:
-                  'Here, Optic is showing all urls that received traffic but have not been documented. \n\nChoose a url to document it',
-              });
-            } else {
-              setMessage({
-                message: `All Undocumented URLs have been added to the specification`,
-                action: {
-                  text: 'See Documentation',
-                  href: `/demos/todo/documentation/paths/${route}`,
-                },
-              });
+        case DiffEvents.UserChangedCaptureOverviewTab.eventName: {
+          if (event.data.currentTab === "UNDOCUMENTED_URL") {
+            if (!hasCommited && props.location.pathname.includes('diffs')) {
+              // we don't need to keep telling them things they already did
+              const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1;
+              if (undocumentedUrlCount > 0) {
+                setMessage({
+                  message:
+                    'Here, Optic is showing all urls that received traffic but have not been documented. \n\nChoose a url to document it',
+                });
+              } else {
+                console.log(routeStateRef.current)
+                setMessage({
+                  message: `All Undocumented URLs have been added to the specification`,
+                  action: {
+                    text: 'See Documentation',
+                    href: `/demos/todo/documentation/paths/${routeStateRef.current}`,
+                  },
+                });
+              }
+            }
+          } else if (event.data.currentTab === "ENDPOINT_DIFF") {
+            if (!hasCommited && props.location.pathname.includes('diffs')) {
+              // we don't need to keep telling them things they already did
+              const diffAmount = eventProps.diffCount;
+              if (diffAmount > 0) {
+                setMessage({
+                  message: `Optic shows all your API endpoints. If any endpoints exhibit undocumented behavior, Optic detects it\n\nExample: Click "Creates a new Todo Item" to Review the Diff`,
+                });
+              } else {
+                setMessage({
+                  message: `Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`,
+                });
+              }
             }
           }
           break;
         }
-        case 'Navigating to Review Diff':
-        case 'Changed to ENDPOINT_DIFF': {
-          if (!hasCommited && props.location.pathname.includes('diffs')) {
-            // we don't need to keep telling them things they already did
-            const diffAmount = eventProps.diffCount;
-            if (diffAmount > 0) {
-              setMessage({
-                message: `Optic shows all your API endpoints. If any endpoints exhibit undocumented behavior, Optic detects it\n\nExample: Click "Creates a new Todo Item" to Review the Diff`,
-              });
-            } else {
-              setMessage({
-                message: `Because we've documented all changes in our API's behavior, we can see that the requests are following the expected behavior, and that there are no diffs`,
-              });
-            }
-          }
-          break;
-        }
-        case 'On Undocumented Url':
-        case 'Clicked Undocumented Url': {
+        case DiffEvents.AddUrlModalIdentifyingPathComponents.eventName: {
           setMessage({
             message:
               'If an API path has parameters, they can be documented for consumers. Click the last component of the path, which is an example of a `todo_id`, and click Next.',
@@ -248,7 +255,7 @@ export default function DemoSessions(props) {
           // setMessage(`Since our route is using a path parameter, we can tell Optic to recognize the pattern. Click on ${eventProps.path.split("/").pop()} and change it to say "todo_id"`)
           break;
         }
-        case 'Naming Endpoint': {
+        case DiffEvents.AddUrlModalNaming.eventName: {
           const exampleEndpointName =
             eventProps.method === 'GET'
               ? 'Get specific TODO Item'
@@ -258,43 +265,31 @@ export default function DemoSessions(props) {
           });
           break;
         }
-        case 'Rendered Finalize Card': {
+        case DiffEvents.ShowCommitCard.eventName: {
           setMessage({
             message:
               'To commit these changes to your API Specification, click commit! Optic is recording the history of your API changes, somewhat like Git tracks changes in code.',
           });
           break;
         }
-        case 'Committed Changes to Endpoint': {
+        case DiffEvents.ChangesCommitted.eventName: {
           setHasCommited(true);
           trackCommit();
           if (route.includes('PUT')) {
             setDocumentedAllEndpointDiffs(true);
           }
           // 1 - button is offset
+          console.log(routeStateRef);
           setMessage({
             message: `Awesome! Now that you've committed changes, let's take a look at the documentation!`,
             action: {
               text: 'See Documentation',
-              href: `/demos/todo/documentation/paths/${route}`,
+              href: `/demos/todo/documentation/paths/${routeStateRef.current}`,
             },
           });
           break;
         }
-        case 'Viewing Endpoint Diff': {
-          // setAction(null)
-          // Optic has detected a new field — priority, meaning that there was a change in behavior. Optic detected this, and will now
-          // help you update the specification.
-          // — onclick —
-          // Optic has documented this field — hit approve to save
-          // on approve (1/2)
-          // Optic has noticed that this field is sometimes ommited. We should tell Optic that it is an optional field.
-          // — onclick —
-          // Optic has noted that priority is optional! — hit approve to save
-          // setMessage(`Optic detected a change from the previously documented behavior. We can update the documentation and commit that change in behavior to the specification. Let's add priority as a field. Then, make it optional.`)
-          break;
-        }
-        case 'Demo - Previewing Suggestion': {
+        case DiffEvents.PreviewSuggestion.eventName: {
           let m = '';
           const addingField = eventProps.suggestion.match(
             /Add field '(.*)' as/
@@ -325,7 +320,7 @@ export default function DemoSessions(props) {
           }
           break;
         }
-        case 'Showing recommendation': {
+        case DiffEvents.DisplayNextSuggestion.eventName: {
           let m = '';
           const missingField = eventProps.suggestion.match(
             /Missing (.*) field (.*)/
@@ -349,7 +344,8 @@ export default function DemoSessions(props) {
           break;
         }
       }
-    });
+    };
+    analyticsEvents.listen(eventsHandler);
   }, []);
 
   // event specific info boxes

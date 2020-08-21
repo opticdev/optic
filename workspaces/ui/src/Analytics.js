@@ -44,11 +44,7 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
   return clientContext;
 });
 
-// cli-server consumer
-// analyticsEvents.listen((event) => {
-//   console.log('trying to send up to CLI-server');
-//   // niceTry(async () => client.postTrackingEvents([event]));
-// });
+analyticsEvents.eventEmitter.setMaxListeners(1);
 
 export function trackUserEvent(event) {
   analyticsEvents.emit(event);

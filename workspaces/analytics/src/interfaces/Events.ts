@@ -23,5 +23,10 @@ export const Events = keymirror({
   DisplayNextSuggestion: null,
   PreviewSuggestion: null,
   SuggestionAccepted: null,
+  ShowCommitCard: null,
   ChangesCommitted: null,
+  AddUrlModalNaming: null,
+  AddUrlModalIdentifyingPathComponents: null,
+  ShowInitialDocumentingView: null,
+  UpdateContribution: null,
 });

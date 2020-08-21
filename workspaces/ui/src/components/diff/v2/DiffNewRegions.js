@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import ListItemText from '@material-ui/core/ListItemText';
 import {
   NewBodyDiffRendered,
-  InferPolymorphismEnabledSchema,
+  InferPolymorphismEnabled,
 } from '@useoptic/analytics/lib/events/diffs';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -64,8 +64,8 @@ import {
   useInteractionWithPointer,
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
-import { trackUserEvent, track } from '../../../Analytics';
-
+import { trackUserEvent } from '../../../Analytics';
+import { ShowInitialDocumentingView } from '@useoptic/analytics/lib/events/diffs'
 function _NewRegions(props) {
   const { newRegions, ignoreDiff, captureId, endpointId } = props;
 
@@ -80,7 +80,7 @@ function _NewRegions(props) {
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
   useEffect(() => {
-    track("Show Initial Documentation Page", props)
+    trackUserEvent(ShowInitialDocumentingView.withProps({}));
   }, [])
   
   if (newRegions.length === 0) {
@@ -234,7 +234,7 @@ function _NewRegions(props) {
                     setInferPolymorphism(e.target.checked);
                     if (e.target.checked) {
                       trackUserEvent(
-                        InferPolymorphismEnabledSchema.withProps({
+                        InferPolymorphismEnabled.withProps({
                           captureId,
                           endpointId,
                         })

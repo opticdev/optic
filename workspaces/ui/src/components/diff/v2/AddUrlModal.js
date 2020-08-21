@@ -31,6 +31,7 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { trackUserEvent, track } from '../../../Analytics';
+import { AddUrlModalNaming, AddUrlModalIdentifyingPathComponents } from '@useoptic/analytics/lib/events/diffs'
 import { CaptureContext } from '../../../contexts/CaptureContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -77,9 +78,17 @@ export const NewUrlModal = withRfcContext((props) => {
 
   useEffect(() => {
     if (naming) {
-      track("Naming Endpoint", { path: newUrl.path, method: newUrl.method });
+      // AddUrlModal - Naming Endpoint
+      trackUserEvent(AddUrlModalNaming.withProps({
+        path: newUrl.path, 
+        method: newUrl.method
+      }))
     } else {
-      track("On Undocumented Url", { path: newUrl.path, method: newUrl.method });
+      // AddUrlModal - Path Components
+      trackUserEvent(AddUrlModalIdentifyingPathComponents.withProps({
+        path: newUrl.path, 
+        method: newUrl.method
+      }))
     }
   }, [naming])
 

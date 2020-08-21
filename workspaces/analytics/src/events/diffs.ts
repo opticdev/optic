@@ -138,6 +138,20 @@ export const DiffWasReset = DescribeEvent<DiffWasResetProperties>(
   (props) => `The Diff Was Reset`
 );
 
+const ShowCommitCardSchema = Joi.object({
+  message: Joi.string().required(),
+  captureId: Joi.string().required(),
+  suggestions: Joi.number().required(),
+});
+type ShowCommitCardProperties = Joi.extractType<
+  typeof ChangesCommittedSchema
+>;
+export const ShowCommitCard = DescribeEvent<ShowCommitCardProperties>(
+  Events.ShowCommitCard,
+  ShowCommitCardSchema,
+  (props) => `Commit Card Rendered`
+);
+
 const ChangesCommittedSchema = Joi.object({
   message: Joi.string().required(),
   captureId: Joi.string().required(),
@@ -149,5 +163,57 @@ type ChangesCommittedProperties = Joi.extractType<
 export const ChangesCommitted = DescribeEvent<ChangesCommittedProperties>(
   Events.ChangesCommitted,
   ChangesCommittedSchema,
-  (props) => `The Diff Was Reset`
+  (props) => `The Changes were committed`
 );
+
+const AddUrlModalNamingSchema = Joi.object({
+  method: Joi.string().required(),
+  path: Joi.string().required(),
+});
+type AddUrlModalNamingProperties = Joi.extractType<
+  typeof AddUrlModalNamingSchema
+>;
+export const AddUrlModalNaming = DescribeEvent<AddUrlModalNamingProperties>(
+  Events.AddUrlModalNaming,
+  AddUrlModalNamingSchema,
+  (props) => `Currently naming ${props.method} ${props.path}`
+);
+
+const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
+  method: Joi.string().required(),
+  path: Joi.string().required(),
+});
+type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
+  typeof AddUrlModalIdentifyingPathComponentsSchema
+>;
+export const AddUrlModalIdentifyingPathComponents = DescribeEvent<AddUrlModalIdentifyingPathComponentsProperties>(
+  Events.AddUrlModalIdentifyingPathComponents,
+  AddUrlModalIdentifyingPathComponentsSchema,
+  (props) => `Currently identifying path components for ${props.method} ${props.path}`
+);
+
+const ShowInitialDocumentingViewSchema = Joi.object({
+});
+type ShowInitialDocumentingViewProperties = Joi.extractType<
+  typeof ShowInitialDocumentingViewSchema
+>;
+export const ShowInitialDocumentingView = DescribeEvent<ShowInitialDocumentingViewProperties>(
+  Events.ShowInitialDocumentingView,
+  ShowInitialDocumentingViewSchema,
+  () => `Showing initial documenting view`
+);
+
+const UpdateContributionSchema = Joi.object({
+  id: Joi.string().required(),
+  purpose: Joi.string().required(),
+  value: Joi.string().required(),
+});
+type UpdateContributionProperties = Joi.extractType<
+  typeof UpdateContributionSchema
+>;
+export const UpdateContribution = DescribeEvent<UpdateContributionProperties>(
+  Events.UpdateContribution,
+  UpdateContributionSchema,
+  ({id, purpose, value}) => `Updated ${id} - ${purpose} to be ${value}`
+);
+
