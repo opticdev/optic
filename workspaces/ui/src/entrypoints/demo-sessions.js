@@ -15,7 +15,7 @@ import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import { useSnackbar } from 'notistack';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Button } from '@material-ui/core';
-import { trackEmitter } from '../Analytics';
+import { analyticsEvents } from '../Analytics';
 
 export default function DemoSessions(props) {
   const match = useRouteMatch();
@@ -119,6 +119,12 @@ export default function DemoSessions(props) {
     }
   }, [props.location.pathname]);
 
+  useEffect(() => {
+    analyticsEvents.listen((event) => {
+      console.log(event);
+    });
+  }, [])
+  
   // event specific info boxes
   // trackEmitter.on('event', (event, eventProps) => {
   //   switch (event) {

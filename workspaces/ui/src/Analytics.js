@@ -36,7 +36,7 @@ const userPromise = new Promise(async (resolve) => {
   resolve(userToken || consistentAnonymousId);
 });
 
-const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
+export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
   const clientAgent = await userPromise;
 
   const clientContext = {
@@ -49,10 +49,10 @@ const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
 });
 
 // cli-server consumer
-analyticsEvents.listen((event) => {
-  console.log('trying to send up to CLI-server');
-  // niceTry(async () => client.postTrackingEvents([event]));
-});
+// analyticsEvents.listen((event) => {
+//   console.log('trying to send up to CLI-server');
+//   // niceTry(async () => client.postTrackingEvents([event]));
+// });
 
 export function trackUserEvent(event) {
   analyticsEvents.emit(event);

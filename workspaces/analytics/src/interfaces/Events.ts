@@ -20,6 +20,7 @@ export const Events = keymirror({
   UserBeganAddingNewUrl: null,
   UserFinishedAddingNewUrl: null,
   DiffWasReset: null,
+  DisplayNextSuggestion: null,
   PreviewSuggestion: null,
   SuggestionAccepted: null,
   ChangesCommitted: null,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import { DocDivider } from '../../docs/DocConstants';
@@ -14,6 +14,8 @@ import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
 import { DiffCopy } from './DiffCopy';
+import { trackUserEvent } from '../../../Analytics.js'
+import { DisplayNextSuggestion } from '@useoptic/analytics/lib/events/diffs'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,9 +74,20 @@ export const DiffHelperCard = (props) => {
     (selectedDiff && selectedDiff.inRequest && inRequest) ||
     (selectedDiff.inResponse && inResponse);
 
+  useEffect(() => {
+    if (!showIt) { return; }
+    const suggestion = mapScala(description.summary)((i) => {
+      return i.value
+    }).join(" ");
+    trackUserEvent(DisplayNextSuggestion.withProps({
+      suggestion
+    }))
+  }, [showIt, description.summary]);
+
   if (!showIt) {
     return null;
   }
+
 
   return (
     <div className={classes.root}>
@@ -93,7 +106,10 @@ export const DiffHelperCard = (props) => {
               return (
                 <FormControlLabel
                   key={n}
-                  onClick={() => setSelectedInterpretation(suggestion)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedInterpretation(suggestion)
+                  }}
                   control={
                     <Radio
                       size="small"

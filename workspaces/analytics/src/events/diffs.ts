@@ -101,6 +101,19 @@ export const SuggestionAccepted = DescribeEvent<SuggestionAcceptedProperties>(
   (props) => `Suggestion to '${props.suggestion}' was accepted`
 );
 
+const DisplayNextSuggestionSchema = Joi.object({
+  suggestion: Joi.string().required(),
+});
+type DisplayNextSuggestionProperties = Joi.extractType<
+  typeof DisplayNextSuggestionSchema
+>;
+export const DisplayNextSuggestion = DescribeEvent<DisplayNextSuggestionProperties>(
+  Events.DisplayNextSuggestion,
+  DisplayNextSuggestionSchema,
+  (props) =>
+    `Summary: '${props.suggestion}' `
+);
+
 const PreviewSuggestionSchema = Joi.object({
   captureId: Joi.string().required(),
   diff: Joi.string().required(),
