@@ -34,6 +34,12 @@ export interface IOpticTask {
   targetUrl?: string;
 }
 
+export interface IOpticScript {
+  command?: string;
+  dependsOn: string | string[];
+  install?: string;
+}
+
 export interface IOpticTaskAliases {
   inboundUrl?: string;
 }
@@ -44,6 +50,9 @@ export interface IApiCliConfig {
   name: string;
   tasks: {
     [key: string]: IOpticTask;
+  };
+  scripts?: {
+    [key: string]: string | IOpticScript;
   };
   ignoreRequests?: string[];
 }
