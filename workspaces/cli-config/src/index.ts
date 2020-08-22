@@ -35,8 +35,8 @@ export interface IOpticTask {
 }
 
 export interface IOpticScript {
-  command?: string;
-  dependsOn: string | string[];
+  command: string;
+  dependsOn?: string | string[];
   install?: string;
 }
 

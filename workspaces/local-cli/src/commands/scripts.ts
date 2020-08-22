@@ -1,5 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import { verifyTask } from '../shared/verify';
+// @ts-ignore
 import {
   getPathsRelativeToConfig,
   IOpticTask,
@@ -92,14 +93,12 @@ export default class Scripts extends Command {
   }
 
   async executeScript(script: IOpticScript) {
-    const { json, yaml } = (await generateOas(true, true)) as {
-      json: string;
-      yaml: string;
-    };
-
-    const env = {
-      OPENAPI_JSON: json,
-      OPENAPI_YAML: yaml,
+    const paths: any = await generateOas(true, true)!;
+    const env: any = {
+      //@ts-ignore
+      OPENAPI_JSON: paths.json,
+      //@ts-ignore
+      OPENAPI_YAML: paths.yaml,
     };
 
     console.log(`Running command: ${colors.grey(script.command)} `);
