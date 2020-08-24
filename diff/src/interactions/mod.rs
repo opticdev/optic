@@ -17,14 +17,7 @@ pub fn diff(
 
   interaction_traverser.traverse(http_interaction, &mut diff_visitors);
 
-  return extract_results(&mut diff_visitors);
-}
-
-//@NOTE it feels weird that I have to do this - not sure the best way to "cast" diff_visitors in line 20 above so I copied this way of doing it.
-fn extract_results(
-  visitors: &mut impl InteractionVisitors<InteractionDiffResult>,
-) -> Vec<InteractionDiffResult> {
-  visitors.take_results().unwrap()
+  diff_visitors.take_results().unwrap()
 }
 
 #[cfg(test)]
