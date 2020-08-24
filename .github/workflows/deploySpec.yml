@@ -23,7 +23,7 @@ jobs:
             echo ::set-env name=BUCKET::optic-apidocs-website-staging
             echo ::set-env name=SITE_URL::https://apidocs.o3c.info
             echo ::set-env name=BRANCH_NAME::feature/spec-publisher
-            echo ::set-env name=API_URL::http://7e2be0d6-f3cfeb1-afd79c016934f342.elb.us-east-1.amazonaws.com
+            echo ::set-env name=API_URL::https://staging.infra.opticdev.com
           fi
 
       - name: Configure AWS Credentials
