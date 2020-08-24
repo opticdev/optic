@@ -14,7 +14,7 @@ function createSpecSession(specId) {
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
-		const ApiUrl = 'http://localhost:4000/api/v1';
+		const ApiUrl = `${process.env.REACT_APP_API_URL}/api/v1`;
 		fetchedData = axios({
 			method: 'get',
 			url: `${ApiUrl}/sharing/public/spec-urls/${specId}`

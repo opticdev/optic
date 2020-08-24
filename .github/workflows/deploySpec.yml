@@ -18,10 +18,12 @@ jobs:
             echo ::set-env name=BUCKET::optic-apidocs-website-production
             echo ::set-env name=SITE_URL::https://apidocs.useoptic.com
             echo ::set-env name=BRANCH_NAME::release
+            echo ::set-env name=API_URL::https://api.opticnerve.net
           elif [ "$BRANCH" = "refs/heads/feature/spec-publisher" ]; then
             echo ::set-env name=BUCKET::optic-apidocs-website-staging
             echo ::set-env name=SITE_URL::https://apidocs.o3c.info
             echo ::set-env name=BRANCH_NAME::feature/spec-publisher
+            echo ::set-env name=API_URL::http://7e2be0d6-f3cfeb1-afd79c016934f342.elb.us-east-1.amazonaws.com
           fi
 
       - name: Configure AWS Credentials
@@ -54,6 +56,7 @@ jobs:
         working-directory: ./specRepo
         env:
           PUBLIC_URL: ${{ env.SITE_URL }}
+          REACT_APP_API_URL: ${{ env.API_URL }}
           CI: false # required since otherwise the warnings in react cause a fail to compile
 
       # `--acl=public-read` is neceesary because the prod account is uploading the files to the staging bucket,

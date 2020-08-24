@@ -6,7 +6,7 @@ const apiBaseUrl = urljoin(
   apiPathPrefix
 );
 
-const specViewerUrl = process.env.OPTIC_LOCAL_SPEC_VIEWER_URL || 'https://app.useoptic.com'
+const specViewerUrl = process.env.OPTIC_LOCAL_SPEC_VIEWER_URL || 'https://apidocs.useoptic.com'
 
 const Config = {
   apiBaseUrl,
