@@ -1,6 +1,9 @@
+use super::EventLoadingError;
+use avro_rs;
 use cqrs_core::Event;
 use serde::Deserialize;
 use serde_json;
+use std::io;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
@@ -53,13 +56,24 @@ impl HttpInteraction {
   pub fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
     serde_json::from_str(json)
   }
+
+  pub fn from_avro<R>(source: R) -> Result<impl Iterator<Item = Self>, EventLoadingError>
+  where
+    R: io::Read,
+  {
+    let reader = avro_rs::Reader::new(source)?;
+
+    let interactions = reader.map(|value| avro_rs::from_value(&value.unwrap()).unwrap());
+
+    Ok(interactions)
+  }
 }
 
 #[cfg(test)]
 mod test {
   use super::*;
   #[test]
-  fn can_deserialize_interaction() {
+  fn can_deserialize_interaction_from_json_str() {
     let json = r#"{
       "uuid": "3",
       "request": {

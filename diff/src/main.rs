@@ -32,6 +32,7 @@ fn main() {
         Err(errors::EventLoadingError::Json(err)) => {
             eprintln!("Specification JSON file could not be parsed: {}", err);
         }
+        _ => unreachable!("Specification file not currently serialized as any other but JSON"),
     };
 }
 

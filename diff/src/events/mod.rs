@@ -53,6 +53,7 @@ impl SpecEvent {
 
 #[derive(Debug)]
 pub enum EventLoadingError {
+  Avro(avro_rs::Error),
   Io(io::Error),
   Json(serde_json::Error),
 }
@@ -70,5 +71,11 @@ impl From<serde_json::Error> for EventLoadingError {
       Category::Io => EventLoadingError::Io(err.into()),
       Category::Syntax | Category::Data | Category::Eof => EventLoadingError::Json(err),
     }
+  }
+}
+
+impl From<avro_rs::Error> for EventLoadingError {
+  fn from(err: avro_rs::Error) -> EventLoadingError {
+    EventLoadingError::Avro(err)
   }
 }
