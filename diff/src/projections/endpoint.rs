@@ -5,6 +5,8 @@ use petgraph::dot::Dot;
 use petgraph::graph::Graph;
 use std::collections::HashMap;
 
+pub const ROOT_PATH_ID: &str = "root";
+
 #[derive(Debug)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
@@ -69,7 +71,7 @@ impl EndpointProjection {
 
 impl Default for EndpointProjection {
   fn default() -> Self {
-    let root_id = String::from("root");
+    let root_id = String::from(ROOT_PATH_ID);
     let mut graph: Graph<Node, Edge> = Graph::new();
     let root_index = graph.add_node(Node::PathComponent(
       root_id.clone(),

@@ -1,4 +1,4 @@
-use crate::projections::endpoint::{Edge, EndpointProjection, Node};
+use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
 use crate::state::endpoint::PathComponentId;
 use petgraph::graph::Graph;
 use petgraph::visit::EdgeFilteredNeighborsDirected;
@@ -13,13 +13,13 @@ impl<'a> EndpointQueries<'a> {
       endpoint_projection,
     }
   }
-  pub fn resolve_path(&self, path: &String, relative_to: &'a String) -> Option<&PathComponentId> {
+  pub fn resolve_path(&self, path: &String) -> Option<&str> {
     println!("{}", path);
     let mut path_components = path.split('/');
     // skip leading empty
     path_components.next();
     
-    let mut last_resolved_path_id = Some(relative_to);
+    let mut last_resolved_path_id = Some(ROOT_PATH_ID);
     while let Some(s) = path_components.next() {
       println!("trying to match segment {}", s);
       let node_index = self.graph_get_index(last_resolved_path_id.unwrap());
@@ -74,10 +74,10 @@ impl<'a> EndpointQueries<'a> {
       }
       return None;
     }
-    return last_resolved_path_id;
+    last_resolved_path_id
   }
 
-  fn graph_get_index(&self, node_id: &PathComponentId) -> &petgraph::graph::NodeIndex {
+  fn graph_get_index(&self, node_id: &str) -> &petgraph::graph::NodeIndex {
     return self
       .endpoint_projection
       .node_id_to_index

@@ -1,7 +1,7 @@
 pub mod diff;
 
 use super::HttpInteraction;
-use crate::state::endpoint::PathComponentId;
+use crate::state::endpoint::{PathComponentId, PathComponentIdRef};
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;
@@ -39,7 +39,7 @@ pub trait PathVisitor<R>: InteractionVisitor<R> {
 }
 
 pub struct PathVisitorContext<'a> {
-  pub path: Option<&'a PathComponentId>,
+  pub path: Option<PathComponentIdRef<'a>>,
 }
 
 // Results

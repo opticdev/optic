@@ -2,6 +2,7 @@ use super::visitors::{InteractionVisitors, PathVisitor, PathVisitorContext};
 use crate::interactions::HttpInteraction;
 use crate::queries::endpoint::EndpointQueries;
 use crate::state::endpoint::PathComponentId;
+use crate::projections::endpoint::ROOT_PATH_ID;
 
 pub struct Traverser<'a> {
   endpoint_queries: &'a EndpointQueries<'a>,
@@ -17,11 +18,10 @@ impl<'a> Traverser<'a> {
     interaction: HttpInteraction,
     visitors: &mut impl InteractionVisitors<R>,
   ) {
-    let root_id = String::from("root");
     let path_visitor = visitors.path();
     let resolved_path = self
       .endpoint_queries
-      .resolve_path(&interaction.request.path, &root_id);
+      .resolve_path(&interaction.request.path);
     path_visitor.visit(
       &interaction,
       PathVisitorContext {
