@@ -50,7 +50,7 @@ jobs:
           . ./sourceme.sh && optic_build
         working-directory: ./specRepo
       - name: Build Demo Site
-        run: yarn build-demo
+        run: yarn build-spec
         working-directory: ./specRepo
         env:
           PUBLIC_URL: ${{ env.SITE_URL }}
