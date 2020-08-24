@@ -1,7 +1,5 @@
 use cqrs_core::Aggregate;
-use optic_diff::events::{HttpInteraction, SpecEvent};
-use optic_diff::interactions::diff;
-use optic_diff::projections::endpoint::EndpointProjection;
+use optic_diff::{diff_interaction, EndpointProjection, HttpInteraction, SpecEvent};
 
 #[test]
 fn can_yield_umatched_request_url() {
@@ -20,7 +18,11 @@ fn can_yield_umatched_request_url() {
     events_projection.apply(event)
   }
   for node_index in events_projection.graph.node_indices() {
-    println!("{:?}: {:?}", node_index, events_projection.graph.node_weight(node_index).unwrap())
+    println!(
+      "{:?}: {:?}",
+      node_index,
+      events_projection.graph.node_weight(node_index).unwrap()
+    )
   }
   let interaction = HttpInteraction::from_json_str(
     r#"{
@@ -61,7 +63,6 @@ fn can_yield_umatched_request_url() {
   )
   .expect("example http interaction should deserialize");
 
-  let results = diff(&mut events_projection, interaction);
+  let results = diff_interaction(&mut events_projection, interaction);
   assert_eq!(results.len(), 1);
-  
 }

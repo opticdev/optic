@@ -1,7 +1,15 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
-pub mod events;
-pub mod interactions;
-pub mod projections;
-pub mod queries;
-pub mod state;
+mod events;
+mod interactions;
+mod projections;
+mod queries;
+mod state;
+
+pub use events::{HttpInteraction, SpecEvent};
+pub use interactions::diff as diff_interaction;
+pub use projections::endpoint::EndpointProjection;
+
+pub mod errors {
+  pub use super::events::EventLoadingError;
+}

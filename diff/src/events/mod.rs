@@ -43,8 +43,7 @@ impl Event for SpecEvent {
 
 impl SpecEvent {
   pub fn from_file(filename: &str) -> Result<Vec<SpecEvent>, EventLoadingError> {
-    let file_contents =
-      fs::read_to_string(filename).expect(&format!("File at {} could not be read", &filename));
+    let file_contents = fs::read_to_string(filename)?;
 
     let events: Vec<SpecEvent> = serde_json::from_str(&file_contents)?;
 
@@ -58,7 +57,12 @@ pub enum EventLoadingError {
   Json(serde_json::Error),
 }
 
-// We only have to implement this trait for serde_json::Error as handle conversion from the io::Error
+impl From<io::Error> for EventLoadingError {
+  fn from(err: io::Error) -> EventLoadingError {
+    EventLoadingError::Io(err)
+  }
+}
+
 impl From<serde_json::Error> for EventLoadingError {
   fn from(err: serde_json::Error) -> EventLoadingError {
     use serde_json::error::Category;
