@@ -17,9 +17,11 @@ jobs:
           if [ "$BRANCH" = "refs/heads/release" ]; then
             echo ::set-env name=BUCKET::optic-apidocs-website-production
             echo ::set-env name=SITE_URL::https://apidocs.useoptic.com
-          elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
+            echo ::set-env name=BRANCH_NAME::release
+          elif [ "$BRANCH" = "refs/heads/feature/spec-publisher" ]; then
             echo ::set-env name=BUCKET::optic-apidocs-website-staging
             echo ::set-env name=SITE_URL::https://apidocs.o3c.info
+            echo ::set-env name=BRANCH_NAME::feature/spec-publisher
           fi
 
       - name: Configure AWS Credentials
@@ -34,7 +36,7 @@ jobs:
       - name: Checkout Optic Repository
         uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
         with:
-            ref: $BRANCH
+            ref: $BRANCH_NAME
             path: specRepo
             token: ${{ github.token }}
       - name: Install Dependencies and Build Optic
