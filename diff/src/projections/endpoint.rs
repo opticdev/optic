@@ -23,6 +23,10 @@ pub enum Edge {
 
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
+  
+  // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to
+  // which no longer exist or point to a different node. Compiler can't track these nodes for us. Do not delete nodes
+  // without rebuilding this map.
   pub node_id_to_index: HashMap<PathComponentId, petgraph::graph::NodeIndex>,
 }
 
