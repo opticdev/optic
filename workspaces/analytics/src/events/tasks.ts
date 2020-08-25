@@ -7,6 +7,7 @@ import 'joi-extract-type';
 // Sent whenever an API is created
 const StartedTaskWithLocalCLISchema = Joi.object({
   captureId: Joi.string().required(),
+  cwd: Joi.string().required(),
   inputs: Joi.object().unknown(true),
 });
 type StartedTaskWithLocalCLIProperties = Joi.extractType<

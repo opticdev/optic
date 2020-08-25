@@ -74,6 +74,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     trackUserEvent(
       StartedTaskWithLocalCLI.withProps({
         inputs: opticTaskToProps('', taskConfig),
+        cwd: this.paths.cwd,
         captureId: this.captureId,
       })
     );
