@@ -147,7 +147,7 @@ export default function DemoSessions(props) {
     if (props.location.pathname.includes("documentation/paths")) {
       // then be like "Lets document a new endpoint" (force the right tab when you redirect)
       setMessage({
-        message: `Here is the specification for your endpoint. You can add custom descriptions anywhere to help explain how the works.`,
+        message: `Here is the specification for your endpoint. You can add custom descriptions anywhere to help explain how the endpoint works.`,
       })
     } else if (props.location.pathname.includes("documentation")) {
       setMessage({
