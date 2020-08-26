@@ -47,10 +47,11 @@ pub struct Body {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
-  shapeHashV1Base64: Option<String>,
-  asJsonString: Option<String>,
-  asText: Option<String>,
+  shape_hash_v1_base64: Option<String>,
+  as_json_string: Option<String>,
+  as_text: Option<String>,
 }
 
 // impl Default for ArbitraryData {
