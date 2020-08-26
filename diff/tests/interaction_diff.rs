@@ -1,5 +1,7 @@
 use cqrs_core::Aggregate;
 use optic_diff::{diff_interaction, EndpointProjection, HttpInteraction, SpecEvent};
+use petgraph::dot::{Dot, Config};
+use insta::assert_debug_snapshot;
 
 #[test]
 fn can_yield_umatched_request_url() {
@@ -24,6 +26,8 @@ fn can_yield_umatched_request_url() {
       events_projection.graph.node_weight(node_index).unwrap()
     )
   }
+  assert_debug_snapshot!(Dot::with_config(&events_projection.graph, &[Config::EdgeNoLabel]));
+
   let interaction = HttpInteraction::from_json_str(
     r#"{
     "uuid": "5",

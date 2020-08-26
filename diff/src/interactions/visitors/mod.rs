@@ -5,8 +5,11 @@ use crate::state::endpoint::{PathComponentId, PathComponentIdRef};
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;
+  type RequestBody: RequestBodyVisitor<R>;
 
   fn path(&mut self) -> &mut Self::Path;
+
+  fn request_body(&mut self) -> &mut Self::RequestBody;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
     // TODO: flatten results once we have more types of visitors
@@ -32,6 +35,11 @@ pub trait InteractionVisitor<R> {
       None
     }
   }
+}
+
+pub trait RequestBodyVisitor<R>: InteractionVisitor<R> {
+  fn begin(&mut self);
+  fn end(&mut self);
 }
 
 pub trait PathVisitor<R>: InteractionVisitor<R> {

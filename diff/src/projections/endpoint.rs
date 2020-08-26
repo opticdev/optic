@@ -1,5 +1,5 @@
 use crate::events::{EndpointEvent, SpecEvent};
-use crate::state::endpoint::PathComponentId;
+use crate::state::endpoint::*;
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::dot::Dot;
 use petgraph::graph::Graph;
@@ -28,9 +28,14 @@ pub struct RequestBodyDescriptor {
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
+
 #[derive(Debug)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
+  HttpMethod(HttpMethod),
+  HttpStatusCode(HttpStatusCode),
+  Request(RequestId, RequestBodyDescriptor),
+  Response(ResponseId, ResponseBodyDescriptor),
 }
 
 #[derive(Debug)]
@@ -40,7 +45,6 @@ pub enum Edge {
 
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
-  
   // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to
   // which no longer exist or point to a different node. Compiler can't track these nodes for us. Do not delete nodes
   // without rebuilding this map.
@@ -88,6 +92,129 @@ impl EndpointProjection {
       .graph
       .add_edge(node_index, parent_node_index, Edge::IsChildOf);
   }
+
+  pub fn with_request(
+    &mut self,
+    path_id: PathComponentId,
+    http_method: HttpMethod,
+    request_id: RequestId,
+  ) {
+    let path_node_index = *self
+      .node_id_to_index
+      .get(&path_id)
+      .expect("expected path_id to have a corresponding node");
+    let method_node_index = self.ensure_method_node(path_node_index, http_method);
+    let request_node = Node::Request(request_id.clone(), RequestBodyDescriptor { body: None });
+    let request_node_index = self.graph.add_node(request_node);
+    self
+      .graph
+      .add_edge(request_node_index, method_node_index, Edge::IsChildOf);
+    self.node_id_to_index.insert(request_id, request_node_index);
+  }
+
+  fn ensure_method_node(
+    &mut self,
+    path_node_index: petgraph::graph::NodeIndex,
+    http_method: HttpMethod,
+  ) -> petgraph::graph::NodeIndex {
+    let mut children = self
+      .graph
+      .neighbors_directed(path_node_index, petgraph::Direction::Incoming);
+    // ensure method node
+    let method_node_index_option = children.find(|node_index| {
+      let node = self.graph.node_weight(*node_index).unwrap();
+      match node {
+        Node::HttpMethod(method) => *method == http_method,
+        _ => false,
+      }
+    });
+    let method_node_index = if let None = method_node_index_option {
+      let method_node = Node::HttpMethod(http_method);
+      let method_node_index = self.graph.add_node(method_node);
+      self
+        .graph
+        .add_edge(method_node_index, path_node_index, Edge::IsChildOf);
+      method_node_index
+    } else {
+      method_node_index_option.unwrap()
+    };
+    method_node_index
+  }
+
+  fn ensure_status_code_node(
+    &mut self,
+    method_node_index: petgraph::graph::NodeIndex,
+    http_status_code: HttpStatusCode,
+  ) -> petgraph::graph::NodeIndex {
+    let mut children = self
+      .graph
+      .neighbors_directed(method_node_index, petgraph::Direction::Incoming);
+    // ensure method node
+    let status_code_node_index_option = children.find(|node_index| {
+      let node = self.graph.node_weight(*node_index).unwrap();
+      match node {
+        Node::HttpStatusCode(status_code) => *status_code == http_status_code,
+        _ => false,
+      }
+    });
+    let status_code_node_index = if let None = status_code_node_index_option {
+      let status_code_node = Node::HttpStatusCode(http_status_code);
+      let status_code_node_index = self.graph.add_node(status_code_node);
+      self
+        .graph
+        .add_edge(status_code_node_index, method_node_index, Edge::IsChildOf);
+      status_code_node_index
+    } else {
+      status_code_node_index_option.unwrap()
+    };
+    status_code_node_index
+  }
+
+  pub fn with_response_body(
+    &mut self,
+    response_id: ResponseId,
+    http_content_type: HttpContentType,
+    shape_id: ShapeId,
+  ) {
+    let response_node_index = self
+      .node_id_to_index
+      .get(&response_id)
+      .expect("expected response_id to have a corresponding node");
+    let response_node = self.graph.node_weight_mut(*response_node_index).unwrap();
+    match response_node {
+      Node::Response(id, body_descriptor) => {
+        body_descriptor.body = Some(BodyDescriptor {
+          http_content_type,
+          root_shape_id: shape_id,
+        });
+      }
+      _ => {}
+    }
+  }
+
+  pub fn with_response(
+    &mut self,
+    path_id: PathComponentId,
+    http_method: HttpMethod,
+    http_status_code: HttpStatusCode,
+    response_id: ResponseId,
+  ) {
+    let path_node_index = *self
+      .node_id_to_index
+      .get(&path_id)
+      .expect("expected path_id to have a corresponding node");
+    let method_node_index = self.ensure_method_node(path_node_index, http_method);
+    let status_code_node_index = self.ensure_status_code_node(method_node_index, http_status_code);
+
+    let response_node = Node::Response(response_id.clone(), ResponseBodyDescriptor { body: None });
+    let response_node_index = self.graph.add_node(response_node);
+    self
+      .graph
+      .add_edge(response_node_index, status_code_node_index, Edge::IsChildOf);
+    self
+      .node_id_to_index
+      .insert(response_id, response_node_index);
+  }
 }
 
 impl Default for EndpointProjection {
@@ -126,6 +253,19 @@ impl AggregateEvent<EndpointProjection> for SpecEvent {
         }
         EndpointEvent::PathParameterAdded(e) => {
           aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
+        }
+        EndpointEvent::RequestAdded(e) => {
+          aggregate.with_request(e.path_id, e.http_method, e.request_id);
+        }
+        EndpointEvent::ResponseAddedByPathAndMethod(e) => {
+          aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
+        }
+        EndpointEvent::ResponseBodySet(e) => {
+          aggregate.with_response_body(
+            e.response_id,
+            e.body_descriptor.http_content_type,
+            e.body_descriptor.shape_id,
+          );
         }
         _ => {}
       }
