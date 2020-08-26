@@ -107,15 +107,15 @@ pub struct RequestParameterAddedByPathAndMethod {
   pub http_method: String,
   pub parameter_location: String,
   pub name: String,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestParameterRenamed {
-  parameter_id: RequestParameterId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub parameter_id: RequestParameterId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
@@ -123,21 +123,21 @@ pub struct RequestParameterRenamed {
 pub struct RequestParameterShapeSet {
   pub parameter_id: RequestParameterId,
   pub parameter_descriptor: ShapedRequestParameterShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestParameterShapeUnset {
-  parameter_id: RequestParameterId,
-  event_context: Option<EventContext>,
+  pub parameter_id: RequestParameterId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestParameterRemoved {
-  parameter_id: RequestParameterId,
-  event_context: Option<EventContext>,
+  pub parameter_id: RequestParameterId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)] // Request events
@@ -146,37 +146,37 @@ pub struct RequestAdded {
   pub request_id: RequestId,
   pub path_id: PathComponentId,
   pub http_method: String,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestContentTypeSet {
-  request_id: RequestId,
-  http_content_type: String,
-  event_context: Option<EventContext>,
+  pub request_id: RequestId,
+  pub http_content_type: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBodySet {
-  request_id: RequestId,
-  // bodyDescriptor: ShapedBodyDescriptor,
-  event_context: Option<EventContext>,
+  pub request_id: RequestId,
+  // pub bodyDescriptor: ShapedBodyDescriptor,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestBodyUnset {
-  request_id: RequestId,
-  event_context: Option<EventContext>,
+  pub request_id: RequestId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestRemoved {
-  request_id: RequestId,
-  event_context: Option<EventContext>,
+  pub request_id: RequestId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)] // Response events
@@ -186,23 +186,23 @@ pub struct ResponseAddedByPathAndMethod {
   pub path_id: PathComponentId,
   pub http_method: String,
   pub http_status_code: u16,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ResponseStatusCodeSet {
-  response_id: ResponseId,
-  http_status_code: u16,
-  event_context: Option<EventContext>,
+  pub response_id: ResponseId,
+  pub http_status_code: u16,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ResponseContentTypeSet {
-  response_id: ResponseId,
-  http_content_type: String,
-  event_context: Option<EventContext>,
+  pub response_id: ResponseId,
+  pub http_content_type: String,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
@@ -210,21 +210,21 @@ pub struct ResponseContentTypeSet {
 pub struct ResponseBodySet {
   pub response_id: ResponseId,
   pub body_descriptor: ShapedBodyDescriptor,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ResponseBodyUnset {
-  response_id: ResponseId,
-  event_context: Option<EventContext>,
+  pub response_id: ResponseId,
+  pub event_context: Option<EventContext>,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ResponseRemoved {
-  response_id: ResponseId,
-  event_context: Option<EventContext>,
+  pub response_id: ResponseId,
+  pub event_context: Option<EventContext>,
 }
 
 impl Event for EndpointEvent {

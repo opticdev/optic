@@ -12,11 +12,28 @@ pub struct PathComponentDescriptor {
   pub is_parameter: bool,
   pub name: String,
 }
+
+#[derive(Debug)]
+pub struct BodyDescriptor {
+  pub http_content_type: HttpContentType,
+  pub root_shape_id: ShapeId,
+}
+
+#[derive(Debug)]
+pub struct RequestBodyDescriptor {
+  pub body: Option<BodyDescriptor>,
+}
+
+#[derive(Debug)]
+pub struct ResponseBodyDescriptor {
+  pub body: Option<BodyDescriptor>,
+}
 #[derive(Debug)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
 }
 
+#[derive(Debug)]
 pub enum Edge {
   IsChildOf,
 }
