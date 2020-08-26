@@ -40,13 +40,30 @@ export class Compare extends Command {
       name: "specUrl",
       description: "the url where the head specification is located (use ci publish)",
       required: false
+    }),
+    escape: flags.boolean({
+      name: "escape",
+      description: "condense all output to be in one line (ideal for bash exporting)",
+      required: false
     })
   }
+
+  escapeMode: boolean = false;
+  outputString: string = "";
+
+  output(message: any = "") {
+    if (this.escapeMode) {
+      this.outputString += message + "\n";
+    } else {
+      this.log(message);
+    }
+  }
+
   async run() {
     const { args, flags } = this.parse(Compare);
     const { base, head } = args;
-    const { specUrl } = flags;
-    
+    const { specUrl, escape } = flags;
+    this.escapeMode = escape;
     const changelogArray = ChangeLogFacade.from(base, head);
     const table = ["| Endpoint   |      Name      |  Status |", "|----------|:-------------:|------:|"];
 
@@ -64,14 +81,18 @@ export class Compare extends Command {
     }));
 
     if (changes.length === 0) {
-      this.log(`**No changes detected!**`)
+      this.output(`**No changes detected!**`)
     } else {
       table.push(...changes);
-      this.log(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`)
-      this.log(table.join("\n"));
+      this.output(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`)
+      this.output(table.join("\n"));
     }
-    this.log();
-    this.log(`See full specification @ ${specUrl}`)
-    this.log("#### Powered by Optic");
+    this.output();
+    this.output(`See full specification @ ${specUrl}`)
+    this.output("#### Powered by Optic");
+
+    if (this.escapeMode) {
+      this.log(JSON.stringify(this.outputString))
+    }
   }
 }
