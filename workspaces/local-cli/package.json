@@ -23,7 +23,7 @@
     "@useoptic/cli-scripts": "8.2.11",
     "@useoptic/cli-server": "8.2.11",
     "@useoptic/cli-shared": "8.2.11",
-    "@useoptic/domain": "10.0.6",
+    "@useoptic/domain": "10.0.7",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
