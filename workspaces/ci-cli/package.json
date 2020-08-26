@@ -17,6 +17,8 @@
     "@oclif/plugin-help": "^3",
     "@useoptic/cli-config": "8.2.11",
     "@useoptic/cli-shared": "8.2.11",
+    "@useoptic/domain": "^10.0.8",
+    "@useoptic/domain-utilities": "^10.0.8",
     "dotenv": "^8.2.0",
     "jwt-decode": "^2.2.0",
     "tslib": "^1",

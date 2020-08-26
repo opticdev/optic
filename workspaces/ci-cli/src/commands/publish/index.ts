@@ -25,12 +25,16 @@ export default class Publish extends Command {
       description: 'the path to your optic.yml file',
       default: './optic.yml',
     }),
+    url: flags.boolean({
+      default: false,
+      description: "only log the url of the specId",
+    })
   };
 
   async run() {
     const { flags } = this.parse(Publish);
 
-    const { config: configPath } = flags;
+    const { config: configPath, url: outputOnlyUrl } = flags;
     // find the .optic/api/specification.json relative to the optic.yml
     const config = await readApiConfig(configPath);
     const basePath = dirname(configPath);
@@ -46,6 +50,11 @@ export default class Publish extends Command {
     const events = await fs.readJson(specStorePath);
     await saasClient.uploadSpec(uploadUrl, events);
 
-    this.log(`Check out your spec live @ ${Config.specViewerUrl}/public/${location.value}`)
+    const url = `${Config.specViewerUrl}/public/${location.value}`;
+    if (outputOnlyUrl) {
+      this.log(url);
+    } else {
+      this.log(`Check out your spec live @ ${url}`)
+    }
   }
 }
