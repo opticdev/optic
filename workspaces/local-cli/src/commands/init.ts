@@ -16,6 +16,7 @@ export default class Init extends Command {
 
   static flags = {
     inboundUrl: flags.string({}),
+    targetUrl: flags.string({}),
     command: flags.string({}),
   };
 
@@ -26,7 +27,7 @@ export default class Init extends Command {
 
     if (
       fs.existsSync(path.join(cwd, 'optic.yml')) &&
-      !(flags.inboundUrl && flags.command)
+      Object.entries(flags).length === 0
     ) {
       return this.log(
         colors.red(
@@ -58,13 +59,10 @@ export default class Init extends Command {
     const config = `
 name: ${name}
 tasks:
-  # The default task, invoke using \`api run start\`
+  # The default task, invoke using \`api run taskname\`
   # Learn how to finish setting up Optic at https://docs.useoptic.com/setup
-  start:
-    command: ${
-      flags.command || 'echo "Setup A Valid Command to Start your API!"'
-    }
-    inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
+${buildInitialTask(flags)}
+
 ignoreRequests:
 # For more information on configuration, visit https://docs.useoptic.com/captures
 - OPTIONS (.*)`.trimLeft();
@@ -93,4 +91,25 @@ ignoreRequests:
       );
     // process.exit();
   }
+}
+
+function buildInitialTask(flags: any) {
+  //default config and valid for start injected
+  let commandConfig = `
+  start:
+     command: ${
+       flags.command || 'echo "Setup A Valid Command to Start your API!"'
+     }
+     inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
+`.trimRight();
+
+  if (flags.inboundUrl && flags.targetUrl) {
+    commandConfig = `
+  start-proxy:
+     inboundUrl: ${flags.inboundUrl}
+     targetUrl: ${flags.targetUrl}
+`.trimRight();
+  }
+
+  return commandConfig;
 }
