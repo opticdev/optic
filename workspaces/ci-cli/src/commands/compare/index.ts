@@ -24,9 +24,13 @@ export class Compare extends Command {
     {
       name: "head",
       required: true,
-      description: "Head specification.json file to compare with (e.g. feature, fix)",
+      description: "Head specification.json file to compare with (e.g. feature, fix). Defaults to empty",
       parse: (input: string) => {
-        return fs.readJSONSync(input);
+        if (fs.existsSync(input)) {
+          return fs.readJSONSync(input);
+        } else {
+          return [];
+        }
       }
     },
   ];
