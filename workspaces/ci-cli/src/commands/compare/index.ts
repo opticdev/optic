@@ -81,18 +81,19 @@ export class Compare extends Command {
     }));
 
     if (changes.length === 0) {
-      this.output(`**No changes detected!**`)
+      this.output(`**No changes detected!**`);
     } else {
       table.push(...changes);
-      this.output(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`)
+      this.output(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`);
       this.output(table.join("\n"));
     }
     this.output();
-    this.output(`See full specification @ ${specUrl}`)
+    this.output(`See full specification @ ${specUrl}`);
     this.output("#### Powered by Optic");
 
     if (this.escapeMode) {
-      this.log(JSON.stringify(this.outputString))
+      const escapedString = JSON.stringify(this.outputString);
+      this.log(escapedString.substring(1, escapedString.length - 1));
     }
   }
 }
