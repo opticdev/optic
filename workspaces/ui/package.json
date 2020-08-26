@@ -16,8 +16,8 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.46",
     "@useoptic/cli-client": "8.2.11",
-    "@useoptic/domain": "10.0.7",
-    "@useoptic/domain-utilities": "10.0.7",
+    "@useoptic/domain": "10.0.8",
+    "@useoptic/domain-utilities": "10.0.8",
     "axios": "^0.19.2",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",
@@ -61,6 +61,7 @@
   "scripts": {
     "start": "node --max-old-space-size=8192 scripts/start.js",
     "start-local": "node --max-old-space-size=8192 scripts/start-local.js",
+    "start-local-spec": "node --max-old-space-size=8192 scripts/start-local-spec.js",
     "build": "node --max-old-space-size=8192 scripts/build.js",
     "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
     "build-demo": "node --max-old-space-size=8192 scripts/build-demo.js",

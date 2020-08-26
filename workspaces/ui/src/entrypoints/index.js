@@ -25,11 +25,6 @@ export default function TopLevelRoutes() {
         path="/demos/:sessionId"
         component={DemoSessions}
       />
-      <Route
-        strict
-        path="/public/:specId"
-        component={SpecViewer}
-      />
       <Route strict path="/apis/:apiId" component={LocalCli} />
       
       <Route strict path={'/'} component={WelcomePage} />
