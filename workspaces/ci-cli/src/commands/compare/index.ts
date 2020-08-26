@@ -67,9 +67,11 @@ export class Compare extends Command {
       this.log(`**No changes detected!**`)
     } else {
       table.push(...changes);
-      this.log(`Optic detected **${changes.length} changes** to your API's behavior.`)
+      this.log(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`)
       this.log(table.join("\n"));
     }
+    this.log();
+    this.log(`See full specification @ ${specUrl}`)
     this.log("#### Powered by Optic");
   }
 }
