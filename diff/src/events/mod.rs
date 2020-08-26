@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use cqrs_core::Event;
+pub use cqrs_core::{AggregateEvent, Event};
 use serde::Deserialize;
 use serde_json;
 use std::fs;
