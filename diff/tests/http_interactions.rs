@@ -43,5 +43,24 @@ async fn can_async_read_stream_of_newline_delimited_json() {
   .await
   .expect("test fixture should exist");
 
-  let lines = streams::http_interaction::json_lines(fd);
+  let mut lines = streams::http_interaction::json_lines(fd);
+
+  let first_event = lines
+    .next()
+    .await
+    .expect("there should still be events left")
+    .expect("first event should read from stream");
+  let first_interaction = HttpInteraction::from_json_str(&first_event)
+    .expect("line in stream must parse as HttpInteraction");
+  assert_eq!(&first_interaction.uuid, "3");
+  let second_event = lines
+    .next()
+    .await
+    .expect("there should still be events left")
+    .expect("second event should read from stream");
+  let second_interaction = HttpInteraction::from_json_str(&second_event)
+    .expect("line in stream must parse as HttpInteraction");
+  assert_eq!(&second_interaction.uuid, "4");
+  let remaining_events = lines.take(3).collect::<Vec<_>>().await;
+  assert_eq!(remaining_events.len(), 2);
 }
