@@ -52,8 +52,15 @@ fn main() {
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
-            let interaction_json = interaction_json_result.unwrap(); // TODO: deal with error handling
-            let interaction = HttpInteraction::from_json_str(&interaction_json).unwrap(); // TODO: deal with error handling
+            let interaction_json =
+                interaction_json_result.expect("can read interaction json line from stdin");
+            let interaction = match HttpInteraction::from_json_str(&interaction_json) {
+                Ok(interaction) => interaction,
+                Err(parse_error) => {
+                    eprintln!("could not parse interaction json: {}", parse_error);
+                    continue;
+                }
+            };
             let results = diff_interaction(&mut endpoints_projection, interaction);
             println!("{:?}", results);
         }
