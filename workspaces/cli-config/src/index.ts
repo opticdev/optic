@@ -34,6 +34,12 @@ export interface IOpticTask {
   targetUrl?: string;
 }
 
+export interface IOpticScript {
+  command: string;
+  dependsOn?: string | string[];
+  install?: string;
+}
+
 export interface IOpticTaskAliases {
   inboundUrl?: string;
 }
@@ -44,6 +50,9 @@ export interface IApiCliConfig {
   name: string;
   tasks: {
     [key: string]: IOpticTask;
+  };
+  scripts?: {
+    [key: string]: string | IOpticScript;
   };
   ignoreRequests?: string[];
 }
@@ -133,6 +142,12 @@ export interface IOpticTaskRunnerConfig {
   };
 }
 
+function randomLowerBound(): number {
+  const max = 3500;
+  const min = 3300;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export async function TaskToStartConfig(
   aliasedTask: IOpticTaskAliased
 ): Promise<IOpticTaskRunnerConfig> {
@@ -159,7 +174,7 @@ export async function TaskToStartConfig(
         ? serviceProtocol === 'http:' // assume standard ports for targets without explicit ports
           ? 80
           : 443
-        : await getPort({ port: getPort.makeRange(3300, 3900) }), // find available port if no explicit target set
+        : await getPort({ port: getPort.makeRange(randomLowerBound(), 3900) }), // find available port if no explicit target set
     basePath: (targetUrl && targetUrl.path) || baseUrl.path || '/',
   };
 

@@ -6,9 +6,10 @@ import {
   setCredentials,
 } from '../shared/authentication-server';
 import qs from 'querystring';
-import { ensureDaemonStopped } from '@useoptic/cli-server';
+import { ensureDaemonStarted, ensureDaemonStopped } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';
+import { Config } from '../config';
 
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';
@@ -26,6 +27,10 @@ export default class Login extends Command {
       const { server, port } = await ensureCredentialsServerStarted(
         loginFromUseOptic ? 6782 : undefined
       );
+
+      //also start daemon
+      ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
+
       const tokenReceived = new Promise<string>((resolve, reject) => {
         server.events.on(tokenReceivedEvent, async (token: string) => {
           resolve(token);
@@ -52,8 +57,6 @@ export default class Login extends Command {
       cli.action.stop('Received Credentials');
 
       await server.stop();
-      await ensureDaemonStopped(lockFilePath);
-      // await trackAndSpawn('Logged in from CLI');
       this.log(`You are now logged in!`);
     } catch (e) {
       this.error(e);

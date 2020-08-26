@@ -3,6 +3,7 @@ import keymirror from 'keymirror';
 export const Events = keymirror({
   //on-boarding
   ApiCreated: null,
+  ApiInitializedInProject: null,
   ApiCheckCompleted: null,
 
   //Errors
