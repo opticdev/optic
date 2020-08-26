@@ -5,6 +5,7 @@ mod interactions;
 mod projections;
 mod queries;
 mod state;
+pub mod streams;
 
 pub use events::{HttpInteraction, SpecEvent};
 pub use interactions::diff as diff_interaction;
