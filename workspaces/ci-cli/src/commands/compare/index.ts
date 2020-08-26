@@ -12,9 +12,13 @@ export class Compare extends Command {
     {
       name: "base",
       required: true,
-      description: "Base specification.json file to compare from (e.g. main, master)",
+      description: "Base specification.json file to compare from (e.g. main, master). Defaults to empty",
       parse: (input: string) => {
-        return fs.readJSONSync(input);
+        if (fs.existsSync(input)) {
+          return fs.readJSONSync(input);
+        } else {
+          return [];
+        }
       }
     },
     {
