@@ -65,10 +65,6 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
-const determineIndexJs = () => {
-  
-}
-
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
