@@ -1,11 +1,12 @@
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId};
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum InteractionDiffResult {
   UnmatchedRequestUrl(UnmatchedRequestUrl),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UnmatchedRequestUrl {
   interaction_trail: InteractionTrail,
   requests_trail: RequestSpecTrail,
@@ -20,7 +21,7 @@ impl UnmatchedRequestUrl {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
 }
@@ -35,7 +36,7 @@ impl InteractionTrail {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum RequestSpecTrail {
   SpecRoot,
   SpecPath(SpecPath),
@@ -44,32 +45,32 @@ pub enum RequestSpecTrail {
   SpecResponseRoot(SpecResponseRoot),
   SpecResponseBody(SpecResponseBody),
 }
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SpecPath {
   path_id: PathComponentId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SpecRequestRoot {
   request_id: RequestId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SpecRequestBody {
   request_id: RequestId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SpecResponseRoot {
   response_id: ResponseId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SpecResponseBody {
   response_id: ResponseId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum InteractionTrailPathComponent {
   Method(String),
 }
