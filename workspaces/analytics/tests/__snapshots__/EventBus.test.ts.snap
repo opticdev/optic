@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Event Bus can listen for analytics events 1`] = `
+Object {
+  "context": Object {
+    "clientAgent": "testing",
+    "clientId": "testing",
+    "clientSessionInstanceId": "testing",
+    "clientTimestamp": "testing",
+  },
+  "data": Object {
+    "apiName": "Hello World API",
+  },
+  "type": "ApiCreated",
+}
+`;

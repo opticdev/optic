@@ -28,7 +28,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
 import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
+import { UserPreviewedSuggestion } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -104,12 +105,14 @@ export const DiffReviewExpanded = (props) => {
 
   const setSelectedInterpretation = (s) => {
     if (description && s) {
-      track('Previewing Suggestion', {
-        captureId,
-        diff: description.title,
-        diffAssertion: description.assertion,
-        suggestion: s.action,
-      });
+      trackUserEvent(
+        UserPreviewedSuggestion.withProps({
+          captureId,
+          diff: description.title,
+          diffAssertion: description.assertion,
+          suggestion: s.action,
+        })
+      );
     }
     setSelectedInterpretationInner(s);
   };
@@ -149,7 +152,7 @@ export const DiffReviewExpanded = (props) => {
   const { interaction, interactionScala } = currentInteraction;
 
   const { method, path } = interactionScala.request;
-  track('Display Diff in Behavior Page', props);
+  // track('Display Diff in Behavior Page', props);
   return (
     <ShapeExpandedStore>
       <div>

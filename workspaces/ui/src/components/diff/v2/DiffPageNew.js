@@ -28,7 +28,11 @@ import {
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import { DiffReviewPage } from './DiffReviewPage';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
+import {
+  UserResetDiff,
+  UserAcceptedSuggestion,
+} from '@useoptic/analytics/lib/events/diffs';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
@@ -154,9 +158,7 @@ const InnerDiffWrapper = function (props) {
         updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
-        track('Diff Reset', {
-          captureId,
-        });
+        trackUserEvent(UserResetDiff.withProps({}));
       }}
       acceptSuggestion={(...suggestions) => {
         if (suggestions) {
@@ -167,10 +169,12 @@ const InnerDiffWrapper = function (props) {
             .reduce(flatten, []);
           updatedAdditionalCommands(simulatedCommands);
           suggestions.map((i) => {
-            track('Accept Suggestion', {
-              captureId,
-              suggestion: i.action,
-            });
+            trackUserEvent(
+              UserAcceptedSuggestion.withProps({
+                captureId,
+                suggestion: i.action,
+              })
+            );
           });
         }
       }}

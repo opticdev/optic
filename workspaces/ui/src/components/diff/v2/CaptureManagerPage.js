@@ -7,6 +7,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import time from 'time-ago';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FormControl from '@material-ui/core/FormControl';
+import { UserChangedCaptureOverviewTab } from '@useoptic/analytics/lib/events/diffs';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
@@ -70,7 +71,8 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
-import { track } from '../../../Analytics';
+import { trackUserEvent, track } from '../../../Analytics';
+import qs from 'qs';
 
 const {
   Context: AllCapturesContext,
@@ -153,7 +155,7 @@ export function CaptureManagerPage(props) {
   );
 }
 
-export const CaptureManager = ({}) => {
+export const CaptureManager = ({location}) => {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
@@ -179,7 +181,7 @@ export const CaptureManager = ({}) => {
   );
 };
 
-const subtabs = {
+export const subtabs = {
   ENDPOINT_DIFF: 'ENDPOINT_DIFF',
   UNDOCUMENTED_URL: 'UNDOCUMENTED_URL',
 };
@@ -211,13 +213,25 @@ function CaptureChooserComponent(props) {
     JsonHelper.jsArrayToSeq(endpointDiffs)
   );
 
-  const [tab, setTab] = useState(subtabs.ENDPOINT_DIFF);
+  const query = qs.parse(props.location.search, {
+    ignoreQueryPrefix: true
+  })
+
+  let defaultTab = subtabs.ENDPOINT_DIFF;
+
+  if (query.tab === subtabs.UNDOCUMENTED_URL) {
+    defaultTab = subtabs.UNDOCUMENTED_URL;
+  }
+  const [tab, setTab] = useState(defaultTab);
 
   useEffect(() => {
-    track(`Changed to ${tab}`, {
-      diffCount: realEndpointDiffCount,
-      undocumentedUrlCount: urlsSplit.total,
-    });
+    trackUserEvent(
+      UserChangedCaptureOverviewTab.withProps({
+        currentTab: tab,
+        diffCount: realEndpointDiffCount,
+        undocumentedUrlCount: urlsSplit.total,
+      })
+    );
   }, [tab, realEndpointDiffCount, urlsSplit.total]);
 
   useEffect(() => {
@@ -357,7 +371,7 @@ function CaptureDiffWrapper(props) {
           ignoredDiffs={ignoredDiffs}
           {...services}
         >
-          <CaptureChooserComponent captureId={captureId} />
+          <CaptureChooserComponent location={props.location} captureId={captureId} />
         </CaptureContextStore>
       )}
     </IgnoreDiffContext.Consumer>
@@ -438,7 +452,7 @@ function EndpointDiffs(props) {
                       component={Link}
                       to={to}
                       onClick={() => {
-                        track('Viewing Endpoint Diff', i);
+                        // track('Viewing Endpoint Diff', i);
                       }}
                     >
                       <div className={classes.listItemInner}>

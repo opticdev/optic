@@ -11,7 +11,8 @@ import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import { TextField } from '@material-ui/core';
-import { track } from '../../../Analytics';
+import { UserCommittedChanges } from '@useoptic/analytics/lib/events/diffs';
+import { trackUserEvent } from '../../../Analytics';
 import {
   Facade,
   JsonHelper,
@@ -71,18 +72,20 @@ export default function FinalizeDialog(props) {
       JsonHelper.jsArrayToVector([EndBatchCommit(batchId)])
     );
     await specService.saveEvents(newEventStore, rfcId);
-    
+
     history.push(`${baseUrl}/diffs/${captureId}`);
-    
+
     // Delay sending commit event to ensure that event happens after switch to diffs page
     // neccesary for demo flow
     // TODO: Switch demo implementation to use better state machine to mitigate this problem
     setTimeout(() => {
-      track('Committed Changes to Endpoint', {
-        message: commitMessage,
-        captureId,
-        suggestions: acceptedSuggestions.length,
-      });
+      trackUserEvent(
+        UserCommittedChanges.withProps({
+          message: commitMessage,
+          captureId,
+          suggestions: acceptedSuggestions.length,
+        })
+      );
     }, 500);
   };
 

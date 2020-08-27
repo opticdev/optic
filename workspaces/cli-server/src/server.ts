@@ -21,6 +21,11 @@ import {
 } from './routers/spec-router';
 import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
+import { analyticsEventEmitter, track } from './analytics';
+import cors from 'cors';
+
+const pJson = require('../package.json');
 
 const logFilePath = path.join(os.homedir(), '.optic', 'optic-daemon.log');
 fs.ensureDirSync(path.dirname(logFilePath));
@@ -56,6 +61,14 @@ class CliServer {
   private server!: http.Server;
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
+  private corsOptions: cors.CorsOptions = {
+    origin: [
+      // this needs to be made exclusive in prod
+      'http://localhost:4005',
+      'http://app.o3c.info',
+      'https://app.useoptic.com',
+    ],
+  };
 
   constructor(private config: ICliServerConfig) {}
 
@@ -64,6 +77,7 @@ class CliServer {
     const reactRoot = path.join(resourceRoot, 'build');
     const indexHtmlPath = path.join(reactRoot, 'index.html');
     app.use(express.static(reactRoot));
+    app.use(bodyParser.json({ limit: '1mb' }));
     app.get('*', (req, res) => {
       res.sendFile(indexHtmlPath);
     });
@@ -71,6 +85,7 @@ class CliServer {
 
   async makeServer() {
     const app = express();
+    app.use(cors(this.corsOptions));
     app.set('etag', false);
     const sessions: ICliServerSession[] = [];
     let user: object | null;
@@ -82,6 +97,11 @@ class CliServer {
         res.sendStatus(404);
       }
     });
+
+    app.get('/api/daemon/status', async (req, res: express.Response) => {
+      res.json({ isRunning: true, version: pJson.version });
+    });
+
     app.put(
       '/api/identity',
       bodyParser.json({ limit: '5kb' }),
@@ -94,6 +114,36 @@ class CliServer {
         }
       }
     );
+
+    app.post(
+      '/api/tracking/events',
+      bodyParser.json({ limit: '100kb' }),
+      async (req, res: express.Response) => {
+        const events: TrackingEventBase<any>[] = req.body.events;
+        track(...events);
+        res.status(200).json({});
+      }
+    );
+
+    app.get('/api/tracking/events', async (req, res) => {
+      function emit(data: any) {
+        console.log('emit');
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      }
+
+      const headers = {
+        'Content-Type': 'text/event-stream',
+        Connection: 'keep-alive',
+        'Cache-Control': 'no-cache',
+      };
+      res.writeHead(200, headers);
+
+      analyticsEventEmitter.on('event', (event: any) => {
+        emit({ type: 'message', data: event });
+      });
+
+      req.on('close', () => {});
+    });
 
     // @REFACTOR sessionsRouter
     app.get('/api/sessions', (req, res: express.Response) => {

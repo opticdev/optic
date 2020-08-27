@@ -1,5 +1,6 @@
 import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
 import { JsonHttpClient } from '@useoptic/client-utilities';
+import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 
 class Client {
   constructor(private baseUrl: string) {}
@@ -14,6 +15,11 @@ class Client {
       const url = `${this.baseUrl}/identity`;
       return JsonHttpClient.putJson(url, { user });
     }
+  }
+
+  postTrackingEvents(events: TrackingEventBase<any>[]) {
+    const url = `${this.baseUrl}/tracking/events`;
+    return JsonHttpClient.postJson(url, { events });
   }
 
   findSession(

@@ -98,7 +98,7 @@ const methods = {
 }
 
 const samples = [
-    Sample(methods.get, "/api/todos", null, todos),
+    // Sample(methods.get, "/api/todos", null, todos),
     Sample(methods.get, "/api/todos", null, todos.concat([{
         title: "Try out Optic",
         createdAt: Date.now(),
@@ -107,10 +107,10 @@ const samples = [
         id: crypto.randomBytes(4).toString("hex")
     }])),
     Sample(methods.put, "/api/todos", putRequestNoPriority, putResponseNoPriority),
-    Sample(methods.put, "/api/todos", putRequestWithPriority, putResponseWithPriority),
-    Sample(methods.post, `/api/todos/${postResponseAdjustTitle.id}`, postRequestAdjustTitle, postResponseAdjustTitle),
-    Sample(methods.post, `/api/todos/${postResponseComplete.id}`, postRequestComplete, postResponseComplete),
-    Sample(methods.get, `/api/todos/${todos[0].id}`, null, todos[0]),
+    // Sample(methods.put, "/api/todos", putRequestWithPriority, putResponseWithPriority),
+    // Sample(methods.post, `/api/todos/${postResponseAdjustTitle.id}`, postRequestAdjustTitle, postResponseAdjustTitle),
+    // Sample(methods.post, `/api/todos/${postResponseComplete.id}`, postRequestComplete, postResponseComplete),
+    // Sample(methods.get, `/api/todos/${todos[0].id}`, null, todos[0]),
 ]
 
 const format = {
