@@ -70,11 +70,11 @@ impl InteractionVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
 }
 impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
   fn begin(&mut self) {
-    println!("begin");
+    // eprintln!("begin");
   }
 
   fn end(&mut self) {
-    println!("end");
+    // eprintln!("end");
   }
 }
 

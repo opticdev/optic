@@ -1,4 +1,5 @@
 use clap::{App, Arg};
+use futures::SinkExt;
 use optic_diff::diff_interaction;
 use optic_diff::errors;
 use optic_diff::streams;
@@ -7,7 +8,7 @@ use optic_diff::EndpointProjection;
 use optic_diff::HttpInteraction;
 use optic_diff::SpecEvent;
 use std::process;
-use tokio::io::stdin;
+use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 
 fn main() {
@@ -49,7 +50,10 @@ fn main() {
     let mut runtime = tokio::runtime::Runtime::new().unwrap();
     runtime.block_on(async {
         let stdin = stdin(); // TODO: deal with std in never having been attached
+        let stdout = stdout();
+
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
+        let mut results_sink = streams::diff::into_json_lines(stdout);
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
             let interaction_json =
@@ -62,7 +66,11 @@ fn main() {
                 }
             };
             let results = diff_interaction(&mut endpoints_projection, interaction);
-            println!("{:?}", results);
+            for result in results {
+                if let Err(_) = results_sink.send(result).await {
+                    panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
+                }
+            }
         }
     })
 }

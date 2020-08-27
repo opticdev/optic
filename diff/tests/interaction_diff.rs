@@ -1,10 +1,11 @@
 use cqrs_core::Aggregate;
-use optic_diff::{diff_interaction, EndpointProjection, HttpInteraction, SpecEvent};
-use petgraph::dot::{Dot, Config};
+use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
+use optic_diff::{diff_interaction, streams, EndpointProjection, HttpInteraction, SpecEvent};
+use petgraph::dot::{Config, Dot};
 
-#[test]
-fn can_yield_umatched_request_url() {
+#[tokio::test]
+async fn can_yield_umatched_request_url() {
   let events = SpecEvent::from_file(
     std::env::current_dir()
       .unwrap()
@@ -26,7 +27,10 @@ fn can_yield_umatched_request_url() {
       events_projection.graph.node_weight(node_index).unwrap()
     )
   }
-  assert_debug_snapshot!(Dot::with_config(&events_projection.graph, &[Config::EdgeNoLabel]));
+  assert_debug_snapshot!(Dot::with_config(
+    &events_projection.graph,
+    &[Config::EdgeNoLabel]
+  ));
 
   let interaction = HttpInteraction::from_json_str(
     r#"{
@@ -69,4 +73,14 @@ fn can_yield_umatched_request_url() {
 
   let results = diff_interaction(&mut events_projection, interaction);
   assert_eq!(results.len(), 1);
+
+  let mut destination: Vec<u8> = vec![];
+  assert_eq!(destination.len(), 0);
+  {
+    let mut sink = streams::diff::into_json_lines(&mut destination);
+    for result in results {
+      sink.send(result).await;
+    }
+  }
+  assert!(destination.len() > 0); // TODO: try to parse this as a stream of json
 }
