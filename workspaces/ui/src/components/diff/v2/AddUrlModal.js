@@ -27,7 +27,8 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import { trackUserEvent } from '../../../Analytics';
+import { trackUserEvent, track } from '../../../Analytics';
+import { AddUrlModalNaming, AddUrlModalIdentifyingPathComponents } from '@useoptic/analytics/lib/events/diffs'
 import { CaptureContext } from '../../../contexts/CaptureContext';
 import {
   UserBeganAddingNewUrl,
@@ -77,18 +78,20 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   useEffect(() => {
-    // if (naming) {
-    //   track('Naming Endpoint (uE)', {
-    //     path: newUrl.path,
-    //     method: newUrl.method,
-    //   });
-    // } else {
-    //   track('On Undocumented Url', {
-    //     path: newUrl.path,
-    //     method: newUrl.method,
-    //   });
-    // }
-  });
+    if (naming) {
+      // AddUrlModal - Naming Endpoint
+      trackUserEvent(AddUrlModalNaming.withProps({
+        path: newUrl.path, 
+        method: newUrl.method
+      }))
+    } else {
+      // AddUrlModal - Path Components
+      trackUserEvent(AddUrlModalIdentifyingPathComponents.withProps({
+        path: newUrl.path, 
+        method: newUrl.method
+      }))
+    }
+  }, [naming])
 
   const handleClose = () => {
     // track('Closed AddUrlModal');
@@ -161,6 +164,7 @@ export const NewUrlModal = withRfcContext((props) => {
 
   function NamingDialog() {
     const [purpose, setPurpose] = React.useState('');
+
     return (
       <Dialog
         open={true}

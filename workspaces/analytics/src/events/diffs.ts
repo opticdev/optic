@@ -88,6 +88,21 @@ export const UserFinishedAddingNewUrl = DescribeEvent<
     `User Added New Url ${props.method} ${props.pathExpression} in ${props.captureId} with purpose '${props.pathExpression}'`
 );
 
+const SuggestionDisplayedSchema = Joi.object({
+  suggestion: Joi.string().required(),
+});
+type SuggestionDisplayedProperties = Joi.extractType<
+  typeof SuggestionDisplayedSchema
+>;
+export const SuggestionDisplayed = DescribeEvent<SuggestionDisplayedProperties>(
+  Events.SuggestionDisplayed,
+  SuggestionDisplayedSchema,
+  (props) =>
+    `Summary: '${props.suggestion}' `
+);
+
+
+
 const SuggestionAcceptedSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestion: Joi.string().required(),
@@ -129,6 +144,20 @@ export const UserResetDiff = DescribeEvent<UserResetDiffProperties>(
   (props) => `The Diff Was Reset`
 );
 
+const ShowCommitCardSchema = Joi.object({
+  message: Joi.string().required(),
+  captureId: Joi.string().required(),
+  suggestions: Joi.number().required(),
+});
+type ShowCommitCardProperties = Joi.extractType<
+  typeof ShowCommitCardSchema
+>;
+export const ShowCommitCard = DescribeEvent<ShowCommitCardProperties>(
+  Events.ShowCommitCard,
+  ShowCommitCardSchema,
+  (props) => `Commit Card Rendered`
+);
+
 const UserCommittedChangesSchema = Joi.object({
   message: Joi.string().required(),
   captureId: Joi.string().required(),
@@ -144,3 +173,55 @@ export const UserCommittedChanges = DescribeEvent<
   UserCommittedChangesSchema,
   (props) => `The Diff Was Reset`
 );
+
+const AddUrlModalNamingSchema = Joi.object({
+  method: Joi.string().required(),
+  path: Joi.string().required(),
+});
+type AddUrlModalNamingProperties = Joi.extractType<
+  typeof AddUrlModalNamingSchema
+>;
+export const AddUrlModalNaming = DescribeEvent<AddUrlModalNamingProperties>(
+  Events.AddUrlModalNaming,
+  AddUrlModalNamingSchema,
+  (props) => `Currently naming ${props.method} ${props.path}`
+);
+
+const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
+  method: Joi.string().required(),
+  path: Joi.string().required(),
+});
+type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
+  typeof AddUrlModalIdentifyingPathComponentsSchema
+>;
+export const AddUrlModalIdentifyingPathComponents = DescribeEvent<AddUrlModalIdentifyingPathComponentsProperties>(
+  Events.AddUrlModalIdentifyingPathComponents,
+  AddUrlModalIdentifyingPathComponentsSchema,
+  (props) => `Currently identifying path components for ${props.method} ${props.path}`
+);
+
+const ShowInitialDocumentingViewSchema = Joi.object({
+});
+type ShowInitialDocumentingViewProperties = Joi.extractType<
+  typeof ShowInitialDocumentingViewSchema
+>;
+export const ShowInitialDocumentingView = DescribeEvent<ShowInitialDocumentingViewProperties>(
+  Events.ShowInitialDocumentingView,
+  ShowInitialDocumentingViewSchema,
+  () => `Showing initial documenting view`
+);
+
+const UpdateContributionSchema = Joi.object({
+  id: Joi.string().required(),
+  purpose: Joi.string().required(),
+  value: Joi.string().required(),
+});
+type UpdateContributionProperties = Joi.extractType<
+  typeof UpdateContributionSchema
+>;
+export const UpdateContribution = DescribeEvent<UpdateContributionProperties>(
+  Events.UpdateContribution,
+  UpdateContributionSchema,
+  ({id, purpose, value}) => `Updated ${id} - ${purpose} to be ${value}`
+);
+

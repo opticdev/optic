@@ -16,7 +16,6 @@ export const DemoModal = (props) => {
     setOpen(false);
   };
 
-  console.log('wowza!')
   return (
     <div>
         <Dialog

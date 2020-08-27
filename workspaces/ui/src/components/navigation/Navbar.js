@@ -58,7 +58,7 @@ export default function Navbar(props) {
   const routerPaths = useRouterPaths();
 
   const enabledFeatures = useEnabledFeatures();
-
+  
   const menuItems = useMemo(
     () => [
       {

@@ -39,6 +39,7 @@
     "notistack": "^0.8.6",
     "path-to-regexp": "^3.0.0",
     "prop-types": "latest",
+    "qs": "^6.9.4",
     "react": "^16.8.6",
     "react-ace": "^8.0.0",
     "react-dom": "^16.8.6",
@@ -62,6 +63,7 @@
   "scripts": {
     "start": "node --max-old-space-size=8192 scripts/start.js",
     "start-local": "node --max-old-space-size=8192 scripts/start-local.js",
+    "start-local-demo": "node --max-old-space-size=8192 scripts/start-local-demo.js",
     "build": "node --max-old-space-size=8192 scripts/build.js",
     "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
     "build-demo": "node --max-old-space-size=8192 scripts/build-demo.js",
