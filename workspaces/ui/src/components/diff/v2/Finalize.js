@@ -11,7 +11,7 @@ import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import { TextField } from '@material-ui/core';
-import { ChangesCommitted } from '@useoptic/analytics/lib/events/diffs';
+import { UserCommittedChanges } from '@useoptic/analytics/lib/events/diffs';
 import { trackUserEvent } from '../../../Analytics';
 import {
   Facade,
@@ -80,7 +80,7 @@ export default function FinalizeDialog(props) {
     // TODO: Switch demo implementation to use better state machine to mitigate this problem
     setTimeout(() => {
       trackUserEvent(
-        ChangesCommitted.withProps({
+        UserCommittedChanges.withProps({
           message: commitMessage,
           captureId,
           suggestions: acceptedSuggestions.length,

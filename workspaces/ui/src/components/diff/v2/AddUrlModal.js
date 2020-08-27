@@ -14,10 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { Show } from '../../shared/Show';
 import { DocSubGroup } from '../../docs/DocSubGroup';
 import { resolvePath } from '../../utilities/PathUtilities';
-import {
-  UserBeganAddingNewUrl,
-  UserFinishedAddingNewUrl,
-} from '@useoptic/analytics/lib/events/diffs';
+
 import {
   getOrUndefined,
   RequestsCommands,
@@ -33,6 +30,10 @@ import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { trackUserEvent, track } from '../../../Analytics';
 import { AddUrlModalNaming, AddUrlModalIdentifyingPathComponents } from '@useoptic/analytics/lib/events/diffs'
 import { CaptureContext } from '../../../contexts/CaptureContext';
+import {
+  UserBeganAddingNewUrl,
+  UserFinishedAddingNewUrl,
+} from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
   container: {

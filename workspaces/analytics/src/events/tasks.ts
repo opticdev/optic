@@ -5,33 +5,34 @@ import * as Joi from '@hapi/joi';
 import 'joi-extract-type';
 
 // Sent whenever an API is created
-const StartedTaskWithLocalCLISchema = Joi.object({
+const StartedTaskWithLocalCliSchema = Joi.object({
   captureId: Joi.string().required(),
+  cwd: Joi.string().required(),
   inputs: Joi.object().unknown(true),
 });
-type StartedTaskWithLocalCLIProperties = Joi.extractType<
-  typeof StartedTaskWithLocalCLISchema
+type StartedTaskWithLocalCliProperties = Joi.extractType<
+  typeof StartedTaskWithLocalCliSchema
 >;
-export const StartedTaskWithLocalCLI = DescribeEvent<
-  StartedTaskWithLocalCLIProperties
+export const StartedTaskWithLocalCli = DescribeEvent<
+  StartedTaskWithLocalCliProperties
 >(
-  Events.StartedTaskWithLocalCLI,
-  StartedTaskWithLocalCLISchema,
+  Events.StartedTaskWithLocalCli,
+  StartedTaskWithLocalCliSchema,
   (props) => `User ran task`
 );
 
-const ExitedTaskWithLocalCLISchema = Joi.object({
+const ExitedTaskWithLocalCliSchema = Joi.object({
   captureId: Joi.string().required(),
   interactionCount: Joi.number().required(),
   inputs: Joi.object().unknown(true),
 });
-type ExitedTaskWithLocalCLIProperties = Joi.extractType<
-  typeof ExitedTaskWithLocalCLISchema
+type ExitedTaskWithLocalCliProperties = Joi.extractType<
+  typeof ExitedTaskWithLocalCliSchema
 >;
-export const ExitedTaskWithLocalCLI = DescribeEvent<
-  ExitedTaskWithLocalCLIProperties
+export const ExitedTaskWithLocalCli = DescribeEvent<
+  ExitedTaskWithLocalCliProperties
 >(
-  Events.ExitedTaskWithLocalCLI,
-  ExitedTaskWithLocalCLISchema,
+  Events.ExitedTaskWithLocalCli,
+  ExitedTaskWithLocalCliSchema,
   (props) => `User ran task`
 );

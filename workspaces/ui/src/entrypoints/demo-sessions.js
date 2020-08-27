@@ -272,7 +272,7 @@ export default function DemoSessions(props) {
           });
           break;
         }
-        case DiffEvents.ChangesCommitted.eventName: {
+        case DiffEvents.UserCommittedChanges.eventName: {
           setHasCommited(true);
           trackCommit();
           if (route.includes('PUT')) {
@@ -289,7 +289,7 @@ export default function DemoSessions(props) {
           });
           break;
         }
-        case DiffEvents.PreviewSuggestion.eventName: {
+        case DiffEvents.UserPreviewedSuggestion.eventName: {
           let m = '';
           const addingField = eventProps.suggestion.match(
             /Add field '(.*)' as/

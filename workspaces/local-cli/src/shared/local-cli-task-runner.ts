@@ -14,8 +14,8 @@ import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
 import {
-  ExitedTaskWithLocalCLI,
-  StartedTaskWithLocalCLI,
+  ExitedTaskWithLocalCli,
+  StartedTaskWithLocalCli,
 } from '@useoptic/analytics/lib/events/tasks';
 
 import {
@@ -71,9 +71,10 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
-    trackUserEvent(
-      StartedTaskWithLocalCLI.withProps({
+    await trackUserEvent(
+      StartedTaskWithLocalCli.withProps({
         inputs: opticTaskToProps('', taskConfig),
+        cwd: this.paths.cwd,
         captureId: this.captureId,
       })
     );
@@ -156,7 +157,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const hasDiff = summary.diffsCount > 0;
 
     trackUserEvent(
-      ExitedTaskWithLocalCLI.withProps({
+      ExitedTaskWithLocalCli.withProps({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
         captureId: this.captureId,

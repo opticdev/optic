@@ -11,18 +11,19 @@ import {
 } from '@useoptic/cli-shared';
 import colors from 'colors';
 import waitOn from 'wait-on';
+
+import assert from 'assert';
+import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
+import exp from 'constants';
 import {
   ApiProcessStartsOnAssignedHost,
   ApiProcessStartsOnAssignedPort,
   CheckAssertions,
   CommandIsLongRunning,
-  failingAssertions,
   ProxyCanStartAtInboundUrl,
   ProxyTargetUrlResolves,
-} from './assertions';
-import assert from 'assert';
-import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
-import exp from 'constants';
+} from '@useoptic/analytics/lib/interfaces/ApiCheck';
+import { failingAssertions } from './assertions';
 
 export async function verifyRecommended(
   task: IOpticTaskAliased,
