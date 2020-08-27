@@ -112,7 +112,8 @@ export class Compare extends Command {
     }
     this.output();
     this.output(`### Powered by ${link("Optic", "https://useoptic.com")}`);
-
+    this.output(`<!-- OPTIC_BOT_ID_REFERENCE: THIS LINE IS USED TO IDENTIFY THE COMMENT TO EDIT IT -->`)
+    
     if (this.escapeMode) {
       const escapedString = JSON.stringify(this.outputString);
       this.log(escapedString.substring(1, escapedString.length - 1));
