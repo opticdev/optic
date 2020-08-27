@@ -97,7 +97,7 @@ export class Compare extends Command {
     removedChanges.unshift(...removedChanges.length > 0 ? tableHeader : [])
     removedChanges.unshift(...(removedChanges.length > 0 ? ["## Removed Endpoints"] : []));
 
-    const totalChanges = addedChanges.length + updatedChanges.length + removedChanges.length;
+    const totalChanges = changelogArray.filter((change: any) => change.added || change.updated || change.removed).length;
 
     
     if (totalChanges === 0) {
