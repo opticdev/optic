@@ -64,32 +64,54 @@ export class Compare extends Command {
     const { base, head } = args;
     const { specUrl, escape } = flags;
     this.escapeMode = escape;
-    const changelogArray = ChangeLogFacade.from(base, head);
-    const table = ["| Endpoint   |      Name      |  Status |", "|----------|:-------------:|------:|"];
+    const changelogArray: any[] = ChangeLogFacade.from(base, head);
+    const tableHeader = ["| Endpoint   |      Name      |  Status |", "|----------|-------------|------:|"];
 
     const link = (text: string, href: string) => {
-      if (!specUrl) {
-        return text;
-      }
-      return `[${text}](${specUrl}/${href})`;
+      return `[${text}](${href})`;
     }
 
-    const changes = (changelogArray.filter((change: any) => change.updated || change.added || change.removed).map((change: any) : string => {
-      const status = change.updated ? "updated" : change.added ? "added" : "removed";
-      const url = `documentation/paths/${change.pathId}/methods/${change.method}`;
-      return `| ${link(`${change.method} ${change.absolutePath}`, url)} |  ${link(change.endpointName, url)} | ${link(status, url)} |`;
-    }));
+    const docLink = (text: string, href: string) => {
+      if (!specUrl) {
+        return link(text, href);
+      }
+      return link(text, `${specUrl}/${href}`)
+    }
 
-    if (changes.length === 0) {
+    const changeToString = (change: any) => {
+      const status = change.updated ? "updated" : change.added ? "added" : "removed";
+      change.method = change.method.toUpperCase();
+      const url = `documentation/paths/${change.pathId}/methods/${change.method}`;
+      return `| ${`**${change.method}** ${change.absolutePath}`} |  ${change.endpointName} | ${docLink(status, url)} |`;
+    }
+
+    const addedChanges = changelogArray.filter((change: any) => change.added).map(changeToString);
+    addedChanges.unshift(...addedChanges.length > 0 ? tableHeader : [])
+    addedChanges.unshift(...(addedChanges.length > 0 ? ["## Added Endpoints"] : []));
+
+    const updatedChanges = changelogArray.filter((change: any) => change.updated).map(changeToString);
+    updatedChanges.unshift(...updatedChanges.length > 0 ? tableHeader : [])
+    updatedChanges.unshift(...(updatedChanges.length > 0 ? ["## Updated Endpoints"] : []));
+
+    const removedChanges = changelogArray.filter((change: any) => change.removed).map(changeToString);
+    removedChanges.unshift(...removedChanges.length > 0 ? tableHeader : [])
+    removedChanges.unshift(...(removedChanges.length > 0 ? ["## Removed Endpoints"] : []));
+
+    const totalChanges = addedChanges.length + updatedChanges.length + removedChanges.length;
+
+    
+    if (totalChanges === 0) {
       this.output(`**No changes detected!**`);
+      this.output(`See full specification @ ${specUrl}`);
     } else {
-      table.push(...changes);
-      this.output(`Optic detected **${changes.length} ${changes.length > 1 ? "changes" : "change"}** to your API's behavior.`);
-      this.output(table.join("\n"));
+      this.output(`### Optic detected **${totalChanges} ${totalChanges > 1 ? "changes" : "change"}** to your API's behavior.`);
+      this.output(`See full specification @ ${specUrl}`);
+      this.output(addedChanges.join("\n"));
+      this.output(updatedChanges.join("\n"));
+      this.output(removedChanges.join("\n"));
     }
     this.output();
-    this.output(`See full specification @ ${specUrl}`);
-    this.output("#### Powered by Optic");
+    this.output(`### Powered by ${link("Optic", "https://useoptic.com")}`);
 
     if (this.escapeMode) {
       const escapedString = JSON.stringify(this.outputString);
