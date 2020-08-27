@@ -43,10 +43,10 @@ const InferPolymorphismEnabledSchema = Joi.object({
 type InferPolymorphismEnabledProperties = Joi.extractType<
   typeof InferPolymorphismEnabledSchema
 >;
-export const InferPolymorphismEnabled = DescribeEvent<
+export const UserEnabledInferPolymorphism = DescribeEvent<
   InferPolymorphismEnabledProperties
 >(
-  Events.InferPolymorphismEnabled,
+  Events.UserEnabledInferPolymorphism,
   InferPolymorphismEnabledSchema,
   (props) =>
     `Infer Polymorphism was turned on for ${props.captureId}, endpoint ${props.endpointId}`
@@ -95,46 +95,52 @@ const SuggestionAcceptedSchema = Joi.object({
 type SuggestionAcceptedProperties = Joi.extractType<
   typeof SuggestionAcceptedSchema
 >;
-export const SuggestionAccepted = DescribeEvent<SuggestionAcceptedProperties>(
-  Events.SuggestionAccepted,
+export const UserAcceptedSuggestion = DescribeEvent<
+  SuggestionAcceptedProperties
+>(
+  Events.UserAcceptedSuggestion,
   SuggestionAcceptedSchema,
   (props) => `Suggestion to '${props.suggestion}' was accepted`
 );
 
-const PreviewSuggestionSchema = Joi.object({
+const UserPreviewedSuggestionSchema = Joi.object({
   captureId: Joi.string().required(),
   diff: Joi.string().required(),
   diffAssertion: Joi.string().required(),
   suggestion: Joi.string().required(),
 });
-type PreviewSuggestionProperties = Joi.extractType<
-  typeof PreviewSuggestionSchema
+type UserPreviewedSuggestionProperties = Joi.extractType<
+  typeof UserPreviewedSuggestionSchema
 >;
-export const PreviewSuggestion = DescribeEvent<PreviewSuggestionProperties>(
-  Events.PreviewSuggestion,
-  PreviewSuggestionSchema,
+export const UserPreviewedSuggestion = DescribeEvent<
+  UserPreviewedSuggestionProperties
+>(
+  Events.UserPreviewedSuggestion,
+  UserPreviewedSuggestionSchema,
   (props) =>
     `Suggestion to '${props.suggestion}' was previewed in response to diff: ${props.diff}`
 );
 
-const DiffWasResetSchema = Joi.object({});
-type DiffWasResetProperties = Joi.extractType<typeof DiffWasResetSchema>;
-export const DiffWasReset = DescribeEvent<DiffWasResetProperties>(
-  Events.DiffWasReset,
-  DiffWasResetSchema,
+const UserResetDiffSchema = Joi.object({});
+type UserResetDiffProperties = Joi.extractType<typeof UserResetDiffSchema>;
+export const UserResetDiff = DescribeEvent<UserResetDiffProperties>(
+  Events.UserResetDiff,
+  UserResetDiffSchema,
   (props) => `The Diff Was Reset`
 );
 
-const ChangesCommittedSchema = Joi.object({
+const UserCommittedChangesSchema = Joi.object({
   message: Joi.string().required(),
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
-type ChangesCommittedProperties = Joi.extractType<
-  typeof ChangesCommittedSchema
+type UserCommittedChangesProperties = Joi.extractType<
+  typeof UserCommittedChangesSchema
 >;
-export const ChangesCommitted = DescribeEvent<ChangesCommittedProperties>(
-  Events.ChangesCommitted,
-  ChangesCommittedSchema,
+export const UserCommittedChanges = DescribeEvent<
+  UserCommittedChangesProperties
+>(
+  Events.UserCommittedChanges,
+  UserCommittedChangesSchema,
   (props) => `The Diff Was Reset`
 );

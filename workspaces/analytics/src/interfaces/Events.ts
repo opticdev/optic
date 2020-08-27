@@ -11,17 +11,17 @@ export const Events = keymirror({
   RequirementForDiffsToHaveASuggestionFailed: null,
 
   //running tasks
-  StartedTaskWithLocalCLI: null,
-  ExitedTaskWithLocalCLI: null,
+  StartedTaskWithLocalCli: null,
+  ExitedTaskWithLocalCli: null,
 
   //diffs
+  BodyDiffRendered: null,
   UserChangedCaptureOverviewTab: null,
-  NewBodyDiffRendered: null,
-  InferPolymorphismEnabled: null,
+  UserEnabledInferPolymorphism: null,
   UserBeganAddingNewUrl: null,
   UserFinishedAddingNewUrl: null,
-  DiffWasReset: null,
-  PreviewSuggestion: null,
-  SuggestionAccepted: null,
-  ChangesCommitted: null,
+  UserResetDiff: null,
+  UserPreviewedSuggestion: null,
+  UserAcceptedSuggestion: null,
+  UserCommittedChanges: null,
 });
