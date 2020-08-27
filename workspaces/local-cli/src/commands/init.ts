@@ -60,11 +60,11 @@ export default class Init extends Command {
 name: ${name}
 tasks:
   # The default task, invoke using \`api run taskname\`
-  # Learn how to finish setting up Optic at https://docs.useoptic.com/setup
+  # Learn how to finish setting up Optic at https://useoptic.com/docs/getting-started/setup/
 ${buildInitialTask(flags)}
 
 ignoreRequests:
-# For more information on configuration, visit https://docs.useoptic.com/captures
+# For more information on configuration, visit https://useoptic.com/docs/faqs-and-troubleshooting/captures
 - OPTIONS (.*)`.trimLeft();
 
     // const token: string = await Promise.resolve('token-from-backend')

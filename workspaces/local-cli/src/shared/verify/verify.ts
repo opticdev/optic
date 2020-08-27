@@ -56,13 +56,13 @@ export async function verifyTask(
   let foundTask: IOpticTaskAliased | null = null;
   let startConfig: IOpticTaskRunnerConfig | null = null;
 
-  let fixUrl = 'https://docs.useoptic.com/faqs-and-troubleshooting/';
-
   await niceTry(async () => {
-    const task = config.tasks[taskName];
-    foundTask = task;
-    if (foundTask) {
-      startConfig = await TaskToStartConfig(task);
+    if (config.tasks) {
+      const task = config.tasks[taskName];
+      foundTask = task;
+      if (foundTask) {
+        startConfig = await TaskToStartConfig(task);
+      }
     }
   });
 
@@ -80,7 +80,7 @@ export async function verifyTask(
     );
 
     cli.log(
-      Object.keys(config!.tasks)
+      Object.keys(config.tasks || [])
         .map((i) => '- ' + i)
         .sort()
         .join('\n')
