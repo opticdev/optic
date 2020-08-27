@@ -1,7 +1,11 @@
 import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
 //@ts-ignore
 import Analytics from 'analytics-node';
+//@ts-ignore
+import jwtDecode from 'jwt-decode';
 import { consistentAnonymousId } from '@useoptic/analytics/lib/consistentAnonymousId';
+//@ts-ignore
+import niceTry from 'nice-try';
 import {
   ClientContext,
   TrackingEventBase,
@@ -19,7 +23,8 @@ const clientId = `local_cli_${packageJson.version}`;
 const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
   async (batchId: string) => {
     const user = await getCredentials();
-    const clientAgent = user ? user.token : consistentAnonymousId;
+    const decodedSub = niceTry(() => jwtDecode(user!.token).sub);
+    const clientAgent = decodedSub ? decodedSub : consistentAnonymousId;
 
     const clientContext: ClientContext = {
       clientAgent: clientAgent,

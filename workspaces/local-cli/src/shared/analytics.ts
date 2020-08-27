@@ -55,36 +55,6 @@ export async function trackUserEvent(event: TrackingEventBase<any>) {
   cliServerClient.postTrackingEvents([event]);
 }
 
-// export async function track(event: string, properties: any = {}) {
-//   await new Promise((resolve, reject) => {
-//     getUser().then((user) => {
-//       if (user) {
-//         analytics.track({ userId: user.sub, event, properties }, resolve);
-//       } else {
-//         analytics.track({ anonymousId: 'anon', event, properties }, resolve);
-//       }
-//     });
-//   });
-// }
-
-// // make me spawn a process so main thread can end
-// export function trackAndSpawn(event: string, properties: any = {}) {
-//   getUser().then((user) => {
-//     runScriptByName(
-//       'emit-analytics',
-//       token,
-//       JSON.stringify({
-//         userId: user ? user.sub : 'anon',
-//         event,
-//         properties: {
-//           ...properties,
-//           opticVersion,
-//         },
-//       })
-//     );
-//   });
-// }
-
 export function opticTaskToProps(
   task: string,
   config: IOpticTaskRunnerConfig
