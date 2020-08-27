@@ -3,6 +3,8 @@ use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
 use optic_diff::{diff_interaction, streams, EndpointProjection, HttpInteraction, SpecEvent};
 use petgraph::dot::{Config, Dot};
+use tokio::io::{AsyncBufReadExt, BufReader};
+use tokio::stream::StreamExt;
 
 #[tokio::test]
 async fn can_yield_umatched_request_url() {
@@ -79,8 +81,19 @@ async fn can_yield_umatched_request_url() {
   {
     let mut sink = streams::diff::into_json_lines(&mut destination);
     for result in results {
-      sink.send(result).await;
+      if let Err(_) = sink.send(result).await {
+        panic!("interaction diff results should deserialise and write to json lines");
+      }
     }
   }
-  assert!(destination.len() > 0); // TODO: try to parse this as a stream of json
+  assert!(destination.len() > 0);
+
+  let desitination_reader = BufReader::new(std::io::Cursor::new(&destination));
+  let mut written_lines = desitination_reader.lines();
+  let first_line = written_lines
+    .next()
+    .await
+    .expect("should be able to read a line from the in-memory destination")
+    .unwrap();
+  serde_json::from_str::<serde_json::Value>(&first_line).expect("first line should be valid json");
 }
