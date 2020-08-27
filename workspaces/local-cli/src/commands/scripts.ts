@@ -1,22 +1,16 @@
 import { Command, flags } from '@oclif/command';
-import { verifyTask } from '../shared/verify';
 // @ts-ignore
-import {
-  getPathsRelativeToConfig,
-  IOpticTask,
-  readApiConfig,
-  TaskToStartConfig,
-} from '@useoptic/cli-config';
+import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
 //@ts-ignore
 import niceTry from 'nice-try';
 import { cli } from 'cli-ux';
 //@ts-ignore
 import which from 'which';
 import colors from 'colors';
-import { exec, spawn, SpawnOptions } from 'child_process';
+import { spawn, SpawnOptions } from 'child_process';
 import { IOpticScript } from '@useoptic/cli-config/build';
-import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
-import GenerateOas, { generateOas } from './generate/oas';
+import { fromOptic } from '@useoptic/cli-shared';
+import { generateOas } from './generate/oas';
 export default class Scripts extends Command {
   static description = 'Run one of the scripts in your optic.yml file';
 

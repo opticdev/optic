@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import ListItemText from '@material-ui/core/ListItemText';
 import {
   NewBodyDiffRendered,
-  InferPolymorphismEnabledSchema,
+  UserEnabledInferPolymorphism,
 } from '@useoptic/analytics/lib/events/diffs';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -230,7 +230,7 @@ function _NewRegions(props) {
                     setInferPolymorphism(e.target.checked);
                     if (e.target.checked) {
                       trackUserEvent(
-                        InferPolymorphismEnabledSchema.withProps({
+                        UserEnabledInferPolymorphism.withProps({
                           captureId,
                           endpointId,
                         })

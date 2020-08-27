@@ -29,7 +29,7 @@ import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
 import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
 import { trackUserEvent } from '../../../Analytics';
-import { PreviewSuggestion } from '@useoptic/analytics/lib/events/diffs';
+import { UserPreviewedSuggestion } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,7 +106,7 @@ export const DiffReviewExpanded = (props) => {
   const setSelectedInterpretation = (s) => {
     if (description && s) {
       trackUserEvent(
-        PreviewSuggestion.withProps({
+        UserPreviewedSuggestion.withProps({
           captureId,
           diff: description.title,
           diffAssertion: description.assertion,
