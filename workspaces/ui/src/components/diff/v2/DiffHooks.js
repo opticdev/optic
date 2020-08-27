@@ -1,8 +1,8 @@
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { useEffect, useState } from 'react';
 import { JsonHelper, ScalaJSHelpers } from '@useoptic/domain';
-import { track } from '../../../Analytics';
-
+import { track, trackUserEvent } from '../../../Analytics';
+import { RequirementForDiffsToHaveASuggestionFailed } from '@useoptic/analytics/lib/events/errors';
 export function useDiffDescription(diff) {
   const { diffService } = useCaptureContext();
   const [description, setDescription] = useState(null);
@@ -65,10 +65,11 @@ export function useSuggestionsForDiff(diff, currentInteraction) {
         if (mounted) {
           setSuggestions(result);
           if (result.length === 0) {
-            track('Requirement Failed', {
-              requirement: 'Suggestions should never be empty',
-              diff: diff.toString(),
-            });
+            trackUserEvent(
+              RequirementForDiffsToHaveASuggestionFailed.with({
+                diff: diff.toString(),
+              })
+            );
           }
         }
       } else {

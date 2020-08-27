@@ -22,6 +22,7 @@
     "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
   },
   "workspaces": [
+    "workspaces/analytics",
     "workspaces/saas-types",
     "workspaces/cli-config",
     "workspaces/cli-shared",

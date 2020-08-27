@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.2.11",
+  "version": "8.3.0",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -13,14 +13,16 @@
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
+    "assert": "^2.0.0",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/cli-client": "8.2.11",
-    "@useoptic/cli-config": "8.2.11",
-    "@useoptic/cli-scripts": "8.2.11",
-    "@useoptic/cli-server": "8.2.11",
-    "@useoptic/cli-shared": "8.2.11",
+    "@useoptic/analytics": "8.3.0",
+    "@useoptic/cli-client": "8.3.0",
+    "@useoptic/cli-config": "8.3.0",
+    "@useoptic/cli-scripts": "8.3.0",
+    "@useoptic/cli-server": "8.3.0",
+    "@useoptic/cli-shared": "8.3.0",
     "@useoptic/domain": "10.0.7",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",

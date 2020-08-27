@@ -161,7 +161,7 @@ async function createExampleSpecServiceFactory(data) {
 
     getEnabledFeatures() {
       return {
-        TESTING_DASHBOARD: true,
+        TESTING_DASHBOARD: process.env.REACT_APP_TESTING_DASHBOARD === "true" || process.env.REACT_APP_TESTING_DASHBOARD === true,
       };
     },
   };
