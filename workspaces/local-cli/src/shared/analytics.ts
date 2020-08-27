@@ -52,7 +52,7 @@ export async function trackUserEvent(event: TrackingEventBase<any>) {
     `http://localhost:${daemonState.port}/api`
   );
 
-  cliServerClient.postTrackingEvents([event]);
+  await cliServerClient.postTrackingEvents([event]);
 }
 
 export function opticTaskToProps(

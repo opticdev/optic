@@ -71,13 +71,6 @@ ignoreRequests:
 
     const { configPath } = await createFileTree(config, cwd);
 
-    trackUserEvent(
-      ApiInitializedInProject.withProps({
-        cwd: cwd,
-        apiName: name,
-      })
-    );
-
     cli.log(
       fromOptic(`Added Optic configuration to ${colors.bold(configPath)}`)
     );
@@ -90,6 +83,13 @@ ignoreRequests:
         )
       );
     // process.exit();
+
+    await trackUserEvent(
+      ApiInitializedInProject.withProps({
+        cwd: cwd,
+        apiName: name,
+      })
+    );
   }
 }
 

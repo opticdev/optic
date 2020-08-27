@@ -64,8 +64,9 @@ class CliServer {
   private corsOptions: cors.CorsOptions = {
     origin: [
       // this needs to be made exclusive in prod
-      'https://app.useoptic.com',
       'http://localhost:4005',
+      'http://app.o3c.info',
+      'https://app.useoptic.com',
     ],
   };
 

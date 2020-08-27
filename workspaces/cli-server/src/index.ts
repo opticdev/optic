@@ -63,7 +63,11 @@ export async function ensureDaemonStarted(
       resolve();
     });
   }
+  developerDebugLogger(`trying to read contents`);
   const contents = await fs.readJson(lockFilePath);
+  developerDebugLogger(
+    `could read contents ${JSON.stringify(contents.toString)}`
+  );
   return contents;
 }
 

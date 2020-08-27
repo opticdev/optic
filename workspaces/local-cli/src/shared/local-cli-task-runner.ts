@@ -71,7 +71,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
-    trackUserEvent(
+    await trackUserEvent(
       StartedTaskWithLocalCli.withProps({
         inputs: opticTaskToProps('', taskConfig),
         cwd: this.paths.cwd,
