@@ -88,6 +88,21 @@ export const UserFinishedAddingNewUrl = DescribeEvent<
     `User Added New Url ${props.method} ${props.pathExpression} in ${props.captureId} with purpose '${props.pathExpression}'`
 );
 
+const SuggestionDisplayedSchema = Joi.object({
+  suggestion: Joi.string().required(),
+});
+type SuggestionDisplayedProperties = Joi.extractType<
+  typeof SuggestionDisplayedSchema
+>;
+export const SuggestionDisplayed = DescribeEvent<SuggestionDisplayedProperties>(
+  Events.SuggestionDisplayed,
+  SuggestionDisplayedSchema,
+  (props) =>
+    `Summary: '${props.suggestion}' `
+);
+
+
+
 const SuggestionAcceptedSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestion: Joi.string().required(),

@@ -275,7 +275,7 @@ export default function DemoSessions(props) {
         case DiffEvents.UserCommittedChanges.eventName: {
           setHasCommited(true);
           trackCommit();
-          if (route.includes('PUT')) {
+          if (routeStateRef.current.includes('PUT')) {
             setDocumentedAllEndpointDiffs(true);
           }
           // 1 - button is offset
@@ -320,7 +320,7 @@ export default function DemoSessions(props) {
           }
           break;
         }
-        case DiffEvents.DisplayNextSuggestion.eventName: {
+        case DiffEvents.SuggestionDisplayed.eventName: {
           let m = '';
           const missingField = eventProps.suggestion.match(
             /Missing (.*) field (.*)/
@@ -393,7 +393,6 @@ export default function DemoSessions(props) {
                     {m.action && (
                       <ColorButton
                         className={styles.ctaButton}
-                        color="cta"
                         variant="contained"
                         onClick={() => {
                           if (m.action.onClick) {
