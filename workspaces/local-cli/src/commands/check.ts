@@ -1,5 +1,5 @@
 import { Command } from '@oclif/command';
-import { verifyTask } from '../shared/verify';
+import { verifyTask } from '../shared/verify/verify';
 
 export default class Check extends Command {
   static description = 'Validate the correctness of a task in your optic.yml';

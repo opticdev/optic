@@ -13,6 +13,11 @@ import {
   getUserFromCredentials,
 } from './authentication-server';
 import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
+import { Client } from '@useoptic/cli-client';
+import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
+import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { lockFilePath } from './paths';
+import { Config } from '../config';
 
 const packageJson = require('../../package.json');
 const opticVersion = packageJson.version;
@@ -37,34 +42,17 @@ export async function getUser(): Promise<IUser | null> {
   });
 }
 
-export async function track(event: string, properties: any = {}) {
-  await new Promise((resolve, reject) => {
-    getUser().then((user) => {
-      if (user) {
-        analytics.track({ userId: user.sub, event, properties }, resolve);
-      } else {
-        analytics.track({ anonymousId: 'anon', event, properties }, resolve);
-      }
-    });
-  });
-}
+export async function trackUserEvent(event: TrackingEventBase<any>) {
+  const daemonState = await ensureDaemonStarted(
+    lockFilePath,
+    Config.apiBaseUrl
+  );
 
-// make me spawn a process so main thread can end
-export function trackAndSpawn(event: string, properties: any = {}) {
-  getUser().then((user) => {
-    runScriptByName(
-      'emit-analytics',
-      token,
-      JSON.stringify({
-        userId: user ? user.sub : 'anon',
-        event,
-        properties: {
-          ...properties,
-          opticVersion,
-        },
-      })
-    );
-  });
+  const cliServerClient = new Client(
+    `http://localhost:${daemonState.port}/api`
+  );
+
+  await cliServerClient.postTrackingEvents([event]);
 }
 
 export function opticTaskToProps(

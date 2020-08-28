@@ -11,7 +11,6 @@ import {
   ScalaJSHelpers,
 } from '@useoptic/domain';
 import debounce from 'lodash.debounce';
-import { track } from '../Analytics';
 export const CaptureContext = React.createContext(null);
 
 export function useCaptureContext() {
@@ -63,9 +62,9 @@ class _CaptureContextStore extends React.Component {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
         if (!notifData.hasMoreInteractions) {
           console.log('completed diff');
-          track('Completed Diff', {
-            captureId: this.props.captureId,
-          });
+          // track('Completed Diff', {
+          //   captureId: this.props.captureId,
+          // });
         }
         const stats = {
           completed: !notifData.hasMoreInteractions,
@@ -73,10 +72,10 @@ class _CaptureContextStore extends React.Component {
           processed: notifData.diffedInteractionsCounter,
         };
 
-        track('Diff Progress', {
-          captureId: this.props.captureId,
-          ...stats,
-        });
+        // track('Diff Progress', {
+        //   captureId: this.props.captureId,
+        //   ...stats,
+        // });
 
         return stats;
       } else {
@@ -94,12 +93,12 @@ class _CaptureContextStore extends React.Component {
 
       console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
 
-      track('Diff Incremental Results', {
-        captureId: this.props.captureId,
-        diffs: diffsResponse.diffs.length,
-        newUrls: urlsResponse.length,
-      });
-
+      // track('Diff Incremental Results', {
+      //   captureId: this.props.captureId,
+      //   diffs: diffsResponse.diffs.length,
+      //   newUrls: urlsResponse.length,
+      // });
+      //
       this.setState({
         endpointDiffs: diffsResponse.diffs,
         unrecognizedUrls: urlsResponse,
@@ -155,11 +154,11 @@ class _CaptureContextStore extends React.Component {
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
 
-    track('Starting Diff', {
-      eventsLength: events.length,
-      additionalCommandsLength: this.state.additionalCommands.length,
-      captureId,
-    });
+    // track('Starting Diff', {
+    //   eventsLength: events.length,
+    //   additionalCommandsLength: this.state.additionalCommands.length,
+    //   captureId,
+    // });
     const eventsAsArray = ScalaJSHelpers.eventsJsArray(events);
 
     const config = await captureService.startDiff(

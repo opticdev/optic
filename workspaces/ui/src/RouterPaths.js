@@ -9,8 +9,6 @@ const routerPaths = {
   diffsRoot: (base = '') => `${base}/diffs`,
   captureRoot: (base = '') => `${routerPaths.diffsRoot(base)}/:captureId`,
   captureRequestDiffsRoot: (base = '') => `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method`,
-  captureRequestDiffsRootWithViewer: (base = '') =>
-    `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method/:viewer`,
 };
 
 export function useRouterPaths() {

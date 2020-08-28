@@ -27,8 +27,9 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
-import ShapeViewer from './shape_viewers/ShapeViewer';
-import { track } from '../../../Analytics';
+import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
+import { trackUserEvent } from '../../../Analytics';
+import { UserPreviewedSuggestion } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,12 +82,11 @@ export class DiffReviewExpandedCached extends React.Component {
   }
 
   render() {
-    const { selectedDiff, captureId, setSelectedDiff, viewer } = this.props;
+    const { selectedDiff, captureId, setSelectedDiff } = this.props;
     return (
       <DiffReviewExpanded
         diff={selectedDiff}
         captureId={captureId}
-        viewer={viewer}
         {...{ selectedDiff, setSelectedDiff }}
       />
     );
@@ -95,14 +95,7 @@ export class DiffReviewExpandedCached extends React.Component {
 
 export const DiffReviewExpanded = (props) => {
   const classes = useStyles();
-  const {
-    diff,
-    selectedDiff,
-    setSelectedDiff,
-    rfcContext,
-    captureId,
-    viewer,
-  } = props;
+  const { diff, selectedDiff, setSelectedDiff, rfcContext, captureId } = props;
 
   const description = useDiffDescription(diff);
 
@@ -112,12 +105,14 @@ export const DiffReviewExpanded = (props) => {
 
   const setSelectedInterpretation = (s) => {
     if (description && s) {
-      track('Previewing Suggestion', {
-        captureId,
-        diff: description.title,
-        diffAssertion: description.assertion,
-        suggestion: s.action,
-      });
+      trackUserEvent(
+        UserPreviewedSuggestion.withProps({
+          captureId,
+          diff: description.title,
+          diffAssertion: description.assertion,
+          suggestion: s.action,
+        })
+      );
     }
     setSelectedInterpretationInner(s);
   };
@@ -157,7 +152,7 @@ export const DiffReviewExpanded = (props) => {
   const { interaction, interactionScala } = currentInteraction;
 
   const { method, path } = interactionScala.request;
-  track('Display Diff in Behavior Page', props);
+  // track('Display Diff in Behavior Page', props);
   return (
     <ShapeExpandedStore>
       <div>
@@ -199,11 +194,12 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' && diff.inRequest ? (
-                    <ShapeViewer
-                      diff={diff}
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' &&
+                  diff.inRequest ? (
+                    <InteractionBodyViewer
+                      diff={diff.inRequest && diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.request.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (
@@ -255,11 +251,11 @@ export const DiffReviewExpanded = (props) => {
                     />
                   }
                 >
-                  {viewer === 'flattened' && diff.inResponse ? (
-                    <ShapeViewer
-                      diff={diff}
+                  {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER === 'true' ? (
+                    <InteractionBodyViewer
+                      diff={diff.inResponse && diff}
                       diffDescription={description}
-                      interaction={interactionScala}
+                      body={interactionScala.response.body}
                       selectedInterpretation={selectedInterpretation}
                     />
                   ) : (

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { mapScala } from '@useoptic/domain';
 import { UpdatedBlue, UpdatedBlueBackground } from '../../../theme';
+import { track } from '../../../Analytics';
 
 export function DiffCopy(props) {
   const classes = useStyles();
@@ -9,7 +10,9 @@ export function DiffCopy(props) {
   const copy = props.copy;
   const fontSize = props.fontSize || 13;
 
+  let suggestion = ""
   const components = mapScala(copy)((i) => {
+    suggestion += i.value + " "
     if (i.style === 'normal') {
       return (
         <span className={classes.normal} style={{ fontSize }}>
@@ -26,6 +29,10 @@ export function DiffCopy(props) {
       );
     }
   });
+
+  useEffect(() => {
+    track("Showing recommendation", {suggestion})
+  }, [])
 
   return <div>{components}</div>;
 }

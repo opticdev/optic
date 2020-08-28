@@ -1,4 +1,5 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, withStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 
 export const primary = '#31366f';
 export const secondary = '#ea4a61';
@@ -12,6 +13,7 @@ export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
+export const SubtleBlueBackground = '#F5F6FA';
 
 export const methodColors = {
   OPTIONS: '#686868',
@@ -39,6 +41,9 @@ export const appTheme = createMuiTheme({
     changed: { main: ChangedYellow, background: ChangedYellowBackground },
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
+    info: {
+      main: "#323232"
+    },
 
     httpMethods: {
       OPTIONS: { main: methodColors.OPTIONS, dark: methodColorsDark.OPTIONS },
@@ -57,10 +62,20 @@ export const appTheme = createMuiTheme({
     MuiSnackbarContent: {
       root: {
         '&[class*="variantInfo"]': {
-          backgroundColor: OpticBlue,
-          fontWeight: 600
+          backgroundColor: SubtleBlueBackground,
         },
       }
     },
   }
 });
+
+
+export const ColorButton = withStyles(() => ({
+  root: {
+    color: "white",
+    backgroundColor: "#4696FF",
+    '&:hover': {
+      backgroundColor: "#71ABFF",
+    },
+  },
+}))(Button);

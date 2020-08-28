@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
   monospace;
 }
+
+.MuiAlert-icon {
+  align-items: center;
+}
+
+.MuiAlert-icon .MuiSvgIcon-root {
+width: 1.3em;
+  height: 1.3em;
+}

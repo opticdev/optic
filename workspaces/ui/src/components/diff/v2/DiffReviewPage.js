@@ -30,13 +30,14 @@ import { DiffStats } from './Stats';
 import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
-import { track } from '../../../Analytics';
 import Button from '@material-ui/core/Button';
+import { trackUserEvent } from '../../../Analytics';
+import { ShowCommitCard } from '@useoptic/analytics/lib/events/diffs';
 
 export const newRegionsConst = 'new_regions';
 
 export function DiffReviewPage(props) {
-  const { captureId, method, pathId, viewer } = props;
+  const { captureId, method, pathId } = props;
   const classes = useStyles();
 
   const { rfcId, rfcService } = useContext(RfcContext);
@@ -112,7 +113,8 @@ export function DiffReviewPage(props) {
 
   useEffect(() => {
     if (showFinalize || (completed && regions.empty)) {
-      track('Rendered Finalize Card');
+      // track('Rendered Finalize Card');
+      trackUserEvent(ShowCommitCard.withProps({}));
     }
   }, [showFinalize, completed, regions.empty]);
 
@@ -224,7 +226,6 @@ export function DiffReviewPage(props) {
               )}
               completed={completed}
               tab={currentTab}
-              viewer={viewer}
             />
           )}
         </div>
@@ -242,7 +243,6 @@ export function DiffReviewPage(props) {
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
-    overflow: 'hidden',
   },
   navigationContainer: {
     width: 230,

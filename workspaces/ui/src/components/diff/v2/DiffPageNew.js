@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Typography } from '@material-ui/core';
 import compose from 'lodash.compose';
+import Invariant from 'invariant';
 import {
   EndpointsContextStore,
   withEndpointsContext,
@@ -27,7 +28,11 @@ import {
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import { DiffReviewPage } from './DiffReviewPage';
-import { track } from '../../../Analytics';
+import { trackUserEvent } from '../../../Analytics';
+import {
+  UserResetDiff,
+  UserAcceptedSuggestion,
+} from '@useoptic/analytics/lib/events/diffs';
 
 const { diff, JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
@@ -38,7 +43,13 @@ function DiffPageNew(props) {
   const services = useServices();
 
   const { pathId, method, captureId } = props.match.params;
-  const viewer = props.match.params.viewer || null;
+
+  Invariant(pathId, ':pathId param must be matched to render DiffPageNew');
+  Invariant(method, ':method param must be matched to render DiffPageNew');
+  Invariant(
+    captureId,
+    ':captureId param must be matched to render DiffPageNew'
+  );
 
   return (
     <CaptureSessionInlineContext
@@ -54,12 +65,7 @@ function DiffPageNew(props) {
         inContextOfDiff={true}
         notFound={<Redirect to={`${baseUrl}/diffs`} />}
       >
-        <DiffReviewPage
-          captureId={captureId}
-          pathId={pathId}
-          method={method}
-          viewer={viewer}
-        />
+        <DiffReviewPage captureId={captureId} pathId={pathId} method={method} />
       </EndpointsContextStore>
     </CaptureSessionInlineContext>
   );
@@ -152,9 +158,7 @@ const InnerDiffWrapper = function (props) {
         updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
-        track('Diff Reset', {
-          captureId,
-        });
+        trackUserEvent(UserResetDiff.withProps({}));
       }}
       acceptSuggestion={(...suggestions) => {
         if (suggestions) {
@@ -165,10 +169,12 @@ const InnerDiffWrapper = function (props) {
             .reduce(flatten, []);
           updatedAdditionalCommands(simulatedCommands);
           suggestions.map((i) => {
-            track('Accept Suggestion', {
-              captureId,
-              suggestion: i.action,
-            });
+            trackUserEvent(
+              UserAcceptedSuggestion.withProps({
+                captureId,
+                suggestion: i.action,
+              })
+            );
           });
         }
       }}
