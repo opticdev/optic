@@ -24,17 +24,22 @@
     "avsc": "^5.4.21",
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",
+    "execa": "^4.0.3",
     "fs-extra": "^9.0.0",
     "mockttp": "^0.19.2",
     "oboe": "^2.1.5",
     "ora": "^4.0.4",
     "proper-lockfile": "^4.1.1",
+    "shape-hash": "^1.0.6",
+    "stream-chain": "^2.2.3",
+    "stream-json": "^1.7.1",
     "tree-kill": "^1.2.2",
     "uuid": "^8.0.0",
-    "shape-hash": "^1.0.6",
     "whatwg-mimetype": "^2.3.0"
   },
   "devDependencies": {
+    "@types/stream-chain": "^2.0.0",
+    "@types/stream-json": "^1.5.1",
     "@types/whatwg-mimetype": "^2.1.0"
   },
   "files": [
