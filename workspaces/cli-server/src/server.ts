@@ -65,7 +65,7 @@ class CliServer {
     origin: [
       // this needs to be made exclusive in prod
       'http://localhost:4005',
-      'http://app.o3c.info',
+      'https://app.o3c.info',
       'https://app.useoptic.com',
     ],
   };
