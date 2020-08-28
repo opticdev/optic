@@ -36,7 +36,7 @@ export default class Login extends Command {
       cli.action.start('Waiting to be authenticated...');
 
       let token: string;
-      setTimeout(() => {
+      const fallbackTimeout = setTimeout(() => {
         if (!token) {
           const launchUrl = `${loginBaseUrl}/login`;
           this.log(`Please log in at ${launchUrl}`);
@@ -44,6 +44,7 @@ export default class Login extends Command {
         }
       }, 5000);
       token = await tokenReceived;
+      clearTimeout(fallbackTimeout);
       await setCredentials({ token });
       cli.action.stop('Received Credentials');
 
