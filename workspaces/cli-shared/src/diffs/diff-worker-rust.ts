@@ -8,7 +8,7 @@ import { ScalaJSHelpers } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import lockfile from 'proper-lockfile';
-import Chain from 'stream-chain';
+import Chain, { chain } from 'stream-chain';
 import Execa from 'execa';
 import { Readable } from 'stream';
 import { disassembler as JSONDissambler } from 'stream-json/Disassembler';
@@ -31,7 +31,7 @@ export function getDiffOutputPaths(values: {
 }) {
   const { captureBaseDirectory, captureId, diffId } = values;
   const base = path.join(captureBaseDirectory, captureId, 'diffs', diffId);
-  const diffs = path.join(base, 'diffs.json');
+  const diffs = path.join(base, 'diffs.jsonl');
   const stats = path.join(base, 'stats.json');
   const undocumentedUrls = path.join(base, 'undocumentedUrls.json');
   const events = path.join(base, 'events.json');
@@ -156,7 +156,7 @@ export class DiffWorkerRust {
       await fs.ensureDir(diffOutputPaths.base);
 
       let count = 0;
-      const interactionsStream = new Chain([
+      const interactionsStream = chain([
         Readable.from(interactionIterator),
         (item) => {
           count++;
@@ -184,23 +184,22 @@ export class DiffWorkerRust {
         },
         JSONLStringer(),
       ]);
+      const eventsSink = fs.createWriteStream(diffOutputPaths.diffs);
 
-      interactionsStream.pipe(process.stdout);
-
-      // for await (const item of interactionIterator) {
-      //   skippedInteractionsCounter = item.skippedInteractionsCounter;
-      //   diffedInteractionsCounter = item.diffedInteractionsCounter;
-      //   hasMoreInteractions = item.hasMoreInteractions;
-      //   if (!hasMoreInteractions) {
-      //     // @GOTCHA item.interaction.value should not be present when hasMoreInteractions is false
-      //     break;
-      //   }
-      //   if (!item.interaction) {
-      //     continue;
-      //   }
-      //   const { batchId, index } = item.interaction.context;
-      // }
-      // hasMoreInteractions = false;
+      // TODO: find the actual way we'll use to point to a built binary
+      // taking in consideration that in development that's probably a
+      // debug build, while in production a release build
+      const differPath = path.resolve(
+        path.join(__dirname, '../../../../diff/target/debug/optic_diff')
+      );
+      let diffProcess = Execa(differPath, [diffOutputPaths.events], {
+        input: interactionsStream,
+        stdio: 'pipe',
+      });
+      if (!diffProcess.stdout || !diffProcess.stderr)
+        throw new Error('diff process should have stdout and stderr streams');
+      diffProcess.stdout.pipe(eventsSink);
+      diffProcess.stderr.pipe(process.stderr);
     } catch (e) {
       notifyParentOfError(e);
     }
