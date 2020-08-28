@@ -155,19 +155,15 @@ export class DiffWorkerRust {
 
       await fs.ensureDir(diffOutputPaths.base);
 
-      let count = 0;
       const interactionsStream = chain([
         Readable.from(interactionIterator),
         (item) => {
-          count++;
           skippedInteractionsCounter = item.skippedInteractionsCounter;
           diffedInteractionsCounter = item.diffedInteractionsCounter;
           hasMoreInteractions = item.hasMoreInteractions;
           if (!item.hasMoreInteractions) {
             return Chain.final();
           }
-
-          if (count > 10) return Chain.final();
 
           if (!item.interaction) return;
 
@@ -180,7 +176,7 @@ export class DiffWorkerRust {
             }
           );
 
-          return [[item.interaction.value, interactionPointer]];
+          return [[item.interaction.value, [interactionPointer]]];
         },
         JSONLStringer(),
       ]);

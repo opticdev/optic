@@ -6,9 +6,10 @@ use tokio_util::codec::FramedWrite;
 
 use crate::interactions::InteractionDiffResult;
 
-pub fn into_json_lines<S>(sink: S) -> impl Sink<InteractionDiffResult>
+pub fn into_json_lines<S, T>(sink: S) -> impl Sink<T>
 where
   S: AsyncWrite,
+  T: Serialize,
 {
   let writer = BufWriter::new(sink);
   let codec = JsonLineEncoder::new();

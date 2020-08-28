@@ -58,22 +58,26 @@ fn main() {
         while let Some(interaction_json_result) = interaction_lines.next().await {
             let interaction_json =
                 interaction_json_result.expect("can read interaction json line from stdin");
-            let interaction = match HttpInteraction::from_json_str(&interaction_json) {
-                Ok(interaction) => interaction,
-                Err(parse_error) => {
-                    eprintln!("could not parse interaction json: {}", parse_error);
-                    continue;
-                }
-            };
+            let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
+                match serde_json::from_str(&interaction_json) {
+                    Ok(tagged_interaction) => tagged_interaction,
+                    Err(parse_error) => {
+                        eprintln!("could not parse interaction json: {}", parse_error);
+                        continue;
+                    }
+                };
             let results = diff_interaction(&mut endpoints_projection, interaction);
             for result in results {
-                if let Err(_) = results_sink.send(result).await {
+                if let Err(_) = results_sink.send(TaggedValue(result, tags.clone())).await {
                     panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
                 }
             }
         }
     })
 }
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct TaggedValue<T>(T, Vec<String>);
 
 #[cfg(test)]
 mod test {
