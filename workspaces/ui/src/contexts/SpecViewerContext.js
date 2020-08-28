@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import axios from 'axios';
 
 const SpecViewerDataContext = React.createContext(null);
 SpecViewerDataContext.displayName = 'SpecViewerDataContext';
@@ -15,32 +14,25 @@ function createSpecSession(specId) {
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
 		const ApiUrl = `${process.env.REACT_APP_API_URL}/api/v1`;
-		fetchedData = axios({
-			method: 'get',
-			url: `${ApiUrl}/sharing/public/spec-urls/${specId}`
-		}).then(response => {
-			console.log(response)
-			const data = {
-				events: response.data,
-				examples: {},
-				session: {
-					metadata: {
-					completed: true,
-					},
-					samples: [],
-					links: [
-						{
-							rel: 'next',
-							href: '',
-						},
-					],
-				},
-			};
-			console.log(data);
-			return data;
-		})
 
-      
+		const response = await fetch(`${ApiUrl}/sharing/public/spec-urls/${specId}`);
+		const data = await response.json();
+		fetchedData = {
+			events: data,
+			examples: {},
+			session: {
+				metadata: {
+				completed: true,
+				},
+				samples: [],
+				links: [
+					{
+						rel: 'next',
+						href: '',
+					},
+				],
+			},
+		};
     }
     return await fetchedData;
   }

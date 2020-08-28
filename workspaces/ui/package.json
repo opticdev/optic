@@ -64,6 +64,7 @@
     "start": "node --max-old-space-size=8192 scripts/start.js",
     "start-local": "node --max-old-space-size=8192 scripts/start-local.js",
     "start-local-demo": "node --max-old-space-size=8192 scripts/start-local-demo.js",
+    "start-local-spec": "node --max-old-space-size=8192 scripts/start-local-spec.js",
     "build": "node --max-old-space-size=8192 scripts/build.js",
     "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
     "build-demo": "node --max-old-space-size=8192 scripts/build-demo.js",
