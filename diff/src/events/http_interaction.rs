@@ -34,16 +34,18 @@ pub struct Request {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
-  status_code: u16,
+  pub status_code: u16,
   // #[serde(skip)]
-  headers: ArbitraryData,
+  pub headers: ArbitraryData,
+  pub body: Body,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Body {
-  content_type: Option<String>,
+  pub content_type: Option<String>,
   // #[serde(skip)]
-  value: ArbitraryData,
+  pub value: ArbitraryData,
 }
 
 #[derive(Deserialize, Debug)]

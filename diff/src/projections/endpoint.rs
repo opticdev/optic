@@ -1,7 +1,6 @@
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
 use cqrs_core::{Aggregate, AggregateEvent};
-use petgraph::dot::Dot;
 use petgraph::graph::Graph;
 use std::collections::HashMap;
 
@@ -149,7 +148,7 @@ impl EndpointProjection {
     let mut children = self
       .graph
       .neighbors_directed(method_node_index, petgraph::Direction::Incoming);
-    // ensure method node
+    // ensure status_code node
     let status_code_node_index_option = children.find(|node_index| {
       let node = self.graph.node_weight(*node_index).unwrap();
       match node {

@@ -1,19 +1,27 @@
 pub mod diff;
 
 use super::HttpInteraction;
-use crate::state::endpoint::{PathComponentId, PathComponentIdRef};
+use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
+use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;
   type RequestBody: RequestBodyVisitor<R>;
+  type ResponseBody: ResponseBodyVisitor<R>;
 
   fn path(&mut self) -> &mut Self::Path;
 
   fn request_body(&mut self) -> &mut Self::RequestBody;
+  
+  fn response_body(&mut self) -> &mut Self::ResponseBody;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
-    // TODO: flatten results once we have more types of visitors
-    self.path().take_results()
+    let flattened = vec![
+      self.path().take_results(), 
+      self.request_body().take_results(),
+      self.response_body().take_results(),
+      ].into_iter().filter_map(|x| x).flatten().collect();
+    Some(flattened)
   }
 }
 
@@ -39,15 +47,29 @@ pub trait InteractionVisitor<R> {
 
 pub trait RequestBodyVisitor<R>: InteractionVisitor<R> {
   fn begin(&mut self);
-  fn end(&mut self);
+  fn visit(&mut self, interaction: &HttpInteraction, context: &RequestBodyVisitorContext);
+  fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext);
+}
+pub trait ResponseBodyVisitor<R>: InteractionVisitor<R> {
+  fn begin(&mut self);
+  fn visit(&mut self, interaction: &HttpInteraction, context: &ResponseBodyVisitorContext);
+  fn end(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext);
 }
 
 pub trait PathVisitor<R>: InteractionVisitor<R> {
-  fn visit(&mut self, interaction: &HttpInteraction, context: PathVisitorContext);
+  fn visit(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext);
 }
 
 pub struct PathVisitorContext<'a> {
   pub path: Option<PathComponentIdRef<'a>>,
+}
+pub struct RequestBodyVisitorContext<'a> {
+  pub path: PathComponentIdRef<'a>,
+  pub operation: Option<(&'a RequestId, &'a RequestBodyDescriptor)>,
+}
+pub struct ResponseBodyVisitorContext<'a> {
+  pub path: PathComponentIdRef<'a>,
+  pub response: Option<(&'a ResponseId, &'a ResponseBodyDescriptor)>,
 }
 
 // Results

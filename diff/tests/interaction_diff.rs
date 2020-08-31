@@ -6,7 +6,8 @@ use petgraph::dot::{Config, Dot};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::stream::StreamExt;
 
-#[tokio::test]
+#[tokio::main]
+#[test]
 async fn can_yield_umatched_request_url() {
   let events = SpecEvent::from_file(
     std::env::current_dir()
@@ -40,7 +41,7 @@ async fn can_yield_umatched_request_url() {
     "request": {
       "host": "localhost",
       "method": "GET",
-      "path": "/api/f1/2019/drivers/screw/BAD",
+      "path": "/api/f1/2019/drivers/screw",
       "query": {
         "asJsonString": null,
         "asText": null,
@@ -52,7 +53,7 @@ async fn can_yield_umatched_request_url() {
         "asShapeHashBytes": null
       },
       "body": {
-        "contentType": "application/json",
+        "contentType": null,
         "value": {}
       }
     },
@@ -64,7 +65,7 @@ async fn can_yield_umatched_request_url() {
         "asShapeHashBytes": null
       },
       "body": {
-        "contentType": "application/json",
+        "contentType": "application/jsonxxx",
         "value": {}
       }
     },
@@ -72,8 +73,10 @@ async fn can_yield_umatched_request_url() {
   }"#,
   )
   .expect("example http interaction should deserialize");
+  println!("{:?}", interaction);
 
   let results = diff_interaction(&mut events_projection, interaction);
+  println!("{:?}", results);
   assert_eq!(results.len(), 1);
 
   let mut destination: Vec<u8> = vec![];
