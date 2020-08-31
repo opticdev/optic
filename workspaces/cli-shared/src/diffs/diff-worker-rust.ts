@@ -181,7 +181,7 @@ export class DiffWorkerRust {
         },
         JSONLStringer(),
       ]);
-      const eventsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
+      const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
 
       // TODO: find the actual way we'll use to point to a built binary
       // taking in consideration that in development that's probably a
@@ -195,8 +195,19 @@ export class DiffWorkerRust {
       });
       if (!diffProcess.stdout || !diffProcess.stderr)
         throw new Error('diff process should have stdout and stderr streams');
-      diffProcess.stdout.pipe(eventsSink);
+      diffProcess.stdout.pipe(diffsSink);
       diffProcess.stderr.pipe(process.stderr);
+
+      await Promise.all([
+        safeWriteJson(diffOutputPaths.stats, {
+          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+          isDone: !hasMoreInteractions,
+        }),
+        safeWriteJson(diffOutputPaths.undocumentedUrls, []),
+      ]);
+
+      notifyParent(); // initial notification to indicate we've started without issue
     } catch (e) {
       notifyParentOfError(e);
     }
