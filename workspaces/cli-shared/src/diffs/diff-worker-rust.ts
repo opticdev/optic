@@ -182,6 +182,10 @@ export class DiffWorkerRust {
         JSONLStringer(),
       ]);
       const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
+      diffsSink.once('finish', () => {
+        hasMoreInteractions = false;
+        notifyParent();
+      });
 
       // TODO: find the actual way we'll use to point to a built binary
       // taking in consideration that in development that's probably a

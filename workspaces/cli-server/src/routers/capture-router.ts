@@ -143,7 +143,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       'Cache-Control': 'no-cache',
     };
     res.writeHead(200, headers);
-    emit({ type: 'message', data: {} });
+    emit({
+      type: 'message',
+      data: diffMetadata.manager.latestProgress() || {},
+    });
 
     diffMetadata.manager.events.on('progress', (data) => {
       emit({ type: 'message', data });
