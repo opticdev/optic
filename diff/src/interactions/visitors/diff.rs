@@ -3,7 +3,7 @@ use super::{
   VisitorResults,
 };
 use crate::interactions::diff::{InteractionDiffResult, UnmatchedRequestUrl};
-use crate::interactions::diff::{InteractionTrail, RequestSpecTrail};
+use crate::interactions::diff::{InteractionTrail, RequestSpecTrail, SpecRoot};
 use crate::interactions::HttpInteraction;
 
 pub struct DiffVisitors {
@@ -82,7 +82,7 @@ impl PathVisitor<InteractionDiffResult> for DiffPathVisitor {
   fn visit(&mut self, interaction: &HttpInteraction, context: PathVisitorContext) {
     if let None = context.path {
       let interaction_trail = InteractionTrail::empty();
-      let requests_trail = RequestSpecTrail::SpecRoot;
+      let requests_trail = RequestSpecTrail::SpecRoot(SpecRoot {});
       let diff = InteractionDiffResult::UnmatchedRequestUrl(UnmatchedRequestUrl::new(
         interaction_trail,
         requests_trail,

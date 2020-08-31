@@ -39,13 +39,17 @@ impl InteractionTrail {
 
 #[derive(Debug, Serialize)]
 pub enum RequestSpecTrail {
-  SpecRoot,
+  SpecRoot(SpecRoot),
   SpecPath(SpecPath),
   SpecRequestRoot(SpecRequestRoot),
   SpecRequestBody(SpecRequestBody),
   SpecResponseRoot(SpecResponseRoot),
   SpecResponseBody(SpecResponseBody),
 }
+
+#[derive(Debug, Serialize)]
+pub struct SpecRoot {}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecPath {
