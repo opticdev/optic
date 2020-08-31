@@ -59,14 +59,6 @@ export default class Init extends Command {
     const config = `
 name: ${name}
 tasks:
-<<<<<<< Updated upstream
-  # The default task, invoke using \`api run taskname\`
-  # Learn how to finish setting up Optic at https://useoptic.com/docs/getting-started/setup/
-${buildInitialTask(flags)}
-
-ignoreRequests:
-# For more information on configuration, visit https://useoptic.com/docs/faqs-and-troubleshooting/captures
-=======
   # The default task, invoke using \`api run start\`
   # Learn how to set up and use Optic at https://app.useoptic.com
   start:
@@ -76,7 +68,6 @@ ignoreRequests:
     inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
 ignoreRequests:
 # For more information on configuration, visit https://www.useoptic.com/docs/faqs-and-troubleshooting/captures
->>>>>>> Stashed changes
 - OPTIONS (.*)`.trimLeft();
 
     // const token: string = await Promise.resolve('token-from-backend')
