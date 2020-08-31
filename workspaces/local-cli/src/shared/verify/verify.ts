@@ -56,6 +56,8 @@ export async function verifyTask(
   let foundTask: IOpticTaskAliased | null = null;
   let startConfig: IOpticTaskRunnerConfig | null = null;
 
+  let fixUrl = 'https://www.useoptic.com/docs/faqs-and-troubleshooting/';
+
   await niceTry(async () => {
     if (config.tasks) {
       const task = config.tasks[taskName];

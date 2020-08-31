@@ -38,7 +38,7 @@ yarn add global @useoptic/cli
 api init
 ```
 
-![The api start command initializing](https://docs.useoptic.com/assets/images/init.svg)
+![The api start command initializing](https://www.useoptic.com/static/init-9a9c43677e29e2b6f9f04bd7ce81ec26.svg)
 
 Then, add your start command to the `optic.yml` file created by `api init`. This allows Optic to start your project and observe its request traffic.
 
@@ -50,7 +50,7 @@ tasks:
     baseUrl: http://localhost:4000
 ```
 
-For further information, please visit the full [installation instructions](https://docs.useoptic.com/install).
+For further information, please check out our [setup instructions](https://app.useoptic.com/).
 
 ### Use the Optic Proxy to Monitor your API's Behavior 
 
@@ -63,7 +63,7 @@ api start
 
 Optic will start your application, and observe API requests run against it. Optic manages these observations in a capture session. When Optic observes traffic that it hasn't yet seen, or that has changed from previous observations, it will list it with examples of payloads in the Optic Dashboard for the capture session. As you make changes to your code, such as adding or updating API endpoints, Optic will establish new capture sessions for each build and report back on observed behavior.
 
-Our detailed [setup instructions](https://docs.useoptic.com/setup) will get you started with additional context for several popular languages and frameworks.
+Our detailed [setup instructions](https://app.useoptic.com/) will get you started with additional context for several popular languages and frameworks.
 
 ### Use Optic to Manage your API Specification 
 
@@ -80,7 +80,7 @@ As you committ the observed diffs, Optic builds documentation in OpenAPI format 
 
 ### See it for Yourself
 
-The best way to see Optic in action is to get [set up](https://docs.useoptic.com/setup) in your current API project. You can also try our [interactive demo](https://docs.useoptic.com/demo) to get a highlight of Optic's workflow and capabilities.
+The best way to see Optic in action is to get [set up](https://app.useoptic.com/) in your current API project. You can also try our [interactive demo](https://demo.useoptic.com) to get a highlight of Optic's workflow and capabilities.
 
 ## Key Features
 📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
@@ -94,9 +94,9 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 👋 **100% Open Source, Runs locally, data is only stored in your API Repo**
 
 
-## Documentation [https://docs.useoptic.com](https://docs.useoptic.com)
+## Documentation [https://useoptic.com/docs](https://www.useoptic.com/docs)
 
-- Read the full docs at: [docs.useoptic.com](https://docs.useoptic.com).
+- Read the full docs at: [useoptic.com/docs](https://www.useoptic.com/docs).
 - Want to contribute? Check out the [Contribution Guidelines](Contributing.md).
 - To get set up working on the project, please review our [Developer Setup](Developer-setup.md) guide as well.
 
