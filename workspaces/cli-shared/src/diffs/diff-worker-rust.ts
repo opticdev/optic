@@ -11,7 +11,6 @@ import lockfile from 'proper-lockfile';
 import Chain, { chain } from 'stream-chain';
 import Execa from 'execa';
 import { Readable } from 'stream';
-import { disassembler as JSONDissambler } from 'stream-json/Disassembler';
 import { stringer as JSONLStringer } from 'stream-json/jsonl/Stringer';
 
 export interface IDiffProjectionEmitterConfig {
@@ -31,7 +30,8 @@ export function getDiffOutputPaths(values: {
 }) {
   const { captureBaseDirectory, captureId, diffId } = values;
   const base = path.join(captureBaseDirectory, captureId, 'diffs', diffId);
-  const diffs = path.join(base, 'diffs.jsonl');
+  const diffs = path.join(base, 'diffs.json');
+  const diffsStream = path.join(base, 'diffs.jsonl');
   const stats = path.join(base, 'stats.json');
   const undocumentedUrls = path.join(base, 'undocumentedUrls.json');
   const events = path.join(base, 'events.json');
@@ -42,6 +42,7 @@ export function getDiffOutputPaths(values: {
   return {
     base,
     diffs,
+    diffsStream,
     stats,
     undocumentedUrls,
     events,
@@ -180,7 +181,7 @@ export class DiffWorkerRust {
         },
         JSONLStringer(),
       ]);
-      const eventsSink = fs.createWriteStream(diffOutputPaths.diffs);
+      const eventsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
 
       // TODO: find the actual way we'll use to point to a built binary
       // taking in consideration that in development that's probably a

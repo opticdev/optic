@@ -7,6 +7,7 @@ pub enum InteractionDiffResult {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestUrl {
   interaction_trail: InteractionTrail,
   requests_trail: RequestSpecTrail,
@@ -46,26 +47,31 @@ pub enum RequestSpecTrail {
   SpecResponseBody(SpecResponseBody),
 }
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpecPath {
   path_id: PathComponentId,
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpecRequestRoot {
   request_id: RequestId,
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpecRequestBody {
   request_id: RequestId,
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpecResponseRoot {
   response_id: ResponseId,
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SpecResponseBody {
   response_id: ResponseId,
 }

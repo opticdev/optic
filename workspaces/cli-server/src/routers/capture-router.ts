@@ -10,6 +10,10 @@ import { DiffManager } from '../diffs/diff-manager';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
 import lockfile from 'proper-lockfile';
+import { chain } from 'stream-chain';
+import { stringer as jsonStringer } from 'stream-json/Stringer';
+import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -163,12 +167,27 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       captureId,
       diffId,
     });
+
     try {
-      //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.diffs, { retries: { retries: 10 } });
-      const contents = await fs.readJson(diffOutputPaths.diffs);
-      await lockfile.unlock(diffOutputPaths.diffs);
-      res.json(contents);
+      if (fs.existsSync(diffOutputPaths.diffsStream)) {
+        const diffsJson = chain([
+          fs.createReadStream(diffOutputPaths.diffsStream),
+          jsonlParser(),
+          (data) => [data.value],
+          jsonDisassembler(),
+          jsonStringer({ makeArray: true }),
+        ]);
+
+        diffsJson.pipe(res).type('application/json');
+      } else {
+        //@TODO: streamify
+        await lockfile.lock(diffOutputPaths.diffs, {
+          retries: { retries: 10 },
+        });
+        const contents = await fs.readJson(diffOutputPaths.diffs);
+        await lockfile.unlock(diffOutputPaths.diffs);
+        res.json(contents);
+      }
     } catch (e) {
       res.status(404).json({
         message: e.message,

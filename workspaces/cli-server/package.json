@@ -33,6 +33,8 @@
     "lodash.sortby": "^4.7.0",
     "node-fetch": "^2.6.0",
     "proper-lockfile": "^4.1.1",
+    "stream-chain": "^2.2.3",
+    "stream-json": "^1.7.1",
     "uuid": "^8.0.0",
     "wait-on": "^4.0.0"
   },
@@ -45,6 +47,8 @@
     "@types/node": "^13.1.6",
     "@types/node-fetch": "^2.5.5",
     "@types/proper-lockfile": "^4.1.1",
+    "@types/stream-chain": "^2.0.0",
+    "@types/stream-json": "^1.5.1",
     "@types/wait-on": "^3.2.0"
   },
   "files": [
