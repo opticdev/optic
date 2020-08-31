@@ -29,7 +29,9 @@ export class DiffManager {
     };
     console.log(JSON.stringify(scriptConfig));
     const child = runManagedScriptByName(
-      'emit-diff-projections',
+      process.env.OPTIC_RUST_DIFF_ENGINE === 'true'
+        ? 'emit-diff-projections-rust'
+        : 'emit-diff-projections',
       JSON.stringify(scriptConfig)
     );
     child.on('message', (x: any) => {
