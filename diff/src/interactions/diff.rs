@@ -25,6 +25,7 @@ impl UnmatchedRequestUrl {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
@@ -40,6 +41,7 @@ impl UnmatchedRequestBodyContentType {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UnmatchedResponseBodyContentType {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
@@ -53,8 +55,6 @@ impl UnmatchedResponseBodyContentType {
     };
   }
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Serialize)]
@@ -117,9 +117,21 @@ pub struct SpecResponseBody {
 //@GOTCHA make sure these serialize matching the existing scala code
 #[derive(Debug, Serialize)]
 pub enum InteractionTrailPathComponent {
-  Url(),
-  Method(String),
-  RequestBody(String),
-  ResponseStatusCode(u16),
-  ResponseBody(String, u16),
+  Url {},
+  Method {
+    method: String,
+  },
+  #[serde(rename_all = "camelCase")]
+  RequestBody {
+    content_type: String,
+  },
+  #[serde(rename_all = "camelCase")]
+  ResponseStatusCode {
+    status_code: u16,
+  },
+  #[serde(rename_all = "camelCase")]
+  ResponseBody {
+    content_type: String,
+    status_code: u16,
+  },
 }

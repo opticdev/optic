@@ -151,13 +151,15 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
       if self.visited_with_matched_content_types.is_empty() {
         let actual_content_type = &interaction.request.body.content_type;
         let mut interaction_trail_components = vec![
-          InteractionTrailPathComponent::Url(),
-          InteractionTrailPathComponent::Method(interaction.request.method.clone()),
+          InteractionTrailPathComponent::Url {},
+          InteractionTrailPathComponent::Method {
+            method: interaction.request.method.clone(),
+          },
         ];
         if let Some(content_type) = actual_content_type {
-          interaction_trail_components.push(InteractionTrailPathComponent::RequestBody(
-            content_type.clone(),
-          ));
+          interaction_trail_components.push(InteractionTrailPathComponent::RequestBody {
+            content_type: content_type.clone(),
+          });
         }
         let interaction_trail = InteractionTrail::new(interaction_trail_components);
         let requests_trail = RequestSpecTrail::SpecPath(SpecPath {
@@ -246,17 +248,19 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
         let actual_content_type = &interaction.response.body.content_type;
         let mut interaction_trail_components = vec![
           //InteractionTrailPathComponent::Url(),
-          InteractionTrailPathComponent::Method(interaction.request.method.clone()),
+          InteractionTrailPathComponent::Method {
+            method: interaction.request.method.clone(),
+          },
         ];
         if let Some(content_type) = actual_content_type {
-          interaction_trail_components.push(InteractionTrailPathComponent::ResponseBody(
-            content_type.clone(),
-            interaction.response.status_code,
-          ));
+          interaction_trail_components.push(InteractionTrailPathComponent::ResponseBody {
+            content_type: content_type.clone(),
+            status_code: interaction.response.status_code,
+          });
         } else {
-          interaction_trail_components.push(InteractionTrailPathComponent::ResponseStatusCode(
-            interaction.response.status_code,
-          ));
+          interaction_trail_components.push(InteractionTrailPathComponent::ResponseStatusCode {
+            status_code: interaction.response.status_code,
+          });
         }
         let interaction_trail = InteractionTrail::new(interaction_trail_components);
         let responses_trail = RequestSpecTrail::SpecPath(SpecPath {
