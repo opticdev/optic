@@ -3185,6 +3185,11 @@
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.7.tgz#66ecb918870a1d1356782e601c995d5125283661"
   integrity sha512-OsK/Au4I9jg7YVlo2cb/JkAVX5VqnDwUyaEVt7ABmB0yXSum8EGv9JvV6/NwipkXUyqe7bbVLDQRj8/0tBH1bA==
 
+"@useoptic/domain-types@10.0.8":
+  version "10.0.8"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.8.tgz#704cc8c8ec54947904a4aef39625498ad6f5c1ed"
+  integrity sha512-v+ABQAWkoPDcwe4DMK0jk6depxNWe3FuKbeGcrobmmKU34lZ4WOBMQFNtg8V6bm5ORW5udqcFjV2XmdqekqnCg==
+
 "@useoptic/domain-utilities@10.0.7":
   version "10.0.7"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.7.tgz#57525f5f21bf1945d9f78811f7fa84d0ef9054ef"
@@ -3193,10 +3198,23 @@
     "@useoptic/domain" "10.0.7"
     "@useoptic/domain-types" "10.0.7"
 
+"@useoptic/domain-utilities@10.0.8", "@useoptic/domain-utilities@^10.0.8":
+  version "10.0.8"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.8.tgz#8b84e65a437ac53632be83933cde754e6bbfe03a"
+  integrity sha512-BwcH0ixqGVMcaWvPV+qiBj/UloX08xIxTwKZXR5E5uQxejqPMKBwNTqsBEWJD4Qqzdk4h9Rx2vNsDZi+1iocdg==
+  dependencies:
+    "@useoptic/domain" "10.0.8"
+    "@useoptic/domain-types" "10.0.8"
+
 "@useoptic/domain@10.0.7":
   version "10.0.7"
   resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.7.tgz#3e5a4a5d8c455c24c964591da971fa384aae67ed"
   integrity sha512-/89ZHmOx0NdkjYtUSrF4tAzL17p/8h4mScgpy8NcM5ZIBaunVxmpJ32k8DPEFWloKRx5dvCi1EkQNUbj0vJpgw==
+
+"@useoptic/domain@10.0.8", "@useoptic/domain@^10.0.8":
+  version "10.0.8"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.8.tgz#929e4135b45315d65af9998992c06973feb5cc00"
+  integrity sha512-/AJRxkxYEB60xP//nkWw0is/8YPS/0OfNNMx2CEPOFbUB/3hHxCn/YkTXAcdG/44uTGfvA9pf8CN8k+QF73TBg==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
