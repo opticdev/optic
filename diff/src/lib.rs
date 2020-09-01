@@ -4,6 +4,7 @@ mod events;
 mod interactions;
 mod projections;
 mod queries;
+mod shapes;
 mod state;
 pub mod streams;
 
