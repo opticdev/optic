@@ -37,11 +37,6 @@ class Client {
     return JsonHttpClient.postJsonWithoutBody(url, this.defaultHeaders());
   }
 
-  async getShareSpecUploadUrl() {
-    const url = `${this.baseUrl}/sharing/public/spec-urls`;
-    return JsonHttpClient.postJsonWithoutBody(url, this.defaultHeaders());
-  }
-
   async getInteractionsUploadUrl(agentId: string, batchId: string) {
     const url = `${this.baseUrl}/interaction-uploads`;
     return JsonHttpClient.postJson(
