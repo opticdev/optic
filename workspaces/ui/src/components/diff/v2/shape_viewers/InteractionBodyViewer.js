@@ -493,7 +493,9 @@ function createInitialState({ diff, body }) {
         JsonTrailHelper.toJs(jsonTrail)
       )
     : [];
-  const shape = JsonHelper.toJs(body.jsonOption);
+
+  const bodyJson = getOrUndefined(body.jsonOption);
+  const shape = bodyJson && JsonHelper.toJs(bodyJson);
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 
