@@ -1,6 +1,6 @@
 use super::visitors::{
-  InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor, ResponseBodyVisitor,
-  RequestBodyVisitorContext, ResponseBodyVisitorContext,
+  InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor,
+  RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext,
 };
 use crate::interactions::HttpInteraction;
 use crate::projections::endpoint::ROOT_PATH_ID;
@@ -26,10 +26,7 @@ impl<'a> Traverser<'a> {
     let path_context = PathVisitorContext {
       path: resolved_path,
     };
-    path_visitor.visit(
-      &interaction,
-      &path_context
-    );
+    path_visitor.visit(&interaction, &path_context);
 
     let request_body_visitor = visitors.request_body();
     request_body_visitor.begin();
@@ -52,7 +49,7 @@ impl<'a> Traverser<'a> {
     };
     request_body_visitor.end(&interaction, &path_context);
 
-    println!("visiting response body");
+    eprintln!("visiting response body");
     let response_body_visitor = visitors.response_body();
     response_body_visitor.begin();
     match resolved_path {

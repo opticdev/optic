@@ -103,15 +103,15 @@ impl InteractionVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
 }
 impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
   fn begin(&mut self) {
-    // eprintln!("begin");
+    // eeprintln!("begin");
   }
 
   fn visit(&mut self, interaction: &HttpInteraction, context: &RequestBodyVisitorContext) {
     if let Some(operation) = context.operation {
       let actual_content_type = &interaction.request.body.content_type;
       let (request_id, request_body_descriptor) = operation;
-      println!("actual request content type {:?}", actual_content_type);
-      println!(
+      eprintln!("actual request content type {:?}", actual_content_type);
+      eprintln!(
         "expecting request content type {:?}",
         &request_body_descriptor
       );
@@ -196,16 +196,16 @@ impl InteractionVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
 }
 impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
   fn begin(&mut self) {
-    println!("begin response body visitor");
+    eprintln!("begin response body visitor");
   }
 
   fn visit(&mut self, interaction: &HttpInteraction, context: &ResponseBodyVisitorContext) {
-    println!("visit response body");
+    eprintln!("visit response body");
     if let Some(response) = context.response {
       let actual_content_type = &interaction.response.body.content_type;
       let (response_id, response_body_descriptor) = response;
-      println!("actual response content type {:?}", actual_content_type);
-      println!(
+      eprintln!("actual response content type {:?}", actual_content_type);
+      eprintln!(
         "expecting response content type {:?}",
         &response_body_descriptor
       );

@@ -17,13 +17,13 @@ impl<'a> EndpointQueries<'a> {
     }
   }
   pub fn resolve_path(&self, interaction: &HttpInteraction) -> Option<PathComponentIdRef> {
-    // println!("{}", path);
+    // eprintln!("{}", path);
     let mut path_components = interaction.request.path.split('/');
     // skip leading empty
     path_components.next();
     let mut last_resolved_path_id = Some(ROOT_PATH_ID);
     while let Some(s) = path_components.next() {
-      // println!("trying to match segment {}", s);
+      // eprintln!("trying to match segment {}", s);
       let node_index = self.graph_get_index(last_resolved_path_id.unwrap());
 
       last_resolved_path_id = None;
@@ -35,7 +35,7 @@ impl<'a> EndpointQueries<'a> {
 
         match child_node {
           Node::PathComponent(id, descriptor) => {
-            // println!("1 - neighbor {}", descriptor.name);
+            // eprintln!("1 - neighbor {}", descriptor.name);
             if !descriptor.is_parameter {
               if descriptor.name == s {
                 last_resolved_path_id = Some(id);
@@ -55,7 +55,7 @@ impl<'a> EndpointQueries<'a> {
         let child_node = self.endpoint_projection.graph.node_weight(child).unwrap();
         match child_node {
           Node::PathComponent(id, descriptor) => {
-            // println!("2 - neighbor {}", descriptor.name);
+            // eprintln!("2 - neighbor {}", descriptor.name);
 
             if descriptor.is_parameter {
               last_resolved_path_id = Some(id);
@@ -122,24 +122,24 @@ impl<'a> EndpointQueries<'a> {
     let matching_status_code = children
       .filter(move |i| {
         let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
-        println!("method node {:?}", node);
+        eprintln!("method node {:?}", node);
         match node {
           Node::HttpMethod(http_method) => interaction.request.method == *http_method,
           _ => false,
         }
       })
       .flat_map(move |i| {
-        println!("method node id {:?}", i);
+        eprintln!("method node id {:?}", i);
         let children = self
           .endpoint_projection
           .graph
           .neighbors_directed(i, petgraph::Direction::Incoming);
         let status_code_nodes = children.filter_map(move |i| {
-          println!("method child node id {:?}", i);
+          eprintln!("method child node id {:?}", i);
           let node = self.endpoint_projection.graph.node_weight(i).unwrap();
           match node {
             Node::HttpStatusCode(http_status_code) => {
-              println!("status code {:?}", http_status_code);
+              eprintln!("status code {:?}", http_status_code);
               if interaction.response.status_code == *http_status_code {
                 Some(i)
               } else {
@@ -153,14 +153,13 @@ impl<'a> EndpointQueries<'a> {
       })
       .flat_map(move |i| {
         let children = self
-        .endpoint_projection
-        .graph
-        .neighbors_directed(i, petgraph::Direction::Incoming);
-        
+          .endpoint_projection
+          .graph
+          .neighbors_directed(i, petgraph::Direction::Incoming);
         let response_nodes = children.filter_map(move |i| {
-          println!("status_code child node id {:?}", i);
+          eprintln!("status_code child node id {:?}", i);
           let node = self.endpoint_projection.graph.node_weight(i).unwrap();
-          println!("status_code child node {:?}", node);
+          eprintln!("status_code child node {:?}", node);
           match node {
             Node::Response(response_id, response_descriptor) => {
               Some((response_id, response_descriptor))
