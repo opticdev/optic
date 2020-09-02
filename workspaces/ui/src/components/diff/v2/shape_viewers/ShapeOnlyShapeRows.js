@@ -252,7 +252,11 @@ function FieldDescription({ fieldId }) {
 
   const description = contributions.getOrUndefined(fieldId, DESCRIPTION);
 
-  const [editing, setEditing] = useState(false);
+  const [editing, _setEditing] = useState(false);
+  const setEditing = (condition) => {
+    if (process.env.REACT_APP_DONT_ALLOW_EDITING === 'true') { return; }
+    _setEditing(condition);
+  }
   const [stagedContent, setStagedContent] = useState(description || '');
 
   const handleChange = (e) => setStagedContent(e.target.value);
@@ -291,7 +295,7 @@ function FieldDescription({ fieldId }) {
           />
         </div>
       )}
-      {!description && !editing && (
+      {!description && !editing && process.env.REACT_APP_DONT_ALLOW_EDITING !== 'true' && (
         <LightTooltip title="Add Field Description">
           <DescriptionIcon
             className={'descriptionButton'}
