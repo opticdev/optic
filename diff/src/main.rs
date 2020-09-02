@@ -52,7 +52,7 @@ fn main() {
 
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
 
-        let (mut results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
+        let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
         let results_manager = tokio::spawn(async move {
             let stdout = stdout();
             let mut results_sink = streams::diff::into_json_lines(stdout);
@@ -65,24 +65,31 @@ fn main() {
         });
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
-            let interaction_json =
-                interaction_json_result.expect("can read interaction json line from stdin");
-            let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
-                match serde_json::from_str(&interaction_json) {
-                    Ok(tagged_interaction) => tagged_interaction,
-                    Err(parse_error) => {
-                        eprintln!("could not parse interaction json: {}", parse_error);
-                        continue;
-                    }
-                };
             let projection = endpoints_projection.clone();
+            let mut results_sender = results_sender.clone();
 
-            let results = diff_interaction(&projection, interaction);
-            for result in results {
-                if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
-                    panic!("could not write diff result to results channel"); // TODO: Find way to actually write error info
+            tokio::spawn(async move {
+                let interaction_json =
+                    interaction_json_result.expect("can read interaction json line from stdin");
+                let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
+                    match serde_json::from_str(&interaction_json) {
+                        Ok(tagged_interaction) => tagged_interaction,
+                        Err(parse_error) => {
+                            eprintln!("could not parse interaction json: {}", parse_error);
+                            return ();
+                        }
+                    };
+
+                // TODO: consider passing it task::yield_now, to allow traverser to yield when it detect
+                // big traversals.
+                let results = diff_interaction(&projection, interaction);
+                for result in results {
+                    if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
+                        panic!("could not write diff result to results channel");
+                        // TODO: Find way to actually write error info
+                    }
                 }
-            }
+            });
         }
 
         drop(results_sender);
