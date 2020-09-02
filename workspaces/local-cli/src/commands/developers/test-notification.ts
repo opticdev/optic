@@ -13,7 +13,7 @@ export default class TestNotification extends Command {
     console.log({ basePath, notifyScriptPath });
     runStandaloneScript(
       notifyScriptPath,
-      'https://docs.useoptic.com',
+      'https://www.useoptic.com/docs',
       iconPath
     );
   }
