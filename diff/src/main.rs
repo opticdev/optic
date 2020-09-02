@@ -3,11 +3,11 @@ use futures::SinkExt;
 use optic_diff::diff_interaction;
 use optic_diff::errors;
 use optic_diff::streams;
-use optic_diff::Aggregate;
 use optic_diff::EndpointProjection;
 use optic_diff::HttpInteraction;
 use optic_diff::SpecEvent;
 use std::process;
+use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 
@@ -43,10 +43,8 @@ fn main() {
         })
         .unwrap();
 
-    let mut endpoints_projection = EndpointProjection::default();
-    for event in events {
-        endpoints_projection.apply(event)
-    }
+    let endpoints_projection = Arc::new(EndpointProjection::from_events(events.into_iter()));
+
     let mut runtime = tokio::runtime::Runtime::new().unwrap();
     runtime.block_on(async {
         let stdin = stdin(); // TODO: deal with std in never having been attached
@@ -66,7 +64,9 @@ fn main() {
                         continue;
                     }
                 };
-            let results = diff_interaction(&mut endpoints_projection, interaction);
+            let projection = endpoints_projection.clone();
+
+            let results = diff_interaction(&projection, interaction);
             for result in results {
                 if let Err(_) = results_sink.send(TaggedValue(result, tags.clone())).await {
                     panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info

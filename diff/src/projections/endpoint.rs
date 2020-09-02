@@ -51,6 +51,17 @@ pub struct EndpointProjection {
 }
 
 impl EndpointProjection {
+  pub fn from_events<E>(events: impl Iterator<Item = E>) -> Self
+  where
+    E: AggregateEvent<Self>,
+  {
+    let mut projection = EndpointProjection::default();
+    for event in events {
+      projection.apply(event);
+    }
+    projection
+  }
+
   pub fn with_path(
     &mut self,
     parent_path_id: PathComponentId,
