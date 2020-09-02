@@ -38,7 +38,7 @@ fn main() {
     let spec_file_path = matches
         .value_of("specification")
         .expect("spec-file-path should be required");
-    let core_threads_count : Option<i16> = match clap::value_t!(matches.value_of("core-threads"), i16) {
+    let core_threads_count : Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16) {
         Ok(count) => Some(count),
         Err(e) => match e.kind {
             clap::ErrorKind::ArgumentNotFound => None,
