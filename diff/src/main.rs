@@ -23,6 +23,14 @@ fn main() {
                 .value_name("spec-file-path")
                 .help("Sets the specification file that describes the API spec")
                 .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("core-threads")
+                .long("core-threads")
+                .takes_value(true)
+                .required(false)
+                .help("Sets the amount of threads used for workers. Defaults to amount of cores available to the system.")
+                
         );
 
     let matches = cli.get_matches();
@@ -30,6 +38,16 @@ fn main() {
     let spec_file_path = matches
         .value_of("specification")
         .expect("spec-file-path should be required");
+    let core_threads_count : Option<i16> = match clap::value_t!(matches.value_of("core-threads"), i16) {
+        Ok(count) => Some(count),
+        Err(e) => match e.kind {
+            clap::ErrorKind::ArgumentNotFound => None,
+            _ => {
+                e.exit();
+            }
+        }
+    };
+
     let events = SpecEvent::from_file(spec_file_path)
         .map_err(|err| match err {
             errors::EventLoadingError::Io(err) => {
@@ -46,7 +64,15 @@ fn main() {
 
     let endpoints_projection = Arc::new(EndpointProjection::from_events(events.into_iter()));
 
-    let mut runtime = tokio::runtime::Runtime::new().unwrap();
+
+    let mut runtime_builder = tokio::runtime::Builder::new();
+    runtime_builder.enable_all();
+    runtime_builder.threaded_scheduler();
+    if let Some(core_threads) = core_threads_count {
+        runtime_builder.core_threads(core_threads as usize);
+    }
+
+    let mut runtime = runtime_builder.build().unwrap();
     runtime.block_on(async {
         let stdin = stdin(); // TODO: deal with std in never having been attached
 
