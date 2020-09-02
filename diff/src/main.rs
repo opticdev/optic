@@ -10,6 +10,7 @@ use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
+use tokio::sync::mpsc;
 
 fn main() {
     let cli = App::new("Optic Diff engine")
@@ -48,10 +49,20 @@ fn main() {
     let mut runtime = tokio::runtime::Runtime::new().unwrap();
     runtime.block_on(async {
         let stdin = stdin(); // TODO: deal with std in never having been attached
-        let stdout = stdout();
 
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
-        let mut results_sink = streams::diff::into_json_lines(stdout);
+
+        let (mut results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
+        let results_manager = tokio::spawn(async move {
+            let stdout = stdout();
+            let mut results_sink = streams::diff::into_json_lines(stdout);
+
+            while let Some(result) = results_receiver.recv().await {
+                if let Err(_) = results_sink.send(result).await {
+                    panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
+                }
+            }
+        });
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
             let interaction_json =
@@ -68,11 +79,14 @@ fn main() {
 
             let results = diff_interaction(&projection, interaction);
             for result in results {
-                if let Err(_) = results_sink.send(TaggedValue(result, tags.clone())).await {
-                    panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
+                if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
+                    panic!("could not write diff result to results channel"); // TODO: Find way to actually write error info
                 }
             }
         }
+
+        drop(results_sender);
+        results_manager.await.unwrap(); // make sure the results manager is done flushing
     })
 }
 
