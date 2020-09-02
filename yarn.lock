@@ -3180,59 +3180,6 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/cli-client@8.2.8":
-  version "8.2.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-client/-/cli-client-8.2.8.tgz#e509503eaf0e8eadac3ccd39be04bfa54dd06325"
-  integrity sha512-Di+eJsabTMNONlCgnhfByUhXkcYrXslmA3He1ZVfLbysTg0+3P/f6KkSEBmQuWEDGPlJ4yDXNppiVBfCGe2Uhw==
-  dependencies:
-    "@useoptic/cli-config" "8.2.8"
-    "@useoptic/client-utilities" "8.2.8"
-    bottleneck "^2.19.5"
-    cross-fetch "^3.0.4"
-
-"@useoptic/cli-config@8.2.8":
-  version "8.2.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-config/-/cli-config-8.2.8.tgz#87d0f70340b81b99e5e48f5b07ded9fd4e6f9abf"
-  integrity sha512-pNmpn46NIpT40UZuTW2CSDL5lgUTruiWOtV3OTfBj6qyRIRG8wLGyzFXi7GvM/VzWXJIVTlniCauQr9PyJDDlA==
-  dependencies:
-    debug "^4.1.1"
-    find-up "^4.1.0"
-    get-port "^5.1.0"
-    js-yaml "^3.13.1"
-    path-to-regexp "^3.0.0"
-
-"@useoptic/cli-shared@8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@useoptic/cli-shared/-/cli-shared-8.3.0.tgz#c54633faa44187694053e284c8337548e37c6197"
-  integrity sha512-FsAq/q2rjxdazMgSxXyG3+R7jhSpu5WtL/ZWn21oTvGdKCW1lafNkGxZxPM+bNb8FJOAdICmWwXVktYectRIPQ==
-  dependencies:
-    "@oclif/command" "^1.6.1"
-    "@useoptic/cli-client" "8.3.0"
-    "@useoptic/cli-config" "8.3.0"
-    "@useoptic/client-utilities" "8.3.0"
-    "@useoptic/domain" "10.0.7"
-    "@useoptic/domain-types" "10.0.7"
-    "@useoptic/domain-utilities" "10.0.7"
-    avsc "^5.4.21"
-    bottleneck "^2.19.5"
-    colors "^1.4.0"
-    fs-extra "^9.0.0"
-    mockttp "^0.19.2"
-    oboe "^2.1.5"
-    ora "^4.0.4"
-    proper-lockfile "^4.1.1"
-    shape-hash "^1.0.6"
-    tree-kill "^1.2.2"
-    uuid "^8.0.0"
-    whatwg-mimetype "^2.3.0"
-
-"@useoptic/client-utilities@8.2.8":
-  version "8.2.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/client-utilities/-/client-utilities-8.2.8.tgz#19681b38591579f1c0f0ab2b45bc8f6e62fd40b8"
-  integrity sha512-OORSkLUJvk0Dsao0kQkXMMQ9WfR7jNDuTtf93U207/6PIyqe9FyHE9CbwJ55TxqaGOGvBSAV8PqbTKKwxjVR5g==
-  dependencies:
-    cross-fetch "^3.0.4"
-
 "@useoptic/domain-types@10.0.3":
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.3.tgz#9af7d34a336038597a30fc8b82fa9e900a0bd735"
