@@ -1,6 +1,9 @@
 mod diff;
-mod traverser;
+pub mod traverser;
 pub mod visitors;
+
+pub use diff::ShapeDiffResult;
+pub use traverser::{JsonTrail, ShapeTrail};
 
 // pub fn diff(
 //   endpoint_projection: &EndpointProjection,

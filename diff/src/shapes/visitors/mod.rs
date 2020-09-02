@@ -1,9 +1,11 @@
+use super::traverser::{ChoiceOutput, JsonTrail, ShapeTrail};
+use serde_json::Value as JsonValue;
 pub mod diff;
 
 pub trait JsonBodyVisitors<R> {
-  // type Path: PathVisitor<R>;
+  type Primitive: JlasPrimitiveVisitor<R>;
 
-  // fn path(&mut self) -> &mut Self::Path;
+  fn primitive(&mut self) -> &mut Self::Primitive;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
     // let flattened = vec![self.path().take_results()]
@@ -49,7 +51,13 @@ pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
 }
 
 pub trait JlasPrimitiveVisitor<R>: JsonBodyVisitor<R> {
-  //fn visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq<ChoiceOutput>);
+  fn visit(
+    &mut self,
+    json: JsonValue,
+    json_trail: JsonTrail,
+    trail_origin: ShapeTrail,
+    trail_choices: Vec<ChoiceOutput>,
+  );
 }
 
 // Results

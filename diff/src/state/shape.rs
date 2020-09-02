@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 pub type ShapeId = String;
 pub type FieldId = String;
-type ShapeParameterId = String;
+pub type ShapeParameterId = String;
 
 #[derive(Debug, Deserialize)]
 pub enum FieldShapeDescriptor {
@@ -40,4 +40,84 @@ pub struct StaticShapeParametersDescriptor {
 #[serde(rename_all = "camelCase")]
 pub struct DynamicShapeParametersDescriptor {
   shape_parameter_ids: Vec<ShapeParameterId>,
+}
+
+pub enum ShapeKind {
+  ObjectKind,
+  ListKind,
+  MapKind,
+  OneOfKind,
+  AnyKind,
+  StringKind,
+  NumberKind,
+  BooleanKind,
+  IdentifierKind,
+  ReferenceKind,
+  NullableKind,
+  OptionalKind,
+  UnknownKind,
+}
+
+impl ShapeKind {
+  pub fn get_descriptor(&self) -> ShapeKindDescriptor {
+    match self {
+      Self::ObjectKind => ShapeKindDescriptor {
+        base_shape_id: "$object",
+        name: "Object",
+      },
+      Self::ListKind => ShapeKindDescriptor {
+        base_shape_id: "$list",
+        name: "List",
+      },
+      Self::MapKind => ShapeKindDescriptor {
+        base_shape_id: "$map",
+        name: "Map",
+      },
+      Self::OneOfKind => ShapeKindDescriptor {
+        base_shape_id: "$oneOf",
+        name: "OneOf",
+      },
+      Self::AnyKind => ShapeKindDescriptor {
+        base_shape_id: "$any",
+        name: "Any",
+      },
+      Self::StringKind => ShapeKindDescriptor {
+        base_shape_id: "$string",
+        name: "String",
+      },
+      Self::NumberKind => ShapeKindDescriptor {
+        base_shape_id: "$number",
+        name: "Number",
+      },
+      Self::BooleanKind => ShapeKindDescriptor {
+        base_shape_id: "$boolean",
+        name: "Boolean",
+      },
+      Self::IdentifierKind => ShapeKindDescriptor {
+        base_shape_id: "$identifier",
+        name: "Identifier",
+      },
+      Self::ReferenceKind => ShapeKindDescriptor {
+        base_shape_id: "$reference",
+        name: "Reference",
+      },
+      Self::NullableKind => ShapeKindDescriptor {
+        base_shape_id: "$nullable",
+        name: "Nullable",
+      },
+      Self::OptionalKind => ShapeKindDescriptor {
+        base_shape_id: "$optional",
+        name: "Optional",
+      },
+      Self::UnknownKind => ShapeKindDescriptor {
+        base_shape_id: "$unknown",
+        name: "Unknown",
+      },
+    }
+  }
+}
+
+pub struct ShapeKindDescriptor {
+  pub base_shape_id: &'static str,
+  pub name: &'static str,
 }
