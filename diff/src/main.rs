@@ -11,7 +11,7 @@ use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
-use tokio::sync::mpsc;
+use tokio::sync::{mpsc, Semaphore};
 
 fn main() {
     let cli = App::new("Optic Diff engine")
@@ -80,6 +80,8 @@ fn main() {
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
 
         let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
+        let running_task_permits = Arc::new(Semaphore::new(32)); // permit 32 interaction chunks to be buffered and queued for processing at once
+
         let results_manager = tokio::spawn(async move {
             let stdout = stdout();
             let mut results_sink = streams::diff::into_json_lines(stdout);
@@ -92,10 +94,13 @@ fn main() {
         });
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
+            let task_permits = running_task_permits.clone();
             let projection = endpoints_projection.clone();
             let mut results_sender = results_sender.clone();
 
-            let diff_task = tokio::spawn(async move {
+            let task_permit = task_permits.acquire_owned().await;
+
+            tokio::spawn(async move {
                 let diff_comp = tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
                     let interaction_json =
                         interaction_json_result.expect("can read interaction json line from stdin");
@@ -121,9 +126,11 @@ fn main() {
                         }
                     }
                 }
-            });
 
+                drop(task_permit);
+            });
             
+
         }
 
         drop(results_sender);
