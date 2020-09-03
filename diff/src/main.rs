@@ -1,5 +1,6 @@
 use clap::{App, Arg};
 use futures::SinkExt;
+use num_cpus;
 use optic_diff::diff_interaction;
 use optic_diff::errors;
 use optic_diff::streams;
@@ -9,6 +10,7 @@ use optic_diff::InteractionDiffResult;
 use optic_diff::SpecEvent;
 use std::process;
 use std::sync::Arc;
+use std::cmp;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
@@ -30,6 +32,7 @@ fn main() {
                 .long("core-threads")
                 .takes_value(true)
                 .required(false)
+                .hidden(true)
                 .help("Sets the amount of threads used. Defaults to amount of cores available to the system.")
                 
         );
@@ -80,7 +83,11 @@ fn main() {
         let mut interaction_lines = streams::http_interaction::json_lines(stdin);
 
         let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
-        let running_task_permits = Arc::new(Semaphore::new(32)); // permit 32 interaction chunks to be buffered and queued for processing at once
+
+        // set amount of diff tasks queued to be proportional to the amount of threads we'll be using
+        let diff_queue_size = cmp::min(num_cpus::get(), core_threads_count.unwrap_or(num_cpus::get() as u16) as usize) * 4;
+        eprintln!("using diff size {}", diff_queue_size);
+        let diff_scheduling_permits = Arc::new(Semaphore::new(diff_queue_size));
 
         let results_manager = tokio::spawn(async move {
             let stdout = stdout();
@@ -94,11 +101,11 @@ fn main() {
         });
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
-            let task_permits = running_task_permits.clone();
+            let diff_permits = diff_scheduling_permits.clone();
             let projection = endpoints_projection.clone();
             let mut results_sender = results_sender.clone();
 
-            let task_permit = task_permits.acquire_owned().await;
+            let diff_task_permit = diff_permits.acquire_owned().await;
 
             tokio::spawn(async move {
                 let diff_comp = tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
@@ -127,10 +134,8 @@ fn main() {
                     }
                 }
 
-                drop(task_permit);
+                drop(diff_task_permit);
             });
-            
-
         }
 
         drop(results_sender);

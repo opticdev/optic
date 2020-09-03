@@ -12,6 +12,7 @@ bytes = "0.5.6"
 clap = "~2.33.3"
 cqrs-core = "0.2.2"
 futures = "0.3.5"
+num_cpus = "1.13.0"
 petgraph = "0.5.1"
 serde = { version = "1.0.106", features = ["derive"] }
 serde_json = "1.0.57"
