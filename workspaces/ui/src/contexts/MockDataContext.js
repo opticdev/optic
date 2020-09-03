@@ -30,6 +30,7 @@ function createDebugSession({ exampleSessionCollection, sessionId }) {
   };
 }
 
+
 // Hooks
 // -----
 
@@ -41,7 +42,7 @@ export function useMockSession({ sessionId, exampleSessionCollection }) {
   return dashboardContext;
 }
 
-export function useMockData(deps) {
+export function useMockData(deps, context=MockDataContext) {
   const debugSession = useContext(MockDataContext);
   // TODO: consider using useReducer here instead, lots of moving bits of state here
   const [data, setData] = useState(null);
@@ -64,6 +65,8 @@ export function useMockData(deps) {
           return result;
         })
         .catch((err) => {
+          console.log("no data err")
+          console.log(err)
           setError(err);
         });
     }

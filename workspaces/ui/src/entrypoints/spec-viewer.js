@@ -2,9 +2,9 @@ import React from 'react';
 import { useParams, useRouteMatch, matchPath } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
 import {
-  Provider as DebugSessionContextProvider,
-  useMockSession,
-} from '../contexts/MockDataContext';
+  useSpecSession,
+} from '../contexts/SpecViewerContext';
+import {Provider as DebugSessionContextProvider} from '../contexts/MockDataContext'
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 import {
@@ -17,14 +17,11 @@ import {
   normalizedDiffFromRfcStateAndInteractions,
 } from '@useoptic/domain-utilities';
 
-export default function PrivateSessions(props) {
+export default function SpecViewer(props) {
   const match = useRouteMatch();
-  const { sessionId } = useParams();
+  const { specId } = useParams();
 
-  const session = useMockSession({
-    sessionId: sessionId,
-    exampleSessionCollection: 'private-sessions',
-  });
+  const session = useSpecSession(specId)
 
   const captureServiceFactory = async (specService, captureId) => {
     return new ExampleCaptureService(specService);
@@ -51,13 +48,13 @@ export default function PrivateSessions(props) {
         resolvers,
         rfcState,
       } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        _events,
+          _events,
         commandContext,
         additionalCommands
       );
       let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
       for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByDiffs(
+          diffs = DiffHelpers.groupInteractionPointerByDiffs(
           resolvers,
           rfcState,
           JsonHelper.fromInteraction(interaction),
@@ -90,7 +87,7 @@ export default function PrivateSessions(props) {
           captureServiceFactory={captureServiceFactory}
           diffServiceFactory={diffServiceFactory}
         >
-          <ApiRoutes />
+          <ApiRoutes defaultRoute={(options) => options.docsRoot} />
         </ApiSpecServiceLoader>
       </DebugSessionContextProvider>
     </BaseUrlContext>

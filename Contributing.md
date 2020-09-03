@@ -7,7 +7,7 @@
         - What were you trying to accomplish when you ran into the issue?
         - What did you expect to happen?
         - What happened instead?
-    - Please provide [debugging information](https://docs.useoptic.com/debugging-diffs).
+    - Please provide [debugging information](https://www.useoptic.com/docs/faqs-and-troubleshooting/debugging).
     - It's possible your report is not part of the designed scope. It may be closed as such. If so, feel free to consider submitting a **Feature Request**.
 - **Feature Requests** cover all requests for additional behavior and requests for changes in designed scope. If the software is not working as intended, that's an **Issue** which needs to be reported.
     - All feature requests must be filed through [GitHub Issues](https://github.com/opticdev/optic/issues).

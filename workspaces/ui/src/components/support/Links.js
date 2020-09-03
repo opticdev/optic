@@ -1,4 +1,4 @@
-const docsBaseLink = 'https://docs.useoptic.com';
+const docsBaseLink = 'https://www.useoptic.com/docs/';
 
 export const OpticDocs = docsBaseLink + '/';
 export const AddOpticLink = docsBaseLink + '/setup';

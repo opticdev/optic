@@ -10,10 +10,10 @@ export default class TestNotification extends Command {
     const notifyScriptPath = path.resolve(basePath, 'notify');
     const iconPath = path.join(__dirname, '../../../assets/optic-logo-png.png');
 
-    console.log({ basePath, notifyScriptPath });
+    // console.log({ basePath, notifyScriptPath });
     runStandaloneScript(
       notifyScriptPath,
-      'https://docs.useoptic.com',
+      'https://www.useoptic.com/docs',
       iconPath
     );
   }

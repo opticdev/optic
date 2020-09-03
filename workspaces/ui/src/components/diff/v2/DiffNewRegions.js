@@ -65,7 +65,7 @@ import {
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
 import { trackUserEvent } from '../../../Analytics';
-import { ShowInitialDocumentingView } from '@useoptic/analytics/lib/events/diffs'
+import { ShowInitialDocumentingView } from '@useoptic/analytics/lib/events/diffs';
 function _NewRegions(props) {
   const { newRegions, ignoreDiff, captureId, endpointId } = props;
 
@@ -81,8 +81,8 @@ function _NewRegions(props) {
 
   useEffect(() => {
     trackUserEvent(ShowInitialDocumentingView.withProps({}));
-  }, [])
-  
+  }, []);
+
   if (newRegions.length === 0) {
     return null;
   }
@@ -435,49 +435,48 @@ const PreviewNewBodyRegion = ({
         })}
       >
         <div style={{ width: '55%', paddingRight: 15 }}>
-          {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER == 'true' &&
-          currentInteraction ? (
-            <ShapeBox
-              header={
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <BreadcumbX
-                    itemStyles={{ fontSize: 13, color: 'white' }}
-                    location={['Example']}
+          {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER == 'true'
+            ? getOrUndefined(diff.contentType) && (
+                <ShapeBox
+                  header={
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <BreadcumbX
+                        itemStyles={{ fontSize: 13, color: 'white' }}
+                        location={['Example']}
+                      />
+                      <div style={{ flex: 1 }}></div>
+                      <span style={{ color: 'white' }}>⮕</span>
+                    </div>
+                  }
+                >
+                  <InteractionBodyViewer
+                    body={
+                      diff.inRequest
+                        ? currentInteraction.interactionScala.request.body
+                        : currentInteraction.interactionScala.response.body
+                    }
                   />
-                  <div style={{ flex: 1 }}></div>
-                  <span style={{ color: 'white' }}>⮕</span>
-                </div>
-              }
-            >
-              <InteractionBodyViewer
-                body={
-                  diff.inRequest
-                    ? currentInteraction.interactionScala.request.body
-                    : currentInteraction.interactionScala.response.body
-                }
-              />
-            </ShapeBox>
-          ) : (
-            process.env.REACT_APP_FLATTENED_SHAPE_VIEWER !== 'true' &&
-            bodyPreview && (
-              <ShapeBox
-                header={
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <BreadcumbX
-                      itemStyles={{ fontSize: 13, color: 'white' }}
-                      location={['Example']}
-                    />
-                    <div style={{ flex: 1 }}></div>
-                    <span style={{ color: 'white' }}>⮕</span>
-                  </div>
-                }
-              >
-                <ShapeExpandedStore>
-                  <DiffHunkViewer preview={bodyPreview} exampleOnly />
-                </ShapeExpandedStore>
-              </ShapeBox>
-            )
-          )}
+                </ShapeBox>
+              )
+            : process.env.REACT_APP_FLATTENED_SHAPE_VIEWER !== 'true' &&
+              bodyPreview && (
+                <ShapeBox
+                  header={
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <BreadcumbX
+                        itemStyles={{ fontSize: 13, color: 'white' }}
+                        location={['Example']}
+                      />
+                      <div style={{ flex: 1 }}></div>
+                      <span style={{ color: 'white' }}>⮕</span>
+                    </div>
+                  }
+                >
+                  <ShapeExpandedStore>
+                    <DiffHunkViewer preview={bodyPreview} exampleOnly />
+                  </ShapeExpandedStore>
+                </ShapeBox>
+              )}
         </div>
         <div style={{ flex: 1 }}>
           {shapePreview && (
