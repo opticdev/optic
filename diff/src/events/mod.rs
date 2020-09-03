@@ -15,7 +15,7 @@ pub use endpoint::EndpointEvent;
 pub use shape::ShapeEvent;
 pub use http_interaction::HttpInteraction;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct EventContext {
   client_id: String,
@@ -24,7 +24,7 @@ pub struct EventContext {
   created_at: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(untagged)]
 pub enum SpecEvent {
   EndpointEvent(endpoint::EndpointEvent),

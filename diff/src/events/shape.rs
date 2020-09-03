@@ -1,5 +1,5 @@
 use super::EventContext;
-use crate::state::shape::{FieldShapeDescriptor, ShapeParametersDescriptor};
+use crate::state::shape::{FieldShapeDescriptor, ShapeParametersDescriptor, ParameterShapeDescriptor};
 use cqrs_core::Event;
 use serde::Deserialize;
 
@@ -7,7 +7,7 @@ type ShapeId = String;
 type ShapeParameterId = String;
 type FieldId = String;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub enum ShapeEvent {
   ShapeAdded(ShapeAdded),
   BaseShapeSet(BaseShapeSet),
@@ -24,101 +24,101 @@ pub enum ShapeEvent {
   FieldRemoved(FieldRemoved),
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeAdded {
   pub shape_id: ShapeId,
   pub base_shape_id: ShapeId,
   pub parameters: ShapeParametersDescriptor,
   pub name: String,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BaseShapeSet {
-  shape_id: ShapeId,
-  base_shape_id: ShapeId,
-  event_context: Option<EventContext>,
+pub   shape_id: ShapeId,
+  pub base_shape_id: ShapeId,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeRenamed {
-  shape_id: ShapeId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub shape_id: ShapeId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeRemoved {
-  shape_id: ShapeId,
-  event_context: Option<EventContext>,
+  pub shape_id: ShapeId,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeParameterAdded {
-  shape_parameter_id: ShapeParameterId,
-  shape_id: ShapeId,
-  name: String,
-  // shapeDescriptor: ParameterShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub shape_parameter_id: ShapeParameterId,
+  pub shape_id: ShapeId,
+  pub name: String,
+  pub shape_descriptor: ShapeParametersDescriptor,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeParameterShapeSet {
-  // shapeDescriptor: ParameterShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub shape_descriptor: ParameterShapeDescriptor,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeParameterRenamed {
-  shape_parameter_id: ShapeParameterId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub shape_parameter_id: ShapeParameterId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeParameterRemoved {
-  shape_parameter_id: ShapeParameterId,
-  event_context: Option<EventContext>,
+  pub shape_parameter_id: ShapeParameterId,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldAdded {
   pub field_id: FieldId,
   pub shape_id: ShapeId,
   pub name: String,
   pub shape_descriptor: FieldShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldShapeSet {
-  shape_descriptor: FieldShapeDescriptor,
-  event_context: Option<EventContext>,
+  pub shape_descriptor: FieldShapeDescriptor,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldRenamed {
-  field_id: FieldId,
-  name: String,
-  event_context: Option<EventContext>,
+  pub field_id: FieldId,
+  pub name: String,
+  pub event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldRemoved {
-  field_id: FieldId,
-  event_context: Option<EventContext>,
+  pub field_id: FieldId,
+  pub event_context: Option<EventContext>,
 }
 
 impl Event for ShapeEvent {

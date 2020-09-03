@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 // RFC Events
 // -----------
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub enum RfcEvent {
   ContributionAdded(ContributionAdded),
   APINamed(APINamed),
@@ -13,7 +13,7 @@ pub enum RfcEvent {
   BatchCommitEnded(BatchCommitEnded),
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ContributionAdded {
   id: String,
@@ -22,14 +22,14 @@ pub struct ContributionAdded {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct APINamed {
   name: String,
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GitStateSet {
   branch_name: String,
@@ -37,7 +37,7 @@ pub struct GitStateSet {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitStarted {
   batch_id: String,
@@ -45,7 +45,7 @@ pub struct BatchCommitStarted {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitEnded {
   batch_id: String,

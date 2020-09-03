@@ -5,7 +5,7 @@ pub type ShapeIdRef<'a> = &'a str;
 pub type FieldId = String;
 pub type ShapeParameterId = String;
 pub type ShapeParameterIdRef<'a> = &'a str;
-
+////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
 pub enum FieldShapeDescriptor {
   FieldShapeFromShape(FieldShapeFromShape),
@@ -24,7 +24,7 @@ pub struct FieldShapeFromParameter {
   field_id: FieldId,
   shape_parameter_id: ShapeParameterId,
 }
-
+////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
 pub enum ShapeParametersDescriptor {
   NoParameterList,
@@ -43,6 +43,45 @@ pub struct StaticShapeParametersDescriptor {
 pub struct DynamicShapeParametersDescriptor {
   shape_parameter_ids: Vec<ShapeParameterId>,
 }
+////////////////////////////////////////////////////////////////////////////////
+#[derive(Debug, Deserialize)]
+pub enum ParameterShapeDescriptor {
+  ProviderInField(ProviderInField),
+  ProviderInShape(ProviderInShape)
+}
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProviderInField {}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProviderInShape {
+  shape_id: ShapeId,
+  provider_descriptor: ProviderDescriptor,
+  consuming_parameter_id: ShapeParameterId
+}
+////////////////////////////////////////////////////////////////////////////////
+#[derive(Debug, Deserialize)]
+pub enum ProviderDescriptor {
+  ParameterProvider(ParameterProvider),
+  ShapeProvider(ShapeProvider),
+  NoProvider(NoProvider)
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ParameterProvider {}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShapeProvider {
+  shape_id: ShapeId
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NoProvider {}
+////////////////////////////////////////////////////////////////////////////////
 
 pub enum ShapeKind {
   ObjectKind,
@@ -117,8 +156,19 @@ impl ShapeKind {
       },
     }
   }
-}
 
+  pub fn get_parameter_descriptor(&self) -> Option<ShapeKindParameterDescriptor> {
+    match self {
+      Self::ListKind => Some(ShapeKindParameterDescriptor {
+        shape_parameter_id: "$listItem"
+      }),
+      _ => None
+    }
+  }
+}
+pub struct ShapeKindParameterDescriptor {
+  pub shape_parameter_id: &'static str,
+}
 pub struct ShapeKindDescriptor {
   pub base_shape_id: &'static str,
   pub name: &'static str,

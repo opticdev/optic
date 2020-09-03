@@ -22,22 +22,17 @@ pub enum Edge {
     IsParameterOf,
 }
 
-#[derive(Hash, PartialEq, Eq)]
-pub enum NodeId {
-    ShapeId(ShapeId),
-    ShapeParameterId(ShapeParameterId),
-    FieldId(FieldId),
-}
-
 #[derive(Debug)]
 pub struct ShapeDescriptor {}
+#[derive(Debug)]
+pub struct ShapeParameterDescriptor {}
 
 #[derive(Debug)]
 pub struct FieldDescriptor {}
 
 pub struct ShapeProjection {
     pub graph: Graph<Node, Edge>,
-    pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
+    pub node_id_to_index: HashMap<String, petgraph::graph::NodeIndex>,
 }
 
 impl Default for ShapeProjection {
@@ -52,18 +47,32 @@ impl Default for ShapeProjection {
         add_core_shape_to_projection(&mut projection, ShapeKind::StringKind);
         add_core_shape_to_projection(&mut projection, ShapeKind::NumberKind);
         add_core_shape_to_projection(&mut projection, ShapeKind::BooleanKind);
+        add_core_shape_to_projection(&mut projection, ShapeKind::ListKind);
         projection
     }
 }
 
 fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_kind: ShapeKind) {
-    let descriptor = ShapeKind::get_descriptor(&shape_kind);
+    let descriptor = shape_kind.get_descriptor();
     let shape_node = Node::CoreShape(ShapeId::from(descriptor.base_shape_id), ShapeDescriptor {});
-    let node_index = shape_projection.graph.add_node(shape_node);
-    shape_projection.node_id_to_index.insert(
-        NodeId::ShapeId(ShapeId::from(descriptor.base_shape_id)),
-        node_index,
-    );
+    let shape_node_index = shape_projection.graph.add_node(shape_node);
+    shape_projection
+        .node_id_to_index
+        .insert(String::from(descriptor.base_shape_id), shape_node_index);
+    if let Some(shape_parameter_descriptor) = shape_kind.get_parameter_descriptor() {
+        let shape_parameter_node = Node::ShapeParameter(
+            String::from(shape_parameter_descriptor.shape_parameter_id),
+            ShapeParameterDescriptor {},
+        );
+        let shape_parameter_node_index = shape_projection.graph.add_node(shape_parameter_node);
+        shape_projection.node_id_to_index.insert(
+            String::from(shape_parameter_descriptor.shape_parameter_id),
+            shape_parameter_node_index,
+        );
+        shape_projection
+            .graph
+            .add_edge(shape_parameter_node_index, shape_node_index, Edge::IsParameterOf);
+    }
 }
 
 impl ShapeProjection {
@@ -76,13 +85,11 @@ impl ShapeProjection {
     ) {
         let shape_node = Node::Shape(shape_id.clone(), ShapeDescriptor {});
         let shape_node_index = self.graph.add_node(shape_node);
-        let shape_node_id = NodeId::ShapeId(shape_id);
-        self.node_id_to_index
-            .insert(shape_node_id, shape_node_index);
+        self.node_id_to_index.insert(shape_id, shape_node_index);
 
         let base_shape_node_index = self
             .node_id_to_index
-            .get(&NodeId::ShapeId(base_shape_id))
+            .get(&base_shape_id)
             .expect("expected base_shape_id to have a corresponding node");
         self.graph.add_edge(
             shape_node_index,
