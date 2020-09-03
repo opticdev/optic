@@ -114,7 +114,7 @@ class _MarkdownContribution extends React.Component {
 
   handleChange = (e) => this.setState({ inputValue: e.target.value });
   setEditing = (b) => () => {
-    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'false') { return; }
+    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') { return; }
 
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
@@ -176,7 +176,7 @@ class _HeadingContribution extends React.Component {
 
   handleChange = (e) => this.setState({ inputValue: e.target.value });
   setEditing = (b) => () => {
-    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'false') { return; }
+    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') { return; }
     
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
