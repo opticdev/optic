@@ -5,6 +5,7 @@ use optic_diff::errors;
 use optic_diff::streams;
 use optic_diff::EndpointProjection;
 use optic_diff::HttpInteraction;
+use optic_diff::InteractionDiffResult;
 use optic_diff::SpecEvent;
 use std::process;
 use std::sync::Arc;
@@ -29,7 +30,7 @@ fn main() {
                 .long("core-threads")
                 .takes_value(true)
                 .required(false)
-                .help("Sets the amount of threads used for workers. Defaults to amount of cores available to the system.")
+                .help("Sets the amount of threads used. Defaults to amount of cores available to the system.")
                 
         );
 
@@ -69,7 +70,7 @@ fn main() {
     runtime_builder.enable_all();
     runtime_builder.threaded_scheduler();
     if let Some(core_threads) = core_threads_count {
-        runtime_builder.core_threads(core_threads as usize);
+        runtime_builder.max_threads((core_threads as usize) * 2).core_threads(core_threads as usize);
     }
 
     let mut runtime = runtime_builder.build().unwrap();
@@ -94,28 +95,35 @@ fn main() {
             let projection = endpoints_projection.clone();
             let mut results_sender = results_sender.clone();
 
-            tokio::spawn(async move {
-                let interaction_json =
-                    interaction_json_result.expect("can read interaction json line from stdin");
-                let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
-                    match serde_json::from_str(&interaction_json) {
-                        Ok(tagged_interaction) => tagged_interaction,
-                        Err(parse_error) => {
-                            eprintln!("could not parse interaction json: {}", parse_error);
-                            return ();
-                        }
-                    };
+            let diff_task = tokio::spawn(async move {
+                let diff_comp = tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
+                    let interaction_json =
+                        interaction_json_result.expect("can read interaction json line from stdin");
+                    let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
+                        match serde_json::from_str(&interaction_json) {
+                            Ok(tagged_interaction) => tagged_interaction,
+                            Err(parse_error) => {
+                                eprintln!("could not parse interaction json: {}", parse_error);
+                                return None;
+                            }
+                        };
 
-                // TODO: consider passing it task::yield_now, to allow traverser to yield when it detect
-                // big traversals.
-                let results = diff_interaction(&projection, interaction);
-                for result in results {
-                    if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
-                        panic!("could not write diff result to results channel");
-                        // TODO: Find way to actually write error info
+                    Some((diff_interaction(&projection, interaction), tags))
+                });
+
+                let results = diff_comp.await.expect("diffing of interaction should be successful");
+
+                if let Some((results, tags)) = results {
+                    for result in results {
+                        if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
+                            panic!("could not write diff result to results channel");
+                            // TODO: Find way to actually write error info
+                        }
                     }
                 }
             });
+
+            
         }
 
         drop(results_sender);
@@ -125,6 +133,7 @@ fn main() {
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 struct TaggedValue<T>(T, Vec<String>);
+type Tags = Vec<String>;
 
 #[cfg(test)]
 mod test {

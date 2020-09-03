@@ -11,6 +11,7 @@ pub mod streams;
 pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, SpecEvent};
 pub use interactions::diff as diff_interaction;
+pub use interactions::diff::InteractionDiffResult;
 pub use projections::endpoint::EndpointProjection;
 
 pub mod errors {
