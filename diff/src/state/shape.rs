@@ -1,8 +1,10 @@
 use serde::Deserialize;
 
 pub type ShapeId = String;
+pub type ShapeIdRef<'a> = &'a str;
 pub type FieldId = String;
 pub type ShapeParameterId = String;
+pub type ShapeParameterIdRef<'a> = &'a str;
 
 #[derive(Debug, Deserialize)]
 pub enum FieldShapeDescriptor {
