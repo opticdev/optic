@@ -5,6 +5,7 @@ use crate::state::shape::{
 };
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::graph::{Graph, NodeIndex};
+use petgraph::visit::EdgeRef;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -22,6 +23,8 @@ pub enum Edge {
     IsParameterOf,
 }
 
+pub type NodeId = String;
+
 #[derive(Debug)]
 pub struct ShapeNodeDescriptor {}
 #[derive(Debug)]
@@ -32,7 +35,7 @@ pub struct FieldNodeDescriptor {}
 
 pub struct ShapeProjection {
     pub graph: Graph<Node, Edge>,
-    pub node_id_to_index: HashMap<String, petgraph::graph::NodeIndex>,
+    pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
 }
 
 impl Default for ShapeProjection {
@@ -101,6 +104,37 @@ impl ShapeProjection {
             *base_shape_node_index,
             Edge::IsDescendantOf,
         );
+    }
+
+    pub fn get_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
+        let node_index = self.node_id_to_index.get(node_id)?;
+        let node = self.graph.node_weight(*node_index);
+        match node {
+            Some(&Node::Shape(_, _)) | Some(&Node::CoreShape(_, _)) => Some(node_index),
+            Some(_) => None,
+            None => None,
+        }
+    }
+
+    pub fn get_descendant_shape_node_index(
+        &self,
+        parent_node_index: &NodeIndex,
+        child_id: &NodeId,
+    ) -> Option<&NodeIndex> {
+        let edges = self
+            .graph
+            .edges_directed(*parent_node_index, petgraph::Direction::Incoming);
+        let child_edge = edges.find(|edge| match edge.weight() {
+            Edge::IsDescendantOf => match self.graph.node_weight(edge.source()) {
+                Some(&Node::Shape(neighbour_id, _)) | Some(&Node::CoreShape(neighbour_id, _)) => {
+                    *child_id == neighbour_id
+                }
+                _ => false,
+            },
+            _ => false,
+        })?;
+
+        Some(&child_edge.source())
     }
 }
 
