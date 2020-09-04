@@ -1,4 +1,5 @@
 use super::visitors::JsonBodyVisitors;
+use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
@@ -19,8 +20,8 @@ impl<'a> Traverser<'a> {
     visitors: &mut impl JsonBodyVisitors<R>,
   ) {
     let body_trail = JsonTrail::empty();
-    let choices: Vec<ChoiceOutput> = vec![];
     let trail_origin = ShapeTrail::new(shape_id.clone());
+    let choices: Vec<ChoiceOutput> = vec![];
     self.traverse(
       json_body_option,
       body_trail,
@@ -48,31 +49,6 @@ impl<'a> Traverser<'a> {
       JsonValue::Array(value) => {}
       JsonValue::Object(value) => {}
       x => {}
-    }
-  }
-}
-
-pub struct ShapeQueries<'a> {
-  shape_projection: &'a ShapeProjection,
-}
-
-pub struct ShapeProjection {}
-
-pub struct ChoiceOutput {
-  pub parent_trail: ShapeTrail,
-  pub additional_components: Vec<ShapeTrailPathComponent>,
-  // shape_id: ShapeId,
-  pub core_shape_kind: ShapeKind,
-}
-
-impl ChoiceOutput {
-  pub fn shape_trail(&self) -> ShapeTrail {
-    let mut path = self.parent_trail.path.clone();
-    let mut additional_components = self.additional_components.clone();
-    path.append(&mut additional_components);
-    ShapeTrail {
-      root_shape_id: self.parent_trail.root_shape_id.clone(),
-      path,
     }
   }
 }
@@ -122,8 +98,8 @@ pub enum ShapeTrailPathComponent {
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
-  root_shape_id: ShapeId,
-  path: Vec<ShapeTrailPathComponent>,
+  pub root_shape_id: ShapeId,
+  pub path: Vec<ShapeTrailPathComponent>,
 }
 impl ShapeTrail {
   fn new(root_shape_id: ShapeId) -> Self {

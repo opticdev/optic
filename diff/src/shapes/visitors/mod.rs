@@ -1,4 +1,5 @@
-use super::traverser::{ChoiceOutput, JsonTrail, ShapeTrail};
+use super::traverser::{JsonTrail, ShapeTrail};
+use crate::queries::shape::ChoiceOutput;
 use serde_json::Value as JsonValue;
 pub mod diff;
 

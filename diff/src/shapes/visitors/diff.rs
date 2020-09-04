@@ -1,5 +1,5 @@
 use super::{JlasPrimitiveVisitor, JsonBodyVisitor, JsonBodyVisitors, VisitorResults};
-use crate::shapes::traverser::ChoiceOutput;
+use crate::queries::shape::ChoiceOutput;
 use crate::shapes::ShapeDiffResult;
 use crate::shapes::{JsonTrail, ShapeTrail};
 use crate::state::shape::ShapeKind;
