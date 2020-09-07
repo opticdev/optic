@@ -213,6 +213,20 @@ impl AggregateEvent<ShapeProjection> for SpecEvent {
     }
 }
 
+impl<I> From<I> for ShapeProjection
+where
+    I: IntoIterator,
+    I::Item: AggregateEvent<Self>,
+{
+    fn from(events: I) -> Self {
+        let mut projection = ShapeProjection::default();
+        for event in events.into_iter() {
+            projection.apply(event);
+        }
+        projection
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

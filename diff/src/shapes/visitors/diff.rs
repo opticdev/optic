@@ -9,10 +9,34 @@ pub struct DiffVisitors {
   primitive: DiffPrimitiveVisitor,
 }
 
+impl DiffVisitors {
+  pub fn new() -> Self {
+    DiffVisitors {
+      primitive: DiffPrimitiveVisitor::new(),
+    }
+  }
+}
+
 type DiffResults = VisitorResults<ShapeDiffResult>;
 
 pub struct DiffPrimitiveVisitor {
   results: DiffResults,
+}
+
+impl DiffPrimitiveVisitor {
+  pub fn new() -> Self {
+    Self {
+      results: DiffResults::new(),
+    }
+  }
+}
+
+impl JsonBodyVisitors<ShapeDiffResult> for DiffVisitors {
+  type Primitive = DiffPrimitiveVisitor;
+
+  fn primitive(&mut self) -> &mut DiffPrimitiveVisitor {
+    &mut self.primitive
+  }
 }
 
 impl JsonBodyVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {

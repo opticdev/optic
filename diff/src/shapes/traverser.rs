@@ -56,7 +56,7 @@ impl<'a> Traverser<'a> {
   }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub enum ShapeTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   ObjectTrail { shape_id: ShapeId },
@@ -98,7 +98,7 @@ pub enum ShapeTrailPathComponent {
   UnknownTrail {},
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
   pub root_shape_id: ShapeId,
@@ -113,7 +113,7 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -125,7 +125,7 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }
