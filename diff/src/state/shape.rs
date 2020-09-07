@@ -47,7 +47,7 @@ pub struct DynamicShapeParametersDescriptor {
 #[derive(Debug, Deserialize)]
 pub enum ParameterShapeDescriptor {
   ProviderInField(ProviderInField),
-  ProviderInShape(ProviderInShape)
+  ProviderInShape(ProviderInShape),
 }
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -58,14 +58,14 @@ pub struct ProviderInField {}
 pub struct ProviderInShape {
   shape_id: ShapeId,
   provider_descriptor: ProviderDescriptor,
-  consuming_parameter_id: ShapeParameterId
+  consuming_parameter_id: ShapeParameterId,
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
 pub enum ProviderDescriptor {
   ParameterProvider(ParameterProvider),
   ShapeProvider(ShapeProvider),
-  NoProvider(NoProvider)
+  NoProvider(NoProvider),
 }
 
 #[derive(Debug, Deserialize)]
@@ -75,7 +75,7 @@ pub struct ParameterProvider {}
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeProvider {
-  shape_id: ShapeId
+  shape_id: ShapeId,
 }
 
 #[derive(Debug, Deserialize)]
@@ -83,6 +83,7 @@ pub struct ShapeProvider {
 pub struct NoProvider {}
 ////////////////////////////////////////////////////////////////////////////////
 
+#[derive(Clone, Debug)]
 pub enum ShapeKind {
   ObjectKind,
   ListKind,
@@ -160,9 +161,9 @@ impl ShapeKind {
   pub fn get_parameter_descriptor(&self) -> Option<ShapeKindParameterDescriptor> {
     match self {
       Self::ListKind => Some(ShapeKindParameterDescriptor {
-        shape_parameter_id: "$listItem"
+        shape_parameter_id: "$listItem",
       }),
-      _ => None
+      _ => None,
     }
   }
 }

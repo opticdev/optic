@@ -1,4 +1,4 @@
-use super::visitors::JsonBodyVisitors;
+use super::visitors::{JlasPrimitiveVisitor, JsonBodyVisitors};
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
@@ -21,7 +21,7 @@ impl<'a> Traverser<'a> {
   ) {
     let body_trail = JsonTrail::empty();
     let trail_origin = ShapeTrail::new(shape_id.clone());
-    let choices: Vec<ChoiceOutput> = vec![];
+    let choices: Vec<ChoiceOutput> = self.shape_queries.list_trail_choices(&trail_origin);
     self.traverse(
       json_body_option,
       body_trail,
@@ -48,7 +48,10 @@ impl<'a> Traverser<'a> {
     match json_body {
       JsonValue::Array(value) => {}
       JsonValue::Object(value) => {}
-      x => {}
+      primitive_value => {
+        let primitive_visitor = visitors.primitive();
+        primitive_visitor.visit(primitive_value, body_trail, trail_origin, trail_choices);
+      }
     }
   }
 }
@@ -95,7 +98,7 @@ pub enum ShapeTrailPathComponent {
   UnknownTrail {},
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
   pub root_shape_id: ShapeId,

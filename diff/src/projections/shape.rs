@@ -10,7 +10,7 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum Node {
-    CoreShape(ShapeNode),
+    CoreShape(CoreShapeNode),
     Shape(ShapeNode),
     Field(FieldNode),
     ShapeParameter(ShapeParameterNode),
@@ -18,6 +18,8 @@ pub enum Node {
 
 #[derive(Debug)]
 pub struct ShapeNode(ShapeId, ShapeNodeDescriptor);
+#[derive(Debug)]
+pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
 #[derive(Debug)]
 pub struct FieldNode(FieldId, FieldNodeDescriptor);
 #[derive(Debug)]
@@ -34,6 +36,10 @@ pub type NodeId = String;
 
 #[derive(Debug)]
 pub struct ShapeNodeDescriptor {}
+#[derive(Debug)]
+pub struct CoreShapeNodeDescriptor {
+    pub kind: ShapeKind,
+}
 #[derive(Debug)]
 pub struct ShapeParameterNodeDescriptor {}
 
@@ -64,9 +70,11 @@ impl Default for ShapeProjection {
 
 fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_kind: ShapeKind) {
     let descriptor = shape_kind.get_descriptor();
-    let shape_node = Node::CoreShape(ShapeNode(
+    let shape_node = Node::CoreShape(CoreShapeNode(
         ShapeId::from(descriptor.base_shape_id),
-        ShapeNodeDescriptor {},
+        CoreShapeNodeDescriptor {
+            kind: shape_kind.clone(),
+        },
     ));
     let shape_node_index = shape_projection.graph.add_node(shape_node);
     shape_projection
@@ -117,7 +125,8 @@ impl ShapeProjection {
         let node_index = self.node_id_to_index.get(node_id)?;
         let node = self.graph.node_weight(*node_index);
         match node {
-            Some(&Node::Shape(node)) | Some(&Node::CoreShape(node)) => Some(node_index),
+            Some(&Node::Shape(ref node)) => Some(node_index),
+            Some(&Node::CoreShape(ref node)) => Some(node_index),
             Some(_) => None,
             None => None,
         }
@@ -134,7 +143,9 @@ impl ShapeProjection {
         let child_edge = edges.find(|edge| match edge.weight() {
             Edge::IsDescendantOf => match self.graph.node_weight(edge.source()) {
                 Some(Node::Shape(ShapeNode(neighbour_id, _)))
-                | Some(Node::CoreShape(ShapeNode(neighbour_id, _))) => *child_id == *neighbour_id,
+                | Some(Node::CoreShape(CoreShapeNode(neighbour_id, _))) => {
+                    *child_id == *neighbour_id
+                }
                 _ => false,
             },
             _ => false,
@@ -143,33 +154,37 @@ impl ShapeProjection {
         Some(child_edge.source())
     }
 
-    // TODO: get some help on why the signature below doesn't work, (expected type parameter `T`, found struct `std::iter::FilterMap`)
-    // "expected type parameter `T`, found struct `std::iter::FilterMap`", but FilterMap implements Iterator?
-    // (`impl Iterator...` won't work, as we need to assign the iterator a lifetime to be at least as long as the struct)
-    // pub fn get_core_shape_nodes<'a, T>(&'a self, node_index: &NodeIndex) -> Option<T>
-    // where
-    //     T: Iterator<Item = &'a ShapeNode>,
-    //     T: 'a,
-    // {
-    pub fn get_core_shape_nodes(self, node_index: &NodeIndex) -> Option<Vec<&ShapeNode>> {
-        let node = self.graph.node_weight(*node_index);
+    pub fn get_core_shape_nodes(
+        &self,
+        node_index: &NodeIndex,
+    ) -> Option<impl Iterator<Item = &CoreShapeNode>> {
+        let graph = &self.graph;
+        let node = graph.node_weight(*node_index);
         if let Some(Node::Shape(shape_node)) = node {
             let neighbours = self
                 .graph
                 .neighbors_directed(*node_index, petgraph::Direction::Outgoing);
-            let core_shapes = neighbours.filter_map(|neighbour_index| {
-                if let Some(Node::CoreShape(node)) = self.graph.node_weight(neighbour_index.clone())
-                {
+            let core_shapes = neighbours.filter_map(move |neighbour_index| {
+                if let Some(Node::CoreShape(node)) = graph.node_weight(neighbour_index.clone()) {
                     Some(node)
                 } else {
                     None
                 }
             });
-            .collect();
             Some(core_shapes)
         } else {
             None
         }
+    }
+}
+
+struct Example {
+    inside: Vec<u8>,
+}
+
+impl Example {
+    pub fn inside_iter<T>(&self) -> impl Iterator<Item = &u8> {
+        self.inside.iter()
     }
 }
 

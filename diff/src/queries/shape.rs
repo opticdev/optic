@@ -1,3 +1,4 @@
+use crate::projections::shape::CoreShapeNode;
 use crate::projections::shape::ShapeProjection;
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
 use crate::state::shape::ShapeKind;
@@ -23,6 +24,9 @@ impl<'a> ShapeQueries<'a> {
 
     let mut parent_node_index = root_node_index;
     while let Some(trail_component) = trail_components.next() {
+      unimplemented!(
+        "we shouldn't have any additional shape trail components yet, making primitives work first"
+      );
       // TODO: implement walking of graph by trail components
       // let component_node = match trail_component {
       //   ShapeTrailPathComponent::
@@ -30,16 +34,23 @@ impl<'a> ShapeQueries<'a> {
       //   projection.get_descendant_shape_node_index(&parent_node_index, &shape_id);
     }
 
-    let current_node_index = parent_node_index.expect("shape trail to describe existing shapes");
-    let core_shapes = projection.get_core_shapes(&current_node_index);
+    let current_node_index =
+      parent_node_index.expect("shape trail should describe existing shapes");
+    let core_shape_nodes = projection.get_core_shape_nodes(&current_node_index);
+    if let None = core_shape_nodes {
+      return vec![];
+    }
 
-    // core_shapes.into_iter().map(|core_shape| {
-    //   let node = projection.graph.node_weight(core_shape_index);
-    //   ChoiceOutput {
-    //   }
-    // })
-
-    vec![]
+    core_shape_nodes
+      .unwrap()
+      .map(
+        |CoreShapeNode(shape_id, core_shape_descriptor)| ChoiceOutput {
+          parent_trail: shape_trail.clone(),
+          additional_components: vec![],
+          core_shape_kind: core_shape_descriptor.kind.clone(),
+        },
+      )
+      .collect::<Vec<_>>()
   }
 }
 
