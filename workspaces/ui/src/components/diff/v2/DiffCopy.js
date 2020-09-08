@@ -10,9 +10,9 @@ export function DiffCopy(props) {
   const copy = props.copy;
   const fontSize = props.fontSize || 13;
 
-  let suggestion = ""
+  let suggestion = '';
   const components = mapScala(copy)((i) => {
-    suggestion += i.value + " "
+    suggestion += i.value + ' ';
     if (i.style === 'normal') {
       return (
         <span className={classes.normal} style={{ fontSize }}>
@@ -31,8 +31,8 @@ export function DiffCopy(props) {
   });
 
   useEffect(() => {
-    track("Showing recommendation", {suggestion})
-  }, [])
+    // track("Showing recommendation", {suggestion})
+  }, []);
 
   return <div>{components}</div>;
 }
