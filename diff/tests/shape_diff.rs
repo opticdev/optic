@@ -41,7 +41,6 @@ fn can_diff_primitive_json_and_yield_unmatched_shape() {
 }
 
 #[test]
-#[ignore]
 fn can_diff_primitive_json_and_yield_unspecified_shape() {
   let events: Vec<SpecEvent> = serde_json::from_value(
     json!([
@@ -53,5 +52,7 @@ fn can_diff_primitive_json_and_yield_unspecified_shape() {
   let string_body = json!("a-string");
   let unknown_shape_id = String::from("not-a-shape-id");
   // TODO: consider returning a Result with Err instead of panicking
-  diff_shape(&shape_projection, Some(string_body), &unknown_shape_id);
+  let results = diff_shape(&shape_projection, Some(string_body), &unknown_shape_id);
+  assert_eq!(results.len(), 1);
+  assert_debug_snapshot!(results);
 }

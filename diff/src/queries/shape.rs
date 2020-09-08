@@ -34,8 +34,11 @@ impl<'a> ShapeQueries<'a> {
       //   projection.get_descendant_shape_node_index(&parent_node_index, &shape_id);
     }
 
-    let current_node_index =
-      parent_node_index.expect("shape trail should describe existing shapes");
+    if let None = parent_node_index {
+      return vec![];
+    }
+
+    let current_node_index = parent_node_index.unwrap();
     let core_shape_nodes = projection.get_core_shape_nodes(&current_node_index);
     if let None = core_shape_nodes {
       return vec![];
