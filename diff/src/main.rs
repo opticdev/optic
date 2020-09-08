@@ -4,7 +4,7 @@ use num_cpus;
 use optic_diff::diff_interaction;
 use optic_diff::errors;
 use optic_diff::streams;
-use optic_diff::EndpointProjection;
+use optic_diff::SpecProjection;
 use optic_diff::HttpInteraction;
 use optic_diff::InteractionDiffResult;
 use optic_diff::SpecEvent;
@@ -65,8 +65,8 @@ fn main() {
             _ => unreachable!("Specification file not currently serialized as any other but JSON"),
         })
         .unwrap();
-
-    let endpoints_projection = Arc::new(EndpointProjection::from_events(events.into_iter()));
+    
+    let spec_projection = Arc::new(SpecProjection::from(events));
 
 
     let mut runtime_builder = tokio::runtime::Builder::new();
@@ -102,7 +102,7 @@ fn main() {
 
         while let Some(interaction_json_result) = interaction_lines.next().await {
             let diff_permits = diff_scheduling_permits.clone();
-            let projection = endpoints_projection.clone();
+            let projection = spec_projection.clone();
             let mut results_sender = results_sender.clone();
 
             let diff_task_permit = diff_permits.acquire_owned().await;

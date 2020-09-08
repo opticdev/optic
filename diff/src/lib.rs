@@ -12,7 +12,7 @@ pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, SpecEvent};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
-pub use projections::{endpoint::EndpointProjection, shape::ShapeProjection};
+pub use projections::{EndpointProjection, ShapeProjection, SpecProjection};
 pub use shapes::diff as diff_shape;
 
 pub mod errors {

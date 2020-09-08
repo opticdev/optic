@@ -254,31 +254,37 @@ impl Aggregate for EndpointProjection {
   }
 }
 
+impl AggregateEvent<EndpointProjection> for EndpointEvent {
+  fn apply_to(self, aggregate: &mut EndpointProjection) {
+    match self {
+      EndpointEvent::PathComponentAdded(e) => {
+        aggregate.with_path(e.parent_path_id, e.path_id, e.name);
+      }
+      EndpointEvent::PathParameterAdded(e) => {
+        aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
+      }
+      EndpointEvent::RequestAdded(e) => {
+        aggregate.with_request(e.path_id, e.http_method, e.request_id);
+      }
+      EndpointEvent::ResponseAddedByPathAndMethod(e) => {
+        aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
+      }
+      EndpointEvent::ResponseBodySet(e) => {
+        aggregate.with_response_body(
+          e.response_id,
+          e.body_descriptor.http_content_type,
+          e.body_descriptor.shape_id,
+        );
+      }
+      _ => {}
+    }
+  }
+}
+
 impl AggregateEvent<EndpointProjection> for SpecEvent {
   fn apply_to(self, aggregate: &mut EndpointProjection) {
     if let SpecEvent::EndpointEvent(event) = self {
-      match event {
-        EndpointEvent::PathComponentAdded(e) => {
-          aggregate.with_path(e.parent_path_id, e.path_id, e.name);
-        }
-        EndpointEvent::PathParameterAdded(e) => {
-          aggregate.with_path_parameter(e.parent_path_id, e.path_id, e.name)
-        }
-        EndpointEvent::RequestAdded(e) => {
-          aggregate.with_request(e.path_id, e.http_method, e.request_id);
-        }
-        EndpointEvent::ResponseAddedByPathAndMethod(e) => {
-          aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
-        }
-        EndpointEvent::ResponseBodySet(e) => {
-          aggregate.with_response_body(
-            e.response_id,
-            e.body_descriptor.http_content_type,
-            e.body_descriptor.shape_id,
-          );
-        }
-        _ => {}
-      }
+      event.apply_to(aggregate);
     }
   }
 }

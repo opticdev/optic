@@ -110,10 +110,16 @@ impl ShapeProjection {
         let shape_node_index = self.graph.add_node(shape_node);
         self.node_id_to_index.insert(shape_id, shape_node_index);
 
-        let base_shape_node_index = self
-            .node_id_to_index
-            .get(&base_shape_id)
-            .expect("expected base_shape_id to have a corresponding node");
+        let base_shape_node_index =
+            self.node_id_to_index
+                .get(&base_shape_id)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "expected base_shape_id '{}' to have a corresponding node",
+                        &base_shape_id
+                    )
+                });
+        // .expect("expected base_shape_id to have a corresponding node");
         self.graph.add_edge(
             shape_node_index,
             *base_shape_node_index,

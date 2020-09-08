@@ -1,7 +1,7 @@
 use cqrs_core::Aggregate;
 use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_interaction, streams, EndpointProjection, HttpInteraction, SpecEvent};
+use optic_diff::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::{Config, Dot};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::stream::StreamExt;
@@ -18,22 +18,22 @@ async fn can_yield_umatched_request_url() {
   )
   .expect("todos spec should deserialize");
 
-  let mut events_projection = EndpointProjection::default();
+  let spec_projection = SpecProjection::from(events);
+  {
+    let endpoint_projection = spec_projection.endpoint();
 
-  for event in events {
-    events_projection.apply(event)
+    for node_index in endpoint_projection.graph.node_indices() {
+      println!(
+        "{:?}: {:?}",
+        node_index,
+        endpoint_projection.graph.node_weight(node_index).unwrap()
+      )
+    }
+    assert_debug_snapshot!(Dot::with_config(
+      &endpoint_projection.graph,
+      &[Config::EdgeNoLabel]
+    ));
   }
-  for node_index in events_projection.graph.node_indices() {
-    println!(
-      "{:?}: {:?}",
-      node_index,
-      events_projection.graph.node_weight(node_index).unwrap()
-    )
-  }
-  assert_debug_snapshot!(Dot::with_config(
-    &events_projection.graph,
-    &[Config::EdgeNoLabel]
-  ));
 
   let interaction = HttpInteraction::from_json_str(
     r#"{
@@ -75,7 +75,7 @@ async fn can_yield_umatched_request_url() {
   .expect("example http interaction should deserialize");
   println!("{:?}", interaction);
 
-  let results = diff_interaction(&mut events_projection, interaction);
+  let results = diff_interaction(&spec_projection, interaction);
   println!("{:?}", results);
   assert_eq!(results.len(), 1);
 
