@@ -1,5 +1,6 @@
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import { ICreateCaptureRequest } from '@useoptic/saas-types';
+import { developerDebugLogger } from './index';
 
 class Client {
   private readonly defaultAdditionalHeaders: Record<string, string>;
@@ -47,15 +48,19 @@ class Client {
   }
 
   uploadInteractions(uploadUrl: string, bytes: Buffer) {
+    developerDebugLogger(`uploading batch to ${uploadUrl}`);
     return JsonHttpClient.putBytes(uploadUrl, bytes, {
       'Content-Type': 'avro/optic-interactions-v1+binary',
+      'x-amz-server-side-encryption': 'AES256',
     });
   }
 
   uploadSpec(uploadUrl: string, spec: any[]) {
+    developerDebugLogger(`uploading spec to ${uploadUrl}`);
     const bytes = Buffer.from(JSON.stringify(spec));
     return JsonHttpClient.putBytes(uploadUrl, bytes, {
       'Content-Type': 'application/json',
+      'x-amz-server-side-encryption': 'AES256',
     });
   }
 
