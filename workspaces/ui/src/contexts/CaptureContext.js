@@ -51,6 +51,16 @@ class _CaptureContextStore extends React.Component {
     );
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevProps.rfcService &&
+      prevProps.rfcService.currentState(prevProps.rfcId).toString() !==
+        this.props.rfcService.currentState(prevProps.rfcId).toString()
+    ) {
+      this.startDiff();
+    }
+  }
+
   componentWillUnmount() {
     if (this.state.notificationChannel) {
       this.state.notificationChannel.close();
