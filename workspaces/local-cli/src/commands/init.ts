@@ -8,6 +8,7 @@ import { fromOptic } from '@useoptic/cli-shared';
 import { opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import {
   ApiCheckCompleted,
+  ApiCreated,
   ApiInitializedInProject,
 } from '@useoptic/analytics/lib/events/onboarding';
 
@@ -52,9 +53,6 @@ export default class Init extends Command {
     }
 
     const name = await cli.prompt('What is this API named?');
-
-    //bring me back with an ID please
-    // await trackAndSpawn('New API Created', { name });
 
     const config = `
 name: ${name}

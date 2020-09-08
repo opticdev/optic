@@ -1,8 +1,6 @@
 import { Client } from '@useoptic/cli-client';
 import packageJson from '../package.json';
-import {
-  newAnalyticsEventBus,
-} from '@useoptic/analytics/lib/eventbus';
+import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
 import { consistentAnonymousId } from '@useoptic/analytics/lib/consistentAnonymousId';
 import niceTry from 'nice-try';
 
@@ -44,14 +42,20 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
   return clientContext;
 });
 
-analyticsEvents.eventEmitter.setMaxListeners(1);
+analyticsEvents.eventEmitter.setMaxListeners(2);
+
+analyticsEvents.listen((event) => {
+  if (isAnalyticsEnabled) {
+    client.postTrackingEvents(event);
+  }
+});
 
 export function trackUserEvent(event) {
   analyticsEvents.emit(event);
 }
 
 export async function track(event, props) {
-  console.group(`Deprecated Event Called ${event}`)
+  console.group(`Deprecated Event Called ${event}`);
   console.groupEnd();
 }
 
