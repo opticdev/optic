@@ -1,3 +1,4 @@
+use crate::shapes::ShapeDiffResult;
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId};
 use serde::Serialize;
 
@@ -5,7 +6,9 @@ use serde::Serialize;
 pub enum InteractionDiffResult {
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
+  UnmatchedRequestBodyShape(UnmatchedRequestBodyShape),
   UnmatchedResponseBodyContentType(UnmatchedResponseBodyContentType),
+  UnmatchedResponseBodyShape(UnmatchedResponseBodyShape),
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Serialize)]
@@ -52,6 +55,50 @@ impl UnmatchedResponseBodyContentType {
     return UnmatchedResponseBodyContentType {
       interaction_trail,
       requests_trail,
+    };
+  }
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UnmatchedRequestBodyShape {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub shape_diff_result: ShapeDiffResult,
+}
+
+impl UnmatchedRequestBodyShape {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    shape_diff_result: ShapeDiffResult,
+  ) -> Self {
+    return UnmatchedRequestBodyShape {
+      interaction_trail,
+      requests_trail,
+      shape_diff_result,
+    };
+  }
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UnmatchedResponseBodyShape {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub shape_diff_result: ShapeDiffResult,
+}
+
+impl UnmatchedResponseBodyShape {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    shape_diff_result: ShapeDiffResult,
+  ) -> Self {
+    return UnmatchedResponseBodyShape {
+      interaction_trail,
+      requests_trail,
+      shape_diff_result,
     };
   }
 }
