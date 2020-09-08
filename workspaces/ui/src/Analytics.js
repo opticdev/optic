@@ -46,7 +46,9 @@ analyticsEvents.eventEmitter.setMaxListeners(2);
 
 analyticsEvents.listen((event) => {
   if (isAnalyticsEnabled) {
-    client.postTrackingEvents(event);
+    try {
+      client.postTrackingEvents(event);
+    } catch (e) {}
   }
 });
 

@@ -19,7 +19,7 @@ $ npm install -g @useoptic/cli
 $ api COMMAND
 running command...
 $ api (-v|--version|version)
-@useoptic/cli/8.2.9 darwin-x64 node-v12.4.0
+@useoptic/cli/8.3.2 darwin-x64 node-v12.4.0
 $ api --help [COMMAND]
 USAGE
   $ api COMMAND
@@ -35,6 +35,7 @@ USAGE
 * [`api login`](#api-login)
 * [`api logout`](#api-logout)
 * [`api run [TASKNAME]`](#api-run-taskname)
+* [`api scripts [SCRIPTNAME]`](#api-scripts-scriptname)
 * [`api spec`](#api-spec)
 * [`api start`](#api-start)
 
@@ -47,7 +48,7 @@ USAGE
   $ api check [TASKNAME]
 ```
 
-_See code: [src/commands/check.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/check.ts)_
+_See code: [src/commands/check.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/check.ts)_
 
 ## `api generate:oas`
 
@@ -62,7 +63,7 @@ OPTIONS
   --yaml
 ```
 
-_See code: [src/commands/generate/oas.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/generate/oas.ts)_
+_See code: [src/commands/generate/oas.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/generate/oas.ts)_
 
 ## `api help [COMMAND]`
 
@@ -88,9 +89,14 @@ Add Optic to your API
 ```
 USAGE
   $ api init
+
+OPTIONS
+  --command=command
+  --inboundUrl=inboundUrl
+  --targetUrl=targetUrl
 ```
 
-_See code: [src/commands/init.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/init.ts)_
 
 ## `api login`
 
@@ -101,7 +107,7 @@ USAGE
   $ api login
 ```
 
-_See code: [src/commands/login.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/login.ts)_
+_See code: [src/commands/login.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/login.ts)_
 
 ## `api logout`
 
@@ -112,7 +118,7 @@ USAGE
   $ api logout
 ```
 
-_See code: [src/commands/logout.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/logout.ts)_
+_See code: [src/commands/logout.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/logout.ts)_
 
 ## `api run [TASKNAME]`
 
@@ -123,7 +129,21 @@ USAGE
   $ api run [TASKNAME]
 ```
 
-_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/run.ts)_
+
+## `api scripts [SCRIPTNAME]`
+
+Run one of the scripts in your optic.yml file
+
+```
+USAGE
+  $ api scripts [SCRIPTNAME]
+
+OPTIONS
+  -i, --install
+```
+
+_See code: [src/commands/scripts.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/scripts.ts)_
 
 ## `api spec`
 
@@ -134,7 +154,7 @@ USAGE
   $ api spec
 ```
 
-_See code: [src/commands/spec.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/spec.ts)_
+_See code: [src/commands/spec.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/spec.ts)_
 
 ## `api start`
 
@@ -145,5 +165,5 @@ USAGE
   $ api start
 ```
 
-_See code: [src/commands/start.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/useoptic/optic-package/blob/v8.3.2/src/commands/start.ts)_
 <!-- commandsstop -->
