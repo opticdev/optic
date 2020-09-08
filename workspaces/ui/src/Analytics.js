@@ -42,7 +42,6 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
   return clientContext;
 });
 
-analyticsEvents.eventEmitter.setMaxListeners(1);
 //forward analytics to central CLI server bus
 analyticsEvents.listen((event) => {
   try {

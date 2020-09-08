@@ -15,7 +15,7 @@ import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Snackbar, makeStyles } from '@material-ui/core';
 import { analyticsEvents } from '../Analytics';
-import * as DiffEvents from '@useoptic/analytics/lib/events/diffs'
+import * as DiffEvents from '@useoptic/analytics/lib/events/diffs';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
   UpdatedBlueBackground,
@@ -142,7 +142,7 @@ export default function DemoSessions(props) {
   const setRoute = (data) => {
     routeStateRef.current = data;
     _setRoute(data);
-  }
+  };
   const styles = snackbarStyles();
   const [showTooltips, setShowTooltips] = useState(true);
   const disableTooltips = () => setShowTooltips(false);
@@ -181,11 +181,7 @@ export default function DemoSessions(props) {
   }, [props.location.pathname]);
 
   useEffect(() => {
-    console.log("Use effect called");
-    console.trace();
     const eventsHandler = (event) => {
-      console.log(event);
-      console.log(analyticsEvents.eventEmitter.listenerCount('event'))
       const eventProps = event.data;
 
       switch (event.type) {
@@ -210,7 +206,7 @@ export default function DemoSessions(props) {
           break;
         }
         case DiffEvents.UserChangedCaptureOverviewTab.eventName: {
-          if (event.data.currentTab === "UNDOCUMENTED_URL") {
+          if (event.data.currentTab === 'UNDOCUMENTED_URL') {
             if (!hasCommited && props.location.pathname.includes('diffs')) {
               // we don't need to keep telling them things they already did
               const undocumentedUrlCount = eventProps.undocumentedUrlCount || 1;
@@ -220,7 +216,7 @@ export default function DemoSessions(props) {
                     'Here, Optic is showing all urls that received traffic but have not been documented. \n\nChoose a url to document it',
                 });
               } else {
-                console.log(routeStateRef.current)
+                console.log(routeStateRef.current);
                 setMessage({
                   message: `All Undocumented URLs have been added to the specification`,
                   action: {
@@ -230,7 +226,7 @@ export default function DemoSessions(props) {
                 });
               }
             }
-          } else if (event.data.currentTab === "ENDPOINT_DIFF") {
+          } else if (event.data.currentTab === 'ENDPOINT_DIFF') {
             if (!hasCommited && props.location.pathname.includes('diffs')) {
               // we don't need to keep telling them things they already did
               const diffAmount = eventProps.diffCount;
@@ -345,11 +341,14 @@ export default function DemoSessions(props) {
         }
       }
     };
+
     analyticsEvents.listen(eventsHandler);
+
+    return () =>
+      analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
   }, []);
 
   // event specific info boxes
-  
 
   const m =
     commits > 1
