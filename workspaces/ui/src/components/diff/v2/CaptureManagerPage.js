@@ -155,7 +155,7 @@ export function CaptureManagerPage(props) {
   );
 }
 
-export const CaptureManager = ({location}) => {
+export const CaptureManager = ({ location }) => {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
@@ -214,8 +214,8 @@ function CaptureChooserComponent(props) {
   );
 
   const query = qs.parse(props.location.search, {
-    ignoreQueryPrefix: true
-  })
+    ignoreQueryPrefix: true,
+  });
 
   let defaultTab = subtabs.ENDPOINT_DIFF;
 
@@ -363,6 +363,11 @@ function CaptureDiffWrapper(props) {
   const rfcContext = useContext(RfcContext);
   const services = useServices();
 
+  useEffect(() => {
+    services.specService
+      .listEvents()
+      .then((i) => console.log('home page value ', JSON.parse(i)));
+  }, [services]);
   return (
     <IgnoreDiffContext.Consumer>
       {({ ignoredDiffs, resetIgnored }) => (
@@ -371,7 +376,10 @@ function CaptureDiffWrapper(props) {
           ignoredDiffs={ignoredDiffs}
           {...services}
         >
-          <CaptureChooserComponent location={props.location} captureId={captureId} />
+          <CaptureChooserComponent
+            location={props.location}
+            captureId={captureId}
+          />
         </CaptureContextStore>
       )}
     </IgnoreDiffContext.Consumer>

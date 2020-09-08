@@ -73,8 +73,6 @@ export default function FinalizeDialog(props) {
     );
     await specService.saveEvents(newEventStore, rfcId);
 
-    history.push(`${baseUrl}/diffs/${captureId}`);
-
     // Delay sending commit event to ensure that event happens after switch to diffs page
     // neccesary for demo flow
     // TODO: Switch demo implementation to use better state machine to mitigate this problem
@@ -87,6 +85,8 @@ export default function FinalizeDialog(props) {
         })
       );
     }, 500);
+
+    history.push(`${baseUrl}/diffs/${captureId}`);
   };
 
   useEffect(() => {

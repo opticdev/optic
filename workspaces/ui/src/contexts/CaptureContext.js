@@ -57,6 +57,16 @@ class _CaptureContextStore extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevProps.rfcService &&
+      prevProps.rfcService.currentState(prevProps.rfcId).toString() !==
+        this.props.rfcService.currentState(prevProps.rfcId).toString()
+    ) {
+      this.startDiff();
+    }
+  }
+
   reload = async (notifData) => {
     const notifDataUpdates = (() => {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
@@ -142,9 +152,6 @@ class _CaptureContextStore extends React.Component {
       method,
       pathId,
     } = this.props;
-
-    const s = this.state;
-    console.log('look here ', s);
 
     //clear diff
     await this.cleanupDiff();
