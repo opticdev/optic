@@ -14,8 +14,8 @@ import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
 import { DiffCopy } from './DiffCopy';
-import { trackUserEvent, track } from '../../../Analytics.js'
-import { SuggestionDisplayed } from '@useoptic/analytics/lib/events/diffs'
+import { trackUserEvent, track } from '../../../Analytics.js';
+import { SuggestionDisplayed } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,19 +75,22 @@ export const DiffHelperCard = (props) => {
     (selectedDiff.inResponse && inResponse);
 
   useEffect(() => {
-    if (!showIt) { return; }
+    if (!showIt) {
+      return;
+    }
     const suggestion = mapScala(description.summary)((i) => {
-      return i.value
-    }).join(" ");
-    trackUserEvent(SuggestionDisplayed.withProps({
-      suggestion
-    }))
+      return i.value;
+    }).join(' ');
+    trackUserEvent(
+      SuggestionDisplayed.withProps({
+        suggestion,
+      })
+    );
   }, [showIt, description.summary]);
 
   if (!showIt) {
     return null;
   }
-
 
   return (
     <div className={classes.root}>
@@ -108,8 +111,8 @@ export const DiffHelperCard = (props) => {
                   key={n}
                   onClick={(e) => {
                     e.preventDefault();
-                    track("Demo - Previewing Suggestion", {suggestion: suggestion.action})
-                    setSelectedInterpretation(suggestion)
+                    // track("Demo - Previewing Suggestion", {suggestion: suggestion.action})
+                    setSelectedInterpretation(suggestion);
                   }}
                   control={
                     <Radio
