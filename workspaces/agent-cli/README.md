@@ -19,7 +19,7 @@ $ npm install -g @useoptic/agent-cli
 $ optic-agent COMMAND
 running command...
 $ optic-agent (-v|--version|version)
-@useoptic/agent-cli/8.2.9 darwin-x64 node-v12.4.0
+@useoptic/agent-cli/8.3.3 darwin-x64 node-v12.4.0
 $ optic-agent --help [COMMAND]
 USAGE
   $ optic-agent COMMAND
@@ -66,5 +66,5 @@ EXAMPLE
   $ optic-agent run --command="npm start" --config=$CAPTURE_CONFIG --listen=http://localhost:3001
 ```
 
-_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.2.9/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/useoptic/optic-package/blob/v8.3.3/src/commands/run.ts)_
 <!-- commandsstop -->
