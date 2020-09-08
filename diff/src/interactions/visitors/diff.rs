@@ -2,11 +2,11 @@ use super::{
   InteractionVisitor, InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor,
   RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
-use crate::interactions::diff::{
+use crate::interactions::result::{
   InteractionDiffResult, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestUrl,
   UnmatchedResponseBodyContentType,
 };
-use crate::interactions::diff::{
+use crate::interactions::result::{
   InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath,
 };
 use crate::interactions::HttpInteraction;

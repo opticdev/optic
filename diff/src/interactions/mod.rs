@@ -1,10 +1,10 @@
-pub mod diff;
+pub mod result;
 mod traverser;
 mod visitors;
 pub use crate::events::http_interaction::HttpInteraction;
 pub use crate::projections::endpoint::EndpointProjection;
 pub use crate::queries::endpoint::EndpointQueries;
-pub use diff::InteractionDiffResult;
+pub use result::InteractionDiffResult;
 use visitors::{InteractionVisitors, PathVisitor};
 
 pub fn diff(

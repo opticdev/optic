@@ -1,10 +1,10 @@
 use serde_json::Value as JsonValue;
 
-mod diff;
+mod result;
 pub mod traverser;
 pub mod visitors;
 
-pub use diff::ShapeDiffResult;
+pub use result::ShapeDiffResult;
 pub use traverser::{JsonTrail, ShapeTrail};
 
 use crate::projections::shape::ShapeProjection;
