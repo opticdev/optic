@@ -9,6 +9,13 @@ pub enum InteractionDiffResult {
   UnmatchedRequestBodyShape(UnmatchedRequestBodyShape),
   UnmatchedResponseBodyContentType(UnmatchedResponseBodyContentType),
   UnmatchedResponseBodyShape(UnmatchedResponseBodyShape),
+  //
+  // Matches
+  // -------
+  #[serde(skip)]
+  MatchedResponseBodyContentType {},
+  #[serde(skip)]
+  MatchedRequestBodyContentType {},
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Serialize)]

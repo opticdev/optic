@@ -136,6 +136,9 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
             self
               .visited_with_matched_content_types
               .insert(request_id.clone());
+          // self.push(InteractionDiffResult::MatchedRequestBodyContentType {
+
+          // })
           } else {
             self
               .visited_with_unmatched_content_types
