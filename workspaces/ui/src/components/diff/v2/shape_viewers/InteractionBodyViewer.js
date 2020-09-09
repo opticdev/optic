@@ -575,8 +575,11 @@ function shapeRows(
       break;
     default:
       // debugger
-      let type = getFieldType(field.fieldValue);
-      let row = createRow({ type, ...field, indent }, { diffTrails });
+      let type = getFieldType(shape);
+      let row = createRow(
+        { type, ...field, fieldValue: field.fieldValue || shape, indent },
+        { diffTrails }
+      );
       rows.push(createRow(row));
       break;
   }
