@@ -598,13 +598,16 @@ function objectRows(
   const { trail } = field;
 
   rows.push(
-    createRow({
-      type: 'object_open',
-      fieldName: field.fieldName,
-      seqIndex: field.seqIndex,
-      trail,
-      indent,
-    })
+    createRow(
+      {
+        type: 'object_open',
+        fieldName: field.fieldName,
+        seqIndex: field.seqIndex,
+        trail,
+        indent,
+      },
+      { diffTrails }
+    )
   );
 
   const nestedDiffs = diffTrails.filter((diffTrail) =>
@@ -646,13 +649,16 @@ function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
   rows.push(
-    createRow({
-      type: 'array_open',
-      indent,
-      fieldName: field.fieldName,
-      seqIndex: field.seqIndex,
-      trail,
-    })
+    createRow(
+      {
+        type: 'array_open',
+        indent,
+        fieldName: field.fieldName,
+        seqIndex: field.seqIndex,
+        trail,
+      },
+      { diffTrails }
+    )
   );
 
   const nestedDiffs = diffTrails.filter(
