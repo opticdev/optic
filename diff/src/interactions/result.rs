@@ -1,5 +1,5 @@
 use crate::shapes::ShapeDiffResult;
-use crate::state::endpoint::{PathComponentId, RequestId, ResponseId};
+use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -13,9 +13,9 @@ pub enum InteractionDiffResult {
   // Matches
   // -------
   #[serde(skip)]
-  MatchedResponseBodyContentType {},
+  MatchedRequestBodyContentType(MatchedRequestBodyContentType),
   #[serde(skip)]
-  MatchedRequestBodyContentType {},
+  MatchedResponseBodyContentType(MatchedResponseBodyContentType),
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Serialize)]
@@ -49,6 +49,26 @@ impl UnmatchedRequestBodyContentType {
     };
   }
 }
+#[derive(Clone, Debug, Serialize)]
+pub struct MatchedRequestBodyContentType {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub root_shape_id: ShapeId,
+}
+
+impl MatchedRequestBodyContentType {
+  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail, root_shape_id: ShapeId) -> Self {
+    return MatchedRequestBodyContentType {
+      interaction_trail,
+      requests_trail,
+      root_shape_id
+    };
+  }
+
+  pub fn into_shape_diff(self, shape_diff_result: ShapeDiffResult) -> UnmatchedRequestBodyShape {
+    UnmatchedRequestBodyShape::new(self.interaction_trail, self.requests_trail, shape_diff_result)
+  }
+}
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -66,6 +86,25 @@ impl UnmatchedResponseBodyContentType {
   }
 }
 
+#[derive(Debug, Serialize, Clone)]
+pub struct MatchedResponseBodyContentType {
+  pub interaction_trail: InteractionTrail,
+  pub requests_trail: RequestSpecTrail,
+  pub root_shape_id: ShapeId,
+}
+
+impl MatchedResponseBodyContentType {
+  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail, root_shape_id: ShapeId) -> Self {
+    return MatchedResponseBodyContentType {
+      interaction_trail,
+      requests_trail,
+      root_shape_id
+    };
+  }
+  pub fn into_shape_diff(self, shape_diff_result: ShapeDiffResult) -> UnmatchedResponseBodyShape {
+    UnmatchedResponseBodyShape::new(self.interaction_trail, self.requests_trail, shape_diff_result)
+  }
+}
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyShape {
@@ -111,7 +150,7 @@ impl UnmatchedResponseBodyShape {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
 }
@@ -126,7 +165,7 @@ impl InteractionTrail {
   }
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub enum RequestSpecTrail {
   SpecRoot(SpecRoot),
   SpecPath(SpecPath),
@@ -136,40 +175,40 @@ pub enum RequestSpecTrail {
   SpecResponseBody(SpecResponseBody),
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct SpecRoot {}
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecPath {
   pub path_id: PathComponentId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestRoot {
   pub request_id: RequestId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestBody {
   pub request_id: RequestId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseRoot {
   pub response_id: ResponseId,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseBody {
   pub response_id: ResponseId,
 }
 //@GOTCHA make sure these serialize matching the existing scala code
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub enum InteractionTrailPathComponent {
   Url {},
   Method {

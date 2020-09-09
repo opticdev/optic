@@ -18,7 +18,7 @@ impl<'a> Traverser<'a> {
 
   pub fn traverse<R>(
     &self,
-    interaction: HttpInteraction,
+    interaction: &HttpInteraction,
     visitors: &mut impl InteractionVisitors<R>,
   ) {
     let path_visitor = visitors.path();
@@ -26,7 +26,7 @@ impl<'a> Traverser<'a> {
     let path_context = PathVisitorContext {
       path: resolved_path,
     };
-    path_visitor.visit(&interaction, &path_context);
+    path_visitor.visit(interaction, &path_context);
 
     let request_body_visitor = visitors.request_body();
     request_body_visitor.begin();
@@ -34,10 +34,10 @@ impl<'a> Traverser<'a> {
       Some(path_id) => {
         let operations = self
           .endpoint_queries
-          .resolve_operations(&interaction, path_id);
+          .resolve_operations(interaction, path_id);
         for operation in operations {
           request_body_visitor.visit(
-            &interaction,
+            interaction,
             &RequestBodyVisitorContext {
               path: path_id,
               operation: Some(operation),
@@ -47,7 +47,7 @@ impl<'a> Traverser<'a> {
       }
       None => {}
     };
-    request_body_visitor.end(&interaction, &path_context);
+    request_body_visitor.end(interaction, &path_context);
 
     eprintln!("visiting response body");
     let response_body_visitor = visitors.response_body();
@@ -56,10 +56,10 @@ impl<'a> Traverser<'a> {
       Some(path_id) => {
         let responses = self
           .endpoint_queries
-          .resolve_responses(&interaction, path_id);
+          .resolve_responses(interaction, path_id);
         for response in responses {
           response_body_visitor.visit(
-            &interaction,
+            interaction,
             &ResponseBodyVisitorContext {
               path: path_id,
               response: Some(response),
@@ -69,7 +69,7 @@ impl<'a> Traverser<'a> {
       }
       None => {}
     };
-    response_body_visitor.end(&interaction, &path_context);
+    response_body_visitor.end(interaction, &path_context);
   }
 }
 

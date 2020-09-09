@@ -3,11 +3,11 @@ use super::{
   RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
 use crate::interactions::result::{
-  InteractionDiffResult, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestUrl,
-  UnmatchedResponseBodyContentType,
+  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType, SpecRoot, UnmatchedRequestBodyContentType,
+  UnmatchedRequestUrl, UnmatchedResponseBodyContentType,
 };
 use crate::interactions::result::{
-  InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath,
+  InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody, SpecResponseBody
 };
 use crate::interactions::HttpInteraction;
 use crate::state::endpoint::{RequestId, ResponseId};
@@ -136,9 +136,17 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
             self
               .visited_with_matched_content_types
               .insert(request_id.clone());
-          // self.push(InteractionDiffResult::MatchedRequestBodyContentType {
+            let interaction_trail_components = vec![InteractionTrailPathComponent::RequestBody {
+              content_type: String::from(content_type),
+            }];
+            let requests_trail = RequestSpecTrail::SpecRequestBody(SpecRequestBody {
+              request_id: String::from(request_id),
+            });
+            let interaction_trail = InteractionTrail::new(interaction_trail_components);
 
-          // })
+            self.push(InteractionDiffResult::MatchedRequestBodyContentType(
+              MatchedRequestBodyContentType::new(interaction_trail, requests_trail, body.root_shape_id.clone()),
+            ));
           } else {
             self
               .visited_with_unmatched_content_types
@@ -235,6 +243,20 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
             self
               .visited_with_matched_content_types
               .insert(response_id.clone());
+
+
+            let interaction_trail_components = vec![InteractionTrailPathComponent::ResponseBody {
+              content_type: String::from(content_type),
+              status_code: interaction.response.status_code
+            }];
+            let requests_trail = RequestSpecTrail::SpecResponseBody(SpecResponseBody {
+              response_id: String::from(response_id),
+            });
+            let interaction_trail = InteractionTrail::new(interaction_trail_components);
+
+            self.push(InteractionDiffResult::MatchedResponseBodyContentType(
+              MatchedResponseBodyContentType::new(interaction_trail, requests_trail, body.root_shape_id.clone()),
+            ));
           } else {
             self
               .visited_with_unmatched_content_types

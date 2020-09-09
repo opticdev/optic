@@ -7,6 +7,7 @@ pub use crate::projections::SpecProjection;
 pub use crate::queries::endpoint::EndpointQueries;
 pub use result::InteractionDiffResult;
 use visitors::{InteractionVisitors, PathVisitor};
+use crate::shapes::diff as diff_shape;
 
 pub fn diff(
   spec_projection: &SpecProjection,
@@ -17,9 +18,29 @@ pub fn diff(
   let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
   let mut diff_visitors = visitors::diff::DiffVisitors::new();
 
-  interaction_traverser.traverse(http_interaction, &mut diff_visitors);
+  interaction_traverser.traverse(&http_interaction, &mut diff_visitors);
 
-  diff_visitors.take_results().unwrap()
+  let results = diff_visitors.take_results().unwrap();
+
+  results.into_iter().flat_map(move |result| {
+    match result {
+      InteractionDiffResult::MatchedRequestBodyContentType(result) => {
+        let body = &http_interaction.request.body.value;
+        let shape_diff_results = diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
+        shape_diff_results.into_iter().map(|shape_diff| {
+          InteractionDiffResult::UnmatchedRequestBodyShape(result.clone().into_shape_diff(shape_diff))
+        }).collect()
+      },
+      InteractionDiffResult::MatchedResponseBodyContentType(result) => {
+        let body = &http_interaction.response.body.value;
+        let shape_diff_results = diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
+        shape_diff_results.into_iter().map(|shape_diff| {
+          InteractionDiffResult::UnmatchedResponseBodyShape(result.clone().into_shape_diff(shape_diff))
+        }).collect()
+      },
+      _ => vec![result]
+    }
+  }).collect()
 }
 
 #[cfg(test)]
