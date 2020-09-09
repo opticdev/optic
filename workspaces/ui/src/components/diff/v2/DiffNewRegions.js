@@ -387,6 +387,11 @@ const PreviewNewBodyRegion = ({
     return <LinearProgress />;
   }
 
+  const body = diff.inRequest
+    ? currentInteraction.interactionScala.request.body
+    : currentInteraction.interactionScala.response.body;
+  const hasRenderableBody = !!getOrUndefined(body.jsonOption);
+
   const bodyPreview = getOrUndefined(initialBody.bodyPreview);
   const shapePreview = getOrUndefined(initialBody.shapePreview);
 
@@ -436,7 +441,7 @@ const PreviewNewBodyRegion = ({
       >
         <div style={{ width: '55%', paddingRight: 15 }}>
           {process.env.REACT_APP_FLATTENED_SHAPE_VIEWER == 'true'
-            ? getOrUndefined(diff.contentType) && (
+            ? hasRenderableBody && (
                 <ShapeBox
                   header={
                     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -449,13 +454,7 @@ const PreviewNewBodyRegion = ({
                     </div>
                   }
                 >
-                  <InteractionBodyViewer
-                    body={
-                      diff.inRequest
-                        ? currentInteraction.interactionScala.request.body
-                        : currentInteraction.interactionScala.response.body
-                    }
-                  />
+                  <InteractionBodyViewer body={body} />
                 </ShapeBox>
               )
             : process.env.REACT_APP_FLATTENED_SHAPE_VIEWER !== 'true' &&
