@@ -5,6 +5,7 @@ use optic_diff::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProj
 use petgraph::dot::{Config, Dot};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::stream::StreamExt;
+use serde_json::json;
 
 #[tokio::main]
 #[test]
@@ -99,4 +100,122 @@ async fn can_yield_umatched_request_url() {
     .expect("should be able to read a line from the in-memory destination")
     .unwrap();
   serde_json::from_str::<serde_json::Value>(&first_line).expect("first line should be valid json");
+}
+
+#[tokio::main]
+#[test]
+async fn can_yield_unmatched_shape() {
+  let events: Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"PathComponentAdded":{"pathId":"path_1","parentPathId":"root","name":"xyz"}},
+      {"RequestAdded":{"requestId":"request_1","pathId":"path_1","httpMethod":"POST"}},
+      {"ResponseAddedByPathAndMethod":{"responseId":"response_1", "httpStatusCode":200,"pathId":"path_1","httpMethod":"POST"}},
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"RequestBodySet": {"shapeId":"shape_1","requestId": "request_1", "bodyDescriptor":{"httpContentType":"application/json","shapeId":"shape_1","isRemoved":false}}}
+    ]),
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let spec_projection = SpecProjection::from(events);
+
+
+  let compliant_interaction = HttpInteraction::from_json_str(
+    r#"{
+    "uuid": "5",
+    "request": {
+      "host": "localhost",
+      "method": "POST",
+      "path": "/xyz",
+      "query": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": "application/json",
+        "value": {
+          "asJsonString": null,
+          "asText": "whatever",
+          "asShapeHashBytes": null
+        }
+      }
+    },
+    "response": {
+      "statusCode": 200,
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {
+          "asJsonString": null,
+          "asText": null,
+          "asShapeHashBytes": null
+        }
+      }
+    },
+    "tags": []
+  }"#,
+  )
+  .expect("example http interaction should deserialize");
+
+  let mut results = diff_interaction(&spec_projection, compliant_interaction);
+  assert_debug_snapshot!(results);
+  assert_eq!(results.len(), 0);
+
+  let incompliant_interaction = HttpInteraction::from_json_str(
+    r#"{
+    "uuid": "5",
+    "request": {
+      "host": "localhost",
+      "method": "POST",
+      "path": "/xyz",
+      "query": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": "application/json",
+        "value": {
+          "asJsonString": "null",
+          "asText": null,
+          "asShapeHashBytes": null
+        }
+      }
+    },
+    "response": {
+      "statusCode": 200,
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {
+          "asJsonString": null,
+          "asText": null,
+          "asShapeHashBytes": null
+        }
+      }
+    },
+    "tags": []
+  }"#,
+  )
+  .expect("example http interaction should deserialize");
+
+  results = diff_interaction(&spec_projection, incompliant_interaction);
+  assert_debug_snapshot!(results);
 }

@@ -7,6 +7,7 @@ pub use shape::ShapeProjection;
 use crate::events::SpecEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
 
+#[derive(Debug)]
 pub struct SpecProjection {
   endpoint: endpoint::EndpointProjection,
   shape: shape::ShapeProjection,

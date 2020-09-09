@@ -161,7 +161,7 @@ pub struct RequestContentTypeSet {
 #[serde(rename_all = "camelCase")]
 pub struct RequestBodySet {
   pub request_id: RequestId,
-  // pub bodyDescriptor: ShapedBodyDescriptor,
+  pub body_descriptor: ShapedBodyDescriptor,
   pub event_context: Option<EventContext>,
 }
 

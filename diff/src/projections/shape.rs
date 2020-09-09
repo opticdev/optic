@@ -46,6 +46,7 @@ pub struct ShapeParameterNodeDescriptor {}
 #[derive(Debug)]
 pub struct FieldNodeDescriptor {}
 
+#[derive(Debug)]
 pub struct ShapeProjection {
     pub graph: Graph<Node, Edge>,
     pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,

@@ -1,6 +1,6 @@
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
-use cqrs_core::{Aggregate, AggregateEvent};
+use cqrs_core::{Aggregate, AggregateEvent, Event};
 use petgraph::graph::Graph;
 use std::collections::HashMap;
 
@@ -42,6 +42,7 @@ pub enum Edge {
   IsChildOf,
 }
 
+#[derive(Debug)]
 pub struct EndpointProjection {
   pub graph: Graph<Node, Edge>,
   // SAFETY: node indices are not stable upon removing of nodes from graph -> node indices might be referred to
@@ -180,6 +181,25 @@ impl EndpointProjection {
     status_code_node_index
   }
 
+  pub fn with_request_body(
+    &mut self,
+    request_id: RequestId,
+    http_content_type: HttpContentType,
+    shape_id: ShapeId,
+  )  {
+    let request_node_index = self.node_id_to_index.get(&request_id).expect("expected request_id to have a corresponding node");
+    let request_node = self.graph.node_weight_mut(*request_node_index).unwrap();
+    match request_node {
+      Node::Request(id, body_descriptor) => {
+        body_descriptor.body = Some(BodyDescriptor {
+          http_content_type,
+          root_shape_id: shape_id
+        })
+      }
+      _ => {}
+    }
+  }
+
   pub fn with_response_body(
     &mut self,
     response_id: ResponseId,
@@ -269,6 +289,13 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
         aggregate.with_response(e.path_id, e.http_method, e.http_status_code, e.response_id);
       }
+      EndpointEvent::RequestBodySet(e) => {
+        aggregate.with_request_body(
+          e.request_id,
+          e.body_descriptor.http_content_type,
+          e.body_descriptor.shape_id,
+        );
+      }
       EndpointEvent::ResponseBodySet(e) => {
         aggregate.with_response_body(
           e.response_id,
@@ -276,7 +303,9 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
           e.body_descriptor.shape_id,
         );
       }
-      _ => {}
+      _ => {
+        eprintln!("Ignoring applying event of type '{}' for EndpointProjection", self.event_type())
+      }
     }
   }
 }
