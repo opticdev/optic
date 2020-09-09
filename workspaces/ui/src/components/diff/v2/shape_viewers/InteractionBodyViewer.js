@@ -575,8 +575,11 @@ function shapeRows(
       break;
     default:
       // debugger
-      let type = getFieldType(field.fieldValue);
-      let row = createRow({ type, ...field, indent }, { diffTrails });
+      let type = getFieldType(shape);
+      let row = createRow(
+        { type, ...field, fieldValue: field.fieldValue || shape, indent },
+        { diffTrails }
+      );
       rows.push(createRow(row));
       break;
   }
@@ -595,13 +598,16 @@ function objectRows(
   const { trail } = field;
 
   rows.push(
-    createRow({
-      type: 'object_open',
-      fieldName: field.fieldName,
-      seqIndex: field.seqIndex,
-      trail,
-      indent,
-    })
+    createRow(
+      {
+        type: 'object_open',
+        fieldName: field.fieldName,
+        seqIndex: field.seqIndex,
+        trail,
+        indent,
+      },
+      { diffTrails }
+    )
   );
 
   const nestedDiffs = diffTrails.filter((diffTrail) =>
@@ -643,13 +649,16 @@ function listRows(list, diffTrails, rows, collapsedTrails, indent, field) {
   const { trail } = field;
 
   rows.push(
-    createRow({
-      type: 'array_open',
-      indent,
-      fieldName: field.fieldName,
-      seqIndex: field.seqIndex,
-      trail,
-    })
+    createRow(
+      {
+        type: 'array_open',
+        indent,
+        fieldName: field.fieldName,
+        seqIndex: field.seqIndex,
+        trail,
+      },
+      { diffTrails }
+    )
   );
 
   const nestedDiffs = diffTrails.filter(

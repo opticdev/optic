@@ -606,6 +606,92 @@
           }
         },
         "tags": []
+      },
+      {
+        "uuid": "14",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/malformed-json-body",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": null,
+              "asText": "{ not-valid-json: without-quotes}",
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "15",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/html-body",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "text/html",
+            "value": {
+              "asJsonString": null,
+              "asText": "<html>\n<head><title>Testing</title></head>\n<body>\n<h1>welcome!</h1></body>\n</html>",
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
       }
     ],
     "links": [

@@ -19,7 +19,7 @@ $ npm install -g @useoptic/ci-cli
 $ optic-ci COMMAND
 running command...
 $ optic-ci (-v|--version|version)
-@useoptic/ci-cli/8.3.4 darwin-x64 node-v12.4.0
+@useoptic/ci-cli/8.3.5 darwin-x64 node-v12.4.0
 $ optic-ci --help [COMMAND]
 USAGE
   $ optic-ci COMMAND
@@ -57,7 +57,7 @@ EXAMPLES
   --config=optic.yml)
 ```
 
-_See code: [src/commands/capture/start.ts](https://github.com/useoptic/optic-package/blob/v8.3.4/src/commands/capture/start.ts)_
+_See code: [src/commands/capture/start.ts](https://github.com/useoptic/optic-package/blob/v8.3.5/src/commands/capture/start.ts)_
 
 ## `optic-ci help [COMMAND]`
 
