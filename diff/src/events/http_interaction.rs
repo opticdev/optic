@@ -56,11 +56,18 @@ pub struct ArbitraryData {
   as_text: Option<String>,
 }
 
-// impl Default for ArbitraryData {
-//   fn default() -> Self {
-//     Self {}
-//   }
-// }
+impl From<&ArbitraryData> for Option<serde_json::value::Value> {
+  fn from(data: &ArbitraryData) -> Option<serde_json::value::Value> {
+    if let Some(json_string) = &data.as_json_string {
+      Some(serde_json::from_str(json_string).expect("as_json_string of ArbitraryData should always be valid json"))
+    } else if let Some(text) = &data.as_text {
+      Some(serde_json::Value::from(text.clone()))
+    } else {
+      None
+    }
+  }
+}
+
 
 impl Event for HttpInteraction {
   fn event_type(&self) -> &'static str {
