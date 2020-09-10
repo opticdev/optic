@@ -1,7 +1,8 @@
-use crate::projections::shape::CoreShapeNode;
-use crate::projections::shape::ShapeProjection;
+use crate::projections::shape::{CoreShapeNode, Edge, Node};
+use crate::projections::shape::{ShapeNode, ShapeProjection};
 use crate::shapes::traverser::{ShapeTrail, ShapeTrailPathComponent};
-use crate::state::shape::ShapeKind;
+use crate::state::shape::{ShapeId, ShapeKind, ShapeParameterId};
+use petgraph::visit::EdgeRef;
 
 pub struct ShapeQueries<'a> {
   pub shape_projection: &'a ShapeProjection,
@@ -46,21 +47,64 @@ impl<'a> ShapeQueries<'a> {
 
     core_shape_nodes
       .unwrap()
-      .map(
-        |CoreShapeNode(shape_id, core_shape_descriptor)| ChoiceOutput {
+      .map(|CoreShapeNode(core_shape_id, core_shape_descriptor)| {
+        let shape_id = match self.shape_projection.graph.node_weight(*current_node_index) {
+          Some(Node::Shape(ShapeNode(shape_id, _))) => shape_id,
+          _ => unreachable!("expected to be a core shape node"),
+        };
+        ChoiceOutput {
           parent_trail: shape_trail.clone(),
           additional_components: vec![],
+          shape_id: shape_id.clone(),
           core_shape_kind: core_shape_descriptor.kind.clone(),
-        },
-      )
+        }
+      })
       .collect::<Vec<_>>()
+  }
+
+  pub fn resolve_parameter_to_shape(
+    &self,
+    shape_id: &ShapeId,
+    shape_parameter_id: &ShapeParameterId,
+  ) -> ShapeId {
+    let projection = &self.shape_projection;
+
+    let shape_node_index = projection
+      .get_shape_node_index(shape_id)
+      .expect("shape id to resolve parameter for must exist");
+
+    let shape_parameter_node_index = projection
+      .get_shape_parameter_node_index(shape_parameter_id)
+      .unwrap_or_else(|| {
+        panic!(
+          "shape parameter id '{}' to resolve parameter for must exist",
+          shape_parameter_id
+        )
+      });
+
+    // @REFACTOR: move this to a method on the projection, we shouldn't have
+    // to reach into projection internals
+    let mut outgoing_edges = projection
+      .graph
+      .edges_connecting(*shape_node_index, *shape_parameter_node_index);
+
+    let existing_binding = outgoing_edges
+      .next()
+      .expect("expected a parameter binding to exist");
+    let edge_index = existing_binding.id();
+    let edge_weight = projection.graph.edge_weight(edge_index).unwrap();
+    match edge_weight {
+      Edge::HasBinding(b) => b.shape_id.clone(),
+      _ => unreachable!("expected edge to be a HasBinding"),
+    }
   }
 }
 
+#[derive(Clone)]
 pub struct ChoiceOutput {
   pub parent_trail: ShapeTrail,
   pub additional_components: Vec<ShapeTrailPathComponent>,
-  // shape_id: ShapeId,
+  pub shape_id: ShapeId,
   pub core_shape_kind: ShapeKind,
 }
 

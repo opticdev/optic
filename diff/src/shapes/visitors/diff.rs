@@ -63,7 +63,7 @@ impl JlasPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
     json: JsonValue,
     json_trail: JsonTrail,
     trail_origin: ShapeTrail,
-    trail_choices: Vec<ChoiceOutput>,
+    trail_choices: &Vec<ChoiceOutput>,
   ) {
     if trail_choices.is_empty() {
       self.results.push(ShapeDiffResult::UnspecifiedShape {
@@ -128,21 +128,21 @@ impl JsonBodyVisitor<ShapeDiffResult> for DiffArrayVisitor {
 impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
   fn visit(
     &mut self,
-    json: JsonValue,
-    json_trail: JsonTrail,
-    trail_origin: ShapeTrail,
-    trail_choices: Vec<ChoiceOutput>,
+    json: &JsonValue,
+    json_trail: &JsonTrail,
+    trail_origin: &ShapeTrail,
+    trail_choices: &Vec<ChoiceOutput>,
   ) -> Vec<ChoiceOutput> {
     if trail_choices.is_empty() {
       self.results.push(ShapeDiffResult::UnspecifiedShape {
-        json_trail,
-        shape_trail: trail_origin,
+        json_trail: json_trail.clone(),
+        shape_trail: trail_origin.clone(),
       });
       return vec![];
     }
 
     let (matched, unmatched): (Vec<&ChoiceOutput>, Vec<&ChoiceOutput>) =
-      trail_choices.iter().partition(|choice| match &json {
+      trail_choices.into_iter().partition(|choice| match json {
         JsonValue::Array(_) => match choice.core_shape_kind {
           ShapeKind::ListKind => true,
           _ => false,
@@ -151,7 +151,7 @@ impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
       });
 
     if matched.is_empty() {
-      unmatched.iter().for_each(|&choice| {
+      unmatched.into_iter().for_each(|choice| {
         self.results.push(ShapeDiffResult::UnmatchedShape {
           json_trail: json_trail.clone(),
           shape_trail: choice.shape_trail(),
@@ -159,6 +159,6 @@ impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
       });
     }
 
-    vec![]
+    matched.into_iter().map(|x| (*x).clone()).collect()
   }
 }

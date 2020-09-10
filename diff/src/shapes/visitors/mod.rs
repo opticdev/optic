@@ -51,10 +51,10 @@ pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {
 pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
   fn visit(
     &mut self,
-    json: JsonValue,
-    json_trail: JsonTrail,
-    trail_origin: ShapeTrail,
-    trail_choices: Vec<ChoiceOutput>,
+    json: &JsonValue,
+    json_trail: &JsonTrail,
+    trail_origin: &ShapeTrail,
+    trail_choices: &Vec<ChoiceOutput>,
   ) -> Vec<ChoiceOutput>;
 }
 
@@ -64,7 +64,7 @@ pub trait JlasPrimitiveVisitor<R>: JsonBodyVisitor<R> {
     json: JsonValue,
     json_trail: JsonTrail,
     trail_origin: ShapeTrail,
-    trail_choices: Vec<ChoiceOutput>,
+    trail_choices: &Vec<ChoiceOutput>,
   );
 }
 

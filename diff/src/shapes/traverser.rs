@@ -26,7 +26,7 @@ impl<'a> Traverser<'a> {
       json_body_option,
       body_trail,
       trail_origin,
-      choices,
+      &choices,
       visitors,
     )
   }
@@ -36,7 +36,7 @@ impl<'a> Traverser<'a> {
     json_body_option: Option<JsonValue>,
     body_trail: JsonTrail,
     trail_origin: ShapeTrail,
-    trail_choices: Vec<ChoiceOutput>,
+    trail_choices: &Vec<ChoiceOutput>,
     visitors: &mut impl JsonBodyVisitors<R>,
   ) {
     if let None = json_body_option {
@@ -48,7 +48,60 @@ impl<'a> Traverser<'a> {
     match json_body {
       JsonValue::Array(_) => {
         let array_visitor = visitors.array();
-        let item_choices = array_visitor.visit(json_body, body_trail, trail_origin, trail_choices);
+        let matching_choices =
+          array_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices);
+        let item_choices = matching_choices
+          .iter()
+          .flat_map(move |choice| {
+            if let ShapeKind::ListKind = &choice.core_shape_kind {
+              let item_shape_id = self.shape_queries.resolve_parameter_to_shape(
+                &choice.shape_id,
+                &String::from(
+                  choice
+                    .core_shape_kind
+                    .get_parameter_descriptor()
+                    .unwrap()
+                    .shape_parameter_id,
+                ),
+              );
+              let item_trail =
+                choice
+                  .shape_trail()
+                  .with_component(ShapeTrailPathComponent::ListItemTrail {
+                    list_shape_id: choice.shape_id.clone(),
+                    item_shape_id: item_shape_id,
+                  });
+              self.shape_queries.list_trail_choices(&item_trail)
+            } else {
+              unreachable!("should only contain items of list kind");
+            }
+          })
+          .collect::<Vec<_>>();
+        let items = match json_body {
+          JsonValue::Array(items) => items,
+          _ => unreachable!("expect json body to be an array"),
+        };
+        items
+          .into_iter()
+          .enumerate()
+          .for_each(|(index, item_json)| {
+            let item_json_trail =
+              body_trail.with_component(JsonTrailPathComponent::JsonArrayItem {
+                index: index as u32,
+              });
+
+            let new_trail_origin = trail_origin.clone();
+
+            if !item_choices.is_empty() {
+              self.traverse(
+                Some(item_json),
+                item_json_trail,
+                new_trail_origin,
+                &item_choices,
+                visitors,
+              )
+            }
+          });
       }
       JsonValue::Object(value) => {}
       primitive_value => {
@@ -114,6 +167,12 @@ impl ShapeTrail {
       path: vec![],
     }
   }
+
+  fn with_component(&self, component: ShapeTrailPathComponent) -> Self {
+    let mut new_trail = self.clone();
+    new_trail.path.push(component);
+    new_trail
+  }
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -135,6 +194,11 @@ pub struct JsonTrail {
 impl JsonTrail {
   fn empty() -> Self {
     JsonTrail { path: vec![] }
+  }
+  fn with_component(&self, component: JsonTrailPathComponent) -> Self {
+    let mut new_trail = self.clone();
+    new_trail.path.push(component);
+    new_trail
   }
 }
 #[cfg(test)]

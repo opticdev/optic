@@ -17,7 +17,7 @@ pub enum Node {
 }
 
 #[derive(Debug)]
-pub struct ShapeNode(ShapeId, ShapeNodeDescriptor);
+pub struct ShapeNode(pub ShapeId, pub ShapeNodeDescriptor);
 #[derive(Debug)]
 pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
 #[derive(Debug)]
@@ -192,6 +192,16 @@ impl ShapeProjection {
         match node {
             Some(&Node::Shape(ref node)) => Some(node_index),
             Some(&Node::CoreShape(ref node)) => Some(node_index),
+            Some(_) => None,
+            None => None,
+        }
+    }
+
+    pub fn get_shape_parameter_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
+        let node_index = self.node_id_to_index.get(node_id)?;
+        let node = self.graph.node_weight(*node_index);
+        match node {
+            Some(&Node::ShapeParameter(ref node)) => Some(node_index),
             Some(_) => None,
             None => None,
         }
