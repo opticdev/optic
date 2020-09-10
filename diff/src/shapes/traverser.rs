@@ -1,4 +1,4 @@
-use super::visitors::{JlasPrimitiveVisitor, JsonBodyVisitors};
+use super::visitors::{JlasArrayVisitor, JlasPrimitiveVisitor, JsonBodyVisitors};
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
@@ -46,7 +46,10 @@ impl<'a> Traverser<'a> {
     let json_body = json_body_option.unwrap();
 
     match json_body {
-      JsonValue::Array(value) => {}
+      JsonValue::Array(_) => {
+        let array_visitor = visitors.array();
+        let item_choices = array_visitor.visit(json_body, body_trail, trail_origin, trail_choices);
+      }
       JsonValue::Object(value) => {}
       primitive_value => {
         let primitive_visitor = visitors.primitive();

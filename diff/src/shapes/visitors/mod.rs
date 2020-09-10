@@ -4,8 +4,10 @@ use serde_json::Value as JsonValue;
 pub mod diff;
 
 pub trait JsonBodyVisitors<R> {
+  type Array: JlasArrayVisitor<R>;
   type Primitive: JlasPrimitiveVisitor<R>;
 
+  fn array(&mut self) -> &mut Self::Array;
   fn primitive(&mut self) -> &mut Self::Primitive;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
@@ -47,7 +49,13 @@ pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {
 }
 
 pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
-  //fn visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq<ChoiceOutput>, itemChoiceCallback: ArrayItemChoiceCallback);
+  fn visit(
+    &mut self,
+    json: JsonValue,
+    json_trail: JsonTrail,
+    trail_origin: ShapeTrail,
+    trail_choices: Vec<ChoiceOutput>,
+  ) -> Vec<ChoiceOutput>;
 }
 
 pub trait JlasPrimitiveVisitor<R>: JsonBodyVisitor<R> {
