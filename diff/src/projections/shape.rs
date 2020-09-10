@@ -1,7 +1,7 @@
 use crate::events::{ShapeEvent, SpecEvent};
 use crate::state::shape::{
-    FieldId, ShapeId, ShapeIdRef, ShapeKind, ShapeKindDescriptor, ShapeParameterId,
-    ShapeParameterIdRef, ShapeParametersDescriptor,
+    FieldId, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeIdRef, ShapeKind,
+    ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef, ShapeParametersDescriptor,
 };
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::graph::{Graph, NodeIndex};
@@ -30,6 +30,12 @@ pub enum Edge {
     IsDescendantOf,
     IsFieldOf,
     IsParameterOf,
+    HasBinding(ShapeParameterBinding),
+}
+
+#[derive(Debug)]
+pub struct ShapeParameterBinding {
+    pub shape_id: ShapeId,
 }
 
 pub type NodeId = String;
@@ -134,6 +140,52 @@ impl ShapeProjection {
         );
     }
 
+    pub fn with_shape_parameter_shape(
+        &mut self,
+        shape_parameter_descriptor: ParameterShapeDescriptor,
+    ) {
+        match shape_parameter_descriptor {
+            ParameterShapeDescriptor::ProviderInShape(p) => {
+                let target_shape_id = match p.provider_descriptor {
+                    ProviderDescriptor::ShapeProvider(provider) => provider.shape_id,
+                    _ => panic!("expected specs to only use ProviderDescriptor::ShapeProvider"),
+                };
+                let shape_node_index = self
+                    .node_id_to_index
+                    .get(&p.shape_id)
+                    .expect("expected shape_id to have a corresponding node");
+                let shape_parameter_node_index = self
+                    .node_id_to_index
+                    .get(&p.consuming_parameter_id)
+                    .expect("expected consuming_parameter_id to have a corresponding node");
+                let mut outgoing_edges = self
+                    .graph
+                    .edges_connecting(*shape_node_index, *shape_parameter_node_index);
+                if let Some(existing_binding) = outgoing_edges.next() {
+                    let edge_index = existing_binding.id();
+                    let edge_weight = self.graph.edge_weight_mut(edge_index).unwrap();
+                    // mutate the edge to point to the new shape_id
+                    match edge_weight {
+                        Edge::HasBinding(b) => {
+                            b.shape_id = target_shape_id;
+                        }
+                        _ => panic!("expected edge to be a HasBinding"),
+                    }
+                } else {
+                    // add a binding edge
+                    let binding_edge = self.graph.add_edge(
+                        *shape_node_index,
+                        *shape_parameter_node_index,
+                        Edge::HasBinding(ShapeParameterBinding {
+                            shape_id: target_shape_id,
+                        }),
+                    );
+                }
+            }
+            _ => panic!("expected specs to only use ParameterShapeDescriptor::ProviderInShape"),
+        }
+    }
+
     pub fn get_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
         let node_index = self.node_id_to_index.get(node_id)?;
         let node = self.graph.node_weight(*node_index);
@@ -191,15 +243,15 @@ impl ShapeProjection {
     }
 }
 
-struct Example {
-    inside: Vec<u8>,
-}
+// struct Example {
+//     inside: Vec<u8>,
+// }
 
-impl Example {
-    pub fn inside_iter<T>(&self) -> impl Iterator<Item = &u8> {
-        self.inside.iter()
-    }
-}
+// impl Example {
+//     pub fn inside_iter<T>(&self) -> impl Iterator<Item = &u8> {
+//         self.inside.iter()
+//     }
+// }
 
 impl Aggregate for ShapeProjection {
     fn aggregate_type() -> &'static str {
@@ -212,6 +264,9 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
         match self {
             ShapeEvent::ShapeAdded(e) => {
                 projection.with_shape(e.shape_id, e.base_shape_id, e.parameters, e.name)
+            }
+            ShapeEvent::ShapeParameterShapeSet(e) => {
+                projection.with_shape_parameter_shape(e.shape_descriptor)
             }
             _ => {} // TODO: eventually add logging for any ShapeEvent we don't use for this projection for some reason
         }

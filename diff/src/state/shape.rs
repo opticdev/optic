@@ -15,14 +15,14 @@ pub enum FieldShapeDescriptor {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldShapeFromShape {
-  field_id: FieldId,
-  shape_id: ShapeId,
+  pub field_id: FieldId,
+  pub shape_id: ShapeId,
 }
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldShapeFromParameter {
-  field_id: FieldId,
-  shape_parameter_id: ShapeParameterId,
+  pub field_id: FieldId,
+  pub shape_parameter_id: ShapeParameterId,
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
@@ -35,13 +35,13 @@ pub enum ShapeParametersDescriptor {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticShapeParametersDescriptor {
-  shape_parameter_ids: Vec<ShapeParameterId>,
+  pub shape_parameter_ids: Vec<ShapeParameterId>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DynamicShapeParametersDescriptor {
-  shape_parameter_ids: Vec<ShapeParameterId>,
+  pub shape_parameter_ids: Vec<ShapeParameterId>,
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
@@ -56,9 +56,9 @@ pub struct ProviderInField {}
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProviderInShape {
-  shape_id: ShapeId,
-  provider_descriptor: ProviderDescriptor,
-  consuming_parameter_id: ShapeParameterId,
+  pub shape_id: ShapeId,
+  pub provider_descriptor: ProviderDescriptor,
+  pub consuming_parameter_id: ShapeParameterId,
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Deserialize)]
@@ -75,7 +75,7 @@ pub struct ParameterProvider {}
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeProvider {
-  shape_id: ShapeId,
+  pub shape_id: ShapeId,
 }
 
 #[derive(Debug, Deserialize)]
@@ -162,6 +162,12 @@ impl ShapeKind {
     match self {
       Self::ListKind => Some(ShapeKindParameterDescriptor {
         shape_parameter_id: "$listItem",
+      }),
+      Self::NullableKind => Some(ShapeKindParameterDescriptor {
+        shape_parameter_id: "$nullableInner"
+      }),
+      Self::OptionalKind => Some(ShapeKindParameterDescriptor {
+        shape_parameter_id: "$optionalInner"
       }),
       _ => None,
     }

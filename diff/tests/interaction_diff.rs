@@ -34,6 +34,11 @@ async fn can_yield_umatched_request_url() {
       &endpoint_projection.graph,
       &[Config::EdgeNoLabel]
     ));
+
+    assert_debug_snapshot!(Dot::with_config(
+      &spec_projection.shape().graph,
+      &[Config::EdgeNoLabel]
+    ));
   }
 
   let interaction = HttpInteraction::from_json_str(

@@ -1,6 +1,6 @@
 ---
 source: tests/interaction_diff.rs
-expression: "Dot::with_config(&events_projection.graph, &[Config::EdgeNoLabel])"
+expression: "Dot::with_config(&endpoint_projection.graph, &[Config::EdgeNoLabel])"
 ---
 digraph {
     0 [ label = "PathComponent(\l    \"root\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"\",\l    },\l)\l" ]
@@ -40,7 +40,7 @@ digraph {
     34 [ label = "PathComponent(\l    \"path_2iEuAjriND\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"following\",\l    },\l)\l" ]
     35 [ label = "PathComponent(\l    \"path_MwY9nZ6x25\",\l    PathComponentDescriptor {\l        is_parameter: false,\l        name: \"drivers\",\l    },\l)\l" ]
     36 [ label = "HttpMethod(\l    \"POST\",\l)\l" ]
-    37 [ label = "Request(\l    \"request_NR43nZPaOr\",\l    RequestBodyDescriptor {\l        body: None,\l    },\l)\l" ]
+    37 [ label = "Request(\l    \"request_NR43nZPaOr\",\l    RequestBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"SGyna3_0\",\l            },\l        ),\l    },\l)\l" ]
     38 [ label = "HttpStatusCode(\l    201,\l)\l" ]
     39 [ label = "Response(\l    \"response_bK58ebkIt4\",\l    ResponseBodyDescriptor {\l        body: Some(\l            BodyDescriptor {\l                http_content_type: \"application/json\",\l                root_shape_id: \"Dzhqpq_0\",\l            },\l        ),\l    },\l)\l" ]
     40 [ label = "HttpStatusCode(\l    400,\l)\l" ]
