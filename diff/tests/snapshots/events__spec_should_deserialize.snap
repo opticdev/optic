@@ -8999,6 +8999,11 @@ expression: events
         RequestBodySet(
             RequestBodySet {
                 request_id: "request_NR43nZPaOr",
+                body_descriptor: ShapedBodyDescriptor {
+                    http_content_type: "application/json",
+                    shape_id: "SGyna3_0",
+                    is_removed: false,
+                },
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
