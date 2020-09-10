@@ -11,7 +11,7 @@ pub trait JsonBodyVisitors<R> {
   fn primitive(&mut self) -> &mut Self::Primitive;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
-    let flattened = vec![self.primitive().take_results()]
+    let flattened = vec![self.primitive().take_results(), self.array().take_results()]
       .into_iter()
       .filter_map(|x| x)
       .flatten()
