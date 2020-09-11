@@ -1,4 +1,3 @@
-use cqrs_core::Aggregate;
 use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
 use optic_diff::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
