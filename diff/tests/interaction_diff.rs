@@ -2,47 +2,41 @@ use cqrs_core::Aggregate;
 use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
 use optic_diff::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
-use petgraph::dot::{Config, Dot};
+use petgraph::dot::Dot;
+use serde_json::json;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::stream::StreamExt;
-use serde_json::json;
 
 #[tokio::main]
 #[test]
 async fn can_yield_umatched_request_url() {
-  let events = SpecEvent::from_file(
-    std::env::current_dir()
-      .unwrap()
-      .join("tests/fixtures/ergast-example-spec.json")
-      .to_str()
-      .unwrap(),
-  )
-  .expect("todos spec should deserialize");
+    let events = SpecEvent::from_file(
+        std::env::current_dir()
+            .unwrap()
+            .join("tests/fixtures/ergast-example-spec.json")
+            .to_str()
+            .unwrap(),
+    )
+    .expect("todos spec should deserialize");
 
-  let spec_projection = SpecProjection::from(events);
-  {
-    let endpoint_projection = spec_projection.endpoint();
+    let spec_projection = SpecProjection::from(events);
+    {
+        let endpoint_projection = spec_projection.endpoint();
 
-    for node_index in endpoint_projection.graph.node_indices() {
-      println!(
-        "{:?}: {:?}",
-        node_index,
-        endpoint_projection.graph.node_weight(node_index).unwrap()
-      )
+        for node_index in endpoint_projection.graph.node_indices() {
+            println!(
+                "{:?}: {:?}",
+                node_index,
+                endpoint_projection.graph.node_weight(node_index).unwrap()
+            )
+        }
+        assert_debug_snapshot!(Dot::with_config(&endpoint_projection.graph, &[]));
+
+        assert_debug_snapshot!(Dot::with_config(&spec_projection.shape().graph, &[]));
     }
-    assert_debug_snapshot!(Dot::with_config(
-      &endpoint_projection.graph,
-      &[Config::EdgeNoLabel]
-    ));
 
-    assert_debug_snapshot!(Dot::with_config(
-      &spec_projection.shape().graph,
-      &[Config::EdgeNoLabel]
-    ));
-  }
-
-  let interaction = HttpInteraction::from_json_str(
-    r#"{
+    let interaction = HttpInteraction::from_json_str(
+        r#"{
     "uuid": "5",
     "request": {
       "host": "localhost",
@@ -77,40 +71,41 @@ async fn can_yield_umatched_request_url() {
     },
     "tags": []
   }"#,
-  )
-  .expect("example http interaction should deserialize");
-  println!("{:?}", interaction);
+    )
+    .expect("example http interaction should deserialize");
+    println!("{:?}", interaction);
 
-  let results = diff_interaction(&spec_projection, interaction);
-  println!("{:?}", results);
-  assert_eq!(results.len(), 1);
+    let results = diff_interaction(&spec_projection, interaction);
+    println!("{:?}", results);
+    assert_eq!(results.len(), 1);
 
-  let mut destination: Vec<u8> = vec![];
-  assert_eq!(destination.len(), 0);
-  {
-    let mut sink = streams::diff::into_json_lines(&mut destination);
-    for result in results {
-      if let Err(_) = sink.send(result).await {
-        panic!("interaction diff results should deserialise and write to json lines");
-      }
+    let mut destination: Vec<u8> = vec![];
+    assert_eq!(destination.len(), 0);
+    {
+        let mut sink = streams::diff::into_json_lines(&mut destination);
+        for result in results {
+            if let Err(_) = sink.send(result).await {
+                panic!("interaction diff results should deserialise and write to json lines");
+            }
+        }
     }
-  }
-  assert!(destination.len() > 0);
+    assert!(destination.len() > 0);
 
-  let desitination_reader = BufReader::new(std::io::Cursor::new(&destination));
-  let mut written_lines = desitination_reader.lines();
-  let first_line = written_lines
-    .next()
-    .await
-    .expect("should be able to read a line from the in-memory destination")
-    .unwrap();
-  serde_json::from_str::<serde_json::Value>(&first_line).expect("first line should be valid json");
+    let desitination_reader = BufReader::new(std::io::Cursor::new(&destination));
+    let mut written_lines = desitination_reader.lines();
+    let first_line = written_lines
+        .next()
+        .await
+        .expect("should be able to read a line from the in-memory destination")
+        .unwrap();
+    serde_json::from_str::<serde_json::Value>(&first_line)
+        .expect("first line should be valid json");
 }
 
 #[tokio::main]
 #[test]
 async fn can_yield_unmatched_shape() {
-  let events: Vec<SpecEvent> = serde_json::from_value(
+    let events: Vec<SpecEvent> = serde_json::from_value(
     json!([
       {"PathComponentAdded":{"pathId":"path_1","parentPathId":"root","name":"xyz"}},
       {"RequestAdded":{"requestId":"request_1","pathId":"path_1","httpMethod":"POST"}},
@@ -120,11 +115,10 @@ async fn can_yield_unmatched_shape() {
     ]),
   ).expect("should be able to deserialize shape added events as spec events");
 
-  let spec_projection = SpecProjection::from(events);
+    let spec_projection = SpecProjection::from(events);
 
-
-  let compliant_interaction = HttpInteraction::from_json_str(
-    r#"{
+    let compliant_interaction = HttpInteraction::from_json_str(
+        r#"{
     "uuid": "5",
     "request": {
       "host": "localhost",
@@ -167,15 +161,15 @@ async fn can_yield_unmatched_shape() {
     },
     "tags": []
   }"#,
-  )
-  .expect("example http interaction should deserialize");
+    )
+    .expect("example http interaction should deserialize");
 
-  let mut results = diff_interaction(&spec_projection, compliant_interaction);
-  assert_debug_snapshot!(results);
-  assert_eq!(results.len(), 0);
+    let mut results = diff_interaction(&spec_projection, compliant_interaction);
+    assert_debug_snapshot!(results);
+    assert_eq!(results.len(), 0);
 
-  let incompliant_interaction = HttpInteraction::from_json_str(
-    r#"{
+    let incompliant_interaction = HttpInteraction::from_json_str(
+        r#"{
     "uuid": "5",
     "request": {
       "host": "localhost",
@@ -218,9 +212,9 @@ async fn can_yield_unmatched_shape() {
     },
     "tags": []
   }"#,
-  )
-  .expect("example http interaction should deserialize");
+    )
+    .expect("example http interaction should deserialize");
 
-  results = diff_interaction(&spec_projection, incompliant_interaction);
-  assert_debug_snapshot!(results);
+    results = diff_interaction(&spec_projection, incompliant_interaction);
+    assert_debug_snapshot!(results);
 }

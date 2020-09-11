@@ -1,5 +1,0 @@
----
-source: tests/shape_diff.rs
-expression: results
----
-[]

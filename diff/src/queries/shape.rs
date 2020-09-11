@@ -100,7 +100,7 @@ impl<'a> ShapeQueries<'a> {
   }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ChoiceOutput {
   pub parent_trail: ShapeTrail,
   pub additional_components: Vec<ShapeTrailPathComponent>,
