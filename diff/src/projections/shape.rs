@@ -321,6 +321,29 @@ impl ShapeProjection {
             None
         }
     }
+
+    pub fn get_shape_field_nodes(
+        &self,
+        node_index: &NodeIndex,
+    ) -> Option<impl Iterator<Item = &FieldNode>> {
+        let graph = &self.graph;
+        let node = graph.node_weight(*node_index);
+        if let Some(Node::Shape(shape_node)) = node {
+            let neighbours = self
+                .graph
+                .neighbors_directed(*node_index, petgraph::Direction::Incoming);
+            let field_nodes = neighbours.filter_map(move |neighbour_index| {
+                if let Some(Node::Field(node)) = graph.node_weight(neighbour_index.clone()) {
+                    Some(node)
+                } else {
+                    None
+                }
+            });
+            Some(field_nodes)
+        } else {
+            None
+        }
+    }
 }
 
 // struct Example {

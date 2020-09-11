@@ -1,5 +1,5 @@
 use super::visitors::{
-  JlasArrayVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitors,
+  JlasArrayVisitor, JlasObjectKeyVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitors,
 };
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
@@ -106,14 +106,48 @@ impl<'a> Traverser<'a> {
           });
       }
       JsonValue::Object(_) => {
-        let object_visitor = visitors.object();
-        let matching_choices =
-          object_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices);
+        let matching_choices = {
+          let object_visitor = visitors.object();
+          object_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices)
+        };
+        let object_key_visitor = visitors.object_key();
 
         let fields = match json_body {
           JsonValue::Object(fields) => fields,
           _ => unreachable!("expect json body to be an object"),
         };
+
+        let object_key_choices = matching_choices
+          .iter()
+          .map(|choice| {
+            if let ShapeKind::ObjectKind = &choice.core_shape_kind {
+              // - find field node by key in object's field node edges
+              let field_ids = self
+                .shape_queries
+                .resolve_shape_field_id_and_names(&choice.shape_id);
+
+              (
+                choice,
+                field_ids
+                  .map(|(field_id, field_name)| {
+                    let field_shape_id = self.shape_queries.resolve_field_shape_node(&field_id);
+                    (
+                      field_name.clone(),
+                      field_id.clone(),
+                      field_shape_id.unwrap().clone(),
+                    )
+                  })
+                  .collect::<Vec<_>>(),
+              )
+            } else {
+              unreachable!("should only contain choices of object kind");
+            }
+          })
+          .collect::<Vec<_>>();
+
+        let object_keys = fields.keys().map(|x| (*x).clone()).collect::<Vec<_>>();
+        object_key_visitor.visit(&body_trail, &object_keys, &object_key_choices);
+
         fields.into_iter().for_each(|(field_key, field_json)| {
           let field_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonObjectKey {
             key: field_key.clone(),
@@ -230,7 +264,7 @@ impl ShapeTrail {
     }
   }
 
-  fn with_component(&self, component: ShapeTrailPathComponent) -> Self {
+  pub fn with_component(&self, component: ShapeTrailPathComponent) -> Self {
     let mut new_trail = self.clone();
     new_trail.path.push(component);
     new_trail
@@ -257,16 +291,9 @@ impl JsonTrail {
   fn empty() -> Self {
     JsonTrail { path: vec![] }
   }
-  fn with_component(&self, component: JsonTrailPathComponent) -> Self {
+  pub fn with_component(&self, component: JsonTrailPathComponent) -> Self {
     let mut new_trail = self.clone();
     new_trail.path.push(component);
     new_trail
   }
-}
-#[cfg(test)]
-mod test {
-  use super::*;
-
-  #[test]
-  fn traversing_with_no_paths() {}
 }

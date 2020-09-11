@@ -5,7 +5,7 @@ pub mod traverser;
 pub mod visitors;
 
 pub use result::ShapeDiffResult;
-pub use traverser::{JsonTrail, ShapeTrail};
+pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
 
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;

@@ -1,16 +1,17 @@
 use super::{
-  JlasArrayVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitor, JsonBodyVisitors,
-  VisitorResults,
+  JlasArrayVisitor, JlasObjectKeyVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitor,
+  JsonBodyVisitors, VisitorResults,
 };
 use crate::queries::shape::ChoiceOutput;
 use crate::shapes::ShapeDiffResult;
-use crate::shapes::{JsonTrail, ShapeTrail};
-use crate::state::shape::ShapeKind;
+use crate::shapes::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
+use crate::state::shape::{FieldId, ShapeId, ShapeKind};
 use serde_json::Value as JsonValue;
 
 pub struct DiffVisitors {
   array: DiffArrayVisitor,
   object: DiffObjectVisitor,
+  object_key: DiffObjectKeyVisitor,
   primitive: DiffPrimitiveVisitor,
 }
 
@@ -19,6 +20,7 @@ impl DiffVisitors {
     DiffVisitors {
       array: DiffArrayVisitor::new(),
       object: DiffObjectVisitor::new(),
+      object_key: DiffObjectKeyVisitor::new(),
       primitive: DiffPrimitiveVisitor::new(),
     }
   }
@@ -29,6 +31,7 @@ type DiffResults = VisitorResults<ShapeDiffResult>;
 impl JsonBodyVisitors<ShapeDiffResult> for DiffVisitors {
   type Array = DiffArrayVisitor;
   type Object = DiffObjectVisitor;
+  type ObjectKey = DiffObjectKeyVisitor;
   type Primitive = DiffPrimitiveVisitor;
 
   fn array(&mut self) -> &mut DiffArrayVisitor {
@@ -37,6 +40,10 @@ impl JsonBodyVisitors<ShapeDiffResult> for DiffVisitors {
 
   fn object(&mut self) -> &mut DiffObjectVisitor {
     &mut self.object
+  }
+
+  fn object_key(&mut self) -> &mut DiffObjectKeyVisitor {
+    &mut self.object_key
   }
 
   fn primitive(&mut self) -> &mut DiffPrimitiveVisitor {
@@ -227,5 +234,65 @@ impl JlasObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
     }
 
     matched.into_iter().map(|x| (*x).clone()).collect()
+  }
+}
+
+// Object Key visitor
+// ------------------
+
+pub struct DiffObjectKeyVisitor {
+  results: DiffResults,
+}
+
+impl DiffObjectKeyVisitor {
+  pub fn new() -> Self {
+    Self {
+      results: DiffResults::new(),
+    }
+  }
+}
+
+impl JsonBodyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
+  fn results(&mut self) -> Option<&mut DiffResults> {
+    Some(&mut self.results)
+  }
+}
+
+impl JlasObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
+  fn visit(
+    &mut self,
+    object_json_trail: &JsonTrail,
+    object_keys: &Vec<String>,
+    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId)>)>,
+  ) {
+    object_and_field_choices.iter().for_each(|entry| {
+      let (choice, keys_for_choice) = entry;
+      match choice.core_shape_kind {
+        ShapeKind::ObjectKind => {
+          keys_for_choice.iter().for_each(|key_and_field_id| {
+            let (key, field_id, field_shape_id) = key_and_field_id;
+            if let None = object_keys.iter().find(|object_key| *object_key == key) {
+              // emit diff
+
+              let shape_trail =
+                choice
+                  .shape_trail()
+                  .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
+                    field_id: field_id.clone(),
+                    field_shape_id: field_shape_id.clone(),
+                  });
+              let json_trail = object_json_trail
+                .with_component(JsonTrailPathComponent::JsonObjectKey { key: key.clone() });
+              let diff = ShapeDiffResult::UnmatchedShape {
+                json_trail,
+                shape_trail,
+              };
+              self.push(diff);
+            }
+          })
+        }
+        _ => unreachable!("expected choice to be ObjectKind"),
+      }
+    })
   }
 }

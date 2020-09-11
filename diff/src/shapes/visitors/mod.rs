@@ -1,15 +1,18 @@
 use super::traverser::{JsonTrail, ShapeTrail};
 use crate::queries::shape::ChoiceOutput;
+use crate::state::shape::{FieldId, ShapeId};
 use serde_json::Value as JsonValue;
 pub mod diff;
 
 pub trait JsonBodyVisitors<R> {
   type Array: JlasArrayVisitor<R>;
   type Object: JlasObjectVisitor<R>;
+  type ObjectKey: JlasObjectKeyVisitor<R>;
   type Primitive: JlasPrimitiveVisitor<R>;
 
   fn array(&mut self) -> &mut Self::Array;
   fn object(&mut self) -> &mut Self::Object;
+  fn object_key(&mut self) -> &mut Self::ObjectKey;
   fn primitive(&mut self) -> &mut Self::Primitive;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
@@ -17,6 +20,7 @@ pub trait JsonBodyVisitors<R> {
       self.primitive().take_results(),
       self.array().take_results(),
       self.object().take_results(),
+      self.object_key().take_results(),
     ]
     .into_iter()
     .filter_map(|x| x)
@@ -57,7 +61,12 @@ pub trait JlasObjectVisitor<R>: JsonBodyVisitor<R> {
 }
 
 pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {
-  //fn visit(objectJsonTrail: JsonTrail, objectKeys: Map<String>, objectChoices: Seq<ChoiceOutput>);
+  fn visit(
+    &mut self,
+    object_json_trail: &JsonTrail,
+    object_keys: &Vec<String>,
+    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId)>)>,
+  );
 }
 
 pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
