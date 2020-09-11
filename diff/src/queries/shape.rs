@@ -182,28 +182,28 @@ impl<'a> ShapeQueries<'a> {
       .find_map(|edge| match edge.weight() {
         Edge::IsFieldOf => match projection.graph.node_weight(edge.source()) {
           Some(Node::Field(ref field_node)) => {
-            eprintln!("resolve_field_id item {:?}", field_node);
+            // eprintln!("resolve_field_id item {:?}", field_node);
             let FieldNode(field_id, descriptor) = field_node;
             if descriptor.name == *field_name {
               Some(field_id.clone())
             } else {
-              eprintln!(
-                "did not match descriptor.name {} to field name {}",
-                &descriptor.name, field_name
-              );
+              // eprintln!(
+              //   "did not match descriptor.name {} to field name {}",
+              //   &descriptor.name, field_name
+              // );
               None
             }
           }
           _ => {
-            eprintln!("did not match node type as field node");
+            // eprintln!("did not match node type as field node");
             None
           }
         },
         _ => {
-          eprintln!(
-            "did not match edge type as isFieldOf variant {:?}",
-            edge.weight()
-          );
+          // eprintln!(
+          //   "did not match edge type as isFieldOf variant {:?}",
+          //   edge.weight()
+          // );
           None
         }
       })
