@@ -16,12 +16,15 @@ digraph {
     10 [ label = "ShapeParameter(\l    ShapeParameterNode(\l        \"$optionalInner\",\l        ShapeParameterNodeDescriptor,\l    ),\l)\l" ]
     11 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$oneOf\",\l        CoreShapeNodeDescriptor {\l            kind: OneOfKind,\l        },\l    ),\l)\l" ]
     12 [ label = "Shape(\l    ShapeNode(\l        \"list_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
-    13 [ label = "Shape(\l    ShapeNode(\l        \"number_shape_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    13 [ label = "Shape(\l    ShapeNode(\l        \"list_2\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    14 [ label = "Shape(\l    ShapeNode(\l        \"number_shape_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
     4 -> 3 [ label = "IsParameterOf\l" ]
     7 -> 6 [ label = "IsParameterOf\l" ]
     10 -> 9 [ label = "IsParameterOf\l" ]
     12 -> 3 [ label = "IsDescendantOf\l" ]
-    13 -> 1 [ label = "IsDescendantOf\l" ]
-    12 -> 4 [ label = "HasBinding(\l    ShapeParameterBinding {\l        shape_id: \"number_shape_1\",\l    },\l)\l" ]
+    13 -> 3 [ label = "IsDescendantOf\l" ]
+    14 -> 1 [ label = "IsDescendantOf\l" ]
+    12 -> 4 [ label = "HasBinding(\l    ShapeParameterBinding {\l        shape_id: \"list_2\",\l    },\l)\l" ]
+    13 -> 4 [ label = "HasBinding(\l    ShapeParameterBinding {\l        shape_id: \"number_shape_1\",\l    },\l)\l" ]
 }
 

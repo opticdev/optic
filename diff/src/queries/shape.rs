@@ -23,23 +23,35 @@ impl<'a> ShapeQueries<'a> {
 
     let mut trail_components = shape_trail.path.iter();
 
-    let mut parent_node_index = root_node_index;
+    // TODO: ask ourselve why we're walking all the path components, if we're not actually walking
+    // the nodes connecting them. The walking of the graph and making sure the shape trail is valid
+    // happens while constructing the Shapetrail. So could we just take the last here?
+    let mut last_node_index = root_node_index;
     while let Some(trail_component) = trail_components.next() {
-      unimplemented!(
-        "we shouldn't have any additional shape trail components yet, making primitives work first"
-      );
-      // TODO: implement walking of graph by trail components
-      // let component_node = match trail_component {
-      //   ShapeTrailPathComponent::
-      // }
-      //   projection.get_descendant_shape_node_index(&parent_node_index, &shape_id);
+      match trail_component {
+        ShapeTrailPathComponent::ListItemTrail {
+          list_shape_id,
+          item_shape_id,
+        } => {
+          last_node_index = projection.get_shape_node_index(&item_shape_id);
+        }
+        _ => {
+          unimplemented!(
+            "resolving of trail choices for shape trail component not implemented yet: {:?}",
+            trail_component
+          );
+        }
+      }
+      if let None = last_node_index {
+        break;
+      }
     }
 
-    if let None = parent_node_index {
+    if let None = last_node_index {
       return vec![];
     }
 
-    let current_node_index = parent_node_index.unwrap();
+    let current_node_index = last_node_index.unwrap();
     let core_shape_nodes = projection.get_core_shape_nodes(&current_node_index);
     if let None = core_shape_nodes {
       return vec![];
