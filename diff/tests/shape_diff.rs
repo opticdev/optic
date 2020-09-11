@@ -184,7 +184,7 @@ fn can_yield_unmatched_shape_for_field() {
       {"FieldAdded":{"fieldId":"field_2","shapeId":"object_1","name":"lastName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_2","shapeId":"string_shape_2"}}}},
 
       {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
-      {"FieldAdded":{"fieldId":"field_3","shapeId":"object_1","name":"age","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_3","shapeId":"string_shape_1"}}}},
+      {"FieldAdded":{"fieldId":"field_3","shapeId":"object_1","name":"age","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_3","shapeId":"number_shape_1"}}}},
     ])
   ).expect("should be able to deserialize shape added events as spec events");
 

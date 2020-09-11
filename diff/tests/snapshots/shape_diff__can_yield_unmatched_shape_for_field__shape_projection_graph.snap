@@ -33,7 +33,7 @@ digraph {
     15 -> 16 [ label = "BelongsTo\l" ]
     16 -> 12 [ label = "IsFieldOf\l" ]
     17 -> 1 [ label = "IsDescendantOf\l" ]
-    13 -> 18 [ label = "BelongsTo\l" ]
+    17 -> 18 [ label = "BelongsTo\l" ]
     18 -> 12 [ label = "IsFieldOf\l" ]
 }
 
