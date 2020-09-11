@@ -1,7 +1,8 @@
 use crate::events::{ShapeEvent, SpecEvent};
 use crate::state::shape::{
-    FieldId, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeIdRef, ShapeKind,
-    ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef, ShapeParametersDescriptor,
+    FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId,
+    ShapeIdRef, ShapeKind, ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef,
+    ShapeParametersDescriptor,
 };
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::graph::{Graph, NodeIndex};
@@ -27,6 +28,7 @@ pub struct ShapeParameterNode(ShapeParameterId, ShapeParameterNodeDescriptor);
 
 #[derive(Debug)]
 pub enum Edge {
+    BelongsTo,
     IsDescendantOf,
     IsFieldOf,
     IsParameterOf,
@@ -50,7 +52,9 @@ pub struct CoreShapeNodeDescriptor {
 pub struct ShapeParameterNodeDescriptor {}
 
 #[derive(Debug)]
-pub struct FieldNodeDescriptor {}
+pub struct FieldNodeDescriptor {
+    pub name: String,
+}
 
 #[derive(Debug)]
 pub struct ShapeProjection {
@@ -186,6 +190,46 @@ impl ShapeProjection {
         }
     }
 
+    pub fn with_field(
+        &mut self,
+        field_id: FieldId,
+        object_id: ShapeId,
+        shape_descriptor: FieldShapeDescriptor,
+        name: String,
+    ) {
+        let object_node_index = *self
+            .get_shape_node_index(&object_id)
+            .expect("expected shape_id of field to have a corresponding node");
+
+        let field_value_shape_node_index = match shape_descriptor {
+            FieldShapeDescriptor::FieldShapeFromShape(field_shape) => {
+                assert_eq!(
+                    field_shape.field_id, field_id,
+                    "expect main field id of event to match one of field shape descriptor"
+                );
+
+                *self
+                    .get_shape_node_index(&field_shape.shape_id)
+                    .expect("expected shape_id for field value to have a corresponding node")
+            }
+            _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
+        };
+
+        let field_node = Node::Field(FieldNode(field_id.clone(), FieldNodeDescriptor { name }));
+        let field_node_index = self.graph.add_node(field_node);
+        self.node_id_to_index
+            .insert(field_id.clone(), field_node_index);
+
+        self.graph.add_edge(
+            field_value_shape_node_index,
+            field_node_index,
+            Edge::BelongsTo,
+        );
+
+        self.graph
+            .add_edge(field_node_index, object_node_index, Edge::IsFieldOf);
+    }
+
     pub fn get_shape_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
         let node_index = self.node_id_to_index.get(node_id)?;
         let node = self.graph.node_weight(*node_index);
@@ -277,6 +321,9 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
             }
             ShapeEvent::ShapeParameterShapeSet(e) => {
                 projection.with_shape_parameter_shape(e.shape_descriptor)
+            }
+            ShapeEvent::FieldAdded(e) => {
+                projection.with_field(e.field_id, e.shape_id, e.shape_descriptor, e.name)
             }
             _ => {} // TODO: eventually add logging for any ShapeEvent we don't use for this projection for some reason
         }

@@ -1,0 +1,39 @@
+---
+source: tests/shape_diff.rs
+expression: "Dot::with_config(&shape_projection.graph, &[])"
+---
+digraph {
+    0 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$string\",\l        CoreShapeNodeDescriptor {\l            kind: StringKind,\l        },\l    ),\l)\l" ]
+    1 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$number\",\l        CoreShapeNodeDescriptor {\l            kind: NumberKind,\l        },\l    ),\l)\l" ]
+    2 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$boolean\",\l        CoreShapeNodeDescriptor {\l            kind: BooleanKind,\l        },\l    ),\l)\l" ]
+    3 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$list\",\l        CoreShapeNodeDescriptor {\l            kind: ListKind,\l        },\l    ),\l)\l" ]
+    4 [ label = "ShapeParameter(\l    ShapeParameterNode(\l        \"$listItem\",\l        ShapeParameterNodeDescriptor,\l    ),\l)\l" ]
+    5 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$object\",\l        CoreShapeNodeDescriptor {\l            kind: ObjectKind,\l        },\l    ),\l)\l" ]
+    6 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$nullable\",\l        CoreShapeNodeDescriptor {\l            kind: NullableKind,\l        },\l    ),\l)\l" ]
+    7 [ label = "ShapeParameter(\l    ShapeParameterNode(\l        \"$nullableInner\",\l        ShapeParameterNodeDescriptor,\l    ),\l)\l" ]
+    8 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$unknown\",\l        CoreShapeNodeDescriptor {\l            kind: UnknownKind,\l        },\l    ),\l)\l" ]
+    9 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$optional\",\l        CoreShapeNodeDescriptor {\l            kind: OptionalKind,\l        },\l    ),\l)\l" ]
+    10 [ label = "ShapeParameter(\l    ShapeParameterNode(\l        \"$optionalInner\",\l        ShapeParameterNodeDescriptor,\l    ),\l)\l" ]
+    11 [ label = "CoreShape(\l    CoreShapeNode(\l        \"$oneOf\",\l        CoreShapeNodeDescriptor {\l            kind: OneOfKind,\l        },\l    ),\l)\l" ]
+    12 [ label = "Shape(\l    ShapeNode(\l        \"object_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    13 [ label = "Shape(\l    ShapeNode(\l        \"string_shape_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    14 [ label = "Field(\l    FieldNode(\l        \"field_1\",\l        FieldNodeDescriptor {\l            name: \"firstName\",\l        },\l    ),\l)\l" ]
+    15 [ label = "Shape(\l    ShapeNode(\l        \"string_shape_2\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    16 [ label = "Field(\l    FieldNode(\l        \"field_2\",\l        FieldNodeDescriptor {\l            name: \"lastName\",\l        },\l    ),\l)\l" ]
+    17 [ label = "Shape(\l    ShapeNode(\l        \"number_shape_1\",\l        ShapeNodeDescriptor,\l    ),\l)\l" ]
+    18 [ label = "Field(\l    FieldNode(\l        \"field_3\",\l        FieldNodeDescriptor {\l            name: \"age\",\l        },\l    ),\l)\l" ]
+    4 -> 3 [ label = "IsParameterOf\l" ]
+    7 -> 6 [ label = "IsParameterOf\l" ]
+    10 -> 9 [ label = "IsParameterOf\l" ]
+    12 -> 5 [ label = "IsDescendantOf\l" ]
+    13 -> 0 [ label = "IsDescendantOf\l" ]
+    13 -> 14 [ label = "BelongsTo\l" ]
+    14 -> 12 [ label = "IsFieldOf\l" ]
+    15 -> 0 [ label = "IsDescendantOf\l" ]
+    15 -> 16 [ label = "BelongsTo\l" ]
+    16 -> 12 [ label = "IsFieldOf\l" ]
+    17 -> 1 [ label = "IsDescendantOf\l" ]
+    13 -> 18 [ label = "BelongsTo\l" ]
+    18 -> 12 [ label = "IsFieldOf\l" ]
+}
+
