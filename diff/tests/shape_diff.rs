@@ -208,3 +208,33 @@ fn can_yield_unmatched_shape_for_field() {
   assert_debug_snapshot!("can_yield_unmatched_shape_for_field__results", results);
   assert_ne!(results.len(), 0);
 }
+
+#[test]
+fn can_yield_unmatched_shape_for_missing_field() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"object_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"string_shape_1"}}}},
+      
+      {"ShapeAdded":{"shapeId":"string_shape_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_2","shapeId":"object_1","name":"lastName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_2","shapeId":"string_shape_2"}}}},
+
+      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_3","shapeId":"object_1","name":"age","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_3","shapeId":"number_shape_1"}}}},
+    ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+
+  let object_body = json!({
+    "firstName": "Homer",
+    "lastName": "Simpson"
+  });
+  let shape_id = String::from("object_1");
+  let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
+
+  assert_debug_snapshot!("can_yield_unmatched_shape_for_missing_field__results", results);
+  assert_ne!(results.len(), 0);
+}
