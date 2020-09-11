@@ -5,17 +5,23 @@ pub mod diff;
 
 pub trait JsonBodyVisitors<R> {
   type Array: JlasArrayVisitor<R>;
+  type Object: JlasObjectVisitor<R>;
   type Primitive: JlasPrimitiveVisitor<R>;
 
   fn array(&mut self) -> &mut Self::Array;
+  fn object(&mut self) -> &mut Self::Object;
   fn primitive(&mut self) -> &mut Self::Primitive;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
-    let flattened = vec![self.primitive().take_results(), self.array().take_results()]
-      .into_iter()
-      .filter_map(|x| x)
-      .flatten()
-      .collect();
+    let flattened = vec![
+      self.primitive().take_results(),
+      self.array().take_results(),
+      self.object().take_results(),
+    ]
+    .into_iter()
+    .filter_map(|x| x)
+    .flatten()
+    .collect();
     Some(flattened)
   }
 }
@@ -41,7 +47,13 @@ pub trait JsonBodyVisitor<R> {
 }
 
 pub trait JlasObjectVisitor<R>: JsonBodyVisitor<R> {
-  // fn visit(json: JsonLike, jsonTrail: JsonTrail, trailOrigin: ShapeTrail, trailChoices: Seq<ChoiceOutput>, itemChoiceCallback: ObjectKeyChoiceCallback);
+  fn visit(
+    &mut self,
+    json: &JsonValue,
+    json_trail: &JsonTrail,
+    trail_origin: &ShapeTrail,
+    trail_choices: &Vec<ChoiceOutput>,
+  ) -> Vec<ChoiceOutput>;
 }
 
 pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {

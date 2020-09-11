@@ -1,4 +1,6 @@
-use super::visitors::{JlasArrayVisitor, JlasPrimitiveVisitor, JsonBodyVisitors};
+use super::visitors::{
+  JlasArrayVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitors,
+};
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
@@ -103,7 +105,69 @@ impl<'a> Traverser<'a> {
             }
           });
       }
-      JsonValue::Object(value) => {}
+      JsonValue::Object(_) => {
+        let object_visitor = visitors.object();
+        let matching_choices =
+          object_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices);
+
+        let fields = match json_body {
+          JsonValue::Object(fields) => fields,
+          _ => unreachable!("expect json body to be an object"),
+        };
+        fields.into_iter().for_each(|(field_key, field_json)| {
+          let field_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonObjectKey {
+            key: field_key.clone(),
+          });
+
+          let field_choices = matching_choices
+            .iter()
+            .flat_map(|choice| {
+              eprintln!("object choice {:?}", choice);
+              if let ShapeKind::ObjectKind = &choice.core_shape_kind {
+                // - find field node by key in object's field node edges
+                let field_id_option = self
+                  .shape_queries
+                  .resolve_field_id(&choice.shape_id, &field_key);
+                if let None = field_id_option {
+                  eprintln!("no field id could be resolved");
+                  return vec![];
+                }
+
+                let field_id = field_id_option.unwrap();
+                let field_shape_id = self
+                  .shape_queries
+                  .resolve_field_shape_node(&field_id)
+                  .expect("field node should have an edge to a shape node describing its value");
+                eprintln!("field_shape_id {:?}", field_shape_id);
+
+                let field_trail =
+                  choice
+                    .shape_trail()
+                    .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
+                      field_id: field_id.clone(),
+                      field_shape_id: field_shape_id,
+                    });
+                self.shape_queries.list_trail_choices(&field_trail)
+              } else {
+                unreachable!("should only contain choices of object kind");
+              }
+            })
+            .collect::<Vec<ChoiceOutput>>();
+          let new_trail_origin = trail_origin.clone();
+
+          println!("field choices for key {}: {:?}", &field_key, field_choices);
+
+          if !field_choices.is_empty() {
+            self.traverse(
+              Some(field_json),
+              field_json_trail,
+              new_trail_origin,
+              &field_choices,
+              visitors,
+            )
+          }
+        });
+      }
       primitive_value => {
         let primitive_visitor = visitors.primitive();
         primitive_visitor.visit(primitive_value, body_trail, trail_origin, trail_choices);

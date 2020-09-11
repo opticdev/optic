@@ -22,7 +22,7 @@ pub struct ShapeNode(pub ShapeId, pub ShapeNodeDescriptor);
 #[derive(Debug)]
 pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
 #[derive(Debug)]
-pub struct FieldNode(FieldId, FieldNodeDescriptor);
+pub struct FieldNode(pub FieldId, pub FieldNodeDescriptor);
 #[derive(Debug)]
 pub struct ShapeParameterNode(ShapeParameterId, ShapeParameterNodeDescriptor);
 
@@ -144,6 +144,23 @@ impl ShapeProjection {
         );
     }
 
+    pub fn get_ancestor_shape_node_index(
+        &self,
+        parent_node_index: &NodeIndex,
+    ) -> Option<NodeIndex> {
+        let mut edges = self
+            .graph
+            .edges_directed(*parent_node_index, petgraph::Direction::Outgoing);
+        if let Some(ancestor_edge) = edges.find(|edge| match edge.weight() {
+            Edge::IsDescendantOf => true,
+            _ => false,
+        }) {
+            Some(ancestor_edge.target())
+        } else {
+            Some(*parent_node_index)
+        }
+    }
+
     pub fn with_shape_parameter_shape(
         &mut self,
         shape_parameter_descriptor: ParameterShapeDescriptor,
@@ -236,6 +253,15 @@ impl ShapeProjection {
         match node {
             Some(&Node::Shape(ref node)) => Some(node_index),
             Some(&Node::CoreShape(ref node)) => Some(node_index),
+            Some(_) => None,
+            None => None,
+        }
+    }
+    pub fn get_field_node_index(&self, node_id: &NodeId) -> Option<&NodeIndex> {
+        let node_index = self.node_id_to_index.get(node_id)?;
+        let node = self.graph.node_weight(*node_index);
+        match node {
+            Some(&Node::Field(ref node)) => Some(node_index),
             Some(_) => None,
             None => None,
         }

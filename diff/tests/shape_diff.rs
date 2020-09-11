@@ -49,6 +49,9 @@ fn can_diff_primitive_json_and_yield_unmatched_shape() {
 }
 
 #[test]
+#[ignore]
+// TODO: fix this test of the PrimitiveVisitor yielding an UnspecifiedShape diff:
+// this test needs to provide a scenario where there is an object field in the interaction that is not in the spec
 fn can_diff_primitive_json_and_yield_unspecified_shape() {
   let events: Vec<SpecEvent> = serde_json::from_value(
     json!([
@@ -194,14 +197,14 @@ fn can_yield_unmatched_shape_for_field() {
     "can_yield_unmatched_shape_for_field__shape_projection_graph",
     Dot::with_config(&shape_projection.graph, &[])
   );
-  // let object_body = json!({
-  //   "firstName": "Homer",
-  //   "lastName": "Simpson",
-  //   "age": "not-a-valid-number"
-  // });
-  // let shape_id = String::from("object_1");
-  // let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
+  let object_body = json!({
+    "firstName": "Homer",
+    "lastName": "Simpson",
+    "age": "not-a-valid-number"
+  });
+  let shape_id = String::from("object_1");
+  let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
 
-  // assert_debug_snapshot!("can_yield_unmatched_shape_for_field__results", results);
-  // assert_eq!(results.len(), 0);
+  assert_debug_snapshot!("can_yield_unmatched_shape_for_field__results", results);
+  assert_ne!(results.len(), 0);
 }
