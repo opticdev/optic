@@ -1,0 +1,19 @@
+# this runs on any pr going to release
+name: Bump Optic
+on:
+  pull_request:
+    branches:
+      - release
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Optic Repository @ Develop
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+        with:
+            ref: develop
+            token: ${{ github.token }}
+      - name: Yarn Install
+        run: yarn install
+      - name: Bump to latest version # we'll do some branch magic here that will check the branch to determine whether we want a patch/minor/major update
+        run: yarn bump
