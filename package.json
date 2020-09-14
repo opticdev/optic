@@ -28,6 +28,7 @@
     "workspaces/cli-shared",
     "workspaces/client-utilities",
     "workspaces/cli-client",
+    "workspaces/diff-engine",
     "workspaces/ui",
     "workspaces/cli-scripts",
     "workspaces/cli-server",

@@ -3,6 +3,7 @@
 export OPTIC_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 echo "Optic development scripts will run from $OPTIC_SRC_DIR"
 export OPTIC_DEBUG_ENV_FILE="$OPTIC_SRC_DIR/.env"
+export OPTIC_SKIP_CSV="@useoptic/diff-engine" #prevent diff-engine from being published for now
 
 alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_DEVELOPMENT=yes OPTIC_UI_HOST=http://localhost:3000 OPTIC_AUTH_UI_HOST=http://localhost:4005 $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
@@ -11,6 +12,7 @@ alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
 optic_workspace_clean() {
   (
     set -o errexit
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:clean
   )
@@ -18,6 +20,7 @@ optic_workspace_clean() {
 optic_workspace_build() {
   (
     set -o errexit
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:build
   )
@@ -32,6 +35,7 @@ optic_watch() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     optic_workspace_clean
     yarn run watch --filter=workspace-scripts/watch-filter.js "source sourceme.sh && optic_workspace_build_with_notification"
   )
