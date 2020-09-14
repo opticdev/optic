@@ -27,8 +27,11 @@ jobs:
             echo ::set-env name=TYPE::major
           elif [ "$LABEL" = "minor" ]; then
             echo ::set-env name=TYPE::minor
-          else
+          elif [ "$LABEL" = "patch" ]; then
             echo ::set-env name=TYPE::patch
+          else
+            echo "This label isn't applicable to trigger a version bump"
+            exit 1
           fi
       - name: Bump to latest version
         run: yarn bump $TYPE
