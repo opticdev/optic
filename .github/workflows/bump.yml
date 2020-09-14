@@ -40,6 +40,8 @@ jobs:
         with:
           branch: bump/bot/${{ github.run_id }}
           base: develop
+          commit-message: $TYPE version bump
+          title: $TYPE version bump
       - name: Comment back with PR
         uses: unsplash/comment-on-pr@master
         env: 
