@@ -1,0 +1,48 @@
+# this runs on any pr going to release
+name: Bump Optic
+on:
+  pull_request:
+    branches:
+      - release
+    types:
+      - opened
+      - labeled
+      - unlabeled
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Optic Repository @ Develop
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+        with:
+            ref: develop
+            token: ${{ github.token }}
+      - name: Checkout branch that has the update
+        run: git checkout -b bump/bot/${{ github.run_id }}
+      - name: Yarn Install
+        run: yarn install
+      - name: Bump to latest version # we'll do some branch magic here that will check the branch to determine whether we want a patch/minor/major update
+        run: yarn bump
+      - name: Add and Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Bump Bot"
+          git commit -am "Bumped version"
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PUSH_TOKEN }}
+          branch: bump/bot/${{ github.run_id }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cpr
+        with:
+          branch: bump/bot/${{ github.run_id }}
+          base: develop
+      - name: Comment back with PR #
+        uses: unsplash/comment-on-pr@master
+        env: 
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+        with:
+          msg: "Bumped version — Approve PR #${{ steps.cpr.outputs.pull-request-number }}"
+        
