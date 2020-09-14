@@ -10,7 +10,6 @@ async function main(targetVersion) {
     return;
   } else {
     console.log(`setting workspace versions to ${targetVersion}`);
-    return
   }
 
   console.log(workspaces.map((x) => ` - ${x}\n`).join(''));
