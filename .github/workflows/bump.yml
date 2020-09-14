@@ -7,7 +7,6 @@ on:
     types:
       - opened
       - labeled
-      - unlabeled
 jobs:
   bump-version:
     runs-on: ubuntu-latest
