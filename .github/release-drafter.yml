@@ -26,6 +26,7 @@ version-resolver:
   patch:
     labels:
       - 'patch'
+      - 'bump'
   default: patch
 template: |
   ## Changes
