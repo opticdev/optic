@@ -19,18 +19,29 @@ jobs:
             token: ${{ github.token }}
       - name: Yarn Install
         run: yarn install
-      - name: Bump to latest version # we'll do some branch magic here that will check the branch to determine whether we want a patch/minor/major update
-        run: yarn bump
+      - name: Extract Label
+        run: echo ::set-env name=LABEL::${{ github.event.label.name }}
+      - name: Determine version bump type
+        run: |
+          if [ "$LABEL" = "major" ]; then
+            echo ::set-env name=TYPE::major
+          elif [ "$LABEL" = "minor" ]; then
+            echo ::set-env name=TYPE::minor
+          else
+            echo ::set-env name=TYPE::patch
+          fi
+      - name: Bump to latest version
+        run: yarn bump $TYPE
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
         with:
           branch: bump/bot/${{ github.run_id }}
           base: develop
-      - name: Comment back with PR #
+      - name: Comment back with PR
         uses: unsplash/comment-on-pr@master
         env: 
           GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
         with:
-          msg: "Bumped version — Approve PR #${{ steps.cpr.outputs.pull-request-number }}"
+          msg: "Bumped version — Approve PR #${{ steps.cpr.outputs.pull-request-number }} to merge the version change"
         
