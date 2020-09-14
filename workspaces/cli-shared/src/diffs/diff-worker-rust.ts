@@ -1,5 +1,6 @@
 import { parseIgnore } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
+import spawnDiffEngine from '@useoptic/diff-engine';
 import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,
@@ -9,7 +10,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import lockfile from 'proper-lockfile';
 import Chain, { chain } from 'stream-chain';
-import Execa from 'execa';
 import { Readable } from 'stream';
 import { stringer as JSONLStringer } from 'stream-json/jsonl/Stringer';
 
@@ -187,20 +187,10 @@ export class DiffWorkerRust {
         notifyParent();
       });
 
-      // TODO: find the actual way we'll use to point to a built binary
-      // taking in consideration that in development that's probably a
-      // debug build, while in production a release build
-      const differPath = path.resolve(
-        path.join(__dirname, '../../../../diff/target/debug/optic_diff')
-      );
-      let diffProcess = Execa(differPath, [diffOutputPaths.events], {
-        input: interactionsStream,
-        stdio: 'pipe',
-      });
-      if (!diffProcess.stdout || !diffProcess.stderr)
-        throw new Error('diff process should have stdout and stderr streams');
-      diffProcess.stdout.pipe(diffsSink);
-      diffProcess.stderr.pipe(process.stderr);
+      const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+      interactionsStream.pipe(diffEngine.input);
+      diffEngine.output.pipe(diffsSink);
+      diffEngine.error.pipe(process.stderr);
 
       await Promise.all([
         safeWriteJson(diffOutputPaths.stats, {

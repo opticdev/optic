@@ -18,6 +18,7 @@
     "@useoptic/cli-client": "8.3.5",
     "@useoptic/cli-config": "8.3.5",
     "@useoptic/client-utilities": "8.3.5",
+    "@useoptic/diff-engine": "8.3.5",
     "@useoptic/domain": "10.0.8",
     "@useoptic/domain-types": "10.0.8",
     "@useoptic/domain-utilities": "10.0.8",
