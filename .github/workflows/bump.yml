@@ -17,22 +17,10 @@ jobs:
         with:
             ref: develop
             token: ${{ github.token }}
-      - name: Checkout branch that has the update
-        run: git checkout -b bump/bot/${{ github.run_id }}
       - name: Yarn Install
         run: yarn install
       - name: Bump to latest version # we'll do some branch magic here that will check the branch to determine whether we want a patch/minor/major update
         run: yarn bump
-      - name: Add and Commit Changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Bump Bot"
-          git commit -am "Bumped version"
-      - name: Push Changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PUSH_TOKEN }}
-          branch: bump/bot/${{ github.run_id }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
