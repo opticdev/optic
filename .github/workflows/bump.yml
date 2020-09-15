@@ -30,22 +30,23 @@ jobs:
             echo ::set-env name=TYPE::patch
           else
             echo "This label isn't applicable to trigger a version bump"
+            echo "Not a real failure — GH Actions doesn't let me exit without failing"
             exit 1
           fi
       - name: Bump to latest version
-        run: yarn bump $TYPE
+        run: echo ::set-env name=VERSION::$(yarn --silent bump $TYPE)
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@44f76dd5b30daa9cc0444913acc58a040c19539c # https://github.com/peter-evans/create-pull-request/commits/v3
+        uses: peter-evans/create-pull-request@v3
         id: cpr
         with:
           branch: bump/bot/${{ github.run_id }}
           base: develop
-          commit-message: ${{ env.TYPE }} version bump
-          title: ${{ env.TYPE }} version bump
+          commit-message: Bumped to ${{ env.VERSION }} [ ${{ env.TYPE }} update]
+          title: Bumped to ${{ env.VERSION }} [ ${{ env.TYPE }} update]
+          labels: ${{ env.TYPE }}
       - name: Comment back with PR
-        uses: unsplash/comment-on-pr@85a56be792d927ac4bfa2f4326607d38e80e6e60 # https://github.com/unsplash/comment-on-pr/commits/master
+        uses: unsplash/comment-on-pr@master
         env: 
           GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
         with:
-          msg: "Bumped version — Approve PR #${{ steps.cpr.outputs.pull-request-number }} to merge the version change"
-        
+          msg: "Bumped to ${{ env.VERSION }} — Approve PR #${{ steps.cpr.outputs.pull-request-number }} to merge the version change"
