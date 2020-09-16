@@ -2,6 +2,7 @@
 import keymirror from 'keymirror';
 export const Events = keymirror({
   //on-boarding
+  UserLoggedInFromCLI: null,
   ApiCreated: null,
   ApiInitializedInProject: null,
   ApiCheckCompleted: null,
