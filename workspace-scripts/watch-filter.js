@@ -30,6 +30,7 @@ module.exports = function (path, stat) {
       if (
         [
           '/src',
+          '/ts',
           '/package.json',
           '/tsconfig.json'
         ].some(x => rest.startsWith(x))
