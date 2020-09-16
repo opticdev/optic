@@ -47,6 +47,6 @@ jobs:
       - name: Comment back with PR
         uses: unsplash/comment-on-pr@master
         env: 
-          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.COMMENT_PR }}
         with:
           msg: "Bumped to ${{ env.VERSION }} — Approve PR #${{ steps.cpr.outputs.pull-request-number }} to merge the version change"
