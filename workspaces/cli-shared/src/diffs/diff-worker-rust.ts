@@ -11,7 +11,8 @@ import path from 'path';
 import lockfile from 'proper-lockfile';
 import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
-import { Readable } from 'stream';
+import { fork } from 'stream-fork';
+import { Readable, Writable } from 'stream';
 import { stringer as JSONLStringer } from 'stream-json/jsonl/Stringer';
 
 export interface IDiffProjectionEmitterConfig {
@@ -191,8 +192,16 @@ export class DiffWorkerRust {
         reportProgress.flush();
       });
 
-      const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-      interactionsStream.pipe(diffEngine.input);
+      let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+      let processStreams: Writable[] = [diffEngine.input];
+      if (process.env.OPTIC_DEVELOPMENT === 'yes') {
+        processStreams.push(
+          fs.createWriteStream(
+            path.join(diffOutputPaths.base, 'interactions.jsonl')
+          )
+        );
+      }
+      interactionsStream.pipe(fork(processStreams));
       diffEngine.output.pipe(diffsSink);
       diffEngine.error.pipe(process.stderr);
 

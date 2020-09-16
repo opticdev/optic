@@ -3079,6 +3079,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/stream-fork@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/stream-fork/-/stream-fork-1.0.0.tgz#b273447116430361e4a813fc2bb5fc0471fae897"
+  integrity sha512-ClvQtms9rRDwEFUf0YW9GpJHpffdpjO6VcQBN7lTUyYWCHbdzBLS+ZO1v/2q7XRLPchLGUo9wXn5pfgXxhKxdQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/stream-json@^1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@types/stream-json/-/stream-json-1.5.1.tgz#ae8d1133f9f920e18c6e94b233cb57d014a47b8d"
@@ -15480,6 +15487,11 @@ stream-each@^1.1.0:
   dependencies:
     end-of-stream "^1.1.0"
     stream-shift "^1.0.0"
+
+stream-fork@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/stream-fork/-/stream-fork-1.0.3.tgz#650442aab8ac5b5624a951decf51f51ff30d5c82"
+  integrity sha512-bxhizLhWS3qWncTagCzbwmgkAU9rjvBcJZMTG1kaqgk3bMvdydym4Rdd9HFtAAQx843FMTpnt3oN/p+tvaeCcg==
 
 stream-http@^2.7.2:
   version "2.8.3"
