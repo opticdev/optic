@@ -11,7 +11,7 @@ apt install -y sbt
 
 echo "Cloning Optic"
 cd /tmp
-git clone https://github.com/trulyronak/optic
+git clone https://github.com/opticdev/optic
 cd optic
 echo "Checking out specific branch"
 git checkout release
