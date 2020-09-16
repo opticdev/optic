@@ -25,7 +25,7 @@ export default function spawn({
     throw new Error('diff process should have stdout and stderr streams');
 
   diffProcess.stdout.pipe(output);
-  diffProcess.stdout.pipe(error);
+  diffProcess.stderr.pipe(error);
 
   return { input, output, error };
 }

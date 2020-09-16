@@ -83,6 +83,7 @@ Yet to be implemented:
 - Undocumented urls projection
 - Normalisation / grouping of diffs
 - All polymorphic types (optional, nullable, oneOf, etc.)
+- Endpoint level filtering
 
 ## Programmatic usage example
 
