@@ -15,8 +15,21 @@ export const ApiCreated = DescribeEvent<ApiCreatedProperties>(
   (props) => `An API called ${props.apiName} was created`
 );
 
+const UserLoggedInFromCLISchema = Joi.object({
+  userId: Joi.string().required(),
+});
+type UserLoggedInFromCLIProperties = Joi.extractType<
+  typeof UserLoggedInFromCLISchema
+>;
+export const UserLoggedInFromCLI = DescribeEvent<UserLoggedInFromCLIProperties>(
+  Events.UserLoggedInFromCLI,
+  UserLoggedInFromCLISchema,
+  (props) => `User ${props.userId} logged in`
+);
+
 const ApiInitializedInProjectSchema = Joi.object({
   apiName: Joi.string().required(),
+  source: Joi.string().required(),
   cwd: Joi.string().required(),
 });
 
