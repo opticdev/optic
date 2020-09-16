@@ -35,6 +35,7 @@
     "listr": "^0.14.3",
     "nice-try": "^2.0.1",
     "react-dev-utils": "^10.0.0",
+    "jsesc": "^3.0.1",
     "slugify": "^1.4.0",
     "strip-ansi": "^6.0.0",
     "tslib": "^1",
