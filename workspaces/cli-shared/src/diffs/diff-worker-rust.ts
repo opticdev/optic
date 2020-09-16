@@ -9,6 +9,7 @@ import { ScalaJSHelpers } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import lockfile from 'proper-lockfile';
+import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
 import { Readable } from 'stream';
 import { stringer as JSONLStringer } from 'stream-json/jsonl/Stringer';
@@ -64,6 +65,26 @@ export class DiffWorkerRust {
 
   async run() {
     console.log('running');
+
+    let hasMoreInteractions = true;
+    let diffedInteractionsCounter = BigInt(0);
+    let skippedInteractionsCounter = BigInt(0);
+
+    const reportProgress = _throttle(function notifyParent() {
+      const progress = {
+        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+        hasMoreInteractions,
+      };
+      if (process && process.send) {
+        process.send({
+          type: 'progress',
+          data: progress,
+        });
+      } else {
+        console.log(progress);
+      }
+    }, 1000);
 
     function notifyParentOfError(e: Error) {
       if (process && process.send) {
@@ -126,26 +147,7 @@ export class DiffWorkerRust {
         interactionFilter
       );
 
-      let hasMoreInteractions = true;
-      let diffedInteractionsCounter = BigInt(0);
-      let skippedInteractionsCounter = BigInt(0);
       const diffOutputPaths = getDiffOutputPaths(this.config);
-
-      function notifyParent() {
-        const progress = {
-          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-          hasMoreInteractions,
-        };
-        if (process && process.send) {
-          process.send({
-            type: 'progress',
-            data: progress,
-          });
-        } else {
-          console.log(progress);
-        }
-      }
 
       const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
         {
@@ -177,6 +179,8 @@ export class DiffWorkerRust {
             }
           );
 
+          reportProgress();
+
           return [[item.interaction.value, [interactionPointer]]];
         },
         JSONLStringer(),
@@ -184,7 +188,7 @@ export class DiffWorkerRust {
       const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
       diffsSink.once('finish', () => {
         hasMoreInteractions = false;
-        notifyParent();
+        reportProgress.flush();
       });
 
       const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
@@ -201,8 +205,9 @@ export class DiffWorkerRust {
         safeWriteJson(diffOutputPaths.undocumentedUrls, []),
       ]);
 
-      notifyParent(); // initial notification to indicate we've started without issue
+      reportProgress(); // initial notification to indicate we've started without issue
     } catch (e) {
+      reportProgress.cancel();
       notifyParentOfError(e);
     }
   }

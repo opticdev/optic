@@ -27,6 +27,7 @@
     "colors": "^1.4.0",
     "execa": "^4.0.3",
     "fs-extra": "^9.0.0",
+    "lodash.throttle": "^4.1.1",
     "mockttp": "^0.19.2",
     "oboe": "^2.1.5",
     "ora": "^4.0.4",
@@ -39,6 +40,7 @@
     "whatwg-mimetype": "^2.3.0"
   },
   "devDependencies": {
+    "@types/lodash.throttle": "^4.1.6",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-json": "^1.5.1",
     "@types/whatwg-mimetype": "^2.1.0"
