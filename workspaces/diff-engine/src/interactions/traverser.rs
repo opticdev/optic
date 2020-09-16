@@ -49,7 +49,7 @@ impl<'a> Traverser<'a> {
     };
     request_body_visitor.end(interaction, &path_context);
 
-    eprintln!("visiting response body");
+    // eprintln!("starting response body visiting");
     let response_body_visitor = visitors.response_body();
     response_body_visitor.begin();
     match resolved_path {
@@ -58,6 +58,7 @@ impl<'a> Traverser<'a> {
           .endpoint_queries
           .resolve_responses(interaction, path_id);
         for response in responses {
+          // eprintln!("visiting response body");
           response_body_visitor.visit(
             interaction,
             &ResponseBodyVisitorContext {
@@ -70,6 +71,7 @@ impl<'a> Traverser<'a> {
       None => {}
     };
     response_body_visitor.end(interaction, &path_context);
+    // eprintln!("ended response body visiting");
   }
 }
 

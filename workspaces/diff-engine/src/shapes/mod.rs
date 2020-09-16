@@ -21,6 +21,11 @@ pub fn diff(
   let shape_traverser = traverser::Traverser::new(&shapes_queries);
   let mut diff_visitors = visitors::diff::DiffVisitors::new();
 
+  eprintln!(
+    "shape-diff: diffing body with shape id {},  {:?}",
+    shape_id, json_body
+  );
+
   shape_traverser.traverse_root_shape(json_body, shape_id, &mut diff_visitors);
 
   diff_visitors.take_results().unwrap()

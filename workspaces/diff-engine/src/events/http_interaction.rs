@@ -1,5 +1,6 @@
 use super::EventLoadingError;
 use avro_rs;
+use base64;
 use cqrs_core::Event;
 use serde::Deserialize;
 use serde_json;
@@ -59,15 +60,49 @@ pub struct ArbitraryData {
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
   fn from(data: &ArbitraryData) -> Option<serde_json::value::Value> {
     if let Some(json_string) = &data.as_json_string {
-      Some(serde_json::from_str(json_string).expect("as_json_string of ArbitraryData should always be valid json"))
+      Some(
+        serde_json::from_str(json_string)
+          .expect("as_json_string of ArbitraryData should always be valid json"),
+      )
     } else if let Some(text) = &data.as_text {
       Some(serde_json::Value::from(text.clone()))
+    } else if let Some(shape_hash) = &data.shape_hash_v1_base64 {
+      let decoded_hash = base64::decode(shape_hash)
+        .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
+      let json =
+        serde_json::from_slice(&decoded_hash).or_else::<ShapeHashParsingError, _>(move |err| {
+          let shape_hash_as_text = String::from_utf8(decoded_hash)?;
+          Ok(serde_json::Value::from(shape_hash_as_text))
+        });
+      match json {
+        Ok(json) => Some(json),
+        Err(json) => {
+          eprintln!("could not decode shape hash into a json value");
+          None
+        }
+      }
     } else {
       None
     }
   }
 }
 
+pub enum ShapeHashParsingError {
+  Serde(serde_json::Error),
+  Utf8(std::string::FromUtf8Error),
+}
+
+impl From<std::string::FromUtf8Error> for ShapeHashParsingError {
+  fn from(err: std::string::FromUtf8Error) -> ShapeHashParsingError {
+    ShapeHashParsingError::Utf8(err)
+  }
+}
+
+impl From<serde_json::Error> for ShapeHashParsingError {
+  fn from(err: serde_json::Error) -> ShapeHashParsingError {
+    ShapeHashParsingError::Serde(err)
+  }
+}
 
 impl Event for HttpInteraction {
   fn event_type(&self) -> &'static str {

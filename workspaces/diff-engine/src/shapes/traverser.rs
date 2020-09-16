@@ -41,14 +41,18 @@ impl<'a> Traverser<'a> {
     trail_choices: &Vec<ChoiceOutput>,
     visitors: &mut impl JsonBodyVisitors<R>,
   ) {
+    // eprintln!("shape-traverser: traversing json value");
     if let None = json_body_option {
+      // eprintln!("shape-traverser: no json value available");
       return;
     }
 
+    // eprintln!("shape-traverser: json value found");
     let json_body = json_body_option.unwrap();
 
     match json_body {
       JsonValue::Array(_) => {
+        // eprintln!("shape-traverser: visiting array");
         let array_visitor = visitors.array();
         let matching_choices =
           array_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices);
@@ -106,10 +110,12 @@ impl<'a> Traverser<'a> {
           });
       }
       JsonValue::Object(_) => {
+        // eprintln!("shape-traverser: visiting object");
         let matching_choices = {
           let object_visitor = visitors.object();
           object_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices)
         };
+        // eprintln!("shape-traverser: visiting object keys");
         let object_key_visitor = visitors.object_key();
 
         let fields = match json_body {
@@ -156,14 +162,14 @@ impl<'a> Traverser<'a> {
           let field_choices = matching_choices
             .iter()
             .flat_map(|choice| {
-              // eprintln!("object choice {:?}", choice);
+              eprintln!("shape-traverser: object choice {:?}", choice);
               if let ShapeKind::ObjectKind = &choice.core_shape_kind {
                 // - find field node by key in object's field node edges
                 let field_id_option = self
                   .shape_queries
                   .resolve_field_id(&choice.shape_id, &field_key);
                 if let None = field_id_option {
-                  eprintln!("no field id could be resolved");
+                  eprintln!("shape-traverser: no field id could be resolved");
                   return vec![];
                 }
 
@@ -172,7 +178,7 @@ impl<'a> Traverser<'a> {
                   .shape_queries
                   .resolve_field_shape_node(&field_id)
                   .expect("field node should have an edge to a shape node describing its value");
-                // eprintln!("field_shape_id {:?}", field_shape_id);
+                eprintln!("shape-traverser: field_shape_id {:?}", field_shape_id);
 
                 let field_trail =
                   choice
@@ -202,6 +208,7 @@ impl<'a> Traverser<'a> {
       }
       primitive_value => {
         let primitive_visitor = visitors.primitive();
+        // eprintln!("shape-traverser: visiting primitive");
         primitive_visitor.visit(primitive_value, body_trail, trail_origin, trail_choices);
       }
     }

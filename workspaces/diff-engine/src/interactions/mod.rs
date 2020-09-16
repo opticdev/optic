@@ -5,9 +5,9 @@ pub use crate::events::http_interaction::HttpInteraction;
 pub use crate::projections::endpoint::EndpointProjection;
 pub use crate::projections::SpecProjection;
 pub use crate::queries::endpoint::EndpointQueries;
+use crate::shapes::diff as diff_shape;
 pub use result::InteractionDiffResult;
 use visitors::{InteractionVisitors, PathVisitor};
-use crate::shapes::diff as diff_shape;
 
 pub fn diff(
   spec_projection: &SpecProjection,
@@ -22,25 +22,43 @@ pub fn diff(
 
   let results = diff_visitors.take_results().unwrap();
 
-  results.into_iter().flat_map(move |result| {
-    match result {
+  results
+    .into_iter()
+    .flat_map(move |result| match result {
       InteractionDiffResult::MatchedRequestBodyContentType(result) => {
+        // eprintln!("shape diffing for matched a request body content type");
         let body = &http_interaction.request.body.value;
-        let shape_diff_results = diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
-        shape_diff_results.into_iter().map(|shape_diff| {
-          InteractionDiffResult::UnmatchedRequestBodyShape(result.clone().into_shape_diff(shape_diff))
-        }).collect()
-      },
+        let shape_diff_results =
+          diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
+        shape_diff_results
+          .into_iter()
+          .map(|shape_diff| {
+            InteractionDiffResult::UnmatchedRequestBodyShape(
+              result.clone().into_shape_diff(shape_diff),
+            )
+          })
+          .collect()
+      }
       InteractionDiffResult::MatchedResponseBodyContentType(result) => {
+        // eprintln!(
+        //   "interaction-diff: shape diffing for matched a response body content type: {:?}",
+        //   &http_interaction.response.body
+        // );
         let body = &http_interaction.response.body.value;
-        let shape_diff_results = diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
-        shape_diff_results.into_iter().map(|shape_diff| {
-          InteractionDiffResult::UnmatchedResponseBodyShape(result.clone().into_shape_diff(shape_diff))
-        }).collect()
-      },
-      _ => vec![result]
-    }
-  }).collect()
+        let shape_diff_results =
+          diff_shape(spec_projection.shape(), body.into(), &result.root_shape_id);
+        shape_diff_results
+          .into_iter()
+          .map(|shape_diff| {
+            InteractionDiffResult::UnmatchedResponseBodyShape(
+              result.clone().into_shape_diff(shape_diff),
+            )
+          })
+          .collect()
+      }
+      _ => vec![result],
+    })
+    .collect()
 }
 
 #[cfg(test)]

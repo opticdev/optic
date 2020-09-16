@@ -122,24 +122,24 @@ impl<'a> EndpointQueries<'a> {
     let matching_status_code = children
       .filter(move |i| {
         let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
-        eprintln!("method node {:?}", node);
+        // eprintln!("method node {:?}", node);
         match node {
           Node::HttpMethod(http_method) => interaction.request.method == *http_method,
           _ => false,
         }
       })
       .flat_map(move |i| {
-        eprintln!("method node id {:?}", i);
+        // eprintln!("method node id {:?}", i);
         let children = self
           .endpoint_projection
           .graph
           .neighbors_directed(i, petgraph::Direction::Incoming);
         let status_code_nodes = children.filter_map(move |i| {
-          eprintln!("method child node id {:?}", i);
+          // eprintln!("method child node id {:?}", i);
           let node = self.endpoint_projection.graph.node_weight(i).unwrap();
           match node {
             Node::HttpStatusCode(http_status_code) => {
-              eprintln!("status code {:?}", http_status_code);
+              // eprintln!("status code {:?}", http_status_code);
               if interaction.response.status_code == *http_status_code {
                 Some(i)
               } else {
@@ -157,9 +157,9 @@ impl<'a> EndpointQueries<'a> {
           .graph
           .neighbors_directed(i, petgraph::Direction::Incoming);
         let response_nodes = children.filter_map(move |i| {
-          eprintln!("status_code child node id {:?}", i);
+          // eprintln!("status_code child node id {:?}", i);
           let node = self.endpoint_projection.graph.node_weight(i).unwrap();
-          eprintln!("status_code child node {:?}", node);
+          // eprintln!("status_code child node {:?}", node);
           match node {
             Node::Response(response_id, response_descriptor) => {
               Some((response_id, response_descriptor))
