@@ -43,6 +43,7 @@ jobs:
   # Creates debian package for users to install, hosted on s3
   release-deb:
     runs-on: ubuntu-latest
+    needs: release-npm
     steps:
       - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
         with:
@@ -60,6 +61,7 @@ jobs:
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
   trigger-brew-release:
     runs-on: ubuntu-latest
+    needs: release-npm
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@56cbd49233c4b3cc03201ca29d2a7cf1271b90e1 # https://github.com/peter-evans/repository-dispatch/commits/v1.1.0
@@ -72,7 +74,7 @@ jobs:
   # Tells slack a release has happened
   notify-slack:
     runs-on: ubuntu-latest
-    # needs: release-npm
+    needs: release-npm
     name: Message Slack that Release has happened
     steps:
       - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
