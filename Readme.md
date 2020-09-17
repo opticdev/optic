@@ -16,7 +16,7 @@
 <p align="center">
     <a href="#how-it-works">How it Works</a> •
   <a href="#key-features">Key Features</a> •
-  <a href="#documentation">Documentation</a> •
+  <a href="#documentation-httpsuseopticcomdocs">Documentation</a> •
   <a href="#license">License</a>
 </p>
 
