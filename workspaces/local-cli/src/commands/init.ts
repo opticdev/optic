@@ -1,4 +1,5 @@
 import { Command, flags } from '@oclif/command';
+// @ts-ignore
 import { createFileTree } from '@useoptic/cli-config';
 import colors from 'colors';
 import cli from 'cli-ux';
@@ -6,6 +7,7 @@ import fs from 'fs-extra';
 //@ts-ignore
 import jsesc from 'jsesc';
 import path from 'path';
+// @ts-ignore
 import { fromOptic } from '@useoptic/cli-shared';
 import { opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import {
@@ -85,8 +87,8 @@ ignoreRequests:
         cwd: cwd,
         source:
           Object.entries(flags).length === 0
-            ? 'on-boarding-flow'
-            : 'documentation',
+            ? 'documentation'
+            : 'on-boarding-flow',
         apiName: name,
       })
     );
@@ -117,5 +119,5 @@ function escapeIt(value: string): string {
   if (escaped !== value) {
     return `"${escaped}"`;
   }
-  return value;
+  return `"${value}"`;
 }

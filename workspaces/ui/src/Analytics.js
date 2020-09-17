@@ -50,7 +50,6 @@ analyticsEvents.listen((event) => {
 });
 
 export function trackUserEvent(event) {
-  console.log('hello world');
   analyticsEvents.emit(event);
 }
 
