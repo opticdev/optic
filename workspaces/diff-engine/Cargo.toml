@@ -15,6 +15,7 @@ cqrs-core = "0.2.2"
 futures = "0.3.5"
 num_cpus = "1.13.0"
 petgraph = "0.5.1"
+protobuf = "2.17.0"
 serde = { version = "1.0.106", features = ["derive"] }
 serde_json = "1.0.57"
 # all of tokio for now, until we figure out what we need exactly
@@ -24,3 +25,6 @@ tokio-util = { version = "0.3.1", features = ["codec"] }
 [dev-dependencies]
 insta = "0.16.1"
 petgraph-evcxr = "*"
+
+[build-dependencies]
+protobuf-codegen-pure = "2.17.0"
