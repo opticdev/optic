@@ -12,6 +12,9 @@ module.exports = function (path, stat) {
   if (path.length === workspaceRoot.length) {
     return true;
   }
+  if (path.endsWith('.rs')) {
+    return false;
+  }
   const subPath = path.substring(cwd.length);
   if (
     [
