@@ -16,6 +16,9 @@ inputs:
   PREFIX_NAME:
     description: "The prefix for the package"
     required: true
+  NPM_PACKAGE_NAME:
+    description: "The name of the npm package to deploy into debian"
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'

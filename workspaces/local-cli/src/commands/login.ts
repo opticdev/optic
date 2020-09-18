@@ -4,12 +4,16 @@ import {
   loginBaseUrl,
   tokenReceivedEvent,
   setCredentials,
+  getUserFromCredentials,
+  getCredentials,
 } from '../shared/authentication-server';
 import qs from 'querystring';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { cli } from 'cli-ux';
 import { Config } from '../config';
+import { UserLoggedInFromCLI } from '@useoptic/analytics/lib/events/onboarding';
+import { trackUserEvent } from '../shared/analytics';
 
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';
@@ -46,7 +50,13 @@ export default class Login extends Command {
       token = await tokenReceived;
       clearTimeout(fallbackTimeout);
       await setCredentials({ token });
+      const credentials = await getCredentials();
+      const decodedToken = await getUserFromCredentials(credentials!);
       cli.action.stop('Received Credentials');
+
+      await trackUserEvent(
+        UserLoggedInFromCLI.withProps({ userId: decodedToken.sub })
+      );
 
       await server.stop();
       await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);

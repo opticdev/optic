@@ -1,9 +1,13 @@
 import { Command, flags } from '@oclif/command';
+// @ts-ignore
 import { createFileTree } from '@useoptic/cli-config';
 import colors from 'colors';
 import cli from 'cli-ux';
 import fs from 'fs-extra';
+//@ts-ignore
+import jsesc from 'jsesc';
 import path from 'path';
+// @ts-ignore
 import { fromOptic } from '@useoptic/cli-shared';
 import { opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import {
@@ -22,7 +26,6 @@ export default class Init extends Command {
 
   async run() {
     const cwd = process.cwd();
-
     const { flags } = this.parse(Init);
 
     if (
@@ -57,15 +60,9 @@ export default class Init extends Command {
     // await trackAndSpawn('New API Created', { name });
 
     const config = `
-name: ${name}
+name: ${escapeIt(name)}
 tasks:
-  # The default task, invoke using \`api run start\`
-  # Learn how to set up and use Optic at https://app.useoptic.com
-  start:
-    command: ${
-      flags.command || 'echo "Setup A Valid Command to Start your API!"'
-    }
-    inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
+${buildInitialTask(flags)}
 ignoreRequests:
 # For more information on configuration, visit https://www.useoptic.com/docs/faqs-and-troubleshooting/captures
 - OPTIONS (.*)`.trimLeft();
@@ -77,7 +74,7 @@ ignoreRequests:
     cli.log(
       fromOptic(`Added Optic configuration to ${colors.bold(configPath)}`)
     );
-    if (!flags.command)
+    if (Object.entries(flags).length === 0)
       cli.log(
         fromOptic(
           `Open the ${colors.bold(
@@ -85,11 +82,13 @@ ignoreRequests:
           )} to finish adding Optic to your API`
         )
       );
-    // process.exit();
-
     await trackUserEvent(
       ApiInitializedInProject.withProps({
         cwd: cwd,
+        source:
+          Object.entries(flags).length === 0
+            ? 'documentation'
+            : 'on-boarding-flow',
         apiName: name,
       })
     );
@@ -98,21 +97,27 @@ ignoreRequests:
 
 function buildInitialTask(flags: any) {
   //default config and valid for start injected
-  let commandConfig = `
-  start:
-     command: ${
+  let commandConfig = `  start:
+     command: ${escapeIt(
        flags.command || 'echo "Setup A Valid Command to Start your API!"'
-     }
+     )}
      inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
 `.trimRight();
 
   if (flags.inboundUrl && flags.targetUrl) {
-    commandConfig = `
-  start-proxy:
+    commandConfig = `  start-proxy:
      inboundUrl: ${flags.inboundUrl}
      targetUrl: ${flags.targetUrl}
 `.trimRight();
   }
 
   return commandConfig;
+}
+
+function escapeIt(value: string): string {
+  const escaped = jsesc(value, { quotes: 'double' });
+  if (escaped !== value) {
+    return `"${escaped}"`;
+  }
+  return `"${value}"`;
 }

@@ -53,8 +53,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET_NAME: optic-packages
           PACKAGE_NAME: api
-          NPM_PACKAGE_NAME: "@useoptic/cli"
           PREFIX_NAME: deb
+          NPM_PACKAGE_NAME: "@useoptic/cli"
   
   # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope

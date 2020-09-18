@@ -16,7 +16,7 @@
 <p align="center">
     <a href="#how-it-works">How it Works</a> •
   <a href="#key-features">Key Features</a> •
-  <a href="#documentation">Documentation</a> •
+  <a href="#documentation-httpsuseopticcomdocs">Documentation</a> •
   <a href="#license">License</a>
 </p>
 
@@ -67,7 +67,7 @@ Our detailed [setup instructions](https://app.useoptic.com/) will get you starte
 
 ### Use Optic to Manage your API Specification 
 
-Optic organizes the API traffic it observes to allow you to manage expected behavior. It reports the shape of your payloads, or the types of data observed, for documentation. If the shapes change from what has been observed previously, Optic will repot those changes. This helps identify that a change in behavior has been implemented properly, or catches unexpected behaviors before they get out into the wild.
+Optic organizes the API traffic it observes to allow you to manage expected behavior. It reports the shape of your payloads, or the types of data observed, for documentation. If the shapes change from what has been observed previously, Optic will report those changes. This helps identify that a change in behavior has been implemented properly, or catches unexpected behaviors before they get out into the wild.
 
 > Similar to `git diff`, `git add` and `git commit`
 
