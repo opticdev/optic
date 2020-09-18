@@ -11,6 +11,7 @@ alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
 optic_workspace_clean() {
   (
     set -o errexit
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:clean
   )
@@ -18,6 +19,7 @@ optic_workspace_clean() {
 optic_workspace_build() {
   (
     set -o errexit
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:build
   )
@@ -32,6 +34,7 @@ optic_watch() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     optic_workspace_clean
     yarn run watch --filter=workspace-scripts/watch-filter.js "source sourceme.sh && optic_workspace_build_with_notification"
   )

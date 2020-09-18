@@ -3,5 +3,10 @@
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src"
-  }
+  },
+  "typeRoots": [
+    "./typings",
+    "./node_modules/@types",
+    "../../node_modules/@types"
+  ]
 }
