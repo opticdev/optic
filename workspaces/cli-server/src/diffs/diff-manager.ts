@@ -16,6 +16,12 @@ export class DiffManager {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
 
+  private lastProgress: {
+    diffedInteractionsCounter: string;
+    skippedInteractionsCounter: string;
+    hasMoreInteractions: string;
+  } | null = null;
+
   async start(config: IDiffManagerConfig) {
     const outputPaths = getDiffOutputPaths(config);
     const scriptConfig: IDiffProjectionEmitterConfig = {
@@ -29,17 +35,26 @@ export class DiffManager {
     };
     console.log(JSON.stringify(scriptConfig));
     const child = runManagedScriptByName(
-      'emit-diff-projections',
+      process.env.OPTIC_RUST_DIFF_ENGINE === 'true'
+        ? 'emit-diff-projections-rust'
+        : 'emit-diff-projections',
       JSON.stringify(scriptConfig)
     );
     child.on('message', (x: any) => {
-      console.log(x);
+      if (x.type && x.type === 'progress') {
+        this.lastProgress = { ...x.data };
+      }
       this.events.emit(x.type, x.data);
     });
     child.on('exit', function () {
       console.log(arguments);
     });
     this.child = child;
+  }
+
+  latestProgress() {
+    const lastProgress = this.lastProgress;
+    return lastProgress ? { ...lastProgress } : null;
   }
 
   async stop() {

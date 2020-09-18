@@ -1,0 +1,5 @@
+---
+source: tests/interaction_diff.rs
+expression: results
+---
+[]
