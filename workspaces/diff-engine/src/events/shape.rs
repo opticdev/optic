@@ -1,5 +1,7 @@
 use super::EventContext;
-use crate::state::shape::{FieldShapeDescriptor, ShapeParametersDescriptor, ParameterShapeDescriptor};
+use crate::state::shape::{
+  FieldShapeDescriptor, ParameterShapeDescriptor, ShapeParametersDescriptor,
+};
 use cqrs_core::Event;
 use serde::Deserialize;
 
@@ -37,7 +39,7 @@ pub struct ShapeAdded {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct BaseShapeSet {
-pub   shape_id: ShapeId,
+  pub shape_id: ShapeId,
   pub base_shape_id: ShapeId,
   pub event_context: Option<EventContext>,
 }

@@ -186,14 +186,17 @@ impl EndpointProjection {
     request_id: RequestId,
     http_content_type: HttpContentType,
     shape_id: ShapeId,
-  )  {
-    let request_node_index = self.node_id_to_index.get(&request_id).expect("expected request_id to have a corresponding node");
+  ) {
+    let request_node_index = self
+      .node_id_to_index
+      .get(&request_id)
+      .expect("expected request_id to have a corresponding node");
     let request_node = self.graph.node_weight_mut(*request_node_index).unwrap();
     match request_node {
       Node::Request(id, body_descriptor) => {
         body_descriptor.body = Some(BodyDescriptor {
           http_content_type,
-          root_shape_id: shape_id
+          root_shape_id: shape_id,
         })
       }
       _ => {}
@@ -303,9 +306,10 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
           e.body_descriptor.shape_id,
         );
       }
-      _ => {
-        eprintln!("Ignoring applying event of type '{}' for EndpointProjection", self.event_type())
-      }
+      _ => eprintln!(
+        "Ignoring applying event of type '{}' for EndpointProjection",
+        self.event_type()
+      ),
     }
   }
 }

@@ -12,8 +12,8 @@ pub mod rfc;
 pub mod shape;
 
 pub use endpoint::EndpointEvent;
-pub use shape::ShapeEvent;
 pub use http_interaction::HttpInteraction;
+pub use shape::ShapeEvent;
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]

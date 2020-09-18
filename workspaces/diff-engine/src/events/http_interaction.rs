@@ -13,159 +13,158 @@ use std::iter::FromIterator;
 
 #[derive(Deserialize, Debug)]
 pub struct HttpInteraction {
-    pub uuid: String,
-    pub request: Request,
-    pub response: Response,
-    pub tags: Vec<HttpInteractionTag>,
+  pub uuid: String,
+  pub request: Request,
+  pub response: Response,
+  pub tags: Vec<HttpInteractionTag>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct HttpInteractionTag {
-    name: String,
-    value: String,
+  name: String,
+  value: String,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct Request {
-    pub host: String,
-    pub method: String,
-    pub path: String,
-    // #[serde(skip)]
-    pub query: ArbitraryData,
-    pub body: Body,
+  pub host: String,
+  pub method: String,
+  pub path: String,
+  // #[serde(skip)]
+  pub query: ArbitraryData,
+  pub body: Body,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
-    pub status_code: u16,
-    // #[serde(skip)]
-    pub headers: ArbitraryData,
-    pub body: Body,
+  pub status_code: u16,
+  // #[serde(skip)]
+  pub headers: ArbitraryData,
+  pub body: Body,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Body {
-    pub content_type: Option<String>,
-    // #[serde(skip)]
-    pub value: ArbitraryData,
+  pub content_type: Option<String>,
+  // #[serde(skip)]
+  pub value: ArbitraryData,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
-    shape_hash_v1_base64: Option<String>,
-    as_json_string: Option<String>,
-    as_text: Option<String>,
+  shape_hash_v1_base64: Option<String>,
+  as_json_string: Option<String>,
+  as_text: Option<String>,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
-    fn from(data: &ArbitraryData) -> Option<serde_json::value::Value> {
-        if let Some(json_string) = &data.as_json_string {
-            Some(
-                serde_json::from_str(json_string)
-                    .expect("as_json_string of ArbitraryData should always be valid json"),
-            )
-        } else if let Some(text) = &data.as_text {
-            Some(serde_json::Value::from(text.clone()))
-        } else if let Some(shape_hash) = &data.shape_hash_v1_base64 {
-            let decoded_hash = base64::decode(shape_hash)
-                .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
-            let shape_descriptor: shapehash::ShapeDescriptor =
-                protobuf::parse_from_bytes(&decoded_hash)
-                    .expect("shape hash should be validly encoded shapehash proto");
-            Some(serde_json::Value::from(shape_descriptor))
-        } else {
-            None
-        }
+  fn from(data: &ArbitraryData) -> Option<serde_json::value::Value> {
+    if let Some(json_string) = &data.as_json_string {
+      Some(
+        serde_json::from_str(json_string)
+          .expect("as_json_string of ArbitraryData should always be valid json"),
+      )
+    } else if let Some(text) = &data.as_text {
+      Some(serde_json::Value::from(text.clone()))
+    } else if let Some(shape_hash) = &data.shape_hash_v1_base64 {
+      let decoded_hash = base64::decode(shape_hash)
+        .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
+      let shape_descriptor: shapehash::ShapeDescriptor = protobuf::parse_from_bytes(&decoded_hash)
+        .expect("shape hash should be validly encoded shapehash proto");
+      Some(serde_json::Value::from(shape_descriptor))
+    } else {
+      None
     }
+  }
 }
 
 impl From<shapehash::ShapeDescriptor> for serde_json::value::Value {
-    fn from(mut shape_descriptor: shapehash::ShapeDescriptor) -> serde_json::value::Value {
-        use serde_json::map::Map;
-        use serde_json::value::Value;
+  fn from(mut shape_descriptor: shapehash::ShapeDescriptor) -> serde_json::value::Value {
+    use serde_json::map::Map;
+    use serde_json::value::Value;
 
-        match shape_descriptor.field_type {
-            shapehash::ShapeDescriptor_PrimitiveType::OBJECT => {
-                let map = Map::from_iter(shape_descriptor.take_fields().into_iter().map(
-                    |field_descriptor| {
-                        (
-                            field_descriptor.key.clone(),
-                            Value::from(field_descriptor.hash.unwrap()),
-                        )
-                    },
-                ));
-                Value::from(map)
-            }
-            shapehash::ShapeDescriptor_PrimitiveType::ARRAY => Value::from_iter(
-                shape_descriptor
-                    .take_items()
-                    .into_iter()
-                    .map(|descriptor| Value::from(descriptor)),
-            ),
-            shapehash::ShapeDescriptor_PrimitiveType::BOOLEAN => Value::from(true),
-            shapehash::ShapeDescriptor_PrimitiveType::NUMBER => Value::from(1),
-            shapehash::ShapeDescriptor_PrimitiveType::STRING => Value::from("string"),
-            shapehash::ShapeDescriptor_PrimitiveType::NULL => Value::Null,
-        }
+    match shape_descriptor.field_type {
+      shapehash::ShapeDescriptor_PrimitiveType::OBJECT => {
+        let map = Map::from_iter(shape_descriptor.take_fields().into_iter().map(
+          |field_descriptor| {
+            (
+              field_descriptor.key.clone(),
+              Value::from(field_descriptor.hash.unwrap()),
+            )
+          },
+        ));
+        Value::from(map)
+      }
+      shapehash::ShapeDescriptor_PrimitiveType::ARRAY => Value::from_iter(
+        shape_descriptor
+          .take_items()
+          .into_iter()
+          .map(|descriptor| Value::from(descriptor)),
+      ),
+      shapehash::ShapeDescriptor_PrimitiveType::BOOLEAN => Value::from(true),
+      shapehash::ShapeDescriptor_PrimitiveType::NUMBER => Value::from(1),
+      shapehash::ShapeDescriptor_PrimitiveType::STRING => Value::from("string"),
+      shapehash::ShapeDescriptor_PrimitiveType::NULL => Value::Null,
     }
+  }
 }
 
 pub enum ShapeHashParsingError {
-    Serde(serde_json::Error),
-    Utf8(std::string::FromUtf8Error),
+  Serde(serde_json::Error),
+  Utf8(std::string::FromUtf8Error),
 }
 
 impl From<std::string::FromUtf8Error> for ShapeHashParsingError {
-    fn from(err: std::string::FromUtf8Error) -> ShapeHashParsingError {
-        ShapeHashParsingError::Utf8(err)
-    }
+  fn from(err: std::string::FromUtf8Error) -> ShapeHashParsingError {
+    ShapeHashParsingError::Utf8(err)
+  }
 }
 
 impl From<serde_json::Error> for ShapeHashParsingError {
-    fn from(err: serde_json::Error) -> ShapeHashParsingError {
-        ShapeHashParsingError::Serde(err)
-    }
+  fn from(err: serde_json::Error) -> ShapeHashParsingError {
+    ShapeHashParsingError::Serde(err)
+  }
 }
 
 impl Event for HttpInteraction {
-    fn event_type(&self) -> &'static str {
-        "HttpInteraction"
-    }
+  fn event_type(&self) -> &'static str {
+    "HttpInteraction"
+  }
 }
 
 impl HttpInteraction {
-    pub fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(json)
-    }
+  pub fn from_json_str(json: &str) -> Result<Self, serde_json::Error> {
+    serde_json::from_str(json)
+  }
 
-    pub fn from_avro() -> HttpInteractionAvroDeserializer {
-        let deserializer = HttpInteractionAvroDeserializer::new(&INTERACTION_AVRO_SCHEMA)
-            .expect("interaction avro schema should be valid");
+  pub fn from_avro() -> HttpInteractionAvroDeserializer {
+    let deserializer = HttpInteractionAvroDeserializer::new(&INTERACTION_AVRO_SCHEMA)
+      .expect("interaction avro schema should be valid");
 
-        deserializer
-    }
+    deserializer
+  }
 }
 
 pub struct HttpInteractionAvroDeserializer {
-    schema: avro_rs::Schema,
+  schema: avro_rs::Schema,
 }
 
 impl HttpInteractionAvroDeserializer {
-    fn new(schema_str: &str) -> Result<Self, avro_rs::Error> {
-        let schema = avro_rs::Schema::parse_str(schema_str)?;
-        Ok(Self { schema })
-    }
+  fn new(schema_str: &str) -> Result<Self, avro_rs::Error> {
+    let schema = avro_rs::Schema::parse_str(schema_str)?;
+    Ok(Self { schema })
+  }
 
-    pub fn reader<'a, R>(&'a mut self, source: R) -> Result<avro_rs::Reader<'a, R>, avro_rs::Error>
-    where
-        R: io::Read,
-        R: 'a,
-    {
-        avro_rs::Reader::with_schema(&self.schema, source)
-    }
+  pub fn reader<'a, R>(&'a mut self, source: R) -> Result<avro_rs::Reader<'a, R>, avro_rs::Error>
+  where
+    R: io::Read,
+    R: 'a,
+  {
+    avro_rs::Reader::with_schema(&self.schema, source)
+  }
 }
 
 const INTERACTION_AVRO_SCHEMA: &str = r#"{
@@ -384,10 +383,10 @@ const INTERACTION_AVRO_SCHEMA: &str = r#"{
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    #[test]
-    fn can_deserialize_interaction_from_json_str() {
-        let json = r#"{
+  use super::*;
+  #[test]
+  fn can_deserialize_interaction_from_json_str() {
+    let json = r#"{
       "uuid": "3",
       "request": {
         "host": "localhost",
@@ -419,7 +418,7 @@ mod test {
       "tags": []
     }"#;
 
-        let interaction = HttpInteraction::from_json_str(&json);
-        interaction.expect("Valid JSON should be able to deserialize into an HttpInteraction");
-    }
+    let interaction = HttpInteraction::from_json_str(&json);
+    interaction.expect("Valid JSON should be able to deserialize into an HttpInteraction");
+  }
 }

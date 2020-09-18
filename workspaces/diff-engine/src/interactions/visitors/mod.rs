@@ -1,8 +1,8 @@
 pub mod diff;
 
 use super::HttpInteraction;
-use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
+use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;
@@ -12,15 +12,19 @@ pub trait InteractionVisitors<R> {
   fn path(&mut self) -> &mut Self::Path;
 
   fn request_body(&mut self) -> &mut Self::RequestBody;
-  
+
   fn response_body(&mut self) -> &mut Self::ResponseBody;
 
   fn take_results(&mut self) -> Option<Vec<R>> {
     let flattened = vec![
-      self.path().take_results(), 
+      self.path().take_results(),
       self.request_body().take_results(),
       self.response_body().take_results(),
-      ].into_iter().filter_map(|x| x).flatten().collect();
+    ]
+    .into_iter()
+    .filter_map(|x| x)
+    .flatten()
+    .collect();
     Some(flattened)
   }
 }

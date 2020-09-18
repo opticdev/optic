@@ -235,6 +235,9 @@ fn can_yield_unmatched_shape_for_missing_field() {
   let shape_id = String::from("object_1");
   let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
 
-  assert_debug_snapshot!("can_yield_unmatched_shape_for_missing_field__results", results);
+  assert_debug_snapshot!(
+    "can_yield_unmatched_shape_for_missing_field__results",
+    results
+  );
   assert_ne!(results.len(), 0);
 }

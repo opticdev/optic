@@ -164,10 +164,10 @@ impl ShapeKind {
         shape_parameter_id: "$listItem",
       }),
       Self::NullableKind => Some(ShapeKindParameterDescriptor {
-        shape_parameter_id: "$nullableInner"
+        shape_parameter_id: "$nullableInner",
       }),
       Self::OptionalKind => Some(ShapeKindParameterDescriptor {
-        shape_parameter_id: "$optionalInner"
+        shape_parameter_id: "$optionalInner",
       }),
       _ => None,
     }

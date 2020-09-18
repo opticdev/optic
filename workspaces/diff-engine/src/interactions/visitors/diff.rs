@@ -3,11 +3,12 @@ use super::{
   RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext, VisitorResults,
 };
 use crate::interactions::result::{
-  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType, SpecRoot, UnmatchedRequestBodyContentType,
-  UnmatchedRequestUrl, UnmatchedResponseBodyContentType,
+  InteractionDiffResult, MatchedRequestBodyContentType, MatchedResponseBodyContentType, SpecRoot,
+  UnmatchedRequestBodyContentType, UnmatchedRequestUrl, UnmatchedResponseBodyContentType,
 };
 use crate::interactions::result::{
-  InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody, SpecResponseBody
+  InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody,
+  SpecResponseBody,
 };
 use crate::interactions::HttpInteraction;
 use crate::state::endpoint::{RequestId, ResponseId};
@@ -145,7 +146,11 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
             let interaction_trail = InteractionTrail::new(interaction_trail_components);
 
             self.push(InteractionDiffResult::MatchedRequestBodyContentType(
-              MatchedRequestBodyContentType::new(interaction_trail, requests_trail, body.root_shape_id.clone()),
+              MatchedRequestBodyContentType::new(
+                interaction_trail,
+                requests_trail,
+                body.root_shape_id.clone(),
+              ),
             ));
           } else {
             self
@@ -244,10 +249,9 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
               .visited_with_matched_content_types
               .insert(response_id.clone());
 
-
             let interaction_trail_components = vec![InteractionTrailPathComponent::ResponseBody {
               content_type: String::from(content_type),
-              status_code: interaction.response.status_code
+              status_code: interaction.response.status_code,
             }];
             let requests_trail = RequestSpecTrail::SpecResponseBody(SpecResponseBody {
               response_id: String::from(response_id),
@@ -255,7 +259,11 @@ impl ResponseBodyVisitor<InteractionDiffResult> for DiffResponseBodyVisitor {
             let interaction_trail = InteractionTrail::new(interaction_trail_components);
 
             self.push(InteractionDiffResult::MatchedResponseBodyContentType(
-              MatchedResponseBodyContentType::new(interaction_trail, requests_trail, body.root_shape_id.clone()),
+              MatchedResponseBodyContentType::new(
+                interaction_trail,
+                requests_trail,
+                body.root_shape_id.clone(),
+              ),
             ));
           } else {
             self

@@ -57,16 +57,24 @@ pub struct MatchedRequestBodyContentType {
 }
 
 impl MatchedRequestBodyContentType {
-  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail, root_shape_id: ShapeId) -> Self {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    root_shape_id: ShapeId,
+  ) -> Self {
     return MatchedRequestBodyContentType {
       interaction_trail,
       requests_trail,
-      root_shape_id
+      root_shape_id,
     };
   }
 
   pub fn into_shape_diff(self, shape_diff_result: ShapeDiffResult) -> UnmatchedRequestBodyShape {
-    UnmatchedRequestBodyShape::new(self.interaction_trail, self.requests_trail, shape_diff_result)
+    UnmatchedRequestBodyShape::new(
+      self.interaction_trail,
+      self.requests_trail,
+      shape_diff_result,
+    )
   }
 }
 
@@ -94,15 +102,23 @@ pub struct MatchedResponseBodyContentType {
 }
 
 impl MatchedResponseBodyContentType {
-  pub fn new(interaction_trail: InteractionTrail, requests_trail: RequestSpecTrail, root_shape_id: ShapeId) -> Self {
+  pub fn new(
+    interaction_trail: InteractionTrail,
+    requests_trail: RequestSpecTrail,
+    root_shape_id: ShapeId,
+  ) -> Self {
     return MatchedResponseBodyContentType {
       interaction_trail,
       requests_trail,
-      root_shape_id
+      root_shape_id,
     };
   }
   pub fn into_shape_diff(self, shape_diff_result: ShapeDiffResult) -> UnmatchedResponseBodyShape {
-    UnmatchedResponseBodyShape::new(self.interaction_trail, self.requests_trail, shape_diff_result)
+    UnmatchedResponseBodyShape::new(
+      self.interaction_trail,
+      self.requests_trail,
+      shape_diff_result,
+    )
   }
 }
 #[derive(Debug, Serialize)]
