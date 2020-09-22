@@ -134,7 +134,11 @@ function RowValue({ type, value, compliant, changeDescription }) {
   if (type === 'null') {
     return (
       <span
-        className={classNames(generalClasses.symbols, classes.symbolContent)}
+        className={classNames(
+          generalClasses.symbols,
+          classes.symbolContent,
+          'fs-exclude'
+        )}
       >
         {'null'}
       </span>
@@ -199,15 +203,19 @@ function RowValue({ type, value, compliant, changeDescription }) {
   }
 
   if (type === 'string') {
-    return <span className={classes.stringContent}>"{value}"</span>;
+    return (
+      <span className={classNames(classes.stringContent, 'fs-exclude')}>
+        "{value}"
+      </span>
+    );
   }
 
   if (type === 'boolean') {
-    return <span>{value ? 'true' : 'false'}</span>;
+    return <span className="fs-exclude">{value ? 'true' : 'false'}</span>;
   }
 
   if (type === 'number') {
-    return <span>{value}</span>;
+    return <span className="fs-exclude">{value}</span>;
   }
 
   if (type === 'undefined') {
