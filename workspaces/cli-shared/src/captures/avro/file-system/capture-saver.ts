@@ -22,16 +22,19 @@ export class CaptureSaver implements ICaptureSaver {
     maxTime: 500,
   });
 
-  private tracking: Bottleneck = new Bottleneck({
-    maxConcurrent: 10,
-    minTime: 1,
-  });
-
   private batchCount: number = 0;
-  private interactionsReceivedCount: number = 0;
-  private interactionsSavedCount: number = 0;
 
-  constructor(private config: IFileSystemCaptureSaverConfig) {}
+  constructor(private config: IFileSystemCaptureSaverConfig) {
+    const sessionDirectory = path.join(
+      this.config.captureBaseDirectory,
+      this.config.captureId
+    );
+    const entries = fs.readdirSync(sessionDirectory);
+
+    const captureFiles = entries.filter((x) => x.endsWith(captureFileSuffix));
+    //provide for continuation
+    this.batchCount = captureFiles.length || 0;
+  }
 
   async init() {
     const { captureId } = this.config;
@@ -44,9 +47,6 @@ export class CaptureSaver implements ICaptureSaver {
     const agentGroupId = '';
     this.batcher.on('batch', async (items: IHttpInteraction[]) => {
       const batchId = this.batchCount.toString();
-      developerDebugLogger(
-        `handling batch id=${batchId} (${items.length} interactions)`
-      );
       this.batchCount++;
       const groupingIdentifiers: IGroupingIdentifiers = {
         captureId,
@@ -55,18 +55,12 @@ export class CaptureSaver implements ICaptureSaver {
         batchId,
       };
       try {
-        const promise: Promise<void> = this.onBatch(
+        await this.onBatch(
           groupingIdentifiers,
           batchId,
           items,
           outputDirectory
         );
-
-        await this.tracking.schedule(() => promise);
-        developerDebugLogger(
-          `handled batch id=${batchId} (${items.length} interactions)`
-        );
-        this.interactionsSavedCount += items.length;
       } catch (e) {
         console.error(e);
       }
@@ -109,39 +103,11 @@ export class CaptureSaver implements ICaptureSaver {
   }
 
   async save(sample: IHttpInteraction) {
-    this.interactionsReceivedCount++;
     // don't await flush, just enqueue
     this.batcher.add(sample);
   }
 
   async cleanup() {
     developerDebugLogger('stopping capture saver');
-
-    await new Promise((resolve, reject) => {
-      const poll = () => {
-        const interactionsReceivedCount = this.interactionsReceivedCount;
-        const interactionsSavedCount = this.interactionsSavedCount;
-        developerDebugLogger(
-          'waiting until interactionsReceivedCount matches interactionsSavedCount...',
-          interactionsReceivedCount,
-          interactionsSavedCount
-        );
-        if (interactionsSavedCount === interactionsReceivedCount) {
-          developerDebugLogger(
-            'done waiting until interactionsReceivedCount matches interactionsSavedCount',
-            interactionsReceivedCount,
-            interactionsSavedCount
-          );
-          resolve();
-        } else {
-          setTimeout(poll, 50);
-        }
-      };
-      poll();
-    });
-
-    await this.tracking.stop({ dropWaitingJobs: false });
-
-    developerDebugLogger('stopped capture saver');
   }
 }
