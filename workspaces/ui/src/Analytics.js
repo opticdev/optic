@@ -44,9 +44,11 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
 
 //forward analytics to central CLI server bus
 analyticsEvents.listen((event) => {
-  try {
-    client.postTrackingEvents([event]);
-  } catch (e) {}
+  if (isAnalyticsEnabled) {
+    try {
+      client.postTrackingEvents([event]);
+    } catch (e) {}
+  }
 });
 
 export function trackUserEvent(event) {
