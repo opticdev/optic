@@ -1,0 +1,5 @@
+target
+build
+node_modules
+src/protos/generated/*
+!src/protos/generated/mod.rs

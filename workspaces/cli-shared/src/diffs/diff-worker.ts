@@ -35,6 +35,7 @@ export function getDiffOutputPaths(values: {
   const { captureBaseDirectory, captureId, diffId } = values;
   const base = path.join(captureBaseDirectory, captureId, 'diffs', diffId);
   const diffs = path.join(base, 'diffs.json');
+  const diffsStream = path.join(base, 'diffs.jsonl');
   const stats = path.join(base, 'stats.json');
   const undocumentedUrls = path.join(base, 'undocumentedUrls.json');
   const events = path.join(base, 'events.json');
@@ -45,6 +46,7 @@ export function getDiffOutputPaths(values: {
   return {
     base,
     diffs,
+    diffsStream,
     stats,
     undocumentedUrls,
     events,

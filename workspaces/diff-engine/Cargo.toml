@@ -1,0 +1,30 @@
+[package]
+name = "optic_diff"
+version = "0.1.0"
+authors = ["Jaap Rood <jaap@jaaprood.nl>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+avro-rs = "~0.11.0"
+base64 = "0.12.3"
+bytes = "0.5.6"
+clap = "~2.33.3"
+cqrs-core = "0.2.2"
+futures = "0.3.5"
+num_cpus = "1.13.0"
+petgraph = "0.5.1"
+protobuf = "2.17.0"
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0.57"
+# all of tokio for now, until we figure out what we need exactly
+tokio = { version = "~0.2.22", features = ["full"] } 
+tokio-util = { version = "0.3.1", features = ["codec"] }
+
+[dev-dependencies]
+insta = "0.16.1"
+petgraph-evcxr = "*"
+
+[build-dependencies]
+protobuf-codegen-pure = "2.17.0"

@@ -28,7 +28,10 @@ import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { trackUserEvent, track } from '../../../Analytics';
-import { AddUrlModalNaming, AddUrlModalIdentifyingPathComponents } from '@useoptic/analytics/lib/events/diffs'
+import {
+  AddUrlModalNaming,
+  AddUrlModalIdentifyingPathComponents,
+} from '@useoptic/analytics/lib/events/diffs';
 import { CaptureContext } from '../../../contexts/CaptureContext';
 import {
   UserBeganAddingNewUrl,
@@ -80,18 +83,22 @@ export const NewUrlModal = withRfcContext((props) => {
   useEffect(() => {
     if (naming) {
       // AddUrlModal - Naming Endpoint
-      trackUserEvent(AddUrlModalNaming.withProps({
-        path: newUrl.path, 
-        method: newUrl.method
-      }))
+      trackUserEvent(
+        AddUrlModalNaming.withProps({
+          path: newUrl.path,
+          method: newUrl.method,
+        })
+      );
     } else {
       // AddUrlModal - Path Components
-      trackUserEvent(AddUrlModalIdentifyingPathComponents.withProps({
-        path: newUrl.path, 
-        method: newUrl.method
-      }))
+      trackUserEvent(
+        AddUrlModalIdentifyingPathComponents.withProps({
+          path: newUrl.path,
+          method: newUrl.method,
+        })
+      );
     }
-  }, [naming])
+  }, [naming]);
 
   const handleClose = () => {
     // track('Closed AddUrlModal');
@@ -197,7 +204,12 @@ export const NewUrlModal = withRfcContext((props) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setNaming(false)}>Back</Button>
+            <Button
+              disabled={Boolean(knownPathId)}
+              onClick={() => setNaming(false)}
+            >
+              Back
+            </Button>
             <Button
               type="submit"
               onClick={() => handleCreate(purpose)}

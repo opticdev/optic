@@ -55,14 +55,14 @@ export async function* CaptureInteractionIterator(
       if (shouldEmit) {
         diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
         yield {
-            hasMoreInteractions: true,
-            interaction: {
-              context: {
-          batchId: currentBatchId.toString(),
-          index,
-              },
-              value: x,
+          hasMoreInteractions: true,
+          interaction: {
+            context: {
+              batchId: currentBatchId.toString(),
+              index,
             },
+            value: x,
+          },
           skippedInteractionsCounter,
           diffedInteractionsCounter,
         };

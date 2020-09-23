@@ -1,0 +1,23 @@
+{
+  "name": "@useoptic/diff-engine",
+  "version": "8.3.8",
+  "scripts": {
+    "ws:build": "scripts/build.sh",
+    "ws:clean": "rm -rf build/* && rm -rf target/*",
+    "ws:test": "scripts/test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/diff-engine"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "execa": "^4.0.3"
+  },
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
+}

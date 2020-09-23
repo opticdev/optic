@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "8.3.7",
+  "version": "8.3.8",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,12 +14,12 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "8.3.7",
-    "@useoptic/cli-client": "8.3.7",
-    "@useoptic/cli-config": "8.3.7",
-    "@useoptic/cli-scripts": "8.3.7",
-    "@useoptic/cli-shared": "8.3.7",
-    "@useoptic/ui": "8.3.7",
+    "@useoptic/analytics": "8.3.8",
+    "@useoptic/cli-client": "8.3.8",
+    "@useoptic/cli-config": "8.3.8",
+    "@useoptic/cli-scripts": "8.3.8",
+    "@useoptic/cli-shared": "8.3.8",
+    "@useoptic/ui": "8.3.8",
     "avsc": "^5.4.18",
     "analytics-node": "^3.4.0-beta.2",
     "body-parser": "^1.19.0",
@@ -33,6 +33,8 @@
     "lodash.sortby": "^4.7.0",
     "node-fetch": "^2.6.0",
     "proper-lockfile": "^4.1.1",
+    "stream-chain": "^2.2.3",
+    "stream-json": "^1.7.1",
     "uuid": "^8.0.0",
     "wait-on": "^4.0.0"
   },
@@ -45,6 +47,8 @@
     "@types/node": "^13.1.6",
     "@types/node-fetch": "^2.5.5",
     "@types/proper-lockfile": "^4.1.1",
+    "@types/stream-chain": "^2.0.0",
+    "@types/stream-json": "^1.5.1",
     "@types/wait-on": "^3.2.0"
   },
   "files": [
