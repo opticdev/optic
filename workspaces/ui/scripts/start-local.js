@@ -4,4 +4,5 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.REACT_APP_ENABLE_ANALYTICS = 'no';
+process.env.REACT_APP_GITFLOW_CAPTURE = process.env.GITFLOW_CAPTURE;
 require('./start');
