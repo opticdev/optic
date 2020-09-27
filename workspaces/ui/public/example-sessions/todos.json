@@ -46,11 +46,97 @@
         "tags": []
       },
       {
-        "uuid": "fa0def96-abf8-41a7-ba1f-7fd09c509090",
+        "uuid": "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/todos/abcdfeg",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 502,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos/abcdfeg",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 502,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos/abcdefg/profile",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -137,6 +223,92 @@
           "host": "localhost",
           "method": "PATCH",
           "path": "/todos/5exvbk000",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2488a433-85f6-4b1f-bd80-23c2c4ds6a5c87",
+        "request": {
+          "host": "localhost",
+          "method": "PATCH",
+          "path": "/todos/aa5exvbk000",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBA==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2488a433-85f6-4b1fdsa-bd80-23c2c46a5c87",
+        "request": {
+          "host": "localhost",
+          "method": "PATCH",
+          "path": "/todos/5ebk000",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,

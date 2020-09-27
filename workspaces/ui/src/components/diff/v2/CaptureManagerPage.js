@@ -73,6 +73,7 @@ import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
 import { trackUserEvent, track } from '../../../Analytics';
 import qs from 'qs';
+import { LearnAPIPage } from './learn-api/LearnAPIPage';
 
 const {
   Context: AllCapturesContext,
@@ -155,8 +156,8 @@ export function CaptureManagerPage(props) {
   );
 }
 
-export const CaptureManager = ({location}) => {
-  const classes = useStyles();
+export const CaptureManager = ({ location }) => {
+  const classes = useCaptureManagerPageStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
   const baseUrl = useBaseUrl();
@@ -189,7 +190,7 @@ export const subtabs = {
 function CaptureChooserComponent(props) {
   const { captureId } = props;
   const specService = useSpecService();
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const captureContext = useContext(AllCapturesContext);
   const {
     endpointDiffs,
@@ -214,8 +215,8 @@ function CaptureChooserComponent(props) {
   );
 
   const query = qs.parse(props.location.search, {
-    ignoreQueryPrefix: true
-  })
+    ignoreQueryPrefix: true,
+  });
 
   let defaultTab = subtabs.ENDPOINT_DIFF;
 
@@ -325,9 +326,12 @@ function CaptureChooserComponent(props) {
           {subtabs.ENDPOINT_DIFF === tab && (
             <EndpointDiffs captureId={captureId} />
           )}
-          {subtabs.UNDOCUMENTED_URL === tab && (
-            <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
-          )}
+          {subtabs.UNDOCUMENTED_URL === tab &&
+            (process.env.REACT_APP_LEARN_API_MODE ? (
+              <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
+            ) : (
+              <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
+            ))}
         </div>
       </div>
     </div>
@@ -336,7 +340,7 @@ function CaptureChooserComponent(props) {
 
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
 
   return (
     // sessionId={props.match.params.captureId}
@@ -358,7 +362,7 @@ Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
 
 function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
 
   const rfcContext = useContext(RfcContext);
   const services = useServices();
@@ -371,7 +375,10 @@ function CaptureDiffWrapper(props) {
           ignoredDiffs={ignoredDiffs}
           {...services}
         >
-          <CaptureChooserComponent location={props.location} captureId={captureId} />
+          <CaptureChooserComponent
+            location={props.location}
+            captureId={captureId}
+          />
         </CaptureContextStore>
       )}
     </IgnoreDiffContext.Consumer>
@@ -379,7 +386,7 @@ function CaptureDiffWrapper(props) {
 }
 
 function CaptureDiffStat() {
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   // const { stats } = useCaptureContext();
   //also available
   // stats.captureCompleted
@@ -404,7 +411,7 @@ function CaptureDiffStat() {
 
 function EndpointDiffs(props) {
   const { captureId } = props;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const { endpointDiffs, completed } = useCaptureContext();
   const history = useHistory();
   const baseUrl = useBaseUrl();
@@ -504,7 +511,7 @@ function EndpointDiffs(props) {
 
 function UnrecognizedUrls(props) {
   const { captureId, urlsSplit } = props;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const history = useHistory();
   const { unrecognizedUrls, endpointDiffs, completed } = useCaptureContext();
   const baseUrl = useBaseUrl();
@@ -655,7 +662,7 @@ const Stat = ({ number, label }) => {
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+export const useCaptureManagerPageStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     overflow: 'hidden',
