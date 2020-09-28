@@ -40,6 +40,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { LightTooltip } from '../../../tooltips/LightTooltip';
 import { Icon } from '@material-ui/core';
+import InProgressFullScreen from './InProgressFullScreen';
 
 export function LearnAPIPage(props) {
   const { captureId, urlsSplit } = props;
@@ -285,18 +286,11 @@ export default function EnhancedTable(props) {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, urls.length - page * rowsPerPage);
 
-  if (learningInProgress) {
-    return (
-      <div className={classes.root}>
-        <Paper className={classes.paper}>Learning this magic lol</Paper>
-      </div>
-    );
-  }
-
   const filteredUrls = urls.filter((url) => !shouldHideIds.includes(url.id));
 
   return (
     <div className={classes.root}>
+      {learningInProgress && <InProgressFullScreen />}
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={checkedIds.length} />
         <FilterAction

@@ -7,7 +7,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/api/todos",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -50,7 +50,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos/abcdfeg",
+          "path": "/api/todos/abcdfeg",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -93,7 +93,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos/abcdfeg",
+          "path": "/api/todos/abcdfeg",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -136,7 +136,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos/abcdefg/profile",
+          "path": "/api/todos/abcdefg/profile",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -179,7 +179,50 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/api/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggC",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "aa1c0b722f-107c-4082-abe7-f3cdd1d92475",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/index.html",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -222,7 +265,7 @@
         "request": {
           "host": "localhost",
           "method": "PATCH",
-          "path": "/todos/5exvbk000",
+          "path": "/api/todos/5exvbk000",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -265,7 +308,7 @@
         "request": {
           "host": "localhost",
           "method": "PATCH",
-          "path": "/todos/aa5exvbk000",
+          "path": "/api/todos/aa5exvbk000",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -308,7 +351,7 @@
         "request": {
           "host": "localhost",
           "method": "PATCH",
-          "path": "/todos/5ebk000",
+          "path": "/api/todos/5ebk000",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -351,7 +394,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/api/todos",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -394,7 +437,7 @@
         "request": {
           "host": "localhost",
           "method": "POST",
-          "path": "/todos",
+          "path": "/api/todos",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -437,7 +480,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/api/todos",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -480,7 +523,7 @@
         "request": {
           "host": "localhost",
           "method": "PATCH",
-          "path": "/todos/5exvbk000",
+          "path": "/api/todos/5exvbk000",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
@@ -523,7 +566,7 @@
         "request": {
           "host": "localhost",
           "method": "GET",
-          "path": "/todos",
+          "path": "/api/todos",
           "query": {
             "shapeHashV1Base64": null,
             "asJsonString": null,

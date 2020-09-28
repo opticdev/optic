@@ -32,6 +32,7 @@ export function LearnAPIStore({ children, allUrls }) {
 
   const currentPathExpressions = toDocument.map((i) => ({
     ...i,
+    pathExpression: pathExpressions[i.id].pathExpression,
     regex: (() => {
       const pathString = pathComponentsToString(
         pathExpressions[i.id].pathComponents
@@ -70,6 +71,7 @@ export function LearnAPIStore({ children, allUrls }) {
     basepath,
     setBasepath,
     toDocument,
+    currentPathExpressions,
     learningInProgress,
     startLearning,
     checkedIds,
