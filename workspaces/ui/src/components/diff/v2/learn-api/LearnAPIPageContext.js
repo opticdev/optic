@@ -6,7 +6,7 @@ export const LearnAPIPageContext = React.createContext({});
 
 export function LearnAPIStore({ children, allUrls }) {
   const [toDocument, setToDocument] = useState([]);
-  const [basepath, setBasepath] = useState('/');
+  const [basepath, setBasepath] = useState('');
   const [learningInProgress, setLearningInProgress] = useState(false);
   const checkedIds = toDocument.map((i) => i.id);
   const [pathExpressions, changePathExpressions] = useState({});

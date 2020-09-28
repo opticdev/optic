@@ -7,6 +7,7 @@ import { DiffLoadingOverview } from '../LoadingNextDiff';
 import { NewUrlModal } from '../AddUrlModal';
 import classNames from 'classnames';
 import { Show } from '../../../shared/Show';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { DocDarkGrey, DocGrey } from '../../../docs/DocConstants';
 import List from '@material-ui/core/List';
@@ -38,6 +39,7 @@ import LearnAPIMenu from './LearnAPIMenu';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { LightTooltip } from '../../../tooltips/LightTooltip';
+import { Icon } from '@material-ui/core';
 
 export function LearnAPIPage(props) {
   const { captureId, urlsSplit } = props;
@@ -140,7 +142,7 @@ const headCells = [
     label: 'Document',
     align: 'right',
     style: {
-      paddingRight: 16,
+      paddingRight: 32,
     },
   },
 ];
@@ -297,6 +299,20 @@ export default function EnhancedTable(props) {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={checkedIds.length} />
+        <FilterAction
+          handleChangePage={handleChangePage}
+          paginator={
+            <TablePagination
+              rowsPerPageOptions={[25, 50, 100, 200]}
+              count={filteredUrls.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              component="div"
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          }
+        />
         <TableContainer>
           <Table
             className={classes.table}
@@ -391,6 +407,14 @@ export default function EnhancedTable(props) {
                               inputProps={{ 'aria-labelledby': labelId }}
                             />
                           </Fade>
+                          <LightTooltip title="Mark as Ignored">
+                            <IconButton size="small">
+                              <RemoveCircleIcon
+                                fontSizeAdjust="small"
+                                style={{ width: '.8rem', height: '.8rem' }}
+                              />
+                            </IconButton>
+                          </LightTooltip>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -398,26 +422,13 @@ export default function EnhancedTable(props) {
                 })}
             </TableBody>
           </Table>
-          <FilterAction
-            paginator={
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100, 200]}
-                count={filteredUrls.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                component="div"
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            }
-          />
         </TableContainer>
       </Paper>
     </div>
   );
 }
 
-function FilterAction({ paginator }) {
+function FilterAction({ paginator, handleChangePage }) {
   const classes = useStyles();
   const { setBasepath, basepath } = useContext(LearnAPIPageContext);
   return (
@@ -428,10 +439,18 @@ function FilterAction({ paginator }) {
         </IconButton>
         <LightTooltip title="Basepath filter: Only show URLs that start with a certain path. ie /api">
           <TextField
-            className={classes.filterInput}
+            inputProps={{
+              className: classes.filterInput,
+            }}
+            placeholder="filter basepath"
             value={basepath}
+            onFocus={(e) => {
+              e.target.value = '';
+              e.target.value = basepath;
+            }}
             onChange={(e) => {
-              const newValue = e.target.value;
+              const newValue = e.target.value.replace(/\s+/g, '');
+              handleChangePage(null, 0);
               if (!newValue.startsWith('/')) {
                 setBasepath('/' + newValue);
               } else {
@@ -506,7 +525,7 @@ const useStyles = makeStyles((theme) => ({
   },
   innerCheck: {
     display: 'flex',
-    minWidth: 205,
+    minWidth: 250,
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingRight: 15,
@@ -519,6 +538,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'rgb(250,250,250)',
   },
   filterInput: {
-    fontSize: 10,
+    fontWeight: 100,
+    width: 270,
   },
 }));
