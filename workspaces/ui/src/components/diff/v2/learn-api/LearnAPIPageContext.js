@@ -6,6 +6,7 @@ export const LearnAPIPageContext = React.createContext({});
 
 export function LearnAPIStore({ children, allUrls }) {
   const [toDocument, setToDocument] = useState([]);
+  const [basepath, setBasepath] = useState('/');
   const [learningInProgress, setLearningInProgress] = useState(false);
   const checkedIds = toDocument.map((i) => i.id);
   const [pathExpressions, changePathExpressions] = useState({});
@@ -54,7 +55,9 @@ export function LearnAPIStore({ children, allUrls }) {
         }
       );
 
-      return matchesAToDocument;
+      const shouldHideFromIgnore = !i.path.startsWith(basepath);
+
+      return matchesAToDocument || shouldHideFromIgnore;
     })
     .map((i) => i.id);
 
@@ -64,6 +67,8 @@ export function LearnAPIStore({ children, allUrls }) {
   };
 
   const value = {
+    basepath,
+    setBasepath,
     toDocument,
     learningInProgress,
     startLearning,

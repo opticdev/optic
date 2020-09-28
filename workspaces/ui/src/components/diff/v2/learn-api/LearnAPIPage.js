@@ -7,6 +7,7 @@ import { DiffLoadingOverview } from '../LoadingNextDiff';
 import { NewUrlModal } from '../AddUrlModal';
 import classNames from 'classnames';
 import { Show } from '../../../shared/Show';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import { DocDarkGrey, DocGrey } from '../../../docs/DocConstants';
 import List from '@material-ui/core/List';
 import { PathNameFromId } from '../../../../contexts/EndpointContext';
@@ -34,6 +35,9 @@ import PathMatcher from '../../PathMatcher';
 import { LearnAPIPageContext, LearnAPIStore } from './LearnAPIPageContext';
 import Button from '@material-ui/core/Button';
 import LearnAPIMenu from './LearnAPIMenu';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import { LightTooltip } from '../../../tooltips/LightTooltip';
 
 export function LearnAPIPage(props) {
   const { captureId, urlsSplit } = props;
@@ -394,17 +398,51 @@ export default function EnhancedTable(props) {
                 })}
             </TableBody>
           </Table>
+          <FilterAction
+            paginator={
+              <TablePagination
+                rowsPerPageOptions={[25, 50, 100, 200]}
+                count={filteredUrls.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                component="div"
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            }
+          />
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[25, 50, 100, 200]}
-          component="div"
-          count={filteredUrls.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
       </Paper>
+    </div>
+  );
+}
+
+function FilterAction({ paginator }) {
+  const classes = useStyles();
+  const { setBasepath, basepath } = useContext(LearnAPIPageContext);
+  return (
+    <div>
+      <div className={classes.filter}>
+        <IconButton size="small" disabled style={{ marginRight: 10 }}>
+          <FilterListIcon fontSize="10" />
+        </IconButton>
+        <LightTooltip title="Basepath filter: Only show URLs that start with a certain path. ie /api">
+          <TextField
+            className={classes.filterInput}
+            value={basepath}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              if (!newValue.startsWith('/')) {
+                setBasepath('/' + newValue);
+              } else {
+                setBasepath(newValue);
+              }
+            }}
+          />
+        </LightTooltip>
+        <div style={{ flex: 1 }} />
+        {paginator}
+      </div>
     </div>
   );
 }
@@ -472,5 +510,15 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingRight: 15,
+  },
+  filter: {
+    paddingLeft: 12,
+    paddingRight: 12,
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: 'rgb(250,250,250)',
+  },
+  filterInput: {
+    fontSize: 10,
   },
 }));
