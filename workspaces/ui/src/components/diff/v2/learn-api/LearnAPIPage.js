@@ -190,26 +190,6 @@ function EnhancedTableHead(props) {
   );
 }
 
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.primary.main,
-          backgroundColor: lighten(theme.palette.primary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.primary.dark,
-        },
-  title: {
-    flex: '1 1 100%',
-  },
-}));
-
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
@@ -256,41 +236,6 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    paddingTop: 20,
-  },
-  paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  table: {
-    minWidth: 750,
-  },
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1,
-  },
-  selectedRow: {
-    backgroundColor: `${lighten(theme.palette.primary.light, 0.9)} !important`,
-  },
-  innerCheck: {
-    display: 'flex',
-    minWidth: 205,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingRight: 15,
-  },
-}));
-
 export default function EnhancedTable(props) {
   const classes = useStyles();
   const {
@@ -308,7 +253,7 @@ export default function EnhancedTable(props) {
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [rowsPerPage, setRowsPerPage] = React.useState(50);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -343,8 +288,6 @@ export default function EnhancedTable(props) {
   }
 
   const filteredUrls = urls.filter((url) => !shouldHideIds.includes(url.id));
-  console.log('filtered ', filteredUrls);
-  console.log('to hide ', shouldHideIds);
 
   return (
     <div className={classes.root}>
@@ -372,6 +315,9 @@ export default function EnhancedTable(props) {
                 .map((row, index) => {
                   const isItemSelected = isSelected(row);
                   const labelId = `enhanced-table-checkbox-${index}`;
+                  const alsoMatchesCurrent = highlightAlsoMatching.includes(
+                    row.id
+                  );
 
                   return (
                     <TableRow
@@ -380,8 +326,12 @@ export default function EnhancedTable(props) {
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.id}
-                      selected={isItemSelected}
-                      classes={{ selected: classes.selectedRow }}
+                      selected={isItemSelected || alsoMatchesCurrent}
+                      classes={{
+                        selected: alsoMatchesCurrent
+                          ? classes.selectedRowMatches
+                          : classes.selectedRow,
+                      }}
                     >
                       <TableCell
                         align="left"
@@ -405,32 +355,30 @@ export default function EnhancedTable(props) {
                       </TableCell>
                       <TableCell padding="checkbox" align="right">
                         <div className={classes.innerCheck}>
-                          <Fade in={highlightAlsoMatching.includes(row.id)}>
+                          <Fade in={alsoMatchesCurrent}>
                             <Typography
                               variant="overline"
                               style={{
                                 color: secondary,
                                 fontSize: 10,
                                 textAlign: 'right',
-                                width: !highlightAlsoMatching.includes(row.id)
-                                  ? 0
-                                  : '100%',
+                                width: !alsoMatchesCurrent ? 0 : '100%',
                               }}
                             >
                               Matches!
                             </Typography>
                           </Fade>
-                          <Fade in={!highlightAlsoMatching.includes(row.id)}>
+                          <Fade in={!alsoMatchesCurrent}>
                             <Typography
                               variant="overline"
                               style={{ color: DocDarkGrey, fontSize: 10 }}
                             >
                               {(pathExpressions[row.id] || {}).hasParameters
-                                ? 'Has Path Parameters'
+                                ? ''
                                 : 'No Path Parameters'}
                             </Typography>
                           </Fade>
-                          <Fade in={!highlightAlsoMatching.includes(row.id)}>
+                          <Fade in={!alsoMatchesCurrent}>
                             <Checkbox
                               checked={isItemSelected}
                               onClick={(event) => handleClick(row)}
@@ -444,16 +392,11 @@ export default function EnhancedTable(props) {
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25, 50, 100, 200]}
           component="div"
           count={filteredUrls.length}
           rowsPerPage={rowsPerPage}
@@ -469,3 +412,65 @@ export default function EnhancedTable(props) {
 function rowId(row) {
   return `${row.path + row.method + getOrUndefined(row.pathId) || 'new'}`;
 }
+
+const useToolbarStyles = makeStyles((theme) => ({
+  root: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+  },
+  highlight:
+    theme.palette.type === 'light'
+      ? {
+          color: theme.palette.primary.main,
+          backgroundColor: lighten(theme.palette.primary.light, 0.85),
+        }
+      : {
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.primary.dark,
+        },
+  title: {
+    flex: '1 1 100%',
+  },
+}));
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    paddingTop: 20,
+    height: '80%',
+  },
+  paper: {
+    width: '100%',
+    marginBottom: theme.spacing(2),
+  },
+  table: {
+    minWidth: 750,
+  },
+  visuallyHidden: {
+    border: 0,
+    clip: 'rect(0 0 0 0)',
+    height: 1,
+    margin: -1,
+    overflow: 'hidden',
+    padding: 0,
+    position: 'absolute',
+    top: 20,
+    width: 1,
+  },
+  selectedRow: {
+    backgroundColor: `${lighten(theme.palette.primary.light, 0.9)} !important`,
+  },
+  selectedRowMatches: {
+    backgroundColor: `${lighten(
+      theme.palette.secondary.light,
+      0.9
+    )} !important`,
+  },
+  innerCheck: {
+    display: 'flex',
+    minWidth: 205,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: 15,
+  },
+}));
