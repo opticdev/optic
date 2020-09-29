@@ -29,7 +29,7 @@ export function batchCommandHandler(eventStore, rfcId) {
   return {
     doWork: (handler) => {
       const queries = Queries(eventStore, rfcService, rfcId);
-      handler(emitCommands, queries);
+      handler(emitCommands, queries, rfcService.currentState(rfcId));
     },
     getAllCommands: () => pendingCommands,
   };

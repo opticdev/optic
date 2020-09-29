@@ -1,16 +1,26 @@
 import { batchCommandHandler } from '../../../utilities/BatchCommandHandler';
 import { resolvePath } from '../../../utilities/PathUtilities';
-import { OpticIds, RequestsCommands } from '@useoptic/domain';
+import {
+  DiffResultHelper,
+  getOrUndefined,
+  opticEngine,
+  OpticIds,
+  RequestsCommands,
+} from '@useoptic/domain';
 import {
   cleanupPathComponentName,
   pathStringToPathComponents,
 } from '../AddUrlModal';
 
+const { JsonHelper } = opticEngine.com.useoptic;
+const jsonHelper = JsonHelper();
+
 export function LearnPaths(eventStore, rfcId, currentPathExpressions) {
-  const batchHanlder = batchCommandHandler(eventStore, rfcId);
+  const batchHandler = batchCommandHandler(eventStore, rfcId);
+  const endpointIds = [];
   //learn paths
   currentPathExpressions.forEach((i) => {
-    batchHanlder.doWork((emitCommands, queries) => {
+    batchHandler.doWork((emitCommands, queries) => {
       const pathsById = queries.requestsState().pathComponents;
       let lastParentPathId;
       const commands = [];
@@ -30,9 +40,49 @@ export function LearnPaths(eventStore, rfcId, currentPathExpressions) {
         commands.push(command);
         lastParentPathId = pathId;
       });
+      endpointIds.push({ method: i.method, pathId: lastParentPathId });
       emitCommands(commands);
     });
   });
 
-  return batchHanlder.getAllCommands();
+  return {
+    commands: batchHandler.getAllCommands(),
+    endpointIds,
+  };
+}
+
+export function getSamplesToLearnFrom(
+  eventStore,
+  rfcId,
+  endpointIds,
+  endpointDiffs,
+  setProgressTicker
+) {
+  const batchHandler = batchCommandHandler(eventStore, rfcId);
+
+  endpointIds.forEach(({ pathId, method }, index) => {
+    // endpointDiffs
+
+    batchHandler.doWork((emitCommands, queries, rfcState) => {
+      const diffsForThisEndpoint = getOrUndefined(
+        DiffResultHelper.diffsForPathAndMethod(
+          jsonHelper.jsArrayToSeq(endpointDiffs),
+          pathId,
+          method,
+          jsonHelper.jsArrayToSeq([]) //should be ignore...
+        )
+      );
+
+      const regions = DiffResultHelper.groupEndpointDiffsByRegion(
+        diffsForThisEndpoint,
+        rfcState,
+        method,
+        pathId
+      );
+
+      const newRegions = JsonHelper.seqToJsArray(regions.newRegions);
+
+      setProgressTicker(index + 1);
+    });
+  });
 }

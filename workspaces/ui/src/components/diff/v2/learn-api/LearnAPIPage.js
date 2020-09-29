@@ -65,14 +65,13 @@ function LearnAPIPageInner(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  if (urls.length === 0 && undocumented.length === 0 && !completed) {
-    return <DiffLoadingOverview show={true} />;
-  }
-
   return (
     <>
-      <LearnAPIStore allUrls={urls}>
-        <EnhancedTable urls={urls} />
+      <LearnAPIStore allUrls={urls} key="learning-store">
+        {urls.length === 0 && undocumented.length === 0 && !completed && (
+          <DiffLoadingOverview show={true} />
+        )}
+        <EnhancedTable urls={urls} key="url-table" />
       </LearnAPIStore>
     </>
   );

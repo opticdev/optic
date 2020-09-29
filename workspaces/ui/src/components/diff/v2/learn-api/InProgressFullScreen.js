@@ -26,7 +26,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { AddedGreen } from '../../../../theme';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { LearnPaths } from './Learn';
+import { getSamplesToLearnFrom, LearnPaths } from './Learn';
 import { RfcContext } from '../../../../contexts/RfcContext';
 import { lengthScala } from '@useoptic/domain';
 import { useCaptureContext } from '../../../../contexts/CaptureContext';
@@ -57,27 +57,45 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function InProgressFullScreen(props) {
   const { currentPathExpressions } = useContext(LearnAPIPageContext);
-  const { endpointDiffs, completed } = useCaptureContext();
+  const {
+    endpointDiffs,
+    completed,
+    updatedAdditionalCommands,
+  } = useCaptureContext();
   const { eventStore, handleCommands, rfcId } = useContext(RfcContext);
   const classes = useStyles();
 
-  const [createdPaths, setCreatedPaths] = useState(false);
+  const [endpointIds, setEndpointIds] = useState(undefined);
   const [collectingDiffsStatus, setCollectingDiffsStatus] = useState('running');
+  const [progressTicker, setProgressTicker] = useState(0);
 
   //Runs First
   useEffect(() => {
     //build the paths
-    const commands = LearnPaths(eventStore, rfcId, currentPathExpressions);
-    setCreatedPaths(true);
-    setTimeout(() => handleCommands(...commands), 100);
+    const { commands, endpointIds } = LearnPaths(
+      eventStore,
+      rfcId,
+      currentPathExpressions
+    );
+    setEndpointIds(endpointIds);
+    setTimeout(() => {
+      updatedAdditionalCommands(commands);
+    }, 100);
   }, [currentPathExpressions.length]);
 
   //Runs when the # of events changes
   useEffect(() => {
-    if (createdPaths) {
+    if (endpointIds) {
       setCollectingDiffsStatus('running');
     }
-    if (createdPaths && completed) {
+    if (endpointIds && completed) {
+      getSamplesToLearnFrom(
+        eventStore,
+        rfcId,
+        endpointIds,
+        endpointDiffs,
+        setProgressTicker
+      );
       setCollectingDiffsStatus('done');
       // wait for diffs
     }
@@ -135,7 +153,7 @@ export default function InProgressFullScreen(props) {
             <Step
               title={'Adding paths to spec...'}
               started={true}
-              done={createdPaths}
+              done={Boolean(endpointIds)}
             />
             <Step
               title={'Collecting examples...'}
@@ -159,7 +177,7 @@ export default function InProgressFullScreen(props) {
             </ListItem>
             <LinearProgress
               variant="determinate"
-              value={20}
+              value={(progressTicker / currentPathExpressions.length) * 100}
               style={{ marginTop: 5 }}
             />
           </List>
