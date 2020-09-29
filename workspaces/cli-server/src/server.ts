@@ -41,6 +41,7 @@ export interface IOpticExpressRequestAdditions {
   config: IApiCliConfig;
   capturesHelpers: CapturesHelpers;
   exampleRequestsHelpers: ExampleRequestsHelpers;
+  session: Session;
 }
 
 declare global {

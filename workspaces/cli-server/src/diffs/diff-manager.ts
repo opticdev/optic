@@ -5,16 +5,22 @@ import {
   IDiffProjectionEmitterConfig,
 } from '@useoptic/cli-shared/build/diffs/diff-worker';
 import { ChildProcess } from 'child_process';
+import fs from 'fs-extra';
+import { readApiConfig } from '@useoptic/cli-config';
 
 export interface IDiffManagerConfig {
+  configPath: string;
   diffId: string;
   captureId: string;
   captureBaseDirectory: string;
+  specPath: string;
 }
 
 export class DiffManager {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
+
+  constructor(public readonly id: string) {}
 
   private lastProgress: {
     diffedInteractionsCounter: string;
@@ -23,7 +29,17 @@ export class DiffManager {
   } | null = null;
 
   async start(config: IDiffManagerConfig) {
+    const apiConfig = await readApiConfig(config.configPath);
+
     const outputPaths = getDiffOutputPaths(config);
+    await fs.ensureDir(outputPaths.base);
+    await Promise.all([
+      fs.copy(config.specPath, outputPaths.events),
+      fs.writeJson(outputPaths.ignoreRequests, apiConfig.ignoreRequests || []),
+      fs.writeJson(outputPaths.filters, []), // TODO: accept endpoint filters
+      fs.writeJson(outputPaths.additionalCommands, []),
+    ]);
+
     const scriptConfig: IDiffProjectionEmitterConfig = {
       captureId: config.captureId,
       diffId: config.diffId,

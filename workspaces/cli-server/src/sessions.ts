@@ -1,3 +1,11 @@
+import {
+  getPathsRelativeToCwd,
+  readApiConfig,
+  IApiCliConfig,
+} from '@useoptic/cli-config';
+import { DiffManager } from './diffs/diff-manager';
+import * as Uuid from 'uuid';
+
 export class SessionsManager {
   private sessions: Session[] = [];
 
@@ -31,7 +39,60 @@ export class SessionsManager {
 
 export class Session {
   constructor(readonly id: string, readonly path: string) {}
+  diffs: SessionDiffs | null = null;
+  async start() {
+    const resolvedPaths = await getPathsRelativeToCwd(this.path);
+    this.diffs = new SessionDiffs(
+      resolvedPaths.configPath,
+      resolvedPaths.capturesPath,
+      resolvedPaths.specStorePath
+    );
+  }
 
-  async start() {}
+  async diffCapture(captureId: string) {
+    if (!this.diffs)
+      throw new Error(
+        'Session must have been started before it can diff a capture'
+      );
+
+    return this.diffs.startDiff(captureId);
+  }
+
   async stop() {}
+}
+
+class SessionDiffs {
+  private diffsByCaptureId: Map<string, DiffManager> = new Map();
+
+  constructor(
+    readonly configPath: string,
+    readonly capturesPath: string,
+    readonly specPath: string
+  ) {}
+
+  async startDiff(captureId: string): Promise<DiffManager> {
+    const existingDiff = this.diffsByCaptureId.get(captureId);
+    if (existingDiff) return existingDiff;
+
+    const diffId = Uuid.v4();
+    const newDiff = new DiffManager(diffId);
+    this.diffsByCaptureId.set(captureId, newDiff);
+
+    const workerStarted = new Promise((resolve, reject) => {
+      newDiff.events.once('progress', resolve);
+      newDiff.events.once('error', reject);
+    });
+
+    await newDiff.start({
+      captureId,
+      configPath: this.configPath,
+      captureBaseDirectory: this.capturesPath,
+      diffId,
+      specPath: this.specPath,
+    });
+
+    await workerStarted;
+
+    return newDiff;
+  }
 }

@@ -191,6 +191,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         paths,
         capturesHelpers,
         exampleRequestsHelpers,
+        session,
       };
       next();
     } catch (e) {

@@ -80,45 +80,32 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     async (req, res) => {
       const { captureId } = req.params;
       const { ignoreRequests, events, additionalCommands, filters } = req.body;
-      const id = dependencies.idGenerator.nextId();
-      const manager = new DiffManager();
-      const diffOutputPaths = getDiffOutputPaths({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        captureId,
-        diffId: id,
-      });
-      await fs.ensureDir(diffOutputPaths.base);
-      await Promise.all([
-        fs.writeJson(diffOutputPaths.events, events),
-        fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests),
-        fs.writeJson(diffOutputPaths.filters, filters),
-        fs.writeJson(diffOutputPaths.additionalCommands, additionalCommands),
-      ]);
-      const workerStarted = new Promise((resolve, reject) => {
-        manager.events.once('progress', resolve);
-        manager.events.once('error', reject);
-      });
-      await manager.start({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        captureId: captureId,
-        diffId: id,
-      });
+
+      let diff;
       try {
-        await workerStarted;
+        diff = await req.optic.session.diffCapture(
+          captureId /* TODO: , filters*/
+        );
       } catch (e) {
-        return res.status(500).json({
-          message: e.message,
-        });
+        return res.status(500).json({ message: e.message });
       }
+
+      // await fs.ensureDir(diffOutputPaths.base);
+      // await Promise.all([
+      //   fs.writeJson(diffOutputPaths.events, events),
+      //   fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests),
+      //   fs.writeJson(diffOutputPaths.filters, filters),
+      //   fs.writeJson(diffOutputPaths.additionalCommands, additionalCommands),
+      // ]);
       const diffMetadata = {
-        id,
-        manager,
+        id: diff.id,
+        manager: diff,
       };
-      diffs.set(id, diffMetadata);
+      diffs.set(diff.id, diffMetadata);
 
       res.json({
-        diffId: id,
-        notificationsUrl: `${req.baseUrl}/diffs/${id}/notifications`,
+        diffId: diff.id,
+        notificationsUrl: `${req.baseUrl}/diffs/${diff.id}/notifications`,
       });
     }
   );
