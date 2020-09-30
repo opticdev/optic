@@ -8,6 +8,14 @@ import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 
+import lockfile from 'proper-lockfile';
+import { Readable } from 'stream';
+import { chain } from 'stream-chain';
+import { stringer as jsonStringer } from 'stream-json/Stringer';
+import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import { parser as jsonParser } from 'stream-json';
+
 export interface IDiffManagerConfig {
   configPath: string;
   captureId: string;
@@ -20,8 +28,13 @@ export interface IDiffManagerConfig {
 export class DiffManager {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
+  public readonly id: string;
+  private readonly config: IDiffManagerConfig;
 
-  constructor(public readonly id: string) {}
+  constructor(config: IDiffManagerConfig) {
+    this.id = config.diffId;
+    this.config = config;
+  }
 
   private lastProgress: {
     diffedInteractionsCounter: string;
@@ -29,10 +42,11 @@ export class DiffManager {
     hasMoreInteractions: string;
   } | null = null;
 
-  async start(config: IDiffManagerConfig): Promise<any> {
+  async start(): Promise<any> {
+    const { config } = this;
     const apiConfig = await readApiConfig(config.configPath);
 
-    const outputPaths = getDiffOutputPaths(config);
+    const outputPaths = this.paths();
     await fs.ensureDir(outputPaths.base);
     await Promise.all([
       fs.copy(config.specPath, outputPaths.events),
@@ -115,9 +129,67 @@ export class DiffManager {
     return lastProgress ? { ...lastProgress } : null;
   }
 
+  private paths(): DiffPaths {
+    return getDiffOutputPaths(this.config);
+  }
+
+  queries() {
+    return new DiffQueries(this.paths());
+  }
+
   async stop() {
     if (this.child) {
       this.child.kill('SIGTERM');
     }
   }
+}
+
+interface DiffPaths {
+  base: string;
+  diffs: string;
+  diffsStream: string;
+  stats: string;
+  undocumentedUrls: string;
+  events: string;
+  ignoreRequests: string;
+  filters: string;
+  additionalCommands: string;
+}
+
+export class DiffQueries {
+  constructor(private readonly paths: DiffPaths) {}
+
+  diffs(): Readable {
+    if (fs.existsSync(this.paths.diffsStream)) {
+      return chain([
+        fs.createReadStream(this.paths.diffsStream),
+        jsonlParser(),
+        (data) => [data.value],
+        jsonDisassembler(),
+        jsonStringer({ makeArray: true }),
+      ]);
+    } else {
+      return chain([
+        Readable.from(lockedRead(this.paths.diffs)),
+        jsonParser(), // parse as JSON, to guard against malformed persisted results
+        jsonStringer(),
+      ]);
+    }
+  }
+  undocumentedUrls() {}
+  stats() {}
+}
+
+async function* lockedRead(filePath: string) {
+  await lockfile.lock(filePath, {
+    retries: { retries: 10 },
+  });
+
+  let readStream = fs.createReadStream(filePath);
+
+  for await (const chunk of readStream) {
+    yield chunk;
+  }
+
+  await lockfile.unlock(filePath);
 }

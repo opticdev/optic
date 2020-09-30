@@ -143,38 +143,17 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/diffs', async (req, res) => {
     const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
 
-    try {
-      if (fs.existsSync(diffOutputPaths.diffsStream)) {
-        const diffsJson = chain([
-          fs.createReadStream(diffOutputPaths.diffsStream),
-          jsonlParser(),
-          (data) => [data.value],
-          jsonDisassembler(),
-          jsonStringer({ makeArray: true }),
-        ]);
-
-        diffsJson.pipe(res).type('application/json');
-      } else {
-        //@TODO: streamify
-        await lockfile.lock(diffOutputPaths.diffs, {
-          retries: { retries: 10 },
-        });
-        const contents = await fs.readJson(diffOutputPaths.diffs);
-        await lockfile.unlock(diffOutputPaths.diffs);
-        res.json(contents);
-      }
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+    const diffMetadata = diffs.get(diffId);
+    if (!diffMetadata) {
+      return res.json(404);
     }
+    const diffQueries = diffMetadata.manager.queries();
+
+    let diffsStream = diffQueries.diffs();
+    diffsStream.pipe(res).type('application/json');
   });
+
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
     const { captureId, diffId } = req.params;
     const diffOutputPaths = getDiffOutputPaths({

@@ -81,7 +81,14 @@ class SessionDiffs {
     if (existingDiff) return existingDiff;
 
     const diffId = Uuid.v4();
-    const newDiff = new DiffManager(diffId);
+    const newDiff = new DiffManager({
+      captureId,
+      configPath: this.configPath,
+      captureBaseDirectory: this.capturesPath,
+      diffId,
+      endpoints,
+      specPath: this.specPath,
+    });
     this.diffsByCaptureId.set(captureId, newDiff);
 
     newDiff.events.once('finish', () => {
@@ -91,14 +98,7 @@ class SessionDiffs {
       throw err;
     });
 
-    await newDiff.start({
-      captureId,
-      configPath: this.configPath,
-      captureBaseDirectory: this.capturesPath,
-      diffId,
-      endpoints,
-      specPath: this.specPath,
-    });
+    await newDiff.start();
 
     return newDiff;
   }
