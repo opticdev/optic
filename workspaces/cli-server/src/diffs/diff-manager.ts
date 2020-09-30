@@ -13,6 +13,7 @@ import { Readable } from 'stream';
 import { chain } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
 
@@ -176,7 +177,14 @@ export class DiffQueries {
       ]);
     }
   }
-  undocumentedUrls() {}
+  undocumentedUrls(): Readable {
+    return chain([
+      Readable.from(lockedRead(this.paths.undocumentedUrls)),
+      jsonParser(),
+      streamArray(),
+      (data) => [data.value],
+    ]);
+  }
   stats() {}
 }
 

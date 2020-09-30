@@ -10,10 +10,14 @@ import { DiffManager } from '../diffs/diff-manager';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
 import lockfile from 'proper-lockfile';
-import { chain } from 'stream-chain';
+import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
-import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import {
+  disassembler,
+  disassembler as jsonDisassembler,
+} from 'stream-json/Disassembler';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import { Duplex } from 'stream';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -156,28 +160,16 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
     const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
-    try {
-      //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.undocumentedUrls, {
-        retries: { retries: 10 },
-      });
-      const contents = await fs.readJson(diffOutputPaths.undocumentedUrls);
-      await lockfile.unlock(diffOutputPaths.undocumentedUrls);
-
-      res.json({
-        urls: contents,
-      });
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+    const diffMetadata = diffs.get(diffId);
+    if (!diffMetadata) {
+      return res.json(404);
     }
+    const diffQueries = diffMetadata.manager.queries();
+
+    let undocumentedUrls = diffQueries.undocumentedUrls();
+    undocumentedUrls.pipe(toJSONArray()).pipe(res).type('application/json');
   });
+
   router.get('/diffs/:diffId/stats', async (req, res) => {
     const { captureId, diffId } = req.params;
     const diffOutputPaths = getDiffOutputPaths({
@@ -219,4 +211,8 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   return router;
+}
+
+function toJSONArray(): Duplex {
+  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
 }
