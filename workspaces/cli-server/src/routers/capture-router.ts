@@ -83,20 +83,11 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       let diff;
       try {
-        diff = await req.optic.session.diffCapture(
-          captureId /* TODO: , filters*/
-        );
+        diff = await req.optic.session.diffCapture(captureId, filters);
       } catch (e) {
         return res.status(500).json({ message: e.message });
       }
 
-      // await fs.ensureDir(diffOutputPaths.base);
-      // await Promise.all([
-      //   fs.writeJson(diffOutputPaths.events, events),
-      //   fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests),
-      //   fs.writeJson(diffOutputPaths.filters, filters),
-      //   fs.writeJson(diffOutputPaths.additionalCommands, additionalCommands),
-      // ]);
       const diffMetadata = {
         id: diff.id,
         manager: diff,

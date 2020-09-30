@@ -49,13 +49,16 @@ export class Session {
     );
   }
 
-  async diffCapture(captureId: string) {
+  async diffCapture(
+    captureId: string,
+    endpoints?: Array<{ pathId: string; method: string }>
+  ) {
     if (!this.diffs)
       throw new Error(
         'Session must have been started before it can diff a capture'
       );
 
-    return this.diffs.startDiff(captureId);
+    return this.diffs.startDiff(captureId, endpoints);
   }
 
   async stop() {}
@@ -70,7 +73,10 @@ class SessionDiffs {
     readonly specPath: string
   ) {}
 
-  async startDiff(captureId: string): Promise<DiffManager> {
+  async startDiff(
+    captureId: string,
+    endpoints?: Array<{ pathId: string; method: string }>
+  ): Promise<DiffManager> {
     const existingDiff = this.diffsByCaptureId.get(captureId);
     if (existingDiff) return existingDiff;
 
@@ -90,6 +96,7 @@ class SessionDiffs {
       configPath: this.configPath,
       captureBaseDirectory: this.capturesPath,
       diffId,
+      endpoints,
       specPath: this.specPath,
     });
 

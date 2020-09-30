@@ -10,9 +10,10 @@ import { readApiConfig } from '@useoptic/cli-config';
 
 export interface IDiffManagerConfig {
   configPath: string;
-  diffId: string;
   captureId: string;
   captureBaseDirectory: string;
+  diffId: string;
+  endpoints?: Array<{ pathId: string; method: string }>;
   specPath: string;
 }
 
@@ -36,7 +37,7 @@ export class DiffManager {
     await Promise.all([
       fs.copy(config.specPath, outputPaths.events),
       fs.writeJson(outputPaths.ignoreRequests, apiConfig.ignoreRequests || []),
-      fs.writeJson(outputPaths.filters, []), // TODO: accept endpoint filters
+      fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),
     ]);
 
