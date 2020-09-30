@@ -155,7 +155,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     const diffQueries = diffMetadata.manager.queries();
 
     let diffsStream = diffQueries.diffs();
-    diffsStream.pipe(res).type('application/json');
+    diffsStream.pipe(toJSONArray()).pipe(res).type('application/json');
   });
 
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {

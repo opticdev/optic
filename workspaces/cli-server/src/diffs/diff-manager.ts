@@ -166,14 +166,13 @@ export class DiffQueries {
         fs.createReadStream(this.paths.diffsStream),
         jsonlParser(),
         (data) => [data.value],
-        jsonDisassembler(),
-        jsonStringer({ makeArray: true }),
       ]);
     } else {
       return chain([
         Readable.from(lockedRead(this.paths.diffs)),
         jsonParser(), // parse as JSON, to guard against malformed persisted results
-        jsonStringer(),
+        streamArray(),
+        (data) => [data.value],
       ]);
     }
   }
