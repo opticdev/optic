@@ -63,17 +63,16 @@ function LearnAPIPageInner(props) {
   const { completed } = useCaptureContext();
   const classes = useCaptureManagerPageStyles();
   const history = useHistory();
+
   const baseUrl = useBaseUrl();
 
   return (
-    <>
-      <LearnAPIStore allUrls={urls} key="learning-store">
-        {urls.length === 0 && undocumented.length === 0 && !completed && (
-          <DiffLoadingOverview show={true} />
-        )}
-        <EnhancedTable urls={urls} key="url-table" />
-      </LearnAPIStore>
-    </>
+    <LearnAPIStore allUrls={urls} key="learning-store">
+      {urls.length === 0 && undocumented.length === 0 && !completed && (
+        <DiffLoadingOverview show={true} />
+      )}
+      <EnhancedTable urls={urls} key="url-table" />
+    </LearnAPIStore>
   );
 }
 
@@ -289,7 +288,7 @@ export default function EnhancedTable(props) {
 
   return (
     <div className={classes.root}>
-      {learningInProgress && <InProgressFullScreen />}
+      {learningInProgress && <InProgressFullScreen type={learningInProgress} />}
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={checkedIds.length} />
         <FilterAction

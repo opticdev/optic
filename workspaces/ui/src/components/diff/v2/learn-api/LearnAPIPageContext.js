@@ -63,7 +63,7 @@ export function LearnAPIStore({ children, allUrls }) {
     .map((i) => i.id);
 
   const startLearning = (type) => {
-    setLearningInProgress(true);
+    setLearningInProgress(type);
     //do magic....
   };
 
@@ -79,6 +79,12 @@ export function LearnAPIStore({ children, allUrls }) {
     pathExpressions,
     highlightAlsoMatching,
     updatePathExpression,
+    reset: () => {
+      setToDocument([]);
+      setLearningInProgress(false);
+      changePathExpressions({});
+      setHighlight([]);
+    },
     addRow: (row) => {
       if (!checkedIds.includes(row.id)) {
         setToDocument((current) => [...current, row]);

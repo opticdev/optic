@@ -220,10 +220,17 @@ function CaptureChooserComponent(props) {
 
   let defaultTab = subtabs.ENDPOINT_DIFF;
 
-  if (query.tab === subtabs.UNDOCUMENTED_URL) {
-    defaultTab = subtabs.UNDOCUMENTED_URL;
-  }
   const [tab, setTab] = useState(defaultTab);
+
+  useEffect(() => {
+    if (query.tab === subtabs.UNDOCUMENTED_URL) {
+      setTab(subtabs.UNDOCUMENTED_URL);
+    }
+
+    if (query.tab === subtabs.ENDPOINT_DIFF) {
+      setTab(subtabs.ENDPOINT_DIFF);
+    }
+  }, [query.tab]);
 
   useEffect(() => {
     trackUserEvent(
@@ -640,7 +647,7 @@ function UnrecognizedUrls(props) {
   );
 }
 
-const Stat = ({ number, label }) => {
+export const Stat = ({ number, label }) => {
   return (
     <span>
       {number !== 0 && (
@@ -653,7 +660,12 @@ const Stat = ({ number, label }) => {
           {number}{' '}
         </Typography>
       )}
-      <Typography variant="h6" component="span" style={{ fontWeight: 800 }}>
+      <Typography
+        variant="h6"
+        component="span"
+        style={{ fontWeight: 800 }}
+        color="primary"
+      >
         {number === 0 && 'no '}
         {label}
         {number === 1 ? '' : 's'}

@@ -153,9 +153,6 @@ class _CaptureContextStore extends React.Component {
       pathId,
     } = this.props;
 
-    const s = this.state;
-    console.log('look here ', s);
-
     //clear diff
     await this.cleanupDiff();
 
@@ -263,6 +260,7 @@ class _CaptureContextStore extends React.Component {
       completed,
       skipped,
       processed,
+      additionalCommands: this.state.additionalCommands,
       updatedAdditionalCommands: this.updatedAdditionalCommands,
     };
 

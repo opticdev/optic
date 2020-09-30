@@ -56,33 +56,48 @@ export function getSamplesToLearnFrom(
   rfcId,
   endpointIds,
   endpointDiffs,
+  captureService,
+  diffService,
+  acceptSuggestion,
   setProgressTicker
 ) {
   const batchHandler = batchCommandHandler(eventStore, rfcId);
 
+  let allPromises = [];
+
   endpointIds.forEach(({ pathId, method }, index) => {
     // endpointDiffs
-
     batchHandler.doWork((emitCommands, queries, rfcState) => {
-      const diffsForThisEndpoint = getOrUndefined(
-        DiffResultHelper.diffsForPathAndMethod(
+      const newRegionsToLearn = jsonHelper.seqToJsArray(
+        DiffResultHelper.newRegionsForPathAndMethod(
           jsonHelper.jsArrayToSeq(endpointDiffs),
           pathId,
           method,
+          rfcState,
           jsonHelper.jsArrayToSeq([]) //should be ignore...
         )
       );
 
-      const regions = DiffResultHelper.groupEndpointDiffsByRegion(
-        diffsForThisEndpoint,
-        rfcState,
-        method,
-        pathId
-      );
+      const promises = newRegionsToLearn.map(async (i) => {
+        const { interaction } = await captureService.loadInteraction(
+          i.firstInteractionPointer
+        );
+        const { suggestion } = await diffService.loadInitialPreview(
+          i,
+          jsonHelper.fromInteraction(interaction),
+          true
+        );
 
-      const newRegions = JsonHelper.seqToJsArray(regions.newRegions);
+        return getOrUndefined(suggestion);
+      });
 
-      setProgressTicker(index + 1);
+      allPromises = allPromises.concat(promises);
+
+      Promise.all(promises).finally(() => {
+        setProgressTicker(index + 1);
+      });
     });
   });
+
+  Promise.all(allPromises).then(acceptSuggestion);
 }
