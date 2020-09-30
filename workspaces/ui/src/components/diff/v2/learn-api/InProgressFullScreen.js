@@ -369,7 +369,7 @@ export default function InProgressFullScreen({ type }) {
                     }
                   }}
                 >
-                  Review Documentation
+                  {isManual ? 'Document Bodies' : 'Review Documentation'}
                 </Button>
               </div>
             </Collapse>
