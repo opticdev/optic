@@ -28,7 +28,7 @@ export class DiffManager {
     hasMoreInteractions: string;
   } | null = null;
 
-  async start(config: IDiffManagerConfig) {
+  async start(config: IDiffManagerConfig): Promise<any> {
     const apiConfig = await readApiConfig(config.configPath);
 
     const outputPaths = getDiffOutputPaths(config);
@@ -56,16 +56,57 @@ export class DiffManager {
         : 'emit-diff-projections',
       JSON.stringify(scriptConfig)
     );
-    child.on('message', (x: any) => {
+
+    const onMessage = (x: any) => {
       if (x.type && x.type === 'progress') {
         this.lastProgress = { ...x.data };
       }
       this.events.emit(x.type, x.data);
-    });
-    child.on('exit', function () {
-      console.log(arguments);
-    });
+    };
+    const onError = (err: Error) => {
+      cleanup();
+      this.events.emit('error', err);
+    };
+    const onExit = (code: number, signal: string | null) => {
+      cleanup();
+      if (code !== 0) {
+        this.events.emit(
+          'error',
+          new Error('Diff worker exited with non-zero status code')
+        );
+      } else {
+        this.events.emit('finish');
+      }
+    };
+    function cleanup() {
+      child.removeListener('message', onMessage);
+      child.removeListener('error', onError);
+      child.removeListener('exit', onExit);
+    }
+
+    child.on('message', onMessage);
+    child.once('error', onError);
+    child.once('exit', onExit);
+
     this.child = child;
+
+    return new Promise((resolve, reject) => {
+      function onErr(err: Error) {
+        cleanup();
+        reject(err);
+      }
+      function onProgress(data: any) {
+        cleanup();
+        resolve(data);
+      }
+      const cleanup = () => {
+        this.events.removeListener('progress', onProgress);
+        this.events.removeListener('error', onErr);
+      };
+
+      this.events.once('progress', onProgress);
+      this.events.once('error', onErr);
+    });
   }
 
   latestProgress() {

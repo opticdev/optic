@@ -78,9 +78,11 @@ class SessionDiffs {
     const newDiff = new DiffManager(diffId);
     this.diffsByCaptureId.set(captureId, newDiff);
 
-    const workerStarted = new Promise((resolve, reject) => {
-      newDiff.events.once('progress', resolve);
-      newDiff.events.once('error', reject);
+    newDiff.events.once('finish', () => {
+      this.diffsByCaptureId.delete(captureId);
+    });
+    newDiff.events.once('error', (err) => {
+      throw err;
     });
 
     await newDiff.start({
@@ -90,8 +92,6 @@ class SessionDiffs {
       diffId,
       specPath: this.specPath,
     });
-
-    await workerStarted;
 
     return newDiff;
   }
