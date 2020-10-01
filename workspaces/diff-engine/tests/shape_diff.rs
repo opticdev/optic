@@ -296,3 +296,123 @@ fn can_yield_unmatched_shape_for_missing_field() {
     fingerprints
   );
 }
+
+#[test]
+fn can_diff_nullable() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"nullable_1","baseShapeId":"$nullable","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"nullable_1","providerDescriptor":{"ShapeProvider":{"shapeId":"number_shape_1"}},"consumingParameterId":"$nullableInner"}}}},
+      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"nullable_1"}},"consumingParameterId":"$listItem"}}}},
+      ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+
+  assert_debug_snapshot!(
+    "can_diff_nullable__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let array_body = json!([4, null, 8, "s"]);
+  let shape_id = String::from("list_1");
+  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+
+  assert_debug_snapshot!("can_diff_nullable__results", results);
+  assert_eq!(results.len(), 2);
+}
+
+#[test]
+fn can_diff_optional() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"object_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"optional_shape_1","baseShapeId":"$optional","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"optional_shape_1","providerDescriptor":{"ShapeProvider":{"shapeId":"string_shape_1"}},"consumingParameterId":"$optionalInner"}}}},
+      {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"optional_shape_1"}}}},
+      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"object_1"}},"consumingParameterId":"$listItem"}}}},
+      
+    ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+  assert_debug_snapshot!(
+    "can_diff_optional__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let body = json!([{
+    "firstName": "Homer"
+  }, {
+    "firstName": 3
+  }, {
+
+  }
+  ]);
+  let shape_id = String::from("list_1");
+  let results = diff_shape(&shape_projection, Some(body), &shape_id);
+
+  assert_debug_snapshot!("can_diff_optional__results", results);
+  assert_eq!(results.len(), 3);
+}
+
+#[test]
+fn can_diff_one_of() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"object_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"boolean_shape_1","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"oneof_shape_1","baseShapeId":"$oneOf","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterAdded":{
+        "shapeParameterId":"oneof_parameter_1",
+        "shapeId":"oneof_shape_1",
+        "name":"",
+        "shapeDescriptor":{
+          "ProviderInShape":{"shapeId":"oneof_shape_1",
+          "providerDescriptor":{"NoProvider":{}},
+          "consumingParameterId":"oneof_parameter_1"}},
+        }},     
+         {"ShapeParameterAdded":{
+          "shapeParameterId":"oneof_parameter_2",
+          "shapeId":"oneof_shape_1",
+          "name":"",
+          "shapeDescriptor":{
+            "ProviderInShape":{"shapeId":"oneof_shape_1",
+            "providerDescriptor":{"NoProvider":{}},
+            "consumingParameterId":"oneof_parameter_2"}},
+          }},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"oneof_shape_1","providerDescriptor":{"ShapeProvider":{"shapeId":"string_shape_1"}},"consumingParameterId":"oneof_parameter_1"}}}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"oneof_shape_1","providerDescriptor":{"ShapeProvider":{"shapeId":"boolean_shape_1"}},"consumingParameterId":"oneof_parameter_2"}}}},
+      {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"oneof_shape_1"}}}},
+      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"object_1"}},"consumingParameterId":"$listItem"}}}},
+      
+    ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+  assert_debug_snapshot!(
+    "can_diff_one_of__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let body = json!([{
+    "firstName": "Homer"
+  }, {
+    "firstName": 3
+  }, {
+    "firstName": false
+  }, {
+
+  }
+  ]);
+  let shape_id = String::from("list_1");
+  let results = diff_shape(&shape_projection, Some(body), &shape_id);
+
+  assert_debug_snapshot!("can_diff_one_of__results", results);
+  assert_eq!(results.len(), 3);
+}
