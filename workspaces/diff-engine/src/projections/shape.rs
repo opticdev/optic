@@ -23,7 +23,7 @@ pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
 #[derive(Debug)]
 pub struct FieldNode(pub FieldId, pub FieldNodeDescriptor);
 #[derive(Debug)]
-pub struct ShapeParameterNode(ShapeParameterId, ShapeParameterNodeDescriptor);
+pub struct ShapeParameterNode(pub ShapeParameterId, pub ShapeParameterNodeDescriptor);
 
 #[derive(Debug)]
 pub enum Edge {
@@ -115,6 +115,23 @@ fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_ki
 }
 
 impl ShapeProjection {
+  pub fn with_shape_parameter(&mut self, shape_parameter_id: ShapeParameterId, shape_id: ShapeId) {
+    let shape_node_index = *self.get_shape_node_index(&shape_id).unwrap();
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
+      shape_parameter_id.clone(),
+      ShapeParameterNodeDescriptor {},
+    ));
+    let shape_parameter_node_index = self.graph.add_node(shape_parameter_node);
+    self
+      .node_id_to_index
+      .insert(String::from(shape_parameter_id), shape_parameter_node_index);
+
+    self.graph.add_edge(
+      shape_parameter_node_index,
+      shape_node_index,
+      Edge::IsParameterOf,
+    );
+  }
   pub fn with_shape(
     &mut self,
     shape_id: ShapeId,
@@ -295,6 +312,7 @@ impl ShapeProjection {
     Some(child_edge.source())
   }
 
+  //?
   pub fn get_core_shape_nodes(
     &self,
     node_index: &NodeIndex,
@@ -363,6 +381,9 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
     match self {
       ShapeEvent::ShapeAdded(e) => {
         projection.with_shape(e.shape_id, e.base_shape_id, e.parameters, e.name)
+      }
+      ShapeEvent::ShapeParameterAdded(e) => {
+        projection.with_shape_parameter(e.shape_parameter_id, e.shape_id)
       }
       ShapeEvent::ShapeParameterShapeSet(e) => {
         projection.with_shape_parameter_shape(e.shape_descriptor)
