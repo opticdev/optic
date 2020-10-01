@@ -27,7 +27,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { AddedGreen } from '../../../../theme';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { getSamplesToLearnFrom, LearnPaths } from './Learn';
+import { LearnPaths } from './Learn';
 import { RfcContext } from '../../../../contexts/RfcContext';
 import {
   Facade,
@@ -46,6 +46,7 @@ import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../../contexts/BaseUrlContext';
 import Collapse from '@material-ui/core/Collapse';
 import { Stat, subtabs } from '../CaptureManagerPage';
+import { useBatchLearn } from './useBatchLearn';
 
 const { JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
@@ -97,7 +98,6 @@ export default function InProgressFullScreen({ type }) {
 
   const [endpointIds, setEndpointIds] = useState(undefined);
   const [stats, setStats] = useState(undefined);
-  const [collectingDiffsStatus, setCollectingDiffsStatus] = useState('running');
   const [progressTicker, setProgressTicker] = useState(0);
   const [done, setDone] = useState(0);
 
@@ -110,18 +110,25 @@ export default function InProgressFullScreen({ type }) {
       currentPathExpressions
     );
     setEndpointIds(endpointIds);
+    setProgressTicker(0);
     setTimeout(() => {
       updatedAdditionalCommands(commands);
     }, 100);
   }, [currentPathExpressions.length]);
 
-  //Runs when the # of events changes
-  useEffect(() => {
-    if (endpointIds) {
-      setCollectingDiffsStatus('running');
-    }
-
-    if (endpointIds && completed && !done && additionalCommands.length) {
+  useBatchLearn(
+    // this will work through each sample and wait for component to update progress before proceeding to next item of the batch
+    progressTicker,
+    progressTicker === (endpointIds ? endpointIds.length : -1),
+    isManual,
+    eventStore,
+    rfcId,
+    endpointIds,
+    endpointDiffs,
+    captureService,
+    diffService,
+    setProgressTicker,
+    async (suggestions) => {
       if (isManual) {
         const learnManual = async () => {
           const batchCommands = [...additionalCommands];
@@ -159,79 +166,64 @@ export default function InProgressFullScreen({ type }) {
           await specService.saveEvents(newEventStore, rfcId);
           setDone(true);
         };
-
         learnManual();
       } else {
-        getSamplesToLearnFrom(
-          eventStore,
-          rfcId,
-          endpointIds,
-          endpointDiffs,
-          captureService,
-          diffService,
-          async (suggestions) => {
-            const commands = [];
-            suggestions.forEach((x) =>
-              mapScala(x.commands)((command) => commands.push(command))
-            );
-
-            const newEventStore = eventStore.getCopy(rfcId);
-            const {
-              StartBatchCommit,
-              EndBatchCommit,
-            } = opticEngine.com.useoptic.contexts.rfc.Commands;
-            const batchId = uuidv4();
-            const commandContext = new RfcCommandContext(
-              clientId,
-              clientSessionId,
-              batchId
-            );
-
-            const pathAddCommands = additionalCommands;
-            const batchCommands = [...pathAddCommands, ...commands];
-
-            const commandsAsVector = jsonHelper.jsArrayToVector(batchCommands);
-
-            const asJs = opticEngine.CommandSerialization.toJs(
-              commandsAsVector
-            );
-
-            Facade.fromCommands(
-              newEventStore,
-              rfcId,
-              commandsAsVector,
-              commandContext
-            );
-
-            updatedAdditionalCommands([]); // clear these
-            const oas = OasProjectionHelper.fromEventString(
-              newEventStore.serializeEvents(rfcId)
-            );
-
-            setStats({
-              fields: asJs.reduce(
-                (sum, command) => (command.AddField ? sum + 1 : sum),
-                0
-              ),
-              requests: asJs.reduce(
-                (sum, command) => (command.AddRequest ? sum + 1 : sum),
-                0
-              ),
-              responses: asJs.reduce(
-                (sum, command) =>
-                  command.AddResponseByPathAndMethod ? sum + 1 : sum,
-                0
-              ),
-              oasLineCount: JSON.stringify(oas, null, 4).split('\n').length,
-            });
-            await specService.saveEvents(newEventStore, rfcId);
-            setDone(true);
-          },
-          setProgressTicker
+        const commands = [];
+        suggestions.forEach((x) =>
+          mapScala(x.commands)((command) => commands.push(command))
         );
+        const newEventStore = eventStore.getCopy(rfcId);
+        const {
+          StartBatchCommit,
+          EndBatchCommit,
+        } = opticEngine.com.useoptic.contexts.rfc.Commands;
+        const batchId = uuidv4();
+        const commandContext = new RfcCommandContext(
+          clientId,
+          clientSessionId,
+          batchId
+        );
+
+        const pathAddCommands = additionalCommands;
+        const batchCommands = [...pathAddCommands, ...commands];
+
+        const commandsAsVector = jsonHelper.jsArrayToVector(batchCommands);
+
+        const asJs = opticEngine.CommandSerialization.toJs(commandsAsVector);
+
+        Facade.fromCommands(
+          newEventStore,
+          rfcId,
+          commandsAsVector,
+          commandContext
+        );
+
+        updatedAdditionalCommands([]); // clear these
+        const oas = OasProjectionHelper.fromEventString(
+          newEventStore.serializeEvents(rfcId)
+        );
+
+        setStats({
+          fields: asJs.reduce(
+            (sum, command) => (command.AddField ? sum + 1 : sum),
+            0
+          ),
+          requests: asJs.reduce(
+            (sum, command) => (command.AddRequest ? sum + 1 : sum),
+            0
+          ),
+          responses: asJs.reduce(
+            (sum, command) =>
+              command.AddResponseByPathAndMethod ? sum + 1 : sum,
+            0
+          ),
+          oasLineCount: JSON.stringify(oas, null, 4).split('\n').length,
+        });
+        await specService.saveEvents(newEventStore, rfcId);
+        setDone(true);
       }
     }
-  }, [completed]);
+  );
 
   const Step = ({ title, done, started }) => {
     if (!started) {
@@ -266,7 +258,7 @@ export default function InProgressFullScreen({ type }) {
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper} elevation={4}>
           <PulsingOpticHuge />
-          <Typography color="primary" variant="h5">
+          <Typography color="primary" variant="h5" style={{ marginTop: 8 }}>
             {done ? (
               <>
                 Documented {currentPathExpressions.length} endpoint
@@ -301,30 +293,33 @@ export default function InProgressFullScreen({ type }) {
                   done={Boolean(endpointIds)}
                 />
                 <Step
-                  title={'Collecting examples...'}
-                  started={
-                    collectingDiffsStatus === 'done' ||
-                    collectingDiffsStatus === 'running'
-                  }
-                  done={collectingDiffsStatus === 'done' || done}
+                  title={'Collecting Samples...'}
+                  started={Boolean(endpointIds)}
+                  done={completed}
                 />
 
-                <ListItem dense>
-                  <ListItemText
-                    primary="Learning Endpoints..."
-                    primaryTypographyProps={{
-                      style: {
-                        color: Dark,
-                        fontWeight: 100,
-                      },
-                    }}
-                  />
-                </ListItem>
-                <LinearProgress
-                  variant="determinate"
-                  value={(progressTicker / currentPathExpressions.length) * 100}
-                  style={{ marginTop: 5 }}
-                />
+                {completed ? (
+                  <>
+                    <ListItem dense>
+                      <ListItemText
+                        primary="Learning Endpoints..."
+                        primaryTypographyProps={{
+                          style: {
+                            color: Dark,
+                            fontWeight: 100,
+                          },
+                        }}
+                      />
+                    </ListItem>
+                    <LinearProgress
+                      variant="determinate"
+                      value={
+                        (progressTicker / currentPathExpressions.length) * 100
+                      }
+                      style={{ marginTop: 5 }}
+                    />
+                  </>
+                ) : null}
               </div>
             </Collapse>
             <Collapse in={done}>

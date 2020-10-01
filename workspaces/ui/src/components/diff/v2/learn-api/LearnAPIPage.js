@@ -7,6 +7,7 @@ import { DiffLoadingOverview } from '../LoadingNextDiff';
 import { NewUrlModal } from '../AddUrlModal';
 import classNames from 'classnames';
 import { Show } from '../../../shared/Show';
+import isEqual from 'lodash.isequal';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { DocDarkGrey, DocGrey } from '../../../docs/DocConstants';
@@ -245,13 +246,14 @@ export default function EnhancedTable(props) {
   const classes = useStyles();
   const {
     checkedIds,
-    toggleRow,
-    updatePathExpression,
-    addRow,
+    toDocument,
     learningInProgress,
     shouldHideIds,
     highlightAlsoMatching,
+    updatePathExpression,
+    addRow,
     pathExpressions,
+    toggleRow,
   } = useContext(LearnAPIPageContext);
   const { urls } = props;
   const [order, setOrder] = React.useState('asc');
@@ -266,10 +268,6 @@ export default function EnhancedTable(props) {
     setOrderBy(property);
   };
 
-  const handleClick = (row) => {
-    toggleRow(row);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -280,9 +278,6 @@ export default function EnhancedTable(props) {
   };
 
   const isSelected = (row) => checkedIds.indexOf(row.id) !== -1;
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, urls.length - page * rowsPerPage);
 
   const filteredUrls = urls.filter((url) => !shouldHideIds.includes(url.id));
 
@@ -321,95 +316,29 @@ export default function EnhancedTable(props) {
               onRequestSort={handleRequestSort}
               rowCount={filteredUrls.length}
             />
-            <TableBody>
+            <TableBody key="table-body">
               {stableSort(filteredUrls, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row);
-                  const labelId = `enhanced-table-checkbox-${index}`;
                   const alsoMatchesCurrent = highlightAlsoMatching.includes(
                     row.id
                   );
 
                   return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
+                    <UndocumentedRowWrapper
                       key={row.id}
-                      selected={isItemSelected || alsoMatchesCurrent}
-                      classes={{
-                        selected: alsoMatchesCurrent
-                          ? classes.selectedRowMatches
-                          : classes.selectedRow,
+                      {...{
+                        isItemSelected,
+                        alsoMatchesCurrent,
+                        updatePathExpression,
+                        addRow,
+                        toDocument,
+                        pathExpressions,
+                        toggleRow,
+                        row,
                       }}
-                    >
-                      <TableCell
-                        align="left"
-                        style={{ verticalAlign: 'initial' }}
-                      >
-                        <div style={{ marginTop: 2 }}>
-                          <MethodRenderLarge method={row.method} />
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <PathMatcher
-                          initialPathString={row.path}
-                          url={row.path}
-                          onUserCompleted={() => {
-                            addRow(row);
-                          }}
-                          onChange={(result) => {
-                            updatePathExpression(row.id, result);
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell padding="checkbox" align="right">
-                        <div className={classes.innerCheck}>
-                          <Fade in={alsoMatchesCurrent}>
-                            <Typography
-                              variant="overline"
-                              style={{
-                                color: secondary,
-                                fontSize: 10,
-                                textAlign: 'right',
-                                width: !alsoMatchesCurrent ? 0 : '100%',
-                              }}
-                            >
-                              Matches!
-                            </Typography>
-                          </Fade>
-                          <Fade in={!alsoMatchesCurrent}>
-                            <Typography
-                              variant="overline"
-                              style={{ color: DocDarkGrey, fontSize: 10 }}
-                            >
-                              {(pathExpressions[row.id] || {}).hasParameters
-                                ? ''
-                                : 'No Path Parameters'}
-                            </Typography>
-                          </Fade>
-                          <Fade in={!alsoMatchesCurrent}>
-                            <Checkbox
-                              checked={isItemSelected}
-                              onClick={(event) => handleClick(row)}
-                              color="primary"
-                              style={{ marginLeft: 14 }}
-                              inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                          </Fade>
-                          <LightTooltip title="Mark as Ignored">
-                            <IconButton size="small">
-                              <RemoveCircleIcon
-                                fontSizeAdjust="small"
-                                style={{ width: '.8rem', height: '.8rem' }}
-                              />
-                            </IconButton>
-                          </LightTooltip>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                    />
                   );
                 })}
             </TableBody>
@@ -417,6 +346,121 @@ export default function EnhancedTable(props) {
         </TableContainer>
       </Paper>
     </div>
+  );
+}
+
+class UndocumentedRowWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (
+      this.props.row.id !== nextProps.row.id ||
+      this.props.isItemSelected !== nextProps.isItemSelected ||
+      this.props.alsoMatchesCurrent !== nextProps.alsoMatchesCurrent
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  render() {
+    return <UndocumentedRow {...this.props} />;
+  }
+}
+
+function UndocumentedRow(props) {
+  const classes = useStyles();
+
+  const {
+    isItemSelected,
+    alsoMatchesCurrent,
+    row,
+    updatePathExpression,
+    addRow,
+    pathExpressions,
+    toggleRow,
+    toDocument,
+  } = props;
+
+  const handleClick = (row) => {
+    toggleRow(row);
+  };
+
+  return (
+    <TableRow
+      hover
+      role="checkbox"
+      tabIndex={-1}
+      key={rowId}
+      selected={isItemSelected || alsoMatchesCurrent}
+      classes={{
+        selected: alsoMatchesCurrent
+          ? classes.selectedRowMatches
+          : classes.selectedRow,
+      }}
+    >
+      <TableCell align="left" style={{ verticalAlign: 'initial' }}>
+        <div style={{ marginTop: 2 }}>
+          <MethodRenderLarge method={row.method} />
+        </div>
+      </TableCell>
+      <TableCell align="left">
+        <PathMatcher
+          initialPathString={row.path}
+          key={row.path + row.id}
+          url={row.path}
+          rowId={row.id}
+          onUserCompleted={() => {
+            addRow(row);
+          }}
+          onChange={(result) => {
+            updatePathExpression(row.id, result);
+          }}
+        />
+      </TableCell>
+      <TableCell padding="checkbox" align="right">
+        <div className={classes.innerCheck}>
+          <Fade in={alsoMatchesCurrent}>
+            <Typography
+              variant="overline"
+              style={{
+                color: secondary,
+                fontSize: 10,
+                textAlign: 'right',
+                width: !alsoMatchesCurrent ? 0 : '100%',
+              }}
+            >
+              Matches!
+            </Typography>
+          </Fade>
+          <Fade in={!alsoMatchesCurrent}>
+            <Typography
+              variant="overline"
+              style={{ color: DocDarkGrey, fontSize: 10 }}
+            >
+              {isItemSelected && !(pathExpressions[row.id] || {}).hasParameters
+                ? 'No Path Parameters'
+                : ''}
+            </Typography>
+          </Fade>
+          <Fade in={!alsoMatchesCurrent}>
+            <Checkbox
+              checked={isItemSelected}
+              onClick={(event) => handleClick(row)}
+              color="primary"
+              style={{ marginLeft: 14 }}
+            />
+          </Fade>
+          <LightTooltip title="Mark as Ignored">
+            <IconButton size="small">
+              <RemoveCircleIcon
+                fontSizeAdjust="small"
+                style={{ width: '.8rem', height: '.8rem' }}
+              />
+            </IconButton>
+          </LightTooltip>
+        </div>
+      </TableCell>
+    </TableRow>
   );
 }
 

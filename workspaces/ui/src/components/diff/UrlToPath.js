@@ -9,6 +9,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import { LearnAPIPageContext } from './v2/learn-api/LearnAPIPageContext';
+import { useHover } from '../utilities/useHoverHook';
 
 export function urlStringToPathComponents(url) {
   const components = url.split('/').map((name, index) => {
@@ -43,48 +44,37 @@ const useStyles = makeStyles((theme) =>
 
 function PathComponentItem(props) {
   const classes = useStyles();
-  const { item, updateItem, inferDefaultParamName } = props;
-  if (item.isParameter) {
+  const { item, updateItem, index, pathComponents } = props;
+  const [hoverRef, isHovered] = useHover();
+
+  function PathComponentButton({ onClick }) {
     return (
-      <ButtonBase
-        className={classes.component}
-        onClick={() =>
-          updateItem({ ...item, name: item.originalName, isParameter: false })
-        }
-      >
-        <Typography className={classes.thick}>{`{${
-          item.name || '   '
-        }}`}</Typography>
+      <ButtonBase className={classes.component} onClick={onClick}>
+        {item.isParameter ? (
+          <Typography className={classes.thick}>{`{${
+            item.name || '   '
+          }}`}</Typography>
+        ) : (
+          <Typography className={classes.thin}>{item.name}</Typography>
+        )}
       </ButtonBase>
     );
   }
-  return (
-    <ButtonBase
-      className={classes.component}
-      onClick={() =>
-        updateItem({
-          ...item,
-          isParameter: true,
-          name: inferDefaultParamName(),
-        })
-      }
-    >
-      <Typography className={classes.thin}>{item.name}</Typography>
-    </ButtonBase>
-  );
-}
 
-function UrlToPath(props) {
-  const { url, onAccept, onUserCompleted } = props;
-  const { toDocument, pathExpressions } = useContext(LearnAPIPageContext);
-  const [pathComponents, setPathComponentsInternal] = useState(
-    urlStringToPathComponents(url)
-  );
-  const [lastInteractedIndex, setLastInteractedIndex] = useState(null);
-  const [collapseParams, setCollapseParams] = useState(false);
+  if (item.isParameter) {
+    return (
+      <PathComponentButton
+        onClick={() =>
+          updateItem({ ...item, name: item.originalName, isParameter: false })
+        }
+      />
+    );
+  }
 
-  function inferDefaultParamName(index) {
-    return () => {
+  function ClickToMakeParam({ updateItem, classes, item }) {
+    const { toDocument, pathExpressions } = useContext(LearnAPIPageContext);
+
+    function inferDefaultParamName() {
       if (pathComponents.length === 0) {
         return '';
       }
@@ -118,8 +108,43 @@ function UrlToPath(props) {
 
         return firstMatchingParamName ? firstMatchingParamName.name : '';
       }
-    };
+    }
+
+    return (
+      <PathComponentButton
+        onClick={() =>
+          updateItem({
+            ...item,
+            isParameter: true,
+            name: inferDefaultParamName(),
+          })
+        }
+      />
+    );
   }
+
+  return (
+    <span ref={hoverRef}>
+      {isHovered ? ( // when hovered bring in context aware variant
+        <ClickToMakeParam
+          item={item}
+          classes={classes}
+          updateItem={updateItem}
+        />
+      ) : (
+        <PathComponentButton onClick={() => {}} /> // when not hovered, keep dumb
+      )}
+    </span>
+  );
+}
+
+function UrlToPath(props) {
+  const { url, onAccept, onUserCompleted } = props;
+  const [pathComponents, setPathComponentsInternal] = useState(
+    urlStringToPathComponents(url)
+  );
+  const [lastInteractedIndex, setLastInteractedIndex] = useState(null);
+  const [collapseParams, setCollapseParams] = useState(false);
 
   function setPathComponents(pathComponents) {
     setPathComponentsInternal(pathComponents);
@@ -161,7 +186,8 @@ function UrlToPath(props) {
           <PathComponentItem
             key={`${item.index}-2`}
             item={item}
-            inferDefaultParamName={inferDefaultParamName(item.index)}
+            index={item.index}
+            pathComponents={pathComponents}
             updateItem={setItemAt(item.index)}
           />,
         ])}
@@ -173,10 +199,13 @@ function UrlToPath(props) {
             <div>
               <Typography variant="overline">Parameter Names:</Typography>
             </div>
-            {parameters.map((item) => {
+            {parameters.map((item, index) => {
               const updater = setItemAt(item.index);
               return (
-                <div style={{ marginBottom: 11 }}>
+                <div
+                  style={{ marginBottom: 11 }}
+                  key={'name-param-' + index.toString()}
+                >
                   <TextField
                     key={item.index}
                     autoFocus={item.index === lastInteractedIndex}

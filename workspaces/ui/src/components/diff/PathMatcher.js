@@ -2,6 +2,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import UrlToPath from './UrlToPath';
 import { pathComponentsToString } from './v2/AddUrlModal';
+import isEqual from 'lodash.isequal';
 
 const styles = (theme) => ({
   pathWrapper: {
@@ -22,12 +23,19 @@ class PathMatcher extends React.Component {
   };
 
   render() {
-    const { classes, url, onUserCompleted } = this.props;
-
+    const {
+      classes,
+      url,
+      rowId,
+      onUserCompleted,
+      toDocument,
+      pathExpressions,
+    } = this.props;
     return (
       <div>
         <UrlToPath
           url={url}
+          key={'path-match' + rowId}
           onUserCompleted={onUserCompleted}
           onAccept={(pathComponents) => {
             this.handlePathComponentsChange(pathComponents);
