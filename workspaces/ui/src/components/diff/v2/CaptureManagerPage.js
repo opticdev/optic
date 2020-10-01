@@ -206,8 +206,7 @@ function CaptureChooserComponent(props) {
     (i) => i.count > 0 && i.isDocumentedEndpoint
   ).length;
 
-  const totalEndpoints = endpointDiffs.filter((i) => i.isDocumentedEndpoint)
-    .length;
+  const totalEndpoints = endpointDiffs.length;
 
   const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
     JsonHelper.jsArrayToSeq(unrecognizedUrls),
@@ -423,9 +422,8 @@ function EndpointDiffs(props) {
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const real = endpointDiffs.filter((i) => i.isDocumentedEndpoint);
-  const realCount = real.length;
-  const anyHaveDiffs = real.some((i) => i.count > 0);
+  const realCount = endpointDiffs.length;
+  const anyHaveDiffs = endpointDiffs.some((i) => i.count > 0);
 
   if (realCount === 0 && !completed) {
     return <DiffLoadingOverview show={true} />;
@@ -445,11 +443,6 @@ function EndpointDiffs(props) {
       </div>
       <List style={{ padding: 13, paddingTop: 4 }}>
         {endpointDiffs.map((i) => {
-          //skip undocumented
-          if (!i.isDocumentedEndpoint) {
-            return null;
-          }
-
           const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
           return (
             <EndpointsContextStore key={to} pathId={i.pathId} method={i.method}>
