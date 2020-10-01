@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import isEqual from 'lodash.isequal';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -51,7 +52,9 @@ function PathComponentItem(props) {
           updateItem({ ...item, name: item.originalName, isParameter: false })
         }
       >
-        <Typography className={classes.thick}>{`{${item.name}}`}</Typography>
+        <Typography className={classes.thick}>{`{${
+          item.name || '   '
+        }}`}</Typography>
       </ButtonBase>
     );
   }
@@ -91,7 +94,16 @@ function UrlToPath(props) {
           const expressions = pathExpressions[doc.id];
           return expressions.pathComponents;
         })
-        .filter((i) => i[0].name === pathComponents[0].name);
+        .filter((i) => {
+          const a = i
+            .slice(0, index - 1)
+            .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+          const b = pathComponents
+            .slice(0, index - 1)
+            .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+
+          return isEqual(a, b);
+        });
 
       if (otherPathComponents.length === 0) {
         return '';

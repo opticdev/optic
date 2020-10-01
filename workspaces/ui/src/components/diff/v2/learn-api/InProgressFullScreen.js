@@ -329,7 +329,7 @@ export default function InProgressFullScreen({ type }) {
             </Collapse>
             <Collapse in={done}>
               <div style={{ textAlign: 'center', marginTop: 19 }}>
-                {stats && (
+                {stats && !isManual ? (
                   <Typography variant="body1" color="primary">
                     <Typography variant="h6" color="textPrimary">
                       That's <Stat number={stats.oasLineCount} label="line" />{' '}
@@ -352,7 +352,7 @@ export default function InProgressFullScreen({ type }) {
                     <div></div>
                     <div></div>
                   </Typography>
-                )}
+                ) : null}
                 <Button
                   variant="contained"
                   color="primary"

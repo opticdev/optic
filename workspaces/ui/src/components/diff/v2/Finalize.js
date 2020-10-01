@@ -129,7 +129,7 @@ export default function FinalizeDialog(props) {
       <DialogTitle>{'Commit changes to API specification'}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {!endpointDescriptor.endpointPurpose && (
+          {!endpointDescriptor.endpointPurpose && hasChanges ? (
             <div style={{ paddingBottom: 18 }}>
               <PathAndMethod
                 path={endpointDescriptor.fullPath}
@@ -146,7 +146,7 @@ export default function FinalizeDialog(props) {
                 required
               />
             </div>
-          )}
+          ) : null}
           You have accepted {acceptedSuggestions.length} suggestion
           {pluralIf(acceptedSuggestions)}, and ignored {ignoredDiffs.length}{' '}
           diff{pluralIf(ignoredDiffs)}
