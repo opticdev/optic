@@ -17,7 +17,8 @@ import {
   disassembler as jsonDisassembler,
 } from 'stream-json/Disassembler';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
-import { Duplex } from 'stream';
+import { replace as jsonReplace } from 'stream-json/filters/Replace';
+import { Duplex, Readable } from 'stream';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -155,7 +156,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     const diffQueries = diffMetadata.manager.queries();
 
     let diffsStream = diffQueries.diffs();
-    diffsStream.pipe(toJSONArray()).pipe(res).type('application/json');
+    toJSONArray(diffsStream).pipe(res).type('application/json');
   });
 
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
@@ -167,7 +168,12 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     const diffQueries = diffMetadata.manager.queries();
 
     let undocumentedUrls = diffQueries.undocumentedUrls();
-    undocumentedUrls.pipe(toJSONArray()).pipe(res).type('application/json');
+    toJSONArray(undocumentedUrls, {
+      base: { urls: [] },
+      path: 'urls',
+    })
+      .pipe(res)
+      .type('application/json');
   });
 
   router.get('/diffs/:diffId/stats', async (req, res) => {
@@ -213,6 +219,49 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   return router;
 }
 
-function toJSONArray(): Duplex {
-  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
+function toJSONArray(
+  itemsStream: Readable,
+  wrap?: {
+    base: { [key: string]: any };
+    path: string;
+  }
+): Duplex {
+  let tokenStream = chain([itemsStream, jsonDisassembler()]);
+  if (!wrap) return tokenStream.pipe(jsonStringer({ makeArray: true }));
+
+  let ARRAY_ITEM_MARKER = { name: 'array_insert_marker ' };
+  let objectTokenStream = chain([
+    Readable.from([wrap.base]),
+    jsonDisassembler(),
+    jsonReplace({
+      filter: wrap.path,
+      once: true,
+      allowEmptyReplacement: false,
+      replacement: () => [
+        { name: 'startArray' },
+        ARRAY_ITEM_MARKER,
+        { name: 'endArray' },
+      ],
+    }),
+  ]);
+
+  let outputGenerator = async function* (
+    wrapTokenStream: Readable,
+    arrayTokenStream: Readable,
+    marker: any
+  ) {
+    for await (let wrapToken of wrapTokenStream) {
+      if (wrapToken === marker) {
+        for await (let arrayToken of arrayTokenStream) {
+          yield arrayToken;
+        }
+      } else {
+        yield wrapToken;
+      }
+    }
+  };
+
+  return Readable.from(
+    outputGenerator(objectTokenStream, tokenStream, ARRAY_ITEM_MARKER)
+  ).pipe(jsonStringer());
 }
