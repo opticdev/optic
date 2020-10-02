@@ -318,23 +318,20 @@ impl<'a> ShapeQueries<'a> {
 
     projection
       .graph
-      .neighbors_directed(*shape_node_index, petgraph::Direction::Incoming)
-      .filter_map(|neighbor_node_index| {
-        let neighbor = projection.graph.node_weight(neighbor_node_index).unwrap();
-        match neighbor {
-          Node::ShapeParameter(parameter_node) => {
-            let mut outgoing_edges = projection
+      .edges_directed(*shape_node_index, petgraph::Direction::Outgoing)
+      .filter_map(|edge_reference| {
+        let edge_weight = edge_reference.weight();
+        match edge_weight {
+          Edge::HasBinding(b) => {
+            let neighbor = projection
               .graph
-              .edges_connecting(*shape_node_index, neighbor_node_index);
-
-            let existing_binding = outgoing_edges
-              .next()
-              .expect("expected a parameter binding to exist");
-            let edge_index = existing_binding.id();
-            let edge_weight = projection.graph.edge_weight(edge_index).unwrap();
-            match edge_weight {
-              Edge::HasBinding(b) => Some((parameter_node.0.clone(), b.shape_id.clone())),
-              _ => unreachable!("expected edge to be a HasBinding"),
+              .node_weight(edge_reference.target())
+              .unwrap();
+            match neighbor {
+              Node::ShapeParameter(parameter_node) => {
+                Some((parameter_node.0.clone(), b.shape_id.clone()))
+              }
+              _ => unreachable!("expected HasBinding edge to point to a ShapeParameter"),
             }
           }
           _ => None,
