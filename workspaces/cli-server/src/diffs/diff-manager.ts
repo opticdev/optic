@@ -169,7 +169,7 @@ export class DiffQueries {
       ]);
     } else {
       return chain([
-        Readable.from(lockedRead(this.paths.diffs)),
+        Readable.from(lockedReadStream(this.paths.diffs)),
         jsonParser(), // parse as JSON, to guard against malformed persisted results
         streamArray(),
         (data) => [data.value],
@@ -178,16 +178,20 @@ export class DiffQueries {
   }
   undocumentedUrls(): Readable {
     return chain([
-      Readable.from(lockedRead(this.paths.undocumentedUrls)),
+      Readable.from(lockedReadStream(this.paths.undocumentedUrls)),
       jsonParser(),
       streamArray(),
       (data) => [data.value],
     ]);
   }
-  stats() {}
+  stats(): Promise<DiffStats> {
+    return lockedRead<DiffStats>(this.paths.stats);
+  }
 }
 
-async function* lockedRead(filePath: string) {
+type DiffStats = { [key: string]: number | string | boolean };
+
+async function* lockedReadStream(filePath: string) {
   await lockfile.lock(filePath, {
     retries: { retries: 10 },
   });
@@ -199,4 +203,16 @@ async function* lockedRead(filePath: string) {
   }
 
   await lockfile.unlock(filePath);
+}
+
+async function lockedRead<T>(filePath: string): Promise<T> {
+  await lockfile.lock(filePath, {
+    retries: { retries: 10 },
+  });
+
+  let json = await fs.readJson(filePath);
+
+  await lockfile.unlock(filePath);
+
+  return json;
 }

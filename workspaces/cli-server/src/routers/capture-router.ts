@@ -178,23 +178,14 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/stats', async (req, res) => {
     const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
-    try {
-      //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.stats, { retries: { retries: 10 } });
-      const contents = await fs.readJson(diffOutputPaths.stats);
-      await lockfile.unlock(diffOutputPaths.stats);
-
-      res.json(contents);
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+    const diffMetadata = diffs.get(diffId);
+    if (!diffMetadata) {
+      return res.json(404);
     }
+    const diffQueries = diffMetadata.manager.queries();
+
+    let stats = await diffQueries.stats();
+    res.json(stats);
   });
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -264,4 +255,8 @@ function toJSONArray(
   return Readable.from(
     outputGenerator(objectTokenStream, tokenStream, ARRAY_ITEM_MARKER)
   ).pipe(jsonStringer());
+}
+
+function toJSONObject(): Duplex {
+  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
 }
