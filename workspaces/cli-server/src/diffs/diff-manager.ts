@@ -9,13 +9,14 @@ import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 
 import lockfile from 'proper-lockfile';
-import { Readable } from 'stream';
+import { Readable, PassThrough } from 'stream';
 import { chain } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
+import { ENETRESET } from 'constants';
 
 export interface IDiffManagerConfig {
   configPath: string;
@@ -31,6 +32,7 @@ export class DiffManager {
   private child!: ChildProcess;
   public readonly id: string;
   private readonly config: IDiffManagerConfig;
+  private finished: boolean = false;
 
   constructor(config: IDiffManagerConfig) {
     this.id = config.diffId;
@@ -91,6 +93,7 @@ export class DiffManager {
           new Error('Diff worker exited with non-zero status code')
         );
       } else {
+        this.finished = true;
         this.events.emit('finish');
       }
     };
@@ -113,11 +116,16 @@ export class DiffManager {
       }
       function onProgress(data: any) {
         cleanup();
-        resolve(data);
+        resolve();
+      }
+      function onFinish() {
+        cleanup();
+        resolve();
       }
       const cleanup = () => {
         this.events.removeListener('progress', onProgress);
         this.events.removeListener('error', onErr);
+        this.events.removeListener('finish', onFinish);
       };
 
       this.events.once('progress', onProgress);
@@ -132,6 +140,57 @@ export class DiffManager {
 
   private paths(): DiffPaths {
     return getDiffOutputPaths(this.config);
+  }
+
+  progress(): Readable {
+    // NOTE: event emitters don't respect back pressure, so to make sure we don't overwhelm
+    // downstream consumers, we stop observing progress events until a fully-buffered stream
+    // drains again.
+    const stream = new PassThrough({ objectMode: true, highWaterMark: 4 });
+    stream.write({ type: 'progress', data: this.latestProgress() });
+
+    if (this.finished) {
+      stream.end();
+    } else {
+      let resume = () => {
+        let write = (progress: { type: string; data: any }) => {
+          if (!stream.write(progress)) {
+            stopListening();
+            stream.once('drain', resume);
+          }
+        };
+
+        let end = () => {
+          stopListening();
+          stream.end();
+        };
+
+        function onProgress(data: any) {
+          write({ type: 'progress', data });
+        }
+        function onErr(data: any) {
+          write({ type: 'error', data });
+          end();
+        }
+        function onFinish() {
+          end();
+        }
+
+        const stopListening = () => {
+          this.events.removeListener('progress', onProgress);
+          this.events.removeListener('error', onErr);
+          this.events.removeListener('finish', onFinish);
+        };
+
+        this.events.on('progress', onProgress);
+        this.events.once('error', onErr);
+        this.events.once('finish', onFinish);
+      };
+
+      resume();
+    }
+
+    return stream;
   }
 
   queries() {

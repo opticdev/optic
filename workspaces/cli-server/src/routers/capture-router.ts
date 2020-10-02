@@ -114,11 +114,14 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     if (!diffMetadata) {
       return res.json(404);
     }
-
-    function emit(data: any) {
-      console.log('emit');
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-    }
+    const progress = diffMetadata.manager.progress();
+    const notifications = chain([
+      progress,
+      ({ type, data }) => {
+        if (type === 'progress') type = 'message';
+        return [`data: ${JSON.stringify({ type, data })}\n\n`];
+      },
+    ]);
 
     const headers = {
       'Content-Type': 'text/event-stream',
@@ -126,22 +129,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       'Cache-Control': 'no-cache',
     };
     res.writeHead(200, headers);
-    emit({
-      type: 'message',
-      data: diffMetadata.manager.latestProgress() || {},
-    });
-
-    diffMetadata.manager.events.on('progress', (data) => {
-      emit({ type: 'message', data });
-    });
-    diffMetadata.manager.events.on('error', (data) => {
-      emit({ type: 'error', data });
-    });
-
-    req.on('close', () => {
-      diffMetadata.manager.stop();
-      diffs.delete(diffId);
-    });
+    notifications.pipe(res);
   });
 
   ////////////////////////////////////////////////////////////////////////////////
