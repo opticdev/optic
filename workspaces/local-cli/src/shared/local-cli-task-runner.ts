@@ -72,7 +72,7 @@ export async function LocalTaskSessionWrapper(
   await session.start(cli, config, taskName);
 
   if (flags.coverage) {
-    await printCoverage(paths, captureId);
+    await printCoverage(paths, taskName, captureId);
   }
 
   return await cleanupAndExit();
