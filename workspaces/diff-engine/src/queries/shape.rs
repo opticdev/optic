@@ -18,7 +18,7 @@ impl<'a> ShapeQueries<'a> {
   pub fn new(shape_projection: &'a ShapeProjection) -> Self {
     ShapeQueries { shape_projection }
   }
-  
+
   pub fn list_trail_choices(&self, shape_trail: &ShapeTrail) -> Vec<ChoiceOutput> {
     let projection = &self.shape_projection;
     let root_node_index = projection.get_shape_node_index(&shape_trail.root_shape_id);
@@ -75,18 +75,17 @@ impl<'a> ShapeQueries<'a> {
                 shape_id: shape_id.clone(),
                 inner_shape_id: item_shape_id.clone(),
               });
-            vec![
-              vec![ChoiceOutput {
-                parent_trail: shape_trail.clone(),
-                additional_components: vec![ShapeTrailPathComponent::NullableTrail {
-                  shape_id: shape_id.clone(),
-                }],
+
+            let mut output = vec![ChoiceOutput {
+              parent_trail: shape_trail.clone(),
+              additional_components: vec![ShapeTrailPathComponent::NullableTrail {
                 shape_id: shape_id.clone(),
-                core_shape_kind: core_shape_descriptor.kind.clone(),
               }],
-              self.list_trail_choices(&trail),
-            ]
-            .concat()
+              shape_id: shape_id.clone(),
+              core_shape_kind: core_shape_descriptor.kind.clone(),
+            }];
+            output.append(&mut self.list_trail_choices(&trail));
+            output
           }
           ShapeKind::OptionalKind => {
             let optional_parameter_id = core_shape_descriptor
@@ -105,18 +104,16 @@ impl<'a> ShapeQueries<'a> {
                 shape_id: shape_id.clone(),
                 inner_shape_id: item_shape_id.clone(),
               });
-            vec![
-              vec![ChoiceOutput {
-                parent_trail: shape_trail.clone(),
-                additional_components: vec![ShapeTrailPathComponent::OptionalTrail {
-                  shape_id: shape_id.clone(),
-                }],
+            let mut output = vec![ChoiceOutput {
+              parent_trail: shape_trail.clone(),
+              additional_components: vec![ShapeTrailPathComponent::OptionalTrail {
                 shape_id: shape_id.clone(),
-                core_shape_kind: core_shape_descriptor.kind.clone(),
               }],
-              self.list_trail_choices(&trail),
-            ]
-            .concat()
+              shape_id: shape_id.clone(),
+              core_shape_kind: core_shape_descriptor.kind.clone(),
+            }];
+            output.append(&mut self.list_trail_choices(&trail));
+            output
           }
           ShapeKind::OneOfKind => self
             .resolve_parameters_to_shapes(shape_id)
@@ -175,7 +172,6 @@ impl<'a> ShapeQueries<'a> {
     }
   }
 
-  
   fn resolve_trail_to_core_shape_helper(
     &self,
     parent: &ResolvedTrail,
