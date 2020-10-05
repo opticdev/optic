@@ -9,10 +9,17 @@ import {
   diffFromRfcStateAndInteractions,
   universeFromEvents,
 } from '@useoptic/domain-utilities';
-import { DiffHelpers, opticEngine, Queries } from '@useoptic/domain';
+import {
+  DiffHelpers,
+  JsonHelper,
+  opticEngine,
+  Queries,
+} from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
+
+export const coverageFilePrefix = 'coverage-';
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private rfcState!: any;
@@ -59,11 +66,14 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     const filteredItems = items.filter(
       (x) => !filter.shouldIgnore(x.request.method, x.request.path)
     );
+
+    // diff report
     const diffs = diffFromRfcStateAndInteractions(
       this.shapesResolvers,
       this.rfcState,
       items
     );
+
     const distinctDiffCount = DiffHelpers.distinctDiffCount(diffs);
     const diffsAsJs = opticEngine.DiffJsonSerializer.toJs(diffs);
     developerDebugLogger({ distinctDiffCount });
@@ -80,6 +90,23 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       path.join(outputDirectory, `diffs-${batchId}.json`),
       diffsAsJs
     );
+
+    // coverage report as JS
+    const report = opticEngine.com.useoptic.diff.helpers
+      .CoverageHelpers()
+      .getCoverage(
+        this.shapesResolvers,
+        this.rfcState,
+        JsonHelper.jsArrayToSeq(items.map((x) => JsonHelper.fromInteraction(x)))
+      );
+
+    const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
+
+    await fs.writeJson(
+      path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
+      asJs
+    );
+
     return result;
   }
 }
