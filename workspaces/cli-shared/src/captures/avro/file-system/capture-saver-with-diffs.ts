@@ -18,6 +18,7 @@ import {
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
+import { coverageFilePrefix } from '@useoptic/cli/lib/shared/coverage';
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private rfcState!: any;
@@ -101,7 +102,7 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
 
     await fs.writeJson(
-      path.join(outputDirectory, `coverage-${batchId}.json`),
+      path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
       asJs
     );
 

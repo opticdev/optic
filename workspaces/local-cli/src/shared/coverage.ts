@@ -10,6 +10,8 @@ import Table from 'cli-table3';
 import sortBy from 'lodash.sortby';
 import colors from 'colors';
 
+export const coverageFilePrefix = 'coverage-';
+
 export async function printCoverage(
   paths: IPathMapping,
   taskName: string,
@@ -246,7 +248,7 @@ async function getReport(paths: IPathMapping, captureId: string): Promise<any> {
   return report;
 }
 
-export function getCachedQueryResults(queries: any) {
+function getCachedQueryResults(queries: any) {
   const contributions = queries.contributions();
 
   const {
@@ -321,12 +323,11 @@ export function createEndpointDescriptor(
   } = cachedQueryResults;
 
   const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(
-    //@ts-ignore
-    (requestId) => requests[requestId]
+    (requestId: any) => requests[requestId]
   );
   const requestsOnPathAndMethod = requestIdsOnPath.filter(
-    //@ts-ignore
-    (request) => request.requestDescriptor.httpMethod === method.toUpperCase()
+    (request: any) =>
+      request.requestDescriptor.httpMethod === method.toUpperCase()
   );
 
   const requestBodies = requestsOnPathAndMethod.map(
