@@ -1,4 +1,4 @@
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import path from 'path';
 import {
@@ -40,8 +40,20 @@ import { EventEmitter } from 'events';
 import { Config } from '../config';
 import { Debugger } from 'debug';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
+import { printCoverage } from './coverage';
 
-export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
+export const runCommandFlags = {
+  coverage: flags.boolean({ char: 'c', default: false, required: false }),
+};
+interface LocalCliTaskFlags {
+  coverage?: boolean;
+}
+
+export async function LocalTaskSessionWrapper(
+  cli: Command,
+  taskName: string,
+  flags: LocalCliTaskFlags
+) {
   // hijack the config deprecation log to format nicely for the CLI
   deprecationLogger.log = (msg: string) => {
     cli.log(
@@ -58,6 +70,11 @@ export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   const runner = new LocalCliTaskRunner(captureId, paths);
   const session = new CliTaskSession(runner);
   await session.start(cli, config, taskName);
+
+  if (flags.coverage) {
+    await printCoverage(paths, taskName, captureId);
+  }
+
   return await cleanupAndExit();
 }
 
