@@ -18,7 +18,8 @@ import {
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
-import { coverageFilePrefix } from '@useoptic/cli/lib/shared/coverage';
+
+export const coverageFilePrefix = 'coverage-';
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
   private rfcState!: any;

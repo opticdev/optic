@@ -9,8 +9,7 @@ const CoverageConcerns = opticEngine.com.useoptic.coverage;
 import Table from 'cli-table3';
 import sortBy from 'lodash.sortby';
 import colors from 'colors';
-
-export const coverageFilePrefix = 'coverage-';
+import { coverageFilePrefix } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 
 export async function printCoverage(
   paths: IPathMapping,
@@ -118,6 +117,7 @@ export async function printCoverage(
 
     const coverage = colors.grey(`${coverageCopy}      ${totalCount} Examples`);
 
+    // @ts-ignore
     table.push([
       `${endpointName}\n\n${coverage}`,
       `${requests}\n\n${responses}`,
@@ -176,6 +176,7 @@ export async function printCoverage(
   );
 
   resultTable.push(
+    // @ts-ignore
     [
       'Documented Body Coverage',
       totalN.toString(),
@@ -226,7 +227,7 @@ async function getReport(paths: IPathMapping, captureId: string): Promise<any> {
   const entries = await fs.readdir(capturesDirectory);
 
   const coverageFiles = entries
-    .filter((x) => x.startsWith('coverage-'))
+    .filter((x) => x.startsWith(coverageFilePrefix))
     .map((x) => path.join(capturesDirectory, x));
 
   const reportsToMerge = await Promise.all(
