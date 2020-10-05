@@ -32,11 +32,7 @@ import {
   ProxyCanStartAtInboundUrl,
   ProxyTargetUrlResolves,
 } from '@useoptic/analytics/lib/interfaces/ApiCheck';
-
-enum Modes {
-  Recommended = 'Recommended',
-  Manual = 'Manual',
-}
+import { Modes } from '@useoptic/cli-shared/build/tasks/await-up';
 
 export async function verifyTask(
   cli: Command,

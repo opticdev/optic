@@ -29,8 +29,9 @@ export interface ITestingConfig {
 
 export interface IOpticTask {
   command?: string;
-  baseUrl: string;
+  baseUrl?: string;
   proxy?: string;
+  useTask?: string;
   targetUrl?: string;
 }
 
@@ -95,6 +96,8 @@ export class TargetPortUnavailableError extends Error {}
 
 export class TaskNotFoundError extends Error {}
 
+export class RunsWithTaskNotFoundError extends Error {}
+
 export interface IOpticCaptureConfig {
   persistenceEngine: 'fs' | 's3';
   captureId: string;
@@ -148,12 +151,16 @@ function randomLowerBound(): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function isTestTask(aliasedTask: IOpticTaskAliased) {
+  return aliasedTask.useTask && aliasedTask.command;
+}
+
 export async function TaskToStartConfig(
   aliasedTask: IOpticTaskAliased
 ): Promise<IOpticTaskRunnerConfig> {
   const task = normalizeTask(aliasedTask);
 
-  const baseUrl = url.parse(task.baseUrl);
+  const baseUrl = url.parse(task.baseUrl!);
   const targetUrl =
     (task.targetUrl && url.parse(task.targetUrl)) ||
     (task.proxy && url.parse(task.proxy)); // TODO: add deprecation warning
@@ -199,8 +206,14 @@ export async function TaskToStartConfig(
 
 function normalizeTask(aliased: IOpticTaskAliased): IOpticTask {
   const baseUrl = aliased.baseUrl || aliased.inboundUrl;
-  if (!baseUrl)
+  if (!baseUrl && !aliased.useTask)
     throw new Error('Task definition must have baseUrl (aliases: inboundUrl)');
+
+  if (aliased.useTask && (baseUrl || aliased.targetUrl)) {
+    throw new Error(
+      'Task definitions with useTask should not include an inboundUrl or targetUrl '
+    );
+  }
 
   return {
     ...aliased,

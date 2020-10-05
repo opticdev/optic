@@ -10,9 +10,13 @@ import {
 } from './index';
 import url from 'url';
 import { buildQueryStringParser } from './query/build-query-string-parser';
+import { awaitTaskUp, Modes } from './tasks/await-up';
 
 class CommandAndProxySessionManager {
-  constructor(private config: IOpticTaskRunnerConfig) {}
+  constructor(
+    private config: IOpticTaskRunnerConfig,
+    private onStarted?: () => void
+  ) {}
 
   async run(persistenceManager: ICaptureSaver) {
     const commandSession = new CommandSession();
@@ -83,6 +87,14 @@ class CommandAndProxySessionManager {
           ...opticServiceConfig,
         },
       });
+
+      if (this.onStarted) {
+        // run test task for manual mode
+        await awaitTaskUp(Modes.Recommended, this.config);
+        await this.onStarted();
+        await commandSession.stop();
+      }
+
       const commandStoppedPromise = new Promise((resolve) => {
         commandSession.events.on('stopped', ({ state }) => {
           developerDebugLogger(`command session stopped (${state})`);
@@ -90,6 +102,11 @@ class CommandAndProxySessionManager {
         });
       });
       promises.push(commandStoppedPromise);
+    } else {
+      if (this.onStarted) {
+        await awaitTaskUp(Modes.Manual, this.config);
+        await this.onStarted();
+      }
     }
 
     const processInterruptedPromise = new Promise((resolve) => {
