@@ -43,10 +43,14 @@ import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { printCoverage } from './coverage';
 
 export const runCommandFlags = {
-  coverage: flags.boolean({ char: 'c', default: false, required: false }),
+  'collect-coverage': flags.boolean({
+    char: 'c',
+    default: false,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
-  coverage?: boolean;
+  'collect-coverage'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -71,7 +75,7 @@ export async function LocalTaskSessionWrapper(
   const session = new CliTaskSession(runner);
   await session.start(cli, config, taskName);
 
-  if (flags.coverage) {
+  if (flags['collect-coverage']) {
     await printCoverage(paths, taskName, captureId);
   }
 
