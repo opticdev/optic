@@ -46,10 +46,14 @@ import { spawnProcess } from './spawn-process';
 import { command } from '@oclif/test';
 
 export const runCommandFlags = {
-  coverage: flags.boolean({ char: 'c', default: false, required: false }),
+  'collect-coverage': flags.boolean({
+    char: 'c',
+    default: false,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
-  coverage?: boolean;
+  'collect-coverage'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -83,7 +87,7 @@ export async function LocalTaskSessionWrapper(
     await session.start(cli, config, taskName);
   }
 
-  if (flags.coverage) {
+  if (flags['collect-coverage']) {
     await printCoverage(paths, taskName, captureId);
   }
 
