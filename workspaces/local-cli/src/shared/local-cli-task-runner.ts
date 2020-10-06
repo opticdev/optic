@@ -178,18 +178,20 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
 
     const testCommand = commandToRunWhenStarted
-      ? () => {
+      ? async () => {
           console.log(
             fromOptic(
               'Running test command ' +
                 colors.grey.bold(commandToRunWhenStarted)
             )
           );
-          spawnProcess(commandToRunWhenStarted!, {
+
+          await spawnProcess(commandToRunWhenStarted!, {
             OPTIC_PROXY_PORT: taskConfig.proxyConfig.port.toString(),
             OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
             OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
           });
+          return new Promise((resolve) => setTimeout(resolve, 500)); // needs time to finish saving
         }
       : undefined;
 
