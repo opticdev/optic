@@ -318,4 +318,10 @@ export interface ITestingConfig {
   authToken: string;
 }
 
+export enum Modes {
+  Recommended = 'Recommended',
+  Manual = 'Manual',
+  Test = 'Test',
+}
+
 export { parseIgnore, parseRule, IIgnoreRunnable };

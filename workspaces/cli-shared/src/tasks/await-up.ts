@@ -1,11 +1,10 @@
-import { IOpticTask, IOpticTaskRunnerConfig } from '@useoptic/cli-config';
+import {
+  IOpticTask,
+  IOpticTaskRunnerConfig,
+  Modes,
+} from '@useoptic/cli-config';
 import url from 'url';
 import waitOn from 'wait-on';
-
-export enum Modes {
-  Recommended = 'Recommended',
-  Manual = 'Manual',
-}
 
 export async function awaitTaskUp(
   mode: Modes,

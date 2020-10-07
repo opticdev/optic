@@ -78,6 +78,25 @@ export async function LocalTaskSessionWrapper(
   const session = new CliTaskSession(runner);
 
   const task = config.tasks[taskName];
+
+  if (!task) {
+    cli.log(
+      fromOptic(
+        `Task ${colors.grey.bold(
+          taskName
+        )} does not exist. Try one of these ${colors.grey.bold(
+          'api run <taskname>'
+        )}`
+      )
+    );
+    return cli.log(
+      Object.keys(config.tasks || [])
+        .map((i) => '- ' + i)
+        .sort()
+        .join('\n')
+    );
+  }
+
   if (task && isTestTask(task)) {
     cli.log(
       fromOptic(`Running dependent task ${colors.grey.bold(task.useTask!)}...`)

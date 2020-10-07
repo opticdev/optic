@@ -1,4 +1,4 @@
-import { IOpticTaskRunnerConfig } from '@useoptic/cli-config';
+import { IOpticTaskRunnerConfig, Modes } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { CommandSession } from './command-session';
 import { HttpToolkitCapturingProxy } from './httptoolkit-capturing-proxy';
@@ -10,7 +10,7 @@ import {
 } from './index';
 import url from 'url';
 import { buildQueryStringParser } from './query/build-query-string-parser';
-import { awaitTaskUp, Modes } from './tasks/await-up';
+import { awaitTaskUp } from './tasks/await-up';
 
 class CommandAndProxySessionManager {
   constructor(
