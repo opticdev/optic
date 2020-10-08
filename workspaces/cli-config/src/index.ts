@@ -151,8 +151,20 @@ function randomLowerBound(): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function isTestTask(aliasedTask: IOpticTaskAliased) {
-  return aliasedTask.useTask && aliasedTask.command;
+export function isTestTask(aliasedTask: IOpticTaskAliased): boolean {
+  return Boolean(aliasedTask.useTask && aliasedTask.command);
+}
+
+export function isRecommendedTask(aliasedTask: IOpticTaskAliased): boolean {
+  return Boolean(
+    aliasedTask.command && (aliasedTask.inboundUrl || aliasedTask.baseUrl)
+  );
+}
+
+export function isManualTask(aliasedTask: IOpticTaskAliased): boolean {
+  return Boolean(
+    (aliasedTask.inboundUrl || aliasedTask.baseUrl) && aliasedTask.targetUrl
+  );
 }
 
 export async function TaskToStartConfig(
