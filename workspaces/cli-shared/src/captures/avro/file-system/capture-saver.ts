@@ -21,6 +21,9 @@ export class CaptureSaver implements ICaptureSaver {
     maxSize: 20,
     maxTime: 500,
   });
+
+  public savePromises: Promise<void>[] = [];
+
   private batchCount: number = 0;
 
   constructor(private config: IFileSystemCaptureSaverConfig) {}
@@ -93,10 +96,11 @@ export class CaptureSaver implements ICaptureSaver {
 
   async save(sample: IHttpInteraction) {
     // don't await flush, just enqueue
-    this.batcher.add(sample);
+    this.savePromises.push(this.batcher.add(sample));
   }
 
   async cleanup() {
+    await Promise.all(this.savePromises);
     developerDebugLogger('stopping capture saver');
   }
 }

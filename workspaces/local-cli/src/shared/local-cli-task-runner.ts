@@ -214,7 +214,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
             OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
             OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
           });
-          return new Promise((resolve) => setTimeout(resolve, 500)); // needs time to finish saving
+          // return new Promise((resolve) => setTimeout(resolve, 500)); // needs time to finish saving
         }
       : undefined;
 
