@@ -46,6 +46,9 @@ export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {
 analyticsEvents.listen((event) => {
   if (isAnalyticsEnabled) {
     try {
+      if (window.FS) {
+        window.FS.event(event.type, { ...event.data, ...event.context });
+      }
       client.postTrackingEvents([event]);
     } catch (e) {}
   }
