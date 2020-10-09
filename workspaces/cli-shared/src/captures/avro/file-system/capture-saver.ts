@@ -2,8 +2,6 @@ import Bottleneck from 'bottleneck';
 import fs from 'fs-extra';
 import path from 'path';
 import avro from 'avsc';
-//@ts-ignore
-import waitUntil from 'wait-until';
 import {
   IInteractionBatch,
   IGroupingIdentifiers,
@@ -24,8 +22,12 @@ export class CaptureSaver implements ICaptureSaver {
     maxTime: 500,
   });
 
-  private enqueuedForSave: number = 0;
-  private completed: number = 0;
+  private throttler: Bottleneck = new Bottleneck({
+    maxConcurrent: 10,
+    minTime: 1,
+  });
+
+  public savePromises: Promise<void>[] = [];
 
   private batchCount: number = 0;
 
@@ -50,12 +52,14 @@ export class CaptureSaver implements ICaptureSaver {
         batchId,
       };
       try {
-        await this.onBatch(
-          groupingIdentifiers,
-          batchId,
-          items,
-          outputDirectory
-        );
+        await this.throttler.schedule(async () => {
+          await this.onBatch(
+            groupingIdentifiers,
+            batchId,
+            items,
+            outputDirectory
+          );
+        });
       } catch (e) {
         console.error(e);
       }
@@ -98,22 +102,15 @@ export class CaptureSaver implements ICaptureSaver {
   }
 
   async save(sample: IHttpInteraction) {
-    this.enqueuedForSave++;
     // don't await flush, just enqueue
-    const promise = this.batcher.add(sample);
-    promise.finally(() => {
-      this.completed++;
-    });
+    await this.batcher.add(sample);
   }
 
   async cleanup() {
-    await new Promise((resolve) => {
-      waitUntil()
-        .interval(100)
-        .times(10)
-        .condition(() => this.completed === this.enqueuedForSave)
-        .done(resolve);
+    await new Promise((resolve, reject) => {
+      this.throttler.on('idle', resolve);
     });
+
     developerDebugLogger('stopping capture saver');
   }
 }
