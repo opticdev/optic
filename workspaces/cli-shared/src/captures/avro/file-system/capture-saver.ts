@@ -2,6 +2,8 @@ import Bottleneck from 'bottleneck';
 import fs from 'fs-extra';
 import path from 'path';
 import avro from 'avsc';
+//@ts-ignore
+import waitUntil from 'wait-until';
 import {
   IInteractionBatch,
   IGroupingIdentifiers,
@@ -22,7 +24,8 @@ export class CaptureSaver implements ICaptureSaver {
     maxTime: 500,
   });
 
-  public savePromises: Promise<void>[] = [];
+  private enqueuedForSave: number = 0;
+  private completed: number = 0;
 
   private batchCount: number = 0;
 
@@ -95,12 +98,22 @@ export class CaptureSaver implements ICaptureSaver {
   }
 
   async save(sample: IHttpInteraction) {
+    this.enqueuedForSave++;
     // don't await flush, just enqueue
-    this.savePromises.push(this.batcher.add(sample));
+    const promise = this.batcher.add(sample);
+    promise.finally(() => {
+      this.completed++;
+    });
   }
 
   async cleanup() {
-    await Promise.all(this.savePromises);
+    await new Promise((resolve) => {
+      waitUntil()
+        .interval(100)
+        .times(10)
+        .condition(() => this.completed === this.enqueuedForSave)
+        .done(resolve);
+    });
     developerDebugLogger('stopping capture saver');
   }
 }
