@@ -22,7 +22,7 @@ import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
 
-export class DiffManager implements Diff {
+export class OnDemandDiff implements Diff {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
   public readonly id: string;

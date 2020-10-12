@@ -4,7 +4,7 @@ import {
   IApiCliConfig,
 } from '@useoptic/cli-config';
 import { createDiff, Diff } from './diffs';
-import { DiffManager as OneOffDiff } from './diffs/diff-manager';
+import { OnDemandDiff } from './diffs/on-demand';
 import * as Uuid from 'uuid';
 
 export class SessionsManager {
@@ -82,7 +82,7 @@ class SessionDiffs {
     if (existingDiff) return existingDiff;
 
     const diffId = Uuid.v4();
-    const newDiff = createDiff(OneOffDiff, {
+    const newDiff = createDiff(OnDemandDiff, {
       captureId,
       configPath: this.configPath,
       captureBaseDirectory: this.capturesPath,
