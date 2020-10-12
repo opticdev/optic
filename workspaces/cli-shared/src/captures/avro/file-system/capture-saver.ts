@@ -22,12 +22,10 @@ export class CaptureSaver implements ICaptureSaver {
     maxTime: 500,
   });
 
-  private throttler: Bottleneck = new Bottleneck({
+  private tracking: Bottleneck = new Bottleneck({
     maxConcurrent: 10,
     minTime: 1,
   });
-
-  public savePromises: Promise<void>[] = [];
 
   private batchCount: number = 0;
 
@@ -52,14 +50,15 @@ export class CaptureSaver implements ICaptureSaver {
         batchId,
       };
       try {
-        await this.throttler.schedule(async () => {
-          await this.onBatch(
-            groupingIdentifiers,
-            batchId,
-            items,
-            outputDirectory
-          );
-        });
+        const promise: Promise<void> = this.onBatch(
+          groupingIdentifiers,
+          batchId,
+          items,
+          outputDirectory
+        );
+
+        this.tracking.schedule(() => promise);
+        await promise;
       } catch (e) {
         console.error(e);
       }
@@ -108,7 +107,7 @@ export class CaptureSaver implements ICaptureSaver {
 
   async cleanup() {
     await new Promise((resolve, reject) => {
-      this.throttler.on('idle', resolve);
+      this.tracking.on('idle', resolve);
     });
 
     developerDebugLogger('stopping capture saver');
