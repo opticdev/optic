@@ -1,18 +1,21 @@
 import { Command, flags } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import path from 'path';
+import colors from 'colors';
 import {
   IApiCliConfig,
   IOpticTaskRunnerConfig,
   IPathMapping,
   TargetPortUnavailableError,
   deprecationLogger,
+  isTestTask,
 } from '@useoptic/cli-config';
 import { opticTaskToProps, trackUserEvent } from './analytics';
 import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
+import cliux from 'cli-ux';
 import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
@@ -38,9 +41,9 @@ import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
 import { Config } from '../config';
-import { Debugger } from 'debug';
-import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { printCoverage } from './coverage';
+import { spawnProcess } from './spawn-process';
+import { command } from '@oclif/test';
 
 export const runCommandFlags = {
   'collect-coverage': flags.boolean({
@@ -73,7 +76,35 @@ export async function LocalTaskSessionWrapper(
   const captureId = uuid.v4();
   const runner = new LocalCliTaskRunner(captureId, paths);
   const session = new CliTaskSession(runner);
-  await session.start(cli, config, taskName);
+
+  const task = config.tasks[taskName];
+
+  if (!task) {
+    cli.log(
+      fromOptic(
+        `Task ${colors.grey.bold(
+          taskName
+        )} does not exist. Try one of these ${colors.grey.bold(
+          'api run <taskname>'
+        )}`
+      )
+    );
+    return cli.log(
+      Object.keys(config.tasks || [])
+        .map((i) => '- ' + i)
+        .sort()
+        .join('\n')
+    );
+  }
+
+  if (task && isTestTask(task)) {
+    cli.log(
+      fromOptic(`Running dependent task ${colors.grey.bold(task.useTask!)}...`)
+    );
+    await session.start(cli, config, task.useTask!, task.command!);
+  } else {
+    await session.start(cli, config, taskName);
+  }
 
   if (flags['collect-coverage']) {
     await printCoverage(paths, taskName, captureId);
@@ -88,7 +119,8 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   async run(
     cli: Command,
     config: IApiCliConfig,
-    taskConfig: IOpticTaskRunnerConfig
+    taskConfig: IOpticTaskRunnerConfig,
+    commandToRunWhenStarted?: string
   ): Promise<void> {
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +199,29 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
     process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
-    const sessionManager = new CommandAndProxySessionManager(taskConfig);
+
+    const testCommand = commandToRunWhenStarted
+      ? async () => {
+          console.log(
+            fromOptic(
+              'Running test command ' +
+                colors.grey.bold(commandToRunWhenStarted)
+            )
+          );
+
+          await spawnProcess(commandToRunWhenStarted!, {
+            OPTIC_PROXY_PORT: taskConfig.proxyConfig.port.toString(),
+            OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
+            OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
+          });
+          // return new Promise((resolve) => setTimeout(resolve, 500)); // needs time to finish saving
+        }
+      : undefined;
+
+    const sessionManager = new CommandAndProxySessionManager(
+      taskConfig,
+      testCommand
+    );
 
     await sessionManager.run(persistenceManager);
 
