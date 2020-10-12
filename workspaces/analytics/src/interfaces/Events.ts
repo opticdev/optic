@@ -16,6 +16,7 @@ export const Events = keymirror({
   ExitedTaskWithLocalCli: null,
 
   //diffs
+  NewBodyDiffRendered: null,
   BodyDiffRendered: null,
   UserChangedCaptureOverviewTab: null,
   UserEnabledInferPolymorphism: null,

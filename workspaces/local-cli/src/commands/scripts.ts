@@ -11,6 +11,7 @@ import { spawn, SpawnOptions } from 'child_process';
 import { IOpticScript } from '@useoptic/cli-config/build';
 import { fromOptic } from '@useoptic/cli-shared';
 import { generateOas } from './generate/oas';
+import { spawnProcess } from '../shared/spawn-process';
 export default class Scripts extends Command {
   static description = 'Run one of the scripts in your optic.yml file';
 
@@ -148,24 +149,4 @@ async function tryInstall(installScript: string): Promise<boolean> {
   const status = await spawnProcess(installScript);
   cli.action.stop('Success!');
   return status;
-}
-
-async function spawnProcess(command: string, env: any = {}): Promise<boolean> {
-  const taskOptions: SpawnOptions = {
-    env: {
-      ...process.env,
-      ...env,
-    },
-    shell: true,
-    cwd: process.cwd(),
-    stdio: 'inherit',
-  };
-
-  const child = spawn(command, taskOptions);
-
-  return await new Promise((resolve) => {
-    child.on('exit', (code) => {
-      resolve(code === 0);
-    });
-  });
 }

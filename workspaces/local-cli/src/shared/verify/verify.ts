@@ -12,6 +12,9 @@ import {
   TaskToStartConfig,
   IOpticTaskAliased,
   IApiCliConfig,
+  isTestTask,
+  isManualTask,
+  isRecommendedTask,
 } from '@useoptic/cli-config';
 import {
   HttpToolkitCapturingProxy,
@@ -32,29 +35,26 @@ import {
   ProxyCanStartAtInboundUrl,
   ProxyTargetUrlResolves,
 } from '@useoptic/analytics/lib/interfaces/ApiCheck';
-
-enum Modes {
-  Recommended = 'Recommended',
-  Manual = 'Manual',
-}
+import { Modes } from '@useoptic/cli-config/build';
 
 export async function verifyTask(
   cli: Command,
-  taskName: string
-): Promise<void> {
+  taskName: string,
+  dependent: boolean = false
+): Promise<boolean> {
   const config: IApiCliConfig | undefined = await niceTry(async () => {
     const paths = await getPathsRelativeToConfig();
     return await readApiConfig(paths.configPath);
   });
 
   if (!config) {
-    return cli.log(
+    cli.log(
       fromOptic(colors.red(`Please run this command from an Optic project`))
     );
+    return false;
   }
 
   let foundTask: IOpticTaskAliased | null = null;
-  let startConfig: IOpticTaskRunnerConfig | null = null;
 
   let fixUrl = 'https://www.useoptic.com/docs/faqs-and-troubleshooting/';
 
@@ -62,9 +62,6 @@ export async function verifyTask(
     if (config.tasks) {
       const task = config.tasks[taskName];
       foundTask = task;
-      if (foundTask) {
-        startConfig = await TaskToStartConfig(task);
-      }
     }
   });
 
@@ -88,96 +85,136 @@ export async function verifyTask(
         .join('\n')
     );
 
-    return;
+    return false;
   }
 
-  const mode: Modes | null = (() => {
-    const isManual =
-      (foundTask!.inboundUrl || foundTask!.baseUrl) && foundTask!.targetUrl;
-    if (isManual) {
-      return Modes.Manual;
-    }
+  if (taskExists && foundTask) {
+    const mode: Modes | null = (() => {
+      if (isTestTask(foundTask!)) {
+        return Modes.Test;
+      }
 
-    const isRecommended =
-      foundTask!.command && (foundTask!.inboundUrl || foundTask!.baseUrl);
-    if (isRecommended) {
-      return Modes.Recommended;
-    }
+      if (isManualTask(foundTask)) {
+        return Modes.Manual;
+      }
 
-    return null;
-  })();
+      if (isRecommendedTask(foundTask)) {
+        return Modes.Recommended;
+      }
 
-  cli.log(
-    '\n' + fromOptic(colors.underline(`Testing task ${colors.bold(taskName)}`))
-  );
+      return null;
+    })();
 
-  if (mode === null) {
-    return cli.log(fromOptic(colors.red(`Invalid task configuration. `)));
-  }
-
-  let passedAll = false;
-
-  if (mode == Modes.Recommended) {
-    const results = await verifyRecommended(foundTask!, startConfig!);
-    passedAll = results.passedAll;
-
-    await trackUserEvent(
-      ApiCheckCompleted.withProps({
-        passed: passedAll,
-        mode: mode,
-        taskName: taskName,
-        task: {
-          ...foundTask!,
-        },
-        recommended: {
-          commandIsLongRunning: results.assertions.longRunningAssertion,
-          apiProcessStartsOnAssignedHost:
-            results.assertions.startOnHostAssertion,
-          apiProcessStartsOnAssignedPort:
-            results.assertions.startOnPortAssertion,
-          proxyCanStartAtInboundUrl:
-            results.assertions.proxyCanStartAtInboundUrl,
-        },
-      })
-    );
-  } else {
-    const results = await verifyManual(foundTask!, startConfig!);
-    passedAll = results.passedAll;
-    await trackUserEvent(
-      ApiCheckCompleted.withProps({
-        passed: passedAll,
-        mode: mode,
-        taskName: taskName,
-        task: {
-          ...foundTask!,
-        },
-        manual: {
-          proxyCanStartAtInboundUrl:
-            results.assertions.proxyCanStartAtInboundUrl,
-          proxyTargetUrlResolves: results.assertions.isTargetResolvable,
-        },
-      })
-    );
-  }
-
-  if (passedAll) {
     cli.log(
       '\n' +
-        fromOptic(
-          colors.green.bold(
-            `All Passed! This task is setup properly. Nice work!`
-          )
-        )
+        fromOptic(colors.underline(`Checking task ${colors.bold(taskName)}`))
     );
-  } else {
-    cli.log(
-      '\n' +
-        fromOptic(
-          colors.red.bold(
-            `Some checks failed. Steps to fix can be found here: useoptic.com/docs/check-fail`
+
+    if (mode === null) {
+      cli.log(fromOptic(colors.red(`Invalid task configuration. `)));
+      return false;
+    }
+
+    let passedAll = false;
+
+    if (mode === Modes.Test) {
+      if (dependent) {
+        passedAll = false;
+        cli.log(
+          fromOptic(
+            colors.red(
+              `Test tasks can not depend on other test tasks. ${colors.bold(
+                foundTask!.useTask!
+              )} cannot be used here.`
+            )
           )
-        )
-    );
-    // console.log(results);
+        );
+      } else {
+        cli.log(
+          fromOptic(
+            colors.green(
+              `This is a test task, checking dependent task ${colors.bold(
+                foundTask!.useTask!
+              )}`
+            )
+          )
+        );
+
+        passedAll = await verifyTask(cli, foundTask!.useTask!, true);
+      }
+    }
+
+    if (mode == Modes.Recommended) {
+      const startConfig = await TaskToStartConfig(foundTask!);
+      const results = await verifyRecommended(foundTask!, startConfig!);
+      passedAll = results.passedAll;
+
+      await trackUserEvent(
+        ApiCheckCompleted.withProps({
+          passed: passedAll,
+          mode: mode,
+          taskName: taskName,
+          task: {
+            ...foundTask!,
+          },
+          recommended: {
+            commandIsLongRunning: results.assertions.longRunningAssertion,
+            apiProcessStartsOnAssignedHost:
+              results.assertions.startOnHostAssertion,
+            apiProcessStartsOnAssignedPort:
+              results.assertions.startOnPortAssertion,
+            proxyCanStartAtInboundUrl:
+              results.assertions.proxyCanStartAtInboundUrl,
+          },
+        })
+      );
+    }
+    if (mode == Modes.Manual) {
+      const startConfig = await TaskToStartConfig(foundTask!);
+      const results = await verifyManual(foundTask!, startConfig!);
+      passedAll = results.passedAll;
+      await trackUserEvent(
+        ApiCheckCompleted.withProps({
+          passed: passedAll,
+          mode: mode,
+          taskName: taskName,
+          task: {
+            ...foundTask!,
+          },
+          manual: {
+            proxyCanStartAtInboundUrl:
+              results.assertions.proxyCanStartAtInboundUrl,
+            proxyTargetUrlResolves: results.assertions.isTargetResolvable,
+          },
+        })
+      );
+    }
+
+    if (!dependent) {
+      if (passedAll) {
+        cli.log(
+          '\n' +
+            fromOptic(
+              colors.green.bold(
+                `All Passed! This task is setup properly. Nice work!`
+              )
+            )
+        );
+      } else {
+        cli.log(
+          '\n' +
+            fromOptic(
+              colors.red.bold(
+                `Some checks failed. Steps to fix can be found here: useoptic.com/docs/check-fail`
+              )
+            )
+        );
+        // console.log(results);
+      }
+    }
+
+    return passedAll;
   }
+
+  return false;
 }

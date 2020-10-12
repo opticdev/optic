@@ -3116,10 +3116,10 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-7.0.4.tgz#00a5749810b4ad80bff73a61f9cc9d0d521feb3c"
   integrity sha512-WGZCqBZZ0mXN2RxvLHL6/7RCu+OWs28jgQMP04LWfpyJlQUMTR6YU9CNJAKDgbw+EV/u687INXuLUc7FuML/4g==
 
-"@types/wait-on@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@types/wait-on/-/wait-on-3.2.0.tgz#87bfa57af081cb57399d741a963d532946fcdc92"
-  integrity sha512-IBpiv5pRb0MFa7KoC1sqOKPGrZtQlCkXuU03VdlqoAqJXYJnkF0u0ERkzEW9AOA4Uv+HMHNSRJRSDB8JeraxKg==
+"@types/wait-on@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/wait-on/-/wait-on-4.0.0.tgz#fb6fa2854b592f7344f1dd9836b5655795510dce"
+  integrity sha512-Cj2jcMOzrdvWMP+Vl+qlz942eQfJk96S9kRnB1ejVMl+w9/9mUn0+pF4J+v0Iv+6zCrmBBODZAXKsRo6Y91Cfw==
 
 "@types/webpack-dev-server@*":
   version "3.11.0"
