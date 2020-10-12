@@ -74,4 +74,16 @@ export interface DiffStats {
 //        has to play ball. Perhaps a pragmatic first step is a PassThrough<T> that can be used to tack
 //        on to an existing pipeline. But if we're casting types anyway, we could just do that during read?
 //
+//        Ideal would be:
 // interface ResultStream<T> extends Readable<T> {}
+//
+//        Alternatively, we could use TypeScript's native support for AsyncIterable's and the flawless
+//        interop with streams provided by Node. Issue with that is that tooling around AsyncIterables is
+//        pretty meager.
+// export async function* resultStreamGenerator<T>(
+//   stream: Readable
+// ): AsyncIterable<T> {
+//   for await (let item of stream) {
+//     yield item as T;
+//   }
+// }
