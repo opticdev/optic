@@ -8,33 +8,28 @@ import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 
+import {
+  Diff,
+  DiffConfigObject,
+  DiffQueries as DiffQueriesInterface,
+  DiffStats,
+} from '.';
+
 import lockfile from 'proper-lockfile';
 import { Readable, PassThrough } from 'stream';
 import { chain } from 'stream-chain';
-import { stringer as jsonStringer } from 'stream-json/Stringer';
-import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
-import { ENETRESET } from 'constants';
 
-export interface IDiffManagerConfig {
-  configPath: string;
-  captureId: string;
-  captureBaseDirectory: string;
-  diffId: string;
-  endpoints?: Array<{ pathId: string; method: string }>;
-  specPath: string;
-}
-
-export class DiffManager {
+export class DiffManager implements Diff {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
   public readonly id: string;
-  private readonly config: IDiffManagerConfig;
+  private readonly config: DiffConfigObject;
   private finished: boolean = false;
 
-  constructor(config: IDiffManagerConfig) {
+  constructor(config: DiffConfigObject) {
     this.id = config.diffId;
     this.config = config;
   }
@@ -133,7 +128,7 @@ export class DiffManager {
     });
   }
 
-  latestProgress() {
+  private latestProgress() {
     const lastProgress = this.lastProgress;
     return lastProgress ? { ...lastProgress } : null;
   }
@@ -216,7 +211,7 @@ interface DiffPaths {
   additionalCommands: string;
 }
 
-export class DiffQueries {
+export class DiffQueries implements DiffQueriesInterface {
   constructor(private readonly paths: DiffPaths) {}
 
   diffs(): Readable {
@@ -247,8 +242,6 @@ export class DiffQueries {
     return lockedRead<DiffStats>(this.paths.stats);
   }
 }
-
-type DiffStats = { [key: string]: number | string | boolean };
 
 async function* lockedReadStream(filePath: string) {
   await lockfile.lock(filePath, {

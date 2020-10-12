@@ -3,7 +3,8 @@ import {
   readApiConfig,
   IApiCliConfig,
 } from '@useoptic/cli-config';
-import { DiffManager } from './diffs/diff-manager';
+import { createDiff, Diff } from './diffs';
+import { DiffManager as OneOffDiff } from './diffs/diff-manager';
 import * as Uuid from 'uuid';
 
 export class SessionsManager {
@@ -65,7 +66,7 @@ export class Session {
 }
 
 class SessionDiffs {
-  private diffsByCaptureId: Map<string, DiffManager> = new Map();
+  private diffsByCaptureId: Map<string, Diff> = new Map();
 
   constructor(
     readonly configPath: string,
@@ -76,12 +77,12 @@ class SessionDiffs {
   async startDiff(
     captureId: string,
     endpoints?: Array<{ pathId: string; method: string }>
-  ): Promise<DiffManager> {
+  ): Promise<Diff> {
     const existingDiff = this.diffsByCaptureId.get(captureId);
     if (existingDiff) return existingDiff;
 
     const diffId = Uuid.v4();
-    const newDiff = new DiffManager({
+    const newDiff = createDiff(OneOffDiff, {
       captureId,
       configPath: this.configPath,
       captureBaseDirectory: this.capturesPath,

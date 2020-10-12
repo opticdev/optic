@@ -6,7 +6,7 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { DiffManager } from '../diffs/diff-manager';
+import { Diff } from '../diffs';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
 import lockfile from 'proper-lockfile';
@@ -30,7 +30,7 @@ export interface ICaptureRouterDependencies {
 
 export interface ICaptureDiffMetadata {
   id: string;
-  manager: DiffManager;
+  manager: Diff;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
