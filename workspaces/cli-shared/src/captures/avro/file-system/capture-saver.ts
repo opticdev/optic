@@ -21,6 +21,12 @@ export class CaptureSaver implements ICaptureSaver {
     maxSize: 20,
     maxTime: 500,
   });
+
+  private tracking: Bottleneck = new Bottleneck({
+    maxConcurrent: 10,
+    minTime: 1,
+  });
+
   private batchCount: number = 0;
 
   constructor(private config: IFileSystemCaptureSaverConfig) {}
@@ -44,12 +50,15 @@ export class CaptureSaver implements ICaptureSaver {
         batchId,
       };
       try {
-        await this.onBatch(
+        const promise: Promise<void> = this.onBatch(
           groupingIdentifiers,
           batchId,
           items,
           outputDirectory
         );
+
+        this.tracking.schedule(() => promise);
+        await promise;
       } catch (e) {
         console.error(e);
       }
@@ -93,10 +102,14 @@ export class CaptureSaver implements ICaptureSaver {
 
   async save(sample: IHttpInteraction) {
     // don't await flush, just enqueue
-    this.batcher.add(sample);
+    await this.batcher.add(sample);
   }
 
   async cleanup() {
+    await new Promise((resolve, reject) => {
+      this.tracking.on('idle', resolve);
+    });
+
     developerDebugLogger('stopping capture saver');
   }
 }

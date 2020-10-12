@@ -66,7 +66,8 @@ export interface IOpticTaskRunner {
   run(
     cli: Command,
     cliConfig: IApiCliConfig,
-    taskConfig: IOpticTaskRunnerConfig
+    taskConfig: IOpticTaskRunnerConfig,
+    commandToRunWhenStarted?: string
   ): Promise<void>;
 }
 
