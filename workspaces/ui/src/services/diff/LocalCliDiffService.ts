@@ -19,6 +19,7 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
@@ -27,6 +28,15 @@ export class LocalCliDiffService implements IDiffService {
     private config: IStartDiffResponse,
     private rfcState: any
   ) {}
+
+  learnInitial(
+    rfcState: any,
+    pathId: String,
+    method: string
+  ): Promise<ILearnedBodies> {
+    throw new Error('Method not implemented.');
+  }
+
   diffId(): string {
     return this.config.diffId;
   }

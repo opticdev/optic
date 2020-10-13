@@ -1,4 +1,5 @@
 import { IHttpInteraction } from '@useoptic/domain-types';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export interface ICaptureService {
   startDiff(
@@ -29,6 +30,11 @@ export interface IDiffService {
     currentInteraction: any,
     inferPolymorphism: boolean
   );
+  learnInitial(
+    rfcState: any,
+    pathId: String,
+    method: string
+  ): Promise<ILearnedBodies>;
 }
 
 export interface IRfcCommand {}
