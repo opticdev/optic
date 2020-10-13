@@ -7,79 +7,86 @@ import {
   RequestsCommands,
 } from '@useoptic/domain';
 import { DiffResultHelper } from '@useoptic/domain';
+import Bottleneck from 'bottleneck';
+import flattenDeep from 'lodash.flattendeep';
 
 const { JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
 
 export function useBatchLearn(
-  index,
-  isDone,
+  additionalCommands,
   isManual,
   eventStore,
   rfcId,
   endpointIds,
-  endpointDiffs,
-  captureService,
   diffService,
   setProgressTicker,
   onCompleted
 ) {
-  const [batchHandler] = useState(batchCommandHandler(eventStore, rfcId));
-  const [allSuggestions, setAllSuggestions] = useState([]);
-  const [confirmDone, setConfirmDone] = useState(false);
+  const [allBodies, setAllBodies] = useState([]);
 
   useEffect(() => {
-    async function compute() {
-      const endpoint = endpointIds[index];
-      if (isManual) {
-        return setProgressTicker(index + 1);
-      }
-      if (endpoint) {
-        const { pathId, method } = endpoint;
-        console.log(`learning ${index}   ${method} ${pathId}`);
+    async function process() {
+      if (additionalCommands.length && Boolean(endpointIds)) {
+        const batchHandler = batchCommandHandler(eventStore, rfcId);
+        //update with the path commands
+        batchHandler.doWork((emitCommands) => emitCommands(additionalCommands));
 
-        let allPromises = [];
-
-        batchHandler.doWork((emitCommands, queries, rfcState) => {
-          const newRegionsToLearn = jsonHelper.seqToJsArray(
-            DiffResultHelper.newRegionsForPathAndMethod(
-              jsonHelper.jsArrayToSeq(endpointDiffs),
-              pathId,
-              method,
-              rfcState,
-              jsonHelper.jsArrayToSeq([]) //should be ignore...
-            )
-          );
-
-          allPromises = newRegionsToLearn.map(async (i) => {
-            const { interaction } = await captureService.loadInteraction(
-              i.firstInteractionPointer
-            );
-            const { suggestion } = await diffService.loadInitialPreview(
-              i,
-              jsonHelper.fromInteraction(interaction),
-              true
-            );
-
-            return getOrUndefined(suggestion);
-          });
+        const throttler = new Bottleneck({
+          maxConcurrent: 5,
+          minTime: 1,
         });
 
-        const newSuggestions = await Promise.all(allPromises);
+        endpointIds.forEach(({ pathId, method }) => {
+          console.log(`learning scheduled ${pathId} ${method}`);
+          throttler.schedule(async () => {
+            batchHandler.doWork(async (emitCommands, queries, rfcState) => {
+              if (isManual) {
+                setProgressTicker((p) => p + 1); //don't try to learn.
+              } else {
+                const promise = diffService.learnInitial(
+                  rfcState,
+                  pathId,
+                  method
+                );
 
-        setAllSuggestions((suggestions) => [...suggestions, ...newSuggestions]);
-        setProgressTicker(index + 1);
-        setTimeout(() => {
-          setConfirmDone(true);
-        }, 50);
+                promise.finally((i) => {
+                  console.log(`learning finished ${pathId} ${method}`);
+                  setProgressTicker((p) => p + 1);
+                });
+                try {
+                  const result = await promise;
+                  setAllBodies((current) => [...current, result]);
+                } catch (e) {
+                  console.error(e);
+                }
+              }
+            });
+          });
+        });
       }
     }
-    if (index !== undefined && endpointIds) setTimeout(compute, 100);
-  }, [index, endpointIds]);
+    process();
+  }, [additionalCommands.length, endpointIds]);
 
   useEffect(() => {
-    if (isDone && confirmDone) {
-      onCompleted(allSuggestions);
+    if (!isManual && allBodies.length === (endpointIds && endpointIds.length)) {
+      //manufacture suggestions
+
+      const allCommands = flattenDeep(
+        allBodies.map((i) => {
+          return [
+            i.requests.map((req) => req.commands),
+            i.responses.map((req) => req.commands),
+          ];
+        })
+      );
+
+      //flatten requests and responses into one set of runnable commands
+      // allBodies.forEach((i) => (commands = [...commands, ...i.commands]));
+      onCompleted(allCommands);
+    } else if (isManual && endpointIds) {
+      onCompleted([]);
     }
-  }, [isDone, confirmDone]);
+  }, [allBodies, endpointIds]);
 }

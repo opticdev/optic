@@ -5,6 +5,7 @@ import {
   ScalaJSHelpers,
 } from '@useoptic/domain';
 import { IHttpInteraction } from '@useoptic/domain-types';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 const LearnAPIHelper = opticEngine.com.useoptic.diff.interactions.interpreters.LearnAPIHelper();
 
@@ -37,39 +38,24 @@ export function localInitialBodyLearner(
   interactions.forEach((i) => {
     const deserializedInteraction = JsonHelper.fromInteraction(i);
     if (filter(i)) {
-      console.log('learning');
       // only learn if it matches the endpoint
       LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap);
-    } else {
-      console.log('skipping');
     }
   });
-
-  mapScala(shapeBuilderMap.requestRegions)((request: any) =>
-    console.log(request)
-  );
-  mapScala(shapeBuilderMap.requestRegions)((response: any) =>
-    console.log(response)
-  );
 
   return {
     pathId,
     method,
-    requests: [],
-    responses: [],
+    requests: mapScala(shapeBuilderMap.requestRegions)((request: any) => ({
+      contentType: request.contentType,
+      commands: JsonHelper.vectorToJsArray(request.commands),
+      rootShapeId: request.rootShapeId,
+    })),
+    responses: mapScala(shapeBuilderMap.responseRegions)((response: any) => ({
+      contentType: response.contentType,
+      statusCode: response.statusCode,
+      commands: JsonHelper.vectorToJsArray(response.commands),
+      rootShapeId: response.rootShapeId,
+    })),
   };
-}
-
-export interface ILearnedBodies {
-  pathId: string;
-  method: string;
-  requests: ILearnedBody[];
-  responses: ILearnedBody[];
-}
-
-export interface ILearnedBody {
-  contentType: string;
-  statusCode?: number;
-  commands: any[];
-  rootShapeId: string;
 }

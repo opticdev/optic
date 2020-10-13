@@ -1,6 +1,8 @@
 import {
   commandsToJson,
   Facade,
+  lengthScala,
+  mapScala,
   Queries,
   RfcCommandContext,
 } from '@useoptic/domain';
@@ -11,6 +13,7 @@ const clientId = 'anonymous';
 
 export function batchCommandHandler(eventStore, rfcId) {
   const initialEventStore = eventStore.getCopy(rfcId);
+
   const rfcService = Facade.makeRfcService(initialEventStore);
 
   const pendingCommands = [];

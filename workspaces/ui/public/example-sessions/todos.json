@@ -19,25 +19,25 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
           }
         },
         "response": {
-          "statusCode": 502,
+          "statusCode": 200,
           "headers": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -62,25 +62,25 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
           }
         },
         "response": {
-          "statusCode": 502,
+          "statusCode": 200,
           "headers": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -105,25 +105,25 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
           }
         },
         "response": {
-          "statusCode": 502,
+          "statusCode": 200,
           "headers": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -148,25 +148,25 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
           }
         },
         "response": {
-          "statusCode": 502,
+          "statusCode": 200,
           "headers": {
             "shapeHashV1Base64": null,
             "asJsonString": null,
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -191,9 +191,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -363,9 +363,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -449,9 +449,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -535,9 +535,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -578,9 +578,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }
@@ -621,9 +621,9 @@
             "asText": null
           },
           "body": {
-            "contentType": null,
+            "contentType": "application/json",
             "value": {
-              "shapeHashV1Base64": null,
+              "shapeHashV1Base64": "CAEaNQgAEgoKBHRhc2sSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhomCAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaJggAEgoKBHRhc2sSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGiYIABIKCgR0YXNrEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAg==",
               "asJsonString": null,
               "asText": null
             }

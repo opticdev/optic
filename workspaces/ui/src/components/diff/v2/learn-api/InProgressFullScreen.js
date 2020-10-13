@@ -111,31 +111,24 @@ export default function InProgressFullScreen({ type }) {
     );
     setEndpointIds(endpointIds);
     setProgressTicker(0);
-    setTimeout(() => {
-      updatedAdditionalCommands(commands);
-    }, 100);
+    updatedAdditionalCommands(commands);
   }, [currentPathExpressions.length]);
 
   useBatchLearn(
     // this will work through each sample and wait for component to update progress before proceeding to next item of the batch
-    progressTicker,
-    progressTicker === (endpointIds ? endpointIds.length : -1),
+    additionalCommands,
     isManual,
     eventStore,
     rfcId,
     endpointIds,
-    endpointDiffs,
-    captureService,
     diffService,
     setProgressTicker,
-    async (suggestions) => {
+    async (commands) => {
       if (isManual) {
         const learnManual = async () => {
           const batchCommands = [...additionalCommands];
 
           const commandsAsVector = jsonHelper.jsArrayToVector(batchCommands);
-
-          const asJs = opticEngine.CommandSerialization.toJs(commandsAsVector);
 
           const newEventStore = eventStore.getCopy(rfcId);
           const {
@@ -168,10 +161,6 @@ export default function InProgressFullScreen({ type }) {
         };
         learnManual();
       } else {
-        const commands = [];
-        suggestions.forEach((x) =>
-          mapScala(x.commands)((command) => commands.push(command))
-        );
         const newEventStore = eventStore.getCopy(rfcId);
         const {
           StartBatchCommit,
