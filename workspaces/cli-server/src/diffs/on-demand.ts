@@ -222,39 +222,33 @@ export class DiffQueries implements DiffQueriesInterface {
         (data) => [data.value],
       ]);
     } else {
-      return chain([
-        Readable.from(lockedReadStream(this.paths.diffs)),
-        jsonParser(), // parse as JSON, to guard against malformed persisted results
-        streamArray(),
-        (data) => [data.value],
-      ]);
+      let reading = lockedRead<any>(this.paths.diffs);
+      let itemsGenerator = jsonStreamGenerator(reading);
+
+      return Readable.from(itemsGenerator);
     }
   }
   undocumentedUrls(): Readable {
-    return chain([
-      Readable.from(lockedReadStream(this.paths.undocumentedUrls)),
-      jsonParser(),
-      streamArray(),
-      (data) => [data.value],
-    ]);
+    let reading = lockedRead<any>(this.paths.undocumentedUrls);
+    let itemsGenerator = jsonStreamGenerator(reading);
+
+    return Readable.from(itemsGenerator);
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
   }
 }
 
-async function* lockedReadStream(filePath: string) {
-  await lockfile.lock(filePath, {
-    retries: { retries: 10 },
-  });
+async function* jsonStreamGenerator(jsonPromise: Promise<any>) {
+  let json = await jsonPromise;
 
-  let readStream = fs.createReadStream(filePath);
-
-  for await (const chunk of readStream) {
-    yield chunk;
+  if (Array.isArray(json)) {
+    for await (const item of json) {
+      yield item;
+    }
+  } else {
+    yield json;
   }
-
-  await lockfile.unlock(filePath);
 }
 
 async function lockedRead<T>(filePath: string): Promise<T> {
