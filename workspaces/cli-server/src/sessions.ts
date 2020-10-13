@@ -103,9 +103,6 @@ class SessionDiffs {
     captureId: string,
     endpoints?: Array<{ pathId: string; method: string }>
   ): Promise<string> {
-    const existingDiff = this.activeDiffsByCaptureId.get(captureId);
-    if (existingDiff) return existingDiff.id;
-
     const diffId = Uuid.v4();
     const newDiff = createDiff(OnDemandDiff, {
       captureId,
