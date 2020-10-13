@@ -83,10 +83,8 @@ export class OnDemandDiff implements Diff {
     const onExit = (code: number, signal: string | null) => {
       cleanup();
       if (code !== 0) {
-        this.events.emit(
-          'error',
-          new Error('Diff worker exited with non-zero status code')
-        );
+        // @TODO: wonder how we'll ever find out about this happening.
+        console.error('Diff Worker exited with non-zero exit code');
       } else {
         this.finished = true;
         this.events.emit('finish');
