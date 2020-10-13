@@ -3,9 +3,15 @@ import {
   readApiConfig,
   IApiCliConfig,
 } from '@useoptic/cli-config';
-import { createDiff, Diff } from './diffs';
+import {
+  createDiff,
+  Diff,
+  DiffQueries,
+  ProgressStream as DiffProgressStream,
+} from './diffs';
 import { OnDemandDiff } from './diffs/on-demand';
 import * as Uuid from 'uuid';
+import { timingSafeEqual } from 'crypto';
 
 export class SessionsManager {
   private sessions: Session[] = [];
@@ -62,11 +68,30 @@ export class Session {
     return this.diffs.startDiff(captureId, endpoints);
   }
 
+  diffProgress(diffId: string) {
+    if (!this.diffs)
+      throw new Error(
+        'Session must have been started before diffs can be accessed'
+      );
+
+    return this.diffs.progress(diffId);
+  }
+
+  diffQueries(diffId: string) {
+    if (!this.diffs)
+      throw new Error(
+        'Session must have been started before diffs can be accessed'
+      );
+
+    return this.diffs.queries(diffId);
+  }
+
   async stop() {}
 }
 
 class SessionDiffs {
-  private diffsByCaptureId: Map<string, Diff> = new Map();
+  private diffsById: Map<string, Diff> = new Map();
+  private activeDiffsByCaptureId: Map<string, Diff> = new Map();
 
   constructor(
     readonly configPath: string,
@@ -77,9 +102,9 @@ class SessionDiffs {
   async startDiff(
     captureId: string,
     endpoints?: Array<{ pathId: string; method: string }>
-  ): Promise<Diff> {
-    const existingDiff = this.diffsByCaptureId.get(captureId);
-    if (existingDiff) return existingDiff;
+  ): Promise<string> {
+    const existingDiff = this.activeDiffsByCaptureId.get(captureId);
+    if (existingDiff) return existingDiff.id;
 
     const diffId = Uuid.v4();
     const newDiff = createDiff(OnDemandDiff, {
@@ -90,10 +115,11 @@ class SessionDiffs {
       endpoints,
       specPath: this.specPath,
     });
-    this.diffsByCaptureId.set(captureId, newDiff);
+    this.activeDiffsByCaptureId.set(captureId, newDiff);
+    this.diffsById.set(diffId, newDiff);
 
     newDiff.events.once('finish', () => {
-      this.diffsByCaptureId.delete(captureId);
+      this.activeDiffsByCaptureId.delete(captureId);
     });
     newDiff.events.once('error', (err) => {
       throw err;
@@ -101,6 +127,20 @@ class SessionDiffs {
 
     await newDiff.start();
 
-    return newDiff;
+    return diffId;
+  }
+
+  progress(diffId: string): DiffProgressStream | undefined {
+    const diff = this.diffsById.get(diffId);
+    if (!diff) return;
+
+    return diff.progress();
+  }
+
+  queries(diffId: string): DiffQueries | undefined {
+    const diff = this.diffsById.get(diffId);
+    if (!diff) return;
+
+    return diff.queries();
   }
 }

@@ -6,7 +6,7 @@ export interface Diff {
   readonly events: DiffEvents;
 
   start(): Promise<void>;
-  progress(): Readable;
+  progress(): ProgressStream;
   queries(): DiffQueries;
   stop(): Promise<void>;
 }
@@ -53,6 +53,8 @@ export interface DiffConfigObject {
   endpoints?: Array<{ pathId: string; method: string }>;
   specPath: string;
 }
+
+export interface ProgressStream extends Readable {}
 
 export interface ProgressEvent {
   type: 'progress';

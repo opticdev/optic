@@ -78,7 +78,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  const diffs = new Map<string, ICaptureDiffMetadata>();
   router.post(
     '/diffs',
     bodyParser.json({ limit: '100mb' }),
@@ -86,22 +85,16 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       const { captureId } = req.params;
       const { ignoreRequests, events, additionalCommands, filters } = req.body;
 
-      let diff;
+      let diffId;
       try {
-        diff = await req.optic.session.diffCapture(captureId, filters);
+        diffId = await req.optic.session.diffCapture(captureId, filters);
       } catch (e) {
         return res.status(500).json({ message: e.message });
       }
 
-      const diffMetadata = {
-        id: diff.id,
-        manager: diff,
-      };
-      diffs.set(diff.id, diffMetadata);
-
       res.json({
-        diffId: diff.id,
-        notificationsUrl: `${req.baseUrl}/diffs/${diff.id}/notifications`,
+        diffId,
+        notificationsUrl: `${req.baseUrl}/diffs/${diffId}/notifications`,
       });
     }
   );
@@ -110,11 +103,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/notifications', async (req, res) => {
     const { diffId } = req.params;
-    const diffMetadata = diffs.get(diffId);
-    if (!diffMetadata) {
+    const progress = req.optic.session.diffProgress(diffId);
+    if (!progress) {
       return res.json(404);
     }
-    const progress = diffMetadata.manager.progress();
     const notifications = chain([
       progress,
       ({ type, data }) => {
@@ -135,25 +127,24 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   router.get('/diffs/:diffId/diffs', async (req, res) => {
-    const { captureId, diffId } = req.params;
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
 
-    const diffMetadata = diffs.get(diffId);
-    if (!diffMetadata) {
+    if (!diffQueries) {
       return res.json(404);
     }
-    const diffQueries = diffMetadata.manager.queries();
 
     let diffsStream = diffQueries.diffs();
     toJSONArray(diffsStream).pipe(res).type('application/json');
   });
 
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
-    const { captureId, diffId } = req.params;
-    const diffMetadata = diffs.get(diffId);
-    if (!diffMetadata) {
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
+
+    if (!diffQueries) {
       return res.json(404);
     }
-    const diffQueries = diffMetadata.manager.queries();
 
     let undocumentedUrls = diffQueries.undocumentedUrls();
     toJSONArray(undocumentedUrls, {
@@ -165,12 +156,12 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   });
 
   router.get('/diffs/:diffId/stats', async (req, res) => {
-    const { captureId, diffId } = req.params;
-    const diffMetadata = diffs.get(diffId);
-    if (!diffMetadata) {
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
+
+    if (!diffQueries) {
       return res.json(404);
     }
-    const diffQueries = diffMetadata.manager.queries();
 
     let stats = await diffQueries.stats();
     res.json(stats);
