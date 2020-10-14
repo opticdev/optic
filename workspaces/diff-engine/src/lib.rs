@@ -16,6 +16,7 @@ pub use interactions::result::InteractionDiffResult;
 pub use projections::{EndpointProjection, ShapeProjection, SpecProjection};
 pub use protos::shapehash;
 pub use shapes::diff as diff_shape;
+pub use state::body::BodyDescriptor;
 
 pub mod errors {
   pub use super::events::EventLoadingError;

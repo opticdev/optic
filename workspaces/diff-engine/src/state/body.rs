@@ -4,7 +4,7 @@ use serde_json::Value as JsonValue;
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum BodyDescriptor {
-  Object(Vec<FieldDescriptor>),
+  Object(ObjectDescriptor),
   Array(ItemsDescriptor),
   String,
   Number,
@@ -13,16 +13,41 @@ pub enum BodyDescriptor {
 }
 
 #[derive(PartialEq, Clone, Debug)]
-pub struct FieldDescriptor {
-  pub key: String,
-  pub body: Box<BodyDescriptor>,
-}
+pub struct FieldDescriptor(pub String, pub Box<BodyDescriptor>);
 
 impl FieldDescriptor {
   pub fn new(key: String, body: BodyDescriptor) -> Self {
+    Self(key, Box::new(body))
+  }
+}
+
+#[derive(PartialEq, Clone, Debug)]
+pub struct ObjectDescriptor {
+  fields: Vec<FieldDescriptor>,
+}
+
+impl ObjectDescriptor {
+  pub fn keys(&self) -> impl Iterator<Item = &String> {
+    self.fields.iter().map(|FieldDescriptor(key, body)| key)
+  }
+
+  pub fn entries(self) -> impl Iterator<Item = (String, BodyDescriptor)> {
+    self
+      .fields
+      .into_iter()
+      .map(|FieldDescriptor(key, body)| (key, *body))
+  }
+}
+
+impl<T> From<T> for ObjectDescriptor
+where
+  T: Iterator<Item = (String, BodyDescriptor)>,
+{
+  fn from(entries: T) -> Self {
     Self {
-      key,
-      body: Box::new(body),
+      fields: entries
+        .map(|(key, value)| FieldDescriptor::new(key, value))
+        .collect(),
     }
   }
 }
@@ -44,6 +69,10 @@ where
 }
 
 impl ItemsDescriptor {
+  pub fn into_all(self) -> impl Iterator<Item = BodyDescriptor> {
+    self.all_items.into_iter()
+  }
+
   // @TODO: implement way to get unique items rather than all items
   // pub fn unique(&self) -> Vec<(BodyDescriptor, Vec<usize>)> {}
 }
@@ -56,12 +85,12 @@ impl From<shapehash::ShapeDescriptor> for BodyDescriptor {
           .take_fields()
           .into_iter()
           .map(|field_descriptor| {
-            FieldDescriptor::new(
+            (
               field_descriptor.key.clone(),
               BodyDescriptor::from(field_descriptor.hash.unwrap()),
             )
           });
-        BodyDescriptor::Object(fields.collect())
+        BodyDescriptor::Object(ObjectDescriptor::from(fields))
       }
       shapehash::ShapeDescriptor_PrimitiveType::ARRAY => {
         let items = shape_hash_descriptor
@@ -85,9 +114,9 @@ impl From<JsonValue> for BodyDescriptor {
       JsonValue::Object(json_fields) => {
         let fields = json_fields
           .into_iter()
-          .map(|(key, value)| FieldDescriptor::new(key, BodyDescriptor::from(value)));
+          .map(|(key, value)| (key, BodyDescriptor::from(value)));
 
-        BodyDescriptor::Object(fields.collect())
+        BodyDescriptor::Object(ObjectDescriptor::from(fields))
       }
       JsonValue::Array(json_items) => {
         let items = json_items

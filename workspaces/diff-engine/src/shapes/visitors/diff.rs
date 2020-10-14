@@ -5,6 +5,7 @@ use super::{
 use crate::queries::shape::ChoiceOutput;
 use crate::shapes::ShapeDiffResult;
 use crate::shapes::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
+use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind};
 use serde_json::Value as JsonValue;
 
@@ -75,7 +76,7 @@ impl JsonBodyVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
 impl JlasPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
   fn visit(
     &mut self,
-    json: JsonValue,
+    body: BodyDescriptor,
     json_trail: JsonTrail,
     trail_origin: ShapeTrail,
     trail_choices: &Vec<ChoiceOutput>,
@@ -89,20 +90,20 @@ impl JlasPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
     }
 
     let (matched, unmatched): (Vec<&ChoiceOutput>, Vec<&ChoiceOutput>) =
-      trail_choices.iter().partition(|choice| match &json {
-        JsonValue::Bool(x) => match choice.core_shape_kind {
+      trail_choices.iter().partition(|choice| match &body {
+        BodyDescriptor::Boolean => match choice.core_shape_kind {
           ShapeKind::BooleanKind => true,
           _ => false,
         },
-        JsonValue::Number(x) => match choice.core_shape_kind {
+        BodyDescriptor::Number => match choice.core_shape_kind {
           ShapeKind::NumberKind => true,
           _ => false,
         },
-        JsonValue::String(x) => match choice.core_shape_kind {
+        BodyDescriptor::String => match choice.core_shape_kind {
           ShapeKind::StringKind => true,
           _ => false,
         },
-        JsonValue::Null => match choice.core_shape_kind {
+        BodyDescriptor::Null => match choice.core_shape_kind {
           ShapeKind::NullableKind => true,
           _ => false,
         },
@@ -143,7 +144,7 @@ impl JsonBodyVisitor<ShapeDiffResult> for DiffArrayVisitor {
 impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
   fn visit(
     &mut self,
-    json: &JsonValue,
+    body: &BodyDescriptor,
     json_trail: &JsonTrail,
     trail_origin: &ShapeTrail,
     trail_choices: &Vec<ChoiceOutput>,
@@ -157,8 +158,8 @@ impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
     }
 
     let (matched, unmatched): (Vec<&ChoiceOutput>, Vec<&ChoiceOutput>) =
-      trail_choices.into_iter().partition(|choice| match json {
-        JsonValue::Array(_) => match choice.core_shape_kind {
+      trail_choices.into_iter().partition(|choice| match body {
+        BodyDescriptor::Array(_) => match choice.core_shape_kind {
           ShapeKind::ListKind => true,
           _ => false,
         },
@@ -202,7 +203,7 @@ impl JsonBodyVisitor<ShapeDiffResult> for DiffObjectVisitor {
 impl JlasObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
   fn visit(
     &mut self,
-    json: &JsonValue,
+    body: &BodyDescriptor,
     json_trail: &JsonTrail,
     trail_origin: &ShapeTrail,
     trail_choices: &Vec<ChoiceOutput>,
@@ -216,8 +217,8 @@ impl JlasObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
     }
 
     let (matched, unmatched): (Vec<&ChoiceOutput>, Vec<&ChoiceOutput>) =
-      trail_choices.into_iter().partition(|choice| match json {
-        JsonValue::Object(_) => match choice.core_shape_kind {
+      trail_choices.into_iter().partition(|choice| match body {
+        BodyDescriptor::Object(_) => match choice.core_shape_kind {
           ShapeKind::ObjectKind => true,
           _ => false,
         },
