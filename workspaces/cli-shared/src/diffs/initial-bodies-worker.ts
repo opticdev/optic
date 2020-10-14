@@ -7,6 +7,7 @@ import {
 } from '../captures/avro/file-system/interaction-iterator';
 import {
   DiffHelpers,
+  getOrUndefined,
   JsonHelper,
   mapScala,
   opticEngine,
@@ -17,12 +18,12 @@ import fs from 'fs-extra';
 import Bottleneck from 'bottleneck';
 import path from 'path';
 import lockfile from 'proper-lockfile';
+import { ILearnedBodies } from './initial-types';
 
 const LearnAPIHelper = opticEngine.com.useoptic.diff.interactions.interpreters.LearnAPIHelper();
 
 export interface IInitialBodiesProjectionEmitterConfig {
   specFilePath: string;
-  additionalCommandsFilePath: string;
   captureBaseDirectory: string;
   captureId: string;
   pathId: string;
@@ -31,22 +32,25 @@ export interface IInitialBodiesProjectionEmitterConfig {
 
 export function getInitialBodiesOutputPaths(values: {
   captureBaseDirectory: string;
+  pathId: string;
+  method: string;
   captureId: string;
 }) {
-  const { captureBaseDirectory, captureId } = values;
+  const { captureBaseDirectory, captureId, pathId, method } = values;
   const base = path.join(
     captureBaseDirectory,
     captureId,
     'initial-bodies',
-    captureId
+    pathId,
+    method
   );
   const events = path.join(base, 'events.json');
-  const additionalCommands = path.join(base, 'additionalCommands.json');
+  const initialBodies = path.join(base, 'bodies.json');
 
   return {
     base,
     events,
-    additionalCommands,
+    initialBodies,
   };
 }
 
@@ -78,9 +82,8 @@ export class InitialBodiesWorker {
 
     try {
       console.time('load inputs');
-      const [events, additionalCommands] = await Promise.all([
+      const [events] = await Promise.all([
         fs.readJson(this.config.specFilePath),
-        fs.readJson(this.config.additionalCommandsFilePath),
       ]);
       console.timeEnd('load inputs');
       console.time('build state');
@@ -99,7 +102,7 @@ export class InitialBodiesWorker {
       } = cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
         events,
         commandsContext,
-        opticEngine.CommandSerialization.fromJs(additionalCommands)
+        opticEngine.CommandSerialization.fromJs([])
       );
       console.timeEnd('build state');
 
@@ -132,23 +135,20 @@ export class InitialBodiesWorker {
       );
 
       let hasMoreInteractions = true;
-      let diffedInteractionsCounter = BigInt(0);
-      let skippedInteractionsCounter = BigInt(0);
       const batcher = new Bottleneck.Batcher({
         maxSize: 100,
         maxTime: 100,
       });
-      const diffOutputPaths = getInitialBodiesOutputPaths(this.config);
+      const outputPaths = getInitialBodiesOutputPaths(this.config);
 
       const queue = new Bottleneck({
         maxConcurrent: 1,
       });
 
-      function notifyParent() {
+      function notifyParent(results: ILearnedBodies) {
         const progress = {
-          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
           hasMoreInteractions,
+          results,
         };
         if (process && process.send) {
           process.send({
@@ -160,28 +160,36 @@ export class InitialBodiesWorker {
         }
       }
 
+      const { pathId, method } = this.config;
+
+      const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(pathId, method);
+
       async function flush() {
-        const c = diffedInteractionsCounter.toString();
-        console.time(`flushing ${c}`);
-        // const outputDiff = safeWriteJson(
-        //   diffOutputPaths.diffs,
-        //   opticEngine.DiffWithPointersJsonSerializer.toJs(diffs)
-        // );
-        // const outputCount = safeWriteJson(
-        //   diffOutputPaths.undocumentedUrls,
-        //   opticEngine.UrlCounterJsonSerializer.toFriendlyJs(undocumentedUrls)
-        // );
-        // const outputStats = safeWriteJson(diffOutputPaths.stats, {
-        //   diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        //   skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        //   isDone: !hasMoreInteractions,
-        // });
-        //
-        // await Promise.all([outputDiff, outputCount, outputStats]);
+        const results: ILearnedBodies = {
+          pathId,
+          method,
+          requests: mapScala(shapeBuilderMap.requestRegions)(
+            (request: any) => ({
+              contentType: getOrUndefined(request.contentType),
+              commands: opticEngine.CommandSerialization.toJs(request.commands),
+              rootShapeId: request.rootShapeId,
+            })
+          ),
+          responses: mapScala(shapeBuilderMap.responseRegions)(
+            (response: any) => ({
+              contentType: getOrUndefined(response.contentType),
+              statusCode: response.statusCode,
+              commands: opticEngine.CommandSerialization.toJs(
+                response.commands
+              ),
+              rootShapeId: response.rootShapeId,
+            })
+          ),
+        };
 
-        notifyParent();
+        await safeWriteJson(outputPaths.initialBodies, results);
 
-        console.timeEnd(`flushing ${c}`);
+        notifyParent(results);
       }
 
       batcher.on('batch', () => {
@@ -194,24 +202,10 @@ export class InitialBodiesWorker {
         });
       });
 
-      const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
-        {
-          captureBaseDirectory: this.config.captureBaseDirectory,
-          captureId: this.config.captureId,
-        }
-      );
-
-      await fs.ensureDir(diffOutputPaths.base);
+      await fs.ensureDir(outputPaths.base);
       await flush();
 
-      const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(
-        this.config.pathId,
-        this.config.method
-      );
-
       for await (const item of interactionIterator) {
-        skippedInteractionsCounter = item.skippedInteractionsCounter;
-        diffedInteractionsCounter = item.diffedInteractionsCounter;
         hasMoreInteractions = item.hasMoreInteractions;
         if (!hasMoreInteractions) {
           // @GOTCHA item.interaction.value should not be present when hasMoreInteractions is false
@@ -226,28 +220,29 @@ export class InitialBodiesWorker {
           item.interaction.value
         );
 
-        LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap)
+        LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap);
 
-          // console.timeEnd(`serdes ${batchId} ${index}`);
-          // console.time(`diff ${batchId} ${index}`);
-          // diffs = DiffHelpers.groupInteractionPointerByDiffs(
-          //   resolvers,
-          //   rfcState,
-          //   deserializedInteraction,
-          //   interactionPointerConverter.toPointer(item.interaction.value, {
-          //     interactionIndex: index,
-          //     batchId,
-          //   }),
-          //   diffs
-          // );
-          // console.timeEnd(`diff ${batchId} ${index}`);
-          // console.time(`count ${batchId} ${index}`);
-          // undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
-          //   deserializedInteraction,
-          //   undocumentedUrls
-          // );
-          // console.timeEnd(`count ${batchId} ${index}`);
-          .batcher.add(null);
+        // console.timeEnd(`serdes ${batchId} ${index}`);
+        // console.time(`diff ${batchId} ${index}`);
+        // diffs = DiffHelpers.groupInteractionPointerByDiffs(
+        //   resolvers,
+        //   rfcState,
+        //   deserializedInteraction,
+        //   interactionPointerConverter.toPointer(item.interaction.value, {
+        //     interactionIndex: index,
+        //     batchId,
+        //   }),
+        //   diffs
+        // );
+        // console.timeEnd(`diff ${batchId} ${index}`);
+        // console.time(`count ${batchId} ${index}`);
+        // undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
+        //   deserializedInteraction,
+        //   undocumentedUrls
+        // );
+        // console.timeEnd(`count ${batchId} ${index}`);
+        // .batcher.add(null);
+        batcher.add(null);
       }
       hasMoreInteractions = false;
       batcher.add(null);

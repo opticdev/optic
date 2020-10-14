@@ -14,6 +14,9 @@ import { chain } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import { InitialBodyManager } from '../diffs/initial-body-manager';
+import { getInitialBodiesOutputPaths } from '@useoptic/cli-shared/build/diffs/initial-bodies-worker';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -120,6 +123,42 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         diffId: id,
         notificationsUrl: `${req.baseUrl}/diffs/${id}/notifications`,
       });
+    }
+  );
+
+  ////////////////////////////////////////////////////////////////////////////////
+  router.post(
+    '/initial-bodies',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const { captureId } = req.params;
+      const { events, pathId, method } = req.body;
+      const manager = new InitialBodyManager();
+      const outputPaths = getInitialBodiesOutputPaths({
+        captureBaseDirectory: req.optic.paths.capturesPath,
+        captureId,
+        pathId,
+        method,
+      });
+      await fs.ensureDir(outputPaths.base);
+      await Promise.all([fs.writeJson(outputPaths.events, events)]);
+
+      console.log('all setup and events saved');
+
+      try {
+        const learnedBodies: ILearnedBodies = await manager.run({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          captureId: captureId,
+          pathId,
+          method,
+        });
+
+        res.json(learnedBodies);
+      } catch (e) {
+        return res.status(500).json({
+          message: e.message,
+        });
+      }
     }
   );
 

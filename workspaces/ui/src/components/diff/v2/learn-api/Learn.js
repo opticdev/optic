@@ -20,7 +20,7 @@ export function LearnPaths(eventStore, rfcId, currentPathExpressions) {
   const endpointIds = [];
   //learn paths
   currentPathExpressions.forEach((i) => {
-    batchHandler.doWork((emitCommands, queries) => {
+    batchHandler.doWork(({ emitCommands, queries }) => {
       const pathsById = queries.requestsState().pathComponents;
       let lastParentPathId;
       const commands = [];

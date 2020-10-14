@@ -1,4 +1,5 @@
 import {
+  getOrUndefined,
   JsonHelper,
   mapScala,
   opticEngine,
@@ -47,14 +48,14 @@ export function localInitialBodyLearner(
     pathId,
     method,
     requests: mapScala(shapeBuilderMap.requestRegions)((request: any) => ({
-      contentType: request.contentType,
-      commands: JsonHelper.vectorToJsArray(request.commands),
+      contentType: getOrUndefined(request.contentType),
+      commands: opticEngine.CommandSerialization.toJs(request.commands),
       rootShapeId: request.rootShapeId,
     })),
     responses: mapScala(shapeBuilderMap.responseRegions)((response: any) => ({
-      contentType: response.contentType,
+      contentType: getOrUndefined(response.contentType),
       statusCode: response.statusCode,
-      commands: JsonHelper.vectorToJsArray(response.commands),
+      commands: opticEngine.CommandSerialization.toJs(response.commands),
       rootShapeId: response.rootShapeId,
     })),
   };

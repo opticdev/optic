@@ -29,14 +29,6 @@ export class LocalCliDiffService implements IDiffService {
     private rfcState: any
   ) {}
 
-  learnInitial(
-    rfcState: any,
-    pathId: String,
-    method: string
-  ): Promise<ILearnedBodies> {
-    throw new Error('Method not implemented.');
-  }
-
   diffId(): string {
     return this.config.diffId;
   }
@@ -123,10 +115,27 @@ export class LocalCliDiffService implements IDiffService {
       suggestion: shapePreview.suggestion,
     };
   }
+
+  async learnInitial(
+    rfcService: any,
+    rfcId: any,
+    pathId: String,
+    method: string
+  ): Promise<ILearnedBodies> {
+    const events = opticEngine.EventSerialization.toJson(
+      rfcService.listEvents(rfcId)
+    );
+    const url = `${this.captureService.baseUrl}/initial-bodies`;
+    return await JsonHttpClient.postJson(url, {
+      events,
+      pathId,
+      method,
+    });
+  }
 }
 
 export class LocalCliCaptureService implements ICaptureService {
-  constructor(private baseUrl: string) {}
+  constructor(public baseUrl: string) {}
 
   async startDiff(
     events: any[],

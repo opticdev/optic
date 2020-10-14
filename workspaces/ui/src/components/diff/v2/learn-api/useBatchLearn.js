@@ -30,38 +30,47 @@ export function useBatchLearn(
       if (additionalCommands.length && Boolean(endpointIds)) {
         const batchHandler = batchCommandHandler(eventStore, rfcId);
         //update with the path commands
-        batchHandler.doWork((emitCommands) => emitCommands(additionalCommands));
+        batchHandler.doWork(({ emitCommands }) =>
+          emitCommands(additionalCommands)
+        );
 
         const throttler = new Bottleneck({
-          maxConcurrent: 5,
-          minTime: 1,
+          maxConcurrent: 4,
+          minTime: 100,
         });
 
         endpointIds.forEach(({ pathId, method }) => {
-          console.log(`learning scheduled ${pathId} ${method}`);
           throttler.schedule(async () => {
-            batchHandler.doWork(async (emitCommands, queries, rfcState) => {
+            console.log(`learning started for ${pathId} ${method}`);
+            let promise;
+            batchHandler.doWork(async ({ rfcService, rfcId }) => {
               if (isManual) {
                 setProgressTicker((p) => p + 1); //don't try to learn.
+                promise = Promise.resolve();
               } else {
-                const promise = diffService.learnInitial(
-                  rfcState,
+                promise = diffService.learnInitial(
+                  rfcService,
+                  rfcId,
                   pathId,
                   method
                 );
-
-                promise.finally((i) => {
-                  console.log(`learning finished ${pathId} ${method}`);
-                  setProgressTicker((p) => p + 1);
-                });
-                try {
-                  const result = await promise;
-                  setAllBodies((current) => [...current, result]);
-                } catch (e) {
-                  console.error(e);
-                }
               }
             });
+
+            if (!isManual) {
+              promise.finally((i) => {
+                console.log(`learning finished ${pathId} ${method}`);
+                setProgressTicker((p) => p + 1);
+              });
+              try {
+                const result = await promise;
+                setAllBodies((current) => [...current, result]);
+              } catch (e) {
+                console.error(e);
+              }
+            }
+
+            await promise;
           });
         });
       }
@@ -82,9 +91,13 @@ export function useBatchLearn(
         })
       );
 
+      const asScalaCommandsInJsArray = JsonHelper().vectorToJsArray(
+        opticEngine.CommandSerialization.fromJs(allCommands)
+      );
+
       //flatten requests and responses into one set of runnable commands
       // allBodies.forEach((i) => (commands = [...commands, ...i.commands]));
-      onCompleted(allCommands);
+      onCompleted(asScalaCommandsInJsArray);
     } else if (isManual && endpointIds) {
       onCompleted([]);
     }

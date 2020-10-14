@@ -51,6 +51,8 @@ export class ExampleCaptureService implements ICaptureService {
       interaction,
     };
   }
+
+  baseUrl = '';
 }
 
 export class ExampleDiffService implements IDiffService {
@@ -159,12 +161,16 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async learnInitial(
-    rfcState: any,
+    rfcService: any,
+    rfcId: any,
     pathId: string,
     method: string
   ): Promise<ILearnedBodies> {
     const capture = await this.specService.listCapturedSamples(captureId);
     const interactions = capture.samples;
+
+    const rfcState = rfcService.currentState(rfcId);
+
     return localInitialBodyLearner(rfcState, pathId, method, interactions);
   }
 }
