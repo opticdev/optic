@@ -24,6 +24,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEventEmitter, track } from './analytics';
 import cors from 'cors';
+import { Session, SessionsManager } from './sessions';
 
 const pJson = require('../package.json');
 
@@ -40,6 +41,7 @@ export interface IOpticExpressRequestAdditions {
   config: IApiCliConfig;
   capturesHelpers: CapturesHelpers;
   exampleRequestsHelpers: ExampleRequestsHelpers;
+  session: Session;
 }
 
 declare global {
@@ -87,7 +89,7 @@ class CliServer {
     const app = express();
     app.use(cors(this.corsOptions));
     app.set('etag', false);
-    const sessions: ICliServerSession[] = [];
+    const sessions = new SessionsManager();
     let user: object | null;
 
     app.get('/api/identity', async (req, res: express.Response) => {
@@ -172,22 +174,13 @@ class CliServer {
             },
           });
         }
-        const existingSession = sessions.find((x) => x.path === path);
-        if (existingSession) {
-          return res.json({
-            session: existingSession,
-          });
-        }
 
-        const sessionId = (sessions.length + 1).toString();
-        const session: ICliServerSession = {
-          id: sessionId,
-          path,
-        };
-        sessions.push(session);
-
+        const session = await sessions.start(path);
         return res.json({
-          session,
+          session: {
+            id: session.id,
+            path: session.path,
+          },
         });
       }
     );

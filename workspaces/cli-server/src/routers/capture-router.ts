@@ -6,17 +6,22 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { DiffManager } from '../diffs/diff-manager';
+import { Diff } from '../diffs';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
 import lockfile from 'proper-lockfile';
-import { chain } from 'stream-chain';
+import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
-import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import {
+  disassembler,
+  disassembler as jsonDisassembler,
+} from 'stream-json/Disassembler';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { InitialBodyManager } from '../diffs/initial-body-manager';
 import { getInitialBodiesOutputPaths } from '@useoptic/cli-shared/build/diffs/initial-bodies-worker';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { replace as jsonReplace } from 'stream-json/filters/Replace';
+import { Duplex, Readable } from 'stream';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -28,7 +33,7 @@ export interface ICaptureRouterDependencies {
 
 export interface ICaptureDiffMetadata {
   id: string;
-  manager: DiffManager;
+  manager: Diff;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
@@ -76,52 +81,23 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  const diffs = new Map<string, ICaptureDiffMetadata>();
   router.post(
     '/diffs',
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
       const { ignoreRequests, events, additionalCommands, filters } = req.body;
-      const id = dependencies.idGenerator.nextId();
-      const manager = new DiffManager();
-      const diffOutputPaths = getDiffOutputPaths({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        captureId,
-        diffId: id,
-      });
-      await fs.ensureDir(diffOutputPaths.base);
-      await Promise.all([
-        fs.writeJson(diffOutputPaths.events, events),
-        fs.writeJson(diffOutputPaths.ignoreRequests, ignoreRequests),
-        fs.writeJson(diffOutputPaths.filters, filters),
-        fs.writeJson(diffOutputPaths.additionalCommands, additionalCommands),
-      ]);
-      const workerStarted = new Promise((resolve, reject) => {
-        manager.events.once('progress', resolve);
-        manager.events.once('error', reject);
-      });
-      await manager.start({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        captureId: captureId,
-        diffId: id,
-      });
+
+      let diffId;
       try {
-        await workerStarted;
+        diffId = await req.optic.session.diffCapture(captureId, filters);
       } catch (e) {
-        return res.status(500).json({
-          message: e.message,
-        });
+        return res.status(500).json({ message: e.message });
       }
-      const diffMetadata = {
-        id,
-        manager,
-      };
-      diffs.set(id, diffMetadata);
 
       res.json({
-        diffId: id,
-        notificationsUrl: `${req.baseUrl}/diffs/${id}/notifications`,
+        diffId,
+        notificationsUrl: `${req.baseUrl}/diffs/${diffId}/notifications`,
       });
     }
   );
@@ -166,15 +142,17 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   router.get('/diffs/:diffId/notifications', async (req, res) => {
     const { diffId } = req.params;
-    const diffMetadata = diffs.get(diffId);
-    if (!diffMetadata) {
+    const progress = req.optic.session.diffProgress(diffId);
+    if (!progress) {
       return res.json(404);
     }
-
-    function emit(data: any) {
-      console.log('emit');
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-    }
+    const notifications = chain([
+      progress,
+      ({ type, data }) => {
+        if (type === 'progress') type = 'message';
+        return [`data: ${JSON.stringify({ type, data })}\n\n`];
+      },
+    ]);
 
     const headers = {
       'Content-Type': 'text/event-stream',
@@ -182,103 +160,50 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       'Cache-Control': 'no-cache',
     };
     res.writeHead(200, headers);
-    emit({
-      type: 'message',
-      data: diffMetadata.manager.latestProgress() || {},
-    });
-
-    diffMetadata.manager.events.on('progress', (data) => {
-      emit({ type: 'message', data });
-    });
-    diffMetadata.manager.events.on('error', (data) => {
-      emit({ type: 'error', data });
-    });
-
-    req.on('close', () => {
-      diffMetadata.manager.stop();
-      diffs.delete(diffId);
-    });
+    notifications.pipe(res);
   });
 
   ////////////////////////////////////////////////////////////////////////////////
 
   router.get('/diffs/:diffId/diffs', async (req, res) => {
-    const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
 
-    try {
-      if (fs.existsSync(diffOutputPaths.diffsStream)) {
-        const diffsJson = chain([
-          fs.createReadStream(diffOutputPaths.diffsStream),
-          jsonlParser(),
-          (data) => [data.value],
-          jsonDisassembler(),
-          jsonStringer({ makeArray: true }),
-        ]);
-
-        diffsJson.pipe(res).type('application/json');
-      } else {
-        //@TODO: streamify
-        await lockfile.lock(diffOutputPaths.diffs, {
-          retries: { retries: 10 },
-        });
-        const contents = await fs.readJson(diffOutputPaths.diffs);
-        await lockfile.unlock(diffOutputPaths.diffs);
-        res.json(contents);
-      }
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+    if (!diffQueries) {
+      return res.json(404);
     }
+
+    let diffsStream = diffQueries.diffs();
+    toJSONArray(diffsStream).pipe(res).type('application/json');
   });
+
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {
-    const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
-    try {
-      //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.undocumentedUrls, {
-        retries: { retries: 10 },
-      });
-      const contents = await fs.readJson(diffOutputPaths.undocumentedUrls);
-      await lockfile.unlock(diffOutputPaths.undocumentedUrls);
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
 
-      res.json({
-        urls: contents,
-      });
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+    if (!diffQueries) {
+      return res.json(404);
     }
+
+    let undocumentedUrls = diffQueries.undocumentedUrls();
+    toJSONArray(undocumentedUrls, {
+      base: { urls: [] },
+      path: 'urls',
+    })
+      .pipe(res)
+      .type('application/json');
   });
-  router.get('/diffs/:diffId/stats', async (req, res) => {
-    const { captureId, diffId } = req.params;
-    const diffOutputPaths = getDiffOutputPaths({
-      captureBaseDirectory: req.optic.paths.capturesPath,
-      captureId,
-      diffId,
-    });
-    try {
-      //@TODO: streamify
-      await lockfile.lock(diffOutputPaths.stats, { retries: { retries: 10 } });
-      const contents = await fs.readJson(diffOutputPaths.stats);
-      await lockfile.unlock(diffOutputPaths.stats);
 
-      res.json(contents);
-    } catch (e) {
-      res.status(404).json({
-        message: e.message,
-      });
+  router.get('/diffs/:diffId/stats', async (req, res) => {
+    const { diffId } = req.params;
+    const diffQueries = req.optic.session.diffQueries(diffId);
+
+    if (!diffQueries) {
+      return res.json(404);
     }
+
+    let stats = await diffQueries.stats();
+    res.json(stats);
   });
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -301,4 +226,55 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   return router;
+}
+
+function toJSONArray(
+  itemsStream: Readable,
+  wrap?: {
+    base: { [key: string]: any };
+    path: string;
+  }
+): Duplex {
+  let tokenStream = chain([itemsStream, jsonDisassembler()]);
+  if (!wrap) return tokenStream.pipe(jsonStringer({ makeArray: true }));
+
+  let ARRAY_ITEM_MARKER = { name: 'array_insert_marker ' };
+  let objectTokenStream = chain([
+    Readable.from([wrap.base]),
+    jsonDisassembler(),
+    jsonReplace({
+      filter: wrap.path,
+      once: true,
+      allowEmptyReplacement: false,
+      replacement: () => [
+        { name: 'startArray' },
+        ARRAY_ITEM_MARKER,
+        { name: 'endArray' },
+      ],
+    }),
+  ]);
+
+  let outputGenerator = async function* (
+    wrapTokenStream: Readable,
+    arrayTokenStream: Readable,
+    marker: any
+  ) {
+    for await (let wrapToken of wrapTokenStream) {
+      if (wrapToken === marker) {
+        for await (let arrayToken of arrayTokenStream) {
+          yield arrayToken;
+        }
+      } else {
+        yield wrapToken;
+      }
+    }
+  };
+
+  return Readable.from(
+    outputGenerator(objectTokenStream, tokenStream, ARRAY_ITEM_MARKER)
+  ).pipe(jsonStringer());
+}
+
+function toJSONObject(): Duplex {
+  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
 }

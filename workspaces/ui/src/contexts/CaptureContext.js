@@ -72,6 +72,9 @@ class _CaptureContextStore extends React.Component {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
         if (!notifData.hasMoreInteractions) {
           console.log('completed diff');
+          if (this.state.notificationChannel) {
+            this.state.notificationChannel.close();
+          }
           // track('Completed Diff', {
           //   captureId: this.props.captureId,
           // });
