@@ -5,11 +5,11 @@ use crate::state::shape::{FieldId, ShapeId};
 use serde_json::Value as JsonValue;
 pub mod diff;
 
-pub trait JsonBodyVisitors<R> {
-  type Array: JlasArrayVisitor<R>;
-  type Object: JlasObjectVisitor<R>;
-  type ObjectKey: JlasObjectKeyVisitor<R>;
-  type Primitive: JlasPrimitiveVisitor<R>;
+pub trait BodyVisitors<R> {
+  type Array: BodyArrayVisitor<R>;
+  type Object: BodyObjectVisitor<R>;
+  type ObjectKey: BodyObjectKeyVisitor<R>;
+  type Primitive: BodyPrimitiveVisitor<R>;
 
   fn array(&mut self) -> &mut Self::Array;
   fn object(&mut self) -> &mut Self::Object;
@@ -31,7 +31,7 @@ pub trait JsonBodyVisitors<R> {
   }
 }
 
-pub trait JsonBodyVisitor<R> {
+pub trait BodyVisitor<R> {
   fn results(&mut self) -> Option<&mut VisitorResults<R>> {
     None
   }
@@ -51,7 +51,7 @@ pub trait JsonBodyVisitor<R> {
   }
 }
 
-pub trait JlasObjectVisitor<R>: JsonBodyVisitor<R> {
+pub trait BodyObjectVisitor<R>: BodyVisitor<R> {
   fn visit(
     &mut self,
     body: &BodyDescriptor,
@@ -61,7 +61,7 @@ pub trait JlasObjectVisitor<R>: JsonBodyVisitor<R> {
   ) -> Vec<ChoiceOutput>;
 }
 
-pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {
+pub trait BodyObjectKeyVisitor<R>: BodyVisitor<R> {
   fn visit(
     &mut self,
     object_json_trail: &JsonTrail,
@@ -70,7 +70,7 @@ pub trait JlasObjectKeyVisitor<R>: JsonBodyVisitor<R> {
   );
 }
 
-pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
+pub trait BodyArrayVisitor<R>: BodyVisitor<R> {
   fn visit(
     &mut self,
     body: &BodyDescriptor,
@@ -80,7 +80,7 @@ pub trait JlasArrayVisitor<R>: JsonBodyVisitor<R> {
   ) -> Vec<ChoiceOutput>;
 }
 
-pub trait JlasPrimitiveVisitor<R>: JsonBodyVisitor<R> {
+pub trait BodyPrimitiveVisitor<R>: BodyVisitor<R> {
   fn visit(
     &mut self,
     body: BodyDescriptor,

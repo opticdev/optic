@@ -1,5 +1,5 @@
 use super::visitors::{
-  JlasArrayVisitor, JlasObjectKeyVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitors,
+  BodyArrayVisitor, BodyObjectKeyVisitor, BodyObjectVisitor, BodyPrimitiveVisitor, BodyVisitors,
 };
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::body::BodyDescriptor;
@@ -20,7 +20,7 @@ impl<'a> Traverser<'a> {
     &self,
     body_option: Option<BodyDescriptor>,
     shape_id: &ShapeId,
-    visitors: &mut impl JsonBodyVisitors<R>,
+    visitors: &mut impl BodyVisitors<R>,
   ) {
     let body_trail = JsonTrail::empty();
     let trail_origin = ShapeTrail::new(shape_id.clone());
@@ -34,7 +34,7 @@ impl<'a> Traverser<'a> {
     body_trail: JsonTrail,
     trail_origin: ShapeTrail,
     trail_choices: &Vec<ChoiceOutput>,
-    visitors: &mut impl JsonBodyVisitors<R>,
+    visitors: &mut impl BodyVisitors<R>,
   ) {
     // eprintln!("shape-traverser: traversing body");
     if let None = body_option {
@@ -81,7 +81,7 @@ impl<'a> Traverser<'a> {
 
         let items = match body {
           BodyDescriptor::Array(items) => items,
-          _ => unreachable!("expect json body to be an array"),
+          _ => unreachable!("expect body to be an array"),
         };
 
         items.into_all().enumerate().for_each(|(index, item)| {
@@ -113,7 +113,7 @@ impl<'a> Traverser<'a> {
 
         let object = match body {
           BodyDescriptor::Object(fields) => fields,
-          _ => unreachable!("expect json body to be an object"),
+          _ => unreachable!("expect body to be an object"),
         };
 
         let object_key_choices = matching_choices

@@ -1,6 +1,6 @@
 use super::{
-  JlasArrayVisitor, JlasObjectKeyVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitor,
-  JsonBodyVisitors, VisitorResults,
+  BodyArrayVisitor, BodyObjectKeyVisitor, BodyObjectVisitor, BodyPrimitiveVisitor, BodyVisitor,
+  BodyVisitors, VisitorResults,
 };
 use crate::queries::shape::ChoiceOutput;
 use crate::shapes::ShapeDiffResult;
@@ -29,7 +29,7 @@ impl DiffVisitors {
 
 type DiffResults = VisitorResults<ShapeDiffResult>;
 
-impl JsonBodyVisitors<ShapeDiffResult> for DiffVisitors {
+impl BodyVisitors<ShapeDiffResult> for DiffVisitors {
   type Array = DiffArrayVisitor;
   type Object = DiffObjectVisitor;
   type ObjectKey = DiffObjectKeyVisitor;
@@ -67,13 +67,13 @@ impl DiffPrimitiveVisitor {
   }
 }
 
-impl JsonBodyVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
+impl BodyVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
   fn results(&mut self) -> Option<&mut DiffResults> {
     Some(&mut self.results)
   }
 }
 
-impl JlasPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
+impl BodyPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
   fn visit(
     &mut self,
     body: BodyDescriptor,
@@ -107,7 +107,7 @@ impl JlasPrimitiveVisitor<ShapeDiffResult> for DiffPrimitiveVisitor {
           ShapeKind::NullableKind => true,
           _ => false,
         },
-        _ => unreachable!("should not call primitive visitor without a json primitive value"),
+        _ => unreachable!("should not call primitive visitor without a primitive value"),
       });
     if matched.is_empty() {
       unmatched.iter().for_each(|&choice| {
@@ -135,13 +135,13 @@ impl DiffArrayVisitor {
   }
 }
 
-impl JsonBodyVisitor<ShapeDiffResult> for DiffArrayVisitor {
+impl BodyVisitor<ShapeDiffResult> for DiffArrayVisitor {
   fn results(&mut self) -> Option<&mut DiffResults> {
     Some(&mut self.results)
   }
 }
 
-impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
+impl BodyArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
   fn visit(
     &mut self,
     body: &BodyDescriptor,
@@ -163,7 +163,7 @@ impl JlasArrayVisitor<ShapeDiffResult> for DiffArrayVisitor {
           ShapeKind::ListKind => true,
           _ => false,
         },
-        _ => unreachable!("should only call array visitor for array json types"),
+        _ => unreachable!("should only call array visitor for array body types"),
       });
 
     if matched.is_empty() {
@@ -194,13 +194,13 @@ impl DiffObjectVisitor {
   }
 }
 
-impl JsonBodyVisitor<ShapeDiffResult> for DiffObjectVisitor {
+impl BodyVisitor<ShapeDiffResult> for DiffObjectVisitor {
   fn results(&mut self) -> Option<&mut DiffResults> {
     Some(&mut self.results)
   }
 }
 
-impl JlasObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
+impl BodyObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
   fn visit(
     &mut self,
     body: &BodyDescriptor,
@@ -222,7 +222,7 @@ impl JlasObjectVisitor<ShapeDiffResult> for DiffObjectVisitor {
           ShapeKind::ObjectKind => true,
           _ => false,
         },
-        _ => unreachable!("should only call object visitor for object json types"),
+        _ => unreachable!("should only call object visitor for object body types"),
       });
 
     if matched.is_empty() {
@@ -253,13 +253,13 @@ impl DiffObjectKeyVisitor {
   }
 }
 
-impl JsonBodyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
+impl BodyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
   fn results(&mut self) -> Option<&mut DiffResults> {
     Some(&mut self.results)
   }
 }
 
-impl JlasObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
+impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
   fn visit(
     &mut self,
     object_json_trail: &JsonTrail,

@@ -10,7 +10,7 @@ pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPat
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
-use visitors::JsonBodyVisitors;
+use visitors::BodyVisitors;
 
 pub fn diff(
   shapes_projection: &ShapeProjection,
