@@ -82,7 +82,6 @@ export default function InProgressFullScreen({ type }) {
   const history = useHistory();
   const {
     endpointDiffs,
-    completed,
     captureService,
     diffService,
     captureId,
@@ -281,17 +280,12 @@ export default function InProgressFullScreen({ type }) {
                   started={true}
                   done={Boolean(endpointIds)}
                 />
-                <Step
-                  title={'Collecting Samples...'}
-                  started={Boolean(endpointIds)}
-                  done={completed}
-                />
 
-                {completed ? (
+                {Boolean(endpointIds) ? (
                   <>
                     <ListItem dense>
                       <ListItemText
-                        primary="Learning Endpoints..."
+                        primary={`Learning Endpoints (${progressTicker}/${currentPathExpressions.length})...`}
                         primaryTypographyProps={{
                           style: {
                             color: Dark,
