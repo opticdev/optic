@@ -1,8 +1,9 @@
 use crate::shapehash;
 use serde_json::map::Map as JsonMap;
 use serde_json::Value as JsonValue;
+use std::collections::HashMap;
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub enum BodyDescriptor {
   Object(ObjectDescriptor),
   Array(ItemsDescriptor),
@@ -12,7 +13,7 @@ pub enum BodyDescriptor {
   Null,
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub struct FieldDescriptor(pub String, pub Box<BodyDescriptor>);
 
 impl FieldDescriptor {
@@ -21,7 +22,7 @@ impl FieldDescriptor {
   }
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub struct ObjectDescriptor {
   fields: Vec<FieldDescriptor>,
 }
@@ -52,9 +53,9 @@ where
   }
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Hash, Eq)]
 pub struct ItemsDescriptor {
-  pub all_items: Box<Vec<BodyDescriptor>>,
+  unique_items: Box<Vec<(BodyDescriptor, Vec<usize>)>>,
 }
 
 impl<T> From<T> for ItemsDescriptor
@@ -62,19 +63,37 @@ where
   T: Iterator<Item = BodyDescriptor>,
 {
   fn from(all_items: T) -> Self {
+    let mut unique_items = all_items
+      .enumerate()
+      .fold(HashMap::new(), |mut indexes_by_unique_items, (i, item)| {
+        {
+          let items = indexes_by_unique_items.entry(item).or_insert(vec![]);
+          items.push(i);
+        };
+
+        indexes_by_unique_items
+      })
+      .into_iter()
+      .map(|(item, indexes)| (item.clone(), indexes))
+      .collect::<Vec<_>>();
+
+    unique_items.sort_by_key(|(_, indexes)| *indexes.first().unwrap());
+
     Self {
-      all_items: Box::new(all_items.collect::<Vec<_>>()),
+      unique_items: Box::new(unique_items),
     }
   }
 }
 
 impl ItemsDescriptor {
-  pub fn into_all(self) -> impl Iterator<Item = BodyDescriptor> {
-    self.all_items.into_iter()
-  }
+  // @TODO: decide if this is still interesting at all. Could be reconstructed from unique_items
+  // pub fn into_all(self) -> impl Iterator<Item = BodyDescriptor> {
+  //
+  // }
 
-  // @TODO: implement way to get unique items rather than all items
-  // pub fn unique(&self) -> Vec<(BodyDescriptor, Vec<usize>)> {}
+  pub fn into_unique(self) -> impl Iterator<Item = (BodyDescriptor, Vec<usize>)> {
+    self.unique_items.into_iter()
+  }
 }
 
 impl From<shapehash::ShapeDescriptor> for BodyDescriptor {
