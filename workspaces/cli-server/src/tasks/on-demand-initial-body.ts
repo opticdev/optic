@@ -1,20 +1,8 @@
 import { EventEmitter } from 'events';
 import { runManagedScriptByName } from '@useoptic/cli-scripts';
-import {
-  getDiffOutputPaths,
-  IDiffProjectionEmitterConfig,
-} from '@useoptic/cli-shared/build/diffs/diff-worker';
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
-import { readApiConfig } from '@useoptic/cli-config';
-
-import lockfile from 'proper-lockfile';
 import { Readable, PassThrough } from 'stream';
-import { chain } from 'stream-chain';
-import { streamArray } from 'stream-json/streamers/StreamArray';
-import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
-import { parser as jsonParser } from 'stream-json';
-import { DiffQueries, IAsyncTask } from '../diffs';
 import {
   getInitialBodiesOutputPaths,
   IInitialBodiesProjectionEmitterConfig,
@@ -29,7 +17,7 @@ export interface IInitialBodyManagerConfig {
   captureBaseDirectory: string;
 }
 
-export class OnDemandInitialBody implements IAsyncTask {
+export class OnDemandInitialBody {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
   public readonly id: string;
@@ -190,9 +178,5 @@ export class OnDemandInitialBody implements IAsyncTask {
     if (this.child) {
       this.child.kill('SIGTERM');
     }
-  }
-
-  queries(): DiffQueries {
-    throw new Error('unimplemented');
   }
 }

@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 
-export interface IAsyncTask {
+export interface Diff {
   readonly id: string;
-  readonly events: IAsyncTaskEvents;
+  readonly events: DiffEvents;
 
   start(): Promise<void>;
   progress(): ProgressStream;
@@ -12,14 +12,14 @@ export interface IAsyncTask {
 }
 
 export interface DiffConstructor {
-  new (config: DiffConfigObject): IAsyncTask;
+  new (config: DiffConfigObject): Diff;
 }
 
 export function createDiff(ctor: DiffConstructor, config: DiffConfigObject) {
   return new ctor(config);
 }
 
-export interface IAsyncTaskEvents extends EventEmitter {
+export interface DiffEvents extends EventEmitter {
   addListener(event: 'finish', listener: () => void): this;
   addListener(event: 'error', listener: (err: Error) => void): this;
 

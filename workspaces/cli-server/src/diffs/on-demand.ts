@@ -9,7 +9,7 @@ import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 
 import {
-  IAsyncTask,
+  Diff,
   DiffConfigObject,
   DiffQueries as DiffQueriesInterface,
   DiffStats,
@@ -22,7 +22,7 @@ import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
 
-export class OnDemandDiff implements IAsyncTask {
+export class OnDemandDiff implements Diff {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
   public readonly id: string;
@@ -84,7 +84,7 @@ export class OnDemandDiff implements IAsyncTask {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
-        console.error('IAsyncTask Worker exited with non-zero exit code');
+        console.error('Diff Worker exited with non-zero exit code');
       } else {
         this.finished = true;
         this.events.emit('finish');

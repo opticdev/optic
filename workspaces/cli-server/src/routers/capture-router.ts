@@ -6,7 +6,6 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { IAsyncTask } from '../diffs';
 import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
@@ -14,6 +13,7 @@ import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
 import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
+import { Diff } from '../diffs';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -25,7 +25,7 @@ export interface ICaptureRouterDependencies {
 
 export interface ICaptureDiffMetadata {
   id: string;
-  manager: IAsyncTask;
+  manager: Diff;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
