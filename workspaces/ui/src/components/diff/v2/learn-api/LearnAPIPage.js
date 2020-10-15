@@ -252,6 +252,7 @@ export default function EnhancedTable(props) {
     highlightAlsoMatching,
     updatePathExpression,
     addRow,
+    setIgnore,
     pathExpressions,
     toggleRow,
   } = useContext(LearnAPIPageContext);
@@ -336,6 +337,7 @@ export default function EnhancedTable(props) {
                         toDocument,
                         pathExpressions,
                         toggleRow,
+                        setIgnore,
                         row,
                       }}
                     />
@@ -379,6 +381,7 @@ function UndocumentedRow(props) {
     pathExpressions,
     toggleRow,
     toDocument,
+    setIgnore,
   } = props;
 
   const handleClick = (row) => {
@@ -451,7 +454,7 @@ function UndocumentedRow(props) {
             />
           </Fade>
           <LightTooltip title="Mark as Ignored">
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => setIgnore(row)}>
               <RemoveCircleIcon
                 fontSizeAdjust="small"
                 style={{ width: '.8rem', height: '.8rem' }}

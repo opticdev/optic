@@ -71,6 +71,34 @@ class JsonHttpClient {
     );
   }
 
+  static patchJsonString(
+    url: string,
+    body: string,
+    additionalHeaders: Record<string, string> = {}
+  ) {
+    return fetch(url, {
+      method: 'PATCH',
+      body,
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        ...additionalHeaders,
+      },
+    }).then(JsonHttpClient.handleJsonResponse);
+  }
+
+  static patchJson(
+    url: string,
+    body: any,
+    additionalHeaders: Record<string, string> = {}
+  ) {
+    return JsonHttpClient.patchJsonString(
+      url,
+      JSON.stringify(body),
+      additionalHeaders
+    );
+  }
+
   static postJsonWithoutBody(
     url: string,
     additionalHeaders: Record<string, string> = {}

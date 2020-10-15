@@ -284,8 +284,9 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   });
 
   router.get('/config', async (req, res) => {
+    const rules = await req.optic.ignoreHelper.getCurrentIgnoreRules();
     res.json({
-      config: req.optic.config,
+      config: { ...req.optic.config, ignoreRequests: rules.allRules },
     });
   });
 
@@ -296,15 +297,19 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     });
   });
 
-  router.patch('/ignores', async (req, res) => {
-    const { rule } = req.body;
-    if (typeof rule === 'string' && Boolean(parseRule(rule))) {
-      await req.optic.ignoreHelper.appendRule(rule);
-      res.sendStatus(200);
-    } else {
-      res.status(400).json({ message: 'Invalid ignore rule' });
+  router.patch(
+    '/ignores',
+    bodyParser.json({ limit: '100kb' }),
+    async (req, res) => {
+      const { rule } = req.body;
+      if (typeof rule === 'string' && Boolean(parseRule(rule))) {
+        await req.optic.ignoreHelper.appendRule(rule);
+        res.json({});
+      } else {
+        res.status(400).json({ message: 'Invalid ignore rule' });
+      }
     }
-  });
+  );
 
   const captureRouter = makeCaptureRouter({
     idGenerator: new DefaultIdGenerator(),
