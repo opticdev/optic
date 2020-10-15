@@ -54,13 +54,6 @@ export function getInitialBodiesOutputPaths(values: {
   };
 }
 
-async function safeWriteJson(filePath: string, contents: any) {
-  await fs.ensureFile(filePath);
-  await lockfile.lock(filePath);
-  await fs.writeJson(filePath, contents);
-  await lockfile.unlock(filePath);
-}
-
 export class InitialBodiesWorker {
   constructor(private config: IInitialBodiesProjectionEmitterConfig) {}
 
