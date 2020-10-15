@@ -11,6 +11,7 @@ import {
 } from './helpers/ignore-parser';
 
 import Deprecations, { warnDeprecation } from './deprecations';
+import { defaultIgnoreFile } from './helpers/default-ignore-rules';
 export { deprecationLogger } from './deprecations';
 
 export interface IUserCredentials {
@@ -295,6 +296,7 @@ export async function createFileTree(config: string, basePath: string) {
     specStorePath,
     configPath,
     gitignorePath,
+    opticIgnorePath,
     capturesPath,
   } = await getPathsRelativeToCwd(basePath);
   const files = [
@@ -303,6 +305,10 @@ export async function createFileTree(config: string, basePath: string) {
       contents: `
 captures/
 `,
+    },
+    {
+      path: opticIgnorePath,
+      contents: defaultIgnoreFile,
     },
     {
       path: specStorePath,

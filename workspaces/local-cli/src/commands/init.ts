@@ -62,10 +62,7 @@ export default class Init extends Command {
     const config = `
 name: ${escapeIt(name)}
 tasks:
-${buildInitialTask(flags)}
-ignoreRequests:
-# For more information on configuration, visit https://www.useoptic.com/docs/faqs-and-troubleshooting/captures
-- OPTIONS (.*)`.trimLeft();
+${buildInitialTask(flags)}`.trimLeft();
 
     // const token: string = await Promise.resolve('token-from-backend')
 
