@@ -9,6 +9,8 @@ use optic_diff::InteractionDiffResult;
 use optic_diff::SpecEvent;
 use optic_diff::SpecProjection;
 use std::cmp;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
@@ -118,7 +120,7 @@ fn main() {
           tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
             let interaction_json =
               interaction_json_result.expect("can read interaction json line from stdin");
-            let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
+            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
               match serde_json::from_str(&interaction_json) {
                 Ok(tagged_interaction) => tagged_interaction,
                 Err(parse_error) => {
@@ -136,7 +138,10 @@ fn main() {
 
         if let Some((results, tags)) = results {
           for result in results {
-            if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
+            if let Err(_) = results_sender
+              .send(ResultContainer::from((result, &tags)))
+              .await
+            {
               panic!("could not write diff result to results channel");
               // TODO: Find way to actually write error info
             }
@@ -153,8 +158,22 @@ fn main() {
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
-struct TaggedValue<T>(T, Vec<String>);
+struct TaggedInput<T>(T, Tags);
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct ResultContainer<T>(T, Tags, String);
 type Tags = Vec<String>;
+
+impl<T> From<(T, &Tags)> for ResultContainer<T>
+where
+  T: Hash,
+{
+  fn from((result, tags): (T, &Tags)) -> Self {
+    let mut hash_state = DefaultHasher::new();
+    result.hash(&mut hash_state);
+    let hash = hash_state.finish();
+    Self(result, tags.clone(), format!("{:x}", hash))
+  }
+}
 
 #[cfg(test)]
 mod test {

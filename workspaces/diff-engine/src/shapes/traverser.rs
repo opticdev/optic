@@ -208,7 +208,7 @@ impl<'a> Traverser<'a> {
   }
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Hash)]
 pub enum ShapeTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   ObjectTrail { shape_id: ShapeId },
@@ -250,7 +250,7 @@ pub enum ShapeTrailPathComponent {
   UnknownTrail {},
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
   pub root_shape_id: ShapeId,
@@ -271,7 +271,8 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Debug, Serialize, Clone)]
+// @TODO: implement Hash manually, so we can hash all array items as 0
+#[derive(Debug, Serialize, Clone, Hash)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -283,7 +284,7 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Hash)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }

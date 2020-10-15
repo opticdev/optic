@@ -1,7 +1,7 @@
 use crate::shapes::{JsonTrail, ShapeTrail};
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 pub enum ShapeDiffResult {
   #[serde(rename_all = "camelCase")]
   UnspecifiedShape {

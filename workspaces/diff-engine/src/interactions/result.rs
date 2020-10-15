@@ -2,7 +2,7 @@ use crate::shapes::ShapeDiffResult;
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 pub enum InteractionDiffResult {
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
@@ -18,7 +18,7 @@ pub enum InteractionDiffResult {
   MatchedResponseBodyContentType(MatchedResponseBodyContentType),
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestUrl {
   pub interaction_trail: InteractionTrail,
@@ -34,7 +34,7 @@ impl UnmatchedRequestUrl {
   }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -49,7 +49,7 @@ impl UnmatchedRequestBodyContentType {
     };
   }
 }
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 pub struct MatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
@@ -78,7 +78,7 @@ impl MatchedRequestBodyContentType {
   }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedResponseBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -94,7 +94,7 @@ impl UnmatchedResponseBodyContentType {
   }
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Hash)]
 pub struct MatchedResponseBodyContentType {
   pub interaction_trail: InteractionTrail,
   pub requests_trail: RequestSpecTrail,
@@ -121,7 +121,7 @@ impl MatchedResponseBodyContentType {
     )
   }
 }
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyShape {
   pub interaction_trail: InteractionTrail,
@@ -143,7 +143,7 @@ impl UnmatchedRequestBodyShape {
   }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedResponseBodyShape {
   pub interaction_trail: InteractionTrail,
@@ -166,7 +166,7 @@ impl UnmatchedResponseBodyShape {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
 }
@@ -181,7 +181,7 @@ impl InteractionTrail {
   }
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 pub enum RequestSpecTrail {
   SpecRoot(SpecRoot),
   SpecPath(SpecPath),
@@ -191,40 +191,40 @@ pub enum RequestSpecTrail {
   SpecResponseBody(SpecResponseBody),
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 pub struct SpecRoot {}
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecPath {
   pub path_id: PathComponentId,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestRoot {
   pub request_id: RequestId,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestBody {
   pub request_id: RequestId,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseRoot {
   pub response_id: ResponseId,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseBody {
   pub response_id: ResponseId,
 }
 //@GOTCHA make sure these serialize matching the existing scala code
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Hash)]
 pub enum InteractionTrailPathComponent {
   Url {},
   Method {
