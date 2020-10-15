@@ -137,7 +137,7 @@ fn can_yield_unmatched_shape_for_mismatched_array_items() {
     "can_yield_unmatched_shape_for_mismatched_array_items__shape_projection_graph",
     Dot::with_config(&shape_projection.graph, &[])
   );
-  let array_body = json!(["4", "6", 8, "10"]);
+  let array_body = json!(["4", 8, false]);
   let shape_id = String::from("list_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
@@ -145,7 +145,34 @@ fn can_yield_unmatched_shape_for_mismatched_array_items() {
     "can_yield_unmatched_shape_for_mismatched_array_items__results",
     results
   );
-  assert_eq!(results.len(), 3);
+  assert_eq!(results.len(), 2); // one per unique type of array item
+}
+
+#[test]
+fn yields_unmatched_shape_once_for_each_uniquely_shaped_array_item() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"number_shape_1"}},"consumingParameterId":"$listItem"}}}},
+      ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+
+  assert_debug_snapshot!(
+    "yields_unmatched_shape_once_for_each_uniquely_shaped_array_item__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let array_body = json!(["4", "6", 8, "10", { "not-a": "number" }, { "not-a": "boolean" }, { "different": "object-structure" }]);
+  let shape_id = String::from("list_1");
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+
+  assert_debug_snapshot!(
+    "yields_unmatched_shape_once_for_each_uniqu_array_item__results",
+    results
+  );
+  assert_eq!(results.len(), 3); // one per unique type of array item
 }
 
 #[test]

@@ -84,9 +84,9 @@ impl<'a> Traverser<'a> {
           _ => unreachable!("expect body to be an array"),
         };
 
-        items.into_all().enumerate().for_each(|(index, item)| {
+        items.into_unique().for_each(|(item, indexes)| {
           let item_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonArrayItem {
-            index: index as u32,
+            index: *(indexes.first().unwrap()) as u32,
           });
 
           let new_trail_origin = trail_origin.clone();
