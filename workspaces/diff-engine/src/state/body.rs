@@ -63,7 +63,7 @@ where
   T: Iterator<Item = BodyDescriptor>,
 {
   fn from(all_items: T) -> Self {
-    let unique_items = all_items
+    let mut unique_items = all_items
       .enumerate()
       .fold(HashMap::new(), |mut indexes_by_unique_items, (i, item)| {
         {
@@ -76,6 +76,8 @@ where
       .into_iter()
       .map(|(item, indexes)| (item.clone(), indexes))
       .collect::<Vec<_>>();
+
+    unique_items.sort_by_key(|(_, indexes)| *indexes.first().unwrap());
 
     Self {
       unique_items: Box::new(unique_items),
