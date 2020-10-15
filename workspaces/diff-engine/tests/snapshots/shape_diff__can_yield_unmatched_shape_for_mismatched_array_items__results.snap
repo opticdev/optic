@@ -25,25 +25,7 @@ expression: results
         json_trail: JsonTrail {
             path: [
                 JsonArrayItem {
-                    index: 1,
-                },
-            ],
-        },
-        shape_trail: ShapeTrail {
-            root_shape_id: "list_1",
-            path: [
-                ListItemTrail {
-                    list_shape_id: "list_1",
-                    item_shape_id: "number_shape_1",
-                },
-            ],
-        },
-    },
-    UnmatchedShape {
-        json_trail: JsonTrail {
-            path: [
-                JsonArrayItem {
-                    index: 3,
+                    index: 2,
                 },
             ],
         },

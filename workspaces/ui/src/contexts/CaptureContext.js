@@ -72,7 +72,10 @@ class _CaptureContextStore extends React.Component {
       if (notifData && notifData.hasOwnProperty('hasMoreInteractions')) {
         if (!notifData.hasMoreInteractions) {
           console.log('completed diff');
-          // track('Completed Diff', {
+          if (this.state.notificationChannel) {
+            this.state.notificationChannel.close();
+          }
+          // track('Completed IAsyncTask', {
           //   captureId: this.props.captureId,
           // });
         }
@@ -82,7 +85,7 @@ class _CaptureContextStore extends React.Component {
           processed: notifData.diffedInteractionsCounter,
         };
 
-        // track('Diff Progress', {
+        // track('IAsyncTask Progress', {
         //   captureId: this.props.captureId,
         //   ...stats,
         // });
@@ -103,7 +106,7 @@ class _CaptureContextStore extends React.Component {
 
       console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
 
-      // track('Diff Incremental Results', {
+      // track('IAsyncTask Incremental Results', {
       //   captureId: this.props.captureId,
       //   diffs: diffsResponse.diffs.length,
       //   newUrls: urlsResponse.length,
@@ -161,7 +164,7 @@ class _CaptureContextStore extends React.Component {
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
 
-    // track('Starting Diff', {
+    // track('Starting IAsyncTask', {
     //   eventsLength: events.length,
     //   additionalCommandsLength: this.state.additionalCommands.length,
     //   captureId,
