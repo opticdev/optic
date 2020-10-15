@@ -1,5 +1,6 @@
 use super::EventLoadingError;
 use crate::shapehash;
+use crate::state::body::BodyDescriptor;
 use avro_rs;
 use base64;
 use cqrs_core::Event;
@@ -75,6 +76,27 @@ impl From<&ArbitraryData> for Option<serde_json::value::Value> {
       let shape_descriptor: shapehash::ShapeDescriptor = protobuf::parse_from_bytes(&decoded_hash)
         .expect("shape hash should be validly encoded shapehash proto");
       Some(serde_json::Value::from(shape_descriptor))
+    } else {
+      None
+    }
+  }
+}
+
+impl From<&ArbitraryData> for Option<BodyDescriptor> {
+  fn from(data: &ArbitraryData) -> Self {
+    if let Some(shape_hash) = &data.shape_hash_v1_base64 {
+      let decoded_hash = base64::decode(shape_hash)
+        .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
+      let shape_hash_descriptor: shapehash::ShapeDescriptor =
+        protobuf::parse_from_bytes(&decoded_hash)
+          .expect("shape hash should be validly encoded shapehash proto");
+      Some(BodyDescriptor::from(shape_hash_descriptor))
+    } else if let Some(json_string) = &data.as_json_string {
+      let json: serde_json::Value = serde_json::from_str(json_string)
+        .expect("as_json_string of ArbitraryData should always be valid json");
+      Some(BodyDescriptor::from(json))
+    } else if let Some(text) = &data.as_text {
+      Some(BodyDescriptor::from(text))
     } else {
       None
     }

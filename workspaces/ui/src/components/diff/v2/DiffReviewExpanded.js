@@ -152,7 +152,7 @@ export const DiffReviewExpanded = (props) => {
   const { interaction, interactionScala } = currentInteraction;
 
   const { method, path } = interactionScala.request;
-  // track('Display Diff in Behavior Page', props);
+  // track('Display IAsyncTask in Behavior Page', props);
   return (
     <ShapeExpandedStore>
       <div>

@@ -54,13 +54,6 @@ export function getInitialBodiesOutputPaths(values: {
   };
 }
 
-async function safeWriteJson(filePath: string, contents: any) {
-  await fs.ensureFile(filePath);
-  await lockfile.lock(filePath);
-  await fs.writeJson(filePath, contents);
-  await lockfile.unlock(filePath);
-}
-
 export class InitialBodiesWorker {
   constructor(private config: IInitialBodiesProjectionEmitterConfig) {}
 
@@ -155,6 +148,9 @@ export class InitialBodiesWorker {
             type: 'progress',
             data: progress,
           });
+          if (!progress.hasMoreInteractions) {
+            setTimeout(() => process.exit(0), 100);
+          }
         } else {
           console.log(progress);
         }
@@ -186,9 +182,6 @@ export class InitialBodiesWorker {
             })
           ),
         };
-
-        await safeWriteJson(outputPaths.initialBodies, results);
-
         notifyParent(results);
       }
 
@@ -222,26 +215,6 @@ export class InitialBodiesWorker {
 
         LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap);
 
-        // console.timeEnd(`serdes ${batchId} ${index}`);
-        // console.time(`diff ${batchId} ${index}`);
-        // diffs = DiffHelpers.groupInteractionPointerByDiffs(
-        //   resolvers,
-        //   rfcState,
-        //   deserializedInteraction,
-        //   interactionPointerConverter.toPointer(item.interaction.value, {
-        //     interactionIndex: index,
-        //     batchId,
-        //   }),
-        //   diffs
-        // );
-        // console.timeEnd(`diff ${batchId} ${index}`);
-        // console.time(`count ${batchId} ${index}`);
-        // undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
-        //   deserializedInteraction,
-        //   undocumentedUrls
-        // );
-        // console.timeEnd(`count ${batchId} ${index}`);
-        // .batcher.add(null);
         batcher.add(null);
       }
       hasMoreInteractions = false;

@@ -1,7 +1,8 @@
 use super::visitors::{
-  JlasArrayVisitor, JlasObjectKeyVisitor, JlasObjectVisitor, JlasPrimitiveVisitor, JsonBodyVisitors,
+  BodyArrayVisitor, BodyObjectKeyVisitor, BodyObjectVisitor, BodyPrimitiveVisitor, BodyVisitors,
 };
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
+use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
@@ -17,45 +18,39 @@ impl<'a> Traverser<'a> {
 
   pub fn traverse_root_shape<R>(
     &self,
-    json_body_option: Option<JsonValue>,
+    body_option: Option<BodyDescriptor>,
     shape_id: &ShapeId,
-    visitors: &mut impl JsonBodyVisitors<R>,
+    visitors: &mut impl BodyVisitors<R>,
   ) {
     let body_trail = JsonTrail::empty();
     let trail_origin = ShapeTrail::new(shape_id.clone());
     let choices: Vec<ChoiceOutput> = self.shape_queries.list_trail_choices(&trail_origin);
-    self.traverse(
-      json_body_option,
-      body_trail,
-      trail_origin,
-      &choices,
-      visitors,
-    )
+    self.traverse(body_option, body_trail, trail_origin, &choices, visitors)
   }
 
   pub fn traverse<R>(
     &self,
-    json_body_option: Option<JsonValue>,
+    body_option: Option<BodyDescriptor>,
     body_trail: JsonTrail,
     trail_origin: ShapeTrail,
     trail_choices: &Vec<ChoiceOutput>,
-    visitors: &mut impl JsonBodyVisitors<R>,
+    visitors: &mut impl BodyVisitors<R>,
   ) {
-    // eprintln!("shape-traverser: traversing json value");
-    if let None = json_body_option {
-      // eprintln!("shape-traverser: no json value available");
+    // eprintln!("shape-traverser: traversing body");
+    if let None = body_option {
+      // eprintln!("shape-traverser: no body available");
       return;
     }
 
-    // eprintln!("shape-traverser: json value found");
-    let json_body = json_body_option.unwrap();
+    // eprintln!("shape-traverser: body found");
+    let body = body_option.unwrap();
 
-    match json_body {
-      JsonValue::Array(_) => {
+    match body {
+      BodyDescriptor::Array(_) => {
         // eprintln!("shape-traverser: visiting array");
         let array_visitor = visitors.array();
         let matching_choices =
-          array_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices);
+          array_visitor.visit(&body, &body_trail, &trail_origin, trail_choices);
         let item_choices = matching_choices
           .iter()
           .flat_map(move |choice| {
@@ -83,44 +78,42 @@ impl<'a> Traverser<'a> {
             }
           })
           .collect::<Vec<_>>();
-        let items = match json_body {
-          JsonValue::Array(items) => items,
-          _ => unreachable!("expect json body to be an array"),
+
+        let items = match body {
+          BodyDescriptor::Array(items) => items,
+          _ => unreachable!("expect body to be an array"),
         };
-        items
-          .into_iter()
-          .enumerate()
-          .for_each(|(index, item_json)| {
-            let item_json_trail =
-              body_trail.with_component(JsonTrailPathComponent::JsonArrayItem {
-                index: index as u32,
-              });
 
-            let new_trail_origin = trail_origin.clone();
-
-            if !item_choices.is_empty() {
-              self.traverse(
-                Some(item_json),
-                item_json_trail,
-                new_trail_origin,
-                &item_choices,
-                visitors,
-              )
-            }
+        items.into_unique().for_each(|(item, indexes)| {
+          let item_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonArrayItem {
+            index: *(indexes.first().unwrap()) as u32,
           });
+
+          let new_trail_origin = trail_origin.clone();
+
+          if !item_choices.is_empty() {
+            self.traverse(
+              Some(item),
+              item_json_trail,
+              new_trail_origin,
+              &item_choices,
+              visitors,
+            )
+          }
+        });
       }
-      JsonValue::Object(_) => {
+      BodyDescriptor::Object(_) => {
         // eprintln!("shape-traverser: visiting object");
         let matching_choices = {
           let object_visitor = visitors.object();
-          object_visitor.visit(&json_body, &body_trail, &trail_origin, trail_choices)
+          object_visitor.visit(&body, &body_trail, &trail_origin, trail_choices)
         };
         // eprintln!("shape-traverser: visiting object keys");
         let object_key_visitor = visitors.object_key();
 
-        let fields = match json_body {
-          JsonValue::Object(fields) => fields,
-          _ => unreachable!("expect json body to be an object"),
+        let object = match body {
+          BodyDescriptor::Object(fields) => fields,
+          _ => unreachable!("expect body to be an object"),
         };
 
         let object_key_choices = matching_choices
@@ -151,10 +144,10 @@ impl<'a> Traverser<'a> {
           })
           .collect::<Vec<_>>();
 
-        let object_keys = fields.keys().map(|x| (*x).clone()).collect::<Vec<_>>();
+        let object_keys = object.keys().map(|x| (*x).clone()).collect::<Vec<_>>();
         object_key_visitor.visit(&body_trail, &object_keys, &object_key_choices);
 
-        fields.into_iter().for_each(|(field_key, field_json)| {
+        object.entries().for_each(|(field_key, field_body)| {
           let field_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonObjectKey {
             key: field_key.clone(),
           });
@@ -197,7 +190,7 @@ impl<'a> Traverser<'a> {
 
           if !field_choices.is_empty() {
             self.traverse(
-              Some(field_json),
+              Some(field_body),
               field_json_trail,
               new_trail_origin,
               &field_choices,
