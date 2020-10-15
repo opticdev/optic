@@ -1,4 +1,4 @@
-use serde_json::Value as JsonValue;
+use crate::state::body::BodyDescriptor;
 
 mod result;
 pub mod traverser;
@@ -10,11 +10,11 @@ pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPat
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
-use visitors::JsonBodyVisitors;
+use visitors::BodyVisitors;
 
 pub fn diff(
   shapes_projection: &ShapeProjection,
-  json_body: Option<JsonValue>,
+  body: Option<BodyDescriptor>,
   shape_id: &ShapeId,
 ) -> Vec<ShapeDiffResult> {
   let shapes_queries = ShapeQueries::new(shapes_projection);
@@ -23,10 +23,10 @@ pub fn diff(
 
   eprintln!(
     "shape-diff: diffing body with shape id {},  {:?}",
-    shape_id, json_body
+    shape_id, body
   );
 
-  shape_traverser.traverse_root_shape(json_body, shape_id, &mut diff_visitors);
+  shape_traverser.traverse_root_shape(body, shape_id, &mut diff_visitors);
 
   diff_visitors.take_results().unwrap()
 }
