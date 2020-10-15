@@ -10,20 +10,20 @@ jobs:
 
     steps:
       - name: Set branch name
-        run: echo ::set-env name=BRANCH::$(echo "$GITHUB_REF")
+        run: echo "BRANCH=$GITHUB_REF" >> $GITHUB_ENV
 
       - name: Set contextual vars
         run: |
           if [ "$BRANCH" = "refs/heads/release" ]; then
-            echo ::set-env name=BUCKET::optic-apidocs-website-production
-            echo ::set-env name=SITE_URL::https://apidocs.useoptic.com
-            echo ::set-env name=BRANCH_NAME::release
-            echo ::set-env name=API_URL:://api.opticnerve.net
+            echo "BUCKET=optic-apidocs-website-production" >> $GITHUB_ENV
+            echo "SITE_URL=https://apidocs.useoptic.com" >> $GITHUB_ENV
+            echo "BRANCH_NAME=release" >> $GITHUB_ENV
+            echo "API_URL=https://api.opticnerve.net" >> $GITHUB_ENV
           elif [ "$BRANCH" = "refs/heads/feature/spec-publisher" ]; then
-            echo ::set-env name=BUCKET::optic-apidocs-website-staging
-            echo ::set-env name=SITE_URL::https://apidocs.o3c.info
-            echo ::set-env name=BRANCH_NAME::feature/spec-publisher
-            echo ::set-env name=API_URL::https://staging.infra.opticdev.com
+            echo "BUCKET=optic-apidocs-website-staging" >> $GITHUB_ENV
+            echo "SITE_URL=https://apidocs.o3c.info" >> $GITHUB_ENV
+            echo "BRANCH_NAME=feature/spec-publisher" >> $GITHUB_ENV
+            echo "API_URL=https://api.o3c.info" >> $GITHUB_ENV
           fi
 
       - name: Configure AWS Credentials

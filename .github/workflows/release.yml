@@ -9,7 +9,7 @@ env:
   PACKAGE_NAME: api
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-on: 
+on:
   push:
     branches:
       - release
@@ -39,7 +39,7 @@ jobs:
     - run: node ./workspaces/scripts/publish.js
       env:
         OPTIC_PUBLISH_SCOPE: public
-  
+
   # Creates debian package for users to install, hosted on s3
   release-deb:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
           PACKAGE_NAME: api
           PREFIX_NAME: deb
           NPM_PACKAGE_NAME: "@useoptic/cli"
-  
+
   # Triggers Homebrew Release - Configure homebrew/core fork repository in the env settings above
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
   trigger-brew-release:
@@ -70,7 +70,7 @@ jobs:
           repository: opticdev/homebrew-optic
           event-type: version-update
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
- 
+
   # Tells slack a release has happened
   notify-slack:
     runs-on: ubuntu-latest
@@ -81,7 +81,7 @@ jobs:
         name: Setup Node (to determine latest version of Optic)
         with:
             node-version: 12
-      - run: echo ::set-env name=MESSAGE::"${{ github.event.pusher.name }} released version $(npm view @useoptic/cli version) \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>"
+      - run: echo "MESSAGE::"${{ github.event.pusher.name }} released version $(npm view @useoptic/cli version) \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>" >> $GITHUB_ENV
       - name: Send message to Slack API
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}

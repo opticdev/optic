@@ -10,16 +10,16 @@ jobs:
 
     steps:
       - name: Set branch name
-        run: echo ::set-env name=BRANCH::$(echo "$GITHUB_REF")
+        run: echo "BRANCH=$GITHUB_REF" >> $GITHUB_ENV
 
       - name: Set contextual vars
         run: |
           if [ "$BRANCH" = "refs/heads/release" ]; then
-            echo ::set-env name=BUCKET::optic-demo-website-production
-            echo ::set-env name=SITE_URL::https://demo.useoptic.com
+            echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
+            echo "SITE_URL=https://demo.useoptic.com" >> $GITHUB_ENV
           elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
-            echo ::set-env name=BUCKET::optic-demo-website-staging
-            echo ::set-env name=SITE_URL::https://demo.o3c.info
+            echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
+            echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
           fi
 
       - name: Configure AWS Credentials
