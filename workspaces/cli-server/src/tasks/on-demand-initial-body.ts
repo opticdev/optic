@@ -8,65 +8,65 @@ import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 
-import {
-  IAsyncTask,
-  DiffConfigObject,
-  DiffQueries as DiffQueriesInterface,
-  DiffStats,
-} from '.';
-
 import lockfile from 'proper-lockfile';
 import { Readable, PassThrough } from 'stream';
 import { chain } from 'stream-chain';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
+import { DiffQueries, IAsyncTask } from '../diffs';
+import {
+  getInitialBodiesOutputPaths,
+  IInitialBodiesProjectionEmitterConfig,
+} from '@useoptic/cli-shared/build/diffs/initial-bodies-worker';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
-export class OnDemandDiff implements IAsyncTask {
+export interface IInitialBodyManagerConfig {
+  pathId: string;
+  method: string;
+  captureId: string;
+  events: any;
+  captureBaseDirectory: string;
+}
+
+export class OnDemandInitialBody implements IAsyncTask {
   public readonly events: EventEmitter = new EventEmitter();
   private child!: ChildProcess;
   public readonly id: string;
-  private readonly config: DiffConfigObject;
+  private readonly config: IInitialBodyManagerConfig;
   private finished: boolean = false;
 
-  constructor(config: DiffConfigObject) {
-    this.id = config.diffId;
+  constructor(config: IInitialBodyManagerConfig) {
+    this.id = config.method + config.method + config.captureId;
     this.config = config;
   }
 
   private lastProgress: {
-    diffedInteractionsCounter: string;
-    skippedInteractionsCounter: string;
-    hasMoreInteractions: string;
+    hasMoreInteractions: boolean;
+    results: ILearnedBodies;
   } | null = null;
 
   async start(): Promise<any> {
     const { config } = this;
-    const apiConfig = await readApiConfig(config.configPath);
 
     const outputPaths = this.paths();
-    await fs.ensureDir(outputPaths.base);
-    await Promise.all([
-      fs.copy(config.specPath, outputPaths.events),
-      fs.writeJson(outputPaths.ignoreRequests, apiConfig.ignoreRequests || []),
-      fs.writeJson(outputPaths.filters, config.endpoints || []),
-      fs.writeJson(outputPaths.additionalCommands, []),
-    ]);
 
-    const scriptConfig: IDiffProjectionEmitterConfig = {
+    const scriptConfig: IInitialBodiesProjectionEmitterConfig = {
       captureId: config.captureId,
-      diffId: config.diffId,
-      captureBaseDirectory: config.captureBaseDirectory,
+      pathId: config.pathId,
+      method: config.method,
       specFilePath: outputPaths.events,
-      ignoreRequestsFilePath: outputPaths.ignoreRequests,
-      additionalCommandsFilePath: outputPaths.additionalCommands,
-      filtersFilePath: outputPaths.filters,
+      captureBaseDirectory: config.captureBaseDirectory,
     };
+
+    await fs.ensureDir(outputPaths.base);
+
+    await Promise.all([fs.writeJson(outputPaths.events, config.events)]);
+
     console.log(JSON.stringify(scriptConfig));
+
     const child = runManagedScriptByName(
-      process.env.OPTIC_RUST_DIFF_ENGINE === 'true'
-        ? 'emit-diff-projections-rust'
-        : 'emit-diff-projections',
+      'emit-initial-bodies-commands',
       JSON.stringify(scriptConfig)
     );
 
@@ -131,8 +131,8 @@ export class OnDemandDiff implements IAsyncTask {
     return lastProgress ? { ...lastProgress } : null;
   }
 
-  private paths(): DiffPaths {
-    return getDiffOutputPaths(this.config);
+  private paths(): { base: string; events: string; initialBodies: string } {
+    return getInitialBodiesOutputPaths(this.config);
   }
 
   progress(): Readable {
@@ -186,77 +186,13 @@ export class OnDemandDiff implements IAsyncTask {
     return stream;
   }
 
-  queries() {
-    return new DiffQueries(this.paths());
-  }
-
   async stop() {
     if (this.child) {
       this.child.kill('SIGTERM');
     }
   }
-}
 
-interface DiffPaths {
-  base: string;
-  diffs: string;
-  diffsStream: string;
-  stats: string;
-  undocumentedUrls: string;
-  events: string;
-  ignoreRequests: string;
-  filters: string;
-  additionalCommands: string;
-}
-
-export class DiffQueries implements DiffQueriesInterface {
-  constructor(private readonly paths: DiffPaths) {}
-
-  diffs(): Readable {
-    if (fs.existsSync(this.paths.diffsStream)) {
-      return chain([
-        fs.createReadStream(this.paths.diffsStream),
-        jsonlParser(),
-        (data) => [data.value],
-      ]);
-    } else {
-      let reading = lockedRead<any>(this.paths.diffs);
-      let itemsGenerator = jsonStreamGenerator(reading);
-
-      return Readable.from(itemsGenerator);
-    }
+  queries(): DiffQueries {
+    throw new Error('unimplemented');
   }
-  undocumentedUrls(): Readable {
-    let reading = lockedRead<any>(this.paths.undocumentedUrls);
-    let itemsGenerator = jsonStreamGenerator(reading);
-
-    return Readable.from(itemsGenerator);
-  }
-  stats(): Promise<DiffStats> {
-    return lockedRead<DiffStats>(this.paths.stats);
-  }
-}
-
-async function* jsonStreamGenerator(jsonPromise: Promise<any>) {
-  let json = await jsonPromise;
-
-  if (Array.isArray(json)) {
-    for await (const item of json) {
-      yield item;
-    }
-  } else {
-    yield json;
-  }
-}
-
-async function lockedRead<T>(filePath: string): Promise<T> {
-  await lockfile.lock(filePath, {
-    retries: { retries: 10 },
-  });
-
-  let json = await fs.readJson(filePath);
-
-  await lockfile.unlock(filePath);
-
-  return json;
 }

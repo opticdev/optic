@@ -155,6 +155,9 @@ export class InitialBodiesWorker {
             type: 'progress',
             data: progress,
           });
+          if (!progress.hasMoreInteractions) {
+            setTimeout(() => process.exit(0), 100);
+          }
         } else {
           console.log(progress);
         }
@@ -186,9 +189,6 @@ export class InitialBodiesWorker {
             })
           ),
         };
-
-        await safeWriteJson(outputPaths.initialBodies, results);
-
         notifyParent(results);
       }
 
@@ -222,26 +222,6 @@ export class InitialBodiesWorker {
 
         LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap);
 
-        // console.timeEnd(`serdes ${batchId} ${index}`);
-        // console.time(`diff ${batchId} ${index}`);
-        // diffs = DiffHelpers.groupInteractionPointerByDiffs(
-        //   resolvers,
-        //   rfcState,
-        //   deserializedInteraction,
-        //   interactionPointerConverter.toPointer(item.interaction.value, {
-        //     interactionIndex: index,
-        //     batchId,
-        //   }),
-        //   diffs
-        // );
-        // console.timeEnd(`diff ${batchId} ${index}`);
-        // console.time(`count ${batchId} ${index}`);
-        // undocumentedUrls = undocumentedUrlHelpers.countUndocumentedUrls(
-        //   deserializedInteraction,
-        //   undocumentedUrls
-        // );
-        // console.timeEnd(`count ${batchId} ${index}`);
-        // .batcher.add(null);
         batcher.add(null);
       }
       hasMoreInteractions = false;

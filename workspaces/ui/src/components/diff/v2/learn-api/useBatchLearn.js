@@ -35,7 +35,7 @@ export function useBatchLearn(
         );
 
         const throttler = new Bottleneck({
-          maxConcurrent: 4,
+          maxConcurrent: 5,
           minTime: 100,
         });
 

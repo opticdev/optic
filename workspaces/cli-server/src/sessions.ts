@@ -5,7 +5,7 @@ import {
 } from '@useoptic/cli-config';
 import {
   createDiff,
-  Diff,
+  IAsyncTask,
   DiffQueries,
   ProgressStream as DiffProgressStream,
 } from './diffs';
@@ -90,8 +90,8 @@ export class Session {
 }
 
 class SessionDiffs {
-  private diffsById: Map<string, Diff> = new Map();
-  private activeDiffsByCaptureId: Map<string, Diff> = new Map();
+  private diffsById: Map<string, IAsyncTask> = new Map();
+  private activeDiffsByCaptureId: Map<string, IAsyncTask> = new Map();
 
   constructor(
     readonly configPath: string,

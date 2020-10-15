@@ -6,22 +6,14 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { Diff } from '../diffs';
-import fs from 'fs-extra';
-import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
-import lockfile from 'proper-lockfile';
+import { IAsyncTask } from '../diffs';
 import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
-import {
-  disassembler,
-  disassembler as jsonDisassembler,
-} from 'stream-json/Disassembler';
-import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
-import { InitialBodyManager } from '../diffs/initial-body-manager';
-import { getInitialBodiesOutputPaths } from '@useoptic/cli-shared/build/diffs/initial-bodies-worker';
+import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
+import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -33,7 +25,7 @@ export interface ICaptureRouterDependencies {
 
 export interface ICaptureDiffMetadata {
   id: string;
-  manager: Diff;
+  manager: IAsyncTask;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
@@ -109,32 +101,65 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     async (req, res) => {
       const { captureId } = req.params;
       const { events, pathId, method } = req.body;
-      const manager = new InitialBodyManager();
-      const outputPaths = getInitialBodiesOutputPaths({
+
+      const initialBodyGenerator = new OnDemandInitialBody({
         captureBaseDirectory: req.optic.paths.capturesPath,
+        events: events,
         captureId,
         pathId,
         method,
       });
-      await fs.ensureDir(outputPaths.base);
-      await Promise.all([fs.writeJson(outputPaths.events, events)]);
 
-      console.log('all setup and events saved');
+      await initialBodyGenerator.start();
 
-      try {
-        const learnedBodies: ILearnedBodies = await manager.run({
-          captureBaseDirectory: req.optic.paths.capturesPath,
-          captureId: captureId,
-          pathId,
-          method,
+      const result: Promise<ILearnedBodies> = new Promise((resolve, reject) => {
+        initialBodyGenerator.events.on('progress', (data: any) => {
+          console.log('progress tick ', JSON.stringify(data));
+          if (!data.hasMoreInteractions && data.results) {
+            resolve(data.results);
+          }
         });
+        initialBodyGenerator.events.on('exit', reject);
+        initialBodyGenerator.events.on('error', reject);
+      });
 
+      result.finally(() => initialBodyGenerator.stop());
+
+      result.then((learnedBodies: ILearnedBodies) => {
         res.json(learnedBodies);
-      } catch (e) {
-        return res.status(500).json({
+      });
+      result.catch((e) => {
+        res.status(500).json({
           message: e.message,
         });
-      }
+      });
+
+      // const manager = new InitialBodyManager();
+      // const outputPaths = getInitialBodiesOutputPaths({
+      //   captureBaseDirectory: req.optic.paths.capturesPath,
+      //   captureId,
+      //   pathId,
+      //   method,
+      // });
+      // await fs.ensureDir(outputPaths.base);
+      // await Promise.all([fs.writeJson(outputPaths.events, events)]);
+      //
+      // console.log('all setup and events saved');
+      //
+      // try {
+      //   const learnedBodies: ILearnedBodies = await manager.run({
+      //     captureBaseDirectory: req.optic.paths.capturesPath,
+      //     captureId: captureId,
+      //     pathId,
+      //     method,
+      //   });
+      //
+      //   res.json(learnedBodies);
+      // } catch (e) {
+      //   return res.status(500).json({
+      //     message: e.message,
+      //   });
+      // }
     }
   );
 
