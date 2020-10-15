@@ -6,6 +6,7 @@ use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
+use std::hash::{Hash, Hasher};
 
 pub struct Traverser<'a> {
   shape_queries: &'a ShapeQueries<'a>,
@@ -271,7 +272,6 @@ impl ShapeTrail {
   }
 }
 
-// @TODO: implement Hash manually, so we can hash all array items as 0
 #[derive(Debug, Serialize, Clone, Hash)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
@@ -284,7 +284,7 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Serialize, Clone)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }
@@ -296,5 +296,23 @@ impl JsonTrail {
     let mut new_trail = self.clone();
     new_trail.path.push(component);
     new_trail
+  }
+}
+
+impl Hash for JsonTrail {
+  fn hash<H: Hasher>(&self, hash_state: &mut H) {
+    let components = self
+      .path
+      .clone()
+      .into_iter()
+      .map(|component| match component {
+        JsonTrailPathComponent::JsonArrayItem { index } => {
+          JsonTrailPathComponent::JsonArrayItem { index: 0 }
+        }
+        _ => component,
+      })
+      .collect::<Vec<_>>();
+
+    components.hash(hash_state);
   }
 }
