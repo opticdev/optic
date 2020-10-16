@@ -34,7 +34,7 @@ export class OnDemandInitialBody {
     results: ILearnedBodies;
   } | null = null;
 
-  async start(): Promise<any> {
+  async run(): Promise<ILearnedBodies> {
     const { config } = this;
 
     const outputPaths = this.paths();
@@ -60,7 +60,10 @@ export class OnDemandInitialBody {
 
     const onMessage = (x: any) => {
       if (x.type && x.type === 'progress') {
-        this.lastProgress = { ...x.data };
+        if (!x.data.hasMoreInteractions) {
+          this.finished = true;
+          this.events.emit('completed', x.data);
+        }
       }
       this.events.emit(x.type, x.data);
     };
@@ -72,12 +75,13 @@ export class OnDemandInitialBody {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
-        console.error('IAsyncTask Worker exited with non-zero exit code');
+        console.error('On Demand Body Worker exited with non-zero exit code');
       } else {
         this.finished = true;
         this.events.emit('finish');
       }
     };
+
     function cleanup() {
       child.removeListener('message', onMessage);
       child.removeListener('error', onError);
@@ -90,7 +94,18 @@ export class OnDemandInitialBody {
 
     this.child = child;
 
-    return new Promise((resolve, reject) => {
+    const completedPromise: Promise<ILearnedBodies> = new Promise((resolve) => {
+      this.events.once('completed', onCompleted);
+      function onCompleted(data: any) {
+        cleanup();
+        resolve(data.results);
+      }
+      const cleanup = () => {
+        this.events.removeListener('completed', onCompleted);
+      };
+    });
+
+    const startedPromise = await new Promise(async (resolve, reject) => {
       function onErr(err: Error) {
         cleanup();
         reject(err);
@@ -112,66 +127,13 @@ export class OnDemandInitialBody {
       this.events.once('progress', onProgress);
       this.events.once('error', onErr);
     });
-  }
 
-  private latestProgress() {
-    const lastProgress = this.lastProgress;
-    return lastProgress ? { ...lastProgress } : null;
+    await startedPromise;
+    return await completedPromise;
   }
 
   private paths(): { base: string; events: string; initialBodies: string } {
     return getInitialBodiesOutputPaths(this.config);
-  }
-
-  progress(): Readable {
-    // NOTE: event emitters don't respect back pressure, so to make sure we don't overwhelm
-    // downstream consumers, we stop observing progress events until a fully-buffered stream
-    // drains again.
-    const stream = new PassThrough({ objectMode: true, highWaterMark: 4 });
-    stream.write({ type: 'progress', data: this.latestProgress() });
-
-    if (this.finished) {
-      stream.end();
-    } else {
-      let resume = () => {
-        let write = (progress: { type: string; data: any }) => {
-          if (!stream.write(progress)) {
-            stopListening();
-            stream.once('drain', resume);
-          }
-        };
-
-        let end = () => {
-          stopListening();
-          stream.end();
-        };
-
-        function onProgress(data: any) {
-          write({ type: 'progress', data });
-        }
-        function onErr(data: any) {
-          write({ type: 'error', data });
-          end();
-        }
-        function onFinish() {
-          end();
-        }
-
-        const stopListening = () => {
-          this.events.removeListener('progress', onProgress);
-          this.events.removeListener('error', onErr);
-          this.events.removeListener('finish', onFinish);
-        };
-
-        this.events.on('progress', onProgress);
-        this.events.once('error', onErr);
-        this.events.once('finish', onFinish);
-      };
-
-      resume();
-    }
-
-    return stream;
   }
 
   async stop() {

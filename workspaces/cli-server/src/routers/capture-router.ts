@@ -110,20 +110,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         method,
       });
 
-      await initialBodyGenerator.start();
-
-      const result: Promise<ILearnedBodies> = new Promise((resolve, reject) => {
-        initialBodyGenerator.events.on('progress', (data: any) => {
-          console.log('progress tick ', JSON.stringify(data));
-          if (!data.hasMoreInteractions && data.results) {
-            resolve(data.results);
-          }
-        });
-        initialBodyGenerator.events.on('exit', reject);
-        initialBodyGenerator.events.on('error', reject);
-      });
-
-      result.finally(() => initialBodyGenerator.stop());
+      const result = initialBodyGenerator.run();
 
       result.then((learnedBodies: ILearnedBodies) => {
         res.json(learnedBodies);
@@ -133,33 +120,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
           message: e.message,
         });
       });
-
-      // const manager = new InitialBodyManager();
-      // const outputPaths = getInitialBodiesOutputPaths({
-      //   captureBaseDirectory: req.optic.paths.capturesPath,
-      //   captureId,
-      //   pathId,
-      //   method,
-      // });
-      // await fs.ensureDir(outputPaths.base);
-      // await Promise.all([fs.writeJson(outputPaths.events, events)]);
-      //
-      // console.log('all setup and events saved');
-      //
-      // try {
-      //   const learnedBodies: ILearnedBodies = await manager.run({
-      //     captureBaseDirectory: req.optic.paths.capturesPath,
-      //     captureId: captureId,
-      //     pathId,
-      //     method,
-      //   });
-      //
-      //   res.json(learnedBodies);
-      // } catch (e) {
-      //   return res.status(500).json({
-      //     message: e.message,
-      //   });
-      // }
     }
   );
 

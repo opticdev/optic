@@ -164,7 +164,7 @@ class _CaptureContextStore extends React.Component {
     const apiConfig = await specService.loadConfig();
     const events = eventStore.listEvents(rfcId);
 
-    // track('Starting IAsyncTask', {
+    // track('Starting Diff', {
     //   eventsLength: events.length,
     //   additionalCommandsLength: this.state.additionalCommands.length,
     //   captureId,
