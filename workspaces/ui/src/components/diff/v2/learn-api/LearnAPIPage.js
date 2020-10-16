@@ -69,10 +69,10 @@ function LearnAPIPageInner(props) {
 
   return (
     <LearnAPIStore allUrls={urls} key="learning-store">
+      <EnhancedTable urls={urls} key="url-table" />
       {urls.length === 0 && undocumented.length === 0 && !completed && (
         <DiffLoadingOverview show={true} />
       )}
-      <EnhancedTable urls={urls} key="url-table" />
     </LearnAPIStore>
   );
 }

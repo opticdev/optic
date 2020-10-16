@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import { runManagedScriptByName } from '@useoptic/cli-scripts';
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
-import { Readable, PassThrough } from 'stream';
 import {
   getInitialBodiesOutputPaths,
   IInitialBodiesProjectionEmitterConfig,
