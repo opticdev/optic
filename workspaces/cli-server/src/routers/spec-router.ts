@@ -2,6 +2,7 @@ import {
   getPathsRelativeToCwd,
   IOpticTaskRunnerConfig,
   parseIgnore,
+  parseRule,
   readApiConfig,
   readTestingConfig,
 } from '@useoptic/cli-config';
@@ -19,7 +20,9 @@ import {
 } from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
+import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
+
 type CaptureId = string;
 type Iso8601Timestamp = string;
 export type InvalidCaptureState = {
@@ -180,8 +183,14 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     }
     try {
       const paths = await getPathsRelativeToCwd(session.path);
-      const { configPath, capturesPath, exampleRequestsPath } = paths;
+      const {
+        configPath,
+        opticIgnorePath,
+        capturesPath,
+        exampleRequestsPath,
+      } = paths;
       const config = await readApiConfig(configPath);
+      const ignoreHelper = new IgnoreFileHelper(opticIgnorePath, configPath);
       const capturesHelpers = new CapturesHelpers(capturesPath);
       const exampleRequestsHelpers = new ExampleRequestsHelpers(
         exampleRequestsPath
@@ -189,6 +198,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       req.optic = {
         config,
         paths,
+        ignoreHelper,
         capturesHelpers,
         exampleRequestsHelpers,
         session,
@@ -277,10 +287,32 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   });
 
   router.get('/config', async (req, res) => {
+    const rules = await req.optic.ignoreHelper.getCurrentIgnoreRules();
     res.json({
-      config: req.optic.config,
+      config: { ...req.optic.config, ignoreRequests: rules.allRules },
     });
   });
+
+  router.get('/ignores', async (req, res) => {
+    const rules = await req.optic.ignoreHelper.getCurrentIgnoreRules();
+    res.json({
+      rules,
+    });
+  });
+
+  router.patch(
+    '/ignores',
+    bodyParser.json({ limit: '100kb' }),
+    async (req, res) => {
+      const { rule } = req.body;
+      if (typeof rule === 'string' && Boolean(parseRule(rule))) {
+        await req.optic.ignoreHelper.appendRule(rule);
+        res.json({});
+      } else {
+        res.status(400).json({ message: 'Invalid ignore rule' });
+      }
+    }
+  );
 
   const captureRouter = makeCaptureRouter({
     idGenerator: new DefaultIdGenerator(),
