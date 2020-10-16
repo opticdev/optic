@@ -51,6 +51,7 @@ export class Session {
     const resolvedPaths = await getPathsRelativeToCwd(this.path);
     this.diffs = new SessionDiffs(
       resolvedPaths.configPath,
+      resolvedPaths.opticIgnorePath,
       resolvedPaths.capturesPath,
       resolvedPaths.specStorePath
     );
@@ -95,6 +96,7 @@ class SessionDiffs {
 
   constructor(
     readonly configPath: string,
+    readonly opticIgnorePath: string,
     readonly capturesPath: string,
     readonly specPath: string
   ) {}
@@ -106,6 +108,7 @@ class SessionDiffs {
     const diffId = Uuid.v4();
     const newDiff = createDiff(OnDemandDiff, {
       captureId,
+      opticIgnorePath: this.opticIgnorePath,
       configPath: this.configPath,
       captureBaseDirectory: this.capturesPath,
       diffId,
