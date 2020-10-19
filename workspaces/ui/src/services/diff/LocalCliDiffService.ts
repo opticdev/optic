@@ -19,6 +19,7 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
@@ -27,6 +28,7 @@ export class LocalCliDiffService implements IDiffService {
     private config: IStartDiffResponse,
     private rfcState: any
   ) {}
+
   diffId(): string {
     return this.config.diffId;
   }
@@ -113,10 +115,27 @@ export class LocalCliDiffService implements IDiffService {
       suggestion: shapePreview.suggestion,
     };
   }
+
+  async learnInitial(
+    rfcService: any,
+    rfcId: any,
+    pathId: String,
+    method: string
+  ): Promise<ILearnedBodies> {
+    const events = opticEngine.EventSerialization.toJson(
+      rfcService.listEvents(rfcId)
+    );
+    const url = `${this.captureService.baseUrl}/initial-bodies`;
+    return await JsonHttpClient.postJson(url, {
+      events,
+      pathId,
+      method,
+    });
+  }
 }
 
 export class LocalCliCaptureService implements ICaptureService {
-  constructor(private baseUrl: string) {}
+  constructor(public baseUrl: string) {}
 
   async startDiff(
     events: any[],

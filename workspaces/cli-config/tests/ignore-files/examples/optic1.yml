@@ -1,0 +1,6 @@
+name: Todo API
+tasks: []
+ignoreRequests:
+# For more information on configuration, visit https://www.useoptic.com/docs/faqs-and-troubleshooting/captures
+- OPTIONS (.*)
+- GET /main/resource

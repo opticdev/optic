@@ -1,0 +1,6 @@
+GET /images/(.*)
+GET favicon.ico
+GET bots.json
+# These ignore methods, because methods...
+OPTIONS *
+HEAD *

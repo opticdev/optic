@@ -1,5 +1,5 @@
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_shape, ShapeProjection, SpecEvent};
+use optic_diff::{BodyDescriptor, diff_shape, ShapeProjection, SpecEvent};
 use petgraph::dot::Dot;
 use serde_json::json;
 
@@ -15,7 +15,7 @@ fn can_match_primitive_json() {
   let string_body = json!("a-string");
   let shape_id = String::from("example_shape_1");
 
-  let results = diff_shape(&shape_projection, Some(string_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(string_body)), &shape_id);
 
   assert_eq!(
     results.len(),
@@ -39,7 +39,7 @@ fn can_diff_primitive_json_and_yield_unmatched_shape() {
   );
   let number_body = json!(36);
   let shape_id = String::from("example_shape_1");
-  let results = diff_shape(&shape_projection, Some(number_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(number_body)), &shape_id);
 
   assert_eq!(results.len(), 1);
   assert_debug_snapshot!(
@@ -67,7 +67,7 @@ fn can_diff_primitive_json_and_yield_unspecified_shape() {
   let string_body = json!("a-string");
   let unknown_shape_id = String::from("not-a-shape-id");
   // TODO: consider returning a Result with Err instead of panicking
-  let results = diff_shape(&shape_projection, Some(string_body), &unknown_shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(string_body)), &unknown_shape_id);
   assert_eq!(results.len(), 1);
   assert_debug_snapshot!(
     "can_diff_primitive_json_and_yield_unspecified_shape__results",
@@ -93,7 +93,7 @@ fn can_match_array_json() {
   );
   let array_body = json!([4, 6, 8, 10]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
   assert_debug_snapshot!("can_match_array_json__results", results);
   assert_eq!(results.len(), 0);
@@ -115,7 +115,7 @@ fn can_yield_unmatched_shape_for_array_body() {
 
   let array_body = json!([3, 9, 12, 15]);
   let shape_id = String::from("shape_1");
-  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
   assert_debug_snapshot!("can_yield_unmatched_shape_for_array_body__results", results);
   assert_eq!(results.len(), 1);
@@ -137,15 +137,42 @@ fn can_yield_unmatched_shape_for_mismatched_array_items() {
     "can_yield_unmatched_shape_for_mismatched_array_items__shape_projection_graph",
     Dot::with_config(&shape_projection.graph, &[])
   );
-  let array_body = json!(["4", "6", 8, "10"]);
+  let array_body = json!(["4", 8, false]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
   assert_debug_snapshot!(
     "can_yield_unmatched_shape_for_mismatched_array_items__results",
     results
   );
-  assert_eq!(results.len(), 3);
+  assert_eq!(results.len(), 2); // one per unique type of array item
+}
+
+#[test]
+fn yields_unmatched_shape_once_for_each_uniquely_shaped_array_item() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"number_shape_1"}},"consumingParameterId":"$listItem"}}}},
+      ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+
+  assert_debug_snapshot!(
+    "yields_unmatched_shape_once_for_each_uniquely_shaped_array_item__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let array_body = json!(["4", "6", 8, "10", { "not-a": "number" }, { "not-a": "boolean" }, { "different": "object-structure" }]);
+  let shape_id = String::from("list_1");
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+
+  assert_debug_snapshot!(
+    "yields_unmatched_shape_once_for_each_uniqu_array_item__results",
+    results
+  );
+  assert_eq!(results.len(), 3); // one per unique type of array item
 }
 
 #[test]
@@ -168,7 +195,7 @@ fn can_match_shape_for_nested_arrays() {
   );
   let array_body = json!([[4, 6, 8, 10], [3, 9, 12, 15]]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
   assert_debug_snapshot!("can_match_shape_for_nested_arrays__results", results);
   assert_eq!(results.len(), 0);
@@ -203,7 +230,7 @@ fn can_yield_unmatched_shape_for_field() {
     "age": "not-a-valid-number"
   });
   let shape_id = String::from("object_1");
-  let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(object_body)), &shape_id);
 
   assert_debug_snapshot!("can_yield_unmatched_shape_for_field__results", results);
   assert_ne!(results.len(), 0);
@@ -233,7 +260,7 @@ fn can_yield_unmatched_shape_for_missing_field() {
     "lastName": "Simpson"
   });
   let shape_id = String::from("object_1");
-  let results = diff_shape(&shape_projection, Some(object_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(object_body)), &shape_id);
 
   assert_debug_snapshot!(
     "can_yield_unmatched_shape_for_missing_field__results",

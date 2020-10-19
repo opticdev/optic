@@ -3209,23 +3209,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.8":
-  version "10.0.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.8.tgz#704cc8c8ec54947904a4aef39625498ad6f5c1ed"
-  integrity sha512-v+ABQAWkoPDcwe4DMK0jk6depxNWe3FuKbeGcrobmmKU34lZ4WOBMQFNtg8V6bm5ORW5udqcFjV2XmdqekqnCg==
+"@useoptic/domain-types@10.0.17":
+  version "10.0.17"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.17.tgz#afb941214e3a45e944c6620a6a9a3b0185dd0433"
+  integrity sha512-bPNDHZsosEbLcl8IxMb4kBIdtpwV0J/NVkb2wvL4eKdzC2MIK6+DnCD3Oadb7sRB1R3DhmdaulSpxCAZJ//3JA==
 
-"@useoptic/domain-utilities@10.0.8":
-  version "10.0.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.8.tgz#8b84e65a437ac53632be83933cde754e6bbfe03a"
-  integrity sha512-BwcH0ixqGVMcaWvPV+qiBj/UloX08xIxTwKZXR5E5uQxejqPMKBwNTqsBEWJD4Qqzdk4h9Rx2vNsDZi+1iocdg==
+"@useoptic/domain-utilities@10.0.17":
+  version "10.0.17"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.17.tgz#9b9e14c6bf3f6e129012bdd0017ab7875a9b0580"
+  integrity sha512-OtRIrbOPGBC3nA9gM83cDMH6FMerSrmRk20/d+sgVUn/6bpWdi/XGeC4UuUSD7IfC3Txd1xkQov94cE4uRTMjg==
   dependencies:
-    "@useoptic/domain" "10.0.8"
-    "@useoptic/domain-types" "10.0.8"
+    "@useoptic/domain" "10.0.17"
+    "@useoptic/domain-types" "10.0.17"
 
-"@useoptic/domain@10.0.8":
-  version "10.0.8"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.8.tgz#929e4135b45315d65af9998992c06973feb5cc00"
-  integrity sha512-/AJRxkxYEB60xP//nkWw0is/8YPS/0OfNNMx2CEPOFbUB/3hHxCn/YkTXAcdG/44uTGfvA9pf8CN8k+QF73TBg==
+"@useoptic/domain@10.0.17":
+  version "10.0.17"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.17.tgz#d509b9cb667615fd59807466243c281f496062e0"
+  integrity sha512-gB4muRcg/SMv5boYdF/oSjE9oSWf9Hqjy9wTUMPqCwtQhRGEGKKWDFiyZhgXVEZppUX6aZfYHeS3WoW6AHbLbQ==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
