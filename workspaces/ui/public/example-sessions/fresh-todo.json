@@ -1,0 +1,138 @@
+{
+  "events": [],
+  "session": {
+    "samples": [
+      {
+        "uuid": "962a58af-416a-4731-8eb7-b7dd1709a8d3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAEaRwgAEgoKBHRhc2sSAggCEhAKCmFzc2lnbmVkQnkSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggCGkcIABIKCgR0YXNrEgIIAhIQCgphc3NpZ25lZEJ5EgIIAhINCgdkdWVEYXRlEgIIAhIMCgZpc0RvbmUSAggEEggKAmlkEgIIAhpHCAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAIaRwgAEgoKBHRhc2sSAggCEhAKCmFzc2lnbmVkQnkSAggCEg0KB2R1ZURhdGUSAggCEgwKBmlzRG9uZRICCAQSCAoCaWQSAggC",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "28e5d0e0-89b5-4983-9fff-830475899663",
+        "request": {
+          "host": "localhost",
+          "method": "PATCH",
+          "path": "/todos/plwchdqx0",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "f9f9f735-4f88-4122-a1ab-08b929b47ece",
+        "request": {
+          "host": "localhost",
+          "method": "POST",
+          "path": "/todos",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBINCgdtZXNzYWdlEgIIAg==",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "shapeHashV1Base64": "CAASCgoEdGFzaxICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=",
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "metadata": {}
+  },
+  "examples": {}
+}

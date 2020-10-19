@@ -6,19 +6,14 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { Diff } from '../diffs';
-import fs from 'fs-extra';
-import { getDiffOutputPaths } from '@useoptic/cli-shared/build/diffs/diff-worker';
-import lockfile from 'proper-lockfile';
 import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
-import {
-  disassembler,
-  disassembler as jsonDisassembler,
-} from 'stream-json/Disassembler';
-import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
+import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
+import { Diff } from '../diffs';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -95,6 +90,35 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       res.json({
         diffId,
         notificationsUrl: `${req.baseUrl}/diffs/${diffId}/notifications`,
+      });
+    }
+  );
+
+  ////////////////////////////////////////////////////////////////////////////////
+  router.post(
+    '/initial-bodies',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const { captureId } = req.params;
+      const { events, pathId, method } = req.body;
+
+      const initialBodyGenerator = new OnDemandInitialBody({
+        captureBaseDirectory: req.optic.paths.capturesPath,
+        events: events,
+        captureId,
+        pathId,
+        method,
+      });
+
+      const result = initialBodyGenerator.run();
+
+      result.then((learnedBodies: ILearnedBodies) => {
+        res.json(learnedBodies);
+      });
+      result.catch((e) => {
+        res.status(500).json({
+          message: e.message,
+        });
       });
     }
   );

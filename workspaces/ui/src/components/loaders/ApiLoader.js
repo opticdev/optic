@@ -116,15 +116,20 @@ async function createExampleSpecServiceFactory(data) {
   const examples = data.examples || {};
   const eventEmitter = new EventEmitter();
 
+  const ignoreRequests = [];
+
   const specService = {
     eventEmitter,
     loadConfig: async function () {
       return Promise.resolve({
         config: {
           apiName: 'Example API',
-          ignoreRequests: [],
+          ignoreRequests,
         },
       });
+    },
+    addIgnoreRule: async (rule) => {
+      ignoreRequests.push(rule);
     },
     listCapturedSamples: async (captureId) => {
       return Promise.resolve(data.session);
@@ -161,7 +166,9 @@ async function createExampleSpecServiceFactory(data) {
 
     getEnabledFeatures() {
       return {
-        TESTING_DASHBOARD: process.env.REACT_APP_TESTING_DASHBOARD === "true" || process.env.REACT_APP_TESTING_DASHBOARD === true,
+        TESTING_DASHBOARD:
+          process.env.REACT_APP_TESTING_DASHBOARD === 'true' ||
+          process.env.REACT_APP_TESTING_DASHBOARD === true,
       };
     },
   };

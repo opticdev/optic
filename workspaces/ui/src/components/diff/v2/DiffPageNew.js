@@ -73,7 +73,7 @@ function DiffPageNew(props) {
 
 export const SuggestionsContext = React.createContext(null);
 
-function SuggestionsStore({ children }) {
+export function SuggestionsStore({ children }) {
   const [acceptedSuggestions, setAcceptedSuggestions] = React.useState([]);
 
   const resetAccepted = () => {
@@ -114,7 +114,7 @@ export function IgnoreDiffStore({ children }) {
   );
 }
 
-function flatten(acc, array) {
+export function flatten(acc, array) {
   return [...acc, ...array];
 }
 

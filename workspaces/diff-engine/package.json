@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/diff-engine",
-  "version": "8.4.1",
+  "version": "8.4.2",
   "scripts": {
     "ws:build": "scripts/build.sh",
     "ws:clean": "rm -rf build/* && rm -rf target/*",

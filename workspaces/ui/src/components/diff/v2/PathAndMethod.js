@@ -92,6 +92,27 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
   );
 };
 
+export const MethodRenderLarge = ({ method, style }) => {
+  return (
+    <Typography
+      variant="body1"
+      component="span"
+      style={{
+        fontWeight: 400,
+        color: '#ffffff',
+        padding: 4,
+        fontSize: 13,
+        borderRadius: 2,
+        marginTop: -4,
+        backgroundColor: methodColorsDark[method.toUpperCase()],
+        ...style,
+      }}
+    >
+      {method.toUpperCase()}
+    </Typography>
+  );
+};
+
 export const PathAndMethodLarge = ({ path, method }) => {
   const methodRender = (
     <Typography
