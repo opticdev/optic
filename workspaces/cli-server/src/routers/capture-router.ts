@@ -160,30 +160,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
     let diffsStream = diffQueries.diffs();
 
-    async function* normalizeDiffs(resultsStream: Readable) {
-      let pointersByFingerprint: Map<String, string[]> = new Map();
-      let diffs: [any, string][] = [];
-
-      for await (let [diff, pointers, fingerprint] of resultsStream) {
-        let existingPointers = pointersByFingerprint.get(fingerprint) || [];
-        if (existingPointers.length < 1) {
-          diffs.push([diff, fingerprint]);
-        }
-        pointersByFingerprint.set(
-          fingerprint,
-          existingPointers.concat(pointers)
-        );
-      }
-
-      for (let [diff, fingerprint] of diffs) {
-        let pointers = pointersByFingerprint.get(fingerprint);
-        yield [diff, pointers];
-      }
-    }
-
-    toJSONArray(Readable.from(normalizeDiffs(diffsStream)))
-      .pipe(res)
-      .type('application/json');
+    toJSONArray(diffsStream).pipe(res).type('application/json');
   });
 
   router.get('/diffs/:diffId/undocumented-urls', async (req, res) => {

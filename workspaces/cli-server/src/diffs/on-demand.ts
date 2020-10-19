@@ -220,11 +220,13 @@ export class DiffQueries implements DiffQueriesInterface {
 
   diffs(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      return chain([
+      let diffs = chain([
         fs.createReadStream(this.paths.diffsStream),
         jsonlParser(),
         (data) => [data.value],
       ]);
+
+      return Readable.from(this.normalizedDiffs(diffs));
     } else {
       let reading = lockedRead<any>(this.paths.diffs);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -240,6 +242,29 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
+  }
+
+  private async *normalizedDiffs(
+    diffsStream: Readable
+  ): AsyncIterable<[any, string[]]> {
+    let pointersByFingerprint: Map<String, string[]> = new Map();
+    let diffs: [any, string][] = [];
+
+    for await (let [diff, pointers, fingerprint] of diffsStream) {
+      if (!fingerprint) yield [diff, pointers];
+
+      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
+      if (existingPointers.length < 1) {
+        diffs.push([diff, fingerprint]);
+      }
+      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
+    }
+
+    for (let [diff, fingerprint] of diffs) {
+      let pointers = pointersByFingerprint.get(fingerprint);
+      if (!pointers) throw new Error('unreachable');
+      yield [diff, pointers];
+    }
   }
 }
 
