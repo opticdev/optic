@@ -47,6 +47,7 @@ export interface DiffQueries {
 
 export interface DiffConfigObject {
   configPath: string;
+  opticIgnorePath: string;
   captureId: string;
   captureBaseDirectory: string;
   diffId: string;

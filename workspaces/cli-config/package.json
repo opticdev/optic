@@ -2,7 +2,7 @@
   "name": "@useoptic/cli-config",
   "version": "8.4.1",
   "scripts": {
-    "ws:test": "echo config",
+    "ws:test": "jest",
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*"
   },
@@ -22,7 +22,10 @@
   },
   "devDependencies": {
     "@types/find-up": "^4.0.0",
-    "@types/js-yaml": "^3.12.1"
+    "@types/js-yaml": "^3.12.1",
+    "@types/jest": "^26.0.9",
+    "jest": "^26.4.0",
+    "ts-jest": "^26.2.0"
   },
   "files": [
     "/build"

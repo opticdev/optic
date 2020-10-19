@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import pathToRegexp from 'path-to-regexp';
 import { pathComponentsToString } from '../AddUrlModal';
+import { useServices } from '../../../../contexts/SpecServiceContext';
 
 export const LearnAPIPageContext = React.createContext({});
 
 export function LearnAPIStore({ children, allUrls }) {
+  const { specService } = useServices();
   const [toDocument, setToDocument] = useState([]);
+  const [ignoredIds, setIgnoredIds] = useState([]);
   const [basepath, setBasepath] = useState('');
   const [learningInProgress, setLearningInProgress] = useState(false);
   const checkedIds = toDocument.map((i) => i.id);
@@ -56,7 +59,8 @@ export function LearnAPIStore({ children, allUrls }) {
         }
       );
 
-      const shouldHideFromIgnore = !i.path.startsWith(basepath);
+      const shouldHideFromIgnore =
+        !i.path.startsWith(basepath) || ignoredIds.includes(i.id);
 
       return matchesAToDocument || shouldHideFromIgnore;
     })
@@ -65,6 +69,14 @@ export function LearnAPIStore({ children, allUrls }) {
   const startLearning = (type) => {
     setLearningInProgress(type);
     //do magic....
+  };
+
+  const toggleRow = (row, forceRemove = false) => {
+    if (checkedIds.includes(row.id) || forceRemove) {
+      setToDocument((current) => [...current].filter((i) => i.id !== row.id));
+    } else {
+      setToDocument((current) => [...current, row]);
+    }
   };
 
   const value = {
@@ -79,6 +91,12 @@ export function LearnAPIStore({ children, allUrls }) {
     pathExpressions,
     highlightAlsoMatching,
     updatePathExpression,
+    setIgnore: (url) => {
+      const pattern = `${url.method} ${url.path}`;
+      setIgnoredIds((i) => [...i, url.id]);
+      toggleRow(url, true);
+      specService.addIgnoreRule(pattern);
+    },
     reset: () => {
       setToDocument([]);
       setLearningInProgress(false);
@@ -91,13 +109,7 @@ export function LearnAPIStore({ children, allUrls }) {
         setHighlight([]);
       }
     },
-    toggleRow: (row) => {
-      if (checkedIds.includes(row.id)) {
-        setToDocument((current) => [...current].filter((i) => i.id !== row.id));
-      } else {
-        setToDocument((current) => [...current, row]);
-      }
-    },
+    toggleRow,
   };
 
   return (
