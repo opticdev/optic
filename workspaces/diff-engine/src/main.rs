@@ -9,8 +9,6 @@ use optic_diff::InteractionDiffResult;
 use optic_diff::SpecEvent;
 use optic_diff::SpecProjection;
 use std::cmp;
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
@@ -163,15 +161,10 @@ struct TaggedInput<T>(T, Tags);
 struct ResultContainer<T>(T, Tags, String);
 type Tags = Vec<String>;
 
-impl<T> From<(T, &Tags)> for ResultContainer<T>
-where
-  T: Hash,
-{
-  fn from((result, tags): (T, &Tags)) -> Self {
-    let mut hash_state = DefaultHasher::new();
-    result.hash(&mut hash_state);
-    let hash = hash_state.finish();
-    Self(result, tags.clone(), format!("{:x}", hash))
+impl From<(InteractionDiffResult, &Tags)> for ResultContainer<InteractionDiffResult> {
+  fn from((result, tags): (InteractionDiffResult, &Tags)) -> Self {
+    let fingerprint = result.fingerprint();
+    Self(result, tags.clone(), fingerprint)
   }
 }
 

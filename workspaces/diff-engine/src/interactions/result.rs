@@ -1,6 +1,8 @@
 use crate::shapes::ShapeDiffResult;
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Serialize, Hash)]
 pub enum InteractionDiffResult {
@@ -17,6 +19,15 @@ pub enum InteractionDiffResult {
   #[serde(skip)]
   MatchedResponseBodyContentType(MatchedResponseBodyContentType),
 }
+
+impl InteractionDiffResult {
+  pub fn fingerprint(&self) -> String {
+    let mut hash_state = DefaultHasher::new();
+    Hash::hash(self, &mut hash_state);
+    format!("{:x}", hash_state.finish())
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
