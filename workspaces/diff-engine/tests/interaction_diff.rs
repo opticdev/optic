@@ -75,6 +75,7 @@ async fn can_yield_umatched_request_url() {
   println!("{:?}", interaction);
 
   let results = diff_interaction(&spec_projection, interaction);
+
   println!("{:?}", results);
   assert_eq!(results.len(), 1);
 
@@ -214,5 +215,10 @@ async fn can_yield_unmatched_shape() {
   .expect("example http interaction should deserialize");
 
   results = diff_interaction(&spec_projection, incompliant_interaction);
+  let fingerprints = results
+    .iter()
+    .map(|result| result.fingerprint())
+    .collect::<Vec<_>>();
   assert_debug_snapshot!(results);
+  assert_debug_snapshot!("can_yield_unmatched_shape__fingerprints", fingerprints);
 }
