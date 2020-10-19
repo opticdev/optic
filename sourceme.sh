@@ -98,13 +98,26 @@ optic_build_for_release() {
   )
 }
 
+optic_build_beta_channel() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+
+    yarn install
+
+    optic_workspace_clean
+    RELEASE_CHANNEL=beta optic_workspace_build
+  )
+}
+
 optic_build_and_publish_locally() {
   (
+    RELEASE_CHANNEL=${1:-release}
     set -o errexit
     optic_build_for_release
     cd "$OPTIC_SRC_DIR"
     npm-cli-login -u testUser -p testPass -e test@example.com -r http://localhost:4873
-    OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
+    OPTIC_PUBLISH_SCOPE=private RELEASE_CHANNEL=$RELEASE_CHANNEL node ./workspaces/scripts/publish.js
   )
 }
 optic_release_and_install_locally() {
@@ -114,11 +127,11 @@ optic_release_and_install_locally() {
   fi
   (
     set -o errexit
-
+    RELEASE_CHANNEL=${1:-release}
     cd "$OPTIC_SRC_DIR"
     yarn run bump "$1"
 
-    optic_build_and_publish_locally
+    optic_build_and_publish_locally $RELEASE_CHANNEL
     optic_install_from_local_registry
   )
 }

@@ -76,7 +76,7 @@
     "ws:build": "echo building ui",
     "ws:clean": "rm -rf build/*",
     "ws:test": "echo ui",
-    "prepare": "CI='' yarn run build-local"
+    "prepare": "CI='' RELEASE_CHANNEL=$RELEASE_CHANNEL yarn run build-local"
   },
   "eslintConfig": {
     "extends": "react-app"

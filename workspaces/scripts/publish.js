@@ -5,6 +5,7 @@ const packageJson = require(path.join(process.cwd(), 'package.json'));
 const { workspaces } = packageJson;
 console.log({ workspaces });
 const isPrivatePublish = process.env.OPTIC_PUBLISH_SCOPE !== 'public';
+const releaseTag = process.env.RELEASE_CHANNEL || 'latest';
 const registry =
   (process.env.OPTIC_PUBLISH_SCOPE === 'private' && 'http://localhost:4873') ||
   (process.env.OPTIC_PUBLISH_SCOPE === 'github' &&
@@ -89,8 +90,21 @@ promise
               const stdout = execFileSync(
                 'npm',
                 isPrivatePublish
-                  ? ['publish', '--registry', registry]
-                  : ['publish', '--access', 'public', '-ddd'],
+                  ? [
+                      'publish',
+                      '--registry',
+                      registry,
+                      '--tag',
+                      releaseTag || 'latest',
+                    ]
+                  : [
+                      'publish',
+                      '--access',
+                      'public',
+                      '-ddd',
+                      '--tag',
+                      releaseTag || 'latest',
+                    ],
                 {
                   cwd,
                   stdio: 'inherit',
