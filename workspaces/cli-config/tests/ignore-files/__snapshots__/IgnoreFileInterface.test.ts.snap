@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can append new rule to file 1`] = `
+"GET /images/(.*)
+GET favicon.ico
+GET bots.json
+# These ignore methods, because methods...
+OPTIONS *
+HEAD *
+POST /hello-world"
+`;
+
+exports[`can parse rules from file, with Optic yml ones included 1`] = `
+Object {
+  "allRules": Array [
+    "GET /images/(.*)",
+    "GET favicon.ico",
+    "GET bots.json",
+    "OPTIONS *",
+    "HEAD *",
+    "OPTIONS (.*)",
+    "GET /main/resource",
+  ],
+  "filePath": "/Users/aidancunniffe/Developer/optic2020/optic/workspaces/cli-config/tests/ignore-files/examples/ignore1",
+  "ruleLines": Array [
+    Object {
+      "line": 0,
+      "rule": "GET /images/(.*)",
+    },
+    Object {
+      "line": 1,
+      "rule": "GET favicon.ico",
+    },
+    Object {
+      "line": 2,
+      "rule": "GET bots.json",
+    },
+    Object {
+      "line": 4,
+      "rule": "OPTIONS *",
+    },
+    Object {
+      "line": 5,
+      "rule": "HEAD *",
+    },
+  ],
+  "rulesFromYamlDeprecated": Array [
+    "OPTIONS (.*)",
+    "GET /main/resource",
+  ],
+}
+`;

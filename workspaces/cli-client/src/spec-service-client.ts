@@ -23,6 +23,7 @@ type GetCaptureSummaryResponse = any;
 
 export interface ISpecService {
   loadConfig(): Promise<{ config: IApiCliConfig }>;
+  addIgnoreRule(rule: string): Promise<void>;
   listEvents(): Promise<string>;
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
@@ -42,6 +43,13 @@ export class Client implements ISpecService {
     private eventEmitter: EventEmitter,
     private baseUrl: string = '/api'
   ) {}
+
+  addIgnoreRule(rule: string): Promise<void> {
+    return JsonHttpClient.patchJson(
+      `${this.baseUrl}/specs/${this.specId}/ignores`,
+      { rule }
+    );
+  }
 
   loadConfig(): Promise<{ config: IApiCliConfig }> {
     return JsonHttpClient.getJson(

@@ -4,8 +4,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import uuidv4 from 'uuid/v4';
 import { useHistory } from 'react-router-dom';
+import uuidv4 from 'uuid/v4';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
@@ -24,6 +24,9 @@ import { useServices } from '../../../contexts/SpecServiceContext';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffContext } from './DiffContext';
+import { EndpointsContext } from '../../../contexts/EndpointContext';
+import { PathAndMethod } from './PathAndMethod';
+import { PURPOSE } from '../../../ContributionKeys';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -36,6 +39,10 @@ export default function FinalizeDialog(props) {
 
   const { acceptedSuggestions } = useContext(SuggestionsContext);
   const { ignoredDiffs } = useContext(IgnoreDiffContext);
+  const { endpointDescriptor, endpointId } = useContext(EndpointsContext);
+  const [endpointName, setEndpointName] = useState(
+    endpointDescriptor.endpointPurpose
+  );
   const { specService } = useServices();
   const { reset } = useContext(DiffContext);
   const baseUrl = useBaseUrl();
@@ -54,6 +61,7 @@ export default function FinalizeDialog(props) {
     const {
       StartBatchCommit,
       EndBatchCommit,
+      AddContribution,
     } = opticEngine.com.useoptic.contexts.rfc.Commands;
     const batchId = uuidv4();
     const specContext = withSpecContext(
@@ -65,6 +73,17 @@ export default function FinalizeDialog(props) {
     specContext.applyCommands(
       JsonHelper.jsArrayToVector([StartBatchCommit(batchId, commitMessage)])
     );
+
+    //user specified a new name for th endpoint
+    if (endpointDescriptor.endpointPurpose !== endpointName) {
+      const addContribution = AddContribution(
+        endpointId,
+        PURPOSE,
+        endpointName
+      );
+      specContext.applyCommands(JsonHelper.jsArrayToVector([addContribution]));
+    }
+
     acceptedSuggestions.forEach((suggestion) => {
       specContext.applyCommands(JsonHelper.seqToVector(suggestion.commands));
     });
@@ -100,7 +119,6 @@ export default function FinalizeDialog(props) {
   const pluralIfI = (i) => (i !== 1 ? 's' : '');
 
   const hasChanges = acceptedSuggestions.length > 0;
-
   return (
     <Dialog
       open={open}
@@ -111,6 +129,24 @@ export default function FinalizeDialog(props) {
       <DialogTitle>{'Commit changes to API specification'}</DialogTitle>
       <DialogContent>
         <DialogContentText>
+          {!endpointDescriptor.endpointPurpose && hasChanges ? (
+            <div style={{ paddingBottom: 18 }}>
+              <PathAndMethod
+                path={endpointDescriptor.fullPath}
+                method={endpointDescriptor.httpMethod}
+              />
+              <TextField
+                style={{ marginTop: 12 }}
+                value={endpointName}
+                onChange={(e) => setEndpointName(e.target.value)}
+                placeholder="Endpoint Name"
+                fullWidth
+                error={!endpointName}
+                helperText={!endpointName && 'What does this endpoint do?'}
+                required
+              />
+            </div>
+          ) : null}
           You have accepted {acceptedSuggestions.length} suggestion
           {pluralIf(acceptedSuggestions)}, and ignored {ignoredDiffs.length}{' '}
           diff{pluralIf(ignoredDiffs)}
@@ -150,6 +186,7 @@ export default function FinalizeDialog(props) {
           <Button
             size="small"
             variant="contained"
+            disabled={!endpointName}
             onClick={async () => {
               setSaving(true);
               await commit();
@@ -164,7 +201,7 @@ export default function FinalizeDialog(props) {
   );
 }
 
-function withSpecContext(eventStore, rfcId, clientId, clientSessionId) {
+export function withSpecContext(eventStore, rfcId, clientId, clientSessionId) {
   return {
     applyCommands(commands) {
       try {

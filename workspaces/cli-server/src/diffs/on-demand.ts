@@ -21,6 +21,7 @@ import { chain } from 'stream-chain';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
+import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 
 export class OnDemandDiff implements Diff {
   public readonly events: EventEmitter = new EventEmitter();
@@ -42,13 +43,18 @@ export class OnDemandDiff implements Diff {
 
   async start(): Promise<any> {
     const { config } = this;
-    const apiConfig = await readApiConfig(config.configPath);
+
+    const ignoreHelper = new IgnoreFileHelper(
+      config.opticIgnorePath,
+      config.configPath
+    );
+    const ignoreRules = await ignoreHelper.getCurrentIgnoreRules();
 
     const outputPaths = this.paths();
     await fs.ensureDir(outputPaths.base);
     await Promise.all([
       fs.copy(config.specPath, outputPaths.events),
-      fs.writeJson(outputPaths.ignoreRequests, apiConfig.ignoreRequests || []),
+      fs.writeJson(outputPaths.ignoreRequests, ignoreRules.allRules || []),
       fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),
     ]);

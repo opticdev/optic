@@ -11,6 +11,7 @@ import {
 } from './helpers/ignore-parser';
 
 import Deprecations, { warnDeprecation } from './deprecations';
+import { defaultIgnoreFile } from './helpers/default-ignore-rules';
 export { deprecationLogger } from './deprecations';
 
 export interface IUserCredentials {
@@ -239,6 +240,7 @@ export interface IPathMapping {
   specStorePath: string;
   configPath: string;
   gitignorePath: string;
+  opticIgnorePath: string;
   capturesPath: string;
   exampleRequestsPath: string;
   testingConfigPath: string;
@@ -261,6 +263,7 @@ export function pathsFromCwd(cwd: string): IPathMapping {
   const basePath = path.join(cwd, '.optic');
   const capturesPath = path.join(basePath, 'captures');
   const gitignorePath = path.join(basePath, '.gitignore');
+  const opticIgnorePath = path.join(basePath, 'ignore');
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
   const testingConfigPath = path.join(basePath, 'testing.json');
@@ -270,6 +273,7 @@ export function pathsFromCwd(cwd: string): IPathMapping {
     basePath,
     capturesPath,
     gitignorePath,
+    opticIgnorePath,
     specStorePath,
     exampleRequestsPath,
     testingConfigPath,
@@ -292,6 +296,7 @@ export async function createFileTree(config: string, basePath: string) {
     specStorePath,
     configPath,
     gitignorePath,
+    opticIgnorePath,
     capturesPath,
   } = await getPathsRelativeToCwd(basePath);
   const files = [
@@ -300,6 +305,10 @@ export async function createFileTree(config: string, basePath: string) {
       contents: `
 captures/
 `,
+    },
+    {
+      path: opticIgnorePath,
+      contents: defaultIgnoreFile,
     },
     {
       path: specStorePath,

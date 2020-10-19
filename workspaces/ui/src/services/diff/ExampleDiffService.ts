@@ -22,6 +22,8 @@ import {
 } from '@useoptic/domain/build';
 import uuidv4 from 'uuid/v4';
 import { getOrUndefined, opticEngine } from '@useoptic/domain';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { localInitialBodyLearner } from '../../components/diff/v2/learn-api/browser-initial-body';
 
 export class ExampleCaptureService implements ICaptureService {
   constructor(private specService: ISpecService) {}
@@ -49,6 +51,8 @@ export class ExampleCaptureService implements ICaptureService {
       interaction,
     };
   }
+
+  baseUrl = '';
 }
 
 export class ExampleDiffService implements IDiffService {
@@ -154,5 +158,19 @@ export class ExampleDiffService implements IDiffService {
       shapePreview: shapePreview.shape,
       suggestion: shapePreview.suggestion,
     };
+  }
+
+  async learnInitial(
+    rfcService: any,
+    rfcId: any,
+    pathId: string,
+    method: string
+  ): Promise<ILearnedBodies> {
+    const capture = await this.specService.listCapturedSamples(captureId);
+    const interactions = capture.samples;
+
+    const rfcState = rfcService.currentState(rfcId);
+
+    return localInitialBodyLearner(rfcState, pathId, method, interactions);
   }
 }

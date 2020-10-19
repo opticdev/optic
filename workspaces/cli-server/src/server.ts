@@ -24,6 +24,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEventEmitter, track } from './analytics';
 import cors from 'cors';
+import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
 
 const pJson = require('../package.json');
@@ -40,6 +41,7 @@ export interface IOpticExpressRequestAdditions {
   paths: IPathMapping;
   config: IApiCliConfig;
   capturesHelpers: CapturesHelpers;
+  ignoreHelper: IgnoreFileHelper;
   exampleRequestsHelpers: ExampleRequestsHelpers;
   session: Session;
 }

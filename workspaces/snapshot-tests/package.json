@@ -12,9 +12,9 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/domain-types": "10.0.8",
-    "@useoptic/domain": "10.0.8",
-    "@useoptic/domain-utilities": "10.0.8",
+    "@useoptic/domain-types": "10.0.17",
+    "@useoptic/domain": "10.0.17",
+    "@useoptic/domain-utilities": "10.0.17",
     "dataloader": "^2.0.0",
     "fs-extra": "^9.0.0"
   },
