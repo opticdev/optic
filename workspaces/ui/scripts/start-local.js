@@ -4,5 +4,7 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.REACT_APP_ENABLE_ANALYTICS = 'no';
-process.env.REACT_APP_LEARN_API_MODE = process.env.LEARN_API_MODE || undefined;
+if (process.env.LEARN_API_MODE) {
+  process.env.REACT_APP_LEARN_API_MODE = process.env.LEARN_API_MODE;
+}
 require('./start');

@@ -72,7 +72,9 @@ function PathComponentItem(props) {
   }
 
   function ClickToMakeParam({ updateItem, classes, item }) {
-    const { toDocument, pathExpressions } = useContext(LearnAPIPageContext);
+    const { toDocument = [], pathExpressions = [] } = useContext(
+      LearnAPIPageContext
+    );
 
     function inferDefaultParamName() {
       if (pathComponents.length === 0) {
@@ -228,7 +230,7 @@ function UrlToPath(props) {
               variant="contained"
               onClick={() => {
                 setCollapseParams(true);
-                onUserCompleted();
+                onUserCompleted && onUserCompleted();
               }}
             >
               Done
