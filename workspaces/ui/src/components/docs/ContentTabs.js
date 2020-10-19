@@ -1,34 +1,32 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {GenericContextFactory} from '../../contexts/GenericContextFactory';
-import {secondary} from '../../theme';
+import { GenericContextFactory } from '../../contexts/GenericContextFactory';
+import { secondary } from '../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import ReusableDiffRow from '../diff/v2/shape_viewers/ReusableDiffRow';
-import {Typography} from '@material-ui/core';
-
+import { Typography } from '@material-ui/core';
 
 const {
   Context: RequestTabsContext,
-  withContext: withRequestTabsContext
+  withContext: withRequestTabsContext,
 } = GenericContextFactory(null);
 
 class RequestTabsContextStore extends React.Component {
-
   state = {
     requestContentType: null,
     responseStatusCode: null,
-    responseContentType: null
+    responseContentType: null,
   };
 
   render() {
     const context = {
-      setRequestContentType: (e) => this.setState({requestContentType: e}),
-      setResponseStatusCode: (e) => this.setState({responseStatusCode: e}),
-      setResponseContentType: (e) => this.setState({responseContentType: e}),
+      setRequestContentType: (e) => this.setState({ requestContentType: e }),
+      setResponseStatusCode: (e) => this.setState({ responseStatusCode: e }),
+      setResponseContentType: (e) => this.setState({ responseContentType: e }),
       requestContentType: this.state.requestContentType,
       responseStatusCode: this.state.responseStatusCode,
-      responseContentType: this.state.responseContentType
+      responseContentType: this.state.responseContentType,
     };
 
     return (
@@ -39,17 +37,13 @@ class RequestTabsContextStore extends React.Component {
   }
 }
 
-export {
-  RequestTabsContextStore,
-  withRequestTabsContext
-};
+export { RequestTabsContextStore, withRequestTabsContext };
 
-
-const ContentStyledTabs = withStyles({
+export const ContentStyledTabs = withStyles({
   root: {
     // height: 29,
     paddingRight: 12,
-    minHeight: 'inherit'
+    minHeight: 'inherit',
   },
   indicator: {
     display: 'flex',
@@ -61,10 +55,10 @@ const ContentStyledTabs = withStyles({
       backgroundColor: secondary,
     },
   },
-})(props => <Tabs {...props} TabIndicatorProps={{children: <div/>}}/>);
+})((props) => <Tabs {...props} TabIndicatorProps={{ children: <div /> }} />);
 
-const ContentStyledTab = withStyles(theme => {
-  return ({
+export const ContentStyledTab = withStyles((theme) => {
+  return {
     root: {
       textTransform: 'none',
       color: '#726e6e',
@@ -80,13 +74,12 @@ const ContentStyledTab = withStyles(theme => {
         opacity: 1,
       },
     },
-  });
-})(props => <Tab disableRipple {...props} />);
+  };
+})((props) => <Tab disableRipple {...props} />);
 
-
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
-    marginBottom: 45
+    marginBottom: 45,
   },
   root: {
     marginTop: 15,
@@ -95,77 +88,112 @@ const styles = theme => ({
   },
   content: {
     paddingRight: 12,
-    paddingTop: 15
+    paddingTop: 15,
   },
 });
 
 class ContentTabs extends React.Component {
-
   componentDidMount() {
-    const {inRequest, responseContentType, setResponseContentType, setResponseStatusCode, responseStatusCode, requestContentType, options, setRequestContentType} = this.props
+    const {
+      inRequest,
+      responseContentType,
+      setResponseContentType,
+      setResponseStatusCode,
+      responseStatusCode,
+      requestContentType,
+      options,
+      setRequestContentType,
+    } = this.props;
     if (inRequest && !requestContentType && options.contentTypes.length > 0) {
-      setRequestContentType(options.contentTypes[0])
+      setRequestContentType(options.contentTypes[0]);
     }
     if (!inRequest && !responseStatusCode && options.length > 0) {
-      setResponseStatusCode(options[0].statusCode)
-      setResponseContentType(options[0].contentTypes[0])
+      setResponseStatusCode(options[0].statusCode);
+      setResponseContentType(options[0].contentTypes[0]);
     }
   }
 
   render() {
     //@ts-ignore
-    const {classes, options, notifications, renderDescription, inRequest, requestContentType, responseContentType, setRequestContentType, setResponseContentType, responseStatusCode, setResponseStatusCode, renderResponse, renderRequest} = this.props;
+    const {
+      classes,
+      options,
+      notifications,
+      renderDescription,
+      inRequest,
+      requestContentType,
+      responseContentType,
+      setRequestContentType,
+      setResponseContentType,
+      responseStatusCode,
+      setResponseStatusCode,
+      renderResponse,
+      renderRequest,
+    } = this.props;
 
     const contentTypeTab = inRequest ? requestContentType : responseContentType;
-    const setContentTypeTab = inRequest ? setRequestContentType : setResponseContentType;
+    const setContentTypeTab = inRequest
+      ? setRequestContentType
+      : setResponseContentType;
 
-    const contentTypeOptions = inRequest ? (options.contentTypes || []) :
-      (((options.find(i => i.statusCode === responseStatusCode) || {}).contentTypes) || []);
+    const contentTypeOptions = inRequest
+      ? options.contentTypes || []
+      : (options.find((i) => i.statusCode === responseStatusCode) || {})
+          .contentTypes || [];
 
-    const children = inRequest ? renderRequest(requestContentType) : renderResponse(responseStatusCode, responseContentType)
-    const contribution = renderDescription && (inRequest ? renderDescription(requestContentType) : renderDescription(responseStatusCode, responseContentType))
+    const children = inRequest
+      ? renderRequest(requestContentType)
+      : renderResponse(responseStatusCode, responseContentType);
+    const contribution =
+      renderDescription &&
+      (inRequest
+        ? renderDescription(requestContentType)
+        : renderDescription(responseStatusCode, responseContentType));
 
     if (inRequest && options.contentTypes.length === 0) {
-      return null
+      return null;
     }
 
     if (!inRequest && options.length === 0) {
-      return null
+      return null;
     }
 
-    const key = `${contentTypeTab}-${responseStatusCode}-${responseContentType}`
+    const key = `${contentTypeTab}-${responseStatusCode}-${responseContentType}`;
 
     return (
-      <div className={classes.container} key={key} >
+      <div className={classes.container} key={key}>
         <ReusableDiffRow notifications={notifications}>
           <div className={classes.root}>
-            <Typography variant="h5" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
+            <Typography variant="h5" color="primary">
+              {inRequest ? 'Request' : 'Response'}
+            </Typography>
           </div>
         </ReusableDiffRow>
         {contribution}
         <div className={classes.root}>
-          {!inRequest && (<ContentStyledTabs
+          {!inRequest && (
+            <ContentStyledTabs
               onChange={(e, newValue) => setResponseStatusCode(newValue)}
-              value={responseStatusCode}>
-              {options.map(({statusCode}, index) => (
-                <ContentStyledTab label={statusCode} value={statusCode}/>
+              value={responseStatusCode}
+            >
+              {options.map(({ statusCode }, index) => (
+                <ContentStyledTab label={statusCode} value={statusCode} />
               ))}
             </ContentStyledTabs>
           )}
 
-          <div style={{flex: 1}}/>
+          <div style={{ flex: 1 }} />
 
           <ContentStyledTabs
             value={contentTypeTab}
-            onChange={(e, newValue) => setContentTypeTab(newValue)}>
-            {contentTypeOptions.map((contentType) =>
-              (<ContentStyledTab label={contentType} value={contentType}/>))}
+            onChange={(e, newValue) => setContentTypeTab(newValue)}
+          >
+            {contentTypeOptions.map((contentType) => (
+              <ContentStyledTab label={contentType} value={contentType} />
+            ))}
           </ContentStyledTabs>
-
         </div>
-        <div className={classes.content}>
-          {children}
-        </div>
+        <div className={classes.content}>{children}</div>
       </div>
     );
   }

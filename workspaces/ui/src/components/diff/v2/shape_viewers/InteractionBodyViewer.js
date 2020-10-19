@@ -25,13 +25,14 @@ export default function InteractionBodyViewer({
   diff,
   diffDescription,
   body,
+  jsonBody,
   selectedInterpretation,
 }) {
   const generalClasses = useShapeViewerStyles();
 
   const [{ rows }, dispatch] = useReducer(
     updateState,
-    { diff, body },
+    { diff, body, jsonBody },
     createInitialState
   );
 
@@ -495,15 +496,19 @@ const useStyles = makeStyles((theme) => ({
 // TODO: consider moving this to it's own module, partly to enable the usecase
 // stated above.
 
-function createInitialState({ diff, body }) {
+function createInitialState({ diff, body, jsonBody }) {
   const diffTrails = diff
     ? JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
         JsonTrailHelper.toJs(jsonTrail)
       )
     : [];
 
-  const bodyJson = getOrUndefined(body.jsonOption);
-  const shape = bodyJson && JsonHelper.toJs(bodyJson);
+  const shape = jsonBody
+    ? jsonBody
+    : (() => {
+        const bodyJson = getOrUndefined(body.jsonOption);
+        return bodyJson && JsonHelper.toJs(bodyJson);
+      })();
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 
