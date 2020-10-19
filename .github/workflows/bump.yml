@@ -34,7 +34,7 @@ jobs:
             exit 1
           fi
       - name: Bump to latest version
-        run: echo "VERSION=$(yarn --silent bump $TYPE)" >> $GITHUB_ENV"
+        run: echo "VERSION=$(yarn --silent bump $TYPE)" >> $GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
