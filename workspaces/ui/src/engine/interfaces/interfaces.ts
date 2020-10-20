@@ -1,3 +1,5 @@
+import { IDiff } from './diffs';
+
 interface SerializedDiff {
   [key: string]: {
     interactionTrail: {
@@ -10,26 +12,35 @@ interface SerializedDiff {
 // Diff Types the UI Handles
 
 export const allowedDiffTypes: {
-  [key: string]: { isBodyShapeDiff: boolean };
+  [key: string]: { isBodyShapeDiff: boolean; asString: string };
 } = {
-  UnmatchedRequestUrl: { isBodyShapeDiff: false },
+  UnmatchedRequestUrl: {
+    isBodyShapeDiff: false,
+    asString: 'UnmatchedRequestUrl',
+  },
   UnmatchedRequestMethod: {
     isBodyShapeDiff: false,
+    asString: 'UnmatchedRequestMethod',
   },
   UnmatchedRequestBodyContentType: {
     isBodyShapeDiff: false,
+    asString: 'UnmatchedRequestBodyContentType',
   },
   UnmatchedResponseBodyContentType: {
     isBodyShapeDiff: false,
+    asString: 'UnmatchedResponseBodyContentType',
   },
   UnmatchedResponseStatusCode: {
     isBodyShapeDiff: false,
+    asString: 'UnmatchedResponseStatusCode',
   },
   UnmatchedRequestBodyShape: {
     isBodyShapeDiff: true,
+    asString: 'UnmatchedRequestBodyShape',
   },
   UnmatchedResponseBodyShape: {
     isBodyShapeDiff: true,
+    asString: 'UnmatchedResponseBodyShape',
   },
 };
 
@@ -46,14 +57,6 @@ export const DiffInResponse = (key: string): boolean =>
 
 // The ones we like to work with in the UI
 
-export interface BodyShapeDiff<ShapeDiff, ShapeDiffLocation> {
-  diff: ShapeDiff;
-  type: string;
-  interactionPointers: string[];
-  location: IDiffLocation;
-}
-
-export type IDiffLocation = IRequestBodyLocation | IResponseBodyLocation;
 export interface IRequestBodyLocation {
   contentType: string;
 }
@@ -61,4 +64,11 @@ export interface IRequestBodyLocation {
 export interface IResponseBodyLocation {
   statusCode: number;
   contentType: string;
+}
+
+export interface IParsedLocation {
+  pathId: string;
+  method: string;
+  inRequest?: IRequestBodyLocation;
+  inResponse?: IResponseBodyLocation;
 }

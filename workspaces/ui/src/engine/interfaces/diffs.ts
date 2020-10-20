@@ -9,11 +9,16 @@ import { IRequestSpecTrail } from './request-spec-trail';
 
 export type IDiff =
   | IUnmatchedResponseBodyShape
+  | IUnmatchedRequestBodyShape
   | IUnmatchedRequestUrl
   | IUnmatchedRequestMethod
   | IUnmatchedResponseBodyContentType
   | IUnmatchedRequestBodyContentType
   | IUnmatchedResponseStatusCode;
+
+export type IDiffWithShapeDiff =
+  | IUnmatchedResponseBodyShape
+  | IUnmatchedRequestBodyShape;
 
 export interface IUnmatchedResponseBodyShape {
   UnmatchedResponseBodyShape: {

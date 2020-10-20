@@ -1,7 +1,16 @@
-import { IDiff, IShapeDiffResult } from './interfaces/diffs';
 import {
+  IDiff,
+  IDiffWithShapeDiff,
+  IShapeDiffResult,
+  IUnmatchedRequestBodyShape,
+  IUnmatchedResponseBodyShape,
+} from './interfaces/diffs';
+import {
+  allowedDiffTypes,
   allowedDiffTypesKeys,
   DiffInRequest,
+  IDiffLocation,
+  IParsedLocation,
   IRequestBodyLocation,
   IResponseBodyLocation,
   isBodyShapeDiff,
@@ -11,7 +20,7 @@ import invariant from 'invariant';
 class ParsedDiff {
   diffType: string;
 
-  constructor(private serialized_diff: IDiff, interactions: string[]) {
+  constructor(private serialized_diff: IDiff, private interactions: string[]) {
     const keys = Object.keys(this.serialized_diff);
     const typeKey = keys[0]!;
     invariant(
@@ -31,13 +40,41 @@ class ParsedDiff {
     };
   }
 
-  isShapeDiff: () => boolean = () => isBodyShapeDiff(this.diffType);
-  isNewRegionDiff: () => boolean = () => !isBodyShapeDiff(this.diffType);
+  isShapeDiff(): boolean {
+    return isBodyShapeDiff(this.diffType);
+  }
+  isNewRegionDiff(): boolean {
+    return !isBodyShapeDiff(this.diffType);
+  }
+
+  asShapeDiff(): BodyShapeDiff {
+    invariant(this.isShapeDiff(), 'cannot cast as shape diff');
+    const asWithShapeDiff = this.serialized_diff as IDiffWithShapeDiff;
+
+    const requestBodyShapeDiff: IShapeDiffResult | undefined =
+      asWithShapeDiff[allowedDiffTypes.UnmatchedRequestBodyShape.asString]
+        ?.shapeDiffResult;
+
+    const responseBodyShapeDiff: IShapeDiffResult | undefined =
+      asWithShapeDiff[allowedDiffTypes.UnmatchedResponseBodyShape.asString]
+        .shapeDiffResult;
+
+    return new BodyShapeDiff(
+      this,
+      this.serialized_diff,
+      (requestBodyShapeDiff || responseBodyShapeDiff)!,
+      this.interactions,
+      this.location()
+    );
+  }
 }
 
-interface IParsedLocation {
-  pathId: string;
-  method: string;
-  inRequest?: IRequestBodyLocation;
-  inResponse?: IResponseBodyLocation;
+class BodyShapeDiff {
+  constructor(
+    private parsedDiff: ParsedDiff,
+    private diff: IDiff,
+    private shapeDiff: IShapeDiffResult,
+    private interactionPointers: string[],
+    private location: IParsedLocation
+  ) {}
 }
