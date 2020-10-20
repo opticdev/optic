@@ -52,8 +52,9 @@ export class OnDemandDiff implements Diff {
 
     const outputPaths = this.paths();
     await fs.ensureDir(outputPaths.base);
+
     await Promise.all([
-      fs.copy(config.specPath, outputPaths.events),
+      config.events ? fs.writeJson(outputPaths.events, config.events) : fs.copy(config.specPath, outputPaths.events),
       fs.writeJson(outputPaths.ignoreRequests, ignoreRules.allRules || []),
       fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),
