@@ -236,10 +236,21 @@ export class DiffQueries implements DiffQueriesInterface {
     }
   }
   undocumentedUrls(): Readable {
-    let reading = lockedRead<any>(this.paths.undocumentedUrls);
-    let itemsGenerator = jsonStreamGenerator(reading);
+    if (fs.existsSync(this.paths.diffsStream)) {
+      let diffs = chain([
+        fs.createReadStream(this.paths.diffsStream),
+        jsonlParser(),
+        (data) => [data.value],
+      ]);
 
-    return Readable.from(itemsGenerator);
+      return Readable.from(this.countUndocumentedUrls(diffs));
+    } else {
+      let reading = lockedRead<any>(this.paths.undocumentedUrls);
+      let itemsGenerator = jsonStreamGenerator(reading);
+
+      return Readable.from(itemsGenerator);
+    }
+
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
@@ -265,6 +276,35 @@ export class DiffQueries implements DiffQueriesInterface {
       let pointers = pointersByFingerprint.get(fingerprint);
       if (!pointers) throw new Error('unreachable');
       yield [diff, pointers];
+    }
+  }
+
+  private async *countUndocumentedUrls(diffsStream: Readable) : AsyncIterable<{ path: string, method: string, count: number }> {
+    let countsByFingerprint: Map<String, number> = new Map();
+    let undocumentedUrls: Array<{ path: string, method: string, fingerprint: string }> = [];
+
+    for await (let [diff, _, fingerprint] of diffsStream) {
+      let urlDiff = diff['UnmatchedRequestUrl'];
+      if (!urlDiff || !fingerprint) continue;
+
+      let existingCount = countsByFingerprint.get(fingerprint) || 0;
+      if (existingCount < 1) {
+        let path = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
+          interactionComponent.Url && interactionComponent.Url.path
+        ).Url.path as string;
+        let method = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
+          interactionComponent.Method && interactionComponent.Method.method
+        ).Method.method as string;
+
+        undocumentedUrls.push({ path, method, fingerprint });
+      }
+      countsByFingerprint.set(fingerprint, existingCount + 1);
+    }
+
+    for (let { path, method, fingerprint } of undocumentedUrls) {
+      let count = countsByFingerprint.get(fingerprint);
+      if (!count) throw new Error("unreachable");
+      yield { path, method, count };
     }
   }
 }
