@@ -6,7 +6,11 @@ import {
   DiffInResponse,
   isBodyShapeDiff,
   RequestBodyLocation,
-} from './diff-interfaces';
+} from './interfaces/interfaces';
+import {
+  IUnmatchedRequestBodyShape,
+  IUnmatchedResponseBodyShape,
+} from './interfaces/diffs';
 
 class DiffLifecycleManager {
   constructor(private serialized_diff: any, interactions: string[]) {}
@@ -33,7 +37,13 @@ class DiffLifecycleManager {
     return DiffInResponse(this.diffType());
   }
 
-  asRequestBodyShapeDiff: BodyShapeDiff<RequestBodyLocation> = {};
+  asRequestBodyShapeDiff: BodyShapeDiff<
+    IUnmatchedRequestBodyShape,
+    RequestBodyLocation
+  > = {};
 
-  asResponseBodyShapeDiff: BodyShapeDiff<RequestBodyLocation> = {};
+  asResponseBodyShapeDiff: BodyShapeDiff<
+    IUnmatchedResponseBodyShape,
+    RequestBodyLocation
+  > = {};
 }

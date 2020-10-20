@@ -46,18 +46,19 @@ export const DiffInResponse = (key: string): boolean =>
 
 // The ones we like to work with in the UI
 
-export interface BodyShapeDiff<ShapeDiffLocation> {
-  diff: any;
+export interface BodyShapeDiff<ShapeDiff, ShapeDiffLocation> {
+  diff: ShapeDiff;
   type: string;
   interactionPointers: string[];
-  location: Location;
+  location: IDiffLocation;
 }
 
-export interface RequestBodyLocation {
+export type IDiffLocation = IRequestBodyLocation | IResponseBodyLocation;
+export interface IRequestBodyLocation {
   contentType: string;
 }
 
-export interface ResponseBodyLocation {
+export interface IResponseBodyLocation {
   statusCode: number;
   contentType: string;
 }
