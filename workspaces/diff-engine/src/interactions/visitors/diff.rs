@@ -69,7 +69,9 @@ impl InteractionVisitor<InteractionDiffResult> for DiffPathVisitor {
 impl PathVisitor<InteractionDiffResult> for DiffPathVisitor {
   fn visit(&mut self, interaction: &HttpInteraction, context: &PathVisitorContext) {
     if let None = context.path {
-      let interaction_trail = InteractionTrail::empty();
+      let mut interaction_trail = InteractionTrail::empty();
+      interaction_trail.with_url(interaction.request.path.clone());
+      interaction_trail.with_method(interaction.request.method.clone());
       let requests_trail = RequestSpecTrail::SpecRoot(SpecRoot {});
       let diff = InteractionDiffResult::UnmatchedRequestUrl(UnmatchedRequestUrl::new(
         interaction_trail,
@@ -167,7 +169,9 @@ impl RequestBodyVisitor<InteractionDiffResult> for DiffRequestBodyVisitor {
       if self.visited_with_matched_content_types.is_empty() {
         let actual_content_type = &interaction.request.body.content_type;
         let mut interaction_trail_components = vec![
-          InteractionTrailPathComponent::Url {},
+          InteractionTrailPathComponent::Url {
+            path: interaction.request.path.clone(),
+          },
           InteractionTrailPathComponent::Method {
             method: interaction.request.method.clone(),
           },
