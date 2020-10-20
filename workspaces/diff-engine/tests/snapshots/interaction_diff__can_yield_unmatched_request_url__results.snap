@@ -1,0 +1,23 @@
+---
+source: tests/interaction_diff.rs
+expression: results
+---
+[
+    UnmatchedRequestUrl(
+        UnmatchedRequestUrl {
+            interaction_trail: InteractionTrail {
+                path: [
+                    Url {
+                        path: "/abc/def",
+                    },
+                    Method {
+                        method: "GET",
+                    },
+                ],
+            },
+            requests_trail: SpecRoot(
+                SpecRoot,
+            ),
+        },
+    ),
+]
