@@ -40,11 +40,16 @@ fn can_diff_primitive_json_and_yield_unmatched_shape() {
   let number_body = json!(36);
   let shape_id = String::from("example_shape_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(number_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_eq!(results.len(), 1);
   assert_debug_snapshot!(
     "can_diff_primitive_json_and_yield_unmatched_shape__results",
     results
+  );
+  assert_debug_snapshot!(
+    "can_diff_primitive_json_and_yield_unmatched_shape__fingerprints",
+    fingerprints
   );
 }
 
@@ -94,9 +99,11 @@ fn can_match_array_json() {
   let array_body = json!([4, 6, 8, 10]);
   let shape_id = String::from("list_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!("can_match_array_json__results", results);
   assert_eq!(results.len(), 0);
+  assert_debug_snapshot!("can_match_array_json__fingerprints", fingerprints);
 }
 
 #[test]
@@ -116,9 +123,11 @@ fn can_yield_unmatched_shape_for_array_body() {
   let array_body = json!([3, 9, 12, 15]);
   let shape_id = String::from("shape_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!("can_yield_unmatched_shape_for_array_body__results", results);
   assert_eq!(results.len(), 1);
+  assert_debug_snapshot!("can_yield_unmatched_shape_for_array_body__fingerprints", fingerprints);
 }
 
 #[test]
@@ -140,12 +149,17 @@ fn can_yield_unmatched_shape_for_mismatched_array_items() {
   let array_body = json!(["4", 8, false]);
   let shape_id = String::from("list_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!(
     "can_yield_unmatched_shape_for_mismatched_array_items__results",
     results
   );
   assert_eq!(results.len(), 2); // one per unique type of array item
+  assert_debug_snapshot!(
+    "can_yield_unmatched_shape_for_mismatched_array_items__fingerprints",
+    fingerprints
+  );
 }
 
 #[test]
@@ -167,12 +181,17 @@ fn yields_unmatched_shape_once_for_each_uniquely_shaped_array_item() {
   let array_body = json!(["4", "6", 8, "10", { "not-a": "number" }, { "not-a": "boolean" }, { "different": "object-structure" }]);
   let shape_id = String::from("list_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!(
     "yields_unmatched_shape_once_for_each_uniqu_array_item__results",
     results
   );
   assert_eq!(results.len(), 3); // one per unique type of array item
+  assert_debug_snapshot!(
+    "yields_unmatched_shape_once_for_each_uniquely_shaped_array_item__fingerprints",
+    fingerprints
+  );
 }
 
 #[test]
@@ -196,9 +215,11 @@ fn can_match_shape_for_nested_arrays() {
   let array_body = json!([[4, 6, 8, 10], [3, 9, 12, 15]]);
   let shape_id = String::from("list_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!("can_match_shape_for_nested_arrays__results", results);
   assert_eq!(results.len(), 0);
+  assert_debug_snapshot!("can_match_shape_for_nested_arrays__fingerprints", fingerprints);
 }
 
 #[test]
@@ -231,9 +252,11 @@ fn can_yield_unmatched_shape_for_field() {
   });
   let shape_id = String::from("object_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(object_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!("can_yield_unmatched_shape_for_field__results", results);
   assert_ne!(results.len(), 0);
+  assert_debug_snapshot!("can_yield_unmatched_shape_for_field__fingerprints", fingerprints);
 }
 
 #[test]
@@ -261,10 +284,15 @@ fn can_yield_unmatched_shape_for_missing_field() {
   });
   let shape_id = String::from("object_1");
   let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(object_body)), &shape_id);
+  let fingerprints = results.iter().map(|result| result.fingerprint()).collect::<Vec<_>>();
 
   assert_debug_snapshot!(
     "can_yield_unmatched_shape_for_missing_field__results",
     results
   );
   assert_ne!(results.len(), 0);
+  assert_debug_snapshot!(
+    "can_yield_unmatched_shape_for_missing_field__fingerprints",
+    fingerprints
+  );
 }

@@ -159,6 +159,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     }
 
     let diffsStream = diffQueries.diffs();
+
     toJSONArray(diffsStream).pipe(res).type('application/json');
   });
 

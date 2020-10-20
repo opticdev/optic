@@ -118,7 +118,7 @@ fn main() {
           tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
             let interaction_json =
               interaction_json_result.expect("can read interaction json line from stdin");
-            let TaggedValue(interaction, tags): TaggedValue<HttpInteraction> =
+            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
               match serde_json::from_str(&interaction_json) {
                 Ok(tagged_interaction) => tagged_interaction,
                 Err(parse_error) => {
@@ -136,7 +136,10 @@ fn main() {
 
         if let Some((results, tags)) = results {
           for result in results {
-            if let Err(_) = results_sender.send(TaggedValue(result, tags.clone())).await {
+            if let Err(_) = results_sender
+              .send(ResultContainer::from((result, &tags)))
+              .await
+            {
               panic!("could not write diff result to results channel");
               // TODO: Find way to actually write error info
             }
@@ -153,8 +156,17 @@ fn main() {
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
-struct TaggedValue<T>(T, Vec<String>);
+struct TaggedInput<T>(T, Tags);
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct ResultContainer<T>(T, Tags, String);
 type Tags = Vec<String>;
+
+impl From<(InteractionDiffResult, &Tags)> for ResultContainer<InteractionDiffResult> {
+  fn from((result, tags): (InteractionDiffResult, &Tags)) -> Self {
+    let fingerprint = result.fingerprint();
+    Self(result, tags.clone(), fingerprint)
+  }
+}
 
 #[cfg(test)]
 mod test {
