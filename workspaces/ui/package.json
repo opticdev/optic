@@ -39,6 +39,7 @@
     "node-sha1": "^1.0.1",
     "notistack": "^0.8.6",
     "path-to-regexp": "^3.0.0",
+    "json-stable-stringify": "^1.0.1",
     "prop-types": "latest",
     "qs": "^6.9.4",
     "react": "^16.8.6",
@@ -95,6 +96,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.4.3",
+    "babel-jest": "^26.6.0",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.2.0",
     "@storybook/addon-actions": "^5.0.11",
@@ -150,15 +152,11 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
     ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
     "setupFilesAfterEnv": [],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
-    "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
@@ -184,10 +182,6 @@
       "web.jsx",
       "jsx",
       "node"
-    ],
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
     ]
   },
   "proxy": "http://localhost:34444",

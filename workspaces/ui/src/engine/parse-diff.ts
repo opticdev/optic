@@ -5,19 +5,21 @@ import {
   IUnmatchedRequestBodyShape,
   IUnmatchedResponseBodyShape,
 } from './interfaces/diffs';
+import jsonStringify from 'json-stable-stringify';
+import sha1 from 'node-sha1';
 import {
   allowedDiffTypes,
   allowedDiffTypesKeys,
   DiffInRequest,
-  IDiffLocation,
   IParsedLocation,
   IRequestBodyLocation,
   IResponseBodyLocation,
   isBodyShapeDiff,
 } from './interfaces/interfaces';
 import invariant from 'invariant';
+import { IShapeTrail } from './interfaces/shape-trail';
 
-class ParsedDiff {
+export class ParsedDiff {
   diffType: string;
 
   constructor(private serialized_diff: IDiff, private interactions: string[]) {
@@ -31,6 +33,10 @@ class ParsedDiff {
     this.diffType = typeKey!;
   }
 
+  raw(): IDiff {
+    return this.serialized_diff;
+  }
+
   location(): IParsedLocation {
     return {
       pathId: 'xyz',
@@ -40,15 +46,11 @@ class ParsedDiff {
     };
   }
 
-  isShapeDiff(): boolean {
-    return isBodyShapeDiff(this.diffType);
-  }
-  isNewRegionDiff(): boolean {
-    return !isBodyShapeDiff(this.diffType);
-  }
+  asShapeDiff(): BodyShapeDiff | undefined {
+    if (!isBodyShapeDiff(this.diffType)) {
+      return undefined;
+    }
 
-  asShapeDiff(): BodyShapeDiff {
-    invariant(this.isShapeDiff(), 'cannot cast as shape diff');
     const asWithShapeDiff = this.serialized_diff as IDiffWithShapeDiff;
 
     const requestBodyShapeDiff: IShapeDiffResult | undefined =
@@ -69,12 +71,27 @@ class ParsedDiff {
   }
 }
 
+export function parseDiffsArray(array: [IDiff, string[]][]): ParsedDiff[] {
+  return array.map(([rawDiff, pointers]) => new ParsedDiff(rawDiff, pointers));
+}
+
 class BodyShapeDiff {
+  shapeTrail: IShapeTrail;
+  shapeTrailHash: string;
+
   constructor(
     private parsedDiff: ParsedDiff,
     private diff: IDiff,
     private shapeDiff: IShapeDiffResult,
-    private interactionPointers: string[],
-    private location: IParsedLocation
-  ) {}
+    public interactionPointers: string[],
+    public location: IParsedLocation
+  ) {
+    this.shapeTrail = (shapeDiff['UnmatchedShape']?.shapeTrail ||
+      shapeDiff['UnspecifiedShape']?.shapeTrail)!;
+    invariant(
+      this.shapeTrail,
+      'A shape trail must be specified with all shape diffs'
+    );
+    this.shapeTrailHash = sha1(jsonStringify(this.shapeTrail));
+  }
 }
