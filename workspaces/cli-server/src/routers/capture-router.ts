@@ -82,7 +82,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       let diffId;
       try {
-        diffId = await req.optic.session.diffCapture(captureId, filters);
+        diffId = await req.optic.session.diffCapture(captureId, events, filters);
       } catch (e) {
         return res.status(500).json({ message: e.message });
       }
