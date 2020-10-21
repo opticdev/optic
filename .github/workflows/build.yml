@@ -25,11 +25,16 @@ jobs:
         uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
         with:
           toolchain: stable
-      - name: 'Release build'
+      - name: 'Build'
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
         with:
           command: build
           args: --all-features
+      - name: 'Test'
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
+        with:
+          command: test
+
   # This workflow contains a single job called "build"
   node_packages:
     # The type of runner that the job will run on
