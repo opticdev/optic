@@ -190,6 +190,18 @@ impl InteractionTrail {
   pub fn empty() -> Self {
     InteractionTrail { path: vec![] }
   }
+
+  pub fn with_url(&mut self, url: String) {
+    self
+      .path
+      .push(InteractionTrailPathComponent::Url { path: url })
+  }
+
+  pub fn with_method(&mut self, method: String) {
+    self
+      .path
+      .push(InteractionTrailPathComponent::Method { method })
+  }
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
@@ -237,7 +249,9 @@ pub struct SpecResponseBody {
 //@GOTCHA make sure these serialize matching the existing scala code
 #[derive(Clone, Debug, Serialize, Hash)]
 pub enum InteractionTrailPathComponent {
-  Url {},
+  Url {
+    path: String,
+  },
   Method {
     method: String,
   },
