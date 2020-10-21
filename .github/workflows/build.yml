@@ -12,8 +12,26 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  rust_binaries:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: 'Checkout source'
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      - name: 'Rust toolchain'
+        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+        with:
+          toolchain: stable
+      - name: 'Release build'
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
+        with:
+          command: build
+          args: --release --all-features
   # This workflow contains a single job called "build"
-  build:
+  node_packages:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
