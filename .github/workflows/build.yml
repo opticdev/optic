@@ -29,7 +29,7 @@ jobs:
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
         with:
           command: build
-          args: --release --all-features
+          args: --all-features
   # This workflow contains a single job called "build"
   node_packages:
     # The type of runner that the job will run on
