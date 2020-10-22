@@ -15,8 +15,7 @@ jobs:
   rust_binaries:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        # os: [ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest, macos-11.0]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -40,19 +39,6 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      # - name: 'Debug dependencies'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install tree
-      #     cargo install cargo-cache --force
-      # - name: 'Debug cargo tree'
-      #   run: tree $CARGO_HOME
-      # - name: 'Debug main target'
-      #   run: tree target
-      # - name: 'Debug diff engine target'
-      #   run: tree workspaces/diff-engine/target
-      # - name: 'Cargo cache pre-build'
-      #   run: cargo cache
       - name: 'Build'
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
         with:
