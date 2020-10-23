@@ -19,7 +19,7 @@ jobs:
     needs: package_binaries
     steps:
       - uses: release-drafter/release-drafter@06d4616a80cd7c09ea3cf12214165ad6c1859e67 # https://github.com/release-drafter/release-drafter/commits/v5
-        id: release_draft
+        id: draft-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Download macOS tarball
@@ -32,10 +32,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.release_draft.outputs.upload_url }}
           asset_path: optic_diff-macos-tarball/optic_diff-macos.tar.gz
           asset_name: optic_diff_macos.tar.gz
           asset_content_type: application/gzip
+          upload_url: '${{ steps.draft-release.outputs.upload_url }}'
   build_rust_binaries:
     strategy:
       matrix:
