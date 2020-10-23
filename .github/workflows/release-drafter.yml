@@ -22,6 +22,8 @@ jobs:
         id: draft-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'release drafter outputs check'
+        run: echo 'Output id=${{ steps.draft-release.outputs.id}} name=${{ steps.draft-release.outputs.name }} upload-url=${{steps.draft-release.outputs.upload_url}} '
       - name: Download macOS tarball
         uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a # https://github.com/actions/download-artifact/commits/v2
         with:
