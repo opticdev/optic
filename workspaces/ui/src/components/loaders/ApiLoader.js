@@ -110,7 +110,7 @@ export function LocalCliSpecServiceLoader(props) {
 }
 
 export const captureId = 'example-session';
-async function createExampleSpecServiceFactory(data) {
+export async function createExampleSpecServiceFactory(data) {
   let events = JSON.stringify(data.events);
 
   const examples = data.examples || {};

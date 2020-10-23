@@ -58,12 +58,12 @@ export const DiffInResponse = (key: string): boolean =>
 // The ones we like to work with in the UI
 
 export interface IRequestBodyLocation {
-  contentType: string;
+  contentType?: string;
 }
 
 export interface IResponseBodyLocation {
   statusCode: number;
-  contentType: string;
+  contentType?: string;
 }
 
 export interface IParsedLocation {

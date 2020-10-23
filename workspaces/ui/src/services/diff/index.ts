@@ -1,5 +1,9 @@
 import { IHttpInteraction } from '@useoptic/domain-types';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IDiff } from '../../engine/interfaces/diffs';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export interface ICaptureService {
   baseUrl: string;
@@ -34,9 +38,16 @@ export interface IDiffService {
   learnInitial(
     rfcService: any,
     rfcId: any,
-    pathId: String,
+    pathId: string,
     method: string
   ): Promise<ILearnedBodies>;
+  learnTrailValues(
+    rfcService: any,
+    rfcId: any,
+    pathId: string,
+    method: string,
+    diff: IDiff
+  ): Promise<IValueAffordanceSerializationWithCounter>;
 }
 
 export interface IRfcCommand {}
@@ -55,6 +66,7 @@ export interface ILoadInteractionResponse {
 }
 export interface IListDiffsResponse {
   diffs: any[];
+  rawDiffs: any[];
 }
 
 export interface IListUnrecognizedUrlsResponse {

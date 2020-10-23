@@ -1,9 +1,20 @@
+import keymirror from 'keymirror';
+
 export type IRequestSpecTrail =
   | ISpecPath
   | ISpecRequestBody
   | ISpecRequestRoot
   | ISpecResponseBody
   | ISpecResponseRoot;
+
+export const RequestTrailConstants = keymirror({
+  SpecResponseBody: null,
+  SpecRequestRoot: null,
+  SpecPath: null,
+  SpecRequestBody: null,
+  SpecResponseRoot: null,
+  SpecRoot: null,
+});
 
 export interface ISpecResponseBody {
   SpecResponseBody: {
