@@ -16,7 +16,7 @@ on:
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
-    # needs: package_binaries
+    needs: package_binaries
     steps:
       - uses: release-drafter/release-drafter@06d4616a80cd7c09ea3cf12214165ad6c1859e67 # https://github.com/release-drafter/release-drafter/commits/v5
         id: release_draft
