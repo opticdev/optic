@@ -40,6 +40,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      # - name: 'Debug dependencies Linux'
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install tree
+      # - name: 'Debug dependencies macOS'
+      #   if: runner.os == 'macOS'
+      #   run: |
+      #     brew install tree
       - name: 'Set CARGO_HOME and RUSTUP_HOME'
         run: | 
           echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
@@ -69,13 +78,19 @@ jobs:
         if: runner.os == 'macOS'
         run: sudo /usr/sbin/purge
       - name: 'Package binary'
+        env:
+          ARCHIVE_NAME: optic_diff-${{ matrix.platform_name }} # TODO: include version number?
+          FILE_NAME: optic_diff${{ matrix.suffix }}
         run: |
-          mkdir build
+          mkdir -p build/$ARCHIVE_NAME
           mkdir dist
-          cp target/${{ matrix.target }}/release/optic_diff${{ matrix.suffix }} build/${{ matrix.platform_name }}/optic_diff${{ matrix.suffix }}
-          tar -C build -czvf dist/optic_diff${{ matrix.platform_name }}.tar.gz ${{ matrix.platform_name }}
+          cp target/${{ matrix.target }}/release/$FILE_NAME build/$ARCHIVE_NAME/$FILE_NAME
+          tar -C build -czvf dist/$ARCHIVE_NAME.tar.gz $ARCHIVE_NAME
       - name: 'Debug archives'
+        env:
+          ARCHIVE_NAME: optic_diff-${{ matrix.platform_name }} # TODO: include version number?
         run: |
           ls -lsa dist
           ls -lsa build
-          ls -lsa build/${{ matrix.platform_name }}
+          tar -xzvf dist/$ARCHIVE_NAME.tar.gz -C dist
+          ls -lsa dist
