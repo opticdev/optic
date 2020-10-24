@@ -8,7 +8,7 @@ use tokio::stream::StreamExt;
 
 #[tokio::main]
 #[test]
-async fn can_yield_umatched_request_url() {
+async fn can_yield_interactive_diff_result() {
   let events = SpecEvent::from_file(
     std::env::current_dir()
       .unwrap()
@@ -75,8 +75,11 @@ async fn can_yield_umatched_request_url() {
   println!("{:?}", interaction);
 
   let results = diff_interaction(&spec_projection, interaction);
+
   println!("{:?}", results);
   assert_eq!(results.len(), 1);
+
+  assert_debug_snapshot!("can_yield_interactive_diff_result__results", results);
 
   let mut destination: Vec<u8> = vec![];
   assert_eq!(destination.len(), 0);
@@ -98,6 +101,70 @@ async fn can_yield_umatched_request_url() {
     .expect("should be able to read a line from the in-memory destination")
     .unwrap();
   serde_json::from_str::<serde_json::Value>(&first_line).expect("first line should be valid json");
+}
+
+#[test]
+fn can_yield_unmatched_request_url() {
+  let events: Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"PathComponentAdded":{"pathId":"path_1","parentPathId":"root","name":"xyz"}},
+      {"RequestAdded":{"requestId":"request_1","pathId":"path_1","httpMethod":"POST"}},
+      {"ResponseAddedByPathAndMethod":{"responseId":"response_1", "httpStatusCode":200,"pathId":"path_1","httpMethod":"GET"}},
+    ])
+  ).expect("should be able to deserialize path added events as spec events");
+
+  let interaction = HttpInteraction::from_json_str(
+    r#"{
+    "uuid": "5",
+    "request": {
+      "host": "localhost",
+      "method": "GET",
+      "path": "/abc/def",
+      "query": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {}
+      }
+    },
+    "response": {
+      "statusCode": 200,
+      "headers": {
+        "asJsonString": null,
+        "asText": null,
+        "asShapeHashBytes": null
+      },
+      "body": {
+        "contentType": null,
+        "value": {}
+      }
+    },
+    "tags": []
+  }"#,
+  )
+  .expect("example http interaction should deserialize");
+
+  let spec_projection = SpecProjection::from(events);
+  let results = diff_interaction(&spec_projection, interaction);
+  let fingerprints = results
+    .iter()
+    .map(|result| result.fingerprint())
+    .collect::<Vec<_>>();
+
+  assert_debug_snapshot!("can_yield_unmatched_request_url__results", results);
+  assert_debug_snapshot!(
+    "can_yield_unmatched_request_url__fingerprints",
+    fingerprints
+  );
+  assert_eq!(results.len(), 1);
 }
 
 #[tokio::main]
@@ -214,5 +281,10 @@ async fn can_yield_unmatched_shape() {
   .expect("example http interaction should deserialize");
 
   results = diff_interaction(&spec_projection, incompliant_interaction);
+  let fingerprints = results
+    .iter()
+    .map(|result| result.fingerprint())
+    .collect::<Vec<_>>();
   assert_debug_snapshot!(results);
+  assert_debug_snapshot!("can_yield_unmatched_shape__fingerprints", fingerprints);
 }

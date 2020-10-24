@@ -52,8 +52,9 @@ export class OnDemandDiff implements Diff {
 
     const outputPaths = this.paths();
     await fs.ensureDir(outputPaths.base);
+
     await Promise.all([
-      fs.copy(config.specPath, outputPaths.events),
+      config.events ? fs.writeJson(outputPaths.events, config.events) : fs.copy(config.specPath, outputPaths.events),
       fs.writeJson(outputPaths.ignoreRequests, ignoreRules.allRules || []),
       fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),
@@ -220,11 +221,13 @@ export class DiffQueries implements DiffQueriesInterface {
 
   diffs(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      return chain([
+      let diffs = chain([
         fs.createReadStream(this.paths.diffsStream),
         jsonlParser(),
         (data) => [data.value],
       ]);
+
+      return Readable.from(this.normalizedDiffs(diffs));
     } else {
       let reading = lockedRead<any>(this.paths.diffs);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -233,13 +236,76 @@ export class DiffQueries implements DiffQueriesInterface {
     }
   }
   undocumentedUrls(): Readable {
-    let reading = lockedRead<any>(this.paths.undocumentedUrls);
-    let itemsGenerator = jsonStreamGenerator(reading);
+    if (fs.existsSync(this.paths.diffsStream)) {
+      let diffs = chain([
+        fs.createReadStream(this.paths.diffsStream),
+        jsonlParser(),
+        (data) => [data.value],
+      ]);
 
-    return Readable.from(itemsGenerator);
+      return Readable.from(this.countUndocumentedUrls(diffs));
+    } else {
+      let reading = lockedRead<any>(this.paths.undocumentedUrls);
+      let itemsGenerator = jsonStreamGenerator(reading);
+
+      return Readable.from(itemsGenerator);
+    }
+
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
+  }
+
+  private async *normalizedDiffs(
+    diffsStream: Readable
+  ): AsyncIterable<[any, string[]]> {
+    let pointersByFingerprint: Map<String, string[]> = new Map();
+    let diffs: [any, string][] = [];
+
+    for await (let [diff, pointers, fingerprint] of diffsStream) {
+      if (!fingerprint) yield [diff, pointers];
+
+      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
+      if (existingPointers.length < 1) {
+        diffs.push([diff, fingerprint]);
+      }
+      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
+    }
+
+    for (let [diff, fingerprint] of diffs) {
+      let pointers = pointersByFingerprint.get(fingerprint);
+      if (!pointers) throw new Error('unreachable');
+      yield [diff, pointers];
+    }
+  }
+
+  private async *countUndocumentedUrls(diffsStream: Readable) : AsyncIterable<{ path: string, method: string, count: number }> {
+    let countsByFingerprint: Map<String, number> = new Map();
+    let undocumentedUrls: Array<{ path: string, method: string, fingerprint: string }> = [];
+
+    for await (let [diff, _, fingerprint] of diffsStream) {
+      let urlDiff = diff['UnmatchedRequestUrl'];
+      if (!urlDiff || !fingerprint) continue;
+
+      let existingCount = countsByFingerprint.get(fingerprint) || 0;
+      if (existingCount < 1) {
+        let path = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
+          interactionComponent.Url && interactionComponent.Url.path
+        ).Url.path as string;
+        let method = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
+          interactionComponent.Method && interactionComponent.Method.method
+        ).Method.method as string;
+
+        undocumentedUrls.push({ path, method, fingerprint });
+      }
+      countsByFingerprint.set(fingerprint, existingCount + 1);
+    }
+
+    for (let { path, method, fingerprint } of undocumentedUrls) {
+      let count = countsByFingerprint.get(fingerprint);
+      if (!count) throw new Error("unreachable");
+      yield { path, method, count };
+    }
   }
 }
 

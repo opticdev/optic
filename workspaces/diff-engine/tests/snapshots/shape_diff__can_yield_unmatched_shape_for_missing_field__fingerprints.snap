@@ -1,0 +1,7 @@
+---
+source: tests/shape_diff.rs
+expression: fingerprints
+---
+[
+    "be008d3d36400d4e",
+]

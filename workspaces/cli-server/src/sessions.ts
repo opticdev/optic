@@ -59,6 +59,7 @@ export class Session {
 
   async diffCapture(
     captureId: string,
+    events?: Array<{ [key: string]: any }>,
     endpoints?: Array<{ pathId: string; method: string }>
   ) {
     if (!this.diffs)
@@ -66,7 +67,7 @@ export class Session {
         'Session must have been started before it can diff a capture'
       );
 
-    return this.diffs.startDiff(captureId, endpoints);
+    return this.diffs.startDiff(captureId, events, endpoints);
   }
 
   diffProgress(diffId: string) {
@@ -103,6 +104,7 @@ class SessionDiffs {
 
   async startDiff(
     captureId: string,
+    events?: Array<{[key: string ]: any }>,
     endpoints?: Array<{ pathId: string; method: string }>
   ): Promise<string> {
     const diffId = Uuid.v4();
@@ -112,6 +114,7 @@ class SessionDiffs {
       configPath: this.configPath,
       captureBaseDirectory: this.capturesPath,
       diffId,
+      events,
       endpoints,
       specPath: this.specPath,
     });

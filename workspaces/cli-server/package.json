@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "8.4.2",
+  "version": "8.5.0",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,12 +14,12 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "8.4.2",
-    "@useoptic/cli-client": "8.4.2",
-    "@useoptic/cli-config": "8.4.2",
-    "@useoptic/cli-scripts": "8.4.2",
-    "@useoptic/cli-shared": "8.4.2",
-    "@useoptic/ui": "8.4.2",
+    "@useoptic/analytics": "8.5.0",
+    "@useoptic/cli-client": "8.5.0",
+    "@useoptic/cli-config": "8.5.0",
+    "@useoptic/cli-scripts": "8.5.0",
+    "@useoptic/cli-shared": "8.5.0",
+    "@useoptic/ui": "8.5.0",
     "avsc": "^5.4.18",
     "analytics-node": "^3.4.0-beta.2",
     "body-parser": "^1.19.0",

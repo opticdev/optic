@@ -1,0 +1,26 @@
+---
+source: tests/interaction_diff.rs
+expression: results
+---
+[
+    UnmatchedResponseBodyContentType(
+        UnmatchedResponseBodyContentType {
+            interaction_trail: InteractionTrail {
+                path: [
+                    Method {
+                        method: "GET",
+                    },
+                    ResponseBody {
+                        content_type: "application/jsonxxx",
+                        status_code: 200,
+                    },
+                ],
+            },
+            requests_trail: SpecPath(
+                SpecPath {
+                    path_id: "path_P9esbhMNb0",
+                },
+            ),
+        },
+    ),
+]
