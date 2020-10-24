@@ -1,9 +1,4 @@
 import { ParsedDiff } from '../../engine/parse-diff';
-import { InteractiveDiffSessionConfig } from '../../engine/interactive-diff-session';
-import {
-  ILearnedBodies,
-  IValueAffordanceSerializationWithCounter,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
 import {
   ICopy,
   IDiffDescription,
@@ -14,6 +9,10 @@ import { newRegionInterpreters } from '../../engine/interpretors/NewRegionsInter
 import { descriptionForDiffs } from '../../engine/interpretors/DiffDescriptionInterpretors';
 import { shapeDiffInterpretors } from '../../engine/interpretors/ShapeDiffInterpretors';
 import { InteractiveSessionConfig } from '../../engine/interfaces/session';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 
 interface InteractionPreviewTab {
   title: ICopy[];
@@ -74,16 +73,16 @@ export async function prepareNewRegionDiffSuggestionPreview(
 }
 
 export async function prepareShapeDiffSuggestionPreview(
-  diffs: ParsedDiff[],
+  diff: ParsedDiff,
   services: InteractiveSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter
 ): Promise<IDiffSuggestionPreview> {
   return {
     for: 'shape',
     tabs: [],
-    diffDescription: descriptionForDiffs(diffs),
+    diffDescription: descriptionForDiffs(diff),
     suggestions: shapeDiffInterpretors(
-      diffs,
+      diff,
       learnedTrails,
       services.rfcBaseState
     ),

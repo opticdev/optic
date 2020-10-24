@@ -13,9 +13,11 @@ import {
   universeFromEvents,
 } from '@useoptic/domain-utilities';
 import { createExampleSpecServiceFactory } from '../../../components/loaders/ApiLoader';
-import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { ICaptureService, IDiffService } from '../../../services/diff';
-import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-state';
+import {
+  DiffRfcBaseState,
+  makeDiffRfcBaseState,
+} from '../../../engine/interfaces/diff-rfc-base-state';
 
 export async function makeUniverse(
   json: any
@@ -68,7 +70,7 @@ export async function makeUniverse(
         commandContext,
         additionalCommands
       );
-      const a = DiffHelpers;
+
       let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
       for (const interaction of capture.samples) {
         diffs = DiffHelpers.groupInteractionPointerByDiffs(

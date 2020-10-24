@@ -8,18 +8,14 @@ import {
 import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
 
-export function descriptionForDiffs(diffs: ParsedDiff[]): IDiffDescription {
-  invariant(diffs.length > 0, 'diffs required for description');
-
-  if (diffs.every((i) => i.isNewRegionDiff())) {
-    return descriptionForNewRegions(diffs[0]);
+export function descriptionForDiffs(diff: ParsedDiff): IDiffDescription {
+  if (diff.isNewRegionDiff()) {
+    return descriptionForNewRegions(diff);
   }
 
-  if (diffs.every((i) => i.isBodyShapeDiff())) {
-    return descriptionForShapeDiff(diffs);
+  if (diff.isBodyShapeDiff()) {
+    return descriptionForShapeDiff(diff);
   }
-
-  invariant(true, 'diff descriptions for different diff types not allowed');
 }
 
 function descriptionForNewRegions(diff: ParsedDiff): IDiffDescription {
@@ -48,19 +44,13 @@ function descriptionForNewRegions(diff: ParsedDiff): IDiffDescription {
   };
 }
 
-function descriptionForShapeDiff(diffs: ParsedDiff[]): IDiffDescription {
-  const location = diffs[0].location();
-
-  const shapeDiffs = diffs.map((i) => i.asShapeDiff()!);
-
-  const unmatchedCount = shapeDiffs.filter((i) => i.isUnmatched).length;
-  const unspecifiedCount = shapeDiffs.filter((i) => i.isUnspecified).length;
-
-  const jsonTrailPath = shapeDiffs[0]!.jsonTrail.path;
+function descriptionForShapeDiff(diff: ParsedDiff): IDiffDescription {
+  const location = diff.location();
+  const asShapeDiff = diff.asShapeDiff();
+  const jsonTrailPath = asShapeDiff.jsonTrail.path;
   const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1]!;
 
-  //known spec shape, unmatching values
-  if (unmatchedCount > 0 && unspecifiedCount === 0) {
+  if (asShapeDiff.isUnmatched) {
     return {
       title: [code(JSON.stringify(jsonTrailLast) + 'changed')], // make me pretty
       location,
@@ -69,8 +59,7 @@ function descriptionForShapeDiff(diffs: ParsedDiff[]): IDiffDescription {
     };
   }
 
-  //new spec shape, no known value. unspecified should always be === 1. even for multiple shape types
-  if (unmatchedCount === 0 && unspecifiedCount === 1) {
+  if (asShapeDiff.isUnspecified) {
     return {
       title: [code(JSON.stringify(jsonTrailLast) + 'observed')], // make me pretty
       location,
@@ -79,21 +68,5 @@ function descriptionForShapeDiff(diffs: ParsedDiff[]): IDiffDescription {
     };
   }
 
-  if (unmatchedCount > 1 && unspecifiedCount > 1) {
-    invariant(
-      'There should never be a shape trail that is unmatched and unspecified'
-    );
-  }
-
-  invariant('Unexpected shape diff combinations');
-
-  //
-  //
-  //
-  // const jsonTrailPath = asShapeDiff!.jsonTrail.path;
-  // const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1];
-  //
-  // if (jsonTrailLast['JsonObjectKey']) {
-  //   const fieldName = (jsonTrailLast as IJsonObjectKey).JsonObjectKey.key;
-  // }
+  invariant('Unexpected shape diff');
 }

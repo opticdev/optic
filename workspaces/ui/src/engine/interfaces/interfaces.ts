@@ -9,6 +9,20 @@ interface SerializedDiff {
   };
 }
 
+export enum ICoreShapeKinds {
+  ObjectKind = '$object',
+  ListKind = '$list',
+  MapKind = '$map',
+  OneOfKind = '$oneOf',
+  AnyKind = '$any',
+  StringKind = '$string',
+  NumberKind = '$number',
+  BooleanKind = '$boolean',
+  NullableKind = '$nullable',
+  OptionalKind = '$optional',
+  UnknownKind = '$unknown',
+}
+
 // Diff Types the UI Handles
 
 export const allowedDiffTypes: {

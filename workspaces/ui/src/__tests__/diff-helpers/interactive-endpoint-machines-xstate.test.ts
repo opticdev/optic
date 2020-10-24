@@ -7,26 +7,7 @@ import {
 } from '../../engine/interactive-endpoint';
 import { DiffSet } from '../../engine/diff-set';
 import { ParsedDiff } from '../../engine/parse-diff';
-
-async function loadsDiffsFromUniverse(path: string) {
-  const universe_raw = require(path);
-  const universePromise = makeUniverse(universe_raw);
-  const { captureService, diffService, rfcBaseState } = await universePromise;
-  const diffsRaw = (await diffService.listDiffs()).rawDiffs;
-
-  const diffs = new DiffSet(
-    diffsRaw.map(([diff, interactions]) => {
-      const diffParsed = new ParsedDiff(diff, interactions, rfcBaseState);
-      return diffParsed;
-    })
-  );
-  return {
-    diffs,
-    captureService,
-    diffService,
-    rfcBaseState,
-  };
-}
+import { loadsDiffsFromUniverse } from './fixture';
 
 test('xstate lifecycle for endpoint with region diffs', async (done) => {
   const {
@@ -60,7 +41,6 @@ test('xstate lifecycle for endpoint with region diffs', async (done) => {
   const isReadyContext: InteractiveEndpointSessionContext = await new Promise(
     (resolve) =>
       endpointMachine.onTransition((state) => {
-        console.log(state.value);
         if (state.value === 'ready') resolve(state.context);
       })
   );
@@ -115,7 +95,6 @@ test('xstate lifecycle for endpoint with shape diffs', async (done) => {
   const isReadyContext: InteractiveEndpointSessionContext = await new Promise(
     (resolve) =>
       endpointMachine.onTransition((state) => {
-        console.log(state.value);
         if (state.value === 'ready') resolve(state.context);
       })
   );

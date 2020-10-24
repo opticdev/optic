@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`a known field is missing.managed 1`] = `2`;
+
+exports[`a known field is provided the wrong shape.managed 1`] = `
+Array [
+  Object {
+    "action": Object {
+      "activeTense": Array [
+        Object {
+          "style": 0,
+          "text": "Change",
+        },
+        Object {
+          "style": 0,
+          "text": "shape of",
+        },
+        Object {
+          "style": 1,
+          "text": "age",
+        },
+        Object {
+          "style": 0,
+          "text": "to",
+        },
+        Object {
+          "style": 1,
+          "text": "$string",
+        },
+      ],
+      "pastTense": Array [
+        Object {
+          "style": 0,
+          "text": "Changed",
+        },
+        Object {
+          "style": 0,
+          "text": "shape of",
+        },
+        Object {
+          "style": 1,
+          "text": "age",
+        },
+        Object {
+          "style": 0,
+          "text": "to",
+        },
+        Object {
+          "style": 1,
+          "text": "$string",
+        },
+      ],
+    },
+    "changeType": 1,
+    "commands": Array [],
+  },
+]
+`;
