@@ -1,5 +1,4 @@
 import { assign, spawn, Machine, StateMachine, send } from 'xstate';
-import { ICaptureService, IDiffService } from '../services/diff';
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import { IShapeTrail } from './interfaces/shape-trail';
 import { DiffSet } from './diff-set';
@@ -7,7 +6,6 @@ import {
   createNewRegionMachine,
   createShapeDiffMachine,
 } from './interactive-diff-machine';
-import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
 import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';

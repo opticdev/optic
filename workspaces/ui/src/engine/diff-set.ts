@@ -24,6 +24,25 @@ export class DiffSet {
     return new DiffSet(this.diffs.filter((i) => Boolean(i.asShapeDiff())));
   }
 
+  groupedByEndpoint(): {
+    pathId: string;
+    method: string;
+    diffs: ParsedDiff[];
+  }[] {
+    const groupedByEndpoint: { [key: string]: ParsedDiff[] } = groupby(
+      this.diffs,
+      (d) => {
+        const { pathId, method } = d.location();
+        return `${method}.${pathId}`;
+      }
+    );
+
+    return Object.entries(groupedByEndpoint).map(([key, diffs]) => {
+      const { pathId, method } = diffs[0].location();
+      return { pathId, method, diffs };
+    });
+  }
+
   groupedByEndpointAndShapeTrail(): {
     shapeDiffGroupingHash: string;
     shapeTrail: IShapeTrail;
