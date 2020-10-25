@@ -56,3 +56,255 @@ Array [
   },
 ]
 `;
+
+exports[`a new field is provided as an array with any contents.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "expected use spec namer here",
+      },
+    ],
+    "changeType": 0,
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 1,
+        "text": "{\\"JsonObjectKey\\":{\\"key\\":\\"array\\"}}observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "interactionPointers": Array [
+        "id",
+      ],
+      "renderBody": [Function],
+      "title": "was array",
+    },
+  ],
+}
+`;
+
+exports[`a new field is provided in an optional nested object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "expected use spec namer here",
+      },
+    ],
+    "changeType": 0,
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 1,
+        "text": "{\\"JsonObjectKey\\":{\\"key\\":\\"format\\"}}observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "format",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "format",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "format",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "format",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "$type here",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "interactionPointers": Array [
+        "id",
+      ],
+      "renderBody": [Function],
+      "title": "was string",
+    },
+  ],
+}
+`;

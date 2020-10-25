@@ -1,19 +1,21 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import { assign, Machine, send, sendParent } from 'xstate';
-import { IShapeTrail } from './interfaces/shape-trail';
+import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
 import {
   IDiffSuggestionPreview,
-  initialTitleForNewRegions,
-  prepareNewRegionDiffSuggestionPreview,
-  prepareShapeDiffSuggestionPreview,
-} from '../__tests__/diff-helpers/prepare-diff-previews';
+  IDiffDescription,
+} from './interfaces/interpretors';
 import { InteractiveSessionConfig } from './interfaces/session';
-import { IDiffDescription } from './interfaces/interpretors';
-import { descriptionForDiffs } from './interpretors/DiffDescriptionInterpretors';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { descriptionForDiffs } from './interpretors/DiffDescriptionInterpretors';
+import {
+  prepareNewRegionDiffSuggestionPreview,
+  prepareShapeDiffSuggestionPreview,
+} from './interpretors/prepare-diff-previews';
+import { IShapeTrail } from './interfaces/shape-trail';
 
 interface DiffStateSchema {
   states: {
@@ -21,6 +23,7 @@ interface DiffStateSchema {
     loading: {};
     ready: {
       states: {
+        reload_preview: {};
         unhandled: {};
         handled: {};
       };
@@ -31,6 +34,7 @@ interface DiffStateSchema {
 // The events that the machine handles
 type DiffEvent =
   | { type: 'SHOWING' }
+  | { type: 'UPDATE_PREVIEW'; ignoreRules: IIgnoreRule[] }
   | { type: 'CHANGE_SUGGESTION'; to: string }
   | { type: 'DISMISS_TYPE'; type_slug: string }
   | { type: 'STAGE' }
@@ -41,113 +45,55 @@ type DiffEvent =
 interface DiffContext<InterpretationContext> {
   results: InterpretationContext | undefined;
   preview: IDiffSuggestionPreview | undefined;
+  revevantIgnoreRules: IIgnoreRule[];
   descriptionWhileLoading: IDiffDescription;
 }
 
-export const createNewRegionMachine = (
+// standard interface for diffs
+const createNewDiffMachine = <Context>(
   id: string,
-  parsedDiff: ParsedDiff,
-  services: InteractiveSessionConfig
+  diff: ParsedDiff,
+  services: InteractiveSessionConfig,
+  createInitialState: (id: string, diff: ParsedDiff) => DiffContext<Context>,
+  listenToInitialRegions: boolean,
+  loadContext: (
+    id: string,
+    diff: ParsedDiff,
+    services: InteractiveSessionConfig,
+    context: DiffContext<Context>
+  ) => Promise<{ preview: IDiffSuggestionPreview; results: Context }>,
+  realodPreview: (
+    id: string,
+    diff: ParsedDiff,
+    services: InteractiveSessionConfig,
+    context: DiffContext<Context>
+  ) => Promise<IDiffSuggestionPreview>
 ) =>
-  Machine<DiffContext<ILearnedBodies>, DiffStateSchema, DiffEvent>({
-    id,
-    context: {
-      results: undefined,
-      preview: undefined,
-      descriptionWhileLoading: descriptionForDiffs([parsedDiff]),
-    },
+  Machine<DiffContext<Context>, DiffStateSchema, DiffEvent>({
+    id: id,
+    context: createInitialState(id, diff),
     initial: 'unfocused',
     states: {
       unfocused: {
         on: {
+          SHOWING: 'loading',
           //@ts-ignore
-          'done.invoke.loading-initial-regions': {
-            actions: assign({
-              //@ts-ignore
-              results: (context, event) => event.data,
-            }),
-            target: 'loading',
-          },
+          'done.invoke.loading-initial-regions': listenToInitialRegions
+            ? {
+                actions: assign({
+                  //@ts-ignore
+                  results: (context, event) => event.data,
+                }),
+                target: 'loading',
+              }
+            : {},
         },
       },
       loading: {
         invoke: {
-          id: 'preparing-preview-of-diff',
-          src: async (context, event) => {
-            return prepareNewRegionDiffSuggestionPreview(
-              parsedDiff,
-              services,
-              context.results!
-            );
-          },
-          onDone: {
-            target: 'ready',
-            actions: assign({
-              preview: (context, event) => event.data,
-            }),
-          },
-        },
-      },
-      ready: {
-        initial: 'unhandled',
-        states: {
-          unhandled: {
-            entry: [
-              (context, event) => console.log('ready to show the diff. '),
-            ],
-          },
-          handled: {},
-        },
-      },
-    },
-  });
-//
-export const createShapeDiffMachine = (
-  shapeTrail: IShapeTrail,
-  diffs: ParsedDiff[],
-  id: string,
-  services: InteractiveSessionConfig
-) =>
-  Machine<
-    DiffContext<IValueAffordanceSerializationWithCounter>,
-    DiffStateSchema,
-    DiffEvent
-  >({
-    id: id,
-    context: {
-      results: undefined,
-      descriptionWhileLoading: descriptionForDiffs(diffs),
-      preview: undefined,
-    },
-    initial: 'unfocused',
-    states: {
-      unfocused: {
-        on: { SHOWING: 'loading' },
-      },
-      loading: {
-        invoke: {
-          id: 'loading-shape-diff-affordances',
-          src: async (context, event) => {
-            const firstDiff = diffs[0]!;
-            const { pathId, method } = firstDiff.location();
-
-            const trailValues = await services.diffService.learnTrailValues(
-              services.rfcBaseState.rfcService,
-              services.rfcBaseState.rfcId,
-              pathId,
-              method,
-              firstDiff.raw()
-            );
-
-            return {
-              preview: await prepareShapeDiffSuggestionPreview(
-                diffs,
-                services,
-                trailValues
-              ),
-              results: trailValues,
-            };
-          },
+          id: 'loading' + id,
+          src: async (context, event) =>
+            await loadContext(id, diff, services, context),
           onDone: {
             target: 'ready',
             actions: assign({
@@ -159,7 +105,35 @@ export const createShapeDiffMachine = (
       },
       ready: {
         initial: 'unhandled',
+        on: {
+          UPDATE_PREVIEW: {
+            // actions: [
+            cond: (context, event) =>
+              event.ignoreRules.filter((i) => i.diffHash === diff.diffHash)
+                .length !== context.revevantIgnoreRules.length,
+            actions: [
+              assign({
+                revevantIgnoreRules: (context, event) =>
+                  event.ignoreRules.filter((i) => i.diffHash === diff.diffHash),
+              }),
+              'reload_preview',
+            ],
+          },
+        },
         states: {
+          reload_preview: {
+            invoke: {
+              id: 'reloading-preview',
+              src: async (context, event) =>
+                await realodPreview(id, diff, services, context),
+            },
+            onDone: {
+              target: 'unhandled',
+              actions: assign({
+                preview: (context, event) => event.data,
+              }),
+            },
+          },
           unhandled: {
             entry: [(context, event) => console.log('ready to show the diff.')],
           },
@@ -168,3 +142,101 @@ export const createShapeDiffMachine = (
       },
     },
   });
+
+export const createNewRegionMachine = (
+  id: string,
+  parsedDiff: ParsedDiff,
+  services: InteractiveSessionConfig
+) =>
+  createNewDiffMachine<ILearnedBodies>(
+    id,
+    parsedDiff,
+    services,
+    (id: string, diff: ParsedDiff) => ({
+      results: undefined,
+      preview: undefined,
+      revevantIgnoreRules: [],
+      descriptionWhileLoading: descriptionForDiffs(parsedDiff),
+    }),
+    true,
+    async (
+      id: string,
+      diff: ParsedDiff,
+      services: InteractiveSessionConfig,
+      context: DiffContext<ILearnedBodies>
+    ) => {
+      const preview = await prepareNewRegionDiffSuggestionPreview(
+        parsedDiff,
+        services,
+        context.results!
+      );
+      return { preview, results: context.results! };
+    },
+    async (
+      id: string,
+      diff: ParsedDiff,
+      services: InteractiveSessionConfig,
+      context: DiffContext<ILearnedBodies>
+    ) => {
+      return await prepareNewRegionDiffSuggestionPreview(
+        parsedDiff,
+        services,
+        context.results!
+      );
+    }
+  );
+
+export const createShapeDiffMachine = (
+  id: string,
+  parsedDiff: ParsedDiff,
+  services: InteractiveSessionConfig
+) =>
+  createNewDiffMachine<IValueAffordanceSerializationWithCounter>(
+    id,
+    parsedDiff,
+    services,
+    (id: string, diff: ParsedDiff) => ({
+      results: undefined,
+      revevantIgnoreRules: [],
+      descriptionWhileLoading: descriptionForDiffs(diff),
+      preview: undefined,
+    }),
+    false,
+    async (
+      id: string,
+      diff: ParsedDiff,
+      services: InteractiveSessionConfig,
+      context: DiffContext<IValueAffordanceSerializationWithCounter>
+    ) => {
+      const { pathId, method } = diff.location();
+
+      const trailValues = await services.diffService.learnTrailValues(
+        services.rfcBaseState.rfcService,
+        services.rfcBaseState.rfcId,
+        pathId,
+        method,
+        diff.raw()
+      );
+
+      return {
+        preview: await prepareShapeDiffSuggestionPreview(
+          diff,
+          services,
+          trailValues
+        ),
+        results: trailValues,
+      };
+    },
+    async (
+      id: string,
+      diff: ParsedDiff,
+      services: InteractiveSessionConfig,
+      context: DiffContext<IValueAffordanceSerializationWithCounter>
+    ) => {
+      return await prepareShapeDiffSuggestionPreview(
+        diff,
+        services,
+        context.results!
+      );
+    }
+  );

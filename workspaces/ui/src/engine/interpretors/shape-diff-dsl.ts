@@ -10,21 +10,15 @@ import {
   IUnknownTrail,
 } from '../interfaces/shape-trail';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import sortBy from 'lodash.sortby';
 import {
   IValueAffordanceSerialization,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import {
-  code,
-  IChangeType,
-  ISuggestion,
-  plain,
-} from '../interfaces/interpretors';
 import { JsonHelper, opticEngine } from '@useoptic/domain';
 import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
-import { removeField, wrapFieldShapeWithOptional } from './commands-helper';
 
 /*
 Goal: Make the shape diff interpretation logic (the hard stuff) drop dead simple to read
@@ -160,6 +154,66 @@ export class Actual {
     return kinds;
   }
 
+  interactionsGroupedByCoreShapeKind(): IInteractionsGroupedByCoreShapeKind {
+    const results: IInteractionsGroupedByCoreShapeKind = [];
+
+    const {
+      wasMissing,
+      wasNumber,
+      wasBoolean,
+      wasNull,
+      wasArray,
+      wasObject,
+      wasString,
+    } = this.learnedTrails.interactions;
+
+    if (wasMissing.length)
+      results.push({
+        label: 'was missing',
+        kind: ICoreShapeKinds.OptionalKind,
+        interactions: wasMissing,
+      });
+    if (wasString.length)
+      results.push({
+        label: 'was string',
+        kind: ICoreShapeKinds.StringKind,
+        interactions: wasString,
+      });
+    if (wasNumber.length)
+      results.push({
+        label: 'was number',
+        kind: ICoreShapeKinds.NumberKind,
+        interactions: wasNumber,
+      });
+    if (wasBoolean.length)
+      results.push({
+        label: 'was boolean',
+        kind: ICoreShapeKinds.BooleanKind,
+        interactions: wasBoolean,
+      });
+    if (wasNull.length)
+      results.push({
+        label: 'was null',
+        kind: ICoreShapeKinds.NullableKind,
+        interactions: wasNull,
+      });
+    if (wasArray.length)
+      results.push({
+        label: 'was array',
+        kind: ICoreShapeKinds.ListKind,
+        interactions: wasArray,
+      });
+    if (wasObject.length)
+      results.push({
+        label: 'was object',
+        kind: ICoreShapeKinds.ObjectKind,
+        interactions: wasObject,
+      });
+
+    //sort it by the most common variants
+    return sortBy(results, (i) => i.interactions.length).reverse();
+  }
+
   //special case, won't ever show up in the affordances
   wasMissing: () => boolean = () =>
     this.learnedTrails.interactions.wasMissing.length > 0;
@@ -176,3 +230,9 @@ export class Actual {
   wasObject: () => boolean = () =>
     this.trailAffordances.some((i) => i.wasObject);
 }
+
+type IInteractionsGroupedByCoreShapeKind = {
+  label: string;
+  kind: ICoreShapeKinds;
+  interactions: string[];
+}[];

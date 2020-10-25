@@ -3,7 +3,6 @@ import { ICaptureService, IDiffService } from '../services/diff';
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import { IShapeTrail } from './interfaces/shape-trail';
 import { DiffSet } from './diff-set';
-import { createNewAsyncMachine } from './async-work/async-work-machines';
 import {
   createNewRegionMachine,
   createShapeDiffMachine,
@@ -11,6 +10,7 @@ import {
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
+import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
 
 interface InteractiveEndpointSessionStateSchema {
   states: {
@@ -21,9 +21,14 @@ interface InteractiveEndpointSessionStateSchema {
 }
 
 // The events that the machine handles
-type InteractiveEndpointSessionEvent = {
-  type: 'PREPARE';
-};
+type InteractiveEndpointSessionEvent =
+  | {
+      type: 'PREPARE';
+    }
+  | {
+      type: 'ADD_IGNORE';
+      newRule: IIgnoreRule;
+    };
 
 // The context (extended state) of the machine
 export interface InteractiveEndpointSessionContext {
@@ -32,7 +37,7 @@ export interface InteractiveEndpointSessionContext {
     ref: any;
   }[];
   shapeDiffs: { shapeTrail: IShapeTrail; ref: any }[];
-  ignored: [];
+  ignored: IIgnoreRule[];
   learningContext:
     | {
         newRegions: string;
@@ -86,12 +91,12 @@ export const newInteractiveEndpointSessionMachine = (
               ).groupedByEndpointAndShapeTrail();
 
               return shapeDiffsGrouped.map(
-                ({ diffs, shapeTrailHash, shapeTrail }) => {
-                  const id = 'shape-diff' + shapeTrailHash;
+                ({ diffs, shapeDiffGroupingHash, shapeTrail }) => {
+                  const id = 'shape-diff' + shapeDiffGroupingHash;
                   return {
                     shapeTrail,
                     ref: spawn(
-                      createShapeDiffMachine(shapeTrail, diffs, id, services),
+                      createShapeDiffMachine(id, diffs[0], services),
                       id
                     ),
                   };
@@ -148,7 +153,29 @@ export const newInteractiveEndpointSessionMachine = (
           },
         },
       },
-      ready: {},
+      ready: {
+        on: {
+          ADD_IGNORE: {
+            actions: [
+              assign({
+                ignored: (context, event) => [
+                  ...context.ignored,
+                  event.newRule,
+                ],
+              }),
+              (ctx) => {
+                //send all ignore rules to children. they decide which ones they care about
+                const notifyChildren = {
+                  type: 'UPDATE_PREVIEW',
+                  ignoreRules: ctx.ignored,
+                };
+                ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
+                ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
+              },
+            ],
+          },
+        },
+      },
     },
   });
 };

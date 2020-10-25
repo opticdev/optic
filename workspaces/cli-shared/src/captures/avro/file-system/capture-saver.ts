@@ -101,7 +101,7 @@ export class CaptureSaver implements ICaptureSaver {
   }
 
   async save(sample: IHttpInteraction) {
-    // don't await flush, just enqueue
+    // don't await flushSuggestions, just enqueue
     await this.batcher.add(sample);
   }
 

@@ -3,6 +3,7 @@ import { Actual, Expectation } from '../shape-diff-dsl';
 import {
   code,
   IChangeType,
+  IInterpretation,
   ISuggestion,
   plain,
 } from '../../interfaces/interpretors';
@@ -15,6 +16,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { JsonHelper, opticEngine } from '@useoptic/domain';
+import { InteractiveSessionConfig } from '../../interfaces/session';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -22,14 +24,14 @@ export function fieldShapeDiffInterpretor(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
-  rfcBaseState: DiffRfcBaseState
-): ISuggestion[] {
+  services: InteractiveSessionConfig
+): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
   const isUnspecified = shapeDiff.isUnspecified;
 
   const present = new FieldShapeInterpretationHelper(
-    rfcBaseState,
+    services.rfcBaseState,
     shapeTrail,
     jsonTrail,
     actual.learnedTrails,
@@ -84,13 +86,14 @@ class FieldShapeInterpretationHelper {
   addAdditionalCoreShapeKinds = (kinds: ICoreShapeKinds[]) =>
     (this.additionalCoreShapeKinds = kinds);
 
-  flush(): ISuggestion[] {
-    const results: ISuggestion[] = [];
+  flush(): IInterpretation {
+    const suggestions: ISuggestion[] = [];
 
     ///////////////////////////////////////////////////////////////
     // Catch New fields first
-    if (typeof this.shouldAskAddField !== 'undefined')
+    if (typeof this.shouldAskAddField !== 'undefined') {
       return this.addNewField(this.shouldAskAddField!);
+    }
     ///////////////////////////////////////////////////////////////
 
     // this happens first, (if changes required), and is shared through all the cases.
@@ -100,17 +103,17 @@ class FieldShapeInterpretationHelper {
       this.additionalCoreShapeKinds.length > 0 &&
       !this.actual.wasMissing() /* when missing, change shape commands are gets included in the optional/required commands  */
     ) {
-      results.push(this.changeFieldShape(updateShapeCommands));
+      suggestions.push(this.changeFieldShape(updateShapeCommands));
     }
 
     if (this.shouldAskMakeOptional) {
-      results.push(this.wrapFieldShapeWithOptional(updateShapeCommands));
+      suggestions.push(this.wrapFieldShapeWithOptional(updateShapeCommands));
     }
     if (this.shouldAskToRemoveField) {
-      results.push(this.removeField(updateShapeCommands));
+      suggestions.push(this.removeField(updateShapeCommands));
     }
 
-    return results;
+    return { suggestions, previewTabs: [] };
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -171,7 +174,7 @@ class FieldShapeInterpretationHelper {
     };
   }
 
-  private addNewField(key: string): ISuggestion[] {
+  private addNewField(key: string): IInterpretation {
     const parentId = this.expected.lastObject!;
 
     // commands for the field value. infer'd poly.
@@ -185,6 +188,17 @@ class FieldShapeInterpretationHelper {
     const sharedCopy = [code(key), plain('as'), code('$type here')];
 
     const suggestOptionalFirst = this.actual.wasMissing();
+
+    const tabs: IInteractionPreviewTab[] = this.actual
+      .interactionsGroupedByCoreShapeKind()
+      .map((shapeGrouping) => {
+        return {
+          interactionPointers: shapeGrouping.interactions,
+          title: shapeGrouping.label,
+          allowsExpand: true,
+          renderBody: async (a) => {},
+        };
+      });
 
     const suggestions = [
       {
@@ -205,6 +219,9 @@ class FieldShapeInterpretationHelper {
       },
     ];
 
-    return suggestOptionalFirst ? suggestions.reverse() : suggestions;
+    return {
+      suggestions: suggestOptionalFirst ? suggestions.reverse() : suggestions,
+      previewTabs: tabs,
+    };
   }
 }

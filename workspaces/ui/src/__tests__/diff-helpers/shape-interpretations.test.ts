@@ -6,43 +6,42 @@ test('a known field is missing.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  expect(preview.suggestions).toMatchSnapshot();
+  expect(preview).toMatchSnapshot();
 });
 
 test('a known field is provided the wrong shape.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  expect(preview.suggestions).toMatchSnapshot();
+  expect(preview).toMatchSnapshot();
 });
 
 test('a new field is provided as an array with any contents.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  console.log(JSON.stringify(preview.suggestions));
-  expect(preview.suggestions.length).toBeGreaterThan(0);
+  expect(preview).toMatchSnapshot();
 });
 
 test('a new field is provided as an empty array.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  expect(preview.suggestions.length).toBeGreaterThan(0);
+  expect(preview).toMatchSnapshot();
 });
 
 test('a new field is provided in a required nested object.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  expect(preview.suggestions.length).toBeGreaterThan(0);
+  expect(preview).toMatchSnapshot();
 });
 
 test('a new field is provided in an optional nested object.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  expect(preview.suggestions.length).toBeGreaterThan(0);
+  expect(preview).toMatchSnapshot();
 });
 
 test('a primitive type is provided to an optional object.managed', async () => {

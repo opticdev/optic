@@ -23,7 +23,7 @@ import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 
 export class ParsedDiff {
   diffType: string;
-
+  diffHash: string;
   constructor(
     private serialized_diff: IDiff,
     public interactions: string[],
@@ -35,6 +35,8 @@ export class ParsedDiff {
       keys.length === 1 && allowedDiffTypesKeys.includes(typeKey),
       'Serialized diffs should only have one root key'
     );
+
+    this.diffHash = sha1(jsonStringify(this.serialized_diff));
 
     this.diffType = typeKey!;
   }

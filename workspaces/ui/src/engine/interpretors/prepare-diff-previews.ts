@@ -1,35 +1,21 @@
 import { ParsedDiff } from '../../engine/parse-diff';
-import {
-  ICopy,
-  IDiffDescription,
-  ISuggestion,
-  plain,
-} from '../../engine/interfaces/interpretors';
 import { newRegionInterpreters } from '../../engine/interpretors/NewRegionsInterpretors';
 import { descriptionForDiffs } from '../../engine/interpretors/DiffDescriptionInterpretors';
-import { shapeDiffInterpretors } from '../../engine/interpretors/ShapeDiffInterpretors';
 import { InteractiveSessionConfig } from '../../engine/interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-
-interface InteractionPreviewTab {
-  title: ICopy[];
-  allowsIgnore: boolean;
-  allowsExpand: boolean;
-  interactions: any[];
-  renderBody: (interaction) => any;
-  interactionPointers: any[];
-  diff: ParsedDiff;
-}
-
-export interface IDiffSuggestionPreview {
-  for: 'shape' | 'region';
-  diffDescription: IDiffDescription;
-  tabs: InteractionPreviewTab[];
-  suggestions: ISuggestion[];
-}
+import { interpretShapeDiffs } from './interpretor-types/shape-diffs';
+import {
+  IDiffSuggestionPreview,
+  IInteractionPreviewTab,
+} from '../interfaces/interpretors';
+import {
+  IIgnoreRule,
+  transformAffordanceMappingByIgnoreRules,
+} from './ignores/IIgnoreRule';
+import { ICoreShapeKinds } from '../interfaces/interfaces';
 
 export function initialTitleForNewRegions(diff: ParsedDiff) {
   const location = diff.location();
@@ -54,20 +40,17 @@ export async function prepareNewRegionDiffSuggestionPreview(
 
   await services.captureService.loadInteraction(firstInteractionPointer);
 
-  const tab1: InteractionPreviewTab = {
-    diff: diff,
-    title: [plain('New Regions')],
+  const tab1: IInteractionPreviewTab = {
+    title: 'New Region',
     allowsExpand: true,
-    allowsIgnore: true,
-    interactions: diff.interactions,
     interactionPointers: diff.interactions,
-    renderBody: (interaction) => {}, // this should provide the input needed to render just one body or a preview
+    renderBody: async (interaction) => {}, // this should provide the input needed to render just one body or a preview
   };
 
   return {
     for: 'region',
     tabs: [tab1],
-    diffDescription: descriptionForDiffs([diff]),
+    diffDescription: descriptionForDiffs(diff),
     suggestions: newRegionInterpreters(diff, learnedBodies),
   };
 }
@@ -77,14 +60,23 @@ export async function prepareShapeDiffSuggestionPreview(
   services: InteractiveSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter
 ): Promise<IDiffSuggestionPreview> {
+  interpretShapeDiffs(diff, learnedTrails, services);
+
+  const ignoreRule: IIgnoreRule = {
+    diffHash: diff.diffHash,
+    examplesOfCoreShapeKinds: ICoreShapeKinds.StringKind,
+  };
+
+  const { suggestions, previewTabs } = interpretShapeDiffs(
+    diff,
+    learnedTrails,
+    services
+  );
+
   return {
     for: 'shape',
-    tabs: [],
+    tabs: previewTabs,
     diffDescription: descriptionForDiffs(diff),
-    suggestions: shapeDiffInterpretors(
-      diff,
-      learnedTrails,
-      services.rfcBaseState
-    ),
+    suggestions: suggestions,
   };
 }

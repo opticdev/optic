@@ -1,12 +1,9 @@
 import { makeUniverse } from './universes/makeUniverse';
 import { interpret } from 'xstate';
-import { createNewAsyncMachine } from '../../engine/async-work/async-work-machines';
 import {
   InteractiveEndpointSessionContext,
   newInteractiveEndpointSessionMachine,
 } from '../../engine/interactive-endpoint';
-import { DiffSet } from '../../engine/diff-set';
-import { ParsedDiff } from '../../engine/parse-diff';
 import { loadsDiffsFromUniverse } from './fixture';
 
 test('xstate lifecycle for endpoint with region diffs', async (done) => {
@@ -92,12 +89,18 @@ test('xstate lifecycle for endpoint with shape diffs', async (done) => {
   expect(endpointMachine.state.value === 'unfocused');
   endpointMachine.send({ type: 'PREPARE' });
 
+  endpointMachine.onTransition((state) => console.log(state.value));
+
   const isReadyContext: InteractiveEndpointSessionContext = await new Promise(
     (resolve) =>
       endpointMachine.onTransition((state) => {
         if (state.value === 'ready') resolve(state.context);
       })
   );
+
+  isReadyContext.shapeDiffs.forEach((i) => {
+    i.ref.send('SHOWING');
+  });
 
   expect(isReadyContext.newRegions.length).toBe(0);
   expect(isReadyContext.shapeDiffs.length).toBe(2);
@@ -106,11 +109,13 @@ test('xstate lifecycle for endpoint with shape diffs', async (done) => {
   // if endpoint is read, all new shape should also be ready shortly
   await Promise.all(
     isReadyContext.shapeDiffs.map((i) => {
-      i.ref.onTransition((state) => {
-        return new Promise(
-          (resolve) => i.ref.state.value.ready === 'unhandled' && resolve()
-        );
-      });
+      return new Promise((resolve) =>
+        i.ref.onTransition((state) => {
+          if (i.ref.state.value.ready === 'unhandled') {
+            resolve();
+          }
+        })
+      );
     })
   );
 

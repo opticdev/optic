@@ -8,11 +8,8 @@ import {
   ExampleDiffService,
 } from '../../services/diff/ExampleDiffService';
 import { IShapeTrail } from '../../engine/interfaces/shape-trail';
-import {
-  IDiffSuggestionPreview,
-  prepareShapeDiffSuggestionPreview,
-} from './prepare-diff-previews';
-
+import { IDiffSuggestionPreview } from '../../engine/interpretors/interpretor-types/interpretation';
+import { prepareShapeDiffSuggestionPreview } from '../../engine/interpretors/prepare-diff-previews';
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
   diffs: DiffSet;
