@@ -3,15 +3,13 @@
 
 name: Release Drafter
 
-on:
-  push:
-    # branches to consider in the event; optional, defaults to all
-    branches:
-      - develop
-  # TODO: remove the pull-request event, it's only for debugging this workflow
-  pull_request:
-    branches:
-      - develop
+on: push # TODO: restrict back to only develop pushes, this is only for debugging
+
+# on:
+  # push:
+  #   # branches to consider in the event; optional, defaults to all
+  #   branches:
+  #     - develop
 
 jobs:
   update_release_draft:
