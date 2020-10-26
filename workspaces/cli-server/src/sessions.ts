@@ -104,7 +104,7 @@ class SessionDiffs {
 
   async startDiff(
     captureId: string,
-    events?: Array<{[key: string ]: any }>,
+    events?: Array<{ [key: string]: any }>,
     endpoints?: Array<{ pathId: string; method: string }>
   ): Promise<string> {
     const diffId = Uuid.v4();
@@ -125,6 +125,7 @@ class SessionDiffs {
       this.activeDiffsByCaptureId.delete(captureId);
     });
     newDiff.events.once('error', (err) => {
+      console.error(err);
       throw err;
     });
 

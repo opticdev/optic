@@ -317,7 +317,7 @@ fn can_diff_nullable() {
   );
   let array_body = json!([4, null, 8, "s"]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(array_body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(array_body)), &shape_id);
 
   assert_debug_snapshot!("can_diff_nullable__results", results);
   assert_eq!(results.len(), 2);
@@ -353,7 +353,7 @@ fn can_diff_optional() {
   }
   ]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(body)), &shape_id);
 
   assert_debug_snapshot!("can_diff_optional__results", results);
   assert_eq!(results.len(), 3);
@@ -411,7 +411,7 @@ fn can_diff_one_of() {
   }
   ]);
   let shape_id = String::from("list_1");
-  let results = diff_shape(&shape_projection, Some(body), &shape_id);
+  let results = diff_shape(&shape_projection, Some(BodyDescriptor::from(body)), &shape_id);
 
   assert_debug_snapshot!("can_diff_one_of__results", results);
   assert_eq!(results.len(), 3);

@@ -6,13 +6,15 @@ import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
 
 async function main(
-  inputFilePath: string,
+  inputFilePaths: {
+    events: string;
+    interactions: string;
+  },
   outputBaseDirectory: string,
-  captureId: string = 'ccc'
+  captureId: string
 ) {
-  console.log({ inputFilePath });
-  const input = fs.createReadStream(inputFilePath);
-  const events: any[] = [];
+  console.log({ inputFilePaths });
+  const events: any[] = await fs.readJson(inputFilePaths.events);
   const captureBaseDirectory = path.join(
     outputBaseDirectory,
     '.optic',
@@ -22,19 +24,15 @@ async function main(
     captureBaseDirectory,
     captureId,
   });
+  const input = fs.createReadStream(inputFilePaths.interactions);
   await captureSaver.init();
   await new Promise((resolve, reject) => {
     oboe(input)
       .on('node', {
         // @ts-ignore
-        'events.*': function (event: any) {
-          console.count('event');
-          //console.log({ event });
-          events.push(event);
-        },
-        'session.samples.*': function (sample: IHttpInteraction) {
+        '!.*': function (sample: IHttpInteraction) {
           console.count('sample');
-          //console.log({ sample });
+          console.log({ sample });
           captureSaver.save(sample);
         },
       })
@@ -51,7 +49,7 @@ async function main(
   const files = [
     {
       location: path.join(outputBaseDirectory, 'optic.yml'),
-      contents: `name: ${JSON.stringify(path.basename(inputFilePath))}`,
+      contents: `name: ${JSON.stringify(path.basename(inputFilePaths.events))}`,
     },
     {
       location: path.join(
@@ -91,5 +89,16 @@ async function main(
   );
 }
 
-const [, , inputFilePath, outputBaseDirectory, captureId] = process.argv;
-main(inputFilePath, outputBaseDirectory, captureId);
+const [
+  ,
+  ,
+  inputEventsFilePath,
+  inputInteractionsFilePath,
+  outputBaseDirectory,
+  captureId,
+] = process.argv;
+main(
+  { interactions: inputInteractionsFilePath, events: inputEventsFilePath },
+  outputBaseDirectory,
+  captureId
+);

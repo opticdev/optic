@@ -16,6 +16,13 @@ export default function spawn({
   const output = new PassThrough();
   const error = new PassThrough();
 
+  if (!fs.existsSync(Config.binaryPath)) {
+    throw new Error(`expected binary at ${Config.binaryPath}`);
+  } else {
+    console.log(`using binary from ${Config.binaryPath}`);
+  }
+  console.log(`using spec from ${specPath}`);
+
   const diffProcess = Execa(Config.binaryPath, [specPath], {
     input,
     stdio: 'pipe',
