@@ -2,7 +2,7 @@
 
 import { Duplex } from 'stream';
 
-export default function spawn({
+export function spawn({
   specPath: string,
 }): {
   input: Duplex;

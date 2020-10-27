@@ -1,6 +1,6 @@
 import { parseIgnore } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
-import spawnDiffEngine from '@useoptic/diff-engine';
+import { spawn as spawnDiffEngine } from '@useoptic/diff-engine';
 import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,

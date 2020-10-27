@@ -22,7 +22,7 @@ function spawn({ specPath }) {
 
   const binPaths = [];
   if (supportedPlatform) {
-    let prebuiltBinPath = getPrebuiltPath();
+    let prebuiltBinPath = getPrebuiltPath(supportedPlatform);
 
     if (Fs.existsSync(prebuiltBinPath)) {
       binPaths.push(prebuiltBinPath);
