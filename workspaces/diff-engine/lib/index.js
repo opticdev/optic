@@ -10,7 +10,7 @@ const Tar = require('tar');
 
 const Config = require('./config');
 
-const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET');
+const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
 
 function spawn({ specPath }) {
   const input = new PassThrough();
@@ -105,7 +105,17 @@ async function install(options) {
   const downloadStream = await fetchBinary(
     `/v${Config.version}/${archiveName}.tar.gz`
   );
+  if (downloadStream.statusCode === 404) {
+    throw new Error(
+      `Pre-built binary ${Config.binaryName}-${platform.name}@${Config.version} was not published`
+    );
+  }
+
   await downloadStream.pipe(Tar.extract({ strip: 1, cwd: binaryDir }));
+
+  return {
+    archiveName,
+  };
 }
 
 exports.spawn = spawn;
