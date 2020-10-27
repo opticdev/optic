@@ -94,11 +94,10 @@ async function install(options) {
 
   const prebuiltPath = getPrebuiltPath(platform);
   const binaryDir = Path.dirname(prebuiltPath);
+
   if (Fs.existsSync(binaryDir)) {
     Rimraf.sync(binaryDir);
   }
-
-  Fs.mkdirSync(binaryDir, { recursive: true });
 
   const archiveName = Path.basename(binaryDir);
 
@@ -111,6 +110,8 @@ async function install(options) {
     );
   }
 
+  Fs.mkdirSync(binaryDir, { recursive: true });
+
   await downloadStream.pipe(Tar.extract({ strip: 1, cwd: binaryDir }));
 
   return {
@@ -118,5 +119,18 @@ async function install(options) {
   };
 }
 
+function uninstall(options) {
+  let platform = getSupportedPlatform();
+  if (!platform) return;
+
+  const prebuiltPath = getPrebuiltPath(platform);
+  const binaryDir = Path.dirname(prebuiltPath);
+
+  if (Fs.existsSync(binaryDir)) {
+    Rimraf.sync(binaryDir);
+  }
+}
+
 exports.spawn = spawn;
 exports.install = install;
+exports.uninstall = uninstall;
