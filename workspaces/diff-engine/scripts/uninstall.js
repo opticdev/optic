@@ -5,4 +5,4 @@ if (process.env.OPTIC_RUST_DIFF_ENGINE !== 'true') {
 }
 
 uninstall();
-console.log('Uninstalled binaries for diff-engine');
+console.log('Uninstalled downloaded binaries for diff-engine');
