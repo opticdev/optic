@@ -12,7 +12,7 @@ module.exports = {
   binaryName: crate.package.name,
   localBuildPath: Path.join(__dirname, '..', '..', '..', 'target', 'debug'),
   prebuilt: {
-    installPath: Path.join(__dirname, '..', 'bin'),
+    installPath: Path.join(__dirname, '..', 'binaries'),
     baseUrl: 'http://localhost:9090/optic-packages/dists/optic_diff',
   },
 
@@ -20,17 +20,20 @@ module.exports = {
     {
       type: 'Windows_NT',
       arch: 'x64',
-      platform: 'win64',
+      name: 'win64',
+      suffix: '.exe',
     },
     {
       type: 'Linux',
       arch: 'x64',
-      platform: 'linux',
+      name: 'linux',
+      suffix: '',
     },
     {
       type: 'Darwin',
       arch: 'x64',
-      platform: 'macos',
+      name: 'macos',
+      suffix: '',
     },
   ],
 };

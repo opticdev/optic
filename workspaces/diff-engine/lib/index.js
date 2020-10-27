@@ -4,8 +4,13 @@ const Fs = require('fs');
 const Path = require('path');
 const Toml = require('@iarna/toml');
 const OS = require('os');
+const Rimraf = require('rimraf');
+const Bent = require('bent');
+const Tar = require('tar');
 
 const Config = require('./config');
+
+const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET');
 
 function spawn({ specPath }) {
   const input = new PassThrough();
@@ -17,18 +22,17 @@ function spawn({ specPath }) {
 
   const binPaths = [];
   if (supportedPlatform) {
-    let prebuiltBinPath = Path.join(
-      Config.prebuilt.installPath,
-      `${binaryName}-v${Config.version}-${supportedPlatform}`,
-      binaryName
-    );
+    let prebuiltBinPath = getPrebuiltPath();
 
     if (Fs.existsSync(prebuiltBinPath)) {
       binPaths.push(prebuiltBinPath);
     }
   }
 
-  let debugBinPath = Path.join(Config.localBuildPath, binaryName);
+  let debugBinPath = Path.join(
+    Config.localBuildPath,
+    `${binaryName}${supportedPlatform ? supportedPlatform.suffix : ''}`
+  );
   if (Fs.existsSync(debugBinPath)) {
     // @TODO: use reported version of the binary (run optic_diff -V (or --version)) to do
     // some rough determination whether the build is outdated or not. Not perfect, but
@@ -60,12 +64,49 @@ function spawn({ specPath }) {
 }
 
 function getSupportedPlatform() {
-  const supported = Config.supportedPlatforms.find(
+  return Config.supportedPlatforms.find(
     ({ arch, type }) => arch === OS.arch() && type === OS.type()
   );
-  return supported ? supported.platform : undefined;
+}
+
+function getPrebuiltPath(platform) {
+  const binaryName = Config.binaryName;
+  return Path.join(
+    Config.prebuilt.installPath,
+    `${binaryName}-v${Config.version}-${platform.name}`,
+    `${binaryName}${platform.suffix}`
+  );
+}
+
+async function install(options) {
+  let platform = getSupportedPlatform();
+  if (!platform)
+    new Error(
+      `Unsupported platform. Cannot install pre-built ${
+        Config.binaryName
+      } for os.type=${OS.type()} os.arch=${OS.arch()}`
+    );
+
+  const installDir = Config.prebuilt.installPath;
+  if (!Fs.existsSync(installDir)) {
+    Fs.mkdirSync(installDir, { recursive: true });
+  }
+
+  const prebuiltPath = getPrebuiltPath(platform);
+  const binaryDir = Path.dirname(prebuiltPath);
+  if (Fs.existsSync(binaryDir)) {
+    Rimraf.sync(binaryDir);
+  }
+
+  Fs.mkdirSync(binaryDir, { recursive: true });
+
+  const archiveName = Path.basename(binaryDir);
+
+  const downloadStream = await fetchBinary(
+    `/v${Config.version}/${archiveName}.tar.gz`
+  );
+  await downloadStream.pipe(Tar.extract({ strip: 1, cwd: binaryDir }));
 }
 
 exports.spawn = spawn;
-
-spawn({ specPath: 'test' });
+exports.install = install;
