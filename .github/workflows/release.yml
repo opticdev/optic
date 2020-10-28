@@ -15,15 +15,137 @@ on:
       - release
 
 jobs:
+  build-rust-binaries:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            platform_name: macos
+            suffix: ''
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            platform_name: win64
+            suffix: .exe
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            platform_name: linux
+            suffix: ''
+    runs-on: ${{ matrix.os }}
+    env:
+      FILE_NAME: optic_diff${{ matrix.suffix }}
+    steps:
+      - name: 'Checkout source'
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
+      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+        with:
+          node-version: 12
+      - name: 'Determine version and archive name'
+        shell: bash
+        run: |
+          OPTIC_VERSION=$(npm view @useoptic/cli version)
+          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
+      - name: 'Set CARGO_HOME and RUSTUP_HOME'
+        run: |
+          echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
+          echo "CARGO_HOME=$HOME/.cargo" >> $GITHUB_ENV
+      - name: 'Cache cargo registry'
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/registry
+            ${{ env.CARGO_HOME }}/git
+          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-vendor-v1"
+      - name: 'Cache build target'
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
+        with:
+          path: target
+          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-release-target-v1"
+      - name: 'Rust toolchain'
+        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/releases/tag/v1.0.6
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: 'Build'
+        uses: actions-rs/cargo@ae10961054e4aa8b4aa7dffede299aaf087aa33b # https://github.com/actions-rs/cargo/releases/tag/v1.0.1
+        with:
+          command: build
+          args: --workspace --release --target=${{ matrix.target }}
+      - name: 'Flush Cargo cache to disk on macOS'
+        if: runner.os == 'macOS'
+        run: sudo /usr/sbin/purge
+      - name: 'Upload artifact'
+        uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # https://github.com/actions/upload-artifact/releases/tag/v2
+        with:
+          name: ${{ env.ARCHIVE_NAME }}-build
+          path: target/${{ matrix.target }}/release/${{ env.FILE_NAME }}
+
+  publish-binaries:
+    strategy:
+      matrix:
+        include:
+          - platform_name: macos
+            suffix: ''
+          - platform_name: win64
+            suffix: .exe
+          - platform_name: linux
+            suffix: ''
+    runs-on: ubuntu-latest
+    needs: build-rust-binaries
+    env:
+      FILE_NAME: optic_diff${{ matrix.suffix }}
+      BUCKET: optic-packages
+    steps:
+      - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
+      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+        with:
+          node-version: 12
+      - name: 'Determine version and archive name'
+        run: |
+          OPTIC_VERSION=$(npm view @useoptic/cli version)
+          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
+      - name: Prepare directory structure
+        run: |
+          mkdir -p build/$ARCHIVE_NAME
+          mkdir dist
+      - name: Download binary
+        uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a # https://github.com/actions/download-artifact/releases/tag/v2
+        with:
+          name: ${{ env.ARCHIVE_NAME }}-build
+          path: build/${{ env.ARCHIVE_NAME }}
+      - name: 'Package binary'
+        run: |
+          chmod +x build/$ARCHIVE_NAME/$FILE_NAME
+          tar -C build -czvf dist/$ARCHIVE_NAME.tar.gz $ARCHIVE_NAME
+      - name: 'Debug archives'
+        run: |
+          ls -lsa dist
+          ls -lsa build
+          tar -xzvf dist/$ARCHIVE_NAME.tar.gz -C dist
+          ls -lsa dist
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1'
+      - name: 'Upload to S3'
+        run: |
+          aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
+
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
   # All Jobs rely on this job because it verifies the version
   release-npm:
     runs-on: ubuntu-latest
+    needs: publish-binaries
     steps:
-    - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+    - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       with:
           ref: release
-    - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+    - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
     - name: Install Dependencies and Build Optic
@@ -45,7 +167,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-npm
     steps:
-      - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
         with:
           ref: release
       - uses: ./.github/deployDebian/ # locally defined action
@@ -64,7 +186,7 @@ jobs:
     needs: release-npm
     steps:
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@56cbd49233c4b3cc03201ca29d2a7cf1271b90e1 # https://github.com/peter-evans/repository-dispatch/commits/v1.1.0
+        uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
         with:
           token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
           repository: opticdev/homebrew-optic
@@ -77,7 +199,7 @@ jobs:
     needs: release-npm
     name: Message Slack that Release has happened
     steps:
-      - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         name: Setup Node (to determine latest version of Optic)
         with:
             node-version: 12
