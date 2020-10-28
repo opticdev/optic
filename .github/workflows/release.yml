@@ -37,9 +37,17 @@ jobs:
             suffix: ''
     runs-on: ${{ matrix.os }}
     env:
-      ARCHIVE_NAME: optic_diff-${{ matrix.platform_name }} # TODO: include version number?
       FILE_NAME: optic_diff${{ matrix.suffix }}
     steps:
+      - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+        with:
+          node-version: 12
+      - name: 'Determine version and archive name'
+        run: |
+          OPTIC_VERSION=$(npm view @useoptic/cli version)
+          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
       - name: 'Set CARGO_HOME and RUSTUP_HOME'
         run: |
           echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
