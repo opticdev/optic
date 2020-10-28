@@ -139,7 +139,7 @@ jobs:
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
         run: |
-          aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
+          aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
   # All Jobs rely on this job because it verifies the version
