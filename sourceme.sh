@@ -58,12 +58,18 @@ alias wsinfo="show-ws-versions"
 search_ws() {
   find ./workspaces -type f -not -path "*node_modules*" -print0 | xargs -0 grep -il $@
 }
+optic_install_dependencies() {
+  (
+    set -o errexit;
+    OPTIC_SKIP_PREBUILT_INSTALLS=true yarn install
+  )
+}
 optic_build() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
 
-    yarn install
+    optic_install_dependencies
     optic_workspace_clean
     optic_workspace_binaries_build
     optic_workspace_build
@@ -76,7 +82,7 @@ optic_build_with_linked_core() {
     cd "$OPTIC_SRC_DIR"
     optic_workspace_clean
     yarn run bump-core-snapshot
-    yarn install
+    optic_install_dependencies
     optic_workspace_build
   )
 }
@@ -90,7 +96,7 @@ bump_domain() {
     cd "$OPTIC_SRC_DIR"
     optic_workspace_clean
     yarn run bump-core $1
-    yarn install
+    optic_install_dependencies
     optic_workspace_build
   )
 }
@@ -100,7 +106,7 @@ optic_build_for_release() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
 
-    yarn install
+    optic_install_dependencies
 
     optic_workspace_clean
     optic_workspace_build
@@ -149,7 +155,7 @@ optic_local_registry_start() {
     docker-compose up &
 
     cd "$OPTIC_SRC_DIR"
-    yarn install
+    optic_install_dependencies
     yarn wait-on http://localhost:4873
     printf "local npm registry started on http://localhost:4873 \n"
   )
