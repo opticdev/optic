@@ -13,12 +13,17 @@ on:
   push:
     branches:
       - release
+  # TODO: remove pull-request trigger, only for development of prebuilt binaries publishing
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
   # All Jobs rely on this job because it verifies the version
   release-npm:
     runs-on: ubuntu-latest
+    if: false # TODO: re-enable actual release after developing publishing of pre-builts
     steps:
     - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
       with:
