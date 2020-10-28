@@ -4,7 +4,7 @@
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
-    "ws:build": "scripts/build.sh",
+    "ws:build-binaries": "scripts/build-binaries.sh",
     "ws:clean": "rm -rf build/* && rm -rf target/*",
     "ws:test": "scripts/test.sh"
   },

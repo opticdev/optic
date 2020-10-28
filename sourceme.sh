@@ -21,7 +21,15 @@ optic_workspace_build() {
     set -o errexit
     export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
     cd "$OPTIC_SRC_DIR"
-    yarn wsrun --stages --report --fast-exit ws:build
+    yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+  )
+}
+optic_workspace_binaries_build() {
+  (
+    set -o errexit
+    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    cd "$OPTIC_SRC_DIR"
+    yarn wsrun --stages --report --fast-exit --exclude-missing ws:build-binaries
   )
 }
 optic_workspace_build_with_notification() {
@@ -57,6 +65,7 @@ optic_build() {
 
     yarn install
     optic_workspace_clean
+    optic_workspace_binaries_build
     optic_workspace_build
   )
 }
