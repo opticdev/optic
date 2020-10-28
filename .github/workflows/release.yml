@@ -44,6 +44,7 @@ jobs:
         with:
           node-version: 12
       - name: 'Determine version and archive name'
+        shell: bash
         run: |
           OPTIC_VERSION=$(npm view @useoptic/cli version)
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
