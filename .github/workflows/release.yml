@@ -13,10 +13,6 @@ on:
   push:
     branches:
       - release
-  # TODO: remove pull-request trigger, only for development of prebuilt binaries publishing
-  pull_request:
-    branches:
-      - develop
 
 jobs:
   build-rust-binaries:
@@ -145,7 +141,6 @@ jobs:
   release-npm:
     runs-on: ubuntu-latest
     needs: publish-binaries
-    if: false # TODO: re-enable actual release after developing publishing of pre-builts
     steps:
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       with:
