@@ -11,10 +11,12 @@ test('accurate spec trail for all diffs', async () => {
   const diffsRaw = (await diffService.listDiffs()).rawDiffs;
 
   const parsedDiffs = diffsRaw.map(
-    ([diff, interactions]) => new ParsedDiff(diff, interactions, rfcBaseState)
+    ([diff, interactions]) => new ParsedDiff(diff, interactions)
   );
 
-  parsedDiffs.forEach((i) => expect(i.location()).toMatchSnapshot());
+  parsedDiffs.forEach((i) =>
+    expect(i.location(rfcBaseState)).toMatchSnapshot()
+  );
 });
 
 // makeDiffRfcBaseState

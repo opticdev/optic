@@ -27,9 +27,10 @@ export async function loadsDiffsFromUniverse(
 
   const diffs = new DiffSet(
     diffsRaw.map(([diff, interactions]) => {
-      const diffParsed = new ParsedDiff(diff, interactions, rfcBaseState);
+      const diffParsed = new ParsedDiff(diff, interactions);
       return diffParsed;
-    })
+    }),
+    rfcBaseState
   );
 
   return {
@@ -56,7 +57,7 @@ export async function shapeDiffPreview(
   },
   universe: ITestUniverse
 ): Promise<IDiffSuggestionPreview> {
-  const { pathId, method } = input.diffs[0].location();
+  const { pathId, method } = input.diffs[0].location(universe.rfcBaseState);
 
   const trailValues = await universe.diffService.learnTrailValues(
     universe.rfcBaseState.rfcService,

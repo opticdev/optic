@@ -10,7 +10,7 @@ import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
 import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
 
-interface InteractiveEndpointSessionStateSchema {
+export interface InteractiveEndpointSessionStateSchema {
   states: {
     unfocused: {};
     preparing: {};
@@ -19,7 +19,7 @@ interface InteractiveEndpointSessionStateSchema {
 }
 
 // The events that the machine handles
-type InteractiveEndpointSessionEvent =
+export type InteractiveEndpointSessionEvent =
   | {
       type: 'PREPARE';
     }
@@ -34,7 +34,7 @@ export interface InteractiveEndpointSessionContext {
     diffParsed: ParsedDiff;
     ref: any;
   }[];
-  shapeDiffs: { shapeTrail: IShapeTrail; ref: any }[];
+  shapeDiffs: { diffParsed: ParsedDiff; shapeTrail: IShapeTrail; ref: any }[];
   ignored: IIgnoreRule[];
   learningContext:
     | {
@@ -67,7 +67,7 @@ export const newInteractiveEndpointSessionMachine = (
         entry: [
           assign({
             newRegions: (context, event) => {
-              const newRegionDiffs = new DiffSet(diffs)
+              const newRegionDiffs = new DiffSet(diffs, services.rfcBaseState)
                 .newRegions()
                 .iterator()
                 .map((diffParsed, index) => {
@@ -85,7 +85,8 @@ export const newInteractiveEndpointSessionMachine = (
             },
             shapeDiffs: (context, event) => {
               const shapeDiffsGrouped = new DiffSet(
-                diffs
+                diffs,
+                services.rfcBaseState
               ).groupedByEndpointAndShapeTrail();
 
               return shapeDiffsGrouped.map(
@@ -93,10 +94,11 @@ export const newInteractiveEndpointSessionMachine = (
                   const id = 'shape-diff' + shapeDiffGroupingHash;
                   return {
                     shapeTrail,
-                    ref: spawn(
-                      createShapeDiffMachine(id, diffs[0], services),
-                      id
-                    ),
+                    diffParsed: diffs[0],
+                    ref: spawn(createShapeDiffMachine(id, diffs[0], services), {
+                      name: id,
+                      autoForward: true,
+                    }),
                   };
                 }
               );

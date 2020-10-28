@@ -19,7 +19,11 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IDiff } from '../../engine/interfaces/diffs';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
@@ -40,6 +44,7 @@ export class LocalCliDiffService implements IDiffService {
       diffsJson
     );
     return {
+      rawDiffs: diffsJson,
       diffs: ScalaJSHelpers.toJsArray(
         DiffResultHelper.endpointDiffs(diffs, this.rfcState)
       ),
@@ -131,6 +136,16 @@ export class LocalCliDiffService implements IDiffService {
       pathId,
       method,
     });
+  }
+
+  learnTrailValues(
+    rfcService: any,
+    rfcId: any,
+    pathId: string,
+    method: string,
+    diff: IDiff
+  ): Promise<IValueAffordanceSerializationWithCounter> {
+    return Promise.resolve(undefined);
   }
 }
 

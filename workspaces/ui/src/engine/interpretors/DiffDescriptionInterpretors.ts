@@ -7,19 +7,26 @@ import {
 } from '../interfaces/interpretors';
 import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
+import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 
-export function descriptionForDiffs(diff: ParsedDiff): IDiffDescription {
+export function descriptionForDiffs(
+  diff: ParsedDiff,
+  rfcBaseState: DiffRfcBaseState
+): IDiffDescription {
   if (diff.isNewRegionDiff()) {
-    return descriptionForNewRegions(diff);
+    return descriptionForNewRegions(diff, rfcBaseState);
   }
 
   if (diff.isBodyShapeDiff()) {
-    return descriptionForShapeDiff(diff);
+    return descriptionForShapeDiff(diff, rfcBaseState);
   }
 }
 
-function descriptionForNewRegions(diff: ParsedDiff): IDiffDescription {
-  const location = diff.location();
+function descriptionForNewRegions(
+  diff: ParsedDiff,
+  rfcBaseState: DiffRfcBaseState
+): IDiffDescription {
+  const location = diff.location(rfcBaseState);
   let title: ICopy[] = [];
   if (location.inRequest) {
     title = [
@@ -44,9 +51,12 @@ function descriptionForNewRegions(diff: ParsedDiff): IDiffDescription {
   };
 }
 
-function descriptionForShapeDiff(diff: ParsedDiff): IDiffDescription {
-  const location = diff.location();
-  const asShapeDiff = diff.asShapeDiff();
+function descriptionForShapeDiff(
+  diff: ParsedDiff,
+  rfcBaseState: DiffRfcBaseState
+): IDiffDescription {
+  const location = diff.location(rfcBaseState);
+  const asShapeDiff = diff.asShapeDiff(rfcBaseState);
   const jsonTrailPath = asShapeDiff.jsonTrail.path;
   const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1]!;
 

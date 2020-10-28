@@ -14,6 +14,7 @@ export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
 export const SubtleBlueBackground = '#F5F6FA';
+export const SubtleGreyBackground = '#eaeaea';
 
 export const methodColors = {
   OPTIONS: '#686868',
@@ -42,7 +43,7 @@ export const appTheme = createMuiTheme({
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
     info: {
-      main: "#323232"
+      main: '#323232',
     },
 
     httpMethods: {
@@ -64,18 +65,17 @@ export const appTheme = createMuiTheme({
         '&[class*="variantInfo"]': {
           backgroundColor: SubtleBlueBackground,
         },
-      }
+      },
     },
-  }
+  },
 });
-
 
 export const ColorButton = withStyles(() => ({
   root: {
-    color: "white",
-    backgroundColor: "#4696FF",
+    color: 'white',
+    backgroundColor: '#4696FF',
     '&:hover': {
-      backgroundColor: "#71ABFF",
+      backgroundColor: '#71ABFF',
     },
   },
 }))(Button);

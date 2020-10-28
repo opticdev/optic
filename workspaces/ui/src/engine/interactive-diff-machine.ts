@@ -42,7 +42,7 @@ type DiffEvent =
   | { type: 'RESET' };
 
 // The context (extended state) of the machine
-interface DiffContext<InterpretationContext> {
+export interface DiffContext<InterpretationContext> {
   results: InterpretationContext | undefined;
   preview: IDiffSuggestionPreview | undefined;
   revevantIgnoreRules: IIgnoreRule[];
@@ -76,7 +76,12 @@ const createNewDiffMachine = <Context>(
     states: {
       unfocused: {
         on: {
-          SHOWING: 'loading',
+          SHOWING: {
+            actions: (context, event) => {
+              debugger;
+            },
+            target: 'loading',
+          },
           //@ts-ignore
           'done.invoke.loading-initial-regions': listenToInitialRegions
             ? {
@@ -156,7 +161,10 @@ export const createNewRegionMachine = (
       results: undefined,
       preview: undefined,
       revevantIgnoreRules: [],
-      descriptionWhileLoading: descriptionForDiffs(parsedDiff),
+      descriptionWhileLoading: descriptionForDiffs(
+        parsedDiff,
+        services.rfcBaseState
+      ),
     }),
     true,
     async (
@@ -198,7 +206,7 @@ export const createShapeDiffMachine = (
     (id: string, diff: ParsedDiff) => ({
       results: undefined,
       revevantIgnoreRules: [],
-      descriptionWhileLoading: descriptionForDiffs(diff),
+      descriptionWhileLoading: descriptionForDiffs(diff, services.rfcBaseState),
       preview: undefined,
     }),
     false,
@@ -208,7 +216,7 @@ export const createShapeDiffMachine = (
       services: InteractiveSessionConfig,
       context: DiffContext<IValueAffordanceSerializationWithCounter>
     ) => {
-      const { pathId, method } = diff.location();
+      const { pathId, method } = diff.location(services.rfcBaseState);
 
       const trailValues = await services.diffService.learnTrailValues(
         services.rfcBaseState.rfcService,

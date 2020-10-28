@@ -6,6 +6,7 @@ import {
   IUnmatchedResponseBodyContentType,
 } from '../interfaces/diffs';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 
 //only ever take 1 diff at a time
 export function newRegionInterpreters(
@@ -23,9 +24,10 @@ export function newRegionInterpreters(
 
 function newContentType(
   udiff: ParsedDiff,
-  learnedBodies: ILearnedBodies
+  learnedBodies: ILearnedBodies,
+  rfcBaseState: DiffRfcBaseState
 ): ISuggestion {
-  const location = udiff.location();
+  const location = udiff.location(rfcBaseState);
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const diff = (udiff.raw() as IUnmatchedRequestBodyShape)
       .UnmatchedRequestBodyShape;

@@ -3,6 +3,7 @@ import { Actual, Expectation } from '../shape-diff-dsl';
 import {
   code,
   IChangeType,
+  IInteractionPreviewTab,
   IInterpretation,
   ISuggestion,
   plain,

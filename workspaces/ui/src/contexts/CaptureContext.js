@@ -114,6 +114,7 @@ class _CaptureContextStore extends React.Component {
       //
       this.setState({
         endpointDiffs: diffsResponse.diffs,
+        rawDiffs: diffsResponse.rawDiffs,
         unrecognizedUrls: urlsResponse,
         pendingUpdates: true,
         lastUpdate: new Date(),
@@ -244,6 +245,7 @@ class _CaptureContextStore extends React.Component {
       completed,
       skipped,
       processed,
+      rawDiffs,
     } = this.state;
 
     const endpointDiffsWithoutIgnored = CompareEquality.filterIgnored(
@@ -253,6 +255,7 @@ class _CaptureContextStore extends React.Component {
 
     const value = {
       pendingUpdates,
+      rawDiffs,
       captureId: this.props.captureId,
       config,
       lastUpdate,

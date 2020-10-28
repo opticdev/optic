@@ -26,34 +26,53 @@ export enum ICoreShapeKinds {
 // Diff Types the UI Handles
 
 export const allowedDiffTypes: {
-  [key: string]: { isBodyShapeDiff: boolean; asString: string };
+  [key: string]: {
+    isBodyShapeDiff: boolean;
+    inRequest: boolean;
+    inResponse: boolean;
+    asString: string;
+  };
 } = {
   UnmatchedRequestUrl: {
     isBodyShapeDiff: false,
+    inRequest: false,
+    inResponse: false,
     asString: 'UnmatchedRequestUrl',
   },
   UnmatchedRequestMethod: {
     isBodyShapeDiff: false,
+    inRequest: false,
+    inResponse: false,
     asString: 'UnmatchedRequestMethod',
   },
   UnmatchedRequestBodyContentType: {
     isBodyShapeDiff: false,
+    inRequest: true,
+    inResponse: false,
     asString: 'UnmatchedRequestBodyContentType',
   },
   UnmatchedResponseBodyContentType: {
     isBodyShapeDiff: false,
+    inRequest: false,
+    inResponse: true,
     asString: 'UnmatchedResponseBodyContentType',
   },
   UnmatchedResponseStatusCode: {
     isBodyShapeDiff: false,
+    inRequest: false,
+    inResponse: true,
     asString: 'UnmatchedResponseStatusCode',
   },
   UnmatchedRequestBodyShape: {
     isBodyShapeDiff: true,
+    inRequest: true,
+    inResponse: false,
     asString: 'UnmatchedRequestBodyShape',
   },
   UnmatchedResponseBodyShape: {
     isBodyShapeDiff: true,
+    inRequest: false,
+    inResponse: true,
     asString: 'UnmatchedResponseBodyShape',
   },
 };
@@ -65,9 +84,9 @@ export const allowedDiffTypesKeys: string[] = Object.keys(allowedDiffTypes);
 export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
 export const DiffInRequest = (key: string): boolean =>
-  key === 'UnmatchedRequestBodyShape';
+  allowedDiffTypes[key]?.inRequest;
 export const DiffInResponse = (key: string): boolean =>
-  key === 'UnmatchedResponseBodyShape';
+  allowedDiffTypes[key]?.inResponse;
 
 // The ones we like to work with in the UI
 

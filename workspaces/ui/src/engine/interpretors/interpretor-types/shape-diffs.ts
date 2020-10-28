@@ -1,5 +1,10 @@
 import { BodyShapeDiff, ParsedDiff } from '../../parse-diff';
-import { IChangeType, ISuggestion, plain } from '../../interfaces/interpretors';
+import {
+  IChangeType,
+  IInterpretation,
+  ISuggestion,
+  plain,
+} from '../../interfaces/interpretors';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
@@ -8,7 +13,6 @@ import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from '../shape-diff-dsl';
 import { fieldShapeDiffInterpretor } from './field';
 import { InteractiveSessionConfig } from '../../interfaces/session';
-import { IInterpretation } from './interpretation';
 import { shapeChangeInterpretor } from './shape-changed';
 
 //only ever take 1 diff at a time
@@ -17,7 +21,7 @@ export function interpretShapeDiffs(
   learnedTrails: IValueAffordanceSerializationWithCounter,
   services: InteractiveSessionConfig
 ): IInterpretation {
-  const asShapeDiff = diff.asShapeDiff()!;
+  const asShapeDiff = diff.asShapeDiff(services.rfcBaseState)!;
   const { rfcBaseState } = services;
   const { shapeTrail, jsonTrail } = asShapeDiff;
 

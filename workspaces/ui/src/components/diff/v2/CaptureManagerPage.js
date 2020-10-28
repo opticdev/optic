@@ -81,7 +81,7 @@ const {
 } = GenericContextFactory(null);
 export { AllCapturesContext };
 
-function AllCapturesStore(props) {
+export function AllCapturesStore(props) {
   const baseUrl = useBaseUrl();
   const [captures, setCaptures] = useState([]);
   const [dismissed, setDismissed] = useState([]);
@@ -101,15 +101,15 @@ function AllCapturesStore(props) {
     update();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener('focus', update);
-
-    function cleanup() {
-      window.removeEventListener('focus', update);
-    }
-
-    return cleanup;
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('focus', update);
+  //
+  //   function cleanup() {
+  //     window.removeEventListener('focus', update);
+  //   }
+  //
+  //   return cleanup;
+  // }, []);
 
   useEffect(() => {
     global.opticDump = dumpSpecServiceState(specService);

@@ -1,17 +1,13 @@
 import { assign, spawn, Machine, StateMachine, send } from 'xstate';
-import { BodyShapeDiff, ParsedDiff } from './parse-diff';
-import { IShapeTrail } from './interfaces/shape-trail';
+import { ParsedDiff } from './parse-diff';
 import { DiffSet } from './diff-set';
-import {
-  createNewRegionMachine,
-  createShapeDiffMachine,
-} from './interactive-diff-machine';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
-import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
-import { newInteractiveEndpointSessionMachine } from './interactive-endpoint';
+import {
+  InteractiveEndpointSessionEvent,
+  newInteractiveEndpointSessionMachine,
+} from './interactive-endpoint';
 
-interface DiffSessionSessionStateSchema {
+export interface DiffSessionSessionStateSchema {
   states: {
     loading: {};
     preparing: {};
@@ -20,14 +16,41 @@ interface DiffSessionSessionStateSchema {
 }
 
 // The events that the machine handles
-type DiffSessionSessionEvent = { type: 'COMPLETED_DIFF'; diffs: ParsedDiff[] };
+export type DiffSessionSessionEvent =
+  | { type: 'COMPLETED_DIFF'; diffs: ParsedDiff[] }
+  | { type: 'SHOWING' }
+  | {
+      type: 'SELECTED_ENDPOINT';
+      pathId: string;
+      method: string;
+    }
+  | {
+      type: 'SEND_TO_ENDPOINT';
+      pathId: string;
+      method: string;
+      event: InteractiveEndpointSessionEvent;
+    };
+
+export function sendMessageToEndpoint(
+  pathId: string,
+  method: string,
+  event: InteractiveEndpointSessionEvent
+) {
+  return {
+    type: 'SEND_TO_ENDPOINT',
+    pathId,
+    method,
+    event,
+  };
+}
 
 interface IEndpointWithStatus {
   pathId: string;
   method: string;
   handled: boolean;
   diffCount: number;
-  ref: any;
+  machine: any;
+  ref?: any;
 }
 
 // The context (extended state) of the machine
@@ -68,7 +91,8 @@ export const newDiffSessionSessionMachine = (
           id: 'preparing-endpoints',
           src: async (context, event) => {
             const byEndpoint = new DiffSet(
-              context.allDiffs
+              context.allDiffs,
+              services.rfcBaseState
             ).groupedByEndpoint();
             const endpoints: IEndpointWithStatus[] = byEndpoint.map(
               ({ pathId, method, diffs }) => {
@@ -77,14 +101,11 @@ export const newDiffSessionSessionMachine = (
                   handled: false,
                   diffCount: diffs.length,
                   method,
-                  ref: spawn(
-                    newInteractiveEndpointSessionMachine(
-                      pathId,
-                      method,
-                      diffs,
-                      services
-                    ),
-                    `${method}.${pathId}`
+                  machine: newInteractiveEndpointSessionMachine(
+                    pathId,
+                    method,
+                    diffs,
+                    services
                   ),
                 };
               }
@@ -95,13 +116,55 @@ export const newDiffSessionSessionMachine = (
             target: 'ready',
             actions: [
               assign({
-                endpoints: (context, event) => event.data,
+                endpoints: (context, event) => {
+                  return event.data.map((endpoint) => {
+                    return {
+                      ...endpoint,
+                      ref: spawn(
+                        endpoint.machine,
+                        `${endpoint.pathId}${endpoint.method}`
+                      ),
+                    };
+                  });
+                },
               }),
             ],
           },
         },
       },
-      ready: {},
+      ready: {
+        on: {
+          SEND_TO_ENDPOINT: {
+            actions: (context, event) => {
+              const actor = context.endpoints.find(
+                (i) => i.pathId === event.pathId && i.method === event.method
+              );
+              if (actor) {
+                console.log('sending message');
+                actor.ref.send(event.event);
+              }
+            },
+          },
+          SELECTED_ENDPOINT: {
+            actions: [
+              assign({
+                focus: (context, event) => ({
+                  pathId: event.pathId,
+                  method: event.method,
+                }),
+              }),
+              (context) => {
+                const endpointMachine = context.endpoints.find(
+                  (i) =>
+                    i.pathId === context.focus.pathId &&
+                    i.method === context.focus.method
+                )!.ref;
+                send({ type: 'PREPARE' }, { to: endpointMachine }); //warm it up
+              },
+            ],
+          },
+        },
+      },
     },
   });
 };

@@ -24,11 +24,8 @@ import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 export class ParsedDiff {
   diffType: string;
   diffHash: string;
-  constructor(
-    private serialized_diff: IDiff,
-    public interactions: string[],
-    private rfcBaseState: DiffRfcBaseState
-  ) {
+
+  constructor(private serialized_diff: IDiff, public interactions: string[]) {
     const keys = Object.keys(this.serialized_diff);
     const typeKey = keys[0]!;
     invariant(
@@ -39,6 +36,10 @@ export class ParsedDiff {
     this.diffHash = sha1(jsonStringify(this.serialized_diff));
 
     this.diffType = typeKey!;
+  }
+
+  toString() {
+    return '';
   }
 
   raw(): IDiff {
@@ -55,11 +56,12 @@ export class ParsedDiff {
     return this.serialized_diff[key].requestsTrail;
   }
 
-  location(): IParsedLocation {
+  location(rfcBaseState: DiffRfcBaseState): IParsedLocation {
+    const diff = this.serialized_diff;
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),
-      this.rfcBaseState
+      rfcBaseState
     );
 
     invariant(
@@ -91,7 +93,7 @@ export class ParsedDiff {
     return this.diffType === k;
   }
 
-  asShapeDiff(): BodyShapeDiff | undefined {
+  asShapeDiff(rfcBaseState: DiffRfcBaseState): BodyShapeDiff | undefined {
     if (!isBodyShapeDiff(this.diffType)) {
       return undefined;
     }
@@ -111,18 +113,13 @@ export class ParsedDiff {
       this.serialized_diff,
       (requestBodyShapeDiff || responseBodyShapeDiff)!,
       this.interactions,
-      this.location()
+      this.location(rfcBaseState)
     );
   }
 }
 
-export function parseDiffsArray(
-  array: [IDiff, string[]][],
-  rfcBaseState: DiffRfcBaseState
-): ParsedDiff[] {
-  return array.map(
-    ([rawDiff, pointers]) => new ParsedDiff(rawDiff, pointers, rfcBaseState)
-  );
+export function parseDiffsArray(array: [IDiff, string[]][]): ParsedDiff[] {
+  return array.map(([rawDiff, pointers]) => new ParsedDiff(rawDiff, pointers));
 }
 
 export class BodyShapeDiff {

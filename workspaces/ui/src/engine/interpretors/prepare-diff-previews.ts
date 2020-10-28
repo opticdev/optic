@@ -16,9 +16,13 @@ import {
   transformAffordanceMappingByIgnoreRules,
 } from './ignores/IIgnoreRule';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
+import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 
-export function initialTitleForNewRegions(diff: ParsedDiff) {
-  const location = diff.location();
+export function initialTitleForNewRegions(
+  diff: ParsedDiff,
+  rfcBaseState: DiffRfcBaseState
+) {
+  const location = diff.location(rfcBaseState);
   if (location.inRequest) {
     return `${
       location.inRequest.contentType || 'No Body'
@@ -50,7 +54,7 @@ export async function prepareNewRegionDiffSuggestionPreview(
   return {
     for: 'region',
     tabs: [tab1],
-    diffDescription: descriptionForDiffs(diff),
+    diffDescription: descriptionForDiffs(diff, services.rfcBaseState),
     suggestions: newRegionInterpreters(diff, learnedBodies),
   };
 }
@@ -76,7 +80,7 @@ export async function prepareShapeDiffSuggestionPreview(
   return {
     for: 'shape',
     tabs: previewTabs,
-    diffDescription: descriptionForDiffs(diff),
+    diffDescription: descriptionForDiffs(diff, services.rfcBaseState),
     suggestions: suggestions,
   };
 }

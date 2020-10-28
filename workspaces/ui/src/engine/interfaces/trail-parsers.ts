@@ -1,5 +1,10 @@
 import { IRequestSpecTrail, RequestTrailConstants } from './request-spec-trail';
-import { IInteractionTrail, IMethod } from './interaction-trail';
+import {
+  IInteractionTrail,
+  IMethod,
+  IRequestBody,
+  IResponseBody,
+} from './interaction-trail';
 import { DiffRfcBaseState } from './diff-rfc-base-state';
 import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
 
@@ -21,14 +26,6 @@ export function locationForTrails(
 
   if (trail[RequestTrailConstants.SpecRoot]) {
     return undefined;
-  }
-
-  if (trail[RequestTrailConstants.SpecPath]) {
-    const { pathId } = trail[RequestTrailConstants.SpecPath];
-    const methodOption = methodForInteractionTrail(interactionTrail);
-    if (methodOption) {
-      return { pathId, method: methodOption };
-    }
   }
 
   if (trail[RequestTrailConstants.SpecRequestBody]) {
@@ -98,6 +95,25 @@ export function locationForTrails(
       inResponse: true,
     };
   }
+
+  // New Bodies
+  if (trail[RequestTrailConstants.SpecPath]) {
+    const { pathId } = trail[RequestTrailConstants.SpecPath];
+    const methodOption = methodForInteractionTrail(interactionTrail);
+
+    const inRequest = inRequestForInteractionTrail(interactionTrail);
+    const inResponse = inResponseForInteractionTrail(interactionTrail);
+
+    const statusCode = inResponse && inResponse.statusCode;
+
+    const contentType =
+      (inRequest && inRequest.contentType) ||
+      (inResponse && inResponse.contentType);
+
+    if (methodOption) {
+      return { pathId, method: methodOption, statusCode, contentType };
+    }
+  }
 }
 
 export function methodForInteractionTrail(
@@ -110,5 +126,25 @@ export function methodForInteractionTrail(
 
   if (Method) {
     return Method!.Method.method;
+  }
+}
+
+export function inResponseForInteractionTrail(
+  interactionTrail: IInteractionTrail
+): { statusCode: number; contentType: string } | undefined {
+  const last = interactionTrail.path[interactionTrail.path.length - 1];
+  if (last['ResponseBody']) {
+    const asResponseBody = last as IResponseBody;
+    return asResponseBody.ResponseBody;
+  }
+}
+
+export function inRequestForInteractionTrail(
+  interactionTrail: IInteractionTrail
+): { contentType: string } | undefined {
+  const last = interactionTrail.path[interactionTrail.path.length - 1];
+  if (last['RequestBody']) {
+    const asRequestBody = last as IRequestBody;
+    return asRequestBody.RequestBody;
   }
 }
