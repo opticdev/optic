@@ -20,32 +20,28 @@ import {
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
+import { IChangeType } from '../../../../engine/interfaces/interpretors';
+import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 
-export default function InteractionBodyViewer({
+export default function InteractionBodyViewerAllJS({
   diff,
-  diffDescription,
+  description,
+  jsonTrails,
   body,
-  jsonBody,
   selectedInterpretation,
 }) {
   const generalClasses = useShapeViewerStyles();
 
   const [{ rows }, dispatch] = useReducer(
     updateState,
-    { diff, body, jsonBody },
+    { diff, body, jsonTrails, description },
     createInitialState
   );
 
   const diffDetails = diff && {
-    diffDescription,
-    changeType: selectedInterpretation
-      ? selectedInterpretation.changeTypeAsString
-      : diffDescription.changeTypeAsString,
-    changeDescription:
-      selectedInterpretation &&
-      JsonHelper.seqToJsArray(
-        selectedInterpretation.copyPair.action
-      ).map(({ value, style }) => ({ value, style })),
+    description,
+    changeType: description.changeType,
+    changeDescription: description.assertion,
   };
 
   return (
@@ -103,11 +99,11 @@ export function Row(props) {
         [classes.isIncompliant]: !compliant && !collapsed,
         [classes.isCollapsedIncompliant]: !compliant && collapsed,
         [classes.requiresAddition]:
-          diffDetails && diffDetails.changeType === 'Addition',
+          diffDetails && diffDetails.changeType === IChangeType.Added,
         [classes.requiresUpdate]:
-          diffDetails && diffDetails.changeType === 'Update',
+          diffDetails && diffDetails.changeType === IChangeType.Changed,
         [classes.requiresRemoval]:
-          diffDetails && diffDetails.changeType === 'Removal',
+          diffDetails && diffDetails.changeType === IChangeType.Removed,
       })}
     >
       <div className={classes.rowContent} onClick={onRowClick}>
@@ -496,21 +492,12 @@ const useStyles = makeStyles((theme) => ({
 // TODO: consider moving this to it's own module, partly to enable the usecase
 // stated above.
 
-function createInitialState({ diff, body, jsonBody }) {
-  const diffTrails = diff
-    ? JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
-        JsonTrailHelper.toJs(jsonTrail)
-      )
-    : [];
+function createInitialState({ diff, jsonTrails, description, body }) {
+  const diffTrails = jsonTrails.map(toCommonJsPath);
 
   debugger;
 
-  const shape = jsonBody
-    ? jsonBody
-    : (() => {
-        const bodyJson = getOrUndefined(body.jsonOption);
-        return bodyJson && JsonHelper.toJs(bodyJson);
-      })();
+  const shape = body.asJson;
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 

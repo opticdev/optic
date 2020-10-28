@@ -1,4 +1,5 @@
 import { IParsedLocation } from './interfaces';
+import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 
 export interface IInterpretation {
   suggestions: ISuggestion[];
@@ -15,16 +16,21 @@ export interface IDiffSuggestionPreview {
 export interface IInteractionPreviewTab {
   title: string;
   allowsExpand: boolean;
+  invalid: boolean;
+  jsonTrailsByInteractions: IJsonTrail[];
   interactionPointers: string[];
-  //@todo figure out this interface
-  renderBody: (interaction: string) => Promise<any>;
 }
 
+interface BodyPreview {
+  asJson: any | null;
+  asText: any | null;
+}
 export interface IDiffDescription {
   title: ICopy[];
   assertion: ICopy[];
   location: IParsedLocation;
   changeType: IChangeType;
+  getJsonBodyToPreview: (interaction: any) => BodyPreview;
 }
 
 export interface ISuggestion {

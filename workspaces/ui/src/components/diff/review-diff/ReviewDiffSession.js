@@ -64,12 +64,6 @@ export function DiffSessionMachineStore(props) {
     rfcBaseState,
   });
 
-  useEffect(() => {
-    console.log('here I AM');
-    console.log(value);
-    console.log(context);
-  }, [value, context]);
-
   const { completed, rawDiffs } = useCaptureContext();
   //
   useEffect(() => {
@@ -93,6 +87,9 @@ export function DiffSessionMachineStore(props) {
     actions,
     queries,
     rfcBaseState,
+    loadInteraction: (interactionPointer) => {
+      return captureService.loadInteraction(interactionPointer);
+    },
   };
 
   return (

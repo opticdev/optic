@@ -38,4 +38,11 @@ export interface IAffordanceInteractionPointers {
   wasArray: string[];
   wasObject: string[];
   wasMissing: string[];
+  wasStringTrails: { [key: string]: IJsonTrail[] };
+  wasNumberTrails: { [key: string]: IJsonTrail[] };
+  wasBooleanTrails: { [key: string]: IJsonTrail[] };
+  wasNullTrails: { [key: string]: IJsonTrail[] };
+  wasArrayTrails: { [key: string]: IJsonTrail[] };
+  wasObjectTrails: { [key: string]: IJsonTrail[] };
+  wasMissingTrails: { [key: string]: IJsonTrail[] };
 }

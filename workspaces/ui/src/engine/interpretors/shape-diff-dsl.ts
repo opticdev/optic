@@ -9,7 +9,10 @@ import {
   IShapeTrail,
   IUnknownTrail,
 } from '../interfaces/shape-trail';
-import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import {
+  IJsonTrail,
+  normalize,
+} from '@useoptic/cli-shared/build/diffs/json-trail';
 import sortBy from 'lodash.sortby';
 import {
   IValueAffordanceSerialization,
@@ -80,6 +83,10 @@ export class Expectation {
     return !!this.expectationsFromSpec.lastField;
   }
 
+  aRequiredField(): boolean {
+    return this.isField() && !this.isOptionalField();
+  }
+
   lastObject(): string {
     invariant(
       this.expectationsFromSpec.lastObject,
@@ -136,13 +143,16 @@ export class Actual {
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail
   ) {
-    this.trailAffordances = learnedTrails.affordances.filter((i) =>
-      equals(i.trail, jsonTrail)
-    );
+    this.trailAffordances = learnedTrails.affordances.filter((i) => {
+      const compared = equals(normalize(i.trail), normalize(jsonTrail));
+      return compared;
+    });
   }
 
   observedCoreShapeKinds(): Set<ICoreShapeKinds> {
     const kinds: Set<ICoreShapeKinds> = new Set([]);
+
+    const a = this.trailAffordances;
 
     if (this.wasString()) kinds.add(ICoreShapeKinds.StringKind);
     if (this.wasNumber()) kinds.add(ICoreShapeKinds.NumberKind);
@@ -165,6 +175,13 @@ export class Actual {
       wasArray,
       wasObject,
       wasString,
+      wasMissingTrails,
+      wasNumberTrails,
+      wasBooleanTrails,
+      wasNullTrails,
+      wasArrayTrails,
+      wasObjectTrails,
+      wasStringTrails,
     } = this.learnedTrails.interactions;
 
     if (wasMissing.length)
@@ -172,42 +189,49 @@ export class Actual {
         label: 'was missing',
         kind: ICoreShapeKinds.OptionalKind,
         interactions: wasMissing,
+        jsonTrailsByInteractions: wasMissingTrails,
       });
     if (wasString.length)
       results.push({
         label: 'was string',
         kind: ICoreShapeKinds.StringKind,
         interactions: wasString,
+        jsonTrailsByInteractions: wasStringTrails,
       });
     if (wasNumber.length)
       results.push({
         label: 'was number',
         kind: ICoreShapeKinds.NumberKind,
         interactions: wasNumber,
+        jsonTrailsByInteractions: wasNullTrails,
       });
     if (wasBoolean.length)
       results.push({
         label: 'was boolean',
         kind: ICoreShapeKinds.BooleanKind,
         interactions: wasBoolean,
+        jsonTrailsByInteractions: wasBooleanTrails,
       });
     if (wasNull.length)
       results.push({
         label: 'was null',
         kind: ICoreShapeKinds.NullableKind,
         interactions: wasNull,
+        jsonTrailsByInteractions: wasNullTrails,
       });
     if (wasArray.length)
       results.push({
         label: 'was array',
         kind: ICoreShapeKinds.ListKind,
         interactions: wasArray,
+        jsonTrailsByInteractions: wasArrayTrails,
       });
     if (wasObject.length)
       results.push({
         label: 'was object',
         kind: ICoreShapeKinds.ObjectKind,
         interactions: wasObject,
+        jsonTrailsByInteractions: wasObjectTrails,
       });
 
     //sort it by the most common variants
@@ -235,4 +259,5 @@ type IInteractionsGroupedByCoreShapeKind = {
   label: string;
   kind: ICoreShapeKinds;
   interactions: string[];
+  jsonTrailsByInteractions: IJsonTrail[];
 }[];

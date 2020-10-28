@@ -48,7 +48,8 @@ export async function prepareNewRegionDiffSuggestionPreview(
     title: 'New Region',
     allowsExpand: true,
     interactionPointers: diff.interactions,
-    renderBody: async (interaction) => {}, // this should provide the input needed to render just one body or a preview
+    invalid: true,
+    jsonTrailsByInteractions: [],
   };
 
   return {
@@ -64,13 +65,6 @@ export async function prepareShapeDiffSuggestionPreview(
   services: InteractiveSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter
 ): Promise<IDiffSuggestionPreview> {
-  interpretShapeDiffs(diff, learnedTrails, services);
-
-  const ignoreRule: IIgnoreRule = {
-    diffHash: diff.diffHash,
-    examplesOfCoreShapeKinds: ICoreShapeKinds.StringKind,
-  };
-
   const { suggestions, previewTabs } = interpretShapeDiffs(
     diff,
     learnedTrails,

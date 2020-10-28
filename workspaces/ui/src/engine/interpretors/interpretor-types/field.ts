@@ -42,12 +42,10 @@ export function fieldShapeDiffInterpretor(
 
   // field is in the spec, the value was not what we expected to see
   if (isUnmatched) {
-    const expectsARequiredField =
-      expected.isField() && !expected.isOptionalField;
     const unexpectedShapesObserved = expected.diffActual(actual);
     const observedShapeDidNotMatch = unexpectedShapesObserved.length > 0;
 
-    if (actual.wasMissing && expectsARequiredField) {
+    if (actual.wasMissing() && expected.aRequiredField()) {
       present.askMakeOptional();
       present.askRemoveField();
     }
@@ -89,6 +87,7 @@ class FieldShapeInterpretationHelper {
 
   flush(): IInterpretation {
     const suggestions: ISuggestion[] = [];
+    const previewTabs: IInteractionPreviewTab[] = [];
 
     ///////////////////////////////////////////////////////////////
     // Catch New fields first
@@ -114,13 +113,33 @@ class FieldShapeInterpretationHelper {
       suggestions.push(this.removeField(updateShapeCommands));
     }
 
-    return { suggestions, previewTabs: [] };
+    return { suggestions, previewTabs: this.createPreviews() };
   }
 
   ///////////////////////////////////////////////////////////////////
 
   private generateCommandsToChangeShape(): any[] {
     return [];
+  }
+
+  private createPreviews(): IInteractionPreviewTab[] {
+    const previews: IInteractionPreviewTab[] = [];
+    const expected = this.expected.expectedShapes();
+
+    const a = this.actual.interactionsGroupedByCoreShapeKind();
+    debugger;
+
+    this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
+      previews.push({
+        title: i.label,
+        invalid: expected.has(i.kind),
+        allowsExpand: true,
+        interactionPointers: i.interactions,
+        jsonTrailsByInteractions: i.jsonTrailsByInteractions,
+      });
+    });
+
+    return previews;
   }
 
   private wrapFieldShapeWithOptional(shapeChangeCommands: any[]): ISuggestion {
@@ -197,7 +216,8 @@ class FieldShapeInterpretationHelper {
           interactionPointers: shapeGrouping.interactions,
           title: shapeGrouping.label,
           allowsExpand: true,
-          renderBody: async (a) => {},
+          invalid: false,
+          jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
         };
       });
 

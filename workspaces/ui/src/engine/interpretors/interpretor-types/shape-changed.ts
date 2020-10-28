@@ -27,7 +27,8 @@ export function shapeChangeInterpretor(
         interactionPointers: shapeGrouping.interactions,
         title: shapeGrouping.label,
         allowsExpand: true,
-        renderBody: async (a) => {},
+        invalid: additionalKindsObserved.includes(shapeGrouping.kind),
+        jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
       };
     });
 

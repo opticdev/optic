@@ -24,6 +24,7 @@ export function useSingleDiffMachine(
   function createQueries() {
     return {
       preview: () => context.preview,
+      description: () => context.descriptionWhileLoading,
       status: () => value,
     };
   }

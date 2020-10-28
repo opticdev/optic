@@ -20,6 +20,7 @@ import { DocDarkGrey } from '../../docs/DocConstants';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { ReviewDiff } from './ReviewDiff';
 import { SubtleBlueBackground } from '../../../theme';
+import Divider from '@material-ui/core/Divider';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -86,6 +87,7 @@ export function EndpointGrouping(props) {
 
   return (
     <>
+      <Divider />
       <Paper
         className={classes.sectionHeader}
         onClick={() => setExpanded(!expanded)}

@@ -8,6 +8,8 @@ import {
 import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
 import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
+import { Expectation } from './shape-diff-dsl';
+import { JsonHelper } from '@useoptic/domain';
 
 export function descriptionForDiffs(
   diff: ParsedDiff,
@@ -30,16 +32,18 @@ function descriptionForNewRegions(
   let title: ICopy[] = [];
   if (location.inRequest) {
     title = [
+      plain('undocumented'),
       code(location.inRequest.contentType || 'No Body'),
-      plain('Request observed for the first time'),
+      plain('request observed'),
     ];
   }
   if (location.inResponse) {
     title = [
+      plain('undocumented'),
       code(location.inResponse.statusCode.toString()),
-      plain('Response with'),
+      plain('response with'),
       code(location.inResponse.contentType || 'No Body'),
-      plain('observed for the first time'),
+      plain('observed'),
     ];
   }
 
@@ -48,6 +52,17 @@ function descriptionForNewRegions(
     changeType: IChangeType.Added,
     location,
     assertion: [plain('Undocumented Body Observed')],
+    getJsonBodyToPreview: (interaction: any) => {
+      const body =
+        (location.inRequest && interaction.request.body) ||
+        (location.inResponse && interaction.response.body);
+
+      if (body) {
+        return JsonHelper.fromInteractionBodyToJs(body);
+      } else {
+        return { asJson: null, asText: null };
+      }
+    },
   };
 }
 
@@ -60,23 +75,57 @@ function descriptionForShapeDiff(
   const jsonTrailPath = asShapeDiff.jsonTrail.path;
   const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1]!;
 
-  if (asShapeDiff.isUnmatched) {
-    return {
-      title: [code(JSON.stringify(jsonTrailLast) + 'changed')], // make me pretty
-      location,
-      changeType: IChangeType.Changed,
-      assertion: [code('expected use spec namer here')],
-    };
+  const getJsonBodyToPreview = (interaction: any) => {
+    const body =
+      (location.inRequest && interaction.request.body) ||
+      (location.inResponse && interaction.response.body);
+
+    if (body) {
+      return JsonHelper.fromInteractionBodyToJs(body);
+    } else {
+      return { asJson: null, asText: null };
+    }
+  };
+
+  const expected = new Expectation(
+    diff,
+    rfcBaseState,
+    asShapeDiff.shapeTrail,
+    asShapeDiff.jsonTrail
+  );
+
+  if (expected.isField()) {
+    if (asShapeDiff.isUnmatched) {
+      return {
+        title: [
+          plain('values of '),
+          code(expected.fieldKey()),
+          plain('did not match'),
+          code(expected.shapeName()),
+        ],
+        location,
+        changeType: IChangeType.Changed,
+        assertion: [code('expected ' + expected.shapeName())],
+        getJsonBodyToPreview,
+      };
+    }
+
+    if (asShapeDiff.isUnspecified) {
+      return {
+        title: [
+          plain('undocumented field'),
+          code(expected.fieldKey()),
+          plain('observed'),
+        ],
+        location,
+        changeType: IChangeType.Added,
+        assertion: [code('undocumented field')],
+        getJsonBodyToPreview,
+      };
+    }
   }
 
-  if (asShapeDiff.isUnspecified) {
-    return {
-      title: [code(JSON.stringify(jsonTrailLast) + 'observed')], // make me pretty
-      location,
-      changeType: IChangeType.Added,
-      assertion: [code('expected use spec namer here')],
-    };
-  }
+  //@todo impliment others
 
   invariant('Unexpected shape diff');
 }

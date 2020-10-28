@@ -77,9 +77,6 @@ const createNewDiffMachine = <Context>(
       unfocused: {
         on: {
           SHOWING: {
-            actions: (context, event) => {
-              debugger;
-            },
             target: 'loading',
           },
           //@ts-ignore
