@@ -11,12 +11,14 @@ import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 //only ever take 1 diff at a time
 export function newRegionInterpreters(
   diff: ParsedDiff,
-  learnedBodies: ILearnedBodies
+  learnedBodies: ILearnedBodies,
+  services: DiffRfcBaseState
 ): ISuggestion[] {
   if (
     diff.isA(DiffTypes.UnmatchedRequestBodyContentType) ||
     diff.isA(DiffTypes.UnmatchedResponseBodyContentType)
   ) {
+    // return [newContentType(diff, learnedBodies, services)];
   }
 
   return [];

@@ -70,6 +70,11 @@ export function useDiffSessionMachine(
   function createQueries() {
     const { context, value } = state;
     return {
+      handledByDiffHash: () => {},
+      hasEndpoint: (method, pathId) =>
+        !!context.endpoints.find(
+          (i) => i.pathId === pathId && i.method === method
+        ),
       selectedEndpoint: () => context.focus,
       sessionState: () => value,
       totalDiffs: () => context.endpoints.reduce((a, c) => a + c.diffCount, 0),

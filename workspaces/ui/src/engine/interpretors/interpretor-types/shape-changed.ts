@@ -4,8 +4,10 @@ import { Actual, Expectation } from '../shape-diff-dsl';
 import { JsonHelper, opticEngine } from '@useoptic/domain';
 import { InteractiveSessionConfig } from '../../interfaces/session';
 import {
+  code,
   IInteractionPreviewTab,
   IInterpretation,
+  plain,
 } from '../../interfaces/interpretors';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
@@ -27,6 +29,7 @@ export function shapeChangeInterpretor(
         interactionPointers: shapeGrouping.interactions,
         title: shapeGrouping.label,
         allowsExpand: true,
+        assertion: [plain('expected'), code(this.expected.shapeName())],
         invalid: additionalKindsObserved.includes(shapeGrouping.kind),
         jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
       };

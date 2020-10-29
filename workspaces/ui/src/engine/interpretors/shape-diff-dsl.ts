@@ -203,7 +203,7 @@ export class Actual {
         label: 'was number',
         kind: ICoreShapeKinds.NumberKind,
         interactions: wasNumber,
-        jsonTrailsByInteractions: wasNullTrails,
+        jsonTrailsByInteractions: wasNumberTrails,
       });
     if (wasBoolean.length)
       results.push({
@@ -259,5 +259,5 @@ type IInteractionsGroupedByCoreShapeKind = {
   label: string;
   kind: ICoreShapeKinds;
   interactions: string[];
-  jsonTrailsByInteractions: IJsonTrail[];
+  jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
 }[];

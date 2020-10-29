@@ -48,11 +48,15 @@ export function useEndpointDiffMachine(
       prepare: () => {
         send({ type: 'PREPARE' });
       },
+      handledUpdated: () => {
+        send({ type: 'HANDLED_UPDATED' });
+      },
     };
   }
 
   function createQueries() {
     return {
+      handledByDiffHash: () => context.handledByDiffHash,
       newRegionDiffs: () => context.newRegions,
       shapeDiffs: () => context.shapeDiffs,
       getDiffActor: (diffHash) => {
@@ -145,17 +149,25 @@ export function useEndpointDiffMachine(
     };
   }
 
+  const actions = createActions();
+  const queries = createQueries();
+
   return {
     value,
     context,
-    actions: createActions(),
-    queries: createQueries(),
+    actions,
+    queries,
     makeDiffActorHook: (diffHash: string) => () => {
       const { ref, diffParsed }: { ref: any; diffParsed: ParsedDiff } =
         context.shapeDiffs.find((i) => i.diffParsed.diffHash === diffHash) ||
         context.newRegions.find((i) => i.diffParsed.diffHash === diffHash);
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      return useSingleDiffMachine(diffParsed, () => ref, services);
+      return useSingleDiffMachine(
+        diffParsed,
+        () => ref,
+        () => actions,
+        services
+      );
     },
   };
 }

@@ -4,6 +4,7 @@ import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 export interface IInterpretation {
   suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
+  overrideTitle?: ICopy[];
 }
 
 export interface IDiffSuggestionPreview {
@@ -11,13 +12,15 @@ export interface IDiffSuggestionPreview {
   diffDescription: IDiffDescription;
   tabs: IInteractionPreviewTab[];
   suggestions: ISuggestion[];
+  overrideTitle?: ICopy[];
 }
 
 export interface IInteractionPreviewTab {
   title: string;
   allowsExpand: boolean;
   invalid: boolean;
-  jsonTrailsByInteractions: IJsonTrail[];
+  assertion: ICopy[];
+  jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
   interactionPointers: string[];
 }
 

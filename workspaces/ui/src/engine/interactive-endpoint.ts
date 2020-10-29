@@ -26,6 +26,9 @@ export type InteractiveEndpointSessionEvent =
   | {
       type: 'ADD_IGNORE';
       newRule: IIgnoreRule;
+    }
+  | {
+      type: 'HANDLED_UPDATED';
     };
 
 // The context (extended state) of the machine
@@ -36,6 +39,7 @@ export interface InteractiveEndpointSessionContext {
   }[];
   shapeDiffs: { diffParsed: ParsedDiff; shapeTrail: IShapeTrail; ref: any }[];
   ignored: IIgnoreRule[];
+  handledByDiffHash: { [key: string]: boolean };
   learningContext:
     | {
         newRegions: string;
@@ -56,6 +60,7 @@ export const newInteractiveEndpointSessionMachine = (
   >({
     id: `${pathId}.${method}`,
     context: {
+      handledByDiffHash: {},
       newRegions: [],
       shapeDiffs: [],
       ignored: [],
@@ -83,6 +88,7 @@ export const newInteractiveEndpointSessionMachine = (
                 });
               return newRegionDiffs;
             },
+            handledByDiffHash: (context) => computeHandled(context),
             shapeDiffs: (context, event) => {
               const shapeDiffsGrouped = new DiffSet(
                 diffs,
@@ -155,6 +161,11 @@ export const newInteractiveEndpointSessionMachine = (
       },
       ready: {
         on: {
+          HANDLED_UPDATED: {
+            actions: assign({
+              handledByDiffHash: (context) => computeHandled(context),
+            }),
+          },
           ADD_IGNORE: {
             actions: [
               assign({
@@ -179,3 +190,18 @@ export const newInteractiveEndpointSessionMachine = (
     },
   });
 };
+
+function computeHandled(
+  context: InteractiveEndpointSessionContext
+): { [key: string]: boolean } {
+  const results: { [key: string]: boolean } = {};
+  context.shapeDiffs.forEach((i) => {
+    const value = i.ref.state.value;
+    results[i.diffParsed.diffHash] = value && value.ready === 'handled';
+  });
+  context.newRegions.forEach((i) => {
+    const value = i.ref.state.value;
+    results[i.diffParsed.diffHash] = value && value.ready === 'handled';
+  });
+  return results;
+}

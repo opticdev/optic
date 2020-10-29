@@ -41,6 +41,8 @@ import { DocDarkGrey } from '../../docs/DocConstants';
 import { ICopyRender } from './ICopyRender';
 import Skeleton from '@material-ui/lab/Skeleton';
 import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewerAllJS';
+import { SuggestionSelect } from './SuggestionSelect';
+import Fade from '@material-ui/core/Fade';
 
 export const SingleDiffSessionContext = React.createContext(null);
 
@@ -75,26 +77,21 @@ export function ReviewDiff(props) {
 
 export function DiffSummaryRegion(props) {
   const classes = useStyles();
-  const { diff, diffRef, diffQueries } = useSingleDiffSession();
+  const { diff, diffRef, diffQueries, diffActions } = useSingleDiffSession();
   const status = diffQueries.status();
 
   const isLoading = !status.ready;
+  const isHandled = status.ready && status.ready === 'handled';
+
   const preview = useMemo(() => diffQueries.preview(), [isLoading]);
 
-  const approved = status === 'handled';
+  const suggestions = preview ? preview.suggestions : [];
+  const selectedSuggestionIndex = diffQueries.selectedSuggestionIndex();
+
   const loadingDescription = useMemo(() => diffQueries.description(), []);
   const { changeType } = loadingDescription;
 
-  // const {
-  //   mainInterpretation,
-  //   readableIdentifier,
-  //   kind,
-  //   location,
-  //   tasks,
-  //   suggestions,
-  //   diffs,
-  // } = props.diff || HardCodedDiffExamples[0];
-
+  const title = (preview && preview.overrideTitle) || loadingDescription.title;
   const previewTabs = (preview && preview.tabs) || [];
   const [previewTab, setPreviewTab] = useState(undefined);
   const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab);
@@ -106,78 +103,53 @@ export function DiffSummaryRegion(props) {
     },
     [previewTabs.length]
   );
-  // const jsonExample = diffs.find((i) => i.oneWordName === previewTab)
-  //   .jsonExample;
-
-  // const [suggestionId, setSuggestionId] = useState(suggestions[0].id);
-  // const [approved, setApproved] = useState(false);
-  // const suggestion = suggestions.find((i) => i.id === suggestionId);
-  // const choseIgnore = suggestionId === 'ignore'; //this is a hack for the demo
 
   const color = (() => {
     if (changeType === 0) return AddedGreen;
     if (changeType === 1) return ChangedYellow;
     if (changeType === 2) return RemovedRed;
   })();
-  //
-  // const locationRender = (() => {
-  //   if (location.inRequest) {
-  //     return (
-  //       <>
-  //         Request Body <Code>{location.contentType}</Code>
-  //       </>
-  //     );
-  //   }
-  //   if (location.inResponse) {
-  //     return (
-  //       <>
-  //         {location.statusCode} Response Body{' '}
-  //         <Code>{location.contentType}</Code>
-  //       </>
-  //     );
-  //   }
-  // })();
 
   const openHeader = (
     <>
-      <FiberManualRecordIcon
-        style={{ width: 15, marginLeft: 5, marginRight: 10, color }}
-      />
-
-      <Typography variant="h6" className={classes.diffText}>
-        <ICopyRender variant="subtitle2" copy={loadingDescription.title} />
-        {/*{mainInterpretation}: <Code>{readableIdentifier}</Code>*/}
-      </Typography>
+      <div className={classes.titleHeader}>
+        <FiberManualRecordIcon
+          style={{ width: 15, marginLeft: 5, marginRight: 5, color }}
+        />
+        <ICopyRender variant="caption" copy={title} />
+      </div>
       <div style={{ flex: 1 }} />
-      <Button
-        size="small"
-        color="primary"
-        variant="contained"
-        // onClick={() => setApproved(true)}
-      >
-        Approve
-      </Button>
+
+      <Fade in={suggestions.length}>
+        <SuggestionSelect
+          suggestions={suggestions}
+          selectedSuggestionIndex={selectedSuggestionIndex}
+          setSelectedSuggestionIndex={diffActions.setSelectedSuggestionIndex}
+          stage={diffActions.stage}
+        />
+      </Fade>
     </>
   );
 
-  const approvedHeader = approved && (
+  const approvedHeader = isHandled && (
     <>
-      <CheckCircleOutlineIcon
-        style={{
-          width: 15,
-          marginLeft: 5,
-          marginRight: 10,
-          color: UpdatedBlue,
-        }}
-      />
-
-      <Typography variant="h6" className={classes.diffText}>
-        {/*{suggestion.pastTense}*/}
-      </Typography>
+      <div className={classes.titleHeader} style={{ paddingLeft: 10 }}>
+        <ICopyRender
+          variant="caption"
+          copy={suggestions[selectedSuggestionIndex].action.pastTense}
+        />
+      </div>
       <div style={{ flex: 1 }} />
-      {/*<Button size="small" color="default" onClick={() => setApproved(false)}>*/}
-      {/*  Unstage*/}
-      {/*</Button>*/}
+      <div className={classes.titleHeader} style={{ marginRight: 5 }}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={diffActions.unstage}
+          style={{ fontSize: 10, fontWeight: 800 }}
+        >
+          Unstage
+        </Button>
+      </div>
     </>
   );
 
@@ -185,58 +157,24 @@ export function DiffSummaryRegion(props) {
     <Card
       className={classes.root}
       elevation={2}
-      style={{ marginBottom: approved ? 15 : 50 }}
+      style={{ marginBottom: isHandled ? 15 : 50 }}
     >
       <div className={classes.cardHeader}>
-        {approved ? approvedHeader : openHeader}
+        {isHandled ? approvedHeader : openHeader}
       </div>
-      <Collapse in={!approved}>
-        <Divider style={{ marginBottom: 10 }} />
-        <div className={classes.cardInner}>
-          <div className={classes.location}>
-            {/*{locationRender}*/}
-            {/*<div style={{ marginTop: 5 }}>*/}
-            {/*  Traffic observed from tasks{' '}*/}
-            {/*  {tasks*/}
-            {/*    .map((i) => <Code>{i}</Code>)*/}
-            {/*    .reduce((prev, curr) => [prev, ', ', curr])}*/}
-            {/*</div>*/}
-          </div>
-          <div className={classes.interpretations}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">
-                <Typography variant="overline">Suggestions:</Typography>
-              </FormLabel>
-              {/*<RadioGroup*/}
-              {/*  value={suggestionId}*/}
-              {/*  onChange={(e, v) => setSuggestionId(v)}*/}
-              {/*>*/}
-              {/*  {suggestions.map((suggestion, index) => {*/}
-              {/*    return (*/}
-              {/*      <FormControlLabel*/}
-              {/*        value={suggestion.id}*/}
-              {/*        control={<Radio size="small" />}*/}
-              {/*        label={*/}
-              {/*          <span style={{ fontFamily: 'Ubuntu Mono' }}>*/}
-              {/*            {suggestion.action}*/}
-              {/*          </span>*/}
-              {/*        }*/}
-              {/*      />*/}
-              {/*    );*/}
-              {/*  })}*/}
-              {/*  <FormControlLabel*/}
-              {/*    value="ignore"*/}
-              {/*    control={<Radio size="small" />}*/}
-              {/*    label={*/}
-              {/*      <span style={{ opacity: 0.8, fontFamily: 'Ubuntu Mono' }}>*/}
-              {/*        Ignore these Diffs*/}
-              {/*      </span>*/}
-              {/*    }*/}
-              {/*  />*/}
-              {/*</RadioGroup>*/}
-            </FormControl>
-          </div>
-        </div>
+      <Collapse in={!isHandled}>
+        {/*<div className={classes.cardInner}>*/}
+        {/* this will be where we show more informatino about the diff */}
+        {/*  <div className={classes.location}>*/}
+        {/*    /!*{locationRender}*!/*/}
+        {/*    /!*<div style={{ marginTop: 5 }}>*!/*/}
+        {/*    /!*  Traffic observed from tasks{' '}*!/*/}
+        {/*    /!*  {tasks*!/*/}
+        {/*    /!*    .map((i) => <Code>{i}</Code>)*!/*/}
+        {/*    /!*    .reduce((prev, curr) => [prev, ', ', curr])}*!/*/}
+        {/*    /!*</div>*!/*/}
+        {/*  </div>*/}
+        {/*</div>*/}
         <div className={classes.preview}>
           {isLoading && <LoadingExample lines={3} />}
           <div className={classes.previewHeader}>
@@ -263,6 +201,7 @@ export function DiffSummaryRegion(props) {
             pointer={
               selectedPreviewTab && selectedPreviewTab.interactionPointers[0]
             }
+            assertion={selectedPreviewTab && selectedPreviewTab.assertion}
             jsonTrailsByInteractions={
               selectedPreviewTab && selectedPreviewTab.jsonTrailsByInteractions
             }
@@ -282,7 +221,13 @@ export function DiffSummaryRegion(props) {
 }
 
 function RenderPreviewBody(props) {
-  const { diff, description, pointer, jsonTrailsByInteractions } = props;
+  const {
+    diff,
+    description,
+    assertion,
+    pointer,
+    jsonTrailsByInteractions,
+  } = props;
   const { loadInteraction } = useDiffSession();
 
   const [interaction, setInteraction] = useState(null);
@@ -315,6 +260,7 @@ function RenderPreviewBody(props) {
     <InteractionBodyViewerAllJS
       description={description}
       body={bodyPreview}
+      assertion={assertion}
       jsonTrails={jsonTrailsByInteractions[pointer] || []}
       diff={diff}
     />
@@ -371,7 +317,12 @@ const useStyles = makeStyles((theme) => ({
   cardHeader: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 6,
+    padding: 3,
+    alignItems: 'flex-start',
+  },
+  titleHeader: {
+    height: 32,
+    display: 'flex',
     alignItems: 'center',
   },
   cardInner: {
@@ -388,9 +339,6 @@ const useStyles = makeStyles((theme) => ({
   },
   preview: {
     backgroundColor: OpticBlue,
-    marginTop: 14,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2,
   },
   location: {
     padding: 5,

@@ -49,14 +49,19 @@ export async function prepareNewRegionDiffSuggestionPreview(
     allowsExpand: true,
     interactionPointers: diff.interactions,
     invalid: true,
-    jsonTrailsByInteractions: [],
+    assertion: [],
+    jsonTrailsByInteractions: {},
   };
 
   return {
     for: 'region',
     tabs: [tab1],
     diffDescription: descriptionForDiffs(diff, services.rfcBaseState),
-    suggestions: newRegionInterpreters(diff, learnedBodies),
+    suggestions: newRegionInterpreters(
+      diff,
+      learnedBodies,
+      services.rfcBaseState
+    ),
   };
 }
 
@@ -65,7 +70,7 @@ export async function prepareShapeDiffSuggestionPreview(
   services: InteractiveSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter
 ): Promise<IDiffSuggestionPreview> {
-  const { suggestions, previewTabs } = interpretShapeDiffs(
+  const { suggestions, previewTabs, overrideTitle } = interpretShapeDiffs(
     diff,
     learnedTrails,
     services
@@ -76,5 +81,6 @@ export async function prepareShapeDiffSuggestionPreview(
     tabs: previewTabs,
     diffDescription: descriptionForDiffs(diff, services.rfcBaseState),
     suggestions: suggestions,
+    overrideTitle,
   };
 }

@@ -29,11 +29,6 @@ export function ApiRoutes(props) {
           path={routerPaths.diffsRoot}
           component={CaptureManagerPage}
         />
-        <Route
-          strict
-          path={routerPaths.diffsRoot}
-          component={CaptureManagerPage}
-        />
         <Route strict path={routerPaths.review} component={ReviewDiffPage} />
         {process.env.REACT_APP_TESTING_DASHBOARD === 'true' && (
           <Route

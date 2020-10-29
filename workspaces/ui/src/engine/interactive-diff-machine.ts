@@ -35,7 +35,7 @@ interface DiffStateSchema {
 type DiffEvent =
   | { type: 'SHOWING' }
   | { type: 'UPDATE_PREVIEW'; ignoreRules: IIgnoreRule[] }
-  | { type: 'CHANGE_SUGGESTION'; to: string }
+  | { type: 'SET_SUGGESTION_INDEX'; index: number }
   | { type: 'DISMISS_TYPE'; type_slug: string }
   | { type: 'STAGE' }
   | { type: 'UNSTAGE' }
@@ -47,6 +47,7 @@ export interface DiffContext<InterpretationContext> {
   preview: IDiffSuggestionPreview | undefined;
   revevantIgnoreRules: IIgnoreRule[];
   descriptionWhileLoading: IDiffDescription;
+  selectedSuggestionIndex: number;
 }
 
 // standard interface for diffs
@@ -121,6 +122,11 @@ const createNewDiffMachine = <Context>(
               'reload_preview',
             ],
           },
+          SET_SUGGESTION_INDEX: {
+            actions: assign({
+              selectedSuggestionIndex: (ctx, event) => event.index,
+            }),
+          },
         },
         states: {
           reload_preview: {
@@ -138,8 +144,19 @@ const createNewDiffMachine = <Context>(
           },
           unhandled: {
             entry: [(context, event) => console.log('ready to show the diff.')],
+            on: {
+              STAGE: {
+                target: 'handled',
+              },
+            },
           },
-          handled: {},
+          handled: {
+            on: {
+              UNSTAGE: {
+                target: 'unhandled',
+              },
+            },
+          },
         },
       },
     },
@@ -162,6 +179,7 @@ export const createNewRegionMachine = (
         parsedDiff,
         services.rfcBaseState
       ),
+      selectedSuggestionIndex: 0,
     }),
     true,
     async (
@@ -205,6 +223,7 @@ export const createShapeDiffMachine = (
       revevantIgnoreRules: [],
       descriptionWhileLoading: descriptionForDiffs(diff, services.rfcBaseState),
       preview: undefined,
+      selectedSuggestionIndex: 0,
     }),
     false,
     async (

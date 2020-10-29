@@ -7,7 +7,41 @@ import { UpdatedBlueBackground } from '../../../theme';
 export function ICopyRender(props) {
   const { copy, style, variant } = props;
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline' }}>
+    <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap' }}>
+      {copy.map((i, index) => {
+        if (i.style === ICopyStyle.Plain) {
+          return (
+            <span key={index}>
+              {
+                <Typography
+                  component="span"
+                  variant={variant}
+                  style={{ ...style, fontWeight: 200 }}
+                >
+                  {i.text}
+                </Typography>
+              }
+            </span>
+          );
+        } else if (i.style === ICopyStyle.Code) {
+          return (
+            <Code
+              variant={variant}
+              key={index}
+              style={{ whiteSpace: 'pre-wrap' }}
+            >
+              {i.text}
+            </Code>
+          );
+        }
+      })}
+    </div>
+  );
+}
+export function ICopyRenderSpan(props) {
+  const { copy, style, variant } = props;
+  return (
+    <span style={{ display: 'flex', alignItems: 'baseline' }}>
       {copy.map((i, index) => {
         if (i.style === ICopyStyle.Plain) {
           return (
@@ -31,6 +65,47 @@ export function ICopyRender(props) {
           );
         }
       })}
+    </span>
+  );
+}
+
+export function ICopyRenderMultiline(props) {
+  const { copy, style, variant } = props;
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap' }}>
+      {copy.map((i, index) => {
+        if (i.style === ICopyStyle.Plain) {
+          return (
+            <div key={index}>
+              {
+                <Typography
+                  component="span"
+                  variant={variant}
+                  style={{
+                    ...style,
+                    fontWeight: 200,
+                    marginLeft: index === 0 && 3,
+                  }}
+                >
+                  {i.text}
+                </Typography>
+              }
+            </div>
+          );
+        } else if (i.style === ICopyStyle.Code) {
+          return (
+            <div>
+              <Code
+                variant={variant}
+                key={index}
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                {i.text}
+              </Code>
+            </div>
+          );
+        }
+      })}
     </div>
   );
 }
@@ -42,6 +117,7 @@ export const Code = (props) => {
       component="span"
       variant={props.variant}
       className={classes.codeInline}
+      style={props.style}
     >
       {props.children}
     </Typography>

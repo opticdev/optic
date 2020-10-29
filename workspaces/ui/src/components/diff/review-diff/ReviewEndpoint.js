@@ -59,23 +59,41 @@ export function ReviewEndpoint(props) {
 export function ReviewEndpointInner(props) {
   const { endpointQueries, pathId, method } = useEndpointDiffSession();
 
+  const handled = endpointQueries.handledByDiffHash();
+
   const grouped = useMemo(() => endpointQueries.groupDiffsByLocation(), []);
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
       {/*<SubtleEndpointTOC groupings={grouped} />*/}
 
       {grouped.requests.map((i, index) => (
-        <EndpointGrouping key={'diff-requests' + index} {...i} />
+        <EndpointGrouping
+          handled={handled}
+          key={'diff-requests' + index}
+          {...i}
+        />
       ))}
       {grouped.responses.map((i, index) => (
-        <EndpointGrouping key={'diff-responses' + index} {...i} />
+        <EndpointGrouping
+          handled={handled}
+          key={'diff-responses' + index}
+          {...i}
+        />
       ))}
 
       {grouped.newRequests.map((i, index) => (
-        <EndpointGrouping key={'diff-new-requests' + index} {...i} />
+        <EndpointGrouping
+          handled={handled}
+          key={'diff-new-requests' + index}
+          {...i}
+        />
       ))}
       {grouped.newResponses.map((i, index) => (
-        <EndpointGrouping key={'diff-new-responses' + index} {...i} />
+        <EndpointGrouping
+          handled={handled}
+          key={'diff-new-responses' + index}
+          {...i}
+        />
       ))}
     </Box>
   );
@@ -84,6 +102,13 @@ export function ReviewEndpointInner(props) {
 export function EndpointGrouping(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(true);
+
+  const handledByDiffHash = props.handled;
+
+  const handledCount = props.diffs.filter(
+    (i) => !!handledByDiffHash[i.diffParsed.diffHash]
+  ).length;
+  const percent = Math.round((handledCount / props.diffs.length) * 100);
 
   return (
     <>
@@ -102,7 +127,7 @@ export function EndpointGrouping(props) {
           You have handled 0/{props.diffs.length} Diffs
         </div>
         <LinearProgress
-          value={50}
+          value={percent}
           variant="determinate"
           style={{ flex: 1, maxWidth: 80, marginRight: 10 }}
         />
@@ -124,7 +149,11 @@ export const LocationBreadcumbX = (props) => {
   return (
     <Breadcrumbs
       className={classes.location}
-      separator={<span style={{ fontSize: 15, ...itemStyles }}>{'›'}</span>}
+      separator={
+        <span style={{ fontSize: 12, color: 'black', ...itemStyles }}>
+          {'›'}
+        </span>
+      }
       aria-label="breadcrumb"
     >
       {location
@@ -148,7 +177,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 12,
   },
   crumb: {
-    fontSize: 15,
+    fontSize: 12,
     textTransform: 'uppercase',
   },
   sectionHeader: {

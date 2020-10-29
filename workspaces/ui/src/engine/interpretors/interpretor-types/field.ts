@@ -3,6 +3,7 @@ import { Actual, Expectation } from '../shape-diff-dsl';
 import {
   code,
   IChangeType,
+  ICopy,
   IInteractionPreviewTab,
   IInterpretation,
   ISuggestion,
@@ -18,6 +19,7 @@ import {
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { JsonHelper, opticEngine } from '@useoptic/domain';
 import { InteractiveSessionConfig } from '../../interfaces/session';
+import { Simulate } from 'react-dom/test-utils';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -89,6 +91,7 @@ class FieldShapeInterpretationHelper {
     const suggestions: ISuggestion[] = [];
     const previewTabs: IInteractionPreviewTab[] = [];
 
+    let overrideTitle: ICopy[] | undefined;
     ///////////////////////////////////////////////////////////////
     // Catch New fields first
     if (typeof this.shouldAskAddField !== 'undefined') {
@@ -113,7 +116,21 @@ class FieldShapeInterpretationHelper {
       suggestions.push(this.removeField(updateShapeCommands));
     }
 
-    return { suggestions, previewTabs: this.createPreviews() };
+    //force update the title
+    if (
+      this.expected.isField() &&
+      !this.expected.isOptionalField() &&
+      this.actual.wasMissing() &&
+      this.additionalCoreShapeKinds.length === 0
+    ) {
+      overrideTitle = [
+        plain('required field'),
+        code(this.expected.fieldKey()),
+        plain('was missing'),
+      ];
+    }
+
+    return { suggestions, previewTabs: this.createPreviews(), overrideTitle };
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -126,8 +143,10 @@ class FieldShapeInterpretationHelper {
     const previews: IInteractionPreviewTab[] = [];
     const expected = this.expected.expectedShapes();
 
-    const a = this.actual.interactionsGroupedByCoreShapeKind();
-    debugger;
+    const asFieldType =
+      this.expected.isField() && !this.expected.isOptionalField()
+        ? 'as required field'
+        : '';
 
     this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
       previews.push({
@@ -135,6 +154,11 @@ class FieldShapeInterpretationHelper {
         invalid: expected.has(i.kind),
         allowsExpand: true,
         interactionPointers: i.interactions,
+        assertion: [
+          plain('expected'),
+          code(this.expected.shapeName()),
+          plain(asFieldType),
+        ],
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
     });
@@ -145,16 +169,15 @@ class FieldShapeInterpretationHelper {
   private wrapFieldShapeWithOptional(shapeChangeCommands: any[]): ISuggestion {
     const key = this.expected.fieldKey();
     const sharedCopy = [
-      plain('field'),
       code(key),
-      plain('as optional'),
+      plain('an optional'),
       code(this.expected.shapeName()),
     ];
 
     return {
       action: {
-        activeTense: [plain('mark'), ...sharedCopy],
-        pastTense: [plain('Marked'), ...sharedCopy],
+        activeTense: [plain('make field'), ...sharedCopy],
+        pastTense: [plain('Marked field'), ...sharedCopy],
       },
       commands: [],
       changeType: IChangeType.Changed,
@@ -163,12 +186,12 @@ class FieldShapeInterpretationHelper {
 
   private removeField(shapeChangeCommands: any[]): ISuggestion {
     const key = this.expected.fieldKey();
-    const sharedCopy = [plain('field'), code(key)];
+    const sharedCopy = [code(key)];
 
     return {
       action: {
-        activeTense: [plain('remove'), ...sharedCopy],
-        pastTense: [plain('Removed'), ...sharedCopy],
+        activeTense: [plain('remove field'), ...sharedCopy],
+        pastTense: [plain('Removed field'), ...sharedCopy],
       },
       commands: [],
       changeType: IChangeType.Removed,
@@ -195,8 +218,6 @@ class FieldShapeInterpretationHelper {
   }
 
   private addNewField(key: string): IInterpretation {
-    const parentId = this.expected.lastObject!;
-
     // commands for the field value. infer'd poly.
     const { rootShapeId, commands } = JsonHelper.toJs(
       LearnJsonTrailAffordances.toCommandsJson(
@@ -217,6 +238,7 @@ class FieldShapeInterpretationHelper {
           title: shapeGrouping.label,
           allowsExpand: true,
           invalid: false,
+          assertion: [plain('undocumented field'), code(key)],
           jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
         };
       });

@@ -22,12 +22,14 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 import { IChangeType } from '../../../../engine/interfaces/interpretors';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { ICopyRender, ICopyRenderSpan } from '../../review-diff/ICopyRender';
 
 export default function InteractionBodyViewerAllJS({
   diff,
   description,
   jsonTrails,
   body,
+  assertion,
   selectedInterpretation,
 }) {
   const generalClasses = useShapeViewerStyles();
@@ -40,8 +42,9 @@ export default function InteractionBodyViewerAllJS({
 
   const diffDetails = diff && {
     description,
+    assertion,
     changeType: description.changeType,
-    changeDescription: description.assertion,
+    // changeDescription: 'changed!',
   };
 
   return (
@@ -253,22 +256,22 @@ function RowSeqIndex({ type, index, missing }) {
   );
 }
 
-function DiffAssertion({ diffDescription, changeDescription }) {
+function DiffAssertion({ assertion, changeDescription }) {
   const classes = useStyles();
-
   return (
     <div className={classes.diffAssertion}>
       {changeDescription ? (
         <>
           <CheckCircleIcon className={classes.selectectedChangeIcon} />
           <span className={classes.changeDescription}>
-            {changeDescription.map(({ value }) => value).join(' ')}
+            <ICopyRenderSpan variant="subtitle2" copy={assertion} />
+            {/*{changeDescription.map(({ value }) => value).join(' ')}*/}
           </span>
         </>
       ) : (
         <>
           <WarningIcon className={classes.assertionWarningIcon} />
-          <span>{diffDescription.assertion}</span>
+          <ICopyRenderSpan variant="subtitle2" copy={assertion} />
         </>
       )}
     </div>
@@ -494,8 +497,6 @@ const useStyles = makeStyles((theme) => ({
 
 function createInitialState({ diff, jsonTrails, description, body }) {
   const diffTrails = jsonTrails.map(toCommonJsPath);
-
-  debugger;
 
   const shape = body.asJson;
 
