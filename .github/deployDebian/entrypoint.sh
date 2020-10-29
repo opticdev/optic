@@ -17,7 +17,7 @@ echo "Checking out specific branch"
 git checkout release
 echo "Building Optic"
 source sourceme.sh
-optic_build
+optic_build_for_release
 echo "Packing Debian Release"
 cd ./workspaces/local-cli
 npm install
