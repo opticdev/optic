@@ -41,6 +41,7 @@
     "@types/debug": "^4.1.5",
     "all-contributors-cli": "^6.14.0",
     "prettier": "^2.0.4",
+    "semver": "^7.3.2",
     "typescript": "^3.8",
     "wait-on": "^4.0.0",
     "wsrun": "^5.2.0"
