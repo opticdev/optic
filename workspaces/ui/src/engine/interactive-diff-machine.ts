@@ -159,7 +159,9 @@ const createNewDiffMachine = <Context>(
               id: 'should-switch-to-handled',
               src: async (context, event) => {
                 const alreadyHandled =
-                  context.preview && context.preview.tabs.length === 0;
+                  context.preview &&
+                  (context.preview.tabs.length === 0 ||
+                    context.preview.suggestions.length === 0);
                 return alreadyHandled;
               },
               onDone: {

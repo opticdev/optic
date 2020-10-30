@@ -5,6 +5,7 @@ import {
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { ParsedDiff } from '../parse-diff';
 import { useActor } from '@xstate/react';
+import { useEffect } from 'react';
 
 export function useSingleDiffMachine(
   diff: ParsedDiff,
@@ -14,10 +15,15 @@ export function useSingleDiffMachine(
 ) {
   const [state, send] = useActor(getSelf());
   const context: DiffContext<any> = state.context;
-  const value: string = state.value;
+  const value = state.value;
+
+  const endpointActions = getEndpointActions();
+
+  useEffect(() => {
+    endpointActions.handledUpdated();
+  }, [value && value.ready]);
 
   function createActions() {
-    const endpointActions = getEndpointActions();
     return {
       showing: () => send({ type: 'SHOWING' }),
       setSelectedSuggestionIndex: (index: number) =>
@@ -25,11 +31,12 @@ export function useSingleDiffMachine(
         send({ type: 'SET_SUGGESTION_INDEX', index }),
       stage: () => {
         send({ type: 'STAGE' });
-        endpointActions.handledUpdated();
       },
       unstage: () => {
         send({ type: 'UNSTAGE' });
-        endpointActions.handledUpdated();
+      },
+      reset: () => {
+        endpointActions.resetIgnores(diff.diffHash);
       },
     };
   }
@@ -40,6 +47,10 @@ export function useSingleDiffMachine(
       preview: () => context.preview,
       description: () => context.descriptionWhileLoading,
       status: () => value,
+      ignoredAll: () =>
+        context.preview &&
+        (context.preview.suggestions.length === 0 ||
+          context.preview.tabs.length === 0),
       selectedSuggestionIndex: () => context.selectedSuggestionIndex,
     };
   }

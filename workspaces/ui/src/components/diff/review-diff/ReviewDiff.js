@@ -51,7 +51,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewerAllJS';
 import { SuggestionSelect } from './SuggestionSelect';
 import Fade from '@material-ui/core/Fade';
-import { plain, code } from '../../../engine/interfaces/interpretors';
+import { plain, code, bold } from '../../../engine/interfaces/interpretors';
 import Menu from '@material-ui/core/Menu';
 import Grow from '@material-ui/core/Grow';
 import { LightTooltip } from '../../tooltips/LightTooltip';
@@ -100,6 +100,7 @@ export function DiffSummaryRegion(props) {
 
   const isLoading = !status.ready;
   const isHandled = status.ready && status.ready === 'handled';
+  const ignoredAll = isHandled && diffQueries.ignoredAll();
   const readyStatus = status.ready;
 
   const preview = useMemo(() => diffQueries.preview(), [
@@ -166,22 +167,34 @@ export function DiffSummaryRegion(props) {
         <ICopyRender
           variant="caption"
           copy={
-            (suggestions[selectedSuggestionIndex] &&
-              suggestions[selectedSuggestionIndex].action.pastTense) ||
-            []
+            ignoredAll
+              ? [bold('IGNORED: '), ...title]
+              : suggestions[selectedSuggestionIndex] &&
+                suggestions[selectedSuggestionIndex].action.pastTense
           }
         />
       </div>
       <div style={{ flex: 1 }} />
       <div className={classes.titleHeader} style={{ marginRight: 5 }}>
-        <Button
-          size="small"
-          color="primary"
-          onClick={diffActions.unstage}
-          style={{ fontSize: 10, fontWeight: 800 }}
-        >
-          Unstage
-        </Button>
+        {ignoredAll ? (
+          <Button
+            size="small"
+            color="primary"
+            onClick={diffActions.reset}
+            style={{ fontSize: 10, fontWeight: 800 }}
+          >
+            Reset Diff
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            color="primary"
+            onClick={diffActions.unstage}
+            style={{ fontSize: 10, fontWeight: 800 }}
+          >
+            Unstage
+          </Button>
+        )}
       </div>
     </>
   );
@@ -222,56 +235,9 @@ export function DiffSummaryRegion(props) {
                 ))}
               </DiffTabs>
               <div style={{ flex: 1 }} />
-              {selectedPreviewTab && (
-                <LightTooltip
-                  style={{ padding: 0 }}
-                  title={
-                    <ListItemText
-                      style={{ maxWidth: 350 }}
-                      primary={
-                        <ICopyRender
-                          variant="caption"
-                          copy={[
-                            plain('mark examples that are'),
-                            code(
-                              selectedPreviewTab && selectedPreviewTab.title
-                            ),
-                            plain('incorrect'),
-                          ]}
-                        />
-                      }
-                      secondary={
-                        <ICopyRenderMultiline
-                          variant="caption"
-                          copy={[
-                            plain(
-                              'Marking these examples as incorrect tells Optic not to suggest changes to the spec that make these examples valid'
-                            ),
-                          ]}
-                        />
-                      }
-                    />
-                  }
-                >
-                  <Button
-                    onClick={() => {
-                      if (selectedPreviewTab) {
-                        endpointActions.addIgnoreRule(
-                          selectedPreviewTab.ignoreRule
-                        );
-                      }
-                    }}
-                    disabled={
-                      !selectedPreviewTab && selectedPreviewTab.ignoreRule
-                    }
-                    className={classes.ignoreButton}
-                    size="small"
-                    endIcon={<BlockIcon style={{ width: 10, height: 10 }} />}
-                  >
-                    mark as incorrect
-                  </Button>
-                </LightTooltip>
-              )}
+              <IgnoreButton
+                {...{ endpointActions, preview, selectedPreviewTab }}
+              />
               <Button
                 size="small"
                 className={classes.ignoreButton}
@@ -511,5 +477,67 @@ function LoadingExample({ lines = 3 }) {
         />
       ))}
     </div>
+  );
+}
+
+function IgnoreButton({ selectedPreviewTab, preview, endpointActions }) {
+  const classes = useStyles();
+  if (!selectedPreviewTab) {
+    return null;
+  }
+
+  const lastOne = preview.tabs.filter((i) => i.invalid).length;
+
+  return (
+    <LightTooltip
+      style={{ padding: 0 }}
+      title={
+        <ListItemText
+          style={{ maxWidth: 350 }}
+          primary={
+            <ICopyRender
+              variant="caption"
+              copy={[
+                plain('mark examples that are'),
+                code(selectedPreviewTab && selectedPreviewTab.title),
+                plain('incorrect'),
+              ]}
+            />
+          }
+          secondary={
+            <>
+              <ICopyRenderMultiline
+                variant="caption"
+                copy={[
+                  plain(
+                    'Marking these examples as incorrect tells Optic not to suggest changes to the spec that make these examples valid'
+                  ),
+                ]}
+              />
+              {lastOne && (
+                <Typography variant="caption" color="error">
+                  This is the last example that produces this diff. The diff
+                  will be marked as handled if you choose to ignore it.
+                </Typography>
+              )}
+            </>
+          }
+        />
+      }
+    >
+      <Button
+        onClick={() => {
+          if (selectedPreviewTab) {
+            endpointActions.addIgnoreRule(selectedPreviewTab.ignoreRule);
+          }
+        }}
+        disabled={!selectedPreviewTab && selectedPreviewTab.ignoreRule}
+        className={classes.ignoreButton}
+        size="small"
+        endIcon={<BlockIcon style={{ width: 10, height: 10 }} />}
+      >
+        mark as incorrect
+      </Button>
+    </LightTooltip>
   );
 }

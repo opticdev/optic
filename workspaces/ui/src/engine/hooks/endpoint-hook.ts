@@ -55,6 +55,9 @@ export function useEndpointDiffMachine(
       addIgnoreRule: (newRule: IIgnoreRule) => {
         send({ type: 'ADD_IGNORE', newRule });
       },
+      resetIgnores: (diffHash: string) => {
+        send({ type: 'REMOVE_IGNORES', diffHash });
+      },
     };
   }
 

@@ -63,10 +63,14 @@ export enum IChangeType {
 export enum ICopyStyle {
   Plain,
   Code,
+  Bold,
 }
 
 export function plain(text: string): ICopy {
-  return { text: text.trim(), style: ICopyStyle.Plain };
+  return { text: text, style: ICopyStyle.Plain };
+}
+export function bold(text: string): ICopy {
+  return { text: text, style: ICopyStyle.Bold };
 }
 export function code(text: string): ICopy {
   return { text: text.trim(), style: ICopyStyle.Code };

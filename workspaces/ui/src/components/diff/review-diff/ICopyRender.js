@@ -16,7 +16,29 @@ export function ICopyRender(props) {
                 <Typography
                   component="span"
                   variant={variant}
-                  style={{ ...style, fontWeight: 200 }}
+                  style={{
+                    ...style,
+                    fontWeight: 200,
+                    whiteSpace: 'break-spaces',
+                  }}
+                >
+                  {i.text}
+                </Typography>
+              }
+            </span>
+          );
+        } else if (i.style === ICopyStyle.Bold) {
+          return (
+            <span key={index}>
+              {
+                <Typography
+                  component="span"
+                  variant={variant}
+                  style={{
+                    ...style,
+                    fontWeight: 800,
+                    whiteSpace: 'break-spaces',
+                  }}
                 >
                   {i.text}
                 </Typography>

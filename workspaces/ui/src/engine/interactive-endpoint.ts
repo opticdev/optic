@@ -28,6 +28,10 @@ export type InteractiveEndpointSessionEvent =
       newRule: IIgnoreRule;
     }
   | {
+      type: 'REMOVE_IGNORES';
+      diffHash: string;
+    }
+  | {
       type: 'HANDLED_UPDATED';
     };
 
@@ -166,6 +170,23 @@ export const newInteractiveEndpointSessionMachine = (
                   ...context.ignored,
                   event.newRule,
                 ],
+              }),
+              (ctx) => {
+                //send all ignore rules to children. they decide which ones they care about
+                const notifyChildren = {
+                  type: 'UPDATE_PREVIEW',
+                  ignoreRules: ctx.ignored,
+                };
+                ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
+                ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
+              },
+            ],
+          },
+          REMOVE_IGNORES: {
+            actions: [
+              assign({
+                ignored: (context, event) =>
+                  context.ignored.filter((i) => i.diffHash !== event.diffHash),
               }),
               (ctx) => {
                 //send all ignore rules to children. they decide which ones they care about
