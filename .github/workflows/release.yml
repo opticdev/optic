@@ -43,7 +43,7 @@ jobs:
       - name: 'Determine version and archive name'
         shell: bash
         run: |
-          OPTIC_VERSION=$(npm view @useoptic/cli version)
+          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
       - name: 'Set CARGO_HOME and RUSTUP_HOME'
@@ -104,7 +104,7 @@ jobs:
           node-version: 12
       - name: 'Determine version and archive name'
         run: |
-          OPTIC_VERSION=$(npm view @useoptic/cli version)
+          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
       - name: Prepare directory structure
