@@ -187,7 +187,10 @@ jobs:
     needs: release-npm
     if: needs.release-npm.outputs.is_prerelease != 'true'
     steps:
-      - run: exit 1 # TODO: remove this safety that's preventing actual releases from happening
+      - run: |
+          echo "determined as not a prerelease" 
+          echo "is_prelease=${{ needs.release-npm.outputs.is_prerelease }}"
+          exit 1 # TODO: remove this safety that's preventing actual releases from happening
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
         with:
           ref: release
