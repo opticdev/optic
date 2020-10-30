@@ -145,3 +145,119 @@ optic_local_registry_start() {
     printf "local npm registry started on http://localhost:4873 \n"
   )
 }
+
+
+optic_compare_diff_engines() {
+  rm -rf ./issues.patch
+  rm -rf ./issues-side-by-side.patch
+  (
+    set -o errexit
+    API_PROJECT_DIR=~/tmp/optic-snapshots
+    NUM_INTERACTIONS=$1
+
+    echo -n "running rust diff"
+    cd "$API_PROJECT_DIR"
+    rm -rf "./.optic/captures/ccc/diffs/*"
+    export OPTIC_RUST_DIFF_ENGINE=true
+    DEBUG=optic* apidev daemon:stop
+    # instead of apidev spec, we can manually start the session via the cli-server api
+    DEBUG=optic* apidev spec &
+    sleep 3
+    cd "$OPTIC_SRC_DIR"
+    rm -rf ./output-rust
+    node ./workspaces/snapshot-tests/build/e2e/index.js ./output-rust "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
+
+    echo -n "running scalajs diff"
+    cd "$API_PROJECT_DIR"
+    rm -rf "./.optic/captures/ccc/diffs/*"
+    export OPTIC_RUST_DIFF_ENGINE=false
+    DEBUG=optic* apidev daemon:stop
+    DEBUG=optic* apidev spec &
+    sleep 3
+    cd "$OPTIC_SRC_DIR"
+    rm -rf ./output-scalajs
+    node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
+
+    echo -n "comparing..."
+    cd "$OPTIC_SRC_DIR"
+    diff ./output-rust ./output-scalajs > ./issues.patch || echo "found difference"
+    diff --side-by-side ./output-rust ./output-scalajs > ./issues-side-by-side.patch || echo "found difference"
+  )
+  cat ./output-rust/*
+  cat ./output-scalajs/*
+  cat ./issues.patch
+  cat ./issues-side-by-side.patch
+  echo "yay"
+}
+
+optic_snapshot_input_to_capture() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    CAPTURE_ID=ccc
+    API_PROJECT_DIR=~/tmp/optic-snapshots
+    INPUT_EVENTS_FILE=./workspaces/snapshot-tests/inputs/events/todo/v0.json
+    INPUT_INTERACTIONS_FILE=./workspaces/snapshot-tests/inputs/interactions/todo/get-todos.json
+    node ./workspaces/cli-shared/build/captures/avro/file-system/snapshot-input-capture-saver.js "$INPUT_EVENTS_FILE" "$INPUT_INTERACTIONS_FILE" "$API_PROJECT_DIR" "$CAPTURE_ID"
+  )
+}
+
+optic_example_input_to_capture() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    CAPTURE_ID=ccc
+    API_PROJECT_DIR=~/tmp/optic-snapshots
+    INPUT_FILE=./workspaces/ui/public/example-sessions/diff-test-cases.json
+#    INPUT_FILE=/Users/dev/Downloads/shape-diff-engine/a\ known\ field\ is\ missing.managed.json
+#    INPUT_FILE='/Users/dev/Downloads/shape-diff-engine/a new field is provided in an optional nested object.managed.json'
+    INPUT_FILE=$1
+    node ./workspaces/cli-shared/build/captures/avro/file-system/dump-capture-saver.js "$INPUT_FILE" "$API_PROJECT_DIR" "$CAPTURE_ID"
+  )
+}
+
+optic_e2e() {
+  (
+    set -o errexit;
+    cd "$OPTIC_SRC_DIR"
+    INPUT_DIR=$1
+    for input in "$INPUT_DIR"/*;
+      do
+        optic_e2e_single "$input"
+        #read -p "press any key to continue"
+        #break
+      done;
+  )
+}
+
+optic_e2e_single() {
+  (
+    set -o errexit
+    cd "$OPTIC_SRC_DIR"
+    input=$1
+    echo "$input"
+
+    INPUT_FILE_NAME=$(basename "$input")
+    OUTPUT_DIR="output/$INPUT_FILE_NAME"
+    if [ -d "$OUTPUT_DIR" ]
+    then
+      echo "skipping..."
+      exit
+    fi
+
+    rm -rf "$OUTPUT_DIR"
+    mkdir -p "$OUTPUT_DIR"
+
+    jq -r ".events" < "$input" > "$OUTPUT_DIR/input-events.json"
+    jq -r ".session.samples" < "$input" > "$OUTPUT_DIR/input-interactions.json"
+
+    NUM_INTERACTIONS=$(jq ".session.samples | length" < "$input")
+    echo "interactions: $NUM_INTERACTIONS"
+
+    optic_example_input_to_capture "$input" > "$OUTPUT_DIR/conversion.log" 2>&1
+    optic_compare_diff_engines "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log" 2>&1
+    mv ./output-rust "$OUTPUT_DIR/output-rust"
+    mv ./output-scalajs "$OUTPUT_DIR/output-scalajs"
+  )
+}
+# ps aux | grep daemon-lock | cut -d" " -f 15 | xargs echo kill -9 | pbcopy
