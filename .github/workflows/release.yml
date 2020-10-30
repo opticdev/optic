@@ -151,8 +151,9 @@ jobs:
       is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
     steps:
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
-      with:
-          ref: release
+      # TODO: re-enable publishing the release branch before merging
+      # with:
+      #     ref: release
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
