@@ -1,6 +1,6 @@
 import Execa from 'execa';
 import { Duplex, PassThrough } from 'stream';
-
+import fs from 'fs-extra';
 import Config from './config';
 
 export default function spawn({
