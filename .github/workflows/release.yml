@@ -176,8 +176,10 @@ jobs:
       run: |
         OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
         if [[ $OPTIC_VERSION == *'-'* ]]; then
+          echo "v$OPTIC_VERSION is a prerelease"
           echo "::set-output name=is_prerelease::true"
         else
+          echo "v$OPTIC_VERSION is not a prerelease"
           echo "::set-output name=is_prerelease::false"
         fi
 
