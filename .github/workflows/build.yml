@@ -69,4 +69,4 @@ jobs:
     - name: "install dependencies"
       run: yarn install
     - name: "build workspaces"
-      run: yarn wsrun --stages --report --fast-exit ws:build
+      run: yarn wsrun --stages --report --fast-exit --exclude-missing ws:build

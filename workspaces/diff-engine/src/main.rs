@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 use futures::SinkExt;
 use num_cpus;
 use optic_diff::diff_interaction;
@@ -17,7 +17,7 @@ use tokio::sync::{mpsc, Semaphore};
 
 fn main() {
   let cli = App::new("Optic Diff engine")
-    .version("1.0")
+    .version(crate_version!())
     .author("Optic Labs Corporation")
     .about("Detects differences between API spec and captured interactions")
     .arg(
