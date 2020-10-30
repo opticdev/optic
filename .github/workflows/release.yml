@@ -13,6 +13,10 @@ on:
   push:
     branches:
       - release
+  # TODO: remove this trigger after we're done developing the prerelease specifics
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   build-rust-binaries:
@@ -133,6 +137,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
+        if: false # TODO: remove this safety that's preventing actual releases from happening
         run: |
           aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
@@ -149,6 +154,7 @@ jobs:
       with:
         node-version: 12
     - name: Install Dependencies and Build Optic
+      if: false # TODO: remove this skipping after we're done developing the prerelease specifics
       run:  |
         sudo apt-get update
         sudo apt-get install apt-transport-https -y
@@ -167,6 +173,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-npm
     steps:
+      - run: exit 1 # TODO: remove this safety that's preventing actual releases from happening
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
         with:
           ref: release
@@ -185,6 +192,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release-npm
     steps:
+      - run: exit 1 # TODO: remove this safety that's preventing actual releases from happening
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
         with:
@@ -195,6 +203,7 @@ jobs:
 
   # Tells slack a release has happened
   notify-slack:
+    if: false # TODO: remove this safety that's preventing actual releases from happening
     runs-on: ubuntu-latest
     needs: release-npm
     name: Message Slack that Release has happened
