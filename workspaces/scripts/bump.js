@@ -13,12 +13,12 @@ const semverIncrements = [
   'prerelease',
 ];
 
-async function main(targetVersion) {
+async function main(targetVersion, preId) {
   const silentMode = JSON.parse(process.env.npm_config_argv).original.includes('--silent');
   const packageJson = await fs.readJson('./package.json');
   const { workspaces } = packageJson;
   if (!targetVersion || semverIncrements.includes(targetVersion)) {
-    incrementAllPackages(targetVersion);
+    incrementAllPackages(targetVersion, preId);
     return;
   } else {
     console.log(`setting workspace versions to ${targetVersion}`);
@@ -67,7 +67,7 @@ async function main(targetVersion) {
 }
 
 // this is called if there is no specified target version
-async function incrementAllPackages(increment = "patch", silentMode) {
+async function incrementAllPackages(increment = "patch", preId, silentMode) {
   let log = console.log;
   if (silentMode) {
     console.log = () => {} // disable logging
@@ -84,7 +84,11 @@ async function incrementAllPackages(increment = "patch", silentMode) {
         const targetPackage = await fs.readJson(`./${workspace}/package.json`);
         const old = targetPackage.version;
 
-        targetPackage.version = semver.inc(targetPackage.version, increment);
+        targetPackage.version = semver.inc(
+          targetPackage.version,
+          increment,
+          preId
+        );
         console.log(`bumping ${old} to ${targetPackage.version}`)
         versions[targetPackage.name] = targetPackage.version;
         version = targetPackage.version;
@@ -127,5 +131,5 @@ async function incrementAllPackages(increment = "patch", silentMode) {
   console.log(`Done!`);
 }
 
-const [, , targetVersion] = process.argv;
-main(targetVersion);
+const [, , targetVersion, preId] = process.argv;
+main(targetVersion, preId);
