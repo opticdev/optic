@@ -67,9 +67,8 @@ impl<'a> ShapeQueries<'a> {
             let item_shape_id =
               self.resolve_parameter_to_shape(shape_id, &String::from(nullable_parameter_id));
             let trail = shape_trail
-              .with_component(ShapeTrailPathComponent::NullableItemTrail {
+              .with_component(ShapeTrailPathComponent::NullableTrail {
                 shape_id: shape_id.clone(),
-                inner_shape_id: item_shape_id.clone(),
               })
               .with_component(ShapeTrailPathComponent::NullableItemTrail {
                 shape_id: shape_id.clone(),
@@ -96,9 +95,8 @@ impl<'a> ShapeQueries<'a> {
             let item_shape_id =
               self.resolve_parameter_to_shape(shape_id, &String::from(optional_parameter_id));
             let trail = shape_trail
-              .with_component(ShapeTrailPathComponent::OptionalItemTrail {
+              .with_component(ShapeTrailPathComponent::OptionalTrail {
                 shape_id: shape_id.clone(),
-                inner_shape_id: item_shape_id.clone(),
               })
               .with_component(ShapeTrailPathComponent::OptionalItemTrail {
                 shape_id: shape_id.clone(),
@@ -261,7 +259,14 @@ impl<'a> ShapeQueries<'a> {
         shape_id: parent.shape_id.clone(),
         core_shape_kind: &ShapeKind::StringKind,
       },
-      _ => unimplemented!("need to support more shapekinds"),
+      ShapeKind::UnknownKind => ResolvedTrail {
+        shape_id: parent.shape_id.clone(),
+        core_shape_kind: &ShapeKind::UnknownKind
+      },
+      x => {
+        dbg!(x);
+        unimplemented!("need to support more shapekinds")
+      },
     }
   }
 

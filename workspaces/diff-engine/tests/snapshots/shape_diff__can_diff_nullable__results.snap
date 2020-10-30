@@ -1,5 +1,5 @@
 ---
-source: tests/shape_diff.rs
+source: workspaces/diff-engine/tests/shape_diff.rs
 expression: results
 ---
 [
@@ -39,9 +39,8 @@ expression: results
                     list_shape_id: "list_1",
                     item_shape_id: "nullable_1",
                 },
-                NullableItemTrail {
+                NullableTrail {
                     shape_id: "nullable_1",
-                    inner_shape_id: "number_shape_1",
                 },
                 NullableItemTrail {
                     shape_id: "nullable_1",

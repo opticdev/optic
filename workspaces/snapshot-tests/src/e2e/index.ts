@@ -111,8 +111,9 @@ import { delay } from '@useoptic/cli-shared';
 async function main(input: {
   baseDirectory: string;
   outputBaseDirectory: string;
+  interactionsCount: string;
 }) {
-  const totalInteractionsCount = BigInt(16);
+  const totalInteractionsCount = BigInt(interactionsCount);
   const apiId = '1';
   const captureId = 'ccc';
   const apiBaseUrl = 'http://localhost:34444';
@@ -212,8 +213,14 @@ async function main(input: {
   ]);
 }
 
-const [, , outputBaseDirectory, baseDirectory] = process.argv;
-main({ baseDirectory, outputBaseDirectory })
+const [
+  ,
+  ,
+  outputBaseDirectory,
+  baseDirectory,
+  interactionsCount,
+] = process.argv;
+main({ baseDirectory, outputBaseDirectory, interactionsCount })
   .then(() => {
     console.log('Done!');
   })
