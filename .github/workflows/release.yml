@@ -148,9 +148,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: publish-binaries
     outputs: 
-      is_prerelease: 
-        description: "Whether release is a prerelease"
-        value: ${{ steps.release_type.outputs.is_prerelease }}
+      is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
     steps:
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       with:
