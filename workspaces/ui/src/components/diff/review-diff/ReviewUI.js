@@ -38,7 +38,7 @@ export function ReviewUI() {
   );
   return (
     <Page.Body padded={false} style={{ flexDirection: 'row', height: '100vh' }}>
-      <Paper square className={classes.left} elevation={2}>
+      <Paper square className={classes.left} elevation={0}>
         <DiffInfoCard />
         <List className={classes.list}>
           <NiceSubheader
@@ -231,6 +231,8 @@ const useStyles = makeStyles((theme) => ({
   },
   right: {
     minWidth: 550,
+    borderLeft: '1px solid',
+    borderColor: '#d2d2d2',
     flex: 1,
     overflow: 'scroll',
   },

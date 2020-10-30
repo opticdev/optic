@@ -1,4 +1,4 @@
-import { BodyShapeDiff } from '../../parse-diff';
+import { BodyShapeDiff, ParsedDiff } from '../../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl';
 import {
   code,
@@ -12,6 +12,7 @@ import {
 import { ICoreShapeKinds } from '../../interfaces/interfaces';
 import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
 import { IObjectFieldTrail, IShapeTrail } from '../../interfaces/shape-trail';
+import flatten from 'lodash.flatten';
 import {
   IJsonObjectKey,
   IJsonTrail,
@@ -20,6 +21,7 @@ import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/b
 import { JsonHelper, opticEngine } from '@useoptic/domain';
 import { InteractiveSessionConfig } from '../../interfaces/session';
 import { Simulate } from 'react-dom/test-utils';
+import sortBy from 'lodash.sortby';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -34,6 +36,7 @@ export function fieldShapeDiffInterpretor(
   const isUnspecified = shapeDiff.isUnspecified;
 
   const present = new FieldShapeInterpretationHelper(
+    shapeDiff.diffHash(),
     services.rfcBaseState,
     shapeTrail,
     jsonTrail,
@@ -73,6 +76,7 @@ class FieldShapeInterpretationHelper {
   private shouldAskToRemoveField = false;
   private additionalCoreShapeKinds: ICoreShapeKinds[] = [];
   constructor(
+    private diffHash: string,
     private rfcBaseState: DiffRfcBaseState,
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail,
@@ -99,21 +103,40 @@ class FieldShapeInterpretationHelper {
     }
     ///////////////////////////////////////////////////////////////
 
-    // this happens first, (if changes required), and is shared through all the cases.
-    const updateShapeCommands = this.generateCommandsToChangeShape();
-
     if (
       this.additionalCoreShapeKinds.length > 0 &&
       !this.actual.wasMissing() /* when missing, change shape commands are gets included in the optional/required commands  */
     ) {
-      suggestions.push(this.changeFieldShape(updateShapeCommands));
+      suggestions.push(
+        this.changeFieldShape(this.generateCommandsToChangeShape(true))
+      );
+
+      if (
+        !eqSet(
+          new Set([...this.expected.unionWithActual(this.actual)]),
+          this.actual.observedCoreShapeKinds()
+        )
+      ) {
+        //show the breaking one without the union
+        suggestions.push(
+          this.changeFieldShape(this.generateCommandsToChangeShape(false))
+        );
+      }
     }
 
+    // this happens first, (if changes required), and is shared through all the cases.
+    const {
+      updatedShapeCommands,
+      updatedShapeName,
+    } = this.generateCommandsToChangeShape(true);
+
     if (this.shouldAskMakeOptional) {
-      suggestions.push(this.wrapFieldShapeWithOptional(updateShapeCommands));
+      suggestions.push(
+        this.wrapFieldShapeWithOptional(updatedShapeCommands, updatedShapeName)
+      );
     }
     if (this.shouldAskToRemoveField) {
-      suggestions.push(this.removeField(updateShapeCommands));
+      suggestions.push(this.removeField(updatedShapeCommands));
     }
 
     //force update the title
@@ -135,8 +158,34 @@ class FieldShapeInterpretationHelper {
 
   ///////////////////////////////////////////////////////////////////
 
-  private generateCommandsToChangeShape(): any[] {
-    return [];
+  private generateCommandsToChangeShape(
+    useUnion: boolean
+  ): {
+    updatedShapeCommands: any[];
+    updatedShapeName: ICopy[];
+  } {
+    const allCoreShapeKinds = useUnion
+      ? this.expected.unionWithActual(this.actual)
+      : Array.from(this.actual.observedCoreShapeKinds());
+
+    const previewName: ICopy[] = (() => {
+      if (allCoreShapeKinds.length === 0) return [code('Unknown')];
+      if (allCoreShapeKinds.length === 1) return [code(allCoreShapeKinds[0])];
+      return allCoreShapeKinds.reduce(
+        (
+          before: ICopy[],
+          value: ICoreShapeKinds,
+          i: number,
+          array: ICoreShapeKinds[]
+        ) => [
+          ...before,
+          plain(before.length ? (i < array.length - 1 ? ', ' : ' or ') : ''),
+          code(value),
+        ],
+        []
+      );
+    })();
+    return { updatedShapeCommands: [], updatedShapeName: previewName };
   }
 
   private createPreviews(): IInteractionPreviewTab[] {
@@ -145,34 +194,35 @@ class FieldShapeInterpretationHelper {
 
     const asFieldType =
       this.expected.isField() && !this.expected.isOptionalField()
-        ? 'as required field'
+        ? ' required'
         : '';
 
     this.actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
       previews.push({
         title: i.label,
-        invalid: expected.has(i.kind),
+        invalid: !expected.has(i.kind),
         allowsExpand: true,
         interactionPointers: i.interactions,
+        ignoreRule: {
+          diffHash: this.diffHash,
+          examplesOfCoreShapeKinds: i.kind,
+        },
         assertion: [
-          plain('expected'),
+          plain('expected' + asFieldType),
           code(this.expected.shapeName()),
-          plain(asFieldType),
         ],
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
     });
-
-    return previews;
+    return sortBy(previews, (i) => !i.invalid);
   }
 
-  private wrapFieldShapeWithOptional(shapeChangeCommands: any[]): ISuggestion {
+  private wrapFieldShapeWithOptional(
+    shapeChangeCommands: any[],
+    updatedName: ICopy[]
+  ): ISuggestion {
     const key = this.expected.fieldKey();
-    const sharedCopy = [
-      code(key),
-      plain('an optional'),
-      code(this.expected.shapeName()),
-    ];
+    const sharedCopy = [code(key), plain('an optional'), ...updatedName];
 
     return {
       action: {
@@ -198,19 +248,20 @@ class FieldShapeInterpretationHelper {
     };
   }
 
-  private changeFieldShape(updateShapeCommands: any[]) {
+  private changeFieldShape({
+    updatedShapeCommands,
+    updatedShapeName,
+  }: {
+    updatedShapeCommands: any[];
+    updatedShapeName: ICopy[];
+  }) {
     const key = this.expected.fieldKey();
-    const sharedCopy = [
-      plain('shape of'),
-      code(key),
-      plain('to'),
-      code(this.additionalCoreShapeKinds.join(', ')), // @todo change me to proper format
-    ];
+    const sharedCopy = [code(key), plain('to'), ...updatedShapeName];
 
     return {
       action: {
-        activeTense: [plain('change'), ...sharedCopy],
-        pastTense: [plain('Changed'), ...sharedCopy],
+        activeTense: [plain('change shape of'), ...sharedCopy],
+        pastTense: [plain('Changed shape of'), ...sharedCopy],
       },
       commands: [],
       changeType: IChangeType.Changed,
@@ -267,4 +318,10 @@ class FieldShapeInterpretationHelper {
       previewTabs: tabs,
     };
   }
+}
+
+function eqSet(as: Set<string>, bs: Set<string>): boolean {
+  if (as.size !== bs.size) return false;
+  for (var a of as) if (!bs.has(a)) return false;
+  return true;
 }

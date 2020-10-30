@@ -63,7 +63,7 @@ export function SuggestionSelect(props) {
             color="secondary"
             size="small"
             onClick={() => setShowAll(true)}
-            disabled={showAll}
+            disabled={showAll || suggestions.length === 1}
           >
             <span className={classes.numberSpan}>({suggestions.length})</span>
             <ExpandMoreIcon fontSize="small" />

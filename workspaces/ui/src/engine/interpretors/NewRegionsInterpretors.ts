@@ -1,5 +1,10 @@
 import { ParsedDiff } from '../parse-diff';
-import { IChangeType, ISuggestion, plain } from '../interfaces/interpretors';
+import {
+  code,
+  IChangeType,
+  ISuggestion,
+  plain,
+} from '../interfaces/interpretors';
 import {
   DiffTypes,
   IUnmatchedRequestBodyShape,
@@ -18,7 +23,7 @@ export function newRegionInterpreters(
     diff.isA(DiffTypes.UnmatchedRequestBodyContentType) ||
     diff.isA(DiffTypes.UnmatchedResponseBodyContentType)
   ) {
-    // return [newContentType(diff, learnedBodies, services)];
+    return [newContentType(diff, learnedBodies, services)];
   }
 
   return [];
@@ -29,18 +34,27 @@ function newContentType(
   learnedBodies: ILearnedBodies,
   rfcBaseState: DiffRfcBaseState
 ): ISuggestion {
+  debugger;
+
   const location = udiff.location(rfcBaseState);
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const diff = (udiff.raw() as IUnmatchedRequestBodyShape)
       .UnmatchedRequestBodyShape;
+
     const learnedBody = learnedBodies.requests.find(
       (i) => i.contentType === location.inRequest.contentType
     );
-
     return {
       action: {
-        activeTense: [plain('Todo Add request content type')],
-        pastTense: [],
+        activeTense: [
+          plain('document request body'),
+          code(location.inRequest.contentType || 'No Body'),
+        ],
+        pastTense: [
+          plain('Documented'),
+          code(location.inRequest.contentType || 'No Body'),
+          plain('request'),
+        ],
       },
       commands: [],
       changeType: IChangeType.Added,
@@ -50,12 +64,24 @@ function newContentType(
       .UnmatchedResponseBodyContentType;
     //learn status code too.... currently missing
     const learnedBody = learnedBodies.responses.find(
-      (i) => i.contentType === location.inResponse.contentType
+      (i) =>
+        i.contentType === location.inResponse.contentType &&
+        i.statusCode === location.inResponse.statusCode
     );
     return {
       action: {
-        activeTense: [plain('Todo add response content type')],
-        pastTense: [],
+        activeTense: [
+          plain('document'),
+          code(location.inResponse!.statusCode.toString()),
+          plain('response with'),
+          code(location.inRequest.contentType || 'No Body'),
+        ],
+        pastTense: [
+          plain('Documented'),
+          code(location.inResponse!.statusCode.toString()),
+          plain('response with'),
+          code(location.inRequest.contentType || 'No Body'),
+        ],
       },
       commands: [],
       changeType: IChangeType.Added,

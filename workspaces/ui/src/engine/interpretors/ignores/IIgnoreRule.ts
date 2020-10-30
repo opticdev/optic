@@ -44,6 +44,7 @@ export function transformAffordanceMappingByIgnoreRules(
     const key: string = keyMapping[coreShapeKind]!;
 
     values.interactions[key] = []; // remove pointers to these references
+    values.interactions[key + 'Trails'] = {}; // remove json trails
     values.affordances = values.affordances.map((i) => {
       if (equals(i.trail, jsonTrail)) {
         return { ...i, [key]: false }; // flip 'wasX' to false

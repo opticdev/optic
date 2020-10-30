@@ -68,11 +68,19 @@ export async function prepareNewRegionDiffSuggestionPreview(
 export async function prepareShapeDiffSuggestionPreview(
   diff: ParsedDiff,
   services: InteractiveSessionConfig,
-  learnedTrails: IValueAffordanceSerializationWithCounter
+  learnedTrails: IValueAffordanceSerializationWithCounter,
+  ignoreRules: IIgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
+  const trailsWithIgnored = transformAffordanceMappingByIgnoreRules(
+    learnedTrails,
+    diff.diffHash,
+    diff.asShapeDiff(services.rfcBaseState).jsonTrail,
+    ignoreRules
+  );
+
   const { suggestions, previewTabs, overrideTitle } = interpretShapeDiffs(
     diff,
-    learnedTrails,
+    trailsWithIgnored,
     services
   );
 

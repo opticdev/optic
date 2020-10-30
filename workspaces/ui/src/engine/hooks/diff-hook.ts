@@ -36,6 +36,7 @@ export function useSingleDiffMachine(
 
   function createQueries() {
     return {
+      ignoreRules: () => context.revevantIgnoreRules,
       preview: () => context.preview,
       description: () => context.descriptionWhileLoading,
       status: () => value,

@@ -1,6 +1,9 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import { assign, Machine, send, sendParent } from 'xstate';
-import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
+import {
+  IIgnoreRule,
+  transformAffordanceMappingByIgnoreRules,
+} from './interpretors/ignores/IIgnoreRule';
 import {
   IDiffSuggestionPreview,
   IDiffDescription,
@@ -78,6 +81,7 @@ const createNewDiffMachine = <Context>(
       unfocused: {
         on: {
           SHOWING: {
+            cond: () => !listenToInitialRegions,
             target: 'loading',
           },
           //@ts-ignore
@@ -116,11 +120,14 @@ const createNewDiffMachine = <Context>(
                 .length !== context.revevantIgnoreRules.length,
             actions: [
               assign({
-                revevantIgnoreRules: (context, event) =>
-                  event.ignoreRules.filter((i) => i.diffHash === diff.diffHash),
+                revevantIgnoreRules: (context, event) => {
+                  return event.ignoreRules.filter(
+                    (i) => i.diffHash === diff.diffHash
+                  );
+                },
               }),
-              'reload_preview',
             ],
+            target: 'ready.reload_preview',
           },
           SET_SUGGESTION_INDEX: {
             actions: assign({
@@ -134,19 +141,30 @@ const createNewDiffMachine = <Context>(
               id: 'reloading-preview',
               src: async (context, event) =>
                 await realodPreview(id, diff, services, context),
-            },
-            onDone: {
-              target: 'unhandled',
-              actions: assign({
-                preview: (context, event) => event.data,
-              }),
+              onDone: {
+                target: 'unhandled',
+                actions: assign({
+                  preview: (context, event) => event.data,
+                }),
+              },
             },
           },
           unhandled: {
-            entry: [(context, event) => console.log('ready to show the diff.')],
             on: {
               STAGE: {
                 target: 'handled',
+              },
+            },
+            invoke: {
+              id: 'should-switch-to-handled',
+              src: async (context, event) => {
+                const alreadyHandled =
+                  context.preview && context.preview.tabs.length === 0;
+                return alreadyHandled;
+              },
+              onDone: {
+                target: 'handled',
+                cond: (c, event) => Boolean(event.data),
               },
             },
           },
@@ -246,7 +264,8 @@ export const createShapeDiffMachine = (
         preview: await prepareShapeDiffSuggestionPreview(
           diff,
           services,
-          trailValues
+          trailValues,
+          context.revevantIgnoreRules
         ),
         results: trailValues,
       };
@@ -260,7 +279,8 @@ export const createShapeDiffMachine = (
       return await prepareShapeDiffSuggestionPreview(
         diff,
         services,
-        context.results!
+        context.results!,
+        context.revevantIgnoreRules
       );
     }
   );

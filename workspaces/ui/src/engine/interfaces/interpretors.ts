@@ -1,5 +1,6 @@
 import { IParsedLocation } from './interfaces';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { IIgnoreRule } from '../interpretors/ignores/IIgnoreRule';
 
 export interface IInterpretation {
   suggestions: ISuggestion[];
@@ -22,6 +23,7 @@ export interface IInteractionPreviewTab {
   assertion: ICopy[];
   jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
   interactionPointers: string[];
+  ignoreRule?: IIgnoreRule;
 }
 
 interface BodyPreview {

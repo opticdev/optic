@@ -20,17 +20,24 @@ import {
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
-import { IChangeType } from '../../../../engine/interfaces/interpretors';
+import { IChangeType, plain } from '../../../../engine/interfaces/interpretors';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { ICopyRender, ICopyRenderSpan } from '../../review-diff/ICopyRender';
-
+import CheckIcon from '@material-ui/icons/Check';
+import {
+  AddedDarkGreen,
+  AddedGreen,
+  OpticBlue,
+  OpticBlueReadable,
+  SubtleBlueBackground,
+} from '../../../../theme';
 export default function InteractionBodyViewerAllJS({
   diff,
   description,
   jsonTrails,
   body,
   assertion,
-  selectedInterpretation,
+  trailsAreCorrect,
 }) {
   const generalClasses = useShapeViewerStyles();
 
@@ -44,6 +51,7 @@ export default function InteractionBodyViewerAllJS({
     description,
     assertion,
     changeType: description.changeType,
+    trailsAreCorrect,
     // changeDescription: 'changed!',
   };
 
@@ -102,11 +110,18 @@ export function Row(props) {
         [classes.isIncompliant]: !compliant && !collapsed,
         [classes.isCollapsedIncompliant]: !compliant && collapsed,
         [classes.requiresAddition]:
-          diffDetails && diffDetails.changeType === IChangeType.Added,
+          diffDetails &&
+          !diffDetails.trailsAreCorrect &&
+          diffDetails.changeType === IChangeType.Added,
         [classes.requiresUpdate]:
-          diffDetails && diffDetails.changeType === IChangeType.Changed,
+          diffDetails &&
+          !diffDetails.trailsAreCorrect &&
+          diffDetails.changeType === IChangeType.Changed,
         [classes.requiresRemoval]:
-          diffDetails && diffDetails.changeType === IChangeType.Removed,
+          diffDetails &&
+          !diffDetails.trailsAreCorrect &&
+          diffDetails.changeType === IChangeType.Removed,
+        [classes.trailsAreCorrect]: diffDetails.trailsAreCorrect,
       })}
     >
       <div className={classes.rowContent} onClick={onRowClick}>
@@ -121,13 +136,25 @@ export function Row(props) {
         />
       </div>
 
-      {!compliant && !collapsed && <DiffAssertion {...diffDetails} />}
+      {!compliant &&
+        !collapsed &&
+        (diffDetails.trailsAreCorrect ? (
+          <TrailCheck {...diffDetails} />
+        ) : (
+          <DiffAssertion {...diffDetails} />
+        ))}
     </div>
   );
 }
 Row.displayName = 'ShapeViewer/Row';
 
-function RowValue({ type, value, compliant, changeDescription }) {
+function RowValue({
+  type,
+  value,
+  compliant,
+  changeDescription,
+  trailsAreCorrect,
+}) {
   const generalClasses = useShapeViewerStyles();
   const classes = useStyles();
 
@@ -160,7 +187,7 @@ function RowValue({ type, value, compliant, changeDescription }) {
       <span className={classes.collapsedSymbol}>
         {'⋯'}
         {!compliant ? (
-          changeDescription ? (
+          changeDescription || !trailsAreCorrect ? (
             <CheckCircleIcon className={classes.collapsedChangeIcon} />
           ) : (
             <WarningIcon className={classes.collapsedWarning} />
@@ -277,6 +304,15 @@ function DiffAssertion({ assertion, changeDescription }) {
     </div>
   );
 }
+function TrailCheck({ assertion }) {
+  const classes = useStyles();
+  return (
+    <div className={classes.diffAssertion}>
+      <div style={{ flex: 1 }} />
+      <CheckIcon className={classes.correctTrailIcon} />
+    </div>
+  );
+}
 
 const useStyles = makeStyles((theme) => ({
   row: {
@@ -347,6 +383,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.changed.background,
       color: theme.palette.changed.main,
     },
+    '$trailsAreCorrect &': {
+      backgroundColor: theme.palette.added.background,
+      color: theme.palette.added.main,
+    },
   },
 
   collapsedWarning: {
@@ -371,6 +411,10 @@ const useStyles = makeStyles((theme) => ({
 
     '$requiresUpdate &': {
       color: theme.palette.changed.main,
+    },
+
+    '$trailsAreCorrect &': {
+      color: theme.palette.added.main,
     },
   },
 
@@ -475,6 +519,13 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  correctTrailIcon: {
+    width: 14,
+    height: 14,
+    marginRight: theme.spacing(1),
+    color: AddedGreen,
+  },
+
   isCollapsed: {},
   isMissing: {},
   isIncompliant: {},
@@ -482,6 +533,7 @@ const useStyles = makeStyles((theme) => ({
   requiresAddition: {},
   requiresUpdate: {},
   requiresRemoval: {},
+  trailsAreCorrect: {},
 }));
 
 // ShapeViewer view model
@@ -497,7 +549,6 @@ const useStyles = makeStyles((theme) => ({
 
 function createInitialState({ diff, jsonTrails, description, body }) {
   const diffTrails = jsonTrails.map(toCommonJsPath);
-
   const shape = body.asJson;
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);

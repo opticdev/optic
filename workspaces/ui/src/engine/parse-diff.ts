@@ -19,7 +19,10 @@ import { IInteractionTrail } from './interfaces/interaction-trail';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { locationForTrails } from './interfaces/trail-parsers';
 import { IRequestSpecTrail } from './interfaces/request-spec-trail';
-import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+import {
+  IJsonTrail,
+  normalize,
+} from '@useoptic/cli-shared/build/diffs/json-trail';
 
 export class ParsedDiff {
   diffType: string;
@@ -142,8 +145,10 @@ export class BodyShapeDiff {
       this.shapeTrail,
       'A shape trail must be specified with all shape diffs'
     );
-    this.jsonTrail = (shapeDiff['UnmatchedShape']?.jsonTrail ||
-      shapeDiff['UnspecifiedShape']?.jsonTrail)!;
+    this.jsonTrail = normalize(
+      shapeDiff['UnmatchedShape']?.jsonTrail ||
+        shapeDiff['UnspecifiedShape']?.jsonTrail
+    )!;
 
     this.shapeDiffGroupingHash = sha1(
       jsonStringify(this.shapeTrail),
@@ -152,5 +157,9 @@ export class BodyShapeDiff {
 
     this.isUnmatched = Boolean(shapeDiff['UnmatchedShape']);
     this.isUnspecified = Boolean(shapeDiff['UnspecifiedShape']);
+  }
+
+  diffHash() {
+    return this.parsedDiff.diffHash;
   }
 }

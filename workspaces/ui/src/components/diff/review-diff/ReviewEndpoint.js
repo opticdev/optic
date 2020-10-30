@@ -185,6 +185,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     position: 'sticky',
     top: 0,
+    zIndex: 800,
     flexDirection: 'row',
     cursor: 'pointer',
     alignItems: 'center',
@@ -198,8 +199,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   diffContainer: {
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
 }));

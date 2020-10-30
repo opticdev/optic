@@ -123,13 +123,6 @@ export const newInteractiveEndpointSessionMachine = (
           src: async (context, event) => {
             const { rfcService, rfcId } = services.rfcBaseState;
 
-            const learnedBodies = await services.diffService.learnInitial(
-              rfcService,
-              rfcId,
-              pathId,
-              method
-            );
-
             let newRegionWalker: Promise<ILearnedBodies> = Promise.resolve({
               pathId,
               method,
@@ -145,15 +138,15 @@ export const newInteractiveEndpointSessionMachine = (
                 method
               );
             }
-            return {
-              newRegions: await newRegionWalker,
-            };
+            return await newRegionWalker;
           },
           onDone: {
             target: 'ready',
             actions: [
               assign({
-                learningContext: (context, event) => event.data,
+                learningContext: (context, event) => {
+                  return event.data;
+                },
               }),
             ],
           },

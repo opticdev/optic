@@ -2,20 +2,28 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDiffSession } from './ReviewDiffSession';
 // eslint-disable-next-line no-unused-vars
 import { useActor, useMachine } from '@xstate/react';
+import WarningIcon from '@material-ui/icons/Warning';
 import { useContext } from 'react';
 import { useEndpointDiffSession } from './ReviewEndpoint';
 import { createEndpointDescriptor } from '../../../utilities/EndpointUtilities';
+import BlockIcon from '@material-ui/icons/Block';
+import CheckIcon from '@material-ui/icons/Check';
 import { stuffFromQueries } from '../../../contexts/RfcContext';
 import sortby from 'lodash.sortby';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import { HardCodedDiffExamples } from '../v2/shape_viewers/DiffReviewTypes';
 import {
+  AddedDarkGreen,
   AddedGreen,
+  AddedGreenBackground,
   ChangedYellow,
   OpticBlue,
   OpticBlueLightened,
+  OpticBlueReadable,
   primary,
   RemovedRed,
   secondary,
+  SubtleBlueBackground,
   UpdatedBlue,
   UpdatedBlueBackground,
 } from '../../../theme';
@@ -38,11 +46,18 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { DocDarkGrey } from '../../docs/DocConstants';
-import { ICopyRender } from './ICopyRender';
+import { ICopyRender, ICopyRenderMultiline } from './ICopyRender';
 import Skeleton from '@material-ui/lab/Skeleton';
 import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewerAllJS';
 import { SuggestionSelect } from './SuggestionSelect';
 import Fade from '@material-ui/core/Fade';
+import { plain, code } from '../../../engine/interfaces/interpretors';
+import Menu from '@material-ui/core/Menu';
+import Grow from '@material-ui/core/Grow';
+import { LightTooltip } from '../../tooltips/LightTooltip';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export const SingleDiffSessionContext = React.createContext(null);
 
@@ -77,13 +92,21 @@ export function ReviewDiff(props) {
 
 export function DiffSummaryRegion(props) {
   const classes = useStyles();
+
+  const { endpointActions } = useEndpointDiffSession();
+
   const { diff, diffRef, diffQueries, diffActions } = useSingleDiffSession();
   const status = diffQueries.status();
 
   const isLoading = !status.ready;
   const isHandled = status.ready && status.ready === 'handled';
+  const readyStatus = status.ready;
 
-  const preview = useMemo(() => diffQueries.preview(), [isLoading]);
+  const preview = useMemo(() => diffQueries.preview(), [
+    isLoading,
+    readyStatus,
+    diffQueries.ignoreRules().length, // reload the preview if the ignore rule count changes
+  ]);
 
   const suggestions = preview ? preview.suggestions : [];
   const selectedSuggestionIndex = diffQueries.selectedSuggestionIndex();
@@ -98,10 +121,14 @@ export function DiffSummaryRegion(props) {
   useEffect(
     // set to first tab once preview loads
     () => {
-      if (!previewTab && previewTabs.length > 0)
-        setPreviewTab(previewTabs[0].title);
+      if (previewTabs.length > 0) setPreviewTab(previewTabs[0].title);
     },
     [previewTabs.length]
+  );
+
+  console.log(
+    diff.diffHash + 'look here ',
+    previewTabs.map((i) => i.title)
   );
 
   const color = (() => {
@@ -121,12 +148,14 @@ export function DiffSummaryRegion(props) {
       <div style={{ flex: 1 }} />
 
       <Fade in={suggestions.length}>
-        <SuggestionSelect
-          suggestions={suggestions}
-          selectedSuggestionIndex={selectedSuggestionIndex}
-          setSelectedSuggestionIndex={diffActions.setSelectedSuggestionIndex}
-          stage={diffActions.stage}
-        />
+        <div>
+          <SuggestionSelect
+            suggestions={suggestions}
+            selectedSuggestionIndex={selectedSuggestionIndex}
+            setSelectedSuggestionIndex={diffActions.setSelectedSuggestionIndex}
+            stage={diffActions.stage}
+          />
+        </div>
       </Fade>
     </>
   );
@@ -136,7 +165,11 @@ export function DiffSummaryRegion(props) {
       <div className={classes.titleHeader} style={{ paddingLeft: 10 }}>
         <ICopyRender
           variant="caption"
-          copy={suggestions[selectedSuggestionIndex].action.pastTense}
+          copy={
+            (suggestions[selectedSuggestionIndex] &&
+              suggestions[selectedSuggestionIndex].action.pastTense) ||
+            []
+          }
         />
       </div>
       <div style={{ flex: 1 }} />
@@ -156,64 +189,114 @@ export function DiffSummaryRegion(props) {
   return (
     <Card
       className={classes.root}
-      elevation={2}
-      style={{ marginBottom: isHandled ? 15 : 50 }}
+      square
+      elevation={0}
+      style={{ marginBottom: 0 }}
     >
-      <div className={classes.cardHeader}>
+      <div className={classes.cardHeader} style={{ backgroundColor: 'white' }}>
         {isHandled ? approvedHeader : openHeader}
       </div>
       <Collapse in={!isHandled}>
-        {/*<div className={classes.cardInner}>*/}
-        {/* this will be where we show more informatino about the diff */}
-        {/*  <div className={classes.location}>*/}
-        {/*    /!*{locationRender}*!/*/}
-        {/*    /!*<div style={{ marginTop: 5 }}>*!/*/}
-        {/*    /!*  Traffic observed from tasks{' '}*!/*/}
-        {/*    /!*  {tasks*!/*/}
-        {/*    /!*    .map((i) => <Code>{i}</Code>)*!/*/}
-        {/*    /!*    .reduce((prev, curr) => [prev, ', ', curr])}*!/*/}
-        {/*    /!*</div>*!/*/}
-        {/*  </div>*/}
-        {/*</div>*/}
         <div className={classes.preview}>
           {isLoading && <LoadingExample lines={3} />}
-          <div className={classes.previewHeader}>
-            <DiffTabs
-              value={previewTab}
-              style={{ marginBottom: 5 }}
-              onChange={(e, newValue) => setPreviewTab(newValue)}
-            >
-              {previewTabs.map((tab, index) => (
-                <DiffTab label={tab.title} value={tab.title} />
-              ))}
-            </DiffTabs>
-            <div style={{ flex: 1 }} />
-            <Button
-              size="small"
-              style={{ color: 'white' }}
-              endIcon={<OpenInNewIcon />}
-            >
-              Expand Example
-            </Button>
-          </div>
-          <RenderPreviewBody
-            description={loadingDescription}
-            pointer={
-              selectedPreviewTab && selectedPreviewTab.interactionPointers[0]
-            }
-            assertion={selectedPreviewTab && selectedPreviewTab.assertion}
-            jsonTrailsByInteractions={
-              selectedPreviewTab && selectedPreviewTab.jsonTrailsByInteractions
-            }
-            diff={diff}
-          />
-          {/*<InteractionBodyViewer*/}
-          {/*  diff={undefined}*/}
-          {/*  key={JSON.stringify(jsonExample)}*/}
-          {/*  diffDescription={undefined}*/}
-          {/*  selectedInterpretation={undefined}*/}
-          {/*  jsonBody={jsonExample}*/}
-          {/*/>*/}
+          {previewTabs.length && (
+            <div className={classes.previewHeader}>
+              <Typography
+                variant="caption"
+                style={{ color: OpticBlueReadable, marginRight: 5 }}
+              >
+                observed as:
+              </Typography>
+              <DiffTabs
+                value={previewTab}
+                style={{ marginBottom: 5 }}
+                onChange={(e, newValue) => setPreviewTab(newValue)}
+              >
+                {previewTabs.map((tab, index) => (
+                  <DiffTab
+                    label={tab.title}
+                    value={tab.title}
+                    invalid={tab.invalid}
+                    selected={previewTab === tab.title}
+                  />
+                ))}
+              </DiffTabs>
+              <div style={{ flex: 1 }} />
+              {selectedPreviewTab && (
+                <LightTooltip
+                  style={{ padding: 0 }}
+                  title={
+                    <ListItemText
+                      style={{ maxWidth: 350 }}
+                      primary={
+                        <ICopyRender
+                          variant="caption"
+                          copy={[
+                            plain('mark examples that are'),
+                            code(
+                              selectedPreviewTab && selectedPreviewTab.title
+                            ),
+                            plain('incorrect'),
+                          ]}
+                        />
+                      }
+                      secondary={
+                        <ICopyRenderMultiline
+                          variant="caption"
+                          copy={[
+                            plain(
+                              'Marking these examples as incorrect tells Optic not to suggest changes to the spec that make these examples valid'
+                            ),
+                          ]}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Button
+                    onClick={() => {
+                      if (selectedPreviewTab) {
+                        endpointActions.addIgnoreRule(
+                          selectedPreviewTab.ignoreRule
+                        );
+                      }
+                    }}
+                    disabled={
+                      !selectedPreviewTab && selectedPreviewTab.ignoreRule
+                    }
+                    className={classes.ignoreButton}
+                    size="small"
+                    endIcon={<BlockIcon style={{ width: 10, height: 10 }} />}
+                  >
+                    mark as incorrect
+                  </Button>
+                </LightTooltip>
+              )}
+              <Button
+                size="small"
+                className={classes.ignoreButton}
+                style={{ marginRight: 5 }}
+                endIcon={<OpenInNewIcon style={{ width: 12, height: 12 }} />}
+              >
+                expand example
+              </Button>
+            </div>
+          )}
+
+          {previewTabs.map((i) => {
+            return (
+              <RenderPreviewBody
+                show={previewTab === i.title}
+                key={i.title}
+                description={loadingDescription}
+                pointer={i.interactionPointers[0]}
+                assertion={i.assertion}
+                jsonTrailsByInteractions={i.jsonTrailsByInteractions}
+                trailsAreInvalid={i.invalid}
+                diff={diff}
+              />
+            );
+          })}
         </div>
       </Collapse>
     </Card>
@@ -227,8 +310,11 @@ function RenderPreviewBody(props) {
     assertion,
     pointer,
     jsonTrailsByInteractions,
+    trailsAreInvalid,
+    show,
   } = props;
   const { loadInteraction } = useDiffSession();
+  const [wasShown, setShown] = useState(show);
 
   const [interaction, setInteraction] = useState(null);
   const [didError, setError] = useState(null);
@@ -238,23 +324,31 @@ function RenderPreviewBody(props) {
   );
 
   useEffect(() => {
-    if (pointer) {
-      loadInteraction(pointer)
-        .then((i) => {
-          setInteraction(i.interaction);
-        })
-        .catch((e) => setError(e));
-    } else {
-      setError(null);
-      setInteraction(null);
-    }
-  }, [pointer]);
+    if (show && !wasShown) setShown(true);
+  }, [show]);
 
-  if (!diff || !pointer || !interaction) {
-    return <LoadingExample lines={1} />;
+  useEffect(() => {
+    if (wasShown) {
+      if (pointer) {
+        loadInteraction(pointer)
+          .then((i) => {
+            setInteraction(i.interaction);
+          })
+          .catch((e) => setError(e));
+      } else {
+        setError(null);
+        setInteraction(null);
+      }
+    }
+  }, [pointer, wasShown]);
+
+  if (!show) {
+    return null;
   }
 
-  console.log('loaded body preview for interaction ', bodyPreview);
+  if (!diff || !pointer || !bodyPreview || !interaction) {
+    return <LoadingExample lines={5} />;
+  }
 
   return (
     <InteractionBodyViewerAllJS
@@ -262,6 +356,7 @@ function RenderPreviewBody(props) {
       body={bodyPreview}
       assertion={assertion}
       jsonTrails={jsonTrailsByInteractions[pointer] || []}
+      trailsAreCorrect={!trailsAreInvalid}
       diff={diff}
     />
   );
@@ -292,10 +387,14 @@ const DiffTab = withStyles((theme) => {
       color: 'white',
       padding: 0,
       marginTop: 5,
+      paddingLeft: 3,
+      paddingRight: 2,
       height: 20,
+      zIndex: 100,
       minHeight: 'inherit',
       minWidth: 'inherit',
-      fontWeight: 400,
+      maxWidth: 300,
+      fontWeight: 800,
       fontFamily: 'Ubuntu Mono',
       fontSize: theme.typography.pxToRem(12),
       marginRight: theme.spacing(2),
@@ -303,12 +402,56 @@ const DiffTab = withStyles((theme) => {
         opacity: 1,
       },
     },
+    checkIcons: {
+      width: 10,
+      height: 10,
+      marginLeft: 4,
+    },
   };
-})((props) => <Tab disableRipple {...props} />);
+})((props) => {
+  return (
+    <Tab
+      disableRipple
+      {...props}
+      label={
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          {props.label}
+          {props.invalid ? (
+            <WarningIcon
+              className={props.classes.checkIcons}
+              style={{ color: secondary }}
+            />
+          ) : (
+            <CheckIcon
+              className={props.classes.checkIcons}
+              style={{ color: AddedGreen }}
+            />
+          )}
+        </div>
+      }
+    />
+  );
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: '0 auto',
+    borderBottom: '1px solid #e2e2e2',
+  },
+  ignoreButton: {
+    color: '#e2e2e2',
+    padding: 0,
+    marginRight: 17,
+    fontWeight: 800,
+    textTransform: 'none',
+    fontFamily: 'Ubuntu Mono',
+    whiteSpace: 'nowrap',
   },
   diffText: {
     fontFamily: 'Ubuntu Mono',
@@ -350,6 +493,8 @@ const useStyles = makeStyles((theme) => ({
   previewHeader: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 10,
     paddingRight: 4,
   },
 }));

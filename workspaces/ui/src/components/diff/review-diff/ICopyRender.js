@@ -84,7 +84,7 @@ export function ICopyRenderMultiline(props) {
                   style={{
                     ...style,
                     fontWeight: 200,
-                    marginLeft: index === 0 && 3,
+                    // marginLeft: index === 0 && 3,
                   }}
                 >
                   {i.text}

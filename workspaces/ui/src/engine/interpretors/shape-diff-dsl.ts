@@ -186,49 +186,49 @@ export class Actual {
 
     if (wasMissing.length)
       results.push({
-        label: 'was missing',
+        label: 'missing',
         kind: ICoreShapeKinds.OptionalKind,
         interactions: wasMissing,
         jsonTrailsByInteractions: wasMissingTrails,
       });
     if (wasString.length)
       results.push({
-        label: 'was string',
+        label: 'string',
         kind: ICoreShapeKinds.StringKind,
         interactions: wasString,
         jsonTrailsByInteractions: wasStringTrails,
       });
     if (wasNumber.length)
       results.push({
-        label: 'was number',
+        label: 'number',
         kind: ICoreShapeKinds.NumberKind,
         interactions: wasNumber,
         jsonTrailsByInteractions: wasNumberTrails,
       });
     if (wasBoolean.length)
       results.push({
-        label: 'was boolean',
+        label: 'boolean',
         kind: ICoreShapeKinds.BooleanKind,
         interactions: wasBoolean,
         jsonTrailsByInteractions: wasBooleanTrails,
       });
     if (wasNull.length)
       results.push({
-        label: 'was null',
+        label: 'null',
         kind: ICoreShapeKinds.NullableKind,
         interactions: wasNull,
         jsonTrailsByInteractions: wasNullTrails,
       });
     if (wasArray.length)
       results.push({
-        label: 'was array',
+        label: 'array',
         kind: ICoreShapeKinds.ListKind,
         interactions: wasArray,
         jsonTrailsByInteractions: wasArrayTrails,
       });
     if (wasObject.length)
       results.push({
-        label: 'was object',
+        label: 'object',
         kind: ICoreShapeKinds.ObjectKind,
         interactions: wasObject,
         jsonTrailsByInteractions: wasObjectTrails,

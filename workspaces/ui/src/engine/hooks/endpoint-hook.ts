@@ -23,6 +23,7 @@ import { useActor } from '@xstate/react';
 import { ActorRefLike } from '@xstate/react/es/types';
 import { diff } from 'react-ace';
 import { useSingleDiffMachine } from './diff-hook';
+import { IIgnoreRule } from '../interpretors/ignores/IIgnoreRule';
 
 export function useEndpointDiffMachine(
   pathId: string,
@@ -30,7 +31,7 @@ export function useEndpointDiffMachine(
   getSelf: () => any,
   services: InteractiveSessionConfig
 ) {
-  const [state, send] = useActor(getSelf());
+  const [state, send] = useActor<InteractiveEndpointSessionEvent>(getSelf());
   const context: InteractiveEndpointSessionContext = state.context;
   const value = state.value;
 
@@ -50,6 +51,9 @@ export function useEndpointDiffMachine(
       },
       handledUpdated: () => {
         send({ type: 'HANDLED_UPDATED' });
+      },
+      addIgnoreRule: (newRule: IIgnoreRule) => {
+        send({ type: 'ADD_IGNORE', newRule });
       },
     };
   }

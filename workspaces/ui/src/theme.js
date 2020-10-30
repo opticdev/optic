@@ -14,6 +14,7 @@ export const ChangedYellow = '#c8b768';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
 export const OpticBlueLightened = '#2a3764';
+export const OpticBlueReadable = '#868da4';
 export const SubtleBlueBackground = '#F5F6FA';
 export const SubtleGreyBackground = '#eaeaea';
 
