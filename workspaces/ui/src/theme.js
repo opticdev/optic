@@ -11,6 +11,7 @@ export const RemovedRedBackground = 'rgba(248,51,60,0.3)';
 export const AddedGreen = '#17c8a3';
 export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
+export const ChangedYellowDark = '#867b46';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
 export const OpticBlueLightened = '#2a3764';

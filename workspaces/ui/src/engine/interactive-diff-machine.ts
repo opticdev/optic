@@ -145,6 +145,7 @@ const createNewDiffMachine = <Context>(
                 target: 'unhandled',
                 actions: assign({
                   preview: (context, event) => event.data,
+                  selectedSuggestionIndex: () => 0,
                 }),
               },
             },

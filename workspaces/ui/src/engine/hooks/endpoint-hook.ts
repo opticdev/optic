@@ -1,11 +1,3 @@
-import { createShapeDiffMachine } from '../interactive-diff-machine';
-import {
-  DiffSessionSessionContext,
-  DiffSessionSessionEvent,
-  DiffSessionSessionStateSchema,
-  newDiffSessionSessionMachine,
-  sendMessageToEndpoint,
-} from '../diff-session';
 import sortby from 'lodash.sortby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
 import { InteractiveSessionConfig } from '../interfaces/session';
@@ -28,12 +20,19 @@ import { IIgnoreRule } from '../interpretors/ignores/IIgnoreRule';
 export function useEndpointDiffMachine(
   pathId: string,
   method: string,
+  getSessionActions: () => any,
   getSelf: () => any,
   services: InteractiveSessionConfig
 ) {
   const [state, send] = useActor<InteractiveEndpointSessionEvent>(getSelf());
   const context: InteractiveEndpointSessionContext = state.context;
   const value = state.value;
+
+  useEffect(() => {
+    if (value === 'ready') sessionActions.signalHandled(pathId, method);
+  }, [context.handledByDiffHash, value]);
+
+  const sessionActions = getSessionActions();
 
   const endpointDescriptor = useMemo(
     () =>
@@ -136,7 +135,7 @@ export function useEndpointDiffMachine(
             .map((i) => {
               return {
                 //@ts-ignore
-                location: ['Request', 'Body', i.contentType],
+                location: ['Request', 'New Body'],
                 diffs: [{ ...i }],
               };
             }),
@@ -145,9 +144,13 @@ export function useEndpointDiffMachine(
               (i) => !!i.diffParsed.location(services.rfcBaseState).inResponse
             )
             .map((i) => {
+              const location = i.diffParsed.location(services.rfcBaseState);
               return {
                 //@ts-ignore
-                location: [`${i.statusCode} Response`, 'Body', i.contentType],
+                location: [
+                  `${location.inResponse.statusCode} Response`,
+                  'New Body',
+                ],
                 diffs: [{ ...i }],
               };
             }),

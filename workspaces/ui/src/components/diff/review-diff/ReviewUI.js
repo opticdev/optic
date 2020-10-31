@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Page from '../../../components/Page';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -18,13 +18,27 @@ import { PathAndMethodMono } from '../v2/PathAndMethod';
 import { DocDarkGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
+import { CircularDiffProgress } from '../../../storybook/stories/diff-page/CircularDiffProgress';
 
 export function ReviewUI() {
   const classes = useStyles();
-  const { queries } = useDiffSession();
+  const { queries, actions } = useDiffSession();
 
   const results = queries.endpointSections();
   const selected = queries.selectedEndpoint();
+  const selectedEndpointHandled = queries.selectedEndpointHandled();
+  const handled = queries.handledByEndpoint();
+
+  const startedHandled = useMemo(() => selectedEndpointHandled, [selected]);
+
+  useEffect(() => {
+    if (selectedEndpointHandled && !startedHandled) {
+      setTimeout(
+        () => actions.selectNextEndpoint(results.endpointsWithDiffs),
+        1250
+      );
+    }
+  }, [selectedEndpointHandled]);
 
   const NiceSubheader = ({ title, count }) => (
     <ListSubheader
@@ -36,10 +50,14 @@ export function ReviewUI() {
       }}
     >{`${title} (${count})`}</ListSubheader>
   );
+
   return (
     <Page.Body padded={false} style={{ flexDirection: 'row', height: '100vh' }}>
       <Paper square className={classes.left} elevation={0}>
-        <DiffInfoCard />
+        <DiffInfoCard
+          handled={handled.reduce((current, i) => i.handled + current, 0)}
+          total={handled.reduce((current, i) => i.diffCount + current, 0)}
+        />
         <List className={classes.list}>
           <NiceSubheader
             title={'Endpoints with Diffs'}
@@ -49,6 +67,9 @@ export function ReviewUI() {
             <EndpointDetailCard
               key={i.pathId + i.method}
               {...i}
+              handledCount={handled.find(
+                (h) => h.pathId === i.pathId && h.method === i.method
+              )}
               selected={selected}
             />
           ))}
@@ -101,7 +122,7 @@ export function ReviewUI() {
 }
 
 export function EndpointDetailCard(props) {
-  const { method, pathId, diffCount, handled, selected } = props;
+  const { method, pathId, diffCount, handled, handledCount, selected } = props;
   const { queries, actions } = useDiffSession();
   const classes = useStyles();
 
@@ -137,6 +158,12 @@ export function EndpointDetailCard(props) {
         <div style={{ flex: 1 }} />
         <div className={classes.rightAction}>
           <div className={classes.stats}>
+            {handledCount && (
+              <CircularDiffProgress
+                handled={handledCount.handled}
+                total={handledCount.diffCount}
+              />
+            )}
             {/*<CoverageDots*/}
             {/*  requests={props.requests}*/}
             {/*  responses={props.responses}*/}
@@ -151,9 +178,9 @@ export function EndpointDetailCard(props) {
 
 const DiffInfoCard = (props) => {
   const classes = useStyles();
-  const { queries } = useDiffSession();
+  const { total, handled } = props;
 
-  const totalDiffs = queries.totalDiffs();
+  const { queries } = useDiffSession();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -193,13 +220,13 @@ const DiffInfoCard = (props) => {
           <MenuItem onClick={handleClose}>Switch Capture Mode</MenuItem>
         </Menu>
       </Box>
-      <Handled totalDiffs={totalDiffs} />
+      <Handled {...{ total, handled }} />
     </div>
   );
 };
 
 export function Handled(props) {
-  const { totalDiffs, handled } = props;
+  const { total, handled } = props;
   return (
     <Box
       flexDirection="row"
@@ -208,10 +235,10 @@ export function Handled(props) {
       style={{ marginTop: 5, paddingLeft: 10, paddingRight: 10 }}
     >
       <div style={{ fontSize: 10, color: DocDarkGrey, marginRight: 10 }}>
-        You have handled 0/{totalDiffs} Diffs
+        You have handled {handled}/{total} Diffs
       </div>
       <LinearProgress
-        value={50}
+        value={(handled / total) * 100}
         variant="determinate"
         style={{ flex: 1, maxWidth: 100 }}
       />

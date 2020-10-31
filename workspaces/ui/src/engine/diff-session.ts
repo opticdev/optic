@@ -3,6 +3,7 @@ import { ParsedDiff } from './parse-diff';
 import { DiffSet } from './diff-set';
 import { InteractiveSessionConfig } from './interfaces/session';
 import {
+  InteractiveEndpointSessionContext,
   InteractiveEndpointSessionEvent,
   newInteractiveEndpointSessionMachine,
 } from './interactive-endpoint';
@@ -29,7 +30,8 @@ export type DiffSessionSessionEvent =
       pathId: string;
       method: string;
       event: InteractiveEndpointSessionEvent;
-    };
+    }
+  | { type: 'HANDLED_UPDATED'; pathId: string; method: string };
 
 export function sendMessageToEndpoint(
   pathId: string,
@@ -57,6 +59,7 @@ interface IEndpointWithStatus {
 export interface DiffSessionSessionContext {
   allDiffs: ParsedDiff[];
   endpoints: IEndpointWithStatus[];
+  handledByEndpoint: IHandledByEndpoint;
   focus?: { pathId: string; method: string };
 }
 
@@ -71,6 +74,7 @@ export const newDiffSessionSessionMachine = (
   >({
     id: diffId,
     context: {
+      handledByEndpoint: [],
       allDiffs: [],
       endpoints: [],
     },
@@ -134,6 +138,13 @@ export const newDiffSessionSessionMachine = (
       },
       ready: {
         on: {
+          HANDLED_UPDATED: {
+            actions: [
+              assign({
+                handledByEndpoint: (context) => computeHandled(context),
+              }),
+            ],
+          },
           SEND_TO_ENDPOINT: {
             actions: (context, event) => {
               const actor = context.endpoints.find(
@@ -168,3 +179,70 @@ export const newDiffSessionSessionMachine = (
     },
   });
 };
+
+type IHandledByEndpoint = {
+  pathId: string;
+  method: string;
+  diffCount: number;
+  handled: number;
+}[];
+function computeHandled(
+  context: DiffSessionSessionContext
+): IHandledByEndpoint {
+  const results: IHandledByEndpoint = [];
+
+  context.endpoints.forEach((i) => {
+    const endpointContext: InteractiveEndpointSessionContext =
+      i.ref.state.context;
+    const entries: [string, boolean][] = Object.entries(
+      endpointContext.handledByDiffHash
+    );
+    const handled = entries.filter(([key, bool]) => bool).length;
+    results.push({
+      pathId: i.pathId,
+      method: i.method,
+      handled,
+      diffCount: entries.length !== 0 ? entries.length : i.diffCount,
+    });
+  });
+
+  return results;
+}
+
+export function nextEndpointToFocusOn(
+  context: DiffSessionSessionContext,
+  endpointsWithDiffs: { pathId: string; method: string }[]
+) {
+  const indexOfCurrentFoucs: number =
+    context.focus &&
+    endpointsWithDiffs.findIndex(
+      ({ pathId, method }) =>
+        pathId === context.focus.pathId && method === context.focus.method
+    );
+
+  function alreadyHandled(pathId: string, method: string) {
+    const status = context.handledByEndpoint.find(
+      (i) => pathId === i.pathId && method === i.method
+    );
+    return (
+      status && status.diffCount > 0 && status.diffCount === status.handled
+    );
+  }
+  // next unhandled after this one, or start from top of list.
+  const searchOrder = [
+    ...endpointsWithDiffs.slice(
+      indexOfCurrentFoucs || 0,
+      endpointsWithDiffs.length
+    ),
+    ...endpointsWithDiffs.slice(0, indexOfCurrentFoucs || 0),
+  ].filter(
+    (i) =>
+      !(
+        i.method === context.focus.method && i.pathId === context.focus.pathId
+      ) && !alreadyHandled(i.pathId, i.method)
+  );
+
+  const next = searchOrder[0];
+
+  return next ? { pathId: next.pathId, method: next.method } : context.focus;
+}

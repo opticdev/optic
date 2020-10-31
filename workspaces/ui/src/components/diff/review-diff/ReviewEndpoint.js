@@ -146,6 +146,7 @@ export function EndpointGrouping(props) {
 export const LocationBreadcumbX = (props) => {
   const classes = useStyles();
   const { location, itemStyles } = props;
+  console.log('loco', location);
   return (
     <Breadcrumbs
       className={classes.location}

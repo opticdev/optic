@@ -4,6 +4,7 @@ import {
   DiffSessionSessionEvent,
   DiffSessionSessionStateSchema,
   newDiffSessionSessionMachine,
+  nextEndpointToFocusOn,
   sendMessageToEndpoint,
 } from '../diff-session';
 import { InteractiveSessionConfig } from '../interfaces/session';
@@ -62,6 +63,19 @@ export function useDiffSessionMachine(
           ),
         });
       },
+      signalHandled(pathId, method) {
+        send({ type: 'HANDLED_UPDATED', pathId, method });
+      },
+      selectNextEndpoint: (endpointsWithDiffs: any[]) => {
+        const next = nextEndpointToFocusOn(state.context, endpointsWithDiffs);
+        if (next) {
+          send({
+            type: 'SELECTED_ENDPOINT',
+            pathId: next.pathId,
+            method: next.method,
+          });
+        }
+      },
       selectEndpoint: (pathId, method) =>
         send({ type: 'SELECTED_ENDPOINT', pathId, method }),
     };
@@ -70,12 +84,24 @@ export function useDiffSessionMachine(
   function createQueries() {
     const { context, value } = state;
     return {
-      handledByDiffHash: () => {},
+      handledByEndpoint: () => context.handledByEndpoint,
       hasEndpoint: (method, pathId) =>
         !!context.endpoints.find(
           (i) => i.pathId === pathId && i.method === method
         ),
       selectedEndpoint: () => context.focus,
+      selectedEndpointHandled: () => {
+        const value =
+          context.focus &&
+          context.handledByEndpoint.find(
+            (i) =>
+              i.pathId === context.focus.pathId &&
+              i.method === context.focus.method
+          );
+        return (
+          value && value.diffCount === value.handled && value.diffCount > 0
+        );
+      },
       sessionState: () => value,
       totalDiffs: () => context.endpoints.reduce((a, c) => a + c.diffCount, 0),
       endpointSections: () => {
@@ -111,6 +137,7 @@ export function useDiffSessionMachine(
         useEndpointDiffMachine(
           pathId,
           method,
+          createActions,
           () => {
             const endpoint = context.endpoints.find(
               (i) => i.pathId === pathId && i.method === method

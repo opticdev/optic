@@ -34,8 +34,6 @@ function newContentType(
   learnedBodies: ILearnedBodies,
   rfcBaseState: DiffRfcBaseState
 ): ISuggestion {
-  debugger;
-
   const location = udiff.location(rfcBaseState);
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const diff = (udiff.raw() as IUnmatchedRequestBodyShape)
@@ -74,13 +72,13 @@ function newContentType(
           plain('document'),
           code(location.inResponse!.statusCode.toString()),
           plain('response with'),
-          code(location.inRequest.contentType || 'No Body'),
+          code(location.inResponse.contentType || 'No Body'),
         ],
         pastTense: [
           plain('Documented'),
           code(location.inResponse!.statusCode.toString()),
           plain('response with'),
-          code(location.inRequest.contentType || 'No Body'),
+          code(location.inResponse.contentType || 'No Body'),
         ],
       },
       commands: [],

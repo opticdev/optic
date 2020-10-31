@@ -18,6 +18,7 @@ import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { SubtleBlueBackground } from '../../../theme';
+import Grow from '@material-ui/core/Grow';
 
 export function SuggestionSelect(props) {
   const classes = useStyles();
@@ -31,54 +32,56 @@ export function SuggestionSelect(props) {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Card className={classes.bounded} elevation={0}>
-        <div style={{ paddingTop: 2, paddingBottom: 2, flexShrink: 1 }}>
-          <div className={showAll && classes.collapseHeight}>
-            <SelectSuggestionItem
-              copy={suggestions[selectedSuggestionIndex].action.activeTense}
-            />
+    <Grow in={true} key={suggestions.length} timeout={500}>
+      <div style={{ display: 'flex' }}>
+        <Card className={classes.bounded} elevation={0}>
+          <div style={{ paddingTop: 2, paddingBottom: 2, flexShrink: 1 }}>
+            <div className={showAll && classes.collapseHeight}>
+              <SelectSuggestionItem
+                copy={suggestions[selectedSuggestionIndex].action.activeTense}
+              />
+            </div>
+            <Collapse in={showAll} exit={false}>
+              {showAll && (
+                <List>
+                  {suggestions.map((i, index) => (
+                    <SelectSuggestionItem
+                      button
+                      setSuggestion={(newIndex) => {
+                        setShowAll(false);
+                        setSelectedSuggestionIndex(newIndex);
+                      }}
+                      index={index}
+                      copy={i.action.activeTense}
+                      key={index}
+                    />
+                  ))}
+                </List>
+              )}
+            </Collapse>
           </div>
-          <Collapse in={showAll} exit={false}>
-            {showAll && (
-              <List>
-                {suggestions.map((i, index) => (
-                  <SelectSuggestionItem
-                    button
-                    setSuggestion={(newIndex) => {
-                      setShowAll(false);
-                      setSelectedSuggestionIndex(newIndex);
-                    }}
-                    index={index}
-                    copy={i.action.activeTense}
-                    key={index}
-                  />
-                ))}
-              </List>
-            )}
-          </Collapse>
-        </div>
-        <div className={classes.menu}>
-          <IconButton
-            color="secondary"
-            size="small"
-            onClick={() => setShowAll(true)}
-            disabled={showAll || suggestions.length === 1}
-          >
-            <span className={classes.numberSpan}>({suggestions.length})</span>
-            <ExpandMoreIcon fontSize="small" />
-          </IconButton>
-          <Button
-            size="small"
-            color="primary"
-            onClick={stage}
-            style={{ fontSize: 10, fontWeight: 800 }}
-          >
-            Approve
-          </Button>
-        </div>
-      </Card>
-    </div>
+          <div className={classes.menu}>
+            <IconButton
+              color="secondary"
+              size="small"
+              onClick={() => setShowAll(true)}
+              disabled={showAll || suggestions.length === 1}
+            >
+              <span className={classes.numberSpan}>({suggestions.length})</span>
+              <ExpandMoreIcon fontSize="small" />
+            </IconButton>
+            <Button
+              size="small"
+              color="primary"
+              onClick={stage}
+              style={{ fontSize: 10, fontWeight: 800 }}
+            >
+              Approve
+            </Button>
+          </div>
+        </Card>
+      </div>
+    </Grow>
   );
 }
 
