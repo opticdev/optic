@@ -16,6 +16,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "bent": "^7.3.12",
     "execa": "^4.0.3",
     "read-package-json": "^3.0.0",
