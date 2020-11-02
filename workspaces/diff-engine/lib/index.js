@@ -2,7 +2,6 @@ const Execa = require('execa');
 const { PassThrough } = require('stream');
 const Fs = require('fs');
 const Path = require('path');
-const Toml = require('@iarna/toml');
 const OS = require('os');
 const Rimraf = require('rimraf');
 const Bent = require('bent');
