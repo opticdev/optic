@@ -78,6 +78,7 @@ export function DiffSessionMachineStore(props) {
   const reactContext = {
     actions,
     queries,
+    services,
     rfcBaseState,
     baseDiffReviewPath,
     loadInteraction: (interactionPointer) => {

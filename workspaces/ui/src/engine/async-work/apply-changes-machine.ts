@@ -1,7 +1,7 @@
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges, IChanges } from '../hooks/session-hook';
-import workerpool from 'workerpool';
+import { spawn, Thread, Worker } from 'threads';
 import {
   Facade,
   JsonHelper,
@@ -16,7 +16,8 @@ import { batchCommandHandler } from '../../components/utilities/BatchCommandHand
 import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { universeFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
+import { IOasStats } from './oas-preview-machine';
+
 export interface ApplyChangesStateSchema {
   states: {
     staged: {};
@@ -33,18 +34,20 @@ export interface ApplyChangesStateSchema {
 // The events that the machine handles
 export type ApplyChangesEvent =
   | { type: 'START' }
-  | { type: 'INCREMENT_BODIES_PROGRESS' };
+  | { type: 'INCREMENT_BODIES_PROGRESS'; methodAndPath: string };
 
 export interface ApplyChangesContext {
   newPaths: {
     commands: any[];
     commandsJS: any[];
-    endpointIds: { pathId: string; method: string }[];
+    endpointIds: { pathId: string; method: string; pathExpression: string }[];
   };
   newBodiesProgress: number;
+  newBodiesProgressLastLearned: string;
   newBodiesLearned: ILearnedBodies[] | undefined;
   approvedSuggestionsCommands: any[];
   updatedEvents: any[];
+  oasStats: IOasStats | undefined;
 }
 
 // The context (extended state) of the machine
@@ -65,9 +68,11 @@ export const newApplyChangesMachine = (
     context: {
       newPaths: { commands: [], commandsJS: [], endpointIds: [] },
       newBodiesProgress: 0,
+      newBodiesProgressLastLearned: '',
       newBodiesLearned: undefined,
       approvedSuggestionsCommands: [],
       updatedEvents: [],
+      oasStats: undefined,
     },
     initial: 'staged',
     states: {
@@ -128,7 +133,7 @@ export const newApplyChangesMachine = (
             });
 
             const results = endpointIds.map(
-              async ({ pathId, method }, index) => {
+              async ({ pathId, method, pathExpression }, index) => {
                 return await throttler.schedule(async () => {
                   console.log(`learning started for ${pathId} ${method}`);
                   let promise;
@@ -143,7 +148,10 @@ export const newApplyChangesMachine = (
 
                   promise.finally(() => {
                     console.log(`learning finished ${pathId} ${method}`);
-                    callback({ type: 'INCREMENT_BODIES_PROGRESS' });
+                    callback({
+                      type: 'INCREMENT_BODIES_PROGRESS',
+                      methodAndPath: `${method.toUpperCase()} ${pathExpression}`,
+                    });
                   });
 
                   return await promise;
@@ -168,6 +176,8 @@ export const newApplyChangesMachine = (
           INCREMENT_BODIES_PROGRESS: {
             actions: assign({
               newBodiesProgress: (context, _) => context.newBodiesProgress + 1,
+              newBodiesProgressLastLearned: (context, event) =>
+                event.methodAndPath,
             }),
           },
         },
@@ -198,17 +208,22 @@ export const newApplyChangesMachine = (
               ...prepareLearnedBodies(context.newBodiesLearned || []),
             ];
 
-            const pool1 = workerpool.pool();
-            // do me on a web worker
-            return await pool1.exec(handleCommands, [
+            const worker = await spawn(
+              new Worker('./handle-commands-worker.ts')
+            );
+
+            const result = await worker.handleCommands(
               allCommandsToRun,
               services.rfcBaseState.eventStore.serializeEvents(
                 services.rfcBaseState.rfcId
               ),
               uuidv4(),
               clientSessionId,
-              clientId,
-            ]);
+              clientId
+            );
+
+            await Thread.terminate(worker);
+            return result;
           },
           onDone: {
             target: 'completed',
@@ -225,8 +240,20 @@ export const newApplyChangesMachine = (
         },
       },
       completed: {
-        entry: (context) => {
-          console.log(context.updatedEvents);
+        invoke: {
+          src: async (context, event) => {
+            const worker = await spawn(new Worker('./oas-preview-machine.ts'));
+
+            const result = await worker.oasPreviewMachine(
+              context.updatedEvents
+            );
+
+            await Thread.terminate(worker);
+            return result;
+          },
+          onDone: {
+            actions: assign({ oasStats: (context, event) => event.data }),
+          },
         },
       },
       failed: {},
@@ -263,7 +290,11 @@ function LearnPaths(
         commands.push(command);
         lastParentPathId = pathId;
       });
-      endpointIds.push({ method: i.method, pathId: lastParentPathId });
+      endpointIds.push({
+        method: i.method,
+        pathId: lastParentPathId,
+        pathExpression: i.pathExpression,
+      });
       emitCommands(commands);
     });
   });
@@ -311,44 +342,4 @@ export function pathStringToPathComponents(pathString) {
     return trimTrailingEmptyPath(rest);
   }
   return trimTrailingEmptyPath(components);
-}
-
-function handleCommands(
-  commands: any[],
-  eventString: string,
-  batchId: string,
-  clientSessionId: string,
-  clientId: string
-): any[] {
-  const {
-    opticEngine,
-    RfcCommandContext,
-    JsonHelper,
-  } = require('@useoptic/domain');
-  const {
-    universeFromEventsAndAdditionalCommands,
-  } = require('@useoptic/domain-utilities');
-
-  const {
-    StartBatchCommit,
-    EndBatchCommit,
-  } = opticEngine.com.useoptic.contexts.rfc.Commands;
-
-  const inputCommands = JsonHelper.vectorToJsArray(
-    opticEngine.CommandSerialization.fromJs(commands)
-  );
-
-  const commandContext = new RfcCommandContext(
-    clientId,
-    clientSessionId,
-    batchId
-  );
-
-  const { rfcId, eventStore } = universeFromEventsAndAdditionalCommands(
-    JSON.parse(eventString),
-    commandContext,
-    inputCommands
-  );
-
-  return JSON.parse(eventStore.serializeEvents(rfcId));
 }

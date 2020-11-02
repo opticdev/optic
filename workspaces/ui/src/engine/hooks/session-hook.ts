@@ -1,18 +1,11 @@
+import { DiffContext } from '../interactive-diff-machine';
 import {
-  createShapeDiffMachine,
-  DiffContext,
-} from '../interactive-diff-machine';
-import {
-  DiffSessionSessionContext,
-  DiffSessionSessionEvent,
-  DiffSessionSessionStateSchema,
   IEndpointWithStatus,
   newDiffSessionSessionMachine,
   nextEndpointToFocusOn,
-  sendMessageToEndpoint,
 } from '../diff-session';
 import { InteractiveSessionConfig } from '../interfaces/session';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { IDiff } from '../interfaces/diffs';
 import { ParsedDiff } from '../parse-diff';
@@ -24,6 +17,7 @@ import { IUnrecognizedUrl } from '../../services/diff';
 import { IToDocument } from '../interfaces/interfaces';
 import { InteractiveEndpointSessionContext } from '../interactive-endpoint';
 import { ISuggestion } from '../interfaces/interpretors';
+
 export function useDiffSessionMachine(
   diffId: string,
   services: InteractiveSessionConfig
@@ -195,10 +189,10 @@ export type IChanges = {
 
 export type IAllChanges = {
   added: IToDocument[];
-  changes: { method: string; pathId: string; status: IChanges[] }[];
+  changes: { method: string; pathId: string; status: IChanges }[];
 };
 
-function getApprovedSuggestions(i: IEndpointWithStatus): IChanges[] {
+function getApprovedSuggestions(i: IEndpointWithStatus): IChanges {
   type EndpointDiffsInner = {
     context: DiffContext<any>;
     value: any;
@@ -212,7 +206,17 @@ function getApprovedSuggestions(i: IEndpointWithStatus): IChanges[] {
     (diff) => diff.ref.state
   );
 
-  function processEachDiff(tag: string) {
+  function processEachDiff(
+    tag: string
+  ): (
+    diff: EndpointDiffsInner
+  ) => {
+    ignored: boolean;
+    approvedSuggestion: ISuggestion;
+    tag: string;
+    isHandled: boolean;
+    didReview: boolean;
+  } {
     return (diff: EndpointDiffsInner) => {
       const { context, value } = diff;
       const isHandled = (value.ready && value.ready === 'handled') || false;
@@ -237,10 +241,8 @@ function getApprovedSuggestions(i: IEndpointWithStatus): IChanges[] {
     };
   }
 
-  const diffStatus = [
+  return [
     ...shapeDiffs.map(processEachDiff('shape')),
     ...newRegions.map(processEachDiff('region')),
   ];
-
-  return diffStatus;
 }

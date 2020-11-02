@@ -80,7 +80,7 @@ export function ReviewUI() {
       >
         <Paper square className={classes.left} elevation={0}>
           <DiffInfoCard {...handledAll} setAskFinish={setAskFinish} />
-          <AskFinished {...{ askFinish, setAskFinish }} />
+          {askFinish && <AskFinished {...{ setAskFinish }} />}
           <Divider style={{ marginTop: 12, marginBottom: 0 }} />
           <List className={classes.list}>
             <UndocumentedCard selected={shouldShowUndocumented} />
