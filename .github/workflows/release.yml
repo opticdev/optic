@@ -141,32 +141,43 @@ jobs:
   release-npm:
     runs-on: ubuntu-latest
     needs: publish-binaries
+    outputs: 
+      is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
     steps:
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       with:
-          ref: release
+        ref: release
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
     - name: Install Dependencies and Build Optic
       run:  |
-        sudo apt-get update
-        sudo apt-get install apt-transport-https -y
-        echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-        curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
-        sudo apt-get update
-        sudo apt-get install sbt -y
         source ./sourceme.sh && optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
       env:
         OPTIC_PUBLISH_SCOPE: public
+    - name: Set is_prerelease output
+      id: release_type
+      run: |
+        OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
+        if [[ $OPTIC_VERSION == *'-'* ]]; then
+          echo "v$OPTIC_VERSION is a prerelease"
+          echo "::set-output name=is_prerelease::true"
+        else
+          echo "v$OPTIC_VERSION is not a prerelease"
+          echo "::set-output name=is_prerelease::false"
+        fi
 
   # Creates debian package for users to install, hosted on s3
   release-deb:
     runs-on: ubuntu-latest
     needs: release-npm
+    if: needs.release-npm.outputs.is_prerelease == 'false'
     steps:
+      - run: |
+          echo "determined as not a prerelease" 
+          echo "is_prelease=${{ needs.release-npm.outputs.is_prerelease }}"
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
         with:
           ref: release
@@ -184,6 +195,7 @@ jobs:
   trigger-brew-release:
     runs-on: ubuntu-latest
     needs: release-npm
+    if: needs.release-npm.outputs.is_prerelease == 'false'
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2

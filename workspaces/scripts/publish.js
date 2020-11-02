@@ -1,6 +1,7 @@
 const path = require('path');
 const { exec, execFileSync } = require('child_process');
 const packageJson = require(path.join(process.cwd(), 'package.json'));
+const semver = require('semver');
 
 const { workspaces } = packageJson;
 console.log({ workspaces });
@@ -10,18 +11,22 @@ const registry =
   (process.env.OPTIC_PUBLISH_SCOPE === 'github' &&
     'https://npm.pkg.github.com/useoptic');
 const skipList = new Set((process.env.OPTIC_SKIP_CSV || '').split(','));
-const promise = workspaces.reduce((acc, workspace) => {
+const packages = workspaces.map((workspace) => {
+  const workspacePath = path.join(process.cwd(), workspace);
+  const manifest = require(path.join(workspacePath, 'package.json'));
+  return {
+    cwd: workspacePath,
+    name: manifest.name,
+    version: manifest.version
+  };
+});
+const promise = packages.reduce((acc, { name, version }) => {
   return acc.then((previousResults) => {
     return new Promise((resolve, reject) => {
-      const workspacePackage = require(path.join(
-        process.cwd(),
-        workspace,
-        'package.json'
-      ));
-      const packageId = `${workspacePackage.name}@${workspacePackage.version}`;
+      const packageId = `${name}@${version}`;
       console.log(`checking ${packageId}`);
-      if (skipList.has(workspacePackage.name)) {
-        console.log(`force skipping ${workspacePackage.name}`);
+      if (skipList.has(name)) {
+        console.log(`force skipping ${name}`);
         return resolve([...previousResults, true]);
       }
       const promise =
@@ -29,7 +34,7 @@ const promise = workspaces.reduce((acc, workspace) => {
           ? new Promise((resolve1, reject1) => {
               console.log(`\nunpublish ${packageId}`);
               exec(
-                `npm unpublish ${workspacePackage.name} --force --registry ${registry}`,
+                `npm unpublish ${name} --force --registry ${registry}`,
                 (err, stdout, stderr) => {
                   if (err) {
                     console.error(err);
@@ -69,20 +74,30 @@ promise
     console.log(`\n\n================================\n\n`);
     return results
       .map((result, i) => {
-        const workspace = workspaces[i];
-        console.log(workspace, result ? 'skipping' : 'publishing');
+        const package = packages[i];
+        console.log(package, result ? 'skipping' : 'publishing');
+
+        const prereleaseComponents = semver.prerelease(package.version);
+        const tag = !prereleaseComponents
+          ? 'latest'
+          : prereleaseComponents.find(
+              (component) => typeof component === 'string'
+            ) || 'unstable';
+
         return {
-          workspace,
+          cwd: package.cwd,
+          name: package.name,
+          version: package.version,
+          tag,
           skip: result,
         };
       })
-      .reduce((acc, { workspace, skip }) => {
+      .reduce((acc, { cwd, name, skip, version, tag }) => {
         if (skip) {
           return acc;
         }
         return acc.then(() => {
-          const cwd = path.join(process.cwd(), workspace);
-          console.log(`publishing ${workspace}`);
+          console.log(`publishing ${name}@${version} tagged ${tag}`);
           console.log(cwd);
           return new Promise((resolve, reject) => {
             try {
@@ -90,7 +105,7 @@ promise
                 'npm',
                 isPrivatePublish
                   ? ['publish', '--registry', registry]
-                  : ['publish', '--access', 'public', '-ddd'],
+                  : ['publish', '--access', 'public', '-ddd', '--tag', tag],
                 {
                   cwd,
                   stdio: 'inherit',

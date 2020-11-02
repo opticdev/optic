@@ -1,13 +1,24 @@
 // this script is meant to be run via `yarn bump <whatever version>`
 const path = require('path');
 const fs = require('fs-extra');
+const semver = require('semver');
 
-async function main(targetVersion) {
+const semverIncrements = [
+  'minor',
+  'major',
+  'patch',
+  'premajor',
+  'preminor',
+  'prepatch',
+  'prerelease',
+];
+
+async function main(targetVersion, preId) {
   const silentMode = JSON.parse(process.env.npm_config_argv).original.includes('--silent');
   const packageJson = await fs.readJson('./package.json');
   const { workspaces } = packageJson;
-  if ([undefined, "minor", "major", "patch"].includes(targetVersion)) {
-    bumpAllPackages(targetVersion, silentMode);
+  if (!targetVersion || semverIncrements.includes(targetVersion)) {
+    incrementAllPackages(targetVersion, preId);
     return;
   } else {
     console.log(`setting workspace versions to ${targetVersion}`);
@@ -56,12 +67,12 @@ async function main(targetVersion) {
 }
 
 // this is called if there is no specified target version
-async function bumpAllPackages(type = "patch", silentMode) {
+async function incrementAllPackages(increment = "patch", preId, silentMode) {
   let log = console.log;
   if (silentMode) {
     console.log = () => {} // disable logging
   }
-  console.log(`performing a ${type} bump`)
+  console.log(`performing a ${increment} bump`)
   const packageJson = await fs.readJson('./package.json');
   const { workspaces } = packageJson;
   const versions = {}
@@ -73,7 +84,11 @@ async function bumpAllPackages(type = "patch", silentMode) {
         const targetPackage = await fs.readJson(`./${workspace}/package.json`);
         const old = targetPackage.version;
 
-        targetPackage.version = bumpVersion(targetPackage.version, type);
+        targetPackage.version = semver.inc(
+          targetPackage.version,
+          increment,
+          preId
+        );
         console.log(`bumping ${old} to ${targetPackage.version}`)
         versions[targetPackage.name] = targetPackage.version;
         version = targetPackage.version;
@@ -116,25 +131,5 @@ async function bumpAllPackages(type = "patch", silentMode) {
   console.log(`Done!`);
 }
 
-function bumpVersion(current, type) {
-  console.log(current)
-  let [major, minor, patch] = current.split(".");
-  switch (type) {
-    case "major":
-      major = parseInt(major) + 1;
-      minor = patch = 0;
-      break;
-      case "minor":
-        minor = parseInt(minor) + 1;
-        patch = 0;
-        break;
-      case "patch":
-      default:
-        patch = parseInt(patch) + 1;
-        break;
-  }
-  return [major, minor, patch].join(".");
-}
-
-const [, , targetVersion] = process.argv;
-main(targetVersion);
+const [, , targetVersion, preId] = process.argv;
+main(targetVersion, preId);
