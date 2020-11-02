@@ -131,14 +131,12 @@ jobs:
           tar -xzvf dist/$ARCHIVE_NAME.tar.gz -C dist
           ls -lsa dist
       - name: Configure AWS Credentials
-        if: false # TODO: remove this safety that's preventing actual releases from happening
         uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
-        if: false # TODO: remove this safety that's preventing actual releases from happening
         run: |
           aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
@@ -162,7 +160,6 @@ jobs:
         source ./sourceme.sh && optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
-      if: false
       env:
         OPTIC_PUBLISH_SCOPE: public
     - name: Set is_prerelease output
