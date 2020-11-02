@@ -3,8 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { useCaptureContext } from '../../../../contexts/CaptureContext';
 import { useBaseUrl } from '../../../../contexts/BaseUrlContext';
 import { getOrUndefined, JsonHelper } from '@useoptic/domain';
-import { DiffLoadingOverview } from '../LoadingNextDiff';
-import { NewUrlModal } from '../AddUrlModal';
+import { DiffLoadingOverview } from '../../v2/LoadingNextDiff';
+import { NewUrlModal } from '../../v2/AddUrlModal';
 import classNames from 'classnames';
 import { Show } from '../../../shared/Show';
 import isEqual from 'lodash.isequal';
@@ -14,7 +14,7 @@ import { DocDarkGrey, DocGrey } from '../../../docs/DocConstants';
 import List from '@material-ui/core/List';
 import { PathNameFromId } from '../../../../contexts/EndpointContext';
 import ListItem from '@material-ui/core/ListItem';
-import { MethodRenderLarge, PathAndMethod } from '../PathAndMethod';
+import { MethodRenderLarge, PathAndMethod } from '../../v2/PathAndMethod';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Chip from '@material-ui/core/Chip';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -29,50 +29,29 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import { AddedGreenBackground, secondary } from '../../../../theme';
-import { useCaptureManagerPageStyles } from '../CaptureManagerPage';
+import { secondary } from '../../../../theme';
 import TableRow from '@material-ui/core/TableRow';
 import Fade from '@material-ui/core/Fade';
 import PathMatcher from '../../PathMatcher';
 import { LearnAPIPageContext, LearnAPIStore } from './LearnAPIPageContext';
-import Button from '@material-ui/core/Button';
 import LearnAPIMenu from './LearnAPIMenu';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { LightTooltip } from '../../../tooltips/LightTooltip';
-import { Icon } from '@material-ui/core';
 import InProgressFullScreen from './InProgressFullScreen';
 
-export function LearnAPIPage(props) {
-  const { captureId, urlsSplit } = props;
-  //normalize in anticipation of wasm
-  const undocumented = JsonHelper.seqToJsArray(urlsSplit.undocumented);
-  const allUnmatchedPaths = JsonHelper.seqToJsArray(urlsSplit.allPaths);
-  const urls = JsonHelper.seqToJsArray(urlsSplit.urls).map((i) => ({
-    method: i.method,
-    pathId: getOrUndefined(i.pathId),
-    path: i.path,
-    count: i.count,
-    id: rowId(i),
-  }));
-
-  return <LearnAPIPageInner {...{ undocumented, allUnmatchedPaths, urls }} />;
-}
-
-function LearnAPIPageInner(props) {
-  const { undocumented, allUnmatchedPaths, urls } = props;
+export function LearnAPIPageInner(props) {
+  const { urls } = props;
   const { completed } = useCaptureContext();
-  const classes = useCaptureManagerPageStyles();
-  const history = useHistory();
-
-  const baseUrl = useBaseUrl();
 
   return (
-    <LearnAPIStore allUrls={urls} key="learning-store">
+    <LearnAPIStore
+      allUrls={urls}
+      key="learning-store"
+      onChange={props.onChange}
+    >
       <EnhancedTable urls={urls} key="url-table" />
-      {urls.length === 0 && undocumented.length === 0 && !completed && (
-        <DiffLoadingOverview show={true} />
-      )}
+      {urls.length === 0 && !completed && <DiffLoadingOverview show={true} />}
     </LearnAPIStore>
   );
 }
@@ -218,15 +197,15 @@ const EnhancedTableToolbar = (props) => {
           <Typography
             className={classes.title}
             color="inherit"
-            variant="body1"
+            variant="body2"
             component="div"
           >
             {numSelected} endpoints to document
           </Typography>
           <div style={{ flex: 1 }} />
-          <div style={{ width: 200, display: 'flex' }}>
-            <LearnAPIMenu />
-          </div>
+          {/*<div style={{ width: 200, display: 'flex' }}>*/}
+          {/*  <LearnAPIMenu />*/}
+          {/*</div>*/}
         </div>
       ) : (
         <Typography
@@ -247,7 +226,6 @@ export default function EnhancedTable(props) {
   const {
     checkedIds,
     toDocument,
-    learningInProgress,
     shouldHideIds,
     highlightAlsoMatching,
     updatePathExpression,
@@ -284,7 +262,6 @@ export default function EnhancedTable(props) {
 
   return (
     <div className={classes.root}>
-      {learningInProgress && <InProgressFullScreen type={learningInProgress} />}
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={checkedIds.length} />
         <FilterAction
@@ -471,7 +448,7 @@ function FilterAction({ paginator, handleChangePage }) {
   const classes = useStyles();
   const { setBasepath, basepath } = useContext(LearnAPIPageContext);
   return (
-    <div>
+    <div className={classes.filterOuter}>
       <div className={classes.filter}>
         <IconButton size="small" disabled style={{ marginRight: 10 }}>
           <FilterListIcon fontSize="10" />
@@ -511,19 +488,17 @@ function rowId(row) {
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
+    zIndex: 500,
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
+    position: 'sticky',
+    top: 0,
+    backgroundColor: 'rgb(250,250,250)',
   },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.primary.main,
-          backgroundColor: lighten(theme.palette.primary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.primary.dark,
-        },
+  highlight: {
+    color: theme.palette.primary.main,
+    backgroundColor: lighten(theme.palette.primary.light, 0.85),
+  },
   title: {
     flex: '1 1 100%',
   },
@@ -532,8 +507,13 @@ const useToolbarStyles = makeStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    paddingTop: 20,
     height: '80%',
+  },
+  filterOuter: {
+    position: 'sticky',
+    top: 64,
+    borderBottom: '1px solid #e2e2e2',
+    zIndex: 499,
   },
   paper: {
     width: '100%',

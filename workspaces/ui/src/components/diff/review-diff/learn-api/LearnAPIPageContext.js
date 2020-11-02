@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import pathToRegexp from 'path-to-regexp';
-import { pathComponentsToString } from '../AddUrlModal';
+import { pathComponentsToString } from '../../v2/AddUrlModal';
 import { useServices } from '../../../../contexts/SpecServiceContext';
 
 export const LearnAPIPageContext = React.createContext({});
 
-export function LearnAPIStore({ children, allUrls }) {
+export function LearnAPIStore({ children, allUrls, onChange }) {
   const { specService } = useServices();
   const [toDocument, setToDocument] = useState([]);
   const [ignoredIds, setIgnoredIds] = useState([]);
   const [basepath, setBasepath] = useState('');
-  const [learningInProgress, setLearningInProgress] = useState(false);
   const checkedIds = toDocument.map((i) => i.id);
   const [pathExpressions, changePathExpressions] = useState({});
 
@@ -66,10 +65,10 @@ export function LearnAPIStore({ children, allUrls }) {
     })
     .map((i) => i.id);
 
-  const startLearning = (type) => {
-    setLearningInProgress(type);
-    //do magic....
-  };
+  // const startLearning = (type) => {
+  //   setLearningInProgress(type);
+  //   //do magic....
+  // };
 
   const toggleRow = (row, forceRemove = false) => {
     if (checkedIds.includes(row.id) || forceRemove) {
@@ -79,13 +78,21 @@ export function LearnAPIStore({ children, allUrls }) {
     }
   };
 
+  if (onChange) {
+    onChange({
+      handled: new Set([...shouldHideIds, ...checkedIds]).size,
+      total: allUrls.length,
+      toDocument: currentPathExpressions,
+    });
+  }
+
   const value = {
     basepath,
     setBasepath,
     toDocument,
     currentPathExpressions,
-    learningInProgress,
-    startLearning,
+    // learningInProgress,
+    // startLearning,
     checkedIds,
     shouldHideIds,
     pathExpressions,
@@ -99,7 +106,7 @@ export function LearnAPIStore({ children, allUrls }) {
     },
     reset: () => {
       setToDocument([]);
-      setLearningInProgress(false);
+      // setLearningInProgress(false);
       changePathExpressions({});
       setHighlight([]);
     },

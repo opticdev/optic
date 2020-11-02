@@ -70,8 +70,14 @@ export interface IListDiffsResponse {
 }
 
 export interface IListUnrecognizedUrlsResponse {
-  urls: any[];
+  result: any[];
+  raw: IUnrecognizedUrl[];
 }
 
+export interface IUnrecognizedUrl {
+  path: string;
+  method: string;
+  count: number;
+}
 export interface IGetDescriptionResponse {}
 export interface IListSuggestionsResponse {}

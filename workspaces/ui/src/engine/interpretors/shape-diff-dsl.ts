@@ -10,6 +10,7 @@ import {
   IUnknownTrail,
 } from '../interfaces/shape-trail';
 import {
+  IJsonObjectKey,
   IJsonTrail,
   normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
@@ -147,6 +148,17 @@ export class Actual {
       const compared = equals(normalize(i.trail), normalize(jsonTrail));
       return compared;
     });
+  }
+
+  isField(): boolean {
+    return Boolean(this.fieldKey());
+  }
+  fieldKey(): string | undefined {
+    const jsonTrailLast = this.jsonTrail.path[this.jsonTrail.path.length - 1];
+    const last = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
+    if (last) {
+      return last.key;
+    }
   }
 
   observedCoreShapeKinds(): Set<ICoreShapeKinds> {

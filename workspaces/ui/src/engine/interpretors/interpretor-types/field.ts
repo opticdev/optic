@@ -62,9 +62,7 @@ export function fieldShapeDiffInterpretor(
 
   // we've already check if isField() is true, so this is always add field
   if (isUnspecified) {
-    const key = (jsonTrail.path[jsonTrail.path.length - 1] as IJsonObjectKey)
-      .JsonObjectKey.key;
-    present.askAddField(key);
+    present.askAddField(actual.fieldKey()!);
   }
 
   return present.flush();
@@ -270,14 +268,14 @@ class FieldShapeInterpretationHelper {
 
   private addNewField(key: string): IInterpretation {
     // commands for the field value. infer'd poly.
-    const { rootShapeId, commands } = JsonHelper.toJs(
+    const { rootShapeId, name, commands } = JsonHelper.toJs(
       LearnJsonTrailAffordances.toCommandsJson(
         JSON.stringify(this.actual.learnedTrails.affordances),
         JSON.stringify(this.jsonTrail)
       )
     );
 
-    const sharedCopy = [code(key), plain('as'), code('$type here')];
+    const sharedCopy = [code(key), plain('as'), code(name)];
 
     const suggestOptionalFirst = this.actual.wasMissing();
 
@@ -288,7 +286,7 @@ class FieldShapeInterpretationHelper {
           interactionPointers: shapeGrouping.interactions,
           title: shapeGrouping.label,
           allowsExpand: true,
-          invalid: false,
+          invalid: true,
           assertion: [plain('undocumented field'), code(key)],
           jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
         };

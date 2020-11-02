@@ -7,11 +7,18 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import LaunchIcon from '@material-ui/icons/Launch';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { OpticBlue, primary, secondary } from '../../../theme';
+import {
+  OpticBlue,
+  primary,
+  secondary,
+  SubtleBlueBackground,
+} from '../../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { LightTooltip } from '../../../components/tooltips/LightTooltip';
 import { DocDarkGrey } from '../../../components/docs/DocConstants';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 export default {
   title: 'Navigation/ Top Bar',
   decorators: [theme],
@@ -21,9 +28,18 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: '40px !important',
     minHeight: 'auto !important',
+    zIndex: 1000,
+    backgroundColor: SubtleBlueBackground,
   },
   menuButton: {
     marginRight: theme.spacing(2),
+  },
+  toggle: {
+    height: 24,
+  },
+  selectedToggle: {
+    backgroundColor: `${OpticBlue} !important`,
+    color: 'white !important',
   },
   toolbar: {
     height: '40px !important',
@@ -61,11 +77,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const pages = [
+  { name: 'Document', linkTo: '' },
+  { name: 'Review Diff', linkTo: '' },
+  { name: 'Design', linkTo: '' },
+];
+
 export function TopNavigation(props) {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <AppBar position="static" color="transparent" elevation={1}>
+    <div className={classes.root} key="top-navigation">
+      <AppBar position="static" color="transparent" elevation={2}>
         <Toolbar className={classes.toolbar}>
           <div className={classes.stacked}>
             <Typography className={classes.title} variant="subtitle2" noWrap>
@@ -84,56 +106,30 @@ export function TopNavigation(props) {
               </a>
             </LightTooltip>
           </div>
+          {/*<div className={classes.spacer} />*/}
           <div className={classes.tabs}>
-            <NavTabs value="Diff">
-              {['Document', 'Diff', 'Design'].map((i) => (
-                <NavTab value={i} label={i} />
-              ))}
-            </NavTabs>
+            <ToggleButtonGroup
+              size="small"
+              exclusive
+              className={classes.toggle}
+            >
+              {pages.map((i, index) => {
+                return (
+                  <ToggleButton
+                    key={index}
+                    classes={{ selected: classes.selectedToggle }}
+                    selected={index === 1}
+                  >
+                    <Typography variant="caption">{i.name}</Typography>
+                  </ToggleButton>
+                );
+              })}
+            </ToggleButtonGroup>
           </div>
           <div className={classes.spacer} />
-          <div>Visiting Navigation (from page)</div>
+          <div>{props.controls}</div>
         </Toolbar>
       </AppBar>
     </div>
   );
 }
-
-const NavTabs = withStyles({
-  root: {
-    height: 40,
-    minHeight: 'inherit',
-  },
-  indicator: {
-    display: 'flex',
-    justifyContent: 'center',
-    color: primary,
-    backgroundColor: 'transparent',
-    '& > div': {
-      width: '100%',
-      backgroundColor: OpticBlue,
-    },
-  },
-})((props) => <Tabs {...props} TabIndicatorProps={{ children: <div /> }} />);
-
-const NavTab = withStyles((theme) => {
-  return {
-    root: {
-      textTransform: 'none',
-      color: primary,
-      padding: 0,
-      height: 40,
-      paddingLeft: 10,
-      paddingRight: 10,
-      minHeight: 'inherit',
-      minWidth: 'inherit',
-      fontFamily: 'Ubuntu',
-      fontWeight: 200,
-      fontSize: theme.typography.pxToRem(15),
-      marginRight: theme.spacing(2),
-      '&:focus': {
-        opacity: 1,
-      },
-    },
-  };
-})((props) => <Tab disableRipple {...props} />);

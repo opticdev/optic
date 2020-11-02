@@ -17,6 +17,7 @@ export const OpticBlue = '#1B2958';
 export const OpticBlueLightened = '#2a3764';
 export const OpticBlueReadable = '#868da4';
 export const SubtleBlueBackground = '#F5F6FA';
+export const LightBlueBackground = '#edeff6';
 export const SubtleGreyBackground = '#eaeaea';
 
 export const methodColors = {

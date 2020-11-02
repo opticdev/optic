@@ -8,7 +8,7 @@ import { createStyles, makeStyles } from '@material-ui/styles';
 import DoneIcon from '@material-ui/icons/Done';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
-import { LearnAPIPageContext } from './v2/learn-api/LearnAPIPageContext';
+import { LearnAPIPageContext } from './review-diff/learn-api/LearnAPIPageContext';
 import { useHover } from '../utilities/useHoverHook';
 
 export function urlStringToPathComponents(url) {

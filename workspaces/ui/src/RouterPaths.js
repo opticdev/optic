@@ -11,6 +11,7 @@ const routerPaths = {
   diffsRoot: (base = '') => `${base}/diffs`,
   reviewRoot: (base = '') => `${base}/review`,
   reviewRootWithBoundary: (base = '') => `${base}/review/:boundaryId`,
+  reviewFinalize: (base = '') => `${base}/review/:boundaryId/finalize`,
   captureRoot: (base = '') => `${routerPaths.diffsRoot(base)}/:captureId`,
   captureRequestDiffsRoot: (base = '') =>
     `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method`,

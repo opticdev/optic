@@ -55,7 +55,7 @@ export class LocalCliDiffService implements IDiffService {
     const url = `${this.baseUrl}/undocumented-urls`;
     const json = (await JsonHttpClient.getJson(url)).urls;
     const result = UrlCounterHelper.fromJsonToSeq(json, this.rfcState);
-    return result;
+    return Promise.resolve({ result, raw: json });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {

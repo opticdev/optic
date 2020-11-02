@@ -2,12 +2,18 @@ import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
 import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { TopNavigation } from '../storybook/stories/navigation/TopNavigation';
 
 const PageContext = React.createContext(null);
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    flexGrow: 1,
+  },
+  rootWithTopNavigation: {
+    display: 'flex',
+    flexDirection: 'column',
     flexGrow: 1,
   },
   content: ({ padded = true }) => ({
@@ -44,6 +50,38 @@ export default function Page(props) {
   return (
     <PageContext.Provider value={pageContext}>
       <div className={classes.root}>{props.children}</div>;
+    </PageContext.Provider>
+  );
+}
+
+export function PageWithTopNavigation(props) {
+  const classes = useStyles();
+  const pageContext = useState([]);
+  usePageTitle(props.title, pageContext);
+
+  const [pageTitles] = pageContext;
+  const titles = pageTitles.filter((title) => !!title);
+  const title = titles[titles.length - 1] || '';
+
+  useEffect(() => {
+    if (!document || !title) return;
+    document.title = `${title} - Optic`;
+  }, [title]);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (props.scrollToTop) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
+
+  return (
+    <PageContext.Provider value={pageContext}>
+      <div className={classes.rootWithTopNavigation}>
+        <TopNavigation controls={props.controls} />
+        {props.children}
+      </div>
     </PageContext.Provider>
   );
 }

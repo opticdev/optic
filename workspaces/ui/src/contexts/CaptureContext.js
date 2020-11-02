@@ -106,16 +106,11 @@ class _CaptureContextStore extends React.Component {
 
       console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
 
-      // track('IAsyncTask Incremental Results', {
-      //   captureId: this.props.captureId,
-      //   diffs: diffsResponse.diffs.length,
-      //   newUrls: urlsResponse.length,
-      // });
-      //
       this.setState({
         endpointDiffs: diffsResponse.diffs,
         rawDiffs: diffsResponse.rawDiffs,
-        unrecognizedUrls: urlsResponse,
+        unrecognizedUrls: urlsResponse.result,
+        unrecognizedUrlsRaw: urlsResponse.raw,
         pendingUpdates: true,
         lastUpdate: new Date(),
         ...notifDataUpdates,
@@ -246,6 +241,7 @@ class _CaptureContextStore extends React.Component {
       skipped,
       processed,
       rawDiffs,
+      unrecognizedUrlsRaw,
     } = this.state;
 
     const endpointDiffsWithoutIgnored = CompareEquality.filterIgnored(
@@ -256,6 +252,7 @@ class _CaptureContextStore extends React.Component {
     const value = {
       pendingUpdates,
       rawDiffs,
+      unrecognizedUrlsRaw,
       captureId: this.props.captureId,
       config,
       lastUpdate,

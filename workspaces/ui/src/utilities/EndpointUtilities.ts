@@ -102,7 +102,9 @@ export function createEndpointDescriptor(
     console.error(e);
   }
 
-  if (!fullPath) return null; // can not find endpoint requests
+  if (fullPath === '') {
+    fullPath = '/';
+  }
 
   const requestBodies = requestsOnPathAndMethod.map(
     ({ requestId, requestDescriptor }) => {

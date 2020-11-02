@@ -73,7 +73,6 @@ import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
 import { trackUserEvent, track } from '../../../Analytics';
 import qs from 'qs';
-import { LearnAPIPage } from './learn-api/LearnAPIPage';
 
 const {
   Context: AllCapturesContext,
@@ -332,12 +331,15 @@ function CaptureChooserComponent(props) {
           {subtabs.ENDPOINT_DIFF === tab && (
             <EndpointDiffs captureId={captureId} />
           )}
-          {subtabs.UNDOCUMENTED_URL === tab &&
-            (process.env.REACT_APP_LEARN_API_MODE ? (
-              <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
-            ) : (
+          {
+            subtabs.UNDOCUMENTED_URL === tab && (
+              // (process.env.REACT_APP_LEARN_API_MODE ? (
+              //   <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
+              // ) : (
               <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
-            ))}
+            )
+            // ))}
+          }
         </div>
       </div>
     </div>

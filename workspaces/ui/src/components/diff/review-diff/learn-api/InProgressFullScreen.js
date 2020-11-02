@@ -38,14 +38,14 @@ import {
   RfcCommandContext,
 } from '@useoptic/domain';
 import { useCaptureContext } from '../../../../contexts/CaptureContext';
-import { DiffContext } from '../DiffContext';
-import { flatten } from '../DiffPageNew';
-import { withSpecContext } from '../Finalize';
+import { DiffContext } from '../../v2/DiffContext';
+import { flatten } from '../../v2/DiffPageNew';
+import { withSpecContext } from '../../v2/Finalize';
 import { useServices } from '../../../../contexts/SpecServiceContext';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../../contexts/BaseUrlContext';
 import Collapse from '@material-ui/core/Collapse';
-import { Stat, subtabs } from '../CaptureManagerPage';
+import { Stat, subtabs } from '../../v2/CaptureManagerPage';
 import { useBatchLearn } from './useBatchLearn';
 
 const { JsonHelper } = opticEngine.com.useoptic;

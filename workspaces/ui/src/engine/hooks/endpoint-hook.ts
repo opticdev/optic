@@ -2,8 +2,6 @@ import sortby from 'lodash.sortby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { useEffect, useMemo, useState } from 'react';
-import { interpret, Interpreter, Machine, StateMachine } from 'xstate';
-import { IDiff } from '../interfaces/diffs';
 import { ParsedDiff } from '../parse-diff';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
 import {
@@ -42,6 +40,11 @@ export function useEndpointDiffMachine(
       ),
     []
   );
+
+  if (!endpointDescriptor) {
+    const a = { method, pathId };
+    debugger;
+  }
 
   function createActions() {
     return {

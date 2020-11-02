@@ -1,29 +1,29 @@
-import { createShapeDiffMachine } from '../interactive-diff-machine';
+import {
+  createShapeDiffMachine,
+  DiffContext,
+} from '../interactive-diff-machine';
 import {
   DiffSessionSessionContext,
   DiffSessionSessionEvent,
   DiffSessionSessionStateSchema,
+  IEndpointWithStatus,
   newDiffSessionSessionMachine,
   nextEndpointToFocusOn,
   sendMessageToEndpoint,
 } from '../diff-session';
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  EventData,
-  interpret,
-  Interpreter,
-  Machine,
-  SingleOrArray,
-  State,
-  StateMachine,
-} from 'xstate';
+
 import { IDiff } from '../interfaces/diffs';
 import { ParsedDiff } from '../parse-diff';
 import { useEndpointDiffMachine } from './endpoint-hook';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
 import { stuffFromQueries } from '../../contexts/RfcContext';
 import { useMachine } from '@xstate/react';
+import { IUnrecognizedUrl } from '../../services/diff';
+import { IToDocument } from '../interfaces/interfaces';
+import { InteractiveEndpointSessionContext } from '../interactive-endpoint';
+import { ISuggestion } from '../interfaces/interpretors';
 export function useDiffSessionMachine(
   diffId: string,
   services: InteractiveSessionConfig
@@ -55,9 +55,13 @@ export function useDiffSessionMachine(
 
   function createActions() {
     return {
-      signalDiffCompleted(rawDiffs: [IDiff, string[]][]) {
+      signalDiffCompleted(
+        rawDiffs: [IDiff, string[]][],
+        unrecognizedUrls: IUnrecognizedUrl[]
+      ) {
         send({
           type: 'COMPLETED_DIFF',
+          urls: unrecognizedUrls,
           diffs: rawDiffs.map(
             ([diff, interactions]) => new ParsedDiff(diff, interactions)
           ),
@@ -76,6 +80,17 @@ export function useDiffSessionMachine(
           });
         }
       },
+      updateToDocument: (toDocument: IToDocument[], handled: number) => {
+        const existing = state.context.unrecognizedUrlsToDocument;
+        if (
+          existing.handled !== handled ||
+          existing.urls.length !== toDocument.length
+        ) {
+          send({ type: 'UPDATED_TO_DOCUMENT', toDocument, handled });
+        }
+      },
+      toggleUndocumented: (active: boolean) =>
+        send({ type: 'TOGGLED_UNDOCUMENTED', active }),
       selectEndpoint: (pathId, method) =>
         send({ type: 'SELECTED_ENDPOINT', pathId, method }),
     };
@@ -84,6 +99,9 @@ export function useDiffSessionMachine(
   function createQueries() {
     const { context, value } = state;
     return {
+      undocumentedUrls: () => context.unrecognizedUrls,
+      handledUndocumented: () => context.unrecognizedUrlsToDocument.handled,
+      showingUndocumented: () => context.showingUndocumented,
       handledByEndpoint: () => context.handledByEndpoint,
       hasEndpoint: (method, pathId) =>
         !!context.endpoints.find(
@@ -126,6 +144,16 @@ export function useDiffSessionMachine(
           ),
         };
       },
+      endpointsWithSuggestions: (): IAllChanges => {
+        return {
+          changes: context.endpoints.map((i) => ({
+            pathId: i.pathId,
+            method: i.method,
+            status: getApprovedSuggestions(i),
+          })),
+          added: context.unrecognizedUrlsToDocument.urls,
+        };
+      },
       getEndpointDescriptor: ({ method, pathId }) => {
         return createEndpointDescriptor(
           { method, pathId },
@@ -155,4 +183,64 @@ export function useDiffSessionMachine(
     queries: createQueries(),
     actions: createActions(),
   };
+}
+
+export type IChanges = {
+  ignored: boolean;
+  approvedSuggestion: ISuggestion;
+  tag: string;
+  isHandled: boolean;
+  didReview: boolean;
+}[];
+
+export type IAllChanges = {
+  added: IToDocument[];
+  changes: { method: string; pathId: string; status: IChanges[] }[];
+};
+
+function getApprovedSuggestions(i: IEndpointWithStatus): IChanges[] {
+  type EndpointDiffsInner = {
+    context: DiffContext<any>;
+    value: any;
+  };
+  const endpointState: InteractiveEndpointSessionContext = i.ref.state.context;
+
+  const newRegions: EndpointDiffsInner[] = endpointState.newRegions.map(
+    (diff) => diff.ref.state
+  );
+  const shapeDiffs: EndpointDiffsInner[] = endpointState.shapeDiffs.map(
+    (diff) => diff.ref.state
+  );
+
+  function processEachDiff(tag: string) {
+    return (diff: EndpointDiffsInner) => {
+      const { context, value } = diff;
+      const isHandled = (value.ready && value.ready === 'handled') || false;
+      const ignored =
+        (context.preview &&
+          (context.preview.suggestions.length === 0 ||
+            context.preview.tabs.length === 0)) ||
+        false;
+
+      const approvedSuggestion =
+        !ignored &&
+        isHandled &&
+        context.preview.suggestions[context.selectedSuggestionIndex];
+
+      return {
+        tag,
+        isHandled,
+        ignored,
+        didReview: isHandled || ignored,
+        approvedSuggestion,
+      };
+    };
+  }
+
+  const diffStatus = [
+    ...shapeDiffs.map(processEachDiff('shape')),
+    ...newRegions.map(processEachDiff('region')),
+  ];
+
+  return diffStatus;
 }

@@ -3,6 +3,7 @@ import groupby from 'lodash.groupby';
 import { IShapeTrail } from './interfaces/shape-trail';
 import { diff } from 'react-ace';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
+import { isDiffForKnownEndpoint } from './interfaces/interfaces';
 
 export class DiffSet {
   constructor(
@@ -37,23 +38,36 @@ export class DiffSet {
     );
   }
 
+  forKnownEndpoint(): DiffSet {
+    return new DiffSet(
+      this.diffs.filter((i) => {
+        return isDiffForKnownEndpoint(i.diffType); // hard remove for now
+      }),
+      this.rfcBaseState
+    );
+  }
+
   groupedByEndpoint(): {
     pathId: string;
     method: string;
     diffs: ParsedDiff[];
   }[] {
+    const forEndpoints = this.forKnownEndpoint().iterator();
+
     const groupedByEndpoint: { [key: string]: ParsedDiff[] } = groupby(
-      this.diffs,
+      forEndpoints,
       (d) => {
         const { pathId, method } = d.location(this.rfcBaseState);
         return `${method}.${pathId}`;
       }
     );
 
-    return Object.entries(groupedByEndpoint).map(([key, diffs]) => {
+    const result = Object.entries(groupedByEndpoint).map(([key, diffs]) => {
       const { pathId, method } = diffs[0].location(this.rfcBaseState);
       return { pathId, method, diffs };
     });
+
+    return result.filter((i) => i.pathId !== 'root');
   }
 
   groupedByEndpointAndShapeTrail(): {

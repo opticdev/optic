@@ -21,6 +21,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { ReviewDiff } from './ReviewDiff';
 import { SubtleBlueBackground } from '../../../theme';
 import Divider from '@material-ui/core/Divider';
+import Fade from '@material-ui/core/Fade';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -101,7 +102,9 @@ export function ReviewEndpointInner(props) {
 
 export function EndpointGrouping(props) {
   const classes = useStyles();
-  const [expanded, setExpanded] = useState(true);
+  const noDiffs = props.diffs.length === 0;
+
+  const [expanded, setExpanded] = useState(!noDiffs);
 
   const handledByDiffHash = props.handled;
 
@@ -118,21 +121,29 @@ export function EndpointGrouping(props) {
         onClick={() => setExpanded(!expanded)}
         square
       >
-        <IconButton size="small" onClick={() => setExpanded(!expanded)}>
+        <IconButton
+          disabled={noDiffs}
+          size="small"
+          onClick={() => setExpanded(!expanded)}
+        >
           {expanded ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
         </IconButton>
         <LocationBreadcumbX location={props.location} />
         <div style={{ flex: 1 }} />
         <div style={{ fontSize: 10, color: DocDarkGrey, marginRight: 10 }}>
-          You have handled 0/{props.diffs.length} Diffs
+          {noDiffs
+            ? 'No Diffs'
+            : `You have handled ${handledCount}/${props.diffs.length} Diffs`}
         </div>
-        <LinearProgress
-          value={percent}
-          variant="determinate"
-          style={{ flex: 1, maxWidth: 80, marginRight: 10 }}
-        />
+        {!noDiffs && (
+          <LinearProgress
+            value={percent}
+            variant="determinate"
+            style={{ flex: 1, maxWidth: 80, marginRight: 10 }}
+          />
+        )}
       </Paper>
-      <Collapse in={expanded}>
+      <Collapse in={expanded && !noDiffs}>
         <div className={classes.diffContainer}>
           {props.diffs.map((i) => (
             <ReviewDiff key={i.diffParsed.diffHash} diff={i.diffParsed} />
@@ -182,7 +193,7 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'uppercase',
   },
   sectionHeader: {
-    backgroundColor: SubtleBlueBackground,
+    backgroundColor: 'white',
     display: 'flex',
     position: 'sticky',
     top: 0,

@@ -21,7 +21,7 @@ import {
 import Grow from '@material-ui/core/Grow';
 
 export function CircularDiffProgress(props) {
-  const { total, handled } = props;
+  const { total, handled, startBlue, symbol = '𝚫' } = props;
   const classes = useStyles();
   const value = (handled / total) * 100;
   const allHandled = total === handled;
@@ -31,6 +31,7 @@ export function CircularDiffProgress(props) {
         <CircularProgress
           variant="static"
           value={value}
+          size={total < 50 ? 40 : 55}
           style={{ color: UpdatedBlueBackground }}
         />
       </Grow>
@@ -46,11 +47,11 @@ export function CircularDiffProgress(props) {
       >
         {value === 0 && (
           <Typography
-            className={classes.label}
+            className={startBlue ? classes.blueLabel : classes.label}
             variant="caption"
             component="div"
             color="textSecondary"
-          >{`𝚫 ${total}`}</Typography>
+          >{`${symbol} ${total}`}</Typography>
         )}
         {value > 0 && total !== handled && (
           <Typography
@@ -83,6 +84,16 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: 3,
     borderRadius: 4,
   },
+  blueLabel: {
+    fontFamily: 'Ubuntu Mono',
+    fontSize: 10,
+    backgroundColor: UpdatedBlueBackground,
+    color: UpdatedBlue,
+    paddingLeft: 3,
+    paddingTop: 1,
+    paddingRight: 3,
+    borderRadius: 4,
+  },
   labelCounting: {
     fontFamily: 'Ubuntu Mono',
     fontSize: 8,
@@ -95,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 3,
   },
   complete: {
-    // backgroundColor: AddedGreenBackground,
+    backgroundColor: AddedGreenBackground,
     paddingLeft: 4,
     paddingTop: 4,
     paddingRight: 4,

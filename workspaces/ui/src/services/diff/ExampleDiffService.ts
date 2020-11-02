@@ -26,7 +26,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { localInitialBodyLearner } from '../../components/diff/v2/learn-api/browser-initial-body';
+import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
 
@@ -96,8 +96,7 @@ export class ExampleDiffService implements IDiffService {
     const urls = opticEngine.UrlCounterJsonSerializer.toFriendlyJs(counter);
 
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
-
-    return Promise.resolve(result);
+    return Promise.resolve({ result, raw: urls });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {

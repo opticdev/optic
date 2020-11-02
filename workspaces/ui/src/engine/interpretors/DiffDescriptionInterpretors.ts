@@ -8,8 +8,9 @@ import {
 import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
 import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
-import { Expectation } from './shape-diff-dsl';
+import { Actual, Expectation } from './shape-diff-dsl';
 import { JsonHelper } from '@useoptic/domain';
+import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
 
 export function descriptionForDiffs(
   diff: ParsedDiff,
@@ -109,23 +110,24 @@ function descriptionForShapeDiff(
         getJsonBodyToPreview,
       };
     }
+  }
 
-    if (asShapeDiff.isUnspecified) {
-      return {
-        title: [
-          plain('undocumented field'),
-          code(expected.fieldKey()),
-          plain('observed'),
-        ],
-        location,
-        changeType: IChangeType.Added,
-        assertion: [code('undocumented field')],
-        getJsonBodyToPreview,
-      };
-    }
+  const lastIsField = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
+  if (asShapeDiff.isUnspecified && lastIsField) {
+    return {
+      title: [
+        plain('undocumented field'),
+        code(lastIsField.key),
+        plain('observed'),
+      ],
+      location,
+      changeType: IChangeType.Added,
+      assertion: [code('undocumented field')],
+      getJsonBodyToPreview,
+    };
   }
 
   //@todo impliment others
-
+  debugger;
   invariant('Unexpected shape diff');
 }

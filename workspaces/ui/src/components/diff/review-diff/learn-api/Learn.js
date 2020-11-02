@@ -10,7 +10,7 @@ import {
 import {
   cleanupPathComponentName,
   pathStringToPathComponents,
-} from '../AddUrlModal';
+} from '../../v2/AddUrlModal';
 
 const { JsonHelper } = opticEngine.com.useoptic;
 const jsonHelper = JsonHelper();
@@ -47,6 +47,7 @@ export function LearnPaths(eventStore, rfcId, currentPathExpressions) {
 
   return {
     commands: batchHandler.getAllCommands(),
+    commandsJS: batchHandler.getAllCommandsJs(),
     endpointIds,
   };
 }

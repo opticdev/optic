@@ -1,21 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  CaptureContext,
-  useCaptureContext,
-} from '../../../contexts/CaptureContext';
+import { useCaptureContext } from '../../../contexts/CaptureContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { useMachine } from '@xstate/react';
-import {
-  newDiffSessionSessionMachine,
-  sendMessageToEndpoint,
-} from '../../../engine/diff-session';
-import { useServices } from '../../../contexts/SpecServiceContext';
+import { sendMessageToEndpoint } from '../../../engine/diff-session';
 import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-state';
-import { ParsedDiff } from '../../../engine/parse-diff';
 import { ReviewUI } from './ReviewUI';
-import { createEndpointDescriptor } from '../../../utilities/EndpointUtilities';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
-import { useEndpointDiffMachine } from '../../../engine/hooks/endpoint-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
 
 export const DiffSessionContext = React.createContext(null);
@@ -27,6 +16,7 @@ export function useDiffSession() {
 export function ReviewDiffSession(props) {
   const { captureService, diffService, lastUpdate } = useCaptureContext();
 
+  const { baseDiffReviewPath } = props;
   const { eventStore, rfcService, rfcId } = useContext(RfcContext);
 
   if (eventStore && rfcService && rfcId && captureService && diffService) {
@@ -36,13 +26,14 @@ export function ReviewDiffSession(props) {
       <DiffSessionMachineStore
         key={'diff-machine' + diffId}
         diffId={diffId}
+        baseDiffReviewPath={baseDiffReviewPath}
         services={{
           captureService,
           diffService,
           rfcBaseState,
         }}
       >
-        <ReviewUI key={'review-ui' + diffId} />
+        {props.children}
       </DiffSessionMachineStore>
     );
   }
@@ -55,7 +46,7 @@ export function ReviewDiffSession(props) {
 }
 
 export function DiffSessionMachineStore(props) {
-  const { children, services, diffId } = props;
+  const { children, services, diffId, baseDiffReviewPath } = props;
   const { captureService, diffService, rfcBaseState } = services;
 
   const { value, context, actions, queries } = useDiffSessionMachine(diffId, {
@@ -64,22 +55,23 @@ export function DiffSessionMachineStore(props) {
     rfcBaseState,
   });
 
-  const { completed, rawDiffs } = useCaptureContext();
+  const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();
   //
   useEffect(() => {
-    if (completed) actions.signalDiffCompleted(rawDiffs);
+    if (completed) actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
   }, [completed]);
 
-  // const actions = useCreateActions(send);
-  // const queries = useCreateQueries(() => state, rfcBaseState);
-  //
   useEffect(() => {
     /// select first endpoint when ready
     if (value === 'ready') {
-      actions.selectEndpoint(
-        context.endpoints[0].pathId,
-        context.endpoints[0].method
-      );
+      if (context.endpoints.length) {
+        actions.selectEndpoint(
+          context.endpoints[0].pathId,
+          context.endpoints[0].method
+        );
+      } else if (context.unrecognizedUrls.length) {
+        actions.toggleUndocumented(true);
+      }
     }
   }, [value]);
 
@@ -87,6 +79,7 @@ export function DiffSessionMachineStore(props) {
     actions,
     queries,
     rfcBaseState,
+    baseDiffReviewPath,
     loadInteraction: (interactionPointer) => {
       return captureService.loadInteraction(interactionPointer);
     },
@@ -97,14 +90,4 @@ export function DiffSessionMachineStore(props) {
       {queries.sessionState() === 'ready' ? children : 'loading'}
     </DiffSessionContext.Provider>
   );
-}
-
-function useCreateActions(send) {
-  return {
-    selectEndpoint: (pathId, method) =>
-      send({ type: 'SELECTED_ENDPOINT', pathId, method }),
-    sendPrepare: (pathId, method) => {
-      send(sendMessageToEndpoint(pathId, method, { type: 'PREPARE' }));
-    },
-  };
 }

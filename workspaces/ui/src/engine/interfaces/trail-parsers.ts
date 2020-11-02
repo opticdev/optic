@@ -4,6 +4,7 @@ import {
   IMethod,
   IRequestBody,
   IResponseBody,
+  IResponseStatusCode,
 } from './interaction-trail';
 import { DiffRfcBaseState } from './diff-rfc-base-state';
 import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
@@ -131,11 +132,17 @@ export function methodForInteractionTrail(
 
 export function inResponseForInteractionTrail(
   interactionTrail: IInteractionTrail
-): { statusCode: number; contentType: string } | undefined {
+): { statusCode: number; contentType?: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
   if (last['ResponseBody']) {
     const asResponseBody = last as IResponseBody;
     return asResponseBody.ResponseBody;
+  }
+  if (last['ResponseStatusCode']) {
+    const asResponseBody = last as IResponseStatusCode;
+    return {
+      statusCode: asResponseBody.ResponseStatusCode.statusCode,
+    };
   }
 }
 

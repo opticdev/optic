@@ -117,6 +117,11 @@ export function DiffSummaryRegion(props) {
 
   const title = (preview && preview.overrideTitle) || loadingDescription.title;
   const previewTabs = (preview && preview.tabs) || [];
+
+  if (JSON.stringify(title).includes('undocumented')) {
+    console.log('at me ', preview);
+  }
+
   const [previewTab, setPreviewTab] = useState(undefined);
   const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab);
   useEffect(

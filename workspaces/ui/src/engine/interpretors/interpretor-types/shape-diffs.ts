@@ -14,6 +14,7 @@ import { Actual, Expectation } from '../shape-diff-dsl';
 import { fieldShapeDiffInterpretor } from './field';
 import { InteractiveSessionConfig } from '../../interfaces/session';
 import { shapeChangeInterpretor } from './shape-changed';
+import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
 
 //only ever take 1 diff at a time
 export function interpretShapeDiffs(
@@ -31,10 +32,10 @@ export function interpretShapeDiffs(
   const actual = new Actual(learnedTrails, shapeTrail, jsonTrail);
   const expected = new Expectation(diff, rfcBaseState, shapeTrail, jsonTrail);
 
-  // Route to field interpretor
+  // Route to field interpreter
   /////////////////////////////////////////////////////////////////////
-
-  if (expected.isField()) {
+  const isUnspecifiedField = isUnspecified && actual.isField();
+  if (expected.isField() || isUnspecifiedField) {
     return fieldShapeDiffInterpretor(asShapeDiff, actual, expected, services);
   }
 

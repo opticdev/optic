@@ -7,6 +7,8 @@ import {
   InteractiveEndpointSessionEvent,
   newInteractiveEndpointSessionMachine,
 } from './interactive-endpoint';
+import { IUnrecognizedUrl } from '../services/diff';
+import { IToDocument } from './interfaces/interfaces';
 
 export interface DiffSessionSessionStateSchema {
   states: {
@@ -18,7 +20,7 @@ export interface DiffSessionSessionStateSchema {
 
 // The events that the machine handles
 export type DiffSessionSessionEvent =
-  | { type: 'COMPLETED_DIFF'; diffs: ParsedDiff[] }
+  | { type: 'COMPLETED_DIFF'; diffs: ParsedDiff[]; urls: IUnrecognizedUrl[] }
   | { type: 'SHOWING' }
   | {
       type: 'SELECTED_ENDPOINT';
@@ -31,7 +33,16 @@ export type DiffSessionSessionEvent =
       method: string;
       event: InteractiveEndpointSessionEvent;
     }
-  | { type: 'HANDLED_UPDATED'; pathId: string; method: string };
+  | { type: 'HANDLED_UPDATED'; pathId: string; method: string }
+  | {
+      type: 'TOGGLED_UNDOCUMENTED';
+      active: boolean;
+    }
+  | {
+      type: 'UPDATED_TO_DOCUMENT';
+      handled: number;
+      toDocument: IToDocument[];
+    };
 
 export function sendMessageToEndpoint(
   pathId: string,
@@ -46,7 +57,7 @@ export function sendMessageToEndpoint(
   };
 }
 
-interface IEndpointWithStatus {
+export interface IEndpointWithStatus {
   pathId: string;
   method: string;
   handled: boolean;
@@ -58,9 +69,15 @@ interface IEndpointWithStatus {
 // The context (extended state) of the machine
 export interface DiffSessionSessionContext {
   allDiffs: ParsedDiff[];
+  unrecognizedUrls: IUnrecognizedUrl[];
   endpoints: IEndpointWithStatus[];
   handledByEndpoint: IHandledByEndpoint;
   focus?: { pathId: string; method: string };
+  showingUndocumented: boolean;
+  unrecognizedUrlsToDocument: {
+    urls: IToDocument[];
+    handled: number;
+  };
 }
 
 export const newDiffSessionSessionMachine = (
@@ -75,8 +92,14 @@ export const newDiffSessionSessionMachine = (
     id: diffId,
     context: {
       handledByEndpoint: [],
+      unrecognizedUrls: [],
       allDiffs: [],
       endpoints: [],
+      unrecognizedUrlsToDocument: {
+        handled: 0,
+        urls: [],
+      },
+      showingUndocumented: false,
     },
     initial: 'loading',
     states: {
@@ -85,6 +108,7 @@ export const newDiffSessionSessionMachine = (
           COMPLETED_DIFF: {
             actions: assign({
               allDiffs: (context, event) => event.diffs,
+              unrecognizedUrls: (context, event) => event.urls,
             }),
             target: 'preparing',
           },
@@ -156,6 +180,20 @@ export const newDiffSessionSessionMachine = (
               }
             },
           },
+          TOGGLED_UNDOCUMENTED: {
+            actions: assign({
+              showingUndocumented: (context, event) => event.active,
+              focus: (ctx, event) => undefined,
+            }),
+          },
+          UPDATED_TO_DOCUMENT: {
+            actions: assign({
+              unrecognizedUrlsToDocument: (context, event) => ({
+                urls: event.toDocument,
+                handled: event.handled,
+              }),
+            }),
+          },
           SELECTED_ENDPOINT: {
             actions: [
               assign({
@@ -163,6 +201,7 @@ export const newDiffSessionSessionMachine = (
                   pathId: event.pathId,
                   method: event.method,
                 }),
+                showingUndocumented: (ctx, event) => false,
               }),
               (context) => {
                 const endpointMachine = context.endpoints.find(

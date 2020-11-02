@@ -30,6 +30,7 @@ export const allowedDiffTypes: {
     isBodyShapeDiff: boolean;
     inRequest: boolean;
     inResponse: boolean;
+    unmatchedUrl: boolean;
     asString: string;
   };
 } = {
@@ -37,42 +38,49 @@ export const allowedDiffTypes: {
     isBodyShapeDiff: false,
     inRequest: false,
     inResponse: false,
+    unmatchedUrl: true,
     asString: 'UnmatchedRequestUrl',
   },
   UnmatchedRequestMethod: {
     isBodyShapeDiff: false,
     inRequest: false,
     inResponse: false,
+    unmatchedUrl: true,
     asString: 'UnmatchedRequestMethod',
   },
   UnmatchedRequestBodyContentType: {
     isBodyShapeDiff: false,
     inRequest: true,
     inResponse: false,
+    unmatchedUrl: false,
     asString: 'UnmatchedRequestBodyContentType',
   },
   UnmatchedResponseBodyContentType: {
     isBodyShapeDiff: false,
     inRequest: false,
     inResponse: true,
+    unmatchedUrl: false,
     asString: 'UnmatchedResponseBodyContentType',
   },
   UnmatchedResponseStatusCode: {
     isBodyShapeDiff: false,
     inRequest: false,
     inResponse: true,
+    unmatchedUrl: false,
     asString: 'UnmatchedResponseStatusCode',
   },
   UnmatchedRequestBodyShape: {
     isBodyShapeDiff: true,
     inRequest: true,
     inResponse: false,
+    unmatchedUrl: false,
     asString: 'UnmatchedRequestBodyShape',
   },
   UnmatchedResponseBodyShape: {
     isBodyShapeDiff: true,
     inRequest: false,
     inResponse: true,
+    unmatchedUrl: false,
     asString: 'UnmatchedResponseBodyShape',
   },
 };
@@ -83,6 +91,8 @@ export const allowedDiffTypesKeys: string[] = Object.keys(allowedDiffTypes);
 
 export const isBodyShapeDiff = (key: string): boolean =>
   allowedDiffTypes[key]?.isBodyShapeDiff;
+export const isDiffForKnownEndpoint = (key: string): boolean =>
+  !allowedDiffTypes[key]?.unmatchedUrl;
 export const DiffInRequest = (key: string): boolean =>
   allowedDiffTypes[key]?.inRequest;
 export const DiffInResponse = (key: string): boolean =>
@@ -104,4 +114,11 @@ export interface IParsedLocation {
   method: string;
   inRequest?: IRequestBodyLocation;
   inResponse?: IResponseBodyLocation;
+}
+
+///////////////////////////////////////
+export interface IToDocument {
+  method: string;
+  count: number;
+  pathExpression: string;
 }

@@ -9,50 +9,65 @@ import { CaptureContextStore } from '../../../contexts/CaptureContext';
 import { useServices } from '../../../contexts/SpecServiceContext';
 import { ReviewDiffSession } from './ReviewDiffSession';
 import { captureId } from '../../loaders/ApiLoader';
+import { ReviewUI } from './ReviewUI';
 
 export function ReviewDiffPage(props) {
   const routerPaths = useRouterPaths();
   return (
-    <Page title="Review API Diffs">
-      <AllCapturesStore>
-        <Switch>
-          <Route path={routerPaths.reviewRoot} component={ReviewDiffRoutes} />
-        </Switch>
-      </AllCapturesStore>
-    </Page>
+    <AllCapturesStore>
+      <Switch>
+        <Route
+          path={routerPaths.reviewRootWithBoundary}
+          component={ReviewDiffRoutes}
+        />
+        <Route strict path={routerPaths.reviewRoot} component={RootComponent} />
+      </Switch>
+    </AllCapturesStore>
   );
 }
 
-export const ReviewDiffRoutes = ({ location }) => {
+function RootComponent() {
+  const { captures } = useContext(AllCapturesContext);
+  const baseUrl = useBaseUrl();
+  if (captures.length === 0) {
+    return <LinearProgress />;
+  }
+  return <Redirect to={`${baseUrl}/review/${captures[0].captureId}`} />;
+}
+
+export const ReviewDiffRoutes = (props) => {
+  const { boundaryId } = props.match.params;
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
   const baseUrl = useBaseUrl();
   const services = useServices();
 
+  const baseDiffReviewPath = props.location.pathname;
+
   if (captures.length === 0) {
     return <LinearProgress />;
   }
   return (
-    <Switch>
-      <Route
-        path={routerPaths.reviewRootWithBoundary}
-        component={(props) => {
-          const { boundaryId } = props.match.params;
-          return (
-            <CaptureContextStore
-              captureId={boundaryId}
-              ignoredDiffs={[]}
-              key={boundaryId}
-              {...services}
-            >
-              <ReviewDiffSession key={boundaryId + 'diff'} />
-            </CaptureContextStore>
-          );
-        }}
-      />
-      {captures.length && (
-        <Redirect to={`${baseUrl}/review/${captures[0].captureId}`} />
-      )}
-    </Switch>
+    <CaptureContextStore
+      captureId={boundaryId}
+      ignoredDiffs={[]}
+      key={boundaryId}
+      {...services}
+    >
+      <ReviewDiffSession
+        key={boundaryId + 'diff'}
+        baseDiffReviewPath={baseDiffReviewPath}
+      >
+        <Switch>
+          <Route
+            strict
+            path={routerPaths.reviewRootWithBoundary}
+            component={(props) => {
+              return <ReviewUI key={'review-ui' + boundaryId} />;
+            }}
+          />
+        </Switch>
+      </ReviewDiffSession>
+    </CaptureContextStore>
   );
 };
