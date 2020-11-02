@@ -25,7 +25,7 @@
   },
   "devDependencies": {},
   "files": [
-    "/build",
+    "/lib",
     "/scripts"
   ]
 }
