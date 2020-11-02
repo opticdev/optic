@@ -1,17 +1,22 @@
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges, IChanges } from '../hooks/session-hook';
+import workerpool from 'workerpool';
 import {
+  Facade,
   JsonHelper,
   opticEngine,
   OpticIds,
   RequestsCommands,
+  RfcCommandContext,
 } from '@useoptic/domain';
+import uuidv4 from 'uuid/v4';
 import { resolvePath } from '../../components/utilities/PathUtilities';
 import { batchCommandHandler } from '../../components/utilities/BatchCommandHandler';
 import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { universeFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 export interface ApplyChangesStateSchema {
   states: {
     staged: {};
@@ -33,12 +38,13 @@ export type ApplyChangesEvent =
 export interface ApplyChangesContext {
   newPaths: {
     commands: any[];
-    commandsJs: any[];
+    commandsJS: any[];
     endpointIds: { pathId: string; method: string }[];
   };
   newBodiesProgress: number;
   newBodiesLearned: ILearnedBodies[] | undefined;
   approvedSuggestionsCommands: any[];
+  updatedEvents: any[];
 }
 
 // The context (extended state) of the machine
@@ -46,7 +52,9 @@ export interface ApplyChangesContext {}
 
 export const newApplyChangesMachine = (
   patch: IAllChanges,
-  services: InteractiveSessionConfig
+  services: InteractiveSessionConfig,
+  clientSessionId: string = 'default',
+  clientId: string = 'default'
 ) => {
   return Machine<
     ApplyChangesContext,
@@ -55,10 +63,11 @@ export const newApplyChangesMachine = (
   >({
     id: 'apply-changes',
     context: {
-      newPaths: { commands: [], commandsJs: [], endpointIds: [] },
+      newPaths: { commands: [], commandsJS: [], endpointIds: [] },
       newBodiesProgress: 0,
       newBodiesLearned: undefined,
       approvedSuggestionsCommands: [],
+      updatedEvents: [],
     },
     initial: 'staged',
     states: {
@@ -81,7 +90,7 @@ export const newApplyChangesMachine = (
               );
               return { commands, commandsJS, endpointIds };
             }
-            return { commands: [], commandsJs: [], endpointIds: [] };
+            return { commands: [], commandsJS: [], endpointIds: [] };
           },
           onDone: {
             target: 'generatingNewBodyCommands',
@@ -185,26 +194,41 @@ export const newApplyChangesMachine = (
           id: 'running-commands',
           src: async (context, event) => {
             const allCommandsToRun = [
-              ...context.newPaths.commands,
+              ...context.newPaths.commandsJS,
               ...prepareLearnedBodies(context.newBodiesLearned || []),
             ];
 
-            console.log('trying to run commands');
-
-            Promise.resolve([]);
+            const pool1 = workerpool.pool();
+            // do me on a web worker
+            return await pool1.exec(handleCommands, [
+              allCommandsToRun,
+              services.rfcBaseState.eventStore.serializeEvents(
+                services.rfcBaseState.rfcId
+              ),
+              uuidv4(),
+              clientSessionId,
+              clientId,
+            ]);
           },
           onDone: {
             target: 'completed',
             actions: assign({
-              // approvedSuggestionsCommands: (context, event) => event.data,
+              updatedEvents: (context, event) => event.data,
             }),
           },
           onError: {
+            actions: (context, event) => {
+              console.error(event);
+            },
             target: 'failed',
           },
         },
       },
-      completed: {},
+      completed: {
+        entry: (context) => {
+          console.log(context.updatedEvents);
+        },
+      },
       failed: {},
     },
   });
@@ -261,11 +285,7 @@ function prepareLearnedBodies(allBodies: ILearnedBodies[]): any[] {
     })
   );
 
-  const asScalaCommandsInJsArray = JsonHelper.vectorToJsArray(
-    opticEngine.CommandSerialization.fromJs(allCommands)
-  );
-
-  return asScalaCommandsInJsArray;
+  return allCommands;
 }
 
 function cleanupPathComponentName(name) {
@@ -291,4 +311,44 @@ export function pathStringToPathComponents(pathString) {
     return trimTrailingEmptyPath(rest);
   }
   return trimTrailingEmptyPath(components);
+}
+
+function handleCommands(
+  commands: any[],
+  eventString: string,
+  batchId: string,
+  clientSessionId: string,
+  clientId: string
+): any[] {
+  const {
+    opticEngine,
+    RfcCommandContext,
+    JsonHelper,
+  } = require('@useoptic/domain');
+  const {
+    universeFromEventsAndAdditionalCommands,
+  } = require('@useoptic/domain-utilities');
+
+  const {
+    StartBatchCommit,
+    EndBatchCommit,
+  } = opticEngine.com.useoptic.contexts.rfc.Commands;
+
+  const inputCommands = JsonHelper.vectorToJsArray(
+    opticEngine.CommandSerialization.fromJs(commands)
+  );
+
+  const commandContext = new RfcCommandContext(
+    clientId,
+    clientSessionId,
+    batchId
+  );
+
+  const { rfcId, eventStore } = universeFromEventsAndAdditionalCommands(
+    JSON.parse(eventString),
+    commandContext,
+    inputCommands
+  );
+
+  return JSON.parse(eventStore.serializeEvents(rfcId));
 }
