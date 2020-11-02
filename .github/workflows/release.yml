@@ -13,10 +13,6 @@ on:
   push:
     branches:
       - release
-  # TODO: remove this trigger after we're done developing the prerelease specifics
-  pull_request:
-    branches:
-      - develop
 
 jobs:
   build-rust-binaries:
@@ -149,9 +145,8 @@ jobs:
       is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
     steps:
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
-      # TODO: re-enable publishing the release branch before merging
-      # with:
-      #     ref: release
+      with:
+        ref: release
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
@@ -183,7 +178,6 @@ jobs:
       - run: |
           echo "determined as not a prerelease" 
           echo "is_prelease=${{ needs.release-npm.outputs.is_prerelease }}"
-          exit 1 # TODO: remove this safety that's preventing actual releases from happening
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
         with:
           ref: release
@@ -201,9 +195,8 @@ jobs:
   trigger-brew-release:
     runs-on: ubuntu-latest
     needs: release-npm
-    if: needs.release-npm.outputs.is_prerelease != 'true'
+    if: needs.release-npm.outputs.is_prerelease == 'false'
     steps:
-      - run: exit 1 # TODO: remove this safety that's preventing actual releases from happening
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
         with:
@@ -214,7 +207,6 @@ jobs:
 
   # Tells slack a release has happened
   notify-slack:
-    if: false # TODO: remove this safety that's preventing actual releases from happening
     runs-on: ubuntu-latest
     needs: release-npm
     name: Message Slack that Release has happened
