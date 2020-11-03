@@ -177,7 +177,7 @@ optic_compare_diff_engines() {
     DEBUG=optic* apidev daemon:stop
     # instead of apidev spec, we can manually start the session via the cli-server api
     DEBUG=optic* apidev spec &
-    sleep 3
+    sleep 5
     cd "$OPTIC_SRC_DIR"
     rm -rf ./output-rust
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-rust "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
@@ -188,7 +188,7 @@ optic_compare_diff_engines() {
     export OPTIC_RUST_DIFF_ENGINE=false
     DEBUG=optic* apidev daemon:stop
     DEBUG=optic* apidev spec &
-    sleep 3
+    sleep 5
     cd "$OPTIC_SRC_DIR"
     rm -rf ./output-scalajs
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
@@ -202,7 +202,6 @@ optic_compare_diff_engines() {
   cat ./output-scalajs/*
   cat ./issues.patch
   cat ./issues-side-by-side.patch
-  echo "yay"
 }
 
 optic_snapshot_input_to_capture() {

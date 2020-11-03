@@ -1,0 +1,413 @@
+{
+  "events" : [
+    {
+      "PathComponentAdded" : {
+        "pathId" : "baseline-path_1",
+        "parentPathId" : "root",
+        "name" : "users",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "PathParameterAdded" : {
+        "pathId" : "baseline-path_2",
+        "parentPathId" : "baseline-path_1",
+        "name" : ":userId",
+        "eventContext" : null
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_9",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : null
+      }
+    },
+    {
+      "PathParameterShapeSet" : {
+        "pathId" : "baseline-path_2",
+        "shapeDescriptor" : {
+          "shapeId" : "baseline-shape_9",
+          "isRemoved" : false
+        },
+        "eventContext" : null
+      }
+    },
+    {
+      "PathComponentAdded" : {
+        "pathId" : "baseline-path_3",
+        "parentPathId" : "baseline-path_2",
+        "name" : "profile",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod" : {
+        "parameterId" : "baseline-request-parameter_1",
+        "pathId" : "baseline-path_3",
+        "httpMethod" : "GET",
+        "parameterLocation" : "query",
+        "name" : "queryString",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_10",
+        "baseShapeId" : "$object",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet" : {
+        "parameterId" : "baseline-request-parameter_1",
+        "parameterDescriptor" : {
+          "shapeId" : "baseline-shape_10",
+          "isRemoved" : false
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "RequestAdded" : {
+        "requestId" : "baseline-request_1",
+        "pathId" : "baseline-path_3",
+        "httpMethod" : "GET",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod" : {
+        "responseId" : "baseline-response_1",
+        "pathId" : "baseline-path_3",
+        "httpMethod" : "GET",
+        "httpStatusCode" : 200,
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_8",
+        "baseShapeId" : "$object",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_2",
+        "baseShapeId" : "$number",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "baseline-field_1",
+        "shapeId" : "baseline-shape_8",
+        "name" : "age",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "baseline-field_1",
+            "shapeId" : "baseline-shape_2"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_4",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_5",
+        "baseShapeId" : "$list",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "baseline-field_2",
+        "shapeId" : "baseline-shape_8",
+        "name" : "cities",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "baseline-field_2",
+            "shapeId" : "baseline-shape_5"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_6",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "baseline-field_3",
+        "shapeId" : "baseline-shape_8",
+        "name" : "firstName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "baseline-field_3",
+            "shapeId" : "baseline-shape_6"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded" : {
+        "shapeId" : "baseline-shape_7",
+        "baseShapeId" : "$string",
+        "parameters" : {
+          "DynamicParameterList" : {
+            "shapeParameterIds" : [
+            ]
+          }
+        },
+        "name" : "",
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded" : {
+        "fieldId" : "baseline-field_4",
+        "shapeId" : "baseline-shape_8",
+        "name" : "lastName",
+        "shapeDescriptor" : {
+          "FieldShapeFromShape" : {
+            "fieldId" : "baseline-field_4",
+            "shapeId" : "baseline-shape_7"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet" : {
+        "shapeDescriptor" : {
+          "ProviderInShape" : {
+            "shapeId" : "baseline-shape_5",
+            "providerDescriptor" : {
+              "ShapeProvider" : {
+                "shapeId" : "baseline-shape_4"
+              }
+            },
+            "consumingParameterId" : "$listItem"
+          }
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet" : {
+        "responseId" : "baseline-response_1",
+        "bodyDescriptor" : {
+          "httpContentType" : "application/json",
+          "shapeId" : "baseline-shape_8",
+          "isRemoved" : false
+        },
+        "eventContext" : {
+          "clientId" : "ccc",
+          "clientSessionId" : "sss",
+          "clientCommandBatchId" : "bbb",
+          "createdAt" : "NOW"
+        }
+      }
+    }
+  ],
+  "session" : {
+    "samples" : [
+      {
+        "uuid" : "id",
+        "request" : {
+          "host" : "example.com",
+          "method" : "GET",
+          "path" : "/users/1234/profile",
+          "query" : {
+            "shapeHashV1Base64" : null,
+            "asJsonString" : null,
+            "asText" : null
+          },
+          "headers" : {
+            "shapeHashV1Base64" : null,
+            "asJsonString" : null,
+            "asText" : null
+          },
+          "body" : {
+            "contentType" : null,
+            "value" : {
+              "shapeHashV1Base64" : null,
+              "asJsonString" : null,
+              "asText" : null
+            }
+          }
+        },
+        "response" : {
+          "statusCode" : 200,
+          "headers" : {
+            "shapeHashV1Base64" : null,
+            "asJsonString" : null,
+            "asText" : null
+          },
+          "body" : {
+            "contentType" : "application/json",
+            "value" : {
+              "shapeHashV1Base64" : "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSIAoGY2l0aWVzEhYIARoCCAIaAggDGgIIAhoCCAMaAggC",
+              "asJsonString" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}",
+              "asText" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}"
+            }
+          }
+        },
+        "tags" : [
+        ]
+      }
+    ]
+  }
+}
