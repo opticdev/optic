@@ -14,10 +14,6 @@ on:
     branches:
       - release
       - develop
-  # TODO: remove this debug trigger before merging
-  pull_request:
-    branches:
-      - develop
 
 jobs:
   release_logic:
@@ -182,7 +178,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
-        if: false # TODO: remove this before merging
         run: |
           aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
@@ -204,7 +199,6 @@ jobs:
         source ./sourceme.sh && optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
-      if: false # TODO: remove this safety measure before merging
       env:
         OPTIC_PUBLISH_SCOPE: public
 
@@ -221,7 +215,6 @@ jobs:
         with:
           ref: release
       - uses: ./.github/deployDebian/ # locally defined action
-        if: false # TODO: remove this safety measure before merging
         with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -239,7 +232,6 @@ jobs:
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
-        if: false # TODO: remove this safety measure before merging
         with:
           token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
           repository: opticdev/homebrew-optic
