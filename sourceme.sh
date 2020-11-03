@@ -168,8 +168,8 @@ optic_compare_diff_engines() {
   rm -rf ./issues-side-by-side.patch
   (
     set -o errexit
-    set -x
     set -v
+    set -x
     API_PROJECT_DIR=./optic-snapshots
     NUM_INTERACTIONS=$1
 
@@ -196,15 +196,15 @@ optic_compare_diff_engines() {
     rm -rf ./output-scalajs
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
 
-    echo "comparing..."
-    cd "$OPTIC_SRC_DIR"
-    diff ./output-rust ./output-scalajs > ./issues.patch || echo "found difference"
-    diff --side-by-side ./output-rust ./output-scalajs > ./issues-side-by-side.patch || echo "found difference"
+#    echo "comparing..."
+#    cd "$OPTIC_SRC_DIR"
+#    diff ./output-rust ./output-scalajs > ./issues.patch || echo "found difference"
+#    diff --side-by-side ./output-rust ./output-scalajs > ./issues-side-by-side.patch || echo "found difference"
   )
-  cat ./output-rust/*
-  cat ./output-scalajs/*
-  cat ./issues.patch
-  cat ./issues-side-by-side.patch
+  cat ./output-rust/**/*
+  cat ./output-scalajs/**/*
+#  cat ./issues.patch
+#  cat ./issues-side-by-side.patch
 }
 
 optic_snapshot_input_to_capture() {
@@ -282,8 +282,8 @@ optic_e2e_single() {
 optic_ci_e2e() {
   (
     set -o errexit
-    set -x
     set -v
+    set -x
     mkdir -p ./optic-snapshots
     NUM_INTERACTIONS=1
     INPUT_FILE_PATH="./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
