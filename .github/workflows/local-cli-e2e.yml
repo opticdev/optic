@@ -17,12 +17,12 @@ jobs:
         run: |
           source sourceme.sh
           optic_build_for_release
-      - name: 'Install local-cli'
-        shell: bash
-        run: |
-          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
-          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
-          npm install -g "@useoptic/cli@$OPTIC_VERSION"
+#      - name: 'Install local-cli'
+#        shell: bash
+#        run: |
+#          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
+#          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
+#          npm install -g "@useoptic/cli@$OPTIC_VERSION"
       - name: 'run scenario'
         run: |
           mkdir -p ~/tmp/optic-snapshots
