@@ -40,10 +40,10 @@ jobs:
       #          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
       #          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
       #          npm install -g "@useoptic/cli@$OPTIC_VERSION"
-      - name: 'run scenario'
-        run: |
-          source sourceme.sh
-          optic_ci_e2e
+#      - name: 'run scenario'
+#        run: |
+#          source sourceme.sh
+#          optic_ci_e2e
 
 #  test-end-to-end:
 #    runs-on: ubuntu-latest
