@@ -1,0 +1,4 @@
+src
+binaries
+tests
+**/*.rs
