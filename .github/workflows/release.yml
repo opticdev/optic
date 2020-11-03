@@ -84,9 +84,6 @@ jobs:
     env:
       FILE_NAME: optic_diff${{ matrix.suffix }}
     steps:
-      - run: | # TODO: remove this safety before merging this altered release flow
-          echo "Hit safety exit"
-          exit 1
       - name: 'Checkout source'
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
@@ -185,6 +182,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
+        if: false # TODO: remove this before merging
         run: |
           aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
@@ -195,9 +193,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish-binaries, release_logic]
     steps:
-    - run: | # TODO: remove this safety before merging this altered release flow
-        echo "Hit safety exit"
-        exit 1
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       # with:
       #   ref: release
@@ -209,6 +204,7 @@ jobs:
         source ./sourceme.sh && optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
+      if: false # TODO: remove this safety measure before merging
       env:
         OPTIC_PUBLISH_SCOPE: public
 
@@ -216,7 +212,7 @@ jobs:
   release-deb:
     runs-on: ubuntu-latest
     needs: [release_logic, release-npm]
-    if: needs.release_logic.outputs.should_publish == 'true'
+    if: needs.release_logic.outputs.is_prerelease == 'false'
     steps:
       - run: |
           echo "determined as not a prerelease"
@@ -225,6 +221,7 @@ jobs:
         with:
           ref: release
       - uses: ./.github/deployDebian/ # locally defined action
+        if: false # TODO: remove this safety measure before merging
         with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -238,10 +235,11 @@ jobs:
   trigger-brew-release:
     runs-on: ubuntu-latest
     needs: [release_logic, release-npm]
-    if: needs.release_logic.outputs.should_publish == 'true'
+    if: needs.release_logic.outputs.is_prerelease == 'false'
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
+        if: false # TODO: remove this safety measure before merging
         with:
           token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
           repository: opticdev/homebrew-optic
@@ -259,8 +257,8 @@ jobs:
         with:
             node-version: 12
       - run: |
-          MESSAGE=${{ github.event.pusher.name }} released version ${{ needs.release_logic.outputs.version }}
-          if [[ "${needs.release_logic.outputs.is_prerelease}" == "true" ]]; then
+          MESSAGE="${{ github.event.pusher.name }} released version ${{ needs.release_logic.outputs.version }}"
+          if [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; then
             MESSAGE="$MESSAGE \n This is a prerelease only published to npm. Only users who explicitly opted in by installing this or preceding prereleases in this set will be affected."
           else
             MESSAGE="$MESSAGE \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>"
