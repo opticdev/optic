@@ -298,9 +298,9 @@ optic_ci_e2e() {
     cd "$API_PROJECT_DIR"
     rm -rf "./.optic/captures/ccc/diffs/*"
     export OPTIC_RUST_DIFF_ENGINE=true
-    DEBUG=optic* apidev daemon:stop
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
     # instead of apidev spec, we can manually start the session via the cli-server api
-    DEBUG=optic* apidev spec &
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec &
     sleep 5
     cd "$OPTIC_SRC_DIR"
     rm -rf ./output-rust
@@ -310,13 +310,15 @@ optic_ci_e2e() {
     cd "$API_PROJECT_DIR"
     rm -rf "./.optic/captures/ccc/diffs/*"
     export OPTIC_RUST_DIFF_ENGINE=false
-    DEBUG=optic* apidev daemon:stop
-    DEBUG=optic* apidev spec &
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec &
     sleep 5
     cd "$OPTIC_SRC_DIR"
     rm -rf ./output-scalajs
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS" >> "$OUTPUT_DIR/comparison.log"
-    cat "$OUTPUT_DIR/**/*"
+
+
+    cat "output*/**/*"
     cat "$OUTPUT_DIR/conversion.log"
     cat "$OUTPUT_DIR/comparison.log"
   )
