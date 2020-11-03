@@ -259,7 +259,7 @@ jobs:
       - run: |
           MESSAGE="${{ github.event.pusher.name }} released version ${{ needs.release_logic.outputs.version }}"
           if [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; then
-            MESSAGE="$MESSAGE \n This is a prerelease only published to npm. Only users who explicitly opted in by installing this or preceding prereleases in this set will be affected."
+            MESSAGE="$MESSAGE \n This is a prerelease only <https://www.npmjs.com/package/@useoptic/cli/v/${{ needs.release_logic.outputs.version }}|published to npm>. Only users who explicitly opted in by installing this or preceding prereleases in this set will be affected. "
           else
             MESSAGE="$MESSAGE \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>"
           fi
