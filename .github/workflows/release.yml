@@ -20,7 +20,51 @@ on:
       - develop
 
 jobs:
+  release_logic:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.should_publish.outputs.should_publish }}
+      is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
+      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+        with:
+          node-version: 12
+      - name: Set version output
+        id: version
+        run: |
+          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
+          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
+          echo "::set-output name=version::$OPTIC_VERSION"
+      - name: Set is_prerelease output
+        id: release_type
+        run: |
+          if [[ $OPTIC_VERSION == *'-'* ]]; then
+            echo "v$OPTIC_VERSION is a prerelease"
+            echo "::set-output name=is_prerelease::true"
+          else
+            echo "v$OPTIC_VERSION is not a prerelease"
+            echo "::set-output name=is_prerelease::false"
+          fi
+      - name: Set should_publish output
+        id: should_publish
+        run: |
+          echo Should we publish $OPTIC_VERSION from $GITHUB_REF?
+          RELEASED_VERSION=$(npm view @useoptic/cli@$OPTIC_VERSION version)
+          if ! [[ -z $RELEASED_VERSION ]]; then
+            echo "v$OPTIC_VERSION already published, should not publish again"
+            echo "::set-output name=should_publish::false"
+          elif [ "${{ steps.release_type.outputs.is_prerelease }}" = "false" ] && [ $GITHUB_REF != "refs/heads/release" ]; then
+            echo "Only prereleases should be published from branches other than release"
+            echo "::set-output name=should_publish::false"
+          else
+            echo "::set-output name=should_publish::true"
+          fi
+
   build-rust-binaries:
+    if: needs.release_logic.outputs.should_publish == 'true'
+    needs: release_logic
     strategy:
       matrix:
         include:
@@ -51,7 +95,7 @@ jobs:
       - name: 'Determine version and archive name'
         shell: bash
         run: |
-          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
+          OPTIC_VERSION=${{ needs.release_logic.outputs.version }}
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
       - name: 'Set CARGO_HOME and RUSTUP_HOME'
@@ -101,7 +145,7 @@ jobs:
           - platform_name: linux
             suffix: ''
     runs-on: ubuntu-latest
-    needs: build-rust-binaries
+    needs: [release_logic, build-rust-binaries]
     env:
       FILE_NAME: optic_diff${{ matrix.suffix }}
       BUCKET: optic-packages
@@ -112,7 +156,7 @@ jobs:
           node-version: 12
       - name: 'Determine version and archive name'
         run: |
-          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
+          OPTIC_VERSION=${{ needs.release_logic.outputs.version }}
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=optic_diff-v$OPTIC_VERSION-${{ matrix.platform_name }}" >> $GITHUB_ENV
       - name: Prepare directory structure
@@ -147,17 +191,16 @@ jobs:
   # Deploys the current version to NPM, and also verifies that the version is correct in the process
   # All Jobs rely on this job because it verifies the version
   release-npm:
+    if: needs.release_logic.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
-    needs: publish-binaries
-    outputs: 
-      is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
+    needs: [publish-binaries, release_logic]
     steps:
     - run: | # TODO: remove this safety before merging this altered release flow
         echo "Hit safety exit"
         exit 1
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
-      with:
-        ref: release
+      # with:
+      #   ref: release
     - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
       with:
         node-version: 12
@@ -168,23 +211,12 @@ jobs:
     - run: node ./workspaces/scripts/publish.js
       env:
         OPTIC_PUBLISH_SCOPE: public
-    - name: Set is_prerelease output
-      id: release_type
-      run: |
-        OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
-        if [[ $OPTIC_VERSION == *'-'* ]]; then
-          echo "v$OPTIC_VERSION is a prerelease"
-          echo "::set-output name=is_prerelease::true"
-        else
-          echo "v$OPTIC_VERSION is not a prerelease"
-          echo "::set-output name=is_prerelease::false"
-        fi
 
   # Creates debian package for users to install, hosted on s3
   release-deb:
     runs-on: ubuntu-latest
-    needs: release-npm
-    if: needs.release-npm.outputs.is_prerelease == 'false'
+    needs: [release_logic, release-npm]
+    if: needs.release_logic.outputs.should_publish == 'true'
     steps:
       - run: |
           echo "determined as not a prerelease" 
@@ -205,8 +237,8 @@ jobs:
   # Requires Repository Access Token (https://github.com/peter-evans/repository-dispatch#token) with repo:write scope
   trigger-brew-release:
     runs-on: ubuntu-latest
-    needs: release-npm
-    if: needs.release-npm.outputs.is_prerelease == 'false'
+    needs: [release_logic, release-npm]
+    if: needs.release_logic.outputs.should_publish == 'true'
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
@@ -219,14 +251,21 @@ jobs:
   # Tells slack a release has happened
   notify-slack:
     runs-on: ubuntu-latest
-    needs: release-npm
+    needs: [release_logic, release-npm]
     name: Message Slack that Release has happened
     steps:
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         name: Setup Node (to determine latest version of Optic)
         with:
             node-version: 12
-      - run: echo "MESSAGE=${{ github.event.pusher.name }} released version $(npm view @useoptic/cli version) \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>" >> $GITHUB_ENV
+      - run: |
+          MESSAGE=${{ github.event.pusher.name }} released version ${{ needs.release_logic.outputs.version }}
+          if [[ "${needs.release_logic.outputs.is_prerelease}" == "true" ]]; then
+            MESSAGE="$MESSAGE \n This is a prerelease only published to npm. Only users who explicitly opted in by installing this or preceding prereleases in this set will be affected."
+          else
+            MESSAGE="$MESSAGE \n Publish Release Notes <https://github.com/opticdev/optic/releases|here>"            
+          fi
+          echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
       - name: Send message to Slack API
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
