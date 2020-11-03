@@ -210,7 +210,7 @@ optic_snapshot_input_to_capture() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     CAPTURE_ID=ccc
-    API_PROJECT_DIR=~/tmp/optic-snapshots
+    API_PROJECT_DIR=./optic-snapshots
     INPUT_EVENTS_FILE=./workspaces/snapshot-tests/inputs/events/todo/v0.json
     INPUT_INTERACTIONS_FILE=./workspaces/snapshot-tests/inputs/interactions/todo/get-todos.json
     node ./workspaces/cli-shared/build/captures/avro/file-system/snapshot-input-capture-saver.js "$INPUT_EVENTS_FILE" "$INPUT_INTERACTIONS_FILE" "$API_PROJECT_DIR" "$CAPTURE_ID"
@@ -222,7 +222,7 @@ optic_example_input_to_capture() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     CAPTURE_ID=ccc
-    API_PROJECT_DIR=~/tmp/optic-snapshots
+    API_PROJECT_DIR=./optic-snapshots
     INPUT_FILE=./workspaces/ui/public/example-sessions/diff-test-cases.json
 #    INPUT_FILE=/Users/dev/Downloads/shape-diff-engine/a\ known\ field\ is\ missing.managed.json
 #    INPUT_FILE='/Users/dev/Downloads/shape-diff-engine/a new field is provided in an optional nested object.managed.json'
@@ -280,10 +280,10 @@ optic_e2e_single() {
 optic_ci_e2e() {
   (
     set -o errexit
-    mkdir -p ~/tmp/optic-snapshots
+    mkdir -p ./optic-snapshots
 
     NUM_INTERACTIONS=1
-    INPUT_FILE_PATH=./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply\ nested\ fields\ inside\ of\ arrays.managed.json
+    INPUT_FILE_PATH="./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
     INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
     OUTPUT_DIR="output/$INPUT_FILE_NAME"
     mkdir -p "$OUTPUT_DIR"
