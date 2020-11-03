@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Optic Repository @ Develop
-        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
         with:
             ref: develop
             token: ${{ github.token }}
@@ -36,7 +36,7 @@ jobs:
       - name: Bump to latest version
         run: echo "VERSION=$(yarn --silent bump $TYPE)" >> $GITHUB_ENV
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@c7f493a8000b8aeb17a1332e326ba76b57cb83eb # v3.4.1
         id: cpr
         with:
           branch: bump/bot/${{ github.run_id }}
@@ -45,7 +45,7 @@ jobs:
           title: Bumped to ${{ env.VERSION }} [ ${{ env.TYPE }} update]
           labels: ${{ env.TYPE }}
       - name: Comment back with PR
-        uses: unsplash/comment-on-pr@master
+        uses: unsplash/comment-on-pr@master # leaving this on master, the most recent tag is well behind
         env:
           GITHUB_TOKEN: ${{ secrets.COMMENT_PR }}
         with:
