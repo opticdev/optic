@@ -1,9 +1,9 @@
 {
   "name": "@useoptic/diff-engine",
-  "version": "8.6.0-beta.3",
+  "version": "8.6.0-beta.6",
   "scripts": {
-    "postinstall": "echo 'Disabled for now' # node scripts/install",
-    "preuninstall": "ecoh 'Disabled for now' # node scripts/uninstall",
+    "postinstall": "node scripts/install",
+    "preuninstall": "node scripts/uninstall",
     "ws:build-binaries": "scripts/build-binaries.sh",
     "ws:clean": "rm -rf build/* && rm -rf target/*",
     "ws:test": "scripts/test.sh"
@@ -23,8 +23,5 @@
     "rimraf": "^3.0.2",
     "tar": "^6.0.5"
   },
-  "devDependencies": {},
-  "files": [
-    "/build"
-  ]
+  "devDependencies": {}
 }

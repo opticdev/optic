@@ -23,16 +23,16 @@ jobs:
           fi
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@c0243dfafd0e99b12caca0d56b6de8e7fb8d20db # https://github.com/aws-actions/configure-aws-credentials/commits/v1
+        uses: aws-actions/configure-aws-credentials@1417e62aeacec5e7fbe447bb7712d50847507342 # v1.5.4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-east-1"
-      - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
         with:
           node-version: 12
       - name: Checkout Optic Repository
-        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
         with:
             ref: feature/demo
             path: demoRepo
