@@ -23,9 +23,5 @@
     "rimraf": "^3.0.2",
     "tar": "^6.0.5"
   },
-  "devDependencies": {},
-  "files": [
-    "/lib",
-    "/scripts"
-  ]
+  "devDependencies": {}
 }
