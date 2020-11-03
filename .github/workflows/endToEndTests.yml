@@ -81,7 +81,12 @@ jobs:
       - name: 'run scenario'
         run: |
           source sourceme.sh
-          optic_ci_e2e
+          optic_ci_e2e "./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
+
+      - name: 'run scenario'
+        run: |
+          source sourceme.sh
+          optic_ci_e2e "./workspaces/snapshot-tests/src/e2e/shape-diff-engine/array with object listitem is provided with one matching and one primitive.managed.json"
 
 #  test-end-to-end:
 #    runs-on: ubuntu-latest

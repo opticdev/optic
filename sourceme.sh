@@ -284,7 +284,7 @@ optic_ci_e2e() {
     set -v
     mkdir -p ./optic-snapshots
     NUM_INTERACTIONS=1
-    INPUT_FILE_PATH="./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
+    INPUT_FILE_PATH=$1
     INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
     OUTPUT_DIR="output/$INPUT_FILE_NAME"
     mkdir -p "$OUTPUT_DIR"
