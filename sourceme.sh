@@ -164,8 +164,8 @@ optic_local_registry_start() {
 
 optic_compare_diff_engines() {
   echo "optic_compare_diff_engines"
-  rm -rf ./issues.patch
-  rm -rf ./issues-side-by-side.patch
+#  rm -rf ./issues.patch
+#  rm -rf ./issues-side-by-side.patch
   (
     set -o errexit
     set -v
@@ -284,7 +284,8 @@ optic_ci_e2e() {
     set -o errexit
     set -v
     set -x
-    mkdir -p ./optic-snapshots
+    API_PROJECT_DIR=./optic-snapshots
+    mkdir -p "$API_PROJECT_DIR"
     NUM_INTERACTIONS=1
     INPUT_FILE_PATH="./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
     INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
@@ -292,8 +293,30 @@ optic_ci_e2e() {
     mkdir -p "$OUTPUT_DIR"
 
     optic_example_input_to_capture "$INPUT_FILE_PATH" > "$OUTPUT_DIR/conversion.log" 2>&1
-    optic_compare_diff_engines "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log" 2>&1
 
+    echo "running rust diff"
+    cd "$API_PROJECT_DIR"
+    rm -rf "./.optic/captures/ccc/diffs/*"
+    export OPTIC_RUST_DIFF_ENGINE=true
+    DEBUG=optic* apidev daemon:stop
+    # instead of apidev spec, we can manually start the session via the cli-server api
+    DEBUG=optic* apidev spec &
+    sleep 5
+    cd "$OPTIC_SRC_DIR"
+    rm -rf ./output-rust
+    node ./workspaces/snapshot-tests/build/e2e/index.js ./output-rust "$API_PROJECT_DIR" "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log"
+
+    echo "running scalajs diff"
+    cd "$API_PROJECT_DIR"
+    rm -rf "./.optic/captures/ccc/diffs/*"
+    export OPTIC_RUST_DIFF_ENGINE=false
+    DEBUG=optic* apidev daemon:stop
+    DEBUG=optic* apidev spec &
+    sleep 5
+    cd "$OPTIC_SRC_DIR"
+    rm -rf ./output-scalajs
+    node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS" >> "$OUTPUT_DIR/comparison.log"
+    cat "$OUTPUT_DIR/**/*"
     cat "$OUTPUT_DIR/conversion.log"
     cat "$OUTPUT_DIR/comparison.log"
   )
