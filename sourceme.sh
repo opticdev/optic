@@ -163,6 +163,7 @@ optic_local_registry_start() {
 
 
 optic_compare_diff_engines() {
+  echo "optic_compare_diff_engines"
   rm -rf ./issues.patch
   rm -rf ./issues-side-by-side.patch
   (
@@ -170,11 +171,10 @@ optic_compare_diff_engines() {
     API_PROJECT_DIR=./optic-snapshots
     NUM_INTERACTIONS=$1
 
-    echo -n "running rust diff"
+    echo "running rust diff"
     cd "$API_PROJECT_DIR"
     rm -rf "./.optic/captures/ccc/diffs/*"
     export OPTIC_RUST_DIFF_ENGINE=true
-    optic_workspace_build #todo: remove if we are running against prebuilt rust binaries
     DEBUG=optic* apidev daemon:stop
     # instead of apidev spec, we can manually start the session via the cli-server api
     DEBUG=optic* apidev spec &
@@ -183,7 +183,7 @@ optic_compare_diff_engines() {
     rm -rf ./output-rust
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-rust "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
 
-    echo -n "running scalajs diff"
+    echo "running scalajs diff"
     cd "$API_PROJECT_DIR"
     rm -rf "./.optic/captures/ccc/diffs/*"
     export OPTIC_RUST_DIFF_ENGINE=false
@@ -194,7 +194,7 @@ optic_compare_diff_engines() {
     rm -rf ./output-scalajs
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
 
-    echo -n "comparing..."
+    echo "comparing..."
     cd "$OPTIC_SRC_DIR"
     diff ./output-rust ./output-scalajs > ./issues.patch || echo "found difference"
     diff --side-by-side ./output-rust ./output-scalajs > ./issues-side-by-side.patch || echo "found difference"

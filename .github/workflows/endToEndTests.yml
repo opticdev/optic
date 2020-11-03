@@ -34,6 +34,9 @@ jobs:
         run: |
           source sourceme.sh
           optic_build_for_release
+        env:
+          OPTIC_RUST_DIFF_ENGINE: true
+
       #      - name: 'Install local-cli'
       #        shell: bash
       #        run: |
