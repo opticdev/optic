@@ -276,3 +276,22 @@ optic_e2e_single() {
   )
 }
 # ps aux | grep daemon-lock | cut -d" " -f 15 | xargs echo kill -9 | pbcopy
+
+optic_ci_e2e() {
+  (
+    set -o errexit
+    mkdir -p ~/tmp/optic-snapshots
+
+    NUM_INTERACTIONS=1
+    INPUT_FILE_PATH=./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply\ nested\ fields\ inside\ of\ arrays.managed.json
+    INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
+    OUTPUT_DIR="output/$INPUT_FILE_NAME"
+    mkdir -p "$OUTPUT_DIR"
+
+    optic_example_input_to_capture "$INPUT_FILE_PATH" > "$OUTPUT_DIR/conversion.log" 2>&1
+    optic_compare_diff_engines "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log" 2>&1
+
+    cat "$OUTPUT_DIR/conversion.log"
+    cat "$OUTPUT_DIR/comparison.log"
+  )
+}

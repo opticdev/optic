@@ -14,6 +14,7 @@ jobs:
 
   local-cli-e2e:
     strategy:
+      fail-fast: false
       matrix:
         os: [ macos-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
@@ -34,17 +35,7 @@ jobs:
       #          npm install -g "@useoptic/cli@$OPTIC_VERSION"
       - name: 'run scenario'
         run: |
-          mkdir -p ~/tmp/optic-snapshots
-          source sourceme.sh
-          NUM_INTERACTIONS=1
-          INPUT_FILE_PATH=./workspaces/snapshot-tests/e2e/shape-diff-engine/deeply\ nested\ fields\ inside\ of\ arrays.managed.json
-          INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
-          OUTPUT_DIR="output/$INPUT_FILE_NAME"
-          mkdir -p "$OUTPUT_DIR"
-          optic_example_input_to_capture "$INPUT_FILE_PATH" > "$OUTPUT_DIR/conversion.log" 2>&1
-          optic_compare_diff_engines "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log" 2>&1
-          cat "$OUTPUT_DIR/conversion.log"
-          cat "$OUTPUT_DIR/comparison.log"
+          source sourceme.sh && optic_ci_e2e
 
 #  test-end-to-end:
 #    runs-on: ubuntu-latest
