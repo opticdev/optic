@@ -174,6 +174,7 @@ optic_compare_diff_engines() {
     cd "$API_PROJECT_DIR"
     rm -rf "./.optic/captures/ccc/diffs/*"
     export OPTIC_RUST_DIFF_ENGINE=true
+    optic_workspace_build #todo: remove if we are running against prebuilt rust binaries
     DEBUG=optic* apidev daemon:stop
     # instead of apidev spec, we can manually start the session via the cli-server api
     DEBUG=optic* apidev spec &
