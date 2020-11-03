@@ -23,6 +23,13 @@ jobs:
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
         with:
           node-version: 12
+      - name: restore cached node_modules
+        id: workspace-node-modules
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # v2.1.2
+        with:
+          path: |
+            node_modules/
+          key: workspace-node-modules-${{ hashFiles('yarn.lock') }}-v1
       - name: 'Install test dependencies'
         run: |
           source sourceme.sh
@@ -35,7 +42,8 @@ jobs:
       #          npm install -g "@useoptic/cli@$OPTIC_VERSION"
       - name: 'run scenario'
         run: |
-          source sourceme.sh && optic_ci_e2e
+          source sourceme.sh
+          optic_ci_e2e
 
 #  test-end-to-end:
 #    runs-on: ubuntu-latest
