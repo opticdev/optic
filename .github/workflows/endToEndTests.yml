@@ -19,7 +19,7 @@ jobs:
         node-version: 12
     - run: echo "::add-path::$(yarn global bin)"
     - name: Check out Optic Repo
-      uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
       with:
         path: ./optic-repo
     - name: Release Optic Locally
@@ -27,7 +27,7 @@ jobs:
         source sourceme.sh && optic_local_registry_start
         source sourceme.sh && optic_build_and_publish_locally
       working-directory: ./optic-repo
-    - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+    - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
       with:
         repository: opticdev/optic-end-end-tests
         token: ${{ secrets.END_TO_END_ACCESS_KEY }}
