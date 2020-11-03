@@ -280,26 +280,18 @@ optic_e2e_single() {
 optic_ci_e2e() {
   (
     set -o errexit
-    i=0
-    i=$((i+1));echo $i
+    set -x
+    set -v
     mkdir -p ./optic-snapshots
-    i=$((i+1));echo $i
     NUM_INTERACTIONS=1
-    i=$((i+1));echo $i
     INPUT_FILE_PATH="./workspaces/snapshot-tests/src/e2e/shape-diff-engine/deeply nested fields inside of arrays.managed.json"
-    i=$((i+1));echo $i
     INPUT_FILE_NAME=$(basename "$INPUT_FILE_PATH")
-    i=$((i+1));echo $i
     OUTPUT_DIR="output/$INPUT_FILE_NAME"
-    i=$((i+1));echo $i
     mkdir -p "$OUTPUT_DIR"
-    i=$((i+1));echo $i
 
     optic_example_input_to_capture "$INPUT_FILE_PATH" > "$OUTPUT_DIR/conversion.log" 2>&1
-    i=$((i+1));echo $i
     optic_compare_diff_engines "$NUM_INTERACTIONS" > "$OUTPUT_DIR/comparison.log" 2>&1
 
-    i=$((i+1));echo $i
     cat "$OUTPUT_DIR/conversion.log"
     cat "$OUTPUT_DIR/comparison.log"
   )
