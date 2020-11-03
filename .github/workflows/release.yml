@@ -13,6 +13,11 @@ on:
   push:
     branches:
       - release
+      - develop
+  # TODO: remove this debug trigger before merging
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   build-rust-binaries:
@@ -35,6 +40,9 @@ jobs:
     env:
       FILE_NAME: optic_diff${{ matrix.suffix }}
     steps:
+      - run: | # TODO: remove this safety before merging this altered release flow
+          echo "Hit safety exit"
+          exit 1
       - name: 'Checkout source'
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
@@ -144,6 +152,9 @@ jobs:
     outputs:
       is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
     steps:
+    - run: | # TODO: remove this safety before merging this altered release flow
+        echo "Hit safety exit"
+        exit 1
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       with:
         ref: release
