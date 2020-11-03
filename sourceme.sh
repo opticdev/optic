@@ -168,6 +168,8 @@ optic_compare_diff_engines() {
   rm -rf ./issues-side-by-side.patch
   (
     set -o errexit
+    set -x
+    set -v
     API_PROJECT_DIR=./optic-snapshots
     NUM_INTERACTIONS=$1
 
