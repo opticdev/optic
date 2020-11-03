@@ -21,6 +21,7 @@ jobs:
     outputs:
       should_publish: ${{ steps.should_publish.outputs.should_publish }}
       is_prerelease: ${{ steps.release_type.outputs.is_prerelease }}
+      prerelease_tag: ${{ steps.prerelease_tag.outputs.prerelease_tag }}
       version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
@@ -43,6 +44,11 @@ jobs:
             echo "v$OPTIC_VERSION is not a prerelease"
             echo "::set-output name=is_prerelease::false"
           fi
+      - name: Set prerelease_tag output
+        id: prerelease_tag
+        run: |
+          PRERELEASE_TAG=$(node workspaces/scripts/prerelease-tag $OPTIC_VERSION)
+          echo "::set-output name=prerelease_tag::$PRERELEASE_TAG"
       - name: Set should_publish output
         id: should_publish
         run: |
@@ -196,6 +202,12 @@ jobs:
         node-version: 12
     - name: Install Dependencies and Build Optic
       run:  |
+        if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -z "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
+          FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
+          if [[ -r $FLAGS_FILE ]]; then
+            cp $FLAGS_FILE > .env
+          fi
+        fi
         source ./sourceme.sh && optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
