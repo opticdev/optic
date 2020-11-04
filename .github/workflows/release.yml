@@ -202,13 +202,17 @@ jobs:
         node-version: 12
     - name: Install Dependencies and Build Optic
       run:  |
-        if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -z "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
+        source ./sourceme.sh
+        optic_install_dependencies
+        
+        if [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
           FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
           if [[ -r $FLAGS_FILE ]]; then
             cp $FLAGS_FILE > .env
           fi
         fi
-        source ./sourceme.sh && optic_build_for_release
+
+        optic_build_for_release
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
       env:
