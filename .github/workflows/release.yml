@@ -208,7 +208,10 @@ jobs:
         if [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
           FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
           if [[ -r $FLAGS_FILE ]]; then
-            cp $FLAGS_FILE > .env
+            cp $FLAGS_FILE .env
+            cp $FLAGS_FILE workspaces/agent-cli/.env
+            cp $FLAGS_FILE workspaces/ci-cli/.env
+            cp $FLAGS_FILE workspaces/local-cli/.env
           fi
         fi
 
