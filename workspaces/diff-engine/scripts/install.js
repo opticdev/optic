@@ -1,4 +1,13 @@
 const { install } = require('../lib');
+const dotenv = require('dotenv');
+const path = require('path');
+
+const envPath =
+  process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
+
+dotenv.config({
+  path: envPath,
+});
 
 if (process.env.OPTIC_SKIP_PREBUILT_INSTALLS === 'true') {
   console.log(
