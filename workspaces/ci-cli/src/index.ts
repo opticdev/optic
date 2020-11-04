@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-if (process.env.OPTIC_DEBUG_ENV_FILE) {
-  dotenv.config({
-    path: process.env.OPTIC_DEBUG_ENV_FILE,
-  });
-}
+const envPath =
+  process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
+
+dotenv.config({
+  path: envPath,
+});
 
 export { run } from '@oclif/command';
