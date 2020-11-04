@@ -54,7 +54,9 @@ export class OnDemandDiff implements Diff {
     await fs.ensureDir(outputPaths.base);
 
     await Promise.all([
-      config.events ? fs.writeJson(outputPaths.events, config.events) : fs.copy(config.specPath, outputPaths.events),
+      config.events
+        ? fs.writeJson(outputPaths.events, config.events)
+        : fs.copy(config.specPath, outputPaths.events),
       fs.writeJson(outputPaths.ignoreRequests, ignoreRules.allRules || []),
       fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),
@@ -108,6 +110,7 @@ export class OnDemandDiff implements Diff {
     child.once('exit', onExit);
 
     this.child = child;
+    this.child.stderr?.pipe(process.stderr);
 
     return new Promise((resolve, reject) => {
       function onErr(err: Error) {
@@ -250,7 +253,6 @@ export class DiffQueries implements DiffQueriesInterface {
 
       return Readable.from(itemsGenerator);
     }
-
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
@@ -279,9 +281,15 @@ export class DiffQueries implements DiffQueriesInterface {
     }
   }
 
-  private async *countUndocumentedUrls(diffsStream: Readable) : AsyncIterable<{ path: string, method: string, count: number }> {
+  private async *countUndocumentedUrls(
+    diffsStream: Readable
+  ): AsyncIterable<{ path: string; method: string; count: number }> {
     let countsByFingerprint: Map<String, number> = new Map();
-    let undocumentedUrls: Array<{ path: string, method: string, fingerprint: string }> = [];
+    let undocumentedUrls: Array<{
+      path: string;
+      method: string;
+      fingerprint: string;
+    }> = [];
 
     for await (let [diff, _, fingerprint] of diffsStream) {
       let urlDiff = diff['UnmatchedRequestUrl'];
@@ -289,11 +297,13 @@ export class DiffQueries implements DiffQueriesInterface {
 
       let existingCount = countsByFingerprint.get(fingerprint) || 0;
       if (existingCount < 1) {
-        let path = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
-          interactionComponent.Url && interactionComponent.Url.path
+        let path = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Url && interactionComponent.Url.path
         ).Url.path as string;
-        let method = urlDiff.interactionTrail.path.find((interactionComponent: any) => 
-          interactionComponent.Method && interactionComponent.Method.method
+        let method = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Method && interactionComponent.Method.method
         ).Method.method as string;
 
         undocumentedUrls.push({ path, method, fingerprint });
@@ -303,7 +313,7 @@ export class DiffQueries implements DiffQueriesInterface {
 
     for (let { path, method, fingerprint } of undocumentedUrls) {
       let count = countsByFingerprint.get(fingerprint);
-      if (!count) throw new Error("unreachable");
+      if (!count) throw new Error('unreachable');
       yield { path, method, count };
     }
   }

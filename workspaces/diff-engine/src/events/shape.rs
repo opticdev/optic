@@ -65,7 +65,7 @@ pub struct ShapeParameterAdded {
   pub shape_parameter_id: ShapeParameterId,
   pub shape_id: ShapeId,
   pub name: String,
-  pub shape_descriptor: ShapeParametersDescriptor,
+  pub shape_descriptor: ParameterShapeDescriptor,
   pub event_context: Option<EventContext>,
 }
 

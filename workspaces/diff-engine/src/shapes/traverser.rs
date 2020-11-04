@@ -90,7 +90,10 @@ impl<'a> Traverser<'a> {
             index: *(indexes.first().unwrap()) as u32,
           });
 
-          let new_trail_origin = trail_origin.clone();
+          let new_trail_origin = match item_choices.first() {
+            Some(choice) => choice.parent_trail.clone(),
+            None => trail_origin.clone(),
+          };
 
           if !item_choices.is_empty() {
             self.traverse(
@@ -130,11 +133,17 @@ impl<'a> Traverser<'a> {
                 choice,
                 field_ids
                   .map(|(field_id, field_name)| {
-                    let field_shape_id = self.shape_queries.resolve_field_shape_node(&field_id);
+                    let field_shape_id = self
+                      .shape_queries
+                      .resolve_field_shape_node(&field_id)
+                      .unwrap();
+                    let field_core_shape_kind =
+                      self.shape_queries.resolve_to_core_shape(&field_shape_id);
                     (
                       field_name.clone(),
                       field_id.clone(),
-                      field_shape_id.unwrap().clone(),
+                      field_shape_id.clone(),
+                      field_core_shape_kind,
                     )
                   })
                   .collect::<Vec<_>>(),
@@ -187,9 +196,13 @@ impl<'a> Traverser<'a> {
               }
             })
             .collect::<Vec<ChoiceOutput>>();
-          let new_trail_origin = trail_origin.clone();
+          let new_trail_origin = match field_choices.first() {
+            Some(choice) => choice.parent_trail.clone(),
+            None => trail_origin.clone(),
+          };
+          dbg!(&new_trail_origin);
 
-          if !field_choices.is_empty() {
+          if !matching_choices.is_empty() {
             self.traverse(
               Some(field_body),
               field_json_trail,

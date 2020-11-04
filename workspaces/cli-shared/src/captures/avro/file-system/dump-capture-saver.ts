@@ -5,11 +5,14 @@ import { IHttpInteraction } from '@useoptic/domain-types';
 import oboe from 'oboe';
 import { CaptureSaver } from './capture-saver';
 
-async function main(inputFilePath: string, outputBaseDirectory: string) {
+async function main(
+  inputFilePath: string,
+  outputBaseDirectory: string,
+  captureId: string = 'ccc'
+) {
   console.log({ inputFilePath });
   const input = fs.createReadStream(inputFilePath);
   const events: any[] = [];
-  const captureId = 'ccc';
   const captureBaseDirectory = path.join(
     outputBaseDirectory,
     '.optic',
@@ -88,5 +91,5 @@ async function main(inputFilePath: string, outputBaseDirectory: string) {
   );
 }
 
-const [, , inputFilePath, outputBaseDirectory] = process.argv;
-main(inputFilePath, outputBaseDirectory);
+const [, , inputFilePath, outputBaseDirectory, captureId] = process.argv;
+main(inputFilePath, outputBaseDirectory, captureId);

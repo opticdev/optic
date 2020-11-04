@@ -11,7 +11,7 @@ pub struct ShapeQueries<'a> {
 #[derive(Debug)]
 pub struct ResolvedTrail<'a> {
   pub core_shape_kind: &'a ShapeKind,
-  pub shape_id: &'a ShapeId,
+  pub shape_id: ShapeId,
 }
 
 impl<'a> ShapeQueries<'a> {
@@ -19,11 +19,7 @@ impl<'a> ShapeQueries<'a> {
     ShapeQueries { shape_projection }
   }
 
-  pub fn list_trail_choices(
-    &self,
-    shape_trail: &ShapeTrail,
-    /*, parameter bindings */
-  ) -> Vec<ChoiceOutput> {
+  pub fn list_trail_choices(&self, shape_trail: &ShapeTrail) -> Vec<ChoiceOutput> {
     let projection = &self.shape_projection;
     let root_node_index = projection.get_shape_node_index(&shape_trail.root_shape_id);
 
@@ -31,23 +27,16 @@ impl<'a> ShapeQueries<'a> {
 
     let mut parent_node_index = root_node_index;
     let mut resolved = ResolvedTrail {
-      shape_id: &shape_trail.root_shape_id,
+      shape_id: shape_trail.root_shape_id.clone(),
       core_shape_kind: self.resolve_to_core_shape(&shape_trail.root_shape_id),
     };
-    eprintln!("{:?}", resolved);
+    // eprintln!("{:?}", resolved);
     while let Some(trail_component) = trail_components.next() {
-      eprintln!("{:?}", trail_component);
+      // eprintln!("{:?}", trail_component);
       resolved = self.resolve_trail_to_core_shape_helper(&resolved, trail_component);
-      parent_node_index = projection.get_shape_node_index(resolved.shape_id);
-      eprintln!("{:?} -> {:?}", resolved, parent_node_index);
-      // unimplemented!(
-      //   "we shouldn't have any additional shape trail components yet, making primitives work first"
-      // );
-      // TODO: implement walking of graph by trail components
-      // let component_node = match trail_component {
-      //   ShapeTrailPathComponent::
-      // }
-      //   projection.get_descendant_shape_node_index(&parent_node_index, &shape_id);
+
+      parent_node_index = projection.get_shape_node_index(&resolved.shape_id);
+      // eprintln!("{:?} -> {:?}", resolved, parent_node_index);
     }
 
     if let None = parent_node_index {
@@ -60,21 +49,100 @@ impl<'a> ShapeQueries<'a> {
       return vec![];
     }
 
-    core_shape_nodes
+    let result: Vec<ChoiceOutput> = core_shape_nodes
       .unwrap()
       .map(|CoreShapeNode(core_shape_id, core_shape_descriptor)| {
         let shape_id = match self.shape_projection.graph.node_weight(*current_node_index) {
           Some(Node::Shape(ShapeNode(shape_id, _))) => shape_id,
           _ => unreachable!("expected to be a core shape node"),
         };
-        ChoiceOutput {
-          parent_trail: shape_trail.clone(),
-          additional_components: vec![],
-          shape_id: shape_id.clone(),
-          core_shape_kind: core_shape_descriptor.kind.clone(),
-        }
+        let trails: Vec<ChoiceOutput> = match core_shape_descriptor.kind {
+          ShapeKind::UnknownKind => vec![],
+          ShapeKind::NullableKind => {
+            let nullable_parameter_id = core_shape_descriptor
+              .kind
+              .get_parameter_descriptor()
+              .unwrap()
+              .shape_parameter_id;
+            let item_shape_id =
+              self.resolve_parameter_to_shape(shape_id, &String::from(nullable_parameter_id));
+            let trail = shape_trail
+              .with_component(ShapeTrailPathComponent::NullableTrail {
+                shape_id: shape_id.clone(),
+              })
+              .with_component(ShapeTrailPathComponent::NullableItemTrail {
+                shape_id: shape_id.clone(),
+                inner_shape_id: item_shape_id.clone(),
+              });
+
+            let mut output = vec![ChoiceOutput {
+              parent_trail: shape_trail.clone(),
+              additional_components: vec![ShapeTrailPathComponent::NullableTrail {
+                shape_id: shape_id.clone(),
+              }],
+              shape_id: shape_id.clone(),
+              core_shape_kind: core_shape_descriptor.kind.clone(),
+            }];
+            output.append(&mut self.list_trail_choices(&trail));
+            output
+          }
+          ShapeKind::OptionalKind => {
+            let optional_parameter_id = core_shape_descriptor
+              .kind
+              .get_parameter_descriptor()
+              .unwrap()
+              .shape_parameter_id;
+            let item_shape_id =
+              self.resolve_parameter_to_shape(shape_id, &String::from(optional_parameter_id));
+            let trail = shape_trail
+              .with_component(ShapeTrailPathComponent::OptionalTrail {
+                shape_id: shape_id.clone(),
+              })
+              .with_component(ShapeTrailPathComponent::OptionalItemTrail {
+                shape_id: shape_id.clone(),
+                inner_shape_id: item_shape_id.clone(),
+              });
+            let mut output = vec![ChoiceOutput {
+              parent_trail: shape_trail.clone(),
+              additional_components: vec![ShapeTrailPathComponent::OptionalTrail {
+                shape_id: shape_id.clone(),
+              }],
+              shape_id: shape_id.clone(),
+              core_shape_kind: core_shape_descriptor.kind.clone(),
+            }];
+            output.append(&mut self.list_trail_choices(&trail));
+            output
+          }
+          ShapeKind::OneOfKind => self
+            .resolve_parameters_to_shapes(shape_id)
+            .into_iter()
+            .map(|i| {
+              let (item_parameter_id, item_shape_id) = i;
+              let trail = shape_trail
+                .with_component(ShapeTrailPathComponent::OneOfTrail {
+                  shape_id: shape_id.clone(),
+                })
+                .with_component(ShapeTrailPathComponent::OneOfItemTrail {
+                  item_shape_id,
+                  one_of_id: shape_id.clone(),
+                  parameter_id: item_parameter_id,
+                });
+              self.list_trail_choices(&trail)
+            })
+            .flatten()
+            .collect(),
+          _ => vec![ChoiceOutput {
+            parent_trail: shape_trail.clone(),
+            additional_components: vec![],
+            shape_id: shape_id.clone(),
+            core_shape_kind: core_shape_descriptor.kind.clone(),
+          }],
+        };
+        trails
       })
-      .collect::<Vec<_>>()
+      .flatten()
+      .collect();
+    result
   }
 
   pub fn resolve_to_core_shape(&self, shape_id: &ShapeId) -> &ShapeKind {
@@ -88,10 +156,10 @@ impl<'a> ShapeQueries<'a> {
       .shape_projection
       .get_ancestor_shape_node_index(shape_node_index)
       .unwrap();
-    eprintln!(
-      "{:?} -( IsDescendantOf )-> {:?}",
-      shape_node_index, core_shape_node_index
-    );
+    // eprintln!(
+    //   "{:?} -( IsDescendantOf )-> {:?}",
+    //   shape_node_index, core_shape_node_index
+    // );
     match self
       .shape_projection
       .graph
@@ -107,28 +175,98 @@ impl<'a> ShapeQueries<'a> {
     parent: &ResolvedTrail,
     path_component: &'a ShapeTrailPathComponent,
   ) -> ResolvedTrail {
+    // eprintln!(
+    //   "resolve_trail_to_core_shape_helper {:?}",
+    //   parent.core_shape_kind.get_descriptor().name
+    // );
     match parent.core_shape_kind {
       ShapeKind::ListKind => match path_component {
         ShapeTrailPathComponent::ListItemTrail {
           item_shape_id,
           list_shape_id,
         } => ResolvedTrail {
-          shape_id: &item_shape_id,
+          shape_id: item_shape_id.clone(),
           core_shape_kind: self.resolve_to_core_shape(&item_shape_id),
         },
         _ => unreachable!("should only receive ListItemTrail relative to ListKind"),
+      },
+      ShapeKind::OneOfKind => match path_component {
+        ShapeTrailPathComponent::OneOfTrail { shape_id } => ResolvedTrail {
+          shape_id: parent.shape_id.clone(),
+          core_shape_kind: &ShapeKind::OneOfKind,
+        },
+        ShapeTrailPathComponent::OneOfItemTrail {
+          one_of_id,
+          parameter_id,
+          item_shape_id,
+        } => ResolvedTrail {
+          shape_id: item_shape_id.clone(),
+          core_shape_kind: self.resolve_to_core_shape(&item_shape_id),
+        },
+        _ => unreachable!("should only receive OneOfTrail or OneOfItemTrail relative to OneOfKind"),
+      },
+      ShapeKind::NullableKind => match path_component {
+        ShapeTrailPathComponent::NullableTrail { shape_id } => ResolvedTrail {
+          shape_id: parent.shape_id.clone(),
+          core_shape_kind: &ShapeKind::NullableKind,
+        },
+        ShapeTrailPathComponent::NullableItemTrail {
+          shape_id,
+          inner_shape_id,
+        } => ResolvedTrail {
+          shape_id: inner_shape_id.clone(),
+          core_shape_kind: self.resolve_to_core_shape(&inner_shape_id),
+        },
+        _ => unreachable!(
+          "should only receive NullableTrail or NullableItemTrail relative to NullableKind"
+        ),
+      },
+      ShapeKind::OptionalKind => match path_component {
+        ShapeTrailPathComponent::OptionalTrail { shape_id } => ResolvedTrail {
+          shape_id: parent.shape_id.clone(),
+          core_shape_kind: &ShapeKind::OptionalKind,
+        },
+        ShapeTrailPathComponent::OptionalItemTrail {
+          shape_id,
+          inner_shape_id,
+        } => ResolvedTrail {
+          shape_id: inner_shape_id.clone(),
+          core_shape_kind: self.resolve_to_core_shape(&inner_shape_id),
+        },
+        _ => unreachable!(
+          "should only receive OptionalTrail or OptionalItemTrail relative to OptionalKind"
+        ),
       },
       ShapeKind::ObjectKind => match path_component {
         ShapeTrailPathComponent::ObjectFieldTrail {
           field_id,
           field_shape_id,
         } => ResolvedTrail {
-          shape_id: &field_shape_id,
+          shape_id: field_shape_id.clone(),
           core_shape_kind: self.resolve_to_core_shape(&field_shape_id),
         },
         _ => unreachable!("should only receive ObjectFieldTrail relative to ObjectKind"),
       },
-      _ => unimplemented!("need to support more shapekinds"),
+      ShapeKind::NumberKind => ResolvedTrail {
+        shape_id: parent.shape_id.clone(),
+        core_shape_kind: &ShapeKind::NumberKind,
+      },
+      ShapeKind::BooleanKind => ResolvedTrail {
+        shape_id: parent.shape_id.clone(),
+        core_shape_kind: &ShapeKind::BooleanKind,
+      },
+      ShapeKind::StringKind => ResolvedTrail {
+        shape_id: parent.shape_id.clone(),
+        core_shape_kind: &ShapeKind::StringKind,
+      },
+      ShapeKind::UnknownKind => ResolvedTrail {
+        shape_id: parent.shape_id.clone(),
+        core_shape_kind: &ShapeKind::UnknownKind
+      },
+      x => {
+        dbg!(x);
+        unimplemented!("need to support more shapekinds")
+      },
     }
   }
 
@@ -167,6 +305,40 @@ impl<'a> ShapeQueries<'a> {
       Edge::HasBinding(b) => b.shape_id.clone(),
       _ => unreachable!("expected edge to be a HasBinding"),
     }
+  }
+
+  pub fn resolve_parameters_to_shapes(
+    &self,
+    shape_id: &ShapeId,
+  ) -> Vec<(ShapeParameterId, ShapeId)> {
+    let projection = &self.shape_projection;
+
+    let shape_node_index = projection
+      .get_shape_node_index(shape_id)
+      .expect("shape id to resolve parameter for must exist");
+
+    projection
+      .graph
+      .edges_directed(*shape_node_index, petgraph::Direction::Outgoing)
+      .filter_map(|edge_reference| {
+        let edge_weight = edge_reference.weight();
+        match edge_weight {
+          Edge::HasBinding(b) => {
+            let neighbor = projection
+              .graph
+              .node_weight(edge_reference.target())
+              .unwrap();
+            match neighbor {
+              Node::ShapeParameter(parameter_node) => {
+                Some((parameter_node.0.clone(), b.shape_id.clone()))
+              }
+              _ => unreachable!("expected HasBinding edge to point to a ShapeParameter"),
+            }
+          }
+          _ => None,
+        }
+      })
+      .collect()
   }
 
   pub fn resolve_field_id(&self, shape_id: &ShapeId, field_name: &String) -> Option<FieldId> {
