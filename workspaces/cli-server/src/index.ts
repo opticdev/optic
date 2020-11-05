@@ -59,8 +59,10 @@ export async function ensureDaemonStarted(
         timeout: 3000,
       });
       await fs.unlink(sentinelFilePath);
-      await child.unref();
       developerDebugLogger(`lock created ${child.pid}`);
+      developerDebugLogger(`trying to unref child`);
+      await child.unref();
+      developerDebugLogger(`child unreffed`);
       resolve();
     });
   }
