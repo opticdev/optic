@@ -225,6 +225,7 @@ jobs:
             cp $FLAGS_FILE workspaces/ci-cli/.env
             cp $FLAGS_FILE workspaces/local-cli/.env
             cp $FLAGS_FILE workspaces/diff-engine/.env
+            cp $FLAGS_FILE workspaces/ui/.env.production.local
           fi
         fi
 
