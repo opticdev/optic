@@ -123,6 +123,7 @@ class CommandAndProxySessionManager {
     await inboundProxy.stop();
     developerDebugLogger(`waiting for persistence manager to stop`);
     await persistenceManager.cleanup();
+    developerDebugLogger('waiting for cleanup');
   }
 }
 

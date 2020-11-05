@@ -110,7 +110,7 @@ export async function LocalTaskSessionWrapper(
     await printCoverage(paths, taskName, captureId);
   }
 
-  return await cleanupAndExit();
+  return cleanupAndExit();
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
