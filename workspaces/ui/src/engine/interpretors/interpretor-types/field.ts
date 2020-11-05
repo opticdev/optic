@@ -18,10 +18,14 @@ import {
   IJsonTrail,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { JsonHelper, opticEngine } from '@useoptic/domain';
+import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
 import { InteractiveSessionConfig } from '../../interfaces/session';
 import { Simulate } from 'react-dom/test-utils';
 import sortBy from 'lodash.sortby';
+import { addNewFieldCommands, IShapeChange } from '../spec-change-dsl';
+import { setDifference, setEquals } from '../../set-ops';
+import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
+import { targetKindSuggestion } from '../target-shape-kind';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -105,36 +109,62 @@ class FieldShapeInterpretationHelper {
       this.additionalCoreShapeKinds.length > 0 &&
       !this.actual.wasMissing() /* when missing, change shape commands are gets included in the optional/required commands  */
     ) {
+      if (this.expected.isOptionalField()) {
+        const {
+          shapeChange,
+          updatedShapeName,
+        } = this.generateChangeShapeInstructions(true);
+        suggestions.push(
+          this.wrapFieldShapeWithOptional(shapeChange, updatedShapeName)
+        );
+      }
       suggestions.push(
-        this.changeFieldShape(this.generateCommandsToChangeShape(true))
+        this.changeFieldShape(this.generateChangeShapeInstructions(true))
       );
 
       if (
-        !eqSet(
+        !setEquals(
           new Set([...this.expected.unionWithActual(this.actual)]),
           this.actual.observedCoreShapeKinds()
         )
       ) {
+        if (this.expected.isOptionalField()) {
+          const {
+            shapeChange,
+            targetFinal,
+            updatedShapeName,
+          } = this.generateChangeShapeInstructions(false);
+          if (targetFinalNotNullable(targetFinal)) {
+            suggestions.push(
+              this.wrapFieldShapeWithOptional(shapeChange, updatedShapeName)
+            );
+          }
+        }
         //show the breaking one without the union
-        suggestions.push(
-          this.changeFieldShape(this.generateCommandsToChangeShape(false))
-        );
+        const {
+          shapeChange,
+          targetFinal,
+          updatedShapeName,
+        } = this.generateChangeShapeInstructions(false);
+        if (targetFinalNotNullable(targetFinal))
+          suggestions.push(
+            this.changeFieldShape({ shapeChange, updatedShapeName })
+          );
       }
     }
 
-    // this happens first, (if changes required), and is shared through all the cases.
     const {
-      updatedShapeCommands,
+      shapeChange,
       updatedShapeName,
-    } = this.generateCommandsToChangeShape(true);
+    } = this.generateChangeShapeInstructions(true);
 
     if (this.shouldAskMakeOptional) {
       suggestions.push(
-        this.wrapFieldShapeWithOptional(updatedShapeCommands, updatedShapeName)
+        this.wrapFieldShapeWithOptional(shapeChange, updatedShapeName)
       );
     }
     if (this.shouldAskToRemoveField) {
-      suggestions.push(this.removeField(updatedShapeCommands));
+      suggestions.push(this.removeField());
     }
 
     //force update the title
@@ -151,39 +181,38 @@ class FieldShapeInterpretationHelper {
       ];
     }
 
+    if (
+      !this.expected.expectedShapes().has(ICoreShapeKinds.NullableKind) &&
+      this.actual.observedCoreShapeKinds().has(ICoreShapeKinds.NullableKind) &&
+      this.additionalCoreShapeKinds.length === 1
+    ) {
+      overrideTitle = [
+        plain('the value of'),
+        code(this.expected.fieldKey()),
+        plain('was null'),
+      ];
+    }
     return { suggestions, previewTabs: this.createPreviews(), overrideTitle };
   }
 
   ///////////////////////////////////////////////////////////////////
 
-  private generateCommandsToChangeShape(
+  private generateChangeShapeInstructions(
     useUnion: boolean
   ): {
-    updatedShapeCommands: any[];
+    shapeChange: IShapeChange;
     updatedShapeName: ICopy[];
+    targetFinal: Set<ICoreShapeKinds>;
   } {
-    const allCoreShapeKinds = useUnion
-      ? this.expected.unionWithActual(this.actual)
-      : Array.from(this.actual.observedCoreShapeKinds());
+    const result = targetKindSuggestion(useUnion, this.expected, this.actual);
+    const isNullable = result.targetFinal.has(ICoreShapeKinds.NullableKind);
 
-    const previewName: ICopy[] = (() => {
-      if (allCoreShapeKinds.length === 0) return [code('Unknown')];
-      if (allCoreShapeKinds.length === 1) return [code(allCoreShapeKinds[0])];
-      return allCoreShapeKinds.reduce(
-        (
-          before: ICopy[],
-          value: ICoreShapeKinds,
-          i: number,
-          array: ICoreShapeKinds[]
-        ) => [
-          ...before,
-          plain(before.length ? (i < array.length - 1 ? ', ' : ' or ') : ''),
-          code(value),
-        ],
-        []
-      );
-    })();
-    return { updatedShapeCommands: [], updatedShapeName: previewName };
+    const prependNullable = isNullable ? [code('Nullable')] : [];
+
+    return {
+      ...result,
+      updatedShapeName: [...prependNullable, ...result.updatedShapeName],
+    };
   }
 
   private createPreviews(): IInteractionPreviewTab[] {
@@ -216,64 +245,71 @@ class FieldShapeInterpretationHelper {
   }
 
   private wrapFieldShapeWithOptional(
-    shapeChangeCommands: any[],
+    shapeChange: IShapeChange,
     updatedName: ICopy[]
   ): ISuggestion {
     const key = this.expected.fieldKey();
     const sharedCopy = [code(key), plain('an optional'), ...updatedName];
+
+    const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: [],
+      commands: changeField
+        .changeShape(shapeChange) // may be empty :)
+        .wrapInOptional()
+        .toCommands(),
       changeType: IChangeType.Changed,
     };
   }
 
-  private removeField(shapeChangeCommands: any[]): ISuggestion {
+  private removeField(): ISuggestion {
     const key = this.expected.fieldKey();
     const sharedCopy = [code(key)];
+
+    const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
         activeTense: [plain('remove field'), ...sharedCopy],
         pastTense: [plain('Removed field'), ...sharedCopy],
       },
-      commands: [],
+      commands: changeField.stageFieldRemoval().toCommands(),
       changeType: IChangeType.Removed,
     };
   }
 
   private changeFieldShape({
-    updatedShapeCommands,
+    shapeChange,
     updatedShapeName,
   }: {
-    updatedShapeCommands: any[];
+    shapeChange: IShapeChange;
     updatedShapeName: ICopy[];
   }) {
     const key = this.expected.fieldKey();
-    const sharedCopy = [code(key), plain('to'), ...updatedShapeName];
+
+    const sharedCopy = [code(key), plain('a required'), ...updatedShapeName];
+    const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
-        activeTense: [plain('change shape of'), ...sharedCopy],
-        pastTense: [plain('Changed shape of'), ...sharedCopy],
+        activeTense: [plain('make field'), ...sharedCopy],
+        pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: [],
+      commands: changeField.changeShape(shapeChange).toCommands(),
       changeType: IChangeType.Changed,
     };
   }
 
   private addNewField(key: string): IInterpretation {
-    // commands for the field value. infer'd poly.
-    const { rootShapeId, name, commands } = JsonHelper.toJs(
-      LearnJsonTrailAffordances.toCommandsJson(
-        JSON.stringify(this.actual.learnedTrails.affordances),
-        JSON.stringify(this.jsonTrail)
-      )
-    );
+    const {
+      name,
+      asRequiredCommands,
+      asOptionalCommands,
+    } = addNewFieldCommands(key, this.expected, this.actual, true);
 
     const sharedCopy = [code(key), plain('as'), code(name)];
 
@@ -298,7 +334,7 @@ class FieldShapeInterpretationHelper {
           activeTense: [plain('add required field'), ...sharedCopy],
           pastTense: [plain('Added required field'), ...sharedCopy],
         },
-        commands: [],
+        commands: asRequiredCommands,
         changeType: IChangeType.Added,
       },
       {
@@ -306,7 +342,7 @@ class FieldShapeInterpretationHelper {
           activeTense: [plain('add optional field'), ...sharedCopy],
           pastTense: [plain('Added optional field'), ...sharedCopy],
         },
-        commands: [],
+        commands: asOptionalCommands,
         changeType: IChangeType.Added,
       },
     ];
@@ -318,8 +354,5 @@ class FieldShapeInterpretationHelper {
   }
 }
 
-function eqSet(as: Set<string>, bs: Set<string>): boolean {
-  if (as.size !== bs.size) return false;
-  for (var a of as) if (!bs.has(a)) return false;
-  return true;
-}
+const targetFinalNotNullable = (target: Set<ICoreShapeKinds>) =>
+  !(target.has(ICoreShapeKinds.NullableKind) && target.size === 1);

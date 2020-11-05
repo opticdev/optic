@@ -399,9 +399,9 @@
           "body" : {
             "contentType" : "application/json",
             "value" : {
-              "shapeHashV1Base64" : "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSIAoGY2l0aWVzEhYIARoCCAIaAggDGgIIAhoCCAMaAggC",
-              "asJsonString" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}",
-              "asText" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}"
+              "shapeHashV1Base64" : "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSJAoGY2l0aWVzEhoIARoCCAIaAggDGgIIAhoCCAMaAggEGgIIAg==",
+              "asJsonString" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,true,\"Chicago\"]}",
+              "asText" : "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,true,\"Chicago\"]}"
             }
           }
         },

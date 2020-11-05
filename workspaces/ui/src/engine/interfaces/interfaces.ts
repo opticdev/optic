@@ -22,6 +22,11 @@ export enum ICoreShapeKinds {
   OptionalKind = '$optional',
   UnknownKind = '$unknown',
 }
+export enum ICoreShapeInnerParameterNames {
+  ListInner = '$listItem',
+  NullableInner = '$nullableInner',
+  OptionalInner = '$optionalInner',
+}
 
 // Diff Types the UI Handles
 

@@ -29,7 +29,7 @@ export function shapeChangeInterpretor(
         interactionPointers: shapeGrouping.interactions,
         title: shapeGrouping.label,
         allowsExpand: true,
-        assertion: [plain('expected'), code(this.expected.shapeName())],
+        assertion: [plain('expected'), code(expected.shapeName())],
         invalid: additionalKindsObserved.includes(shapeGrouping.kind),
         jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
       };

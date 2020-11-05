@@ -6,6 +6,7 @@ import {
   DiffHelpers,
   Facade,
   JsonHelper,
+  opticEngine,
   RfcCommandContext,
 } from '@useoptic/domain';
 import {
@@ -123,9 +124,11 @@ export async function makeUniverse(
 
   const { eventStore, rfcId, rfcService } = universeFromEvents(events);
 
+  const opticIds = opticEngine.com.useoptic.OpticIdsJsHelper().deterministic;
+
   return {
     ...services,
-    rfcBaseState: makeDiffRfcBaseState(eventStore, rfcService, rfcId),
+    rfcBaseState: makeDiffRfcBaseState(eventStore, rfcService, rfcId, opticIds),
     captureService,
     diffService,
     rawDiffs,

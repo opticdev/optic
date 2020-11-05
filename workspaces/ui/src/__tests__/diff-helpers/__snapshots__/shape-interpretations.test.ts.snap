@@ -1,60 +1,427 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`a known field is missing.managed 1`] = `2`;
-
-exports[`a known field is provided the wrong shape.managed 1`] = `
-Array [
-  Object {
-    "action": Object {
-      "activeTense": Array [
+exports[`a known field is missing.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "firstName",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": Array [
+    Object {
+      "style": 0,
+      "text": "required field",
+    },
+    Object {
+      "style": 1,
+      "text": "firstName",
+    },
+    Object {
+      "style": 0,
+      "text": "was missing",
+    },
+  ],
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "firstName",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "firstName",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
         Object {
-          "style": 0,
-          "text": "Change",
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
         },
         Object {
-          "style": 0,
-          "text": "shape of",
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "baseline-shape_8",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
         },
         Object {
-          "style": 1,
-          "text": "age",
-        },
-        Object {
-          "style": 0,
-          "text": "to",
-        },
-        Object {
-          "style": 1,
-          "text": "$string",
-        },
-      ],
-      "pastTense": Array [
-        Object {
-          "style": 0,
-          "text": "Changed",
-        },
-        Object {
-          "style": 0,
-          "text": "shape of",
-        },
-        Object {
-          "style": 1,
-          "text": "age",
-        },
-        Object {
-          "style": 0,
-          "text": "to",
-        },
-        Object {
-          "style": 1,
-          "text": "$string",
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "baseline-field_3",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
         },
       ],
     },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "remove field",
+          },
+          Object {
+            "style": 1,
+            "text": "firstName",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Removed field",
+          },
+          Object {
+            "style": 1,
+            "text": "firstName",
+          },
+        ],
+      },
+      "changeType": 2,
+      "commands": Array [
+        Object {
+          "RemoveField": Object {
+            "fieldId": "baseline-field_3",
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "7aae429d1863840d191d2d6e988733d0bafa755d",
+        "examplesOfCoreShapeKinds": "$optional",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "firstName",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "missing",
+    },
+  ],
+}
+`;
+
+exports[`a known field is provided the wrong shape.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Number",
+      },
+    ],
     "changeType": 1,
-    "commands": Array [],
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "age",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Number",
+      },
+    ],
   },
-]
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "age",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "age",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "baseline-field_1",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "age",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "age",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "baseline-field_1",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "f5d9d595f05241ef9d83685fa91b8a7c9daa65b5",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "age",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
 `;
 
 exports[`a new field is provided as an array with any contents.managed 1`] = `
@@ -63,10 +430,11 @@ Object {
     "assertion": Array [
       Object {
         "style": 1,
-        "text": "expected use spec namer here",
+        "text": "undocumented field",
       },
     ],
     "changeType": 0,
+    "getJsonBodyToPreview": [Function],
     "location": Object {
       "inRequest": false,
       "inResponse": Object {
@@ -78,12 +446,21 @@ Object {
     },
     "title": Array [
       Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
         "style": 1,
-        "text": "{\\"JsonObjectKey\\":{\\"key\\":\\"array\\"}}observed",
+        "text": "array",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
       },
     ],
   },
   "for": "shape",
+  "overrideTitle": undefined,
   "suggestions": Array [
     Object {
       "action": Object {
@@ -102,7 +479,7 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "List of  Number",
           },
         ],
         "pastTense": Array [
@@ -120,12 +497,55 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "List of  Number",
           },
         ],
       },
       "changeType": 0,
-      "commands": Array [],
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "array",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+      ],
     },
     Object {
       "action": Object {
@@ -144,7 +564,7 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "List of  Number",
           },
         ],
         "pastTense": Array [
@@ -162,22 +582,660 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "List of  Number",
           },
         ],
       },
       "changeType": 0,
-      "commands": Array [],
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "array",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
     },
   ],
   "tabs": Array [
     Object {
       "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "array",
+        },
+      ],
       "interactionPointers": Array [
         "id",
       ],
-      "renderBody": [Function],
-      "title": "was array",
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "array",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`a new field is provided as an empty array.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "undocumented field",
+      },
+    ],
+    "changeType": 0,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
+        "style": 1,
+        "text": "array",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "List of  Unknown",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "List of  Unknown",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$unknown",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "array",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "List of  Unknown",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "array",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "List of  Unknown",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$unknown",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "array",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "array",
+        },
+      ],
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "array",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`a new field is provided in a required nested object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "undocumented field",
+      },
+    ],
+    "changeType": 0,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
+        "style": 1,
+        "text": "motto",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "motto",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "motto",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "motto",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "motto",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "motto",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "motto",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "shape_8",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "motto",
+        },
+      ],
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "motto",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
     },
   ],
 }
@@ -189,10 +1247,11 @@ Object {
     "assertion": Array [
       Object {
         "style": 1,
-        "text": "expected use spec namer here",
+        "text": "undocumented field",
       },
     ],
     "changeType": 0,
+    "getJsonBodyToPreview": [Function],
     "location": Object {
       "inRequest": false,
       "inResponse": Object {
@@ -204,12 +1263,21 @@ Object {
     },
     "title": Array [
       Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
         "style": 1,
-        "text": "{\\"JsonObjectKey\\":{\\"key\\":\\"format\\"}}observed",
+        "text": "format",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
       },
     ],
   },
   "for": "shape",
+  "overrideTitle": undefined,
   "suggestions": Array [
     Object {
       "action": Object {
@@ -228,7 +1296,7 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "String",
           },
         ],
         "pastTense": Array [
@@ -246,12 +1314,33 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "String",
           },
         ],
       },
       "changeType": 0,
-      "commands": Array [],
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "format",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "shape_5",
+          },
+        },
+      ],
     },
     Object {
       "action": Object {
@@ -270,7 +1359,7 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "String",
           },
         ],
         "pastTense": Array [
@@ -288,22 +1377,4765 @@ Object {
           },
           Object {
             "style": 1,
-            "text": "$type here",
+            "text": "String",
           },
         ],
       },
       "changeType": 0,
-      "commands": Array [],
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "format",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "shape_5",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
     },
   ],
   "tabs": Array [
     Object {
       "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "format",
+        },
+      ],
       "interactionPointers": Array [
         "id",
       ],
-      "renderBody": [Function],
-      "title": "was string",
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "format",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`a primitive type is provided to an optional object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (2 fields)  (optional)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "coordinates",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (2 fields)  (optional)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_6",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_5",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_6",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_6",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_8",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_7",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_8",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_8",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_10",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_9",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_10",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_10",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (2 fields)  (optional)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "8e5bd322996f655b95878f166f0011e7749b730c",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`a required array field is an object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "List of  String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "rivals",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "List of  String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "rivals",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "rivals",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "rivals",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "rivals",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_5",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "List of  String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "089b8201e7eca7ffed90c859328418cf25a8827e",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`a required array field of strings provided with an object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$object",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "food",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_6",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "7b66a1137474f18c2a383c1683f2c40437ed68d7",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rivals",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`an array type is provided to an optional object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (2 fields)  (optional)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_2",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "coordinates",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (2 fields)  (optional)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_5",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_4",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_5",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_5",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_10",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_9",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_10",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_10",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_14",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_13",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_14",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_14",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "coordinates",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_18",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_17",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_18",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_4",
+                "shapeId": "incrementing-id-shape_18",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (2 fields)  (optional)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "8e5bd322996f655b95878f166f0011e7749b730c",
+        "examplesOfCoreShapeKinds": "$list",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "location",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "principality",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "coordinates",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`an extra field is provided as an object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "undocumented field",
+      },
+    ],
+    "changeType": 0,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
+        "style": 1,
+        "text": "favoriteColor",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (2 fields)",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (2 fields)",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$object",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "first",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_2",
+            "name": "second",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_2",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_3",
+            "name": "favoriteColor",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_3",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "baseline-shape_8",
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (2 fields)",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "Object (2 fields)",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$object",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "first",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_2",
+            "name": "second",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_2",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_3",
+            "name": "favoriteColor",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_3",
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "baseline-shape_8",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_3",
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "favoriteColor",
+        },
+      ],
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "favoriteColor",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`an extra field is provided.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 1,
+        "text": "undocumented field",
+      },
+    ],
+    "changeType": 0,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "undocumented field",
+      },
+      Object {
+        "style": 1,
+        "text": "favoriteColor",
+      },
+      Object {
+        "style": 0,
+        "text": "observed",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add required field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added required field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "favoriteColor",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "baseline-shape_8",
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "add optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Added optional field",
+          },
+          Object {
+            "style": 1,
+            "text": "favoriteColor",
+          },
+          Object {
+            "style": 0,
+            "text": "as",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 0,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "favoriteColor",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "baseline-shape_8",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "undocumented field",
+        },
+        Object {
+          "style": 1,
+          "text": "favoriteColor",
+        },
+      ],
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "favoriteColor",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`an required object field is null, suggests nullable.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "stats",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": Array [
+    Object {
+      "style": 0,
+      "text": "the value of",
+    },
+    Object {
+      "style": 1,
+      "text": "stats",
+    },
+    Object {
+      "style": 0,
+      "text": "was null",
+    },
+  ],
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Nullable",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Nullable",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$nullable",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$nullableInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_9",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_6",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (1 field)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "076b04f1e7e8a29d705db1f737f504011a2e94a2",
+        "examplesOfCoreShapeKinds": "$nullable",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "null",
+    },
+  ],
+}
+`;
+
+exports[`an required object field is ommitted.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "stats",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": Array [
+    Object {
+      "style": 0,
+      "text": "required field",
+    },
+    Object {
+      "style": 1,
+      "text": "stats",
+    },
+    Object {
+      "style": 0,
+      "text": "was missing",
+    },
+  ],
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_10",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_6",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "remove field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Removed field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+        ],
+      },
+      "changeType": 2,
+      "commands": Array [
+        Object {
+          "RemoveField": Object {
+            "fieldId": "field_6",
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (1 field)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "076b04f1e7e8a29d705db1f737f504011a2e94a2",
+        "examplesOfCoreShapeKinds": "$optional",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "missing",
+    },
+  ],
+}
+`;
+
+exports[`an required object field is provided with a missing required field.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Number",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "rank",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Number",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": Array [
+    Object {
+      "style": 0,
+      "text": "required field",
+    },
+    Object {
+      "style": 1,
+      "text": "rank",
+    },
+    Object {
+      "style": 0,
+      "text": "was missing",
+    },
+  ],
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "rank",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "rank",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_9",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_5",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "remove field",
+          },
+          Object {
+            "style": 1,
+            "text": "rank",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Removed field",
+          },
+          Object {
+            "style": 1,
+            "text": "rank",
+          },
+        ],
+      },
+      "changeType": 2,
+      "commands": Array [
+        Object {
+          "RemoveField": Object {
+            "fieldId": "field_5",
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Number",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "45dc31337fc00181504954ddd45ed7fc0e62ccde",
+        "examplesOfCoreShapeKinds": "$optional",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "rank",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "missing",
+    },
+  ],
+}
+`;
+
+exports[`an required object field is provided with an array.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "stats",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (1 field)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_6",
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "stats",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_6",
+                "shapeId": "incrementing-id-shape_7",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (1 field)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "076b04f1e7e8a29d705db1f737f504011a2e94a2",
+        "examplesOfCoreShapeKinds": "$list",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "stats",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`array with object listitem is provided an empty sub array.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_1",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$unknown",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_12",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (3 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "26aa7d069c511a519cdc7aa69eb228c1a4c471b4",
+        "examplesOfCoreShapeKinds": "$list",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`array with object listitem is provided an sub array of numbers.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_1",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$list",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_4",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_12",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (3 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "26aa7d069c511a519cdc7aa69eb228c1a4c471b4",
+        "examplesOfCoreShapeKinds": "$list",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "array",
+    },
+  ],
+}
+`;
+
+exports[`array with object listitem is provided with one matching and one primitive.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_1",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (3 fields)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_12",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (3 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "d82251d7ede9312b99a5566f49db98ab1e500103",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (3 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "d82251d7ede9312b99a5566f49db98ab1e500103",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`deeply nested fields inside of arrays.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (4 fields)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_SYRwhqD1XN",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "FastestLap",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Object (4 fields)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": Array [
+    Object {
+      "style": 0,
+      "text": "required field",
+    },
+    Object {
+      "style": 1,
+      "text": "FastestLap",
+    },
+    Object {
+      "style": 0,
+      "text": "was missing",
+    },
+  ],
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "FastestLap",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "FastestLap",
+          },
+          Object {
+            "style": 0,
+            "text": "an optional",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$optional",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$optionalInner",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_XA5M5sp7FW",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "field_lKkPHZp1kM",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "remove field",
+          },
+          Object {
+            "style": 1,
+            "text": "FastestLap",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Removed field",
+          },
+          Object {
+            "style": 1,
+            "text": "FastestLap",
+          },
+        ],
+      },
+      "changeType": 2,
+      "commands": Array [
+        Object {
+          "RemoveField": Object {
+            "fieldId": "field_lKkPHZp1kM",
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (4 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "8c49590dde97dbcf6614b3af716f7eed2ff8d691",
+        "examplesOfCoreShapeKinds": "$optional",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 12,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "missing",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object (4 fields)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "8c49590dde97dbcf6614b3af716f7eed2ff8d691",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 16,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "FastestLap",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`field is array of strings, and > 1 items does not match expected type.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Boolean",
+          },
+          Object {
+            "style": 0,
+            "text": ",",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Boolean",
+          },
+          Object {
+            "style": 0,
+            "text": ",",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$boolean",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_3",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_3",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "baseline-shape_4",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$boolean",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 4,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "boolean",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$number",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "number",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`field is array of strings, and 1 item does not match expected type.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "baseline-shape_4",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$number",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "number",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`root array is provided with object.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "List of  Unknown",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "path_1",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "root shape",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "List of  Unknown",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make root shape",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked root shape a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "List",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$object",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "foo",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "shape_3",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetBaseShape": Object {
+            "baseShapeId": "incrementing-id-shape_3",
+            "shapeId": "shape_3",
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "List of  Unknown",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "6cb2ee383235f9a01bdc40c4f530f8153be23225",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [],
+          },
+        ],
+      },
+      "title": "object",
+    },
+  ],
+}
+`;
+
+exports[`when a nullable is provided with a concrete type.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "Unknown  (nullable)",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_1",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "values of ",
+      },
+      Object {
+        "style": 1,
+        "text": "price",
+      },
+      Object {
+        "style": 0,
+        "text": "did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "Unknown  (nullable)",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "price",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Nullable",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "price",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Nullable",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "baseline-field_4",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+          },
+        },
+      ],
+    },
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make field",
+          },
+          Object {
+            "style": 1,
+            "text": "price",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked field",
+          },
+          Object {
+            "style": 1,
+            "text": "price",
+          },
+          Object {
+            "style": 0,
+            "text": "a required",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "SetFieldShape": Object {
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "baseline-field_4",
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Unknown  (nullable)",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "c6c26901c7196bb273b91a2c4b8b74eb787078ba",
+        "examplesOfCoreShapeKinds": "$number",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "price",
+                },
+              },
+            ],
+          },
+          Object {
+            "path": Array [
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "price",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "number",
     },
   ],
 }

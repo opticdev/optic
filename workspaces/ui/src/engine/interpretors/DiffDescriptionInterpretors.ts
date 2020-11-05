@@ -11,6 +11,7 @@ import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from './shape-diff-dsl';
 import { JsonHelper } from '@useoptic/domain';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { rootShapeDiffInterpreter } from './interpretor-types/root';
 
 export function descriptionForDiffs(
   diff: ParsedDiff,
@@ -91,10 +92,26 @@ function descriptionForShapeDiff(
   const expected = new Expectation(
     diff,
     rfcBaseState,
-    asShapeDiff.shapeTrail,
+    asShapeDiff.normalizedShapeTrail,
     asShapeDiff.jsonTrail
   );
 
+  //root handler
+  if (jsonTrailPath.length === 0) {
+    return {
+      title: [
+        plain('root shape'),
+        plain('did not match'),
+        code(expected.shapeName()),
+      ],
+      location,
+      changeType: IChangeType.Changed,
+      assertion: [plain('expected'), code(expected.shapeName())],
+      getJsonBodyToPreview,
+    };
+  }
+
+  //known field handler
   if (expected.isField()) {
     if (asShapeDiff.isUnmatched) {
       return {
@@ -106,12 +123,12 @@ function descriptionForShapeDiff(
         ],
         location,
         changeType: IChangeType.Changed,
-        assertion: [code('expected ' + expected.shapeName())],
+        assertion: [plain('expected'), code(expected.shapeName())],
         getJsonBodyToPreview,
       };
     }
   }
-
+  //undocumented field handler
   const lastIsField = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
   if (asShapeDiff.isUnspecified && lastIsField) {
     return {
@@ -127,7 +144,17 @@ function descriptionForShapeDiff(
     };
   }
 
-  //@todo impliment others
-  debugger;
+  //list item handler
+  if (expected.isListItemShape()) {
+    return {
+      title: [plain('list items did not match'), code(expected.shapeName())],
+      location,
+      changeType: IChangeType.Changed,
+      assertion: [plain('expected'), code(expected.shapeName())],
+      getJsonBodyToPreview,
+    };
+  }
+
+  //we shouldn't ever get there
   invariant('Unexpected shape diff');
 }

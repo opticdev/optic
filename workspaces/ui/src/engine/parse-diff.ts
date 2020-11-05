@@ -14,7 +14,7 @@ import {
   isBodyShapeDiff,
 } from './interfaces/interfaces';
 import invariant from 'invariant';
-import { IShapeTrail } from './interfaces/shape-trail';
+import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
 import { IInteractionTrail } from './interfaces/interaction-trail';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { locationForTrails } from './interfaces/trail-parsers';
@@ -127,6 +127,7 @@ export function parseDiffsArray(array: [IDiff, string[]][]): ParsedDiff[] {
 
 export class BodyShapeDiff {
   shapeTrail: IShapeTrail;
+  normalizedShapeTrail: IShapeTrail;
   jsonTrail: IJsonTrail;
   shapeDiffGroupingHash: string;
   isUnmatched: boolean;
@@ -145,13 +146,16 @@ export class BodyShapeDiff {
       this.shapeTrail,
       'A shape trail must be specified with all shape diffs'
     );
+
+    this.normalizedShapeTrail = normalizeShapeTrail(this.shapeTrail);
+
     this.jsonTrail = normalize(
       shapeDiff['UnmatchedShape']?.jsonTrail ||
         shapeDiff['UnspecifiedShape']?.jsonTrail
     )!;
 
     this.shapeDiffGroupingHash = sha1(
-      jsonStringify(this.shapeTrail),
+      jsonStringify(normalizeShapeTrail(this.shapeTrail)),
       jsonStringify(this.jsonTrail)
     );
 

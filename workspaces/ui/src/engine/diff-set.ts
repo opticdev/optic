@@ -1,6 +1,6 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import groupby from 'lodash.groupby';
-import { IShapeTrail } from './interfaces/shape-trail';
+import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
 import { diff } from 'react-ace';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { isDiffForKnownEndpoint } from './interfaces/interfaces';
@@ -87,7 +87,7 @@ export class DiffSet {
       const oneDiff = diffs[0]!.asShapeDiff(this.rfcBaseState);
       return {
         shapeDiffGroupingHash: key,
-        shapeTrail: oneDiff.shapeTrail,
+        shapeTrail: normalizeShapeTrail(oneDiff.shapeTrail),
         jsonTrail: oneDiff.jsonTrail,
         diffs,
       };
