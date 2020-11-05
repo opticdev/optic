@@ -59,11 +59,10 @@ export async function ensureDaemonStarted(
         timeout: 3000,
       });
       await fs.unlink(sentinelFilePath);
+      await child.unref();
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
     });
-
-    child.unref();
   }
   developerDebugLogger(`trying to read contents`);
   const contents = await fs.readJson(lockFilePath);
