@@ -107,8 +107,6 @@ export class CaptureSaver implements ICaptureSaver {
 
   async cleanup() {
     await this.tracking.stop({ dropWaitingJobs: false });
-    developerDebugLogger('did complete stopping');
-
     developerDebugLogger('stopping capture saver');
   }
 }
