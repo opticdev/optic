@@ -7,6 +7,7 @@ import path from 'path';
 import waitOn from 'wait-on';
 import findProcess from 'find-process';
 import * as uuid from 'uuid';
+import url from 'url';
 import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
 
 export async function ensureDaemonStarted(
@@ -49,11 +50,12 @@ export async function ensureDaemonStarted(
     );
 
     await new Promise(async (resolve) => {
+      const fileUrl = new url.URL(`file:${sentinelFilePath}`).toString();
       developerDebugLogger(
-        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
+        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath} (${fileUrl})`
       );
       await waitOn({
-        resources: [`file://${sentinelFilePath}`],
+        resources: [fileUrl],
         delay: 250,
         window: 250,
         timeout: 3000,
