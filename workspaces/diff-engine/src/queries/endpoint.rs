@@ -6,7 +6,6 @@ use crate::state::endpoint::{
 use crate::HttpInteraction;
 use petgraph::graph::Graph;
 use petgraph::visit::EdgeFilteredNeighborsDirected;
-use serde_json::json;
 
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
@@ -216,6 +215,7 @@ impl<'a> EndpointQueries<'a> {
 #[cfg(test)]
 mod test {
   use super::*;
+  use serde_json::json;
   fn interaction_with_path(path: String) -> HttpInteraction {
     serde_json::from_value(json!(
       {
