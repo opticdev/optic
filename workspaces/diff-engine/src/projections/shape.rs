@@ -220,6 +220,41 @@ impl ShapeProjection {
     }
   }
 
+  pub fn with_field_shape(&mut self, shape_descriptor: FieldShapeDescriptor) {
+    let field_shape = match shape_descriptor {
+      FieldShapeDescriptor::FieldShapeFromShape(field_shape) => {
+        field_shape
+      }
+      _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
+    };
+    let field_node_index = *self
+        .get_field_node_index(&field_shape.field_id)
+        .expect("expected field to exist");
+    let field_node_weight = self
+        .graph
+        .node_weight(field_node_index)
+        .expect("expected field to exist");
+    let existing_field_shape_edge_index = self
+        .graph
+        .edges_directed(field_node_index, petgraph::Direction::Incoming)
+        .find(|edge| match edge.weight() {
+          Edge::BelongsTo => true,
+          _ => false,
+        })
+        .expect("expected field to have a target shape via a BelongsTo edge")
+        .id();
+
+    self.graph.remove_edge(existing_field_shape_edge_index);
+
+    let target_shape_node_index = *self
+        .get_shape_node_index(&field_shape.shape_id)
+        .expect("expected shape_id for field value to have a corresponding node");
+
+    self
+        .graph
+        .add_edge(target_shape_node_index, field_node_index, Edge::BelongsTo);
+  }
+
   pub fn with_field(
     &mut self,
     field_id: FieldId,
@@ -391,7 +426,13 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
       ShapeEvent::FieldAdded(e) => {
         projection.with_field(e.field_id, e.shape_id, e.shape_descriptor, e.name)
       }
-      _ => {} // TODO: eventually add logging for any ShapeEvent we don't use for this projection for some reason
+      ShapeEvent::FieldShapeSet(e) => {
+        projection.with_field_shape(e.shape_descriptor);
+      }
+      x => {
+        dbg!("skipping ShapeEvent in ShapeProjection. warning?");
+        dbg!(&x);
+      }
     }
   }
 }
