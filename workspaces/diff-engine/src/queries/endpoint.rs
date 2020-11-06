@@ -18,7 +18,7 @@ impl<'a> EndpointQueries<'a> {
     }
   }
 
-  pub fn extract_normalized_path(interaction: &HttpInteraction) -> &str {
+  fn extract_normalized_path(interaction: &HttpInteraction) -> &str {
     if interaction.request.path.eq("/") {
       &interaction.request.path
     } else if interaction.request.path.ends_with("/") {
