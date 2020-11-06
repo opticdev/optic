@@ -1,4 +1,3 @@
-use crate::events::SpecEvent::EndpointEvent;
 use crate::projections::endpoint::{Edge, EndpointProjection, Node, ROOT_PATH_ID};
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{
