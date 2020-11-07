@@ -97,6 +97,7 @@ export class OnDemandInitialBody {
       this.events.once('completed', onCompleted);
       function onCompleted(data: any) {
         cleanup();
+        child.kill(0);
         resolve(data.results);
       }
       const cleanup = () => {
