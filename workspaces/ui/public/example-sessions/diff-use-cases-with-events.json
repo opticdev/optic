@@ -1,0 +1,3016 @@
+{
+	"events": [{
+		"PathComponentAdded": {
+			"pathId": "path_aPqDtqTGQN",
+			"parentPathId": "root",
+			"name": "object-cases",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "request-parameter_8liVYqBo88",
+			"pathId": "path_aPqDtqTGQN",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_9I8mJp8URF",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "request-parameter_8liVYqBo88",
+			"parameterDescriptor": {
+				"shapeId": "shape_9I8mJp8URF",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "request_OQ4xWs0s32",
+			"pathId": "path_aPqDtqTGQN",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "response_Zomj5bzNBt",
+			"pathId": "path_aPqDtqTGQN",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_tNRgroSwLj",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_qQT0krhOKn",
+			"baseShapeId": "$number",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_hnI7P1UdbB",
+			"shapeId": "shape_tNRgroSwLj",
+			"name": "age",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_hnI7P1UdbB",
+					"shapeId": "shape_qQT0krhOKn"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_9OWZoB9AQp",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_ZLv9FF57ot",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_fjcgB9O1Gg",
+			"shapeId": "shape_tNRgroSwLj",
+			"name": "cities",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_fjcgB9O1Gg",
+					"shapeId": "shape_ZLv9FF57ot"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_qDxLTuap52",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_omQ4Bb39Ny",
+			"shapeId": "shape_tNRgroSwLj",
+			"name": "firstName",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_omQ4Bb39Ny",
+					"shapeId": "shape_qDxLTuap52"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_vAxrdAagEj",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_EXPFebUkPZ",
+			"shapeId": "shape_tNRgroSwLj",
+			"name": "lastName",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_EXPFebUkPZ",
+					"shapeId": "shape_vAxrdAagEj"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_ZLv9FF57ot",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_9OWZoB9AQp"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "response_Zomj5bzNBt",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "shape_tNRgroSwLj",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"PathComponentAdded": {
+			"pathId": "path_XEnuaiwyv5",
+			"parentPathId": "root",
+			"name": "objects-with-polymorphism",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "request-parameter_NTvEezUEY8",
+			"pathId": "path_XEnuaiwyv5",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_s8F6CLkcEw",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "request-parameter_NTvEezUEY8",
+			"parameterDescriptor": {
+				"shapeId": "shape_s8F6CLkcEw",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "request_n9zG6yfB3K",
+			"pathId": "path_XEnuaiwyv5",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "response_H7mgBDW3pA",
+			"pathId": "path_XEnuaiwyv5",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_kG1JHYgXIw",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_0Rjwrc4XVQ",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_c7nwdWQh7i",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_U2jHOzauf7",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_FDw7T8P1Gl",
+			"shapeId": "shape_c7nwdWQh7i",
+			"name": "city",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_FDw7T8P1Gl",
+					"shapeId": "shape_U2jHOzauf7"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_LaPF9H2WkT",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_ADzn5yEIWh",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_amFoSPj0Yo",
+			"shapeId": "shape_LaPF9H2WkT",
+			"name": "lat",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_amFoSPj0Yo",
+					"shapeId": "shape_ADzn5yEIWh"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_5pqWBXK957",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_QVDqUvTV6F",
+			"shapeId": "shape_LaPF9H2WkT",
+			"name": "long",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_QVDqUvTV6F",
+					"shapeId": "shape_5pqWBXK957"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_CMo2evf3EE",
+			"baseShapeId": "$optional",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_LsaJwQ6B3R",
+			"shapeId": "shape_c7nwdWQh7i",
+			"name": "coordinates",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_LsaJwQ6B3R",
+					"shapeId": "shape_CMo2evf3EE"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_1VsVz1ldHm",
+			"baseShapeId": "$number",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_azOTr94eA4",
+			"shapeId": "shape_c7nwdWQh7i",
+			"name": "population",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_azOTr94eA4",
+					"shapeId": "shape_1VsVz1ldHm"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_Tc108m0Nsy",
+			"shapeId": "shape_0Rjwrc4XVQ",
+			"name": "principality",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_Tc108m0Nsy",
+					"shapeId": "shape_c7nwdWQh7i"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_bYgbrlhzFP",
+			"shapeId": "shape_kG1JHYgXIw",
+			"name": "location",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_bYgbrlhzFP",
+					"shapeId": "shape_0Rjwrc4XVQ"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_CMo2evf3EE",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_LaPF9H2WkT"
+						}
+					},
+					"consumingParameterId": "$optionalInner"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "response_H7mgBDW3pA",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "shape_kG1JHYgXIw",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"PathComponentAdded": {
+			"pathId": "path_A71l1LOES0",
+			"parentPathId": "root",
+			"name": "array-fields",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "request-parameter_XtaymTHqde",
+			"pathId": "path_A71l1LOES0",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_kPyodZ4Tic",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "request-parameter_XtaymTHqde",
+			"parameterDescriptor": {
+				"shapeId": "shape_kPyodZ4Tic",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "request_Hmhp7AWRlF",
+			"pathId": "path_A71l1LOES0",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "response_XkzGtHuniJ",
+			"pathId": "path_A71l1LOES0",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_BWimY31MBw",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_4wTXC2brco",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_DQ1MeMzNwO",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_aFCbmry97x",
+			"shapeId": "shape_4wTXC2brco",
+			"name": "first",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_aFCbmry97x",
+					"shapeId": "shape_DQ1MeMzNwO"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_ePM01PGijN",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_MJxJUokUYA",
+			"shapeId": "shape_4wTXC2brco",
+			"name": "last",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_MJxJUokUYA",
+					"shapeId": "shape_ePM01PGijN"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_WmF0jHCqFh",
+			"shapeId": "shape_BWimY31MBw",
+			"name": "name",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_WmF0jHCqFh",
+					"shapeId": "shape_4wTXC2brco"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_k0u0Kstovv",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_FAm5wD1PJP",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_BbiTcbzz0p",
+			"shapeId": "shape_BWimY31MBw",
+			"name": "rivals",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_BbiTcbzz0p",
+					"shapeId": "shape_FAm5wD1PJP"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_HzYyBRjlHl",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_3Ay8F2W3GS",
+			"baseShapeId": "$number",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_HzVqitaYDq",
+			"shapeId": "shape_HzYyBRjlHl",
+			"name": "rank",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_HzVqitaYDq",
+					"shapeId": "shape_3Ay8F2W3GS"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_31fR9LMutK",
+			"shapeId": "shape_BWimY31MBw",
+			"name": "stats",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_31fR9LMutK",
+					"shapeId": "shape_HzYyBRjlHl"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_FAm5wD1PJP",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_k0u0Kstovv"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "response_XkzGtHuniJ",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "shape_BWimY31MBw",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"PathComponentAdded": {
+			"pathId": "path_BKCtxJ5lMQ",
+			"parentPathId": "root",
+			"name": "root-arrays",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "request-parameter_0OWaHJAew9",
+			"pathId": "path_BKCtxJ5lMQ",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_j0PSviBb9e",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "request-parameter_0OWaHJAew9",
+			"parameterDescriptor": {
+				"shapeId": "shape_j0PSviBb9e",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "request_Dne0Uvp054",
+			"pathId": "path_BKCtxJ5lMQ",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "response_hnuIacJfkl",
+			"pathId": "path_BKCtxJ5lMQ",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_NQW7KNlDs8",
+			"baseShapeId": "$unknown",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_NjFGT8ElYj",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_NjFGT8ElYj",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_NQW7KNlDs8"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "response_hnuIacJfkl",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "shape_NjFGT8ElYj",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"PathComponentAdded": {
+			"pathId": "path_H0AUOucMZ6",
+			"parentPathId": "root",
+			"name": "object-as-array-items",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "request-parameter_pWotHKllb1",
+			"pathId": "path_H0AUOucMZ6",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_GwzyotIy4p",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "request-parameter_pWotHKllb1",
+			"parameterDescriptor": {
+				"shapeId": "shape_GwzyotIy4p",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "request_v0sCV28mBz",
+			"pathId": "path_H0AUOucMZ6",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "response_U9Ma4zEui4",
+			"pathId": "path_H0AUOucMZ6",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_LSzE6p0ick",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_6CwLrwbise",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_uSFm8IzsuO",
+			"shapeId": "shape_LSzE6p0ick",
+			"name": "age",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_uSFm8IzsuO",
+					"shapeId": "shape_6CwLrwbise"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_7RPHWUNFwp",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_o8q1TVrxeB",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_Xozc5zyWHI",
+			"shapeId": "shape_LSzE6p0ick",
+			"name": "colors",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_Xozc5zyWHI",
+					"shapeId": "shape_o8q1TVrxeB"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_29Ms5ZQ8uC",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "field_XkyOiEDHFy",
+			"shapeId": "shape_LSzE6p0ick",
+			"name": "name",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "field_XkyOiEDHFy",
+					"shapeId": "shape_29Ms5ZQ8uC"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "shape_QK42v9Q9jR",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_o8q1TVrxeB",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_7RPHWUNFwp"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "shape_QK42v9Q9jR",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "shape_LSzE6p0ick"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "response_U9Ma4zEui4",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "shape_QK42v9Q9jR",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"PathComponentAdded": {
+			"pathId": "baseline-path_1",
+			"parentPathId": "root",
+			"name": "nullables",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterAddedByPathAndMethod": {
+			"parameterId": "baseline-request-parameter_1",
+			"pathId": "baseline-path_1",
+			"httpMethod": "GET",
+			"parameterLocation": "query",
+			"name": "queryString",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_10",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestParameterShapeSet": {
+			"parameterId": "baseline-request-parameter_1",
+			"parameterDescriptor": {
+				"shapeId": "baseline-shape_10",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"RequestAdded": {
+			"requestId": "baseline-request_1",
+			"pathId": "baseline-path_1",
+			"httpMethod": "GET",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseAddedByPathAndMethod": {
+			"responseId": "baseline-response_1",
+			"pathId": "baseline-path_1",
+			"httpMethod": "GET",
+			"httpStatusCode": 200,
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_8",
+			"baseShapeId": "$object",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_5",
+			"baseShapeId": "$string",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "baseline-field_3",
+			"shapeId": "baseline-shape_8",
+			"name": "address",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "baseline-field_3",
+					"shapeId": "baseline-shape_5"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_6",
+			"baseShapeId": "$unknown",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_7",
+			"baseShapeId": "$nullable",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"FieldAdded": {
+			"fieldId": "baseline-field_4",
+			"shapeId": "baseline-shape_8",
+			"name": "price",
+			"shapeDescriptor": {
+				"FieldShapeFromShape": {
+					"fieldId": "baseline-field_4",
+					"shapeId": "baseline-shape_7"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeAdded": {
+			"shapeId": "baseline-shape_9",
+			"baseShapeId": "$list",
+			"parameters": {
+				"DynamicParameterList": {
+					"shapeParameterIds": []
+				}
+			},
+			"name": "",
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "baseline-shape_7",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "baseline-shape_6"
+						}
+					},
+					"consumingParameterId": "$nullableInner"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ShapeParameterShapeSet": {
+			"shapeDescriptor": {
+				"ProviderInShape": {
+					"shapeId": "baseline-shape_9",
+					"providerDescriptor": {
+						"ShapeProvider": {
+							"shapeId": "baseline-shape_8"
+						}
+					},
+					"consumingParameterId": "$listItem"
+				}
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}, {
+		"ResponseBodySet": {
+			"responseId": "baseline-response_1",
+			"bodyDescriptor": {
+				"httpContentType": "application/json",
+				"shapeId": "baseline-shape_9",
+				"isRemoved": false
+			},
+			"eventContext": {
+				"clientId": "ccc",
+				"clientSessionId": "sss",
+				"clientCommandBatchId": "bbb",
+				"createdAt": "NOW"
+			}
+		}
+	}],
+	"session": {
+		"samples": [{
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Eg4KCGxhc3ROYW1lEgIIAhIJCgNhZ2USAggDEhgKBmNpdGllcxIOCAEaAggCGgIIAhoCCAI=",
+						"asJsonString": "{\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+						"asText": "{\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAISGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":\"not a number\",\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":\"not a number\",\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "ElUKCGxvY2F0aW9uEkkSRwoMcHJpbmNpcGFsaXR5EjcSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSFwoFYXJyYXkSDggBGgIIAxoCCAMaAggD",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[1,2,3]}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[1,2,3]}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EkkKCGxvY2F0aW9uEj0SOwoMcHJpbmNpcGFsaXR5EisSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSCwoFYXJyYXkSAggB",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[]}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[]}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EkkKCGxvY2F0aW9uEj0SOwoMcHJpbmNpcGFsaXR5EisSCwoFbW90dG8SAggCEgoKBGNpdHkSAggCEhAKCnBvcHVsYXRpb24SAggD",
+						"asJsonString": "{\"location\":{\"principality\":{\"motto\":\"Experientia Docet\",\"city\":\"San Fransisco\",\"population\":830000}}}",
+						"asText": "{\"location\":{\"principality\":{\"motto\":\"Experientia Docet\",\"city\":\"San Fransisco\",\"population\":830000}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EnIKCGxvY2F0aW9uEmYSZAoMcHJpbmNpcGFsaXR5ElQSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSNAoLY29vcmRpbmF0ZXMSJRIMCgZmb3JtYXQSAggCEgkKA2xhdBICCAISCgoEbG9uZxICCAI=",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{\"format\":\"DMS\",\"lat\":\"37.7749° N\",\"long\":\"122.4194° W\"}}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{\"format\":\"DMS\",\"lat\":\"37.7749° N\",\"long\":\"122.4194° W\"}}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Ek8KCGxvY2F0aW9uEkMSQQoMcHJpbmNpcGFsaXR5EjESCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSEQoLY29vcmRpbmF0ZXMSAggC",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":\"N/A\"}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":\"N/A\"}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISDAoGcml2YWxzEgIIARIVCgVzdGF0cxIMEgoKBHJhbmsSAggD",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[],\"stats\":{\"rank\":1}}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[],\"stats\":{\"rank\":1}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGQoGcml2YWxzEg8SDQoHbmVtZXNpcxICCAISFQoFc3RhdHMSDBIKCgRyYW5rEgIIAw==",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":{\"nemesis\":\"Brad\"},\"stats\":{\"rank\":1}}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":{\"nemesis\":\"Brad\"},\"stats\":{\"rank\":1}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISNgoGcml2YWxzEiwIARoMEgoKBGZvb2QSAggCGgwSCgoEZm9vZBICCAIaDBIKCgRmb29kEgIIAhIVCgVzdGF0cxIMEgoKBHJhbmsSAggD",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[{\"food\":\"rice\"},{\"food\":\"cookies\"},{\"food\":\"chips\"}],\"stats\":{\"rank\":1}}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[{\"food\":\"rice\"},{\"food\":\"cookies\"},{\"food\":\"chips\"}],\"stats\":{\"rank\":1}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "ElsKCGxvY2F0aW9uEk8STQoMcHJpbmNpcGFsaXR5Ej0SCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSHQoLY29vcmRpbmF0ZXMSDggBGgIIAxoCCAMaAggD",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":[1,2,3]}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":[1,2,3]}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EgkKA2FnZRICCAMSDgoIbGFzdE5hbWUSAggCEg8KCWZpcnN0TmFtZRICCAISLAoNZmF2b3JpdGVDb2xvchIbEgsKBWZpcnN0EgIIAhIMCgZzZWNvbmQSAggCEhgKBmNpdGllcxIOCAEaAggCGgIIAhoCCAI=",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":{\"first\":\"orange\",\"second\":\"red\"}}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":{\"first\":\"orange\",\"second\":\"red\"}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EgkKA2FnZRICCAMSDgoIbGFzdE5hbWUSAggCEg8KCWZpcnN0TmFtZRICCAISEwoNZmF2b3JpdGVDb2xvchICCAISGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":\"Syracuse-Orange\"}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":\"Syracuse-Orange\"}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhILCgVzdGF0cxICCAU=",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":null}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":null}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAg==",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"]}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhIJCgVzdGF0cxIA",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":{}}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":{}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/array-fields",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhITCgVzdGF0cxIKCAEaAggDGgIIAw==",
+						"asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":[12,34]}",
+						"asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":[12,34]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/root-arrays",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaAggDGgIIAxoCCAMaAggDGgIIAw==",
+						"asJsonString": "[1,2,3,4,5]",
+						"asText": "[1,2,3,4,5]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/root-arrays",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAE=",
+						"asJsonString": "[]",
+						"asText": "[]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-as-array-items",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaAggB",
+						"asJsonString": "[[]]",
+						"asText": "[[]]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-as-array-items",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaDggBGgIIAxoCCAMaAggD",
+						"asJsonString": "[[1,2,3]]",
+						"asText": "[[1,2,3]]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-as-array-items",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAE=",
+						"asJsonString": "[]",
+						"asText": "[]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-as-array-items",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaMRIKCgRuYW1lEgIIAhIJCgNhZ2USAggCEhgKBmNvbG9ycxIOCAEaAggCGgIIAhoCCAIaAggC",
+						"asJsonString": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]},\"hello\"]",
+						"asText": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]},\"hello\"]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-as-array-items",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaMRIKCgRuYW1lEgIIAhIJCgNhZ2USAggCEhgKBmNvbG9ycxIOCAEaAggCGgIIAhoCCAI=",
+						"asJsonString": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]}]",
+						"asText": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]}]"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSGAoGY2l0aWVzEg4IARoCCAIaAggDGgIIAg==",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\"]}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSIAoGY2l0aWVzEhYIARoCCAIaAggDGgIIAhoCCAMaAggC",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/object-cases",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+						"asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+						"asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/objects-with-polymorphism",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "Ek0KCGxvY2F0aW9uEkESPwoMcHJpbmNpcGFsaXR5Ei8SCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSDwoLY29vcmRpbmF0ZXMSAA==",
+						"asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{}}}}",
+						"asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{}}}}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/root-arrays",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "EgkKA2ZvbxICCAI=",
+						"asJsonString": "{\"foo\":\"bar\"}",
+						"asText": "{\"foo\":\"bar\"}"
+					}
+				}
+			},
+			"tags": []
+		}, {
+			"uuid": "id",
+			"request": {
+				"host": "example.com",
+				"method": "GET",
+				"path": "/nullables",
+				"query": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": null,
+					"value": {
+						"shapeHashV1Base64": null,
+						"asJsonString": null,
+						"asText": null
+					}
+				}
+			},
+			"response": {
+				"statusCode": 200,
+				"headers": {
+					"shapeHashV1Base64": null,
+					"asJsonString": null,
+					"asText": null
+				},
+				"body": {
+					"contentType": "application/json",
+					"value": {
+						"shapeHashV1Base64": "CAEaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAMaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAM=",
+						"asJsonString": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]",
+						"asText": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]"
+					}
+				}
+			},
+			"tags": []
+		}]
+	}
+}
