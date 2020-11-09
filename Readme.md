@@ -102,3 +102,7 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 
 ## License 
 MIT
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
