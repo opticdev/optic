@@ -45,7 +45,8 @@ export async function* CaptureInteractionIterator(
     );
     if (!(await fs.pathExists(batchFilePath))) {
       //@TODO: determine if we should wait
-      return;
+      shouldStop = true;
+      continue;
     }
     console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
