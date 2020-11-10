@@ -23,4 +23,4 @@
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->g
+<!-- ALL-CONTRIBUTORS-LIST:END -->
