@@ -501,3 +501,54 @@ fn can_diff_one_of() {
   assert_debug_snapshot!("can_diff_one_of__results", results);
   assert_eq!(results.len(), 3);
 }
+
+#[test]
+fn can_handle_base_shape_changes() {
+  let events : Vec<SpecEvent> = serde_json::from_value(
+    json!([
+      {"ShapeAdded":{"shapeId":"object_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_1","shapeId":"object_1","name":"firstName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_1","shapeId":"string_shape_1"}}}},
+
+      {"ShapeAdded":{"shapeId":"string_shape_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_2","shapeId":"object_1","name":"lastName","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_2","shapeId":"string_shape_2"}}}},
+
+      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId":"field_3","shapeId":"object_1","name":"age","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_3","shapeId":"number_shape_1"}}}},
+      {"BaseShapeSet": {
+        "shapeId": "number_shape_1",
+        "baseShapeId": "$string"
+      }}
+    ])
+  ).expect("should be able to deserialize shape added events as spec events");
+
+  let shape_projection = ShapeProjection::from(events);
+
+  assert_debug_snapshot!(
+    "can_handle_base_shape_changes__shape_projection_graph",
+    Dot::with_config(&shape_projection.graph, &[])
+  );
+  let object_body = json!({
+    "firstName": "Homer",
+    "lastName": "Simpson",
+    "age": "not-a-valid-number"
+  });
+  let shape_id = String::from("object_1");
+  let results = diff_shape(
+    &shape_projection,
+    Some(BodyDescriptor::from(object_body)),
+    &shape_id,
+  );
+  let fingerprints = results
+      .iter()
+      .map(|result| result.fingerprint())
+      .collect::<Vec<_>>();
+
+  assert_debug_snapshot!("can_handle_base_shape_changes__results", results);
+  assert_eq!(results.len(), 0);
+  assert_debug_snapshot!(
+    "can_handle_base_shape_changes__fingerprints",
+    fingerprints
+  );
+}
