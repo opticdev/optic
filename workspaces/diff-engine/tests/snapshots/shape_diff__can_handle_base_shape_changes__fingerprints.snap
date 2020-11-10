@@ -1,0 +1,5 @@
+---
+source: workspaces/diff-engine/tests/shape_diff.rs
+expression: fingerprints
+---
+[]
