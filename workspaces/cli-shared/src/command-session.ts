@@ -31,8 +31,10 @@ class CommandSession {
     this.events.once('stopped', (e) => {
       this.isRunning = false;
     });
-    this.child.on('exit', (code) => {
-      developerDebugLogger(`command process exited with code ${code}`);
+    this.child.on('exit', (code, signal) => {
+      developerDebugLogger(
+        `command process exited with code ${code} and signal ${signal}`
+      );
       this.events.emit('stopped', { state: code ? 'failed' : 'completed' });
     });
 
