@@ -106,10 +106,8 @@ export class CaptureSaver implements ICaptureSaver {
   }
 
   async cleanup() {
-    await new Promise((resolve, reject) => {
-      this.tracking.on('idle', resolve);
-    });
-
     developerDebugLogger('stopping capture saver');
+    await this.tracking.stop({ dropWaitingJobs: false });
+    developerDebugLogger('stopped capture saver');
   }
 }

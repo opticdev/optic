@@ -4,12 +4,35 @@ import { CliDaemon } from './daemon';
 import { fork } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
-import waitOn from 'wait-on';
 import findProcess from 'find-process';
 import * as uuid from 'uuid';
-import url from 'url';
-import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
-
+import {
+  delay,
+  developerDebugLogger,
+  ICliDaemonState,
+} from '@useoptic/cli-shared';
+async function waitForFile(
+  path: string,
+  options: { intervalMilliseconds: number; timeoutMilliseconds: number }
+): Promise<void> {
+  const timeout = delay(options.timeoutMilliseconds).then(() => {
+    developerDebugLogger('timed out waiting for file');
+    return Promise.reject(new Error('timed out waiting for file'));
+  });
+  const fileWatcher = new Promise<void>((resolve, reject) => {
+    const intervalId = setInterval(() => {
+      const exists = fs.existsSync(path);
+      if (exists) {
+        developerDebugLogger('saw file!');
+        clearInterval(intervalId);
+        resolve();
+      } else {
+        developerDebugLogger('did not see file, polling');
+      }
+    }, options.intervalMilliseconds);
+  });
+  return Promise.race([timeout, fileWatcher]);
+}
 export async function ensureDaemonStarted(
   lockFilePath: string,
   cloudApiBaseUrl: string
@@ -49,17 +72,20 @@ export async function ensureDaemonStarted(
       }
     );
 
-    await new Promise(async (resolve) => {
+    await new Promise(async (resolve, reject) => {
       developerDebugLogger(
         `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
       );
-      await waitOn({
-        resources: [sentinelFilePath],
-        delay: 250,
-        window: 250,
-        timeout: 3000,
-      });
+      try {
+        await waitForFile(sentinelFilePath, {
+          intervalMilliseconds: 50,
+          timeoutMilliseconds: 10000,
+        });
+      } catch (e) {
+        reject(e);
+      }
       await fs.unlink(sentinelFilePath);
+      await child.unref();
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
     });
