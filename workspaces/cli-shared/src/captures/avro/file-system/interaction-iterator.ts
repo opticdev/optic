@@ -81,7 +81,6 @@ export async function* CaptureInteractionIterator(
     }
     const isBatchEmpty = index === 0;
     if (isBatchEmpty) {
-      debugger;
       yield {
         hasMoreInteractions: true,
         interaction: null,
@@ -91,7 +90,6 @@ export async function* CaptureInteractionIterator(
     }
     currentBatchId = currentBatchId + BigInt(1);
   }
-  debugger;
   yield {
     hasMoreInteractions: false,
     interaction: null,
