@@ -3,6 +3,7 @@ import {
   LocalTaskSessionWrapper,
   runCommandFlags,
 } from '../shared/local-cli-task-runner';
+import { cleanupAndExit } from '@useoptic/cli-shared';
 
 export default class Run extends Command {
   static description = 'Run a task from your optic.yml';
@@ -20,5 +21,6 @@ export default class Run extends Command {
     const { flags } = this.parse(Run);
     const { taskName } = args;
     await LocalTaskSessionWrapper(this, taskName, flags);
+    cleanupAndExit();
   }
 }

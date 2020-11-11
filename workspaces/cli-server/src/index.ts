@@ -11,11 +11,16 @@ import {
   developerDebugLogger,
   ICliDaemonState,
 } from '@useoptic/cli-shared';
+//@REFACTOR with xstate
 async function waitForFile(
   path: string,
   options: { intervalMilliseconds: number; timeoutMilliseconds: number }
 ): Promise<void> {
+  let fileWatcherIsDone = false;
   const timeout = delay(options.timeoutMilliseconds).then(() => {
+    if (fileWatcherIsDone) {
+      return;
+    }
     developerDebugLogger('timed out waiting for file');
     return Promise.reject(new Error('timed out waiting for file'));
   });
@@ -25,11 +30,15 @@ async function waitForFile(
       if (exists) {
         developerDebugLogger('saw file!');
         clearInterval(intervalId);
+        fileWatcherIsDone = true;
         resolve();
       } else {
         developerDebugLogger('did not see file, polling');
       }
     }, options.intervalMilliseconds);
+    timeout.finally(() => {
+      clearInterval(intervalId);
+    });
   });
   return Promise.race([timeout, fileWatcher]);
 }
@@ -71,6 +80,7 @@ export async function ensureDaemonStarted(
         stdio: 'ignore',
       }
     );
+    child.unref();
 
     await new Promise(async (resolve, reject) => {
       developerDebugLogger(
@@ -85,7 +95,7 @@ export async function ensureDaemonStarted(
         reject(e);
       }
       await fs.unlink(sentinelFilePath);
-      await child.unref();
+
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
     });
