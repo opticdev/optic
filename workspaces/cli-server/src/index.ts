@@ -40,7 +40,7 @@ async function waitForFile(
       clearInterval(intervalId);
     });
   });
-  await Promise.race([timeout, fileWatcher]);
+  return Promise.race([timeout, fileWatcher]);
 }
 export async function ensureDaemonStarted(
   lockFilePath: string,
