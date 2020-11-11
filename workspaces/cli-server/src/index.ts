@@ -78,7 +78,7 @@ export async function ensureDaemonStarted(
       );
       await waitForFile(sentinelFilePath, {
         intervalMilliseconds: 50,
-        timeoutMilliseconds: 3000,
+        timeoutMilliseconds: 10000,
       });
       await fs.unlink(sentinelFilePath);
       await child.unref();
