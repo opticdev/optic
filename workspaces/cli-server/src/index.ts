@@ -17,7 +17,7 @@ async function waitForFile(
 ): Promise<void> {
   const timeout = delay(options.timeoutMilliseconds).then(() => {
     developerDebugLogger('timed out waiting for file');
-    throw new Error('timed out waiting for file');
+    return Promise.reject(new Error('timed out waiting for file'));
   });
   const fileWatcher = new Promise<void>((resolve, reject) => {
     const intervalId = setInterval(() => {
@@ -72,14 +72,18 @@ export async function ensureDaemonStarted(
       }
     );
 
-    await new Promise(async (resolve) => {
+    await new Promise(async (resolve, reject) => {
       developerDebugLogger(
         `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
       );
-      await waitForFile(sentinelFilePath, {
-        intervalMilliseconds: 50,
-        timeoutMilliseconds: 10000,
-      });
+      try {
+        await waitForFile(sentinelFilePath, {
+          intervalMilliseconds: 50,
+          timeoutMilliseconds: 10000,
+        });
+      } catch (e) {
+        reject(e);
+      }
       await fs.unlink(sentinelFilePath);
       await child.unref();
       developerDebugLogger(`lock created ${child.pid}`);
