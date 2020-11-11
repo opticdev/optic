@@ -189,6 +189,7 @@ export class DiffWorkerRust {
       const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
       diffsSink.once('finish', () => {
         hasMoreInteractions = false;
+        reportProgress();
         reportProgress.flush();
       });
 
