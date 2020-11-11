@@ -50,12 +50,11 @@ export async function ensureDaemonStarted(
     );
 
     await new Promise(async (resolve) => {
-      const fileUrl = new url.URL(`file:${sentinelFilePath}`).toString();
       developerDebugLogger(
-        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath} (${fileUrl})`
+        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
       );
       await waitOn({
-        resources: [fileUrl],
+        resources: [sentinelFilePath],
         delay: 250,
         window: 250,
         timeout: 3000,
