@@ -45,8 +45,7 @@ export async function* CaptureInteractionIterator(
     );
     if (!(await fs.pathExists(batchFilePath))) {
       //@TODO: determine if we should wait
-      shouldStop = true;
-      continue;
+      return;
     }
     console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
@@ -82,6 +81,7 @@ export async function* CaptureInteractionIterator(
     }
     const isBatchEmpty = index === 0;
     if (isBatchEmpty) {
+      debugger;
       yield {
         hasMoreInteractions: true,
         interaction: null,
@@ -91,7 +91,7 @@ export async function* CaptureInteractionIterator(
     }
     currentBatchId = currentBatchId + BigInt(1);
   }
-
+  debugger;
   yield {
     hasMoreInteractions: false,
     interaction: null,
