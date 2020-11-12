@@ -21,25 +21,11 @@ pub fn diff(
   let shape_traverser = traverser::Traverser::new(&shapes_queries);
   let mut diff_visitors = visitors::diff::DiffVisitors::new();
 
-  eprintln!(
-    "shape-diff: diffing body with shape id {},  {:?}",
-    shape_id, body
+  dbg!(
+    &shape_id, &body
   );
 
   shape_traverser.traverse_root_shape(body, shape_id, &mut diff_visitors);
 
   diff_visitors.take_results().unwrap()
 }
-
-// pub fn diff(
-//   endpoint_projection: &EndpointProjection,
-//   http_interaction: HttpInteraction,
-// ) -> Vec<InteractionDiffResult> {
-//   let endpoint_queries = EndpointQueries::new(endpoint_projection);
-//   let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
-//   let mut diff_visitors = visitors::diff::DiffVisitors::new();
-
-//   interaction_traverser.traverse(http_interaction, &mut diff_visitors);
-
-//   diff_visitors.take_results().unwrap()
-// }
