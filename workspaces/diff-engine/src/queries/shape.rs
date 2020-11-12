@@ -264,7 +264,7 @@ impl<'a> ShapeQueries<'a> {
         core_shape_kind: &ShapeKind::UnknownKind
       },
       x => {
-        dbg!(x);
+        //dbg!(x);
         unimplemented!("need to support more shapekinds")
       },
     }

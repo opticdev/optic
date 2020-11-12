@@ -165,14 +165,14 @@ impl<'a> Traverser<'a> {
           let field_choices = matching_choices
             .iter()
             .flat_map(|choice| {
-              dbg!("shape-traverser: object choice", choice);
+              //dbg!("shape-traverser: object choice", choice);
               if let ShapeKind::ObjectKind = &choice.core_shape_kind {
                 // - find field node by key in object's field node edges
                 let field_id_option = self
                   .shape_queries
                   .resolve_field_id(&choice.shape_id, &field_key);
                 if let None = field_id_option {
-                  dbg!("shape-traverser: no field id could be resolved");
+                  //dbg!("shape-traverser: no field id could be resolved");
                   return vec![];
                 }
 
@@ -181,7 +181,7 @@ impl<'a> Traverser<'a> {
                   .shape_queries
                   .resolve_field_shape_node(&field_id)
                   .expect("field node should have an edge to a shape node describing its value");
-                dbg!("shape-traverser: field_shape_id", &field_shape_id);
+                //dbg!("shape-traverser: field_shape_id", &field_shape_id);
 
                 let field_trail =
                   choice
@@ -200,7 +200,7 @@ impl<'a> Traverser<'a> {
             Some(choice) => choice.parent_trail.clone(),
             None => trail_origin.clone(),
           };
-          dbg!(&new_trail_origin);
+          //dbg!(&new_trail_origin);
 
           if !matching_choices.is_empty() {
             self.traverse(

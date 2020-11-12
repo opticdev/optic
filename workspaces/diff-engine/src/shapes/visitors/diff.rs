@@ -266,9 +266,9 @@ impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
     object_keys: &Vec<String>,
     object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId, &ShapeKind)>)>,
   ) {
-    dbg!(object_json_trail);
-    dbg!(object_keys);
-    dbg!(object_and_field_choices);
+    //dbg!(object_json_trail);
+    //dbg!(object_keys);
+    //dbg!(object_and_field_choices);
     object_and_field_choices.iter().for_each(|entry| {
       let (choice, keys_for_choice) = entry;
       match choice.core_shape_kind {
@@ -277,7 +277,7 @@ impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
             let (key, field_id, field_shape_id, field_core_shape_kind) = key_and_field_id;
             if let None = object_keys.iter().find(|object_key| *object_key == key) {
               // emit diff
-              dbg!(key);
+              //dbg!(key);
 
               match field_core_shape_kind {
                 ShapeKind::OptionalKind => {}
@@ -294,7 +294,7 @@ impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
                     json_trail,
                     shape_trail,
                   };
-                  dbg!(&diff);
+                  //dbg!(&diff);
                   self.push(diff);
                 }
               }
