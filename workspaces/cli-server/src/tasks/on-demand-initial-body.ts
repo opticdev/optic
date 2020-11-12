@@ -74,7 +74,9 @@ export class OnDemandInitialBody {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
-        console.error('On Demand Body Worker exited with non-zero exit code');
+        console.error(
+          `On Demand Body Worker exited with non-zero exit code ${code}`
+        );
       } else {
         this.finished = true;
         this.events.emit('finish');
