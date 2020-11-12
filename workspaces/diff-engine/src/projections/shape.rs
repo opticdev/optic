@@ -472,8 +472,8 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
         projection.with_base_shape(e.shape_id, e.base_shape_id);
       }
       x => {
-        dbg!("skipping ShapeEvent in ShapeProjection. warning?");
-        dbg!(&x);
+        //dbg!("skipping ShapeEvent in ShapeProjection. warning?");
+        //dbg!(&x);
       }
     }
   }

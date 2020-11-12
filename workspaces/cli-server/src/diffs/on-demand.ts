@@ -93,7 +93,7 @@ export class OnDemandDiff implements Diff {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
-        console.error('Diff Worker exited with non-zero exit code');
+        console.error(`Diff Worker exited with non-zero exit code ${code}`);
       } else {
         this.finished = true;
         this.events.emit('finish');
