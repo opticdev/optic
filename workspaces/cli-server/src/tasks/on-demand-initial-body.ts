@@ -52,7 +52,7 @@ export class OnDemandInitialBody {
 
     console.log(JSON.stringify(scriptConfig));
 
-    const child = runManagedScriptByName(
+    const child: ChildProcess = runManagedScriptByName(
       'emit-initial-bodies-commands',
       JSON.stringify(scriptConfig)
     );
@@ -97,6 +97,7 @@ export class OnDemandInitialBody {
       this.events.once('completed', onCompleted);
       function onCompleted(data: any) {
         cleanup();
+        child.kill();
         resolve(data.results);
       }
       const cleanup = () => {

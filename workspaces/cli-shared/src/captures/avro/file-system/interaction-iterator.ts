@@ -90,7 +90,6 @@ export async function* CaptureInteractionIterator(
     }
     currentBatchId = currentBatchId + BigInt(1);
   }
-
   yield {
     hasMoreInteractions: false,
     interaction: null,

@@ -4,12 +4,44 @@ import { CliDaemon } from './daemon';
 import { fork } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
-import waitOn from 'wait-on';
 import findProcess from 'find-process';
 import * as uuid from 'uuid';
-import url from 'url';
-import { developerDebugLogger, ICliDaemonState } from '@useoptic/cli-shared';
-
+import {
+  delay,
+  developerDebugLogger,
+  ICliDaemonState,
+} from '@useoptic/cli-shared';
+//@REFACTOR with xstate
+async function waitForFile(
+  path: string,
+  options: { intervalMilliseconds: number; timeoutMilliseconds: number }
+): Promise<void> {
+  let fileWatcherIsDone = false;
+  const timeout = delay(options.timeoutMilliseconds).then(() => {
+    if (fileWatcherIsDone) {
+      return;
+    }
+    developerDebugLogger('timed out waiting for file');
+    return Promise.reject(new Error('timed out waiting for file'));
+  });
+  const fileWatcher = new Promise<void>((resolve, reject) => {
+    const intervalId = setInterval(() => {
+      const exists = fs.existsSync(path);
+      if (exists) {
+        developerDebugLogger('saw file!');
+        clearInterval(intervalId);
+        fileWatcherIsDone = true;
+        resolve();
+      } else {
+        developerDebugLogger('did not see file, polling');
+      }
+    }, options.intervalMilliseconds);
+    timeout.finally(() => {
+      clearInterval(intervalId);
+    });
+  });
+  return Promise.race([timeout, fileWatcher]);
+}
 export async function ensureDaemonStarted(
   lockFilePath: string,
   cloudApiBaseUrl: string
@@ -48,19 +80,22 @@ export async function ensureDaemonStarted(
         stdio: 'ignore',
       }
     );
+    child.unref();
 
-    await new Promise(async (resolve) => {
-      const fileUrl = new url.URL(`file:${sentinelFilePath}`).toString();
+    await new Promise(async (resolve, reject) => {
       developerDebugLogger(
-        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath} (${fileUrl})`
+        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
       );
-      await waitOn({
-        resources: [fileUrl],
-        delay: 250,
-        window: 250,
-        timeout: 3000,
-      });
+      try {
+        await waitForFile(sentinelFilePath, {
+          intervalMilliseconds: 50,
+          timeoutMilliseconds: 10000,
+        });
+      } catch (e) {
+        reject(e);
+      }
       await fs.unlink(sentinelFilePath);
+
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
     });

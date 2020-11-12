@@ -11,6 +11,7 @@ import { lockFilePath } from '../shared/paths';
 import colors from 'colors';
 import openBrowser from 'react-dev-utils/openBrowser';
 import {
+  cleanupAndExit,
   developerDebugLogger,
   fromOptic,
   makeUiBaseUrl,
@@ -56,6 +57,7 @@ export default class Spec extends Command {
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/dashboard`;
-    //openBrowser(uiUrl);
+    openBrowser(uiUrl);
+    cleanupAndExit();
   }
 }
