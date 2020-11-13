@@ -218,18 +218,19 @@ jobs:
     - name: Install Dependencies and Build Optic
       run:  |
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
-          echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}.'"
-          FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
+          echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}'."
+          RELEASE_CHANNEL=${{ needs.release_logic.outputs.prerelease_tag }}
         elif [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; then
           echo "Prelease without a tag detected. Staging feature flags for 'prerelease'."
-          FLAGS_FILE=.env.prerelease
+          RELEASE_CHANNEL=prerelease
         else
           echo "Stable release detected. Staging feature flags for 'latest'."
-          FLAGS_FILE=.env.latest
+          RELEASE_CHANNEL=latest
         fi
 
+        FLAGS_FILE=.env.$RELEASE_CHANNEL
         if [[ -r $FLAGS_FILE ]]; then
-          echo "Feature flags found for ${{ needs.release_logic.outputs.prerelease_tag }}, staging for build and runtime."
+          echo "Feature flags found for $RELEASE_CHANNEL, staging for build and runtime."
           cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/agent-cli/.env
           cp $FLAGS_FILE workspaces/ci-cli/.env
