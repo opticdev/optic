@@ -218,17 +218,24 @@ jobs:
     - name: Install Dependencies and Build Optic
       run:  |
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
-          echo "Prelease with a tag detected. Staging any feature flags."
+          echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}.'"
           FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
-          if [[ -r $FLAGS_FILE ]]; then
-            echo "Feature flags found for ${{ needs.release_logic.outputs.prerelease_tag }}, staging for build and runtime."
-            cp $FLAGS_FILE .env
-            cp $FLAGS_FILE workspaces/agent-cli/.env
-            cp $FLAGS_FILE workspaces/ci-cli/.env
-            cp $FLAGS_FILE workspaces/local-cli/.env
-            cp $FLAGS_FILE workspaces/diff-engine/.env
-            cp $FLAGS_FILE workspaces/ui/.env.production.local
-          fi
+        elif [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; then
+          echo "Prelease without a tag detected. Staging feature flags for 'prerelease'."
+          FLAGS_FILE=.env.prerelease
+        else
+          echo "Stable release detected. Staging feature flags for 'latest'."
+          FLAGS_FILE=.env.latest
+        fi
+
+        if [[ -r $FLAGS_FILE ]]; then
+          echo "Feature flags found for ${{ needs.release_logic.outputs.prerelease_tag }}, staging for build and runtime."
+          cp $FLAGS_FILE .env
+          cp $FLAGS_FILE workspaces/agent-cli/.env
+          cp $FLAGS_FILE workspaces/ci-cli/.env
+          cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/diff-engine/.env
+          cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi
 
         if [[ -r .env ]]; then
