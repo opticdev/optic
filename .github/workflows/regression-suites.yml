@@ -2,10 +2,6 @@ name: Test Regression Scenarios
 
 on: push
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
 
   local-cli-regression-:
@@ -36,6 +32,7 @@ jobs:
             node_modules/
           key: workspace-node-modules-${{ hashFiles('yarn.lock') }}-v1
       - name: 'Install test dependencies'
+        shell: bash
         run: |
           set -x
           set -v
@@ -70,6 +67,7 @@ jobs:
         run: sudo /usr/sbin/purge
 
       - name: 'run scenario'
+        shell: bash
         run: |
           source sourceme.sh
           optic_ci_standard_streams_regression ${{ matrix.interaction-count }} ${{ matrix.rust-diff-engine }}
