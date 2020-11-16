@@ -174,7 +174,7 @@ optic_compare_diff_engines() {
 
     echo "running rust diff"
     cd "$API_PROJECT_DIR"
-    rm -rfv "./.optic/captures/ccc/diffs/*"
+    rm -rfv ./.optic/captures/ccc/diffs/*
     export OPTIC_RUST_DIFF_ENGINE=true
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
     #@ENHANCEMENT instead of api spec, we can manually start/stop the session via the cli-server api
@@ -186,7 +186,7 @@ optic_compare_diff_engines() {
 
     echo "running scalajs diff"
     cd "$API_PROJECT_DIR"
-    rm -rfv "./.optic/captures/ccc/diffs/*"
+    rm -rfv ./.optic/captures/ccc/diffs/*
     export OPTIC_RUST_DIFF_ENGINE=false
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec
@@ -316,12 +316,15 @@ optic_ci_standard_streams_regression() {
     optic_example_input_to_capture_with_repetition "$NUM_INTERACTIONS"
 
     cd "$API_PROJECT_DIR"
-    rm -rfv "./.optic/captures/ccc/diffs/*"
+    rm -rfv .optic/captures/ccc/diffs/*
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec
     cd "$OPTIC_SRC_DIR"
     node ./workspaces/snapshot-tests/build/e2e/index.js "$OUTPUT_DIR" "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
     cat $OUTPUT_DIR/*
+
+    cd "$API_PROJECT_DIR"
+    ls -lah .optic/captures/ccc/diffs/*
   )
 }
 
