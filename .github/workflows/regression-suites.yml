@@ -2,6 +2,10 @@ name: Test Regression Scenarios
 
 on: push
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   local-cli-regression-:
