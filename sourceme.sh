@@ -61,7 +61,7 @@ search_ws() {
 optic_install_dependencies() {
   (
     set -o errexit;
-    OPTIC_SKIP_PREBUILT_INSTALLS=true yarn install
+    OPTIC_SKIP_PREBUILT_INSTALLS=true yarn install --verbose
   )
 }
 optic_build() {
