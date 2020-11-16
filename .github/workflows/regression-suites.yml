@@ -8,10 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        os: [ windows-latest, macos-latest, ubuntu-latest ]
-#        interaction-count: [0, 1, 10, 100, 1000]
-        os: [ windows-latest ]
-        interaction-count: [ 0 ]
+        os: [ windows-latest, macos-latest, ubuntu-latest ]
+        interaction-count: [0, 1, 10, 100, 1000, 10000]
         rust-diff-engine: ["true"]
     runs-on: ${{ matrix.os }}
     steps:
