@@ -8,8 +8,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
-        interaction-count: [0, 1, 10, 100, 1000]
+#        os: [ windows-latest, macos-latest, ubuntu-latest ]
+#        interaction-count: [0, 1, 10, 100, 1000]
+        os: [ windows-latest ]
+        interaction-count: [ 0 ]
         rust-diff-engine: ["true"]
     runs-on: ${{ matrix.os }}
     steps:
@@ -30,7 +32,7 @@ jobs:
         with:
           path: |
             node_modules/
-          key: workspace-node-modules-${{ hashFiles('yarn.lock') }}-v1
+          key: workspace-node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}-v1
       - name: 'Install test dependencies'
         shell: bash
         run: |
@@ -38,6 +40,10 @@ jobs:
           set -v
           source sourceme.sh
           optic_build_for_release
+      - name: 'display yarn error log'
+        shell: bash
+        run: cat yarn-error.log
+        if: ${{ failure() }}
 
       - name: 'restore cached cargo registry'
         uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/commits/v2
