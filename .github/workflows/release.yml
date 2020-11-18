@@ -8,6 +8,7 @@ env:
   BUCKET_NAME: optic-packages
   PACKAGE_NAME: api
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  RELEASE_WORKFLOW_DRY_RUN: false
 
 on:
   push:
@@ -64,7 +65,7 @@ jobs:
           if ! [[ -z $RELEASED_VERSION ]]; then
             echo "v$OPTIC_VERSION already published, should not publish again"
             echo "::set-output name=should_publish::false"
-          elif [ "${{ steps.release_type.outputs.is_prerelease }}" = "false" ] && [ $GITHUB_REF != "refs/heads/release" ]; then
+          elif [ "${{ steps.release_type.outputs.is_prerelease }}" = "false" ] && [ $GITHUB_REF != "refs/heads/release" ] && [ $RELEASE_WORKFLOW_DRY_RUN = "false" ]; then
             echo "Only prereleases should be published from branches other than release"
             echo "::set-output name=should_publish::false"
           else
@@ -191,6 +192,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
       - name: 'Upload to S3'
+        if: env.RELEASE_WORKFLOW_DRY_RUN == 'false'
         run: |
           aws s3 cp dist/$ARCHIVE_NAME.tar.gz s3://$BUCKET/dists/optic_diff/v$OPTIC_VERSION/$ARCHIVE_NAME.tar.gz --sse=AES256 --acl=public-read
 
@@ -216,17 +218,25 @@ jobs:
     - name: Install Dependencies and Build Optic
       run:  |
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
-          echo "Prelease with a tag detected. Staging any feature flags."
-          FLAGS_FILE=.env.${{ needs.release_logic.outputs.prerelease_tag }}
-          if [[ -r $FLAGS_FILE ]]; then
-            echo "Feature flags found for ${{ needs.release_logic.outputs.prerelease_tag }}, staging for build and runtime."
-            cp $FLAGS_FILE .env
-            cp $FLAGS_FILE workspaces/agent-cli/.env
-            cp $FLAGS_FILE workspaces/ci-cli/.env
-            cp $FLAGS_FILE workspaces/local-cli/.env
-            cp $FLAGS_FILE workspaces/diff-engine/.env
-            cp $FLAGS_FILE workspaces/ui/.env.production.local
-          fi
+          echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}'."
+          RELEASE_CHANNEL=${{ needs.release_logic.outputs.prerelease_tag }}
+        elif [[ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ]]; then
+          echo "Prelease without a tag detected. Staging feature flags for 'prerelease'."
+          RELEASE_CHANNEL=prerelease
+        else
+          echo "Stable release detected. Staging feature flags for 'latest'."
+          RELEASE_CHANNEL=latest
+        fi
+
+        FLAGS_FILE=.env.$RELEASE_CHANNEL
+        if [[ -r $FLAGS_FILE ]]; then
+          echo "Feature flags found for $RELEASE_CHANNEL, staging for build and runtime."
+          cp $FLAGS_FILE .env
+          cp $FLAGS_FILE workspaces/agent-cli/.env
+          cp $FLAGS_FILE workspaces/ci-cli/.env
+          cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/diff-engine/.env
+          cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi
 
         if [[ -r .env ]]; then
@@ -242,6 +252,7 @@ jobs:
     - run: node ./workspaces/scripts/publish.js
       env:
         OPTIC_PUBLISH_SCOPE: public
+      if: env.RELEASE_WORKFLOW_DRY_RUN == 'false'
 
   # Creates debian package for users to install, hosted on s3
   release-deb:
@@ -256,6 +267,7 @@ jobs:
         with:
           ref: release
       - uses: ./.github/deployDebian/ # locally defined action
+        if: env.RELEASE_WORKFLOW_DRY_RUN == 'false'
         with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -273,6 +285,7 @@ jobs:
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@95531d6358eb144ac65db1d7f39af794979ea97e # https://github.com/peter-evans/repository-dispatch/releases/tag/v1.1.2
+        if: env.RELEASE_WORKFLOW_DRY_RUN == 'false'
         with:
           token: ${{ secrets.HOMEBREW_UTILITY_ACCOUNT }}
           repository: opticdev/homebrew-optic
@@ -298,5 +311,6 @@ jobs:
           fi
           echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
       - name: Send message to Slack API
+        if: env.RELEASE_WORKFLOW_DRY_RUN == 'false'
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
