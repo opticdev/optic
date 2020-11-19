@@ -145,6 +145,7 @@ export const Code = (props) => {
     </Typography>
   );
 };
+
 const codeStyles = makeStyles((theme) => ({
   codeInline: {
     padding: 3,

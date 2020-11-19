@@ -15,15 +15,16 @@ import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Code } from '../../../storybook/stories/diff-page/DiffSummaryRegion';
 import { PathAndMethodMono } from '../v2/PathAndMethod';
-import { DocDarkGrey } from '../../docs/DocConstants';
+import { DocDarkGrey, DocGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
 import { CircularDiffProgress } from '../../../storybook/stories/diff-page/CircularDiffProgress';
 import { ReviewUndocumentedUrls } from './learn-api/ReviewUndocumented';
-import TopNavigation from '../../../storybook/stories/navigation/TopNavigation';
-import { PageWithTopNavigation } from '../../Page';
 import Collapse from '@material-ui/core/Collapse';
 import { AskFinished } from './AskFinished';
+import Helmet from 'react-helmet';
+import { ReviewBatchSelect } from './ReviewBatchSelect';
+import Fade from '@material-ui/core/Fade';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -66,14 +67,14 @@ export function ReviewUI() {
 
   const NiceSubheader = ({ title, count }) =>
     count > 1 ? (
-      <ListSubheader
-        disableGutters
-        className={classes.subheader}
-      >{`${title} (${count})`}</ListSubheader>
+      <div className={classes.subheader}>
+        <Typography variant="overline">{`${title} (${count})`}</Typography>
+      </div>
     ) : null;
 
   return (
-    <PageWithTopNavigation>
+    <Page>
+      <Page.Navbar mini={true} />
       <Page.Body
         padded={false}
         style={{ flexDirection: 'row', height: '100vh' }}
@@ -81,10 +82,8 @@ export function ReviewUI() {
         <Paper square className={classes.left} elevation={0}>
           <DiffInfoCard {...handledAll} setAskFinish={setAskFinish} />
           {askFinish && <AskFinished {...{ setAskFinish }} />}
-          <Divider style={{ marginTop: 12, marginBottom: 0 }} />
           <List className={classes.list}>
             <UndocumentedCard selected={shouldShowUndocumented} />
-
             <NiceSubheader
               title={'Endpoints with Diffs'}
               count={results.endpointsWithDiffs.length}
@@ -117,7 +116,7 @@ export function ReviewUI() {
           )}
         </div>
       </Page.Body>
-    </PageWithTopNavigation>
+    </Page>
   );
 }
 
@@ -256,76 +255,75 @@ const DiffInfoCard = (props) => {
   };
 
   return (
-    <div className={classes.info}>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        style={{
-          paddingTop: 10,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}
-      >
-        <div style={{ flex: 1 }}>Showing diffs from your latest capture</div>
-        <div style={{ paddingLeft: 15 }}>
-          <IconButton
-            size="small"
-            onClick={handleClick}
-            style={{ marginTop: 10 }}
-          >
-            <MenuOpenIcon style={{ width: 20, height: 20 }} />
-          </IconButton>
-        </div>
-        <Menu
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem
-            onClick={() => {
-              handleClose();
-              setAskFinish(true);
-            }}
-          >
-            Finalize
-          </MenuItem>
-          <MenuItem onClick={handleClose}>Reset Review</MenuItem>
-          <MenuItem onClick={handleClose}>Clear Capture</MenuItem>
-        </Menu>
-      </Box>
-      <Handled {...{ total, handled }} />
-    </div>
+    <Paper elevation={1} square className={classes.info}>
+      <Helmet>
+        <title>{`Review (${handled} / ${total}) diff${
+          total === 1 ? '' : 's'
+        }`}</title>
+      </Helmet>
+
+      <ReviewBatchSelect />
+      <Handled {...{ total, handled, setAskFinish }} />
+    </Paper>
   );
 };
 
 export function Handled(props) {
-  const { total, handled } = props;
+  const { total, handled, setAskFinish } = props;
   return (
-    <>
-      <Box
-        flexDirection="row"
-        display="flex"
-        alignItems="center"
-        style={{ marginTop: 5, paddingLeft: 10, paddingRight: 10 }}
-      >
-        <div style={{ fontSize: 10, color: DocDarkGrey, marginRight: 10 }}>
-          You have handled {handled}/{total} Diffs
+    <Box
+      flexDirection="column"
+      display="flex"
+      alignItems="flex-start"
+      style={{ width: '100%' }}
+    >
+      <div style={{ width: '100%' }}>
+        <div style={{ padding: '6px 6px 0px 6px' }}>
+          <Fade in={total > 0}>
+            <LinearProgress
+              value={total > 0 ? (handled / total) * 100 : 0}
+              variant="determinate"
+              style={{ flex: 1 }}
+            />
+          </Fade>
         </div>
-        <LinearProgress
-          value={(handled / total) * 100}
-          variant="determinate"
-          style={{ flex: 1, maxWidth: 100 }}
-        />
-      </Box>
-    </>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ paddingLeft: 2, paddingRight: 2 }}
+        >
+          <Button
+            size="small"
+            style={{ fontSize: 10, minWidth: 'auto' }}
+            color="primary"
+          >
+            Reset
+          </Button>
+          <Typography
+            variant="overline"
+            style={{ color: DocGrey, fontSize: 10 }}
+          >
+            You handled ({handled} / {total}) diff{total === 1 ? '' : 's'}
+          </Typography>
+          <Button
+            size="small"
+            style={{ fontSize: 10, minWidth: 'auto' }}
+            color="primary"
+            onClick={setAskFinish}
+          >
+            Finalize
+          </Button>
+        </Box>
+      </div>
+    </Box>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   left: {
-    width: 400,
+    minWidth: 350,
+    maxWidth: 420,
     height: '100%',
     background: theme.palette.grey[100],
     overflow: 'scroll',
@@ -334,9 +332,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 900,
   },
   subheader: {
-    paddingLeft: 10,
+    paddingLeft: 5,
     fontFamily: 'Ubuntu Mono',
-    background: theme.palette.grey[100],
+    color: DocDarkGrey,
   },
   right: {
     minWidth: 550,
@@ -349,7 +347,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 9,
     paddingTop: 1,
     paddingBottom: 1,
-    height: 50,
+    height: 40,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -394,7 +392,12 @@ const useStyles = makeStyles((theme) => ({
   info: {
     fontFamily: 'Ubuntu Mono',
     paddingBottom: 0,
+    background: theme.palette.grey[100],
     fontSize: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    minHeight: 68,
   },
   selected: {
     borderRight: `4px solid ${secondary}`,

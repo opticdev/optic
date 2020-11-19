@@ -109,6 +109,8 @@ export function DiffSummaryRegion(props) {
     diffQueries.ignoreRules().length, // reload the preview if the ignore rule count changes
   ]);
 
+  const isNewRegion = preview && preview.for === 'region';
+
   const suggestions = preview ? preview.suggestions : [];
   const selectedSuggestionIndex = diffQueries.selectedSuggestionIndex();
 
@@ -118,10 +120,6 @@ export function DiffSummaryRegion(props) {
   const title = (preview && preview.overrideTitle) || loadingDescription.title;
   const previewTabs = (preview && preview.tabs) || [];
 
-  if (JSON.stringify(title).includes('undocumented')) {
-    console.log('at me ', preview);
-  }
-
   const [previewTab, setPreviewTab] = useState(undefined);
   const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab);
   useEffect(
@@ -130,11 +128,6 @@ export function DiffSummaryRegion(props) {
       if (previewTabs.length > 0) setPreviewTab(previewTabs[0].title);
     },
     [previewTabs.length]
-  );
-
-  console.log(
-    diff.diffHash + 'look here ',
-    previewTabs.map((i) => i.title)
   );
 
   const color = (() => {
@@ -154,7 +147,7 @@ export function DiffSummaryRegion(props) {
       <div style={{ flex: 1 }} />
 
       <Fade in={suggestions.length}>
-        <div>
+        <div style={{ paddingTop: 2 }}>
           <SuggestionSelect
             suggestions={suggestions}
             selectedSuggestionIndex={selectedSuggestionIndex}
@@ -223,7 +216,7 @@ export function DiffSummaryRegion(props) {
                 variant="caption"
                 style={{ color: OpticBlueReadable, marginRight: 5 }}
               >
-                observed as:
+                {isNewRegion ? 'new body: ' : 'observed as: '}
               </Typography>
               <DiffTabs
                 value={previewTab}

@@ -44,8 +44,13 @@ export async function prepareNewRegionDiffSuggestionPreview(
 
   await services.captureService.loadInteraction(firstInteractionPointer);
 
+  const location = diff.location(services.rfcBaseState);
+
+  const name =
+    location.inRequest?.contentType || location.inResponse?.contentType;
+
   const tab1: IInteractionPreviewTab = {
-    title: 'New Region',
+    title: name,
     allowsExpand: true,
     interactionPointers: diff.interactions,
     invalid: true,

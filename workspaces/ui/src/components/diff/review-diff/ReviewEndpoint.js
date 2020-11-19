@@ -1,12 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { DiffSessionContext, useDiffSession } from './ReviewDiffSession';
-import { useActor, useMachine } from '@xstate/react';
-import { stuffFromQueries } from '../../../contexts/RfcContext';
-import { createEndpointDescriptor } from '../../../utilities/EndpointUtilities';
-import sortby from 'lodash.sortby';
-import { SubtleEndpointTOC } from './SubtleEndpointTOC';
 import Box from '@material-ui/core/Box';
-import { BreadcumbX } from '../v2/DiffNewRegions';
 import Paper from '@material-ui/core/Paper';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
@@ -15,13 +8,10 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { IconButton } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
-import { Handled } from './ReviewUI';
 import { DocDarkGrey } from '../../docs/DocConstants';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { ReviewDiff } from './ReviewDiff';
-import { SubtleBlueBackground } from '../../../theme';
 import Divider from '@material-ui/core/Divider';
-import Fade from '@material-ui/core/Fade';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -65,8 +55,6 @@ export function ReviewEndpointInner(props) {
   const grouped = useMemo(() => endpointQueries.groupDiffsByLocation(), []);
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
-      {/*<SubtleEndpointTOC groupings={grouped} />*/}
-
       {grouped.requests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
@@ -120,17 +108,30 @@ export function EndpointGrouping(props) {
         className={classes.sectionHeader}
         onClick={() => setExpanded(!expanded)}
         square
+        elevation={0}
       >
         <IconButton
           disabled={noDiffs}
           size="small"
           onClick={() => setExpanded(!expanded)}
+          style={{ height: 22, width: 22 }}
         >
-          {expanded ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
+          {expanded ? (
+            <ArrowDropDownIcon style={{ height: 22, width: 22 }} />
+          ) : (
+            <ArrowRightIcon style={{ height: 22, width: 22 }} />
+          )}
         </IconButton>
         <LocationBreadcumbX location={props.location} />
         <div style={{ flex: 1 }} />
-        <div style={{ fontSize: 10, color: DocDarkGrey, marginRight: 10 }}>
+        <div
+          style={{
+            fontSize: 10,
+            color: DocDarkGrey,
+            marginRight: 10,
+            paddingTop: 2,
+          }}
+        >
           {noDiffs
             ? 'No Diffs'
             : `You have handled ${handledCount}/${props.diffs.length} Diffs`}
@@ -139,7 +140,7 @@ export function EndpointGrouping(props) {
           <LinearProgress
             value={percent}
             variant="determinate"
-            style={{ flex: 1, maxWidth: 80, marginRight: 10 }}
+            style={{ flex: 1, maxWidth: 80, marginRight: 10, paddingTop: 2 }}
           />
         )}
       </Paper>
@@ -157,12 +158,11 @@ export function EndpointGrouping(props) {
 export const LocationBreadcumbX = (props) => {
   const classes = useStyles();
   const { location, itemStyles } = props;
-  console.log('loco', location);
   return (
     <Breadcrumbs
       className={classes.location}
       separator={
-        <span style={{ fontSize: 12, color: 'black', ...itemStyles }}>
+        <span style={{ fontSize: 10, color: 'black', ...itemStyles }}>
           {'›'}
         </span>
       }
@@ -189,7 +189,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 12,
   },
   crumb: {
-    fontSize: 12,
+    fontSize: 10,
     textTransform: 'uppercase',
   },
   sectionHeader: {
