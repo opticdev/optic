@@ -1,6 +1,6 @@
 import { ParsedDiff } from '../../engine/parse-diff';
-import { newRegionInterpreters } from '../../engine/interpretors/NewRegionsInterpretors';
-import { descriptionForDiffs } from '../../engine/interpretors/DiffDescriptionInterpretors';
+import { newRegionInterpreters } from '../../engine/interpretors/new-regions-interpretors';
+import { descriptionForDiffs } from '../../engine/interpretors/diff-description-interpretors';
 import { InteractiveSessionConfig } from '../../engine/interfaces/session';
 import {
   ILearnedBodies,
@@ -14,7 +14,7 @@ import {
 import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
-} from './ignores/IIgnoreRule';
+} from './ignores/ignore-rule';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
 import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 

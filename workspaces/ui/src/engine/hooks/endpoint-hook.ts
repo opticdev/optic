@@ -10,10 +10,8 @@ import {
   InteractiveEndpointSessionStateSchema,
 } from '../interactive-endpoint';
 import { useActor } from '@xstate/react';
-import { ActorRefLike } from '@xstate/react/es/types';
-import { diff } from 'react-ace';
 import { useSingleDiffMachine } from './diff-hook';
-import { IgnoreRule } from '../interpretors/ignores/IIgnoreRule';
+import { IgnoreRule } from '../interpretors/ignores/ignore-rule';
 
 export function useEndpointDiffMachine(
   pathId: string,

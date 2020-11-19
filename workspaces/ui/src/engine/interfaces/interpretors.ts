@@ -1,6 +1,6 @@
 import { IParsedLocation } from './interfaces';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IgnoreRule } from '../interpretors/ignores/IIgnoreRule';
+import { IgnoreRule } from '../interpretors/ignores/ignore-rule';
 
 export interface IInterpretation {
   suggestions: ISuggestion[];

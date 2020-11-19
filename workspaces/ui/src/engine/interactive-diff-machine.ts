@@ -3,7 +3,7 @@ import { assign, Machine, send, sendParent } from 'xstate';
 import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
-} from './interpretors/ignores/IIgnoreRule';
+} from './interpretors/ignores/ignore-rule';
 import {
   IDiffSuggestionPreview,
   IDiffDescription,
@@ -13,7 +13,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { descriptionForDiffs } from './interpretors/DiffDescriptionInterpretors';
+import { descriptionForDiffs } from './interpretors/diff-description-interpretors';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
