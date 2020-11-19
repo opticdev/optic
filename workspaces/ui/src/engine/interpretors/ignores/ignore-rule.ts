@@ -2,7 +2,7 @@ import { ICoreShapeKinds } from '../../interfaces/interfaces';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import equals from 'lodash.isequal';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
-export interface IIgnoreRule {
+export interface IgnoreRule {
   diffHash: string;
   specificInteractions?: string[];
   examplesOfCoreShapeKinds?: ICoreShapeKinds;
@@ -13,7 +13,7 @@ export function transformAffordanceMappingByIgnoreRules(
   i: IValueAffordanceSerializationWithCounter,
   diffHash: string,
   jsonTrail: IJsonTrail,
-  rules: IIgnoreRule[]
+  rules: IgnoreRule[]
 ): IValueAffordanceSerializationWithCounter {
   const relevantRules = rules.filter(
     (i) => i.diffHash === diffHash && !!i.examplesOfCoreShapeKinds

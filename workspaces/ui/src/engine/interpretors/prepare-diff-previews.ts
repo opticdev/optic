@@ -12,7 +12,7 @@ import {
   IInteractionPreviewTab,
 } from '../interfaces/interpretors';
 import {
-  IIgnoreRule,
+  IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
 } from './ignores/IIgnoreRule';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
@@ -74,7 +74,7 @@ export async function prepareShapeDiffSuggestionPreview(
   diff: ParsedDiff,
   services: InteractiveSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter,
-  ignoreRules: IIgnoreRule[]
+  ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
   const trailsWithIgnored = transformAffordanceMappingByIgnoreRules(
     learnedTrails,

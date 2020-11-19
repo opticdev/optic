@@ -13,7 +13,7 @@ import { useActor } from '@xstate/react';
 import { ActorRefLike } from '@xstate/react/es/types';
 import { diff } from 'react-ace';
 import { useSingleDiffMachine } from './diff-hook';
-import { IIgnoreRule } from '../interpretors/ignores/IIgnoreRule';
+import { IgnoreRule } from '../interpretors/ignores/IIgnoreRule';
 
 export function useEndpointDiffMachine(
   pathId: string,
@@ -54,7 +54,7 @@ export function useEndpointDiffMachine(
       handledUpdated: () => {
         send({ type: 'HANDLED_UPDATED' });
       },
-      addIgnoreRule: (newRule: IIgnoreRule) => {
+      addIgnoreRule: (newRule: IgnoreRule) => {
         send({ type: 'ADD_IGNORE', newRule });
       },
       resetIgnores: (diffHash: string) => {

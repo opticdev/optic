@@ -1,7 +1,7 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import { assign, Machine, send, sendParent } from 'xstate';
 import {
-  IIgnoreRule,
+  IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
 } from './interpretors/ignores/IIgnoreRule';
 import {
@@ -37,7 +37,7 @@ interface DiffStateSchema {
 // The events that the machine handles
 type DiffEvent =
   | { type: 'SHOWING' }
-  | { type: 'UPDATE_PREVIEW'; ignoreRules: IIgnoreRule[] }
+  | { type: 'UPDATE_PREVIEW'; ignoreRules: IgnoreRule[] }
   | { type: 'SET_SUGGESTION_INDEX'; index: number }
   | { type: 'DISMISS_TYPE'; type_slug: string }
   | { type: 'STAGE' }
@@ -48,7 +48,7 @@ type DiffEvent =
 export interface DiffContext<InterpretationContext> {
   results: InterpretationContext | undefined;
   preview: IDiffSuggestionPreview | undefined;
-  revevantIgnoreRules: IIgnoreRule[];
+  revevantIgnoreRules: IgnoreRule[];
   descriptionWhileLoading: IDiffDescription;
   selectedSuggestionIndex: number;
 }

@@ -8,7 +8,7 @@ import {
 } from './interactive-diff-machine';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
-import { IIgnoreRule } from './interpretors/ignores/IIgnoreRule';
+import { IgnoreRule } from './interpretors/ignores/IIgnoreRule';
 
 export interface InteractiveEndpointSessionStateSchema {
   states: {
@@ -25,7 +25,7 @@ export type InteractiveEndpointSessionEvent =
     }
   | {
       type: 'ADD_IGNORE';
-      newRule: IIgnoreRule;
+      newRule: IgnoreRule;
     }
   | {
       type: 'REMOVE_IGNORES';
@@ -42,7 +42,7 @@ export interface InteractiveEndpointSessionContext {
     ref: any;
   }[];
   shapeDiffs: { diffParsed: ParsedDiff; shapeTrail: IShapeTrail; ref: any }[];
-  ignored: IIgnoreRule[];
+  ignored: IgnoreRule[];
   handledByDiffHash: { [key: string]: boolean };
   learningContext:
     | {
