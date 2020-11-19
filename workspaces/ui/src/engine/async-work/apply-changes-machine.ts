@@ -142,7 +142,8 @@ export const newApplyChangesMachine = (
                       rfcService,
                       rfcId,
                       pathId,
-                      method
+                      method,
+                      services.rfcBaseState.domainIdGenerator
                     );
                   });
 

@@ -170,14 +170,21 @@ export class ExampleDiffService implements IDiffService {
     rfcService: any,
     rfcId: any,
     pathId: string,
-    method: string
+    method: string,
+    opticIds: any = undefined
   ): Promise<ILearnedBodies> {
     const capture = await this.specService.listCapturedSamples(captureId);
     const interactions = capture.samples;
 
     const rfcState = rfcService.currentState(rfcId);
 
-    return localInitialBodyLearner(rfcState, pathId, method, interactions);
+    return localInitialBodyLearner(
+      rfcState,
+      pathId,
+      method,
+      interactions,
+      opticIds
+    );
   }
 
   async learnTrailValues(

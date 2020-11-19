@@ -39,7 +39,8 @@ export interface IDiffService {
     rfcService: any,
     rfcId: any,
     pathId: string,
-    method: string
+    method: string,
+    domainIds: any | undefined
   ): Promise<ILearnedBodies>;
   learnTrailValues(
     rfcService: any,

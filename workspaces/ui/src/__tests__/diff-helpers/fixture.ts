@@ -9,7 +9,10 @@ import {
   ExampleDiffService,
 } from '../../services/diff/ExampleDiffService';
 import { IShapeTrail } from '../../engine/interfaces/shape-trail';
-import { prepareShapeDiffSuggestionPreview } from '../../engine/interpretors/prepare-diff-previews';
+import {
+  prepareNewRegionDiffSuggestionPreview,
+  prepareShapeDiffSuggestionPreview,
+} from '../../engine/interpretors/prepare-diff-previews';
 import {
   IChangeType,
   ICopy,
@@ -79,6 +82,23 @@ export async function shapeDiffPreview(
     trailValues,
     []
   );
+}
+
+export async function newRegionPreview(
+  diff: ParsedDiff,
+  universe: ITestUniverse
+): Promise<IDiffSuggestionPreview> {
+  const { pathId, method } = diff.location(universe.rfcBaseState);
+
+  const initial = await universe.diffService.learnInitial(
+    universe.rfcBaseState.rfcService,
+    universe.rfcBaseState.rfcId,
+    pathId,
+    method,
+    universe.rfcBaseState.domainIdGenerator
+  );
+
+  return await prepareNewRegionDiffSuggestionPreview(diff, universe, initial);
 }
 
 export function ICopyToConsole(i: ICopy[]): string {

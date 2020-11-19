@@ -12,6 +12,8 @@ import {
 } from '../interfaces/diffs';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
+import { JsonHelper, opticEngine } from '@useoptic/domain';
+import { serializeCommands } from './spec-change-dsl';
 
 //only ever take 1 diff at a time
 export function newRegionInterpreters(
@@ -34,14 +36,23 @@ function newContentType(
   learnedBodies: ILearnedBodies,
   rfcBaseState: DiffRfcBaseState
 ): ISuggestion {
+  const {
+    AddRequest,
+    SetRequestBodyShape,
+    ShapedBodyDescriptor,
+    SetResponseBodyShape,
+    AddResponseByPathAndMethod,
+  } = opticEngine.com.useoptic.contexts.requests.Commands;
+
   const location = udiff.location(rfcBaseState);
   if (udiff.isA(DiffTypes.UnmatchedRequestBodyContentType)) {
     const diff = (udiff.raw() as IUnmatchedRequestBodyShape)
       .UnmatchedRequestBodyShape;
 
-    const learnedBody = learnedBodies.requests.find(
+    const { commands } = learnedBodies.requests.find(
       (i) => i.contentType === location.inRequest.contentType
     );
+
     return {
       action: {
         activeTense: [
@@ -54,18 +65,19 @@ function newContentType(
           plain('request'),
         ],
       },
-      commands: [],
+      commands: commands,
       changeType: IChangeType.Added,
     };
   } else if (udiff.isA(DiffTypes.UnmatchedResponseBodyContentType)) {
     const diff = (udiff.raw() as IUnmatchedResponseBodyContentType)
       .UnmatchedResponseBodyContentType;
     //learn status code too.... currently missing
-    const learnedBody = learnedBodies.responses.find(
+    const { commands } = learnedBodies.responses.find(
       (i) =>
         i.contentType === location.inResponse.contentType &&
         i.statusCode === location.inResponse.statusCode
     );
+
     return {
       action: {
         activeTense: [
@@ -81,7 +93,7 @@ function newContentType(
           code(location.inResponse.contentType || 'No Body'),
         ],
       },
-      commands: [],
+      commands,
       changeType: IChangeType.Added,
     };
   }

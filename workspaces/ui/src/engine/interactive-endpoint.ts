@@ -125,7 +125,11 @@ export const newInteractiveEndpointSessionMachine = (
         invoke: {
           id: 'loading-initial-regions',
           src: async (context, event) => {
-            const { rfcService, rfcId } = services.rfcBaseState;
+            const {
+              rfcService,
+              rfcId,
+              domainIdGenerator,
+            } = services.rfcBaseState;
 
             let newRegionWalker: Promise<ILearnedBodies> = Promise.resolve({
               pathId,
@@ -139,7 +143,8 @@ export const newInteractiveEndpointSessionMachine = (
                 rfcService,
                 rfcId,
                 pathId,
-                method
+                method,
+                domainIdGenerator
               );
             }
             return await newRegionWalker;

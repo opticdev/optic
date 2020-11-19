@@ -14,13 +14,18 @@ export function localInitialBodyLearner(
   rfcState: any,
   pathId: string,
   method: string,
-  interactions: any[]
+  interactions: any[],
+  domainIds: any
 ): ILearnedBodies {
   const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
     rfcState
   );
 
-  const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(pathId, method);
+  const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(
+    pathId,
+    method,
+    domainIds
+  );
 
   function filterByEndpoint(endpoint: { pathId: string; method: string }) {
     return function (interaction: IHttpInteraction) {
