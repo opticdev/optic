@@ -59,6 +59,7 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      # @TODO: build and use the release binary as opposed to the debug binary
       - name: 'Build'
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
         with:

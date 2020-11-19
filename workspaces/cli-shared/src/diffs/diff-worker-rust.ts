@@ -202,9 +202,6 @@ export class DiffWorkerRust {
         );
       }
 
-      // provide diffEngine's stdin:
-      interactionsStream.pipe(fork(processStreams));
-
       // consume diffEngine's stdout:
       diffEngine.output.pipe(diffsSink);
 
@@ -215,6 +212,9 @@ export class DiffWorkerRust {
       );
       const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
       diffEngine.error.pipe(diffEngineLog);
+
+      // provide diffEngine's stdin:
+      interactionsStream.pipe(fork(processStreams));
 
       // write initial output
       await Promise.all([
