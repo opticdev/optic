@@ -108,13 +108,13 @@ fn main() {
 
     dbg!("waiting for next interaction");
     while let Some(interaction_json_result) = interaction_lines.next().await {
-      //dbg!("got next interaction");
+      dbg!("got next interaction");
       let diff_permits = diff_scheduling_permits.clone();
       let projection = spec_projection.clone();
       let mut results_sender = results_sender.clone();
-      //dbg!("waiting for permit");
+      dbg!("waiting for permit");
       let diff_task_permit = diff_permits.acquire_owned().await;
-      //dbg!("got permit");
+      dbg!("got permit");
 
       tokio::spawn(async move {
         let diff_comp =
