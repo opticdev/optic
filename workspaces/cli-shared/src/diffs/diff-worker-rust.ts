@@ -159,7 +159,10 @@ export class DiffWorkerRust {
       await fs.ensureDir(diffOutputPaths.base);
 
       const interactionsStream = chain([
-        Readable.from(interactionIterator, { highWaterMark: 32 }),
+        Readable.from(interactionIterator, {
+          highWaterMark: 1,
+          objectMode: true,
+        }),
         (item) => {
           skippedInteractionsCounter = item.skippedInteractionsCounter;
           diffedInteractionsCounter = item.diffedInteractionsCounter;
@@ -195,14 +198,14 @@ export class DiffWorkerRust {
       });
 
       let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-      let processStreams: Writable[] = [diffEngine.input];
-      if (process.env.OPTIC_DEVELOPMENT === 'yes') {
-        processStreams.push(
-          fs.createWriteStream(
-            path.join(diffOutputPaths.base, 'interactions.jsonl')
-          )
-        );
-      }
+      // let processStreams: Writable[] = [diffEngine.input];
+      // if (process.env.OPTIC_DEVELOPMENT === 'yes') {
+      //   processStreams.push(
+      //     fs.createWriteStream(
+      //       path.join(diffOutputPaths.base, 'interactions.jsonl')
+      //     )
+      //   );
+      // }
 
       // consume diffEngine's stdout:
       diffEngine.output.pipe(diffsSink);
@@ -218,7 +221,7 @@ export class DiffWorkerRust {
       diffEngine.error.pipe(diffEngineLog);
 
       // provide diffEngine's stdin:
-      interactionsStream.pipe(fork(processStreams));
+      interactionsStream.pipe(diffEngine.input);
 
       // write initial output
       await Promise.all([
