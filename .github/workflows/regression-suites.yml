@@ -75,7 +75,15 @@ jobs:
 
       - name: 'run scenario'
         shell: bash
-        timeout-minutes: 5
+        timeout-minutes: 2
         run: |
           source sourceme.sh
           optic_ci_standard_streams_regression ${{ matrix.interaction-count }} ${{ matrix.rust-diff-engine }}
+
+
+      - name: 'display diff output'
+        shell: bash
+        run: |
+          source sourceme.sh
+          optic_ci_standard_streams_regression__on_failure
+        if: ${{ failure() }}

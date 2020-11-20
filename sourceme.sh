@@ -328,6 +328,19 @@ optic_ci_standard_streams_regression() {
   )
 }
 
+optic_ci_standard_streams_regression__on_failure() {
+  (
+    set -o errexit
+    set -x
+    set -v
+
+    API_PROJECT_DIR=./optic-snapshots
+    cd "$API_PROJECT_DIR"
+    ls -lah .optic/captures/ccc/diffs/*
+    cat .optic/captures/ccc/diffs/**/diff-engine-output.log
+  )
+}
+
 optic_example_input_to_capture_with_repetition() {
   (
 
