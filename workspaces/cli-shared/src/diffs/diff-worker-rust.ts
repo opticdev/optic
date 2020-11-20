@@ -159,7 +159,7 @@ export class DiffWorkerRust {
       await fs.ensureDir(diffOutputPaths.base);
 
       const interactionsStream = chain([
-        Readable.from(interactionIterator),
+        Readable.from(interactionIterator, { highWaterMark: 32 }),
         (item) => {
           skippedInteractionsCounter = item.skippedInteractionsCounter;
           diffedInteractionsCounter = item.diffedInteractionsCounter;
@@ -185,7 +185,9 @@ export class DiffWorkerRust {
         },
         JSONLStringer(),
       ]);
-      const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
+      const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream, {
+        highWaterMark: 32,
+      });
       diffsSink.once('finish', () => {
         hasMoreInteractions = false;
         reportProgress();
@@ -210,7 +212,9 @@ export class DiffWorkerRust {
         diffOutputPaths.base,
         'diff-engine-output.log'
       );
-      const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
+      const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath, {
+        highWaterMark: 32,
+      });
       diffEngine.error.pipe(diffEngineLog);
 
       // provide diffEngine's stdin:
