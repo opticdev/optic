@@ -86,4 +86,4 @@ jobs:
         run: |
           source sourceme.sh
           optic_ci_standard_streams_regression__on_failure
-        if: ${{ failure() }}
+        if: ${{ always() }}
