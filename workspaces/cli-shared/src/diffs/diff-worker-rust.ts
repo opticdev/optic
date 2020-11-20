@@ -189,7 +189,7 @@ export class DiffWorkerRust {
         JSONLStringer(),
       ]);
       const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream, {
-        highWaterMark: 32,
+        highWaterMark: 1024 * 1000,
       });
       diffsSink.once('finish', () => {
         hasMoreInteractions = false;
@@ -216,7 +216,7 @@ export class DiffWorkerRust {
         'diff-engine-output.log'
       );
       const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath, {
-        highWaterMark: 32,
+        highWaterMark: 1024 * 1000,
       });
       diffEngine.error.pipe(diffEngineLog);
 
