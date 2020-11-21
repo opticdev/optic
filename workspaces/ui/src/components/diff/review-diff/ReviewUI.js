@@ -255,7 +255,7 @@ const DiffInfoCard = (props) => {
   };
 
   return (
-    <Paper elevation={1} square className={classes.info}>
+    <Paper elevation={0} square className={classes.info}>
       <Helmet>
         <title>{`Review (${handled} / ${total}) diff${
           total === 1 ? '' : 's'
@@ -264,6 +264,7 @@ const DiffInfoCard = (props) => {
 
       <ReviewBatchSelect />
       <Handled {...{ total, handled, setAskFinish }} />
+      <Divider />
     </Paper>
   );
 };
@@ -397,7 +398,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    minHeight: 68,
+    minHeight: 70,
   },
   selected: {
     borderRight: `4px solid ${secondary}`,

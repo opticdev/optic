@@ -58,6 +58,7 @@ import { LightTooltip } from '../../tooltips/LightTooltip';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
+import { ExampleInteractionViewer } from './ExampleInteractionViewer';
 
 export const SingleDiffSessionContext = React.createContext(null);
 
@@ -94,6 +95,7 @@ export function DiffSummaryRegion(props) {
   const classes = useStyles();
 
   const { endpointActions } = useEndpointDiffSession();
+  const [expandExample, setExpandExample] = useState(false);
 
   const { diff, diffRef, diffQueries, diffActions } = useSingleDiffSession();
   const status = diffQueries.status();
@@ -147,7 +149,7 @@ export function DiffSummaryRegion(props) {
       <div style={{ flex: 1 }} />
 
       <Fade in={suggestions.length}>
-        <div style={{ paddingTop: 2 }}>
+        <div className={classes.suggestionWrapper}>
           <SuggestionSelect
             suggestions={suggestions}
             selectedSuggestionIndex={selectedSuggestionIndex}
@@ -237,6 +239,7 @@ export function DiffSummaryRegion(props) {
                 {...{ endpointActions, preview, selectedPreviewTab }}
               />
               <Button
+                onClick={() => setExpandExample(true)}
                 size="small"
                 className={classes.ignoreButton}
                 style={{ marginRight: 5 }}
@@ -258,6 +261,7 @@ export function DiffSummaryRegion(props) {
                 jsonTrailsByInteractions={i.jsonTrailsByInteractions}
                 trailsAreInvalid={i.invalid}
                 diff={diff}
+                {...{ expandExample, setExpandExample }}
               />
             );
           })}
@@ -270,6 +274,8 @@ export function DiffSummaryRegion(props) {
 function RenderPreviewBody(props) {
   const {
     diff,
+    expandExample,
+    setExpandExample,
     description,
     assertion,
     pointer,
@@ -314,7 +320,7 @@ function RenderPreviewBody(props) {
     return <LoadingExample lines={5} />;
   }
 
-  return (
+  const bodyViewer = (
     <InteractionBodyViewerAllJS
       description={description}
       body={bodyPreview}
@@ -323,6 +329,16 @@ function RenderPreviewBody(props) {
       trailsAreCorrect={!trailsAreInvalid}
       diff={diff}
     />
+  );
+  return (
+    <>
+      {bodyViewer}
+      <ExampleInteractionViewer
+        location={description.location}
+        diffBodyViewer={bodyViewer}
+        {...{ expandExample, setExpandExample, interaction }}
+      />
+    </>
   );
 }
 
@@ -428,9 +444,18 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'flex-start',
   },
   titleHeader: {
-    height: 32,
+    minHeight: 32,
     display: 'flex',
     alignItems: 'center',
+  },
+  suggestionWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingTop: 1,
+    flex: 1,
+    flexBasis: 'auto',
   },
   cardInner: {
     padding: 6,
