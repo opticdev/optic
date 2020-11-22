@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useCaptureContext } from '../../../../contexts/CaptureContext';
 import { useBaseUrl } from '../../../../contexts/BaseUrlContext';
@@ -39,18 +39,25 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { LightTooltip } from '../../../tooltips/LightTooltip';
 import InProgressFullScreen from './InProgressFullScreen';
+import { useDiffSession } from '../ReviewDiffSession';
+import ButtonBase from '@material-ui/core/ButtonBase';
 
 export function LearnAPIPageInner(props) {
-  const { urls } = props;
+  const { urls, undocumentedEndpoints } = props;
   const { completed } = useCaptureContext();
 
   return (
     <LearnAPIStore
       allUrls={urls}
+      allUndocumentedEndpoints={undocumentedEndpoints}
       key="learning-store"
       onChange={props.onChange}
     >
-      <EnhancedTable urls={urls} key="url-table" />
+      <EnhancedTable
+        urls={urls}
+        undocumentedEndpoints={undocumentedEndpoints}
+        key="url-table"
+      />
       {urls.length === 0 && !completed && <DiffLoadingOverview show={true} />}
     </LearnAPIStore>
   );
@@ -177,7 +184,7 @@ function EnhancedTableHead(props) {
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, endpointsSelected } = props;
 
   return (
     <Toolbar
@@ -200,7 +207,7 @@ const EnhancedTableToolbar = (props) => {
             variant="body2"
             component="div"
           >
-            {numSelected} endpoints to document
+            {numSelected + endpointsSelected} endpoints to document
           </Typography>
           <div style={{ flex: 1 }} />
           {/*<div style={{ width: 200, display: 'flex' }}>*/}
@@ -233,8 +240,10 @@ export default function EnhancedTable(props) {
     setIgnore,
     pathExpressions,
     toggleRow,
+    endpointsToDocument,
+    toggleEndpointsToDocument,
   } = useContext(LearnAPIPageContext);
-  const { urls } = props;
+  const { urls, undocumentedEndpoints } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
@@ -263,7 +272,10 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={checkedIds.length} />
+        <EnhancedTableToolbar
+          numSelected={checkedIds.length}
+          endpointsSelected={endpointsToDocument.length}
+        />
         <FilterAction
           handleChangePage={handleChangePage}
           paginator={
@@ -295,6 +307,16 @@ export default function EnhancedTable(props) {
               rowCount={filteredUrls.length}
             />
             <TableBody key="table-body">
+              {undocumentedEndpoints.map((endpoint) => {
+                return (
+                  <UndocumentedEndpointRow
+                    endpoint={endpoint}
+                    {...{ endpointsToDocument, toggleEndpointsToDocument }}
+                    key={endpoint.pathId + endpoint.method}
+                  />
+                );
+              })}
+
               {stableSort(filteredUrls, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
@@ -444,6 +466,112 @@ function UndocumentedRow(props) {
   );
 }
 
+function UndocumentedEndpointRow(props) {
+  const classes = useStyles();
+  const { queries } = useDiffSession();
+
+  const { endpoint, endpointsToDocument, toggleEndpointsToDocument } = props;
+  const { method, pathId } = endpoint;
+
+  const isSelected = endpointsToDocument.some(
+    (i) => i.method === method && i.pathId === pathId
+  );
+
+  const descriptor = useMemo(
+    () =>
+      queries.getEndpointDescriptor({
+        method,
+        pathId,
+      }),
+    [pathId, method]
+  );
+
+  const { pathTrails, fullPath } = descriptor;
+
+  const handleClick = () => {
+    toggleEndpointsToDocument({ method, pathId, pathExpression: fullPath });
+  };
+
+  return (
+    <TableRow
+      hover
+      role="checkbox"
+      tabIndex={-1}
+      key={rowId}
+      selected={isSelected}
+      classes={{ selected: classes.selectedRow }}
+    >
+      <TableCell align="left" style={{ verticalAlign: 'initial' }}>
+        <div style={{ marginTop: 2 }}>
+          <MethodRenderLarge method={method} />
+        </div>
+      </TableCell>
+      <TableCell align="left">
+        <LightTooltip title="This path is already in the specification. Check 'Document' to add this method and its bodies specification">
+          <div className={classes.pathPatternRender}>
+            {pathTrails.map((i) => {
+              const dash = (
+                <Typography
+                  style={{ marginRight: 2, marginLeft: 2, fontWeight: 200 }}
+                >
+                  {'/'}
+                </Typography>
+              );
+
+              if (i.pathComponentId === 'root') {
+                return null;
+              } else if (i.isPathParameter) {
+                return (
+                  <>
+                    {dash}
+                    <Typography className={classes.thick}>{`${
+                      i.pathComponentName || '   '
+                    }`}</Typography>
+                  </>
+                );
+              } else {
+                return (
+                  <>
+                    {dash}
+                    <Typography className={classes.thin}>
+                      {i.pathComponentName || '   '}
+                    </Typography>
+                  </>
+                );
+              }
+            })}
+          </div>
+        </LightTooltip>
+      </TableCell>
+      <TableCell padding="checkbox" align="right">
+        <div className={classes.innerCheck}>
+          <Typography variant="caption" color="secondary">
+            Matches Documented Path
+          </Typography>
+          <Checkbox
+            checked={isSelected}
+            onClick={handleClick}
+            color="primary"
+            style={{ marginLeft: 14 }}
+          />
+          <IconButton
+            size="small"
+            disabled
+            onClick={() => {
+              // setIgnore(row)
+            }}
+          >
+            <RemoveCircleIcon
+              fontSizeAdjust="small"
+              style={{ width: '.8rem', height: '.8rem' }}
+            />
+          </IconButton>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+}
+
 function FilterAction({ paginator, handleChangePage }) {
   const classes = useStyles();
   const { setBasepath, basepath } = useContext(LearnAPIPageContext);
@@ -559,5 +687,16 @@ const useStyles = makeStyles((theme) => ({
   filterInput: {
     fontWeight: 100,
     width: 270,
+  },
+  pathPatternRender: {
+    display: 'flex',
+    flexDirection: 'row',
+    userSelect: 'none',
+  },
+  thick: {
+    fontWeight: 600,
+  },
+  thin: {
+    fontWeight: 100,
   },
 }));

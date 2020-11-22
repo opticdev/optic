@@ -80,13 +80,24 @@ export function useDiffSessionMachine(
           });
         }
       },
-      updateToDocument: (toDocument: IToDocument[], handled: number) => {
+      updateToDocument: (
+        toDocument: IToDocument[],
+        endpoints: { pathId: string; method: string; pathExpression: string }[],
+        handled: number,
+        total: number
+      ) => {
         const existing = state.context.unrecognizedUrlsToDocument;
         if (
           existing.handled !== handled ||
           existing.urls.length !== toDocument.length
         ) {
-          send({ type: 'UPDATED_TO_DOCUMENT', toDocument, handled });
+          send({
+            type: 'UPDATED_TO_DOCUMENT',
+            toDocument,
+            endpoints,
+            handled,
+            total,
+          });
         }
       },
       toggleUndocumented: (active: boolean) =>
@@ -99,8 +110,10 @@ export function useDiffSessionMachine(
   function createQueries() {
     const { context, value } = state;
     return {
-      undocumentedUrls: () => context.unrecognizedUrls,
+      unrecognizedUrls: () => context.unrecognizedUrls,
+      undocumentedEndpoints: () => context.undocumentedEndpoints,
       handledUndocumented: () => context.unrecognizedUrlsToDocument.handled,
+      totalUndocumented: () => context.unrecognizedUrlsToDocument.total,
       showingUndocumented: () => context.showingUndocumented,
       handledByEndpoint: () => context.handledByEndpoint,
       hasEndpoint: (method, pathId) =>
@@ -151,6 +164,7 @@ export function useDiffSessionMachine(
             method: i.method,
             status: getApprovedSuggestions(i),
           })),
+          endpointsToDocument: context.unrecognizedUrlsToDocument.endpoints,
           added: context.unrecognizedUrlsToDocument.urls,
         };
       },
@@ -195,6 +209,11 @@ export type IChanges = {
 
 export type IAllChanges = {
   added: IToDocument[];
+  endpointsToDocument: {
+    pathId: string;
+    method: string;
+    pathExpression: string;
+  }[];
   changes: { method: string; pathId: string; status: IChanges }[];
 };
 

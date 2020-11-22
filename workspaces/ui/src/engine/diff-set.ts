@@ -4,6 +4,7 @@ import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
 import { diff } from 'react-ace';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { isDiffForKnownEndpoint } from './interfaces/interfaces';
+import { DiffTypes } from './interfaces/diffs';
 
 export class DiffSet {
   constructor(
@@ -41,7 +42,26 @@ export class DiffSet {
   forKnownEndpoint(): DiffSet {
     return new DiffSet(
       this.diffs.filter((i) => {
-        return isDiffForKnownEndpoint(i.diffType); // hard remove for now
+        return (
+          isDiffForKnownEndpoint(i.diffType) &&
+          i.affectsADocumentedEndpoint(this.rfcBaseState)
+        );
+      }),
+      this.rfcBaseState
+    );
+  }
+
+  forUndocumented(): DiffSet {
+    return new DiffSet(
+      this.diffs.filter((i) => {
+        return (
+          [
+            DiffTypes.UnmatchedRequestBodyContentType,
+            DiffTypes.UnmatchedResponseStatusCode,
+            DiffTypes.UnmatchedResponseBodyContentType,
+          ].includes(i.diffType) &&
+          !i.affectsADocumentedEndpoint(this.rfcBaseState)
+        );
       }),
       this.rfcBaseState
     );

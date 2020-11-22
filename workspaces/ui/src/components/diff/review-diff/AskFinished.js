@@ -61,6 +61,7 @@ export function AskFinished(props) {
       setSummary({
         oasStats: state.context.oasStats,
         newEndpoints: patch.added.length,
+        newEndpointsKnownPaths: patch.endpointsToDocument.length,
         endpointsWithChanges: endpointsWithChanges.length,
       });
       history.push(`${baseUrl}/documentation`);
@@ -248,6 +249,20 @@ function RenderPatch(props) {
   return (
     <div>
       {patch.added.map((i) => {
+        return (
+          <div className={classes.patchRow}>
+            <Typography
+              variant="body1"
+              className={classes.patchTitle}
+              style={{ color: AddedGreen }}
+            >
+              added:{' '}
+            </Typography>
+            <PathAndMethod method={i.method} path={i.pathExpression} />
+          </div>
+        );
+      })}
+      {patch.endpointsToDocument.map((i) => {
         return (
           <div className={classes.patchRow}>
             <Typography

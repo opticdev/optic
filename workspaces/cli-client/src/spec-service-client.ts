@@ -81,6 +81,16 @@ export class Client implements ISpecService {
     });
   }
 
+  saveEventsArray(serializedEvents: any[]): Promise<void> {
+    return JsonHttpClient.putJsonString(
+      `${this.baseUrl}/specs/${this.specId}/events`,
+      JSON.stringify(serializedEvents)
+    ).then((x) => {
+      this.eventEmitter.emit('events-updated');
+      return x;
+    });
+  }
+
   listCapturedSamples(captureId: CaptureId) {
     return outgoingPoll.schedule(() => {
       return JsonHttpClient.getJson(

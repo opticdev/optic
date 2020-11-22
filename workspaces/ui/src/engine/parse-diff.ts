@@ -59,6 +59,22 @@ export class ParsedDiff {
     return this.serialized_diff[key].requestsTrail;
   }
 
+  affectsADocumentedEndpoint(rfcBaseState: DiffRfcBaseState) {
+    const location = locationForTrails(
+      this.requestsTrail(),
+      this.interactionTrail(),
+      rfcBaseState
+    );
+
+    const isDocumented = rfcBaseState.queries
+      .endpoints()
+      .find(
+        (i) => i.pathId === location.pathId && i.method === location.method
+      );
+
+    return location && location.pathId && isDocumented;
+  }
+
   location(rfcBaseState: DiffRfcBaseState): IParsedLocation {
     const diff = this.serialized_diff;
     const location = locationForTrails(

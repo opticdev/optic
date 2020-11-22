@@ -40,11 +40,19 @@ export function FinalizeSummaryContextStore(props) {
 }
 
 function ResultsDialog(props) {
-  const { oasStats, newEndpoints, endpointsWithChanges } = props;
+  const {
+    oasStats,
+    newEndpoints,
+    newEndpointsKnownPaths,
+    endpointsWithChanges,
+  } = props;
   const classes = useStyles();
   if (!props.open) {
     return null;
   }
+
+  const allNewEndpoints = newEndpoints + newEndpointsKnownPaths;
+
   return (
     <Dialog
       open={props.open}
@@ -86,8 +94,9 @@ function ResultsDialog(props) {
           <div>
             <div style={{ padding: 20 }}>
               <Typography variant="subtitle1">
-                {newEndpoints} new endpoint{newEndpoints !== 1 && 's'},{' '}
-                {endpointsWithChanges} updated endpoint
+                {allNewEndpoints} new endpoint
+                {allNewEndpoints !== 1 && 's'}, {endpointsWithChanges} updated
+                endpoint
                 {endpointsWithChanges !== 1 && 's'}
               </Typography>
 

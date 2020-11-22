@@ -35,7 +35,8 @@ export function ReviewUI() {
   const selectedEndpointHandled = queries.selectedEndpointHandled();
   const handled = queries.handledByEndpoint();
 
-  const undocumentedCount = queries.undocumentedUrls().length;
+  const unrecognizedCount =
+    queries.unrecognizedUrls().length + queries.undocumentedEndpoints().length;
   const handledUndocumentedCount = queries.handledUndocumented();
 
   const startedHandled = useMemo(() => selectedEndpointHandled, [selected]);
@@ -58,7 +59,7 @@ export function ReviewUI() {
       handledUndocumentedCount,
     total:
       handled.reduce((current, i) => i.diffCount + current, 0) +
-      undocumentedCount,
+      unrecognizedCount,
   };
 
   useEffect(() => {
@@ -192,8 +193,11 @@ export function UndocumentedCard(props) {
   const { selected } = props;
   const classes = useStyles();
 
-  const undocumentedUrls = queries.undocumentedUrls();
-  const hasUndocumented = undocumentedUrls.length > 0;
+  const unrecognizedUrls = queries.unrecognizedUrls();
+  const undocumentedEndpoints = queries.undocumentedEndpoints();
+  const hasUndocumented =
+    unrecognizedUrls.length > 0 || undocumentedEndpoints.length > 0;
+
   const handledUndocumented = queries.handledUndocumented();
 
   if (!hasUndocumented) {
@@ -236,7 +240,7 @@ export function UndocumentedCard(props) {
               startBlue
               symbol={'+'}
               handled={handledUndocumented}
-              total={undocumentedUrls.length}
+              total={unrecognizedUrls.length + undocumentedEndpoints.length}
             />
           </div>
         </div>

@@ -114,7 +114,12 @@ export const newApplyChangesMachine = (
           src: (context, event) => async (callback, onReceive) => {
             const { endpointIds, commands } = context.newPaths;
 
-            if (endpointIds.length === 0) {
+            const mergedEndpointIds = [
+              ...endpointIds,
+              ...patch.endpointsToDocument,
+            ];
+
+            if (mergedEndpointIds.length === 0) {
               // exit if no new endpoints
               return [];
             }
@@ -132,7 +137,7 @@ export const newApplyChangesMachine = (
               minTime: 100,
             });
 
-            const results = endpointIds.map(
+            const results = mergedEndpointIds.map(
               async ({ pathId, method, pathExpression }, index) => {
                 return await throttler.schedule(async () => {
                   console.log(`learning started for ${pathId} ${method}`);
