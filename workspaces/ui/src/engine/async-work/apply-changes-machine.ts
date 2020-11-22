@@ -26,7 +26,7 @@ export interface ApplyChangesStateSchema {
     collectingApprovedSuggestions: {};
     runningCommands: {};
     completed: {};
-
+    completedWithSummary: {};
     failed: {};
   };
 }
@@ -254,9 +254,11 @@ export const newApplyChangesMachine = (
           },
           onDone: {
             actions: assign({ oasStats: (context, event) => event.data }),
+            target: 'completedWithSummary',
           },
         },
       },
+      completedWithSummary: {},
       failed: {},
     },
   });

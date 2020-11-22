@@ -156,7 +156,7 @@ export async function createExampleSpecServiceFactory(data) {
       return Promise.resolve();
     },
     saveEventArray: (serializedEvents) => {
-      events = serializedEvents;
+      events = JSON.stringify(serializedEvents);
       eventEmitter.emit('events-updated');
       return Promise.resolve();
     },

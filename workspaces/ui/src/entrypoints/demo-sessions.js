@@ -23,6 +23,7 @@ import {
   SubtleBlueBackground,
 } from '../theme';
 import { subtabs } from '../components/diff/v2/CaptureManagerPage';
+import { FinalizeSummaryContextStore } from '../components/diff/review-diff/FinalizeSummaryContext';
 
 const snackbarStyles = makeStyles({
   alert: {
@@ -369,8 +370,9 @@ export default function DemoSessions(props) {
             captureServiceFactory={captureServiceFactory}
             diffServiceFactory={diffServiceFactory}
           >
-            <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
-
+            <FinalizeSummaryContextStore>
+              <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
+            </FinalizeSummaryContextStore>
             <Snackbar
               open={showTooltips && m.message !== 'nothing'}
               autoHideDuration={6000}

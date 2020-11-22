@@ -9,6 +9,7 @@ import {
   LocalCliCaptureService,
   LocalCliDiffService,
 } from '../services/diff/LocalCliDiffService';
+import { FinalizeSummaryContextStore } from '../components/diff/review-diff/FinalizeSummaryContext';
 
 export default function LocalCli(props) {
   const match = useRouteMatch();
@@ -41,7 +42,9 @@ export default function LocalCli(props) {
         diffServiceFactory={diffServiceFactory}
         captureServiceFactory={captureServiceFactory}
       >
-        <ApiRoutes />
+        <FinalizeSummaryContextStore>
+          <ApiRoutes />
+        </FinalizeSummaryContextStore>
       </LocalCliSpecServiceLoader>
     </BaseUrlContext>
   );

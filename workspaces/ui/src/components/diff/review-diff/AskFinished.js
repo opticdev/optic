@@ -26,14 +26,12 @@ import { PathAndMethod } from '../v2/PathAndMethod';
 import { Add } from '@material-ui/icons';
 import { useServices } from '../../../contexts/SpecServiceContext';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import { useFinalizeSummaryContext } from './FinalizeSummaryContext';
 
 export function AskFinished(props) {
   const { setAskFinish } = props;
   const history = useHistory();
+  const { setSummary } = useFinalizeSummaryContext();
   const { specService } = useServices();
   const baseUrl = useBaseUrl();
   const { queries, services } = useDiffSession();
@@ -43,6 +41,9 @@ export function AskFinished(props) {
   const classes = useStyles();
 
   const patch = queries.endpointsWithSuggestions();
+  const endpointsWithChanges = patch.changes.filter((i) =>
+    i.status.some((i) => i.isHandled)
+  );
 
   const [state, send] = useMachine(
     newApplyChangesMachine(patch, services, clientSessionId, clientId)
@@ -52,10 +53,17 @@ export function AskFinished(props) {
     console.log('progress updating spec', state);
   }, [state]);
 
-  const isComplete = state.matches('completed');
+  const isComplete = state.matches('completedWithSummary');
   useEffect(() => {
     async function saveEvents() {
       const { updatedEvents } = state.context;
+      debugger;
+      setSummary({
+        oasStats: state.context.oasStats,
+        newEndpoints: patch.added.length,
+        endpointsWithChanges: endpointsWithChanges.length,
+      });
+      history.push(`${baseUrl}/documentation`);
       await specService.saveEventArray(updatedEvents);
     }
     if (isComplete) {
@@ -65,14 +73,10 @@ export function AskFinished(props) {
 
   const start = () => send({ type: 'START' });
 
-  const handleClose = () => {
-    history.push(`${baseUrl}/documentation`);
-  };
-
   return (
     <Dialog
       open={true}
-      onClose={handleClose}
+      onClose={() => setAskFinish(false)}
       TransitionComponent={Transition}
       keepMounted
       maxWidth="sm"
@@ -102,21 +106,15 @@ export function AskFinished(props) {
             <Typography variant="h6">Finalize Changes</Typography>
           </div>
           <div style={{ flexShrink: 1 }}>
-            {isComplete ? (
-              <Button color="primary" variant="contained" onClick={handleClose}>
-                Done
-              </Button>
-            ) : (
-              <Button
-                color="secondary"
-                disabled={state.value !== 'staged'}
-                endIcon={<PlayArrowIcon />}
-                variant="contained"
-                onClick={start}
-              >
-                Apply
-              </Button>
-            )}
+            <Button
+              color="secondary"
+              disabled={state.value !== 'staged'}
+              endIcon={<PlayArrowIcon />}
+              variant="contained"
+              onClick={start}
+            >
+              Apply
+            </Button>
           </div>
         </Box>
 
@@ -140,13 +138,8 @@ export function AskFinished(props) {
             />
           ))}
 
-        {state.matches('runningCommands') && <UpdatingSpec />}
-
-        {state.matches('completed') && (
-          <Results
-            oasStats={state.context.oasStats}
-            newEndpoints={patch.added.length}
-          />
+        {(state.matches('runningCommands') || state.matches('completed')) && (
+          <UpdatingSpec />
         )}
       </div>
     </Dialog>
@@ -296,7 +289,7 @@ const PulsingOpticHuge = () => (
   </div>
 );
 
-const StatMini = ({ number, label }) => {
+export const StatMini = ({ number, label }) => {
   return (
     <span>
       {number !== 0 && (
@@ -363,3 +356,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
 }));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});

@@ -16,6 +16,7 @@ import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
   normalizedDiffFromRfcStateAndInteractions,
 } from '@useoptic/domain-utilities';
+import { FinalizeSummaryContextStore } from '../components/diff/review-diff/FinalizeSummaryContext';
 
 export default function PrivateSessions(props) {
   const match = useRouteMatch();
@@ -90,7 +91,9 @@ export default function PrivateSessions(props) {
           captureServiceFactory={captureServiceFactory}
           diffServiceFactory={diffServiceFactory}
         >
-          <ApiRoutes />
+          <FinalizeSummaryContextStore>
+            <ApiRoutes />
+          </FinalizeSummaryContextStore>
         </ApiSpecServiceLoader>
       </DebugSessionContextProvider>
     </BaseUrlContext>

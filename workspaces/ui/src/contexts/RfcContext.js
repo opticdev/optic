@@ -11,7 +11,6 @@ import debounce from 'lodash.debounce';
 import { useSnackbar, VariantType, withSnackbar } from 'notistack';
 import uuidv4 from 'uuid/v4';
 import { CommandContext, withCommandContext } from './CommandContext';
-import memoize from 'memoize-weak';
 import { InitialRfcCommandsContext } from './InitialRfcCommandsContext';
 import { useContext, useEffect, useState } from 'react';
 
@@ -146,6 +145,7 @@ function BaseRfcStore(props) {
   const queries = Queries(eventStore, rfcService, rfcId);
   const cachedQueryResults = stuffFromQueries(queries);
   const { specService } = props;
+
   const value = {
     rfcId,
     clientSessionId,
