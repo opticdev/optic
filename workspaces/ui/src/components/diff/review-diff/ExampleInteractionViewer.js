@@ -43,6 +43,11 @@ export function ExampleInteractionViewer(props) {
       fullWidth={true}
       maxWidth={'md'}
       open={expandExample}
+      BackdropProps={{
+        classes: {
+          root: classes.backDrop,
+        },
+      }}
       onClose={() => setExpandExample(false)}
     >
       <div className={classes.inner}>
@@ -96,6 +101,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f5f5f5',
     display: 'flex',
     flexDirection: 'column',
+  },
+  backDrop: {
+    backdropFilter: 'blur(2px)',
+    backgroundColor: 'rgba(0,0,30,0.4)',
   },
   header: {
     backgroundColor: OpticBlue,

@@ -27,6 +27,7 @@ export interface ISpecService {
   listEvents(): Promise<string>;
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
+  saveEventsArray(serializedEvents: any[]): Promise<void>;
 
   listCaptures(): Promise<ListCapturesResponse>;
 

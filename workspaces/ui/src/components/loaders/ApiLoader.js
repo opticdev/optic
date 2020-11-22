@@ -155,6 +155,11 @@ export async function createExampleSpecServiceFactory(data) {
       eventEmitter.emit('events-updated');
       return Promise.resolve();
     },
+    saveEventArray: (serializedEvents) => {
+      events = serializedEvents;
+      eventEmitter.emit('events-updated');
+      return Promise.resolve();
+    },
     listExamples: (requestId) => {
       return Promise.resolve({ examples: examples[requestId] || [] });
     },

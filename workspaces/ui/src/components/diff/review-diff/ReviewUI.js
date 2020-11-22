@@ -225,7 +225,7 @@ export function UndocumentedCard(props) {
             className={classes.undocumentedDetected}
             style={{ fontWeight: 200, color: DocDarkGrey }}
           >
-            Add these to your specification for documentation and to manage
+            Add these to your specification for documentation and to detect
             future changes.
           </Typography>
         </div>
@@ -356,7 +356,6 @@ const useStyles = makeStyles((theme) => ({
     padding: 9,
     paddingTop: 1,
     paddingBottom: 1,
-    height: 40,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -414,6 +413,8 @@ const useStyles = makeStyles((theme) => ({
   },
   undocumentedDetected: {
     fontWeight: 400,
+    flexShrink: 1,
+    maxWidth: 260,
     fontSize: 12,
   },
 }));

@@ -1,32 +1,31 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { useHistory } from 'react-router-dom';
 import { useDiffSession } from './ReviewDiffSession';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import { TextFields } from '@material-ui/icons';
 import TextField from '@material-ui/core/TextField';
 import {
+  AddedGreen,
+  ChangedYellow,
   LightBlueBackground,
   OpticBlueReadable,
   SubtleBlueBackground,
 } from '../../../theme';
-import Card from '@material-ui/core/Card';
 import { useMachine } from '@xstate/react';
 import { newApplyChangesMachine } from '../../../engine/async-work/apply-changes-machine';
 import { RfcContext } from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { Stat } from '../v2/CaptureManagerPage';
 import Divider from '@material-ui/core/Divider';
+import { PathAndMethod } from '../v2/PathAndMethod';
+import { Add } from '@material-ui/icons';
+import { useServices } from '../../../contexts/SpecServiceContext';
+import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -35,8 +34,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export function AskFinished(props) {
   const { setAskFinish } = props;
   const history = useHistory();
+  const { specService } = useServices();
+  const baseUrl = useBaseUrl();
   const { queries, services } = useDiffSession();
-  const { clientSessionId, clientId } = useContext(RfcContext);
+  const { clientSessionId, clientId, eventStore, rfcId } = useContext(
+    RfcContext
+  );
   const classes = useStyles();
 
   const patch = queries.endpointsWithSuggestions();
@@ -46,26 +49,24 @@ export function AskFinished(props) {
   );
 
   useEffect(() => {
-    console.log('look here', state);
+    console.log('progress updating spec', state);
   }, [state]);
 
   const isComplete = state.matches('completed');
   useEffect(() => {
-    if (isComplete) {
+    async function saveEvents() {
       const { updatedEvents } = state.context;
-      debugger;
+      await specService.saveEventArray(updatedEvents);
+    }
+    if (isComplete) {
+      saveEvents();
     }
   }, [isComplete]);
 
   const start = () => send({ type: 'START' });
 
   const handleClose = () => {
-    setAskFinish(false);
-  };
-
-  const handleFinalize = () => {
-    setAskFinish(false);
-    // history.push(baseDiffReviewPath + '/finalize');
+    history.push(`${baseUrl}/documentation`);
   };
 
   return (
@@ -75,6 +76,11 @@ export function AskFinished(props) {
       TransitionComponent={Transition}
       keepMounted
       maxWidth="sm"
+      BackdropProps={{
+        classes: {
+          root: classes.backDrop,
+        },
+      }}
       fullWidth
       style={{ padding: 0 }}
     >
@@ -118,7 +124,7 @@ export function AskFinished(props) {
           <Box style={{ padding: 12, width: '100%' }}>
             <TextField multiline fullWidth label="Describe your changes..." />
             <div style={{ marginTop: 20 }}>
-              this will be the list of changes...
+              <RenderPatch patch={patch} />
             </div>
           </Box>
         )}
@@ -237,30 +243,52 @@ function Results(props) {
   );
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  commonStatus: {
-    padding: 12,
-    width: '100%',
-    minHeight: 80,
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    flexDirection: 'column',
-  },
-  logoWrapper: {
-    flexDirection: 'row',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-}));
+function RenderPatch(props) {
+  const { patch } = props;
+  const classes = useStyles();
+  const { queries, actions } = useDiffSession();
+
+  const withChanges = patch.changes.filter((i) =>
+    i.status.some((i) => i.isHandled)
+  );
+
+  return (
+    <div>
+      {patch.added.map((i) => {
+        return (
+          <div className={classes.patchRow}>
+            <Typography
+              variant="body1"
+              className={classes.patchTitle}
+              style={{ color: AddedGreen }}
+            >
+              added:{' '}
+            </Typography>
+            <PathAndMethod method={i.method} path={i.pathExpression} />
+          </div>
+        );
+      })}
+      {withChanges.map(({ method, pathId }) => {
+        const { httpMethod, fullPath } = queries.getEndpointDescriptor({
+          method,
+          pathId,
+        });
+        return (
+          <div className={classes.patchRow}>
+            <Typography
+              variant="body1"
+              className={classes.patchTitle}
+              style={{ color: ChangedYellow }}
+            >
+              changed:{' '}
+            </Typography>
+            <PathAndMethod method={httpMethod} path={fullPath} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 const PulsingOpticHuge = () => (
   <div className={'blobMedium'} style={{ marginRight: 9 }}>
@@ -294,3 +322,44 @@ const StatMini = ({ number, label }) => {
     </span>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backDrop: {
+    backdropFilter: 'blur(2px)',
+    backgroundColor: 'rgba(0,0,30,0.4)',
+  },
+  commonStatus: {
+    padding: 12,
+    width: '100%',
+    minHeight: 80,
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    flexDirection: 'column',
+  },
+  patchRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  patchTitle: {
+    fontWeight: 900,
+    fontFamily: 'Ubuntu Mono',
+    marginRight: 5,
+    fontSize: 15,
+    marginTop: 2,
+  },
+  logoWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+}));
