@@ -22,19 +22,6 @@ export function useDiffSessionMachine(
   diffId: string,
   services: InteractiveSessionConfig
 ) {
-  // const machine: Interpreter<
-  //   DiffSessionSessionContext,
-  //   DiffSessionSessionStateSchema,
-  //   DiffSessionSessionEvent
-  // > = useMemo(() => {
-  //   console.log('spinning up diff machine with id ' + diffId);
-  //   const m = interpret(newDiffSessionSessionMachine(diffId, services), {
-  //     devTools: true,
-  //   });
-  //   m.start();
-  //   return m;
-  // }, []);
-
   const [state, send] = useMachine(
     newDiffSessionSessionMachine(diffId, services),
     {
@@ -60,6 +47,25 @@ export function useDiffSessionMachine(
             ([diff, interactions]) => new ParsedDiff(diff, interactions)
           ),
         });
+      },
+      resetAll(endpointsWithDiffs: any[]) {
+        endpointsWithDiffs.forEach(({ pathId, method }) => {
+          send({
+            type: 'SEND_TO_ENDPOINT',
+            pathId,
+            method,
+            event: { type: 'RESET' },
+          });
+        });
+
+        const first = endpointsWithDiffs[0];
+        if (first) {
+          send({
+            type: 'SELECTED_ENDPOINT',
+            pathId: first.pathId,
+            method: first.method,
+          });
+        }
       },
       signalHandled(pathId, method) {
         send({ type: 'HANDLED_UPDATED', pathId, method });

@@ -50,6 +50,8 @@ export function ReviewUI() {
     }
   }, [selectedEndpointHandled]);
 
+  const resetAll = () => actions.resetAll(results.endpointsWithDiffs);
+
   const handledAll = {
     handled:
       handled.reduce((current, i) => i.handled + current, 0) +
@@ -80,7 +82,12 @@ export function ReviewUI() {
         style={{ flexDirection: 'row', height: '100vh' }}
       >
         <Paper square className={classes.left} elevation={0}>
-          <DiffInfoCard {...handledAll} setAskFinish={setAskFinish} />
+          <DiffInfoCard
+            {...handledAll}
+            resetAll={resetAll}
+            setAskFinish={setAskFinish}
+          />
+
           {askFinish && <AskFinished {...{ setAskFinish }} />}
           <List className={classes.list}>
             <UndocumentedCard selected={shouldShowUndocumented} />
@@ -240,7 +247,7 @@ export function UndocumentedCard(props) {
 
 const DiffInfoCard = (props) => {
   const classes = useStyles();
-  const { total, handled, setAskFinish } = props;
+  const { total, handled, setAskFinish, resetAll } = props;
 
   const { queries } = useDiffSession();
 
@@ -261,16 +268,15 @@ const DiffInfoCard = (props) => {
           total === 1 ? '' : 's'
         }`}</title>
       </Helmet>
-
       <ReviewBatchSelect />
-      <Handled {...{ total, handled, setAskFinish }} />
+      <Handled {...{ total, handled, setAskFinish, resetAll }} />
       <Divider />
     </Paper>
   );
 };
 
 export function Handled(props) {
-  const { total, handled, setAskFinish } = props;
+  const { total, handled, setAskFinish, resetAll } = props;
   return (
     <Box
       flexDirection="column"
@@ -298,6 +304,7 @@ export function Handled(props) {
             size="small"
             style={{ fontSize: 10, minWidth: 'auto' }}
             color="primary"
+            onClick={resetAll}
           >
             Reset
           </Button>
@@ -311,6 +318,7 @@ export function Handled(props) {
             size="small"
             style={{ fontSize: 10, minWidth: 'auto' }}
             color="primary"
+            disabled={handled === 0}
             onClick={setAskFinish}
           >
             Finalize

@@ -33,7 +33,8 @@ export type InteractiveEndpointSessionEvent =
     }
   | {
       type: 'HANDLED_UPDATED';
-    };
+    }
+  | { type: 'RESET' };
 
 // The context (extended state) of the machine
 export interface InteractiveEndpointSessionContext {
@@ -185,6 +186,24 @@ export const newInteractiveEndpointSessionMachine = (
                 ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
                 ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
               },
+            ],
+          },
+          RESET: {
+            actions: [
+              assign({
+                ignored: (_, __) => [],
+              }),
+              (ctx) => {
+                //send all ignore rules to children. they decide which ones they care about
+                const notifyChildren = {
+                  type: 'RESET',
+                };
+                ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
+                ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
+              },
+              assign({
+                handledByDiffHash: (context) => computeHandled(context),
+              }),
             ],
           },
           REMOVE_IGNORES: {

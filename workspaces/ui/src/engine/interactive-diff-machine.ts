@@ -48,7 +48,7 @@ type DiffEvent =
 export interface DiffContext<InterpretationContext> {
   results: InterpretationContext | undefined;
   preview: IDiffSuggestionPreview | undefined;
-  revevantIgnoreRules: IgnoreRule[];
+  relevantIgnoreRules: IgnoreRule[];
   descriptionWhileLoading: IDiffDescription;
   selectedSuggestionIndex: number;
 }
@@ -117,10 +117,10 @@ const createNewDiffMachine = <Context>(
             // actions: [
             cond: (context, event) =>
               event.ignoreRules.filter((i) => i.diffHash === diff.diffHash)
-                .length !== context.revevantIgnoreRules.length,
+                .length !== context.relevantIgnoreRules.length,
             actions: [
               assign({
-                revevantIgnoreRules: (context, event) => {
+                relevantIgnoreRules: (context, event) => {
                   return event.ignoreRules.filter(
                     (i) => i.diffHash === diff.diffHash
                   );
@@ -176,6 +176,10 @@ const createNewDiffMachine = <Context>(
               UNSTAGE: {
                 target: 'unhandled',
               },
+              RESET: {
+                actions: [assign({ relevantIgnoreRules: (_) => [] })],
+                target: 'reload_preview',
+              },
             },
           },
         },
@@ -195,7 +199,7 @@ export const createNewRegionMachine = (
     (id: string, diff: ParsedDiff) => ({
       results: undefined,
       preview: undefined,
-      revevantIgnoreRules: [],
+      relevantIgnoreRules: [],
       descriptionWhileLoading: descriptionForDiffs(
         parsedDiff,
         services.rfcBaseState
@@ -241,7 +245,7 @@ export const createShapeDiffMachine = (
     services,
     (id: string, diff: ParsedDiff) => ({
       results: undefined,
-      revevantIgnoreRules: [],
+      relevantIgnoreRules: [],
       descriptionWhileLoading: descriptionForDiffs(diff, services.rfcBaseState),
       preview: undefined,
       selectedSuggestionIndex: 0,
@@ -268,7 +272,7 @@ export const createShapeDiffMachine = (
           diff,
           services,
           trailValues,
-          context.revevantIgnoreRules
+          context.relevantIgnoreRules
         ),
         results: trailValues,
       };
@@ -283,7 +287,7 @@ export const createShapeDiffMachine = (
         diff,
         services,
         context.results!,
-        context.revevantIgnoreRules
+        context.relevantIgnoreRules
       );
     }
   );

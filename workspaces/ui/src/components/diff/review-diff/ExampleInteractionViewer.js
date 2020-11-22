@@ -37,8 +37,6 @@ export function ExampleInteractionViewer(props) {
     return null;
   }
 
-  const showBoth = !!requestBody.asJson && !!responseBody.asJson;
-
   return (
     <Dialog
       TransitionComponent={Transition}

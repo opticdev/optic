@@ -175,7 +175,6 @@ export const newDiffSessionSessionMachine = (
                 (i) => i.pathId === event.pathId && i.method === event.method
               );
               if (actor) {
-                console.log('sending message');
                 actor.ref.send(event.event);
               }
             },

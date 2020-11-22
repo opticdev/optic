@@ -4,6 +4,7 @@ import Card from '@material-ui/core/Card';
 import { AllCapturesContext, AllCapturesStore } from '../v2/CaptureManagerPage';
 import { Code } from './ICopyRender';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import time from 'time-ago';
 import {
   AddedGreenBackground,
   ChangedYellowBackground,
@@ -13,38 +14,77 @@ import {
 } from '../../../theme';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Fade from '@material-ui/core/Fade';
-import { IconButton, List } from '@material-ui/core';
+import { IconButton, List, Typography } from '@material-ui/core';
 import { LightTooltip } from '../../tooltips/LightTooltip';
 import Collapse from '@material-ui/core/Collapse';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import Typography from '@material-ui/core/Typography';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { useCaptureContext } from '../../../contexts/CaptureContext';
+import { useBaseUrl } from '../../../contexts/BaseUrlContext';
+import { useHistory } from 'react-router-dom';
 export function ReviewBatchSelect(props) {
   const classes = useStyles();
   const { total, handled } = props;
   const { captures } = useContext(AllCapturesContext);
+  const history = useHistory();
 
-  const [showAll, setShowAll] = useState(false);
+  const { captureId } = useCaptureContext();
+  const currentCapture = captures.find((i) => i.captureId === captureId);
+  const baseUrl = useBaseUrl();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const changeCapture = (newCaptureId) => {
+    setAnchorEl(null);
+    history.push(`${baseUrl}/review/${newCaptureId}`);
+    window.location.reload();
+  };
 
   return (
     <Card className={classes.bounded} elevation={0}>
       <div className={classes.current}>
-        <div className={classes.innerChip}>start</div>{' '}
-        <div className={classes.startedAt}>captured 10 mins ago</div>
+        <div className={classes.innerChip}>task</div>{' '}
+        <div className={classes.startedAt}>
+          captured {time.ago(currentCapture.lastUpdate)}
+        </div>
         <div style={{ flex: 1 }} />
-        <LightTooltip title="Filter Traffic">
-          <IconButton
-            size="small"
-            onClick={() => setShowAll(true)}
-            color="primary"
-            style={{ width: 17, height: 17, marginRight: 3 }}
-          >
-            <FilterListIcon style={{ width: 17, height: 17 }} />
-          </IconButton>
-        </LightTooltip>
+        <IconButton
+          size="small"
+          disabled={captures.length === 1}
+          onClick={(e) => setAnchorEl(e.target)}
+          color="primary"
+          style={{ width: 17, height: 17, marginRight: 3 }}
+        >
+          <FilterListIcon style={{ width: 17, height: 17 }} />
+        </IconButton>
       </div>
-      <Collapse in={showAll} className={classes.allCaptures}></Collapse>
+      <Menu
+        open={anchorEl}
+        anchorEl={anchorEl}
+        classes={{ list: classes.menuListClass }}
+      >
+        <Typography
+          variant="overline"
+          color="textSecondary"
+          style={{ paddingBottom: 5 }}
+        >
+          Filter Traffic
+        </Typography>
+        {captures.map((capture) => (
+          <MenuItem
+            onClose={() => setAnchorEl(null)}
+            dense
+            style={{ padding: 0, paddingRight: 5 }}
+            onClick={() => changeCapture(capture.captureId)}
+          >
+            <div className={classes.current}>
+              <div className={classes.innerChip}>task</div>{' '}
+              <div className={classes.startedAt}>
+                captured {time.ago(capture.lastUpdate)}
+              </div>
+            </div>
+          </MenuItem>
+        ))}
+      </Menu>
     </Card>
   );
 }
@@ -60,6 +100,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     border: '1px solid #e2e2e2',
+  },
+  menuListClass: {
+    padding: 5,
+    paddingTop: 0,
   },
   startedAt: {
     paddingLeft: 5,
