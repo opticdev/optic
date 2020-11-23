@@ -155,7 +155,7 @@ export async function createExampleSpecServiceFactory(data) {
       eventEmitter.emit('events-updated');
       return Promise.resolve();
     },
-    saveEventArray: (serializedEvents) => {
+    saveEventsArray: (serializedEvents) => {
       events = JSON.stringify(serializedEvents);
       eventEmitter.emit('events-updated');
       return Promise.resolve();
