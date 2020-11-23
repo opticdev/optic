@@ -31,6 +31,7 @@
     "get-port": "^5.1.0",
     "http-proxy-middleware": "^1.0.4",
     "lodash.sortby": "^4.7.0",
+    "node-sha1": "^1.0.1",
     "node-fetch": "^2.6.0",
     "proper-lockfile": "^4.1.1",
     "stream-chain": "^2.2.3",

@@ -138,14 +138,23 @@ export class LocalCliDiffService implements IDiffService {
     });
   }
 
-  learnTrailValues(
+  async learnTrailValues(
     rfcService: any,
     rfcId: any,
     pathId: string,
     method: string,
     diff: IDiff
   ): Promise<IValueAffordanceSerializationWithCounter> {
-    return Promise.resolve(undefined);
+    const events = opticEngine.EventSerialization.toJson(
+      rfcService.listEvents(rfcId)
+    );
+    const url = `${this.captureService.baseUrl}/trail-values`;
+    return await JsonHttpClient.postJson(url, {
+      events,
+      pathId,
+      method,
+      serializedDiff: JSON.stringify(diff),
+    });
   }
 }
 
