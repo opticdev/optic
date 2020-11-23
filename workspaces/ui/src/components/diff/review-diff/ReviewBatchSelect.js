@@ -69,8 +69,9 @@ export function ReviewBatchSelect(props) {
         >
           Filter Traffic
         </Typography>
-        {captures.map((capture) => (
+        {captures.map((capture, index) => (
           <MenuItem
+            key={'batch' + index}
             onClose={() => setAnchorEl(null)}
             dense
             style={{ padding: 0, paddingRight: 5 }}

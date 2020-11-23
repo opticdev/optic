@@ -96,7 +96,6 @@ class ContentTabs extends React.Component {
   componentDidMount() {
     const {
       inRequest,
-      responseContentType,
       setResponseContentType,
       setResponseStatusCode,
       responseStatusCode,

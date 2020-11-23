@@ -6,11 +6,10 @@ import {
   RfcCommandContext,
 } from '@useoptic/domain';
 import { GenericContextFactory } from './GenericContextFactory.js';
-import { withInitialRfcCommandsContext } from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
-import { useSnackbar, VariantType, withSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import uuidv4 from 'uuid/v4';
-import { CommandContext, withCommandContext } from './CommandContext';
+import { CommandContext } from './CommandContext';
 import { InitialRfcCommandsContext } from './InitialRfcCommandsContext';
 import { useContext, useEffect, useState } from 'react';
 

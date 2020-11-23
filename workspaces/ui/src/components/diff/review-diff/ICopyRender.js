@@ -116,7 +116,7 @@ export function ICopyRenderMultiline(props) {
           );
         } else if (i.style === ICopyStyle.Code) {
           return (
-            <div>
+            <div key={index}>
               <Code
                 variant={variant}
                 key={index}

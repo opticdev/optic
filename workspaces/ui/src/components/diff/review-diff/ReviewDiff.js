@@ -1,46 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDiffSession } from './ReviewDiffSession';
-// eslint-disable-next-line no-unused-vars
-import { useActor, useMachine } from '@xstate/react';
 import WarningIcon from '@material-ui/icons/Warning';
 import { useContext } from 'react';
 import { useEndpointDiffSession } from './ReviewEndpoint';
-import { createEndpointDescriptor } from '../../../utilities/EndpointUtilities';
 import BlockIcon from '@material-ui/icons/Block';
 import CheckIcon from '@material-ui/icons/Check';
-import { stuffFromQueries } from '../../../contexts/RfcContext';
-import sortby from 'lodash.sortby';
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import { HardCodedDiffExamples } from '../v2/shape_viewers/DiffReviewTypes';
 import {
-  AddedDarkGreen,
   AddedGreen,
-  AddedGreenBackground,
   ChangedYellow,
   OpticBlue,
   OpticBlueLightened,
   OpticBlueReadable,
-  primary,
   RemovedRed,
   secondary,
-  SubtleBlueBackground,
-  UpdatedBlue,
-  UpdatedBlueBackground,
 } from '../../../theme';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Card from '@material-ui/core/Card';
 import Collapse from '@material-ui/core/Collapse';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Radio from '@material-ui/core/Radio';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import InteractionBodyViewer from '../v2/shape_viewers/InteractionBodyViewer';
 import { makeStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tabs from '@material-ui/core/Tabs';
@@ -52,12 +31,8 @@ import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewe
 import { SuggestionSelect } from './SuggestionSelect';
 import Fade from '@material-ui/core/Fade';
 import { plain, code, bold } from '../../../engine/interfaces/interpretors';
-import Menu from '@material-ui/core/Menu';
-import Grow from '@material-ui/core/Grow';
 import { LightTooltip } from '../../tooltips/LightTooltip';
-import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import MenuItem from '@material-ui/core/MenuItem';
 import { ExampleInteractionViewer } from './ExampleInteractionViewer';
 
 export const SingleDiffSessionContext = React.createContext(null);
@@ -69,11 +44,11 @@ export function useSingleDiffSession() {
 export function ReviewDiff(props) {
   const { diff } = props;
 
-  const { endpointQueries, makeDiffActorHook } = useEndpointDiffSession();
+  const { makeDiffActorHook } = useEndpointDiffSession();
 
   const useDiffActor = makeDiffActorHook(diff.diffHash);
 
-  const { value, context, diffQueries, diffActions } = useDiffActor();
+  const { value, diffQueries, diffActions } = useDiffActor();
 
   useEffect(() => diffActions.showing(), []);
 
@@ -97,7 +72,7 @@ export function DiffSummaryRegion(props) {
   const { endpointActions } = useEndpointDiffSession();
   const [expandExample, setExpandExample] = useState(false);
 
-  const { diff, diffRef, diffQueries, diffActions } = useSingleDiffSession();
+  const { diff, diffQueries, diffActions } = useSingleDiffSession();
   const status = diffQueries.status();
 
   const isLoading = !status.ready;

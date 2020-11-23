@@ -1,15 +1,8 @@
 import { InteractiveSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
-import { IAllChanges, IChanges } from '../hooks/session-hook';
+import { IAllChanges } from '../hooks/session-hook';
 import { spawn, Thread, Worker } from 'threads';
-import {
-  Facade,
-  JsonHelper,
-  opticEngine,
-  OpticIds,
-  RequestsCommands,
-  RfcCommandContext,
-} from '@useoptic/domain';
+import { OpticIds, RequestsCommands } from '@useoptic/domain';
 import uuidv4 from 'uuid/v4';
 import { resolvePath } from '../../components/utilities/PathUtilities';
 import { batchCommandHandler } from '../../components/utilities/BatchCommandHandler';

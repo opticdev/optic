@@ -1,4 +1,4 @@
-import { DescribeEvent, RegisteredEvent } from '../interfaces/RegisterEvent';
+import { DescribeEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
 // @ts-ignore
 import * as Joi from '@hapi/joi';
@@ -97,11 +97,8 @@ type SuggestionDisplayedProperties = Joi.extractType<
 export const SuggestionDisplayed = DescribeEvent<SuggestionDisplayedProperties>(
   Events.SuggestionDisplayed,
   SuggestionDisplayedSchema,
-  (props) =>
-    `Summary: '${props.suggestion}' `
+  (props) => `Summary: '${props.suggestion}' `
 );
-
-
 
 const SuggestionAcceptedSchema = Joi.object({
   captureId: Joi.string().required(),
@@ -149,9 +146,7 @@ const ShowCommitCardSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
-type ShowCommitCardProperties = Joi.extractType<
-  typeof ShowCommitCardSchema
->;
+type ShowCommitCardProperties = Joi.extractType<typeof ShowCommitCardSchema>;
 export const ShowCommitCard = DescribeEvent<ShowCommitCardProperties>(
   Events.ShowCommitCard,
   ShowCommitCardSchema,
@@ -194,18 +189,22 @@ const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
 type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
   typeof AddUrlModalIdentifyingPathComponentsSchema
 >;
-export const AddUrlModalIdentifyingPathComponents = DescribeEvent<AddUrlModalIdentifyingPathComponentsProperties>(
+export const AddUrlModalIdentifyingPathComponents = DescribeEvent<
+  AddUrlModalIdentifyingPathComponentsProperties
+>(
   Events.AddUrlModalIdentifyingPathComponents,
   AddUrlModalIdentifyingPathComponentsSchema,
-  (props) => `Currently identifying path components for ${props.method} ${props.path}`
+  (props) =>
+    `Currently identifying path components for ${props.method} ${props.path}`
 );
 
-const ShowInitialDocumentingViewSchema = Joi.object({
-});
+const ShowInitialDocumentingViewSchema = Joi.object({});
 type ShowInitialDocumentingViewProperties = Joi.extractType<
   typeof ShowInitialDocumentingViewSchema
 >;
-export const ShowInitialDocumentingView = DescribeEvent<ShowInitialDocumentingViewProperties>(
+export const ShowInitialDocumentingView = DescribeEvent<
+  ShowInitialDocumentingViewProperties
+>(
   Events.ShowInitialDocumentingView,
   ShowInitialDocumentingViewSchema,
   () => `Showing initial documenting view`
@@ -222,6 +221,5 @@ type UpdateContributionProperties = Joi.extractType<
 export const UpdateContribution = DescribeEvent<UpdateContributionProperties>(
   Events.UpdateContribution,
   UpdateContributionSchema,
-  ({id, purpose, value}) => `Updated ${id} - ${purpose} to be ${value}`
+  ({ id, purpose, value }) => `Updated ${id} - ${purpose} to be ${value}`
 );
-

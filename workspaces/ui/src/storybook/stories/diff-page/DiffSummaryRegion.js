@@ -192,7 +192,7 @@ export function DiffSummaryRegion(props) {
             <div style={{ marginTop: 5 }}>
               Traffic observed from tasks{' '}
               {tasks
-                .map((i) => <Code>{i}</Code>)
+                .map((i, index) => <Code key={index}>{i}</Code>)
                 .reduce((prev, curr) => [prev, ', ', curr])}
             </div>
           </div>
@@ -208,6 +208,7 @@ export function DiffSummaryRegion(props) {
                 {suggestions.map((suggestion, index) => {
                   return (
                     <FormControlLabel
+                      key={index}
                       value={suggestion.id}
                       control={<Radio size="small" />}
                       label={
@@ -241,7 +242,7 @@ export function DiffSummaryRegion(props) {
               {diffs
                 .map((i) => i.oneWordName)
                 .map((diff, index) => (
-                  <DiffTab label={diff} value={diff} />
+                  <DiffTab key={index} label={diff} value={diff} />
                 ))}
             </DiffTabs>
             <div style={{ flex: 1 }} />

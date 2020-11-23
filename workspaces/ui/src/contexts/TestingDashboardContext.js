@@ -1,11 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { TestingServiceError } from '../services/testing';
+import React, { useContext, useEffect, useReducer, useRef } from 'react';
 
 const TestingDashboardContext = React.createContext(null);
 

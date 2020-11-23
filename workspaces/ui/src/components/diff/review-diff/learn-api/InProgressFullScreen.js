@@ -6,21 +6,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import uuidv4 from 'uuid/v4';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Container } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import {
-  Dark,
-  DocDarkGrey,
-  DocDivider,
-  DocGrey,
-} from '../../../docs/DocConstants';
+import { Dark, DocDarkGrey } from '../../../docs/DocConstants';
 import { LearnAPIPageContext } from './LearnAPIPageContext';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import DoneIcon from '@material-ui/icons/Done';
@@ -31,16 +21,11 @@ import { LearnPaths } from './Learn';
 import { RfcContext } from '../../../../contexts/RfcContext';
 import {
   Facade,
-  lengthScala,
-  mapScala,
   OasProjectionHelper,
   opticEngine,
   RfcCommandContext,
 } from '@useoptic/domain';
 import { useCaptureContext } from '../../../../contexts/CaptureContext';
-import { DiffContext } from '../../v2/DiffContext';
-import { flatten } from '../../v2/DiffPageNew';
-import { withSpecContext } from '../../v2/Finalize';
 import { useServices } from '../../../../contexts/SpecServiceContext';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../../contexts/BaseUrlContext';

@@ -8,38 +8,20 @@ import {
   RemovedRedBackground,
 } from '../../../../theme';
 import {
-  ShapeExpandedContext,
   ShapeRenderContext,
   ShapeRenderStore,
   withShapeRenderContext,
 } from './ShapeRenderContext';
-import {
-  getOrUndefined,
-  getOrUndefinedJson,
-  lengthScala,
-  mapScala,
-  toOption,
-} from '@useoptic/domain';
+import { getOrUndefined, mapScala } from '@useoptic/domain';
 
-import {
-  HiddenItemEllipsis,
-  SymbolColor,
-  Symbols,
-  TypeName,
-  useColor,
-  useShapeViewerStyles,
-} from './styles';
+import { SymbolColor, Symbols, TypeName, useShapeViewerStyles } from './styles';
 import { DepthContext, Indent, IndentIncrement } from './Indent';
 import Paper from '@material-ui/core/Paper';
 import Collapse from '@material-ui/core/Collapse';
 import { RfcContext } from '../../../../contexts/RfcContext';
 import { DESCRIPTION } from '../../../../ContributionKeys';
-import IconButton from '@material-ui/core/IconButton';
 import { LightTooltip } from '../../../tooltips/LightTooltip';
-import {
-  FieldDescriptionMarkdownRender,
-  MarkdownRender,
-} from '../../../docs/DocContribution';
+import { FieldDescriptionMarkdownRender } from '../../../docs/DocContribution';
 import { commandsForUpdatingContribution } from '../../../../engine/routines';
 
 export function ShapeOnlyViewer(props) {
@@ -254,9 +236,11 @@ function FieldDescription({ fieldId }) {
 
   const [editing, _setEditing] = useState(false);
   const setEditing = (condition) => {
-    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') { return; }
+    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') {
+      return;
+    }
     _setEditing(condition);
-  }
+  };
   const [stagedContent, setStagedContent] = useState(description || '');
 
   const handleChange = (e) => setStagedContent(e.target.value);
@@ -295,22 +279,24 @@ function FieldDescription({ fieldId }) {
           />
         </div>
       )}
-      {!description && !editing && process.env.REACT_APP_SPEC_ENABLE_EDITING !== 'no' && (
-        <LightTooltip title="Add Field Description">
-          <DescriptionIcon
-            className={'descriptionButton'}
-            onClick={() => setEditing(true)}
-            style={{
-              width: 15,
-              display: 'none',
-              height: 15,
-              cursor: 'pointer',
-              color: SymbolColor,
-            }}
-            color="primary"
-          />
-        </LightTooltip>
-      )}
+      {!description &&
+        !editing &&
+        process.env.REACT_APP_SPEC_ENABLE_EDITING !== 'no' && (
+          <LightTooltip title="Add Field Description">
+            <DescriptionIcon
+              className={'descriptionButton'}
+              onClick={() => setEditing(true)}
+              style={{
+                width: 15,
+                display: 'none',
+                height: 15,
+                cursor: 'pointer',
+                color: SymbolColor,
+              }}
+              color="primary"
+            />
+          </LightTooltip>
+        )}
     </div>
   );
 }

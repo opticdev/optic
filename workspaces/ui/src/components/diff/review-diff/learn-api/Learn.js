@@ -1,19 +1,12 @@
 import { batchCommandHandler } from '../../../utilities/BatchCommandHandler';
 import { resolvePath } from '../../../utilities/PathUtilities';
-import {
-  DiffResultHelper,
-  getOrUndefined,
-  opticEngine,
-  OpticIds,
-  RequestsCommands,
-} from '@useoptic/domain';
+import { opticEngine, OpticIds, RequestsCommands } from '@useoptic/domain';
 import {
   cleanupPathComponentName,
   pathStringToPathComponents,
 } from '../../v2/AddUrlModal';
 
 const { JsonHelper } = opticEngine.com.useoptic;
-const jsonHelper = JsonHelper();
 
 export function LearnPaths(eventStore, rfcId, currentPathExpressions) {
   const batchHandler = batchCommandHandler(eventStore, rfcId);

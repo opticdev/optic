@@ -6,31 +6,13 @@ import _isEqual from 'lodash.isequal';
 import _get from 'lodash.get';
 import _uniq from 'lodash.uniq';
 
-import {
-  getOrUndefined,
-  getOrUndefinedJson,
-  headOrUndefined,
-  JsonHelper,
-  JsonTrailHelper,
-  lengthScala,
-  mapScala,
-  getJson,
-  toOption,
-} from '@useoptic/domain';
-
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
-import { IChangeType, plain } from '../../../../engine/interfaces/interpretors';
+import { IChangeType } from '../../../../engine/interfaces/interpretors';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { ICopyRender, ICopyRenderSpan } from '../../review-diff/ICopyRender';
+import { ICopyRenderSpan } from '../../review-diff/ICopyRender';
 import CheckIcon from '@material-ui/icons/Check';
-import {
-  AddedDarkGreen,
-  AddedGreen,
-  OpticBlue,
-  OpticBlueReadable,
-  SubtleBlueBackground,
-} from '../../../../theme';
+import { AddedGreen } from '../../../../theme';
 export default function InteractionBodyViewerAllJS({
   diff,
   description,

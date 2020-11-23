@@ -106,6 +106,7 @@ function PathComponentItem(props) {
             if (param && param.isParameter) {
               return true;
             }
+            return false;
           })[0];
 
         return firstMatchingParamName ? firstMatchingParamName.name : '';
@@ -155,7 +156,7 @@ function UrlToPath(props) {
 
   useEffect(() => {
     onAccept(pathComponents);
-  }, []);
+  }, [onAccept]);
 
   function setItemAt(index) {
     return function (newItem) {

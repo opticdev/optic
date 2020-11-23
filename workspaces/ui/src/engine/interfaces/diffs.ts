@@ -5,7 +5,6 @@ import { IInteractionTrail } from './interaction-trail';
 import { IRequestSpecTrail } from './request-spec-trail';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 import keymirror from 'keymirror';
-import { ParsedDiff } from '../parse-diff';
 // Top-level Diffs
 
 export type IDiff =

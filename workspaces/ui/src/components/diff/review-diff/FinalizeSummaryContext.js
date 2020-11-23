@@ -1,13 +1,10 @@
 import React, { useContext, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import { Button, Typography } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import { Stat } from '../v2/CaptureManagerPage';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/core/styles';
 import { StatMini } from './AskFinished';
-import DialogActions from '@material-ui/core/DialogActions';
 import { LightBlueBackground } from '../../../theme';
 
 export const FinalizeSummaryContext = React.createContext(null);

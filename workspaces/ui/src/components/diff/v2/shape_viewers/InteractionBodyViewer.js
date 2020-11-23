@@ -6,17 +6,7 @@ import _isEqual from 'lodash.isequal';
 import _get from 'lodash.get';
 import _uniq from 'lodash.uniq';
 
-import {
-  getOrUndefined,
-  getOrUndefinedJson,
-  headOrUndefined,
-  JsonHelper,
-  JsonTrailHelper,
-  lengthScala,
-  mapScala,
-  getJson,
-  toOption,
-} from '@useoptic/domain';
+import { getOrUndefined, JsonHelper, JsonTrailHelper } from '@useoptic/domain';
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
