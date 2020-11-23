@@ -6,6 +6,7 @@ import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-s
 import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
+import { LoadingReviewPage } from './LoadingPage';
 
 export const DiffSessionContext = React.createContext(null);
 
@@ -89,7 +90,7 @@ export function DiffSessionMachineStore(props) {
   console.log(queries.sessionState());
   return (
     <DiffSessionContext.Provider value={reactContext}>
-      {queries.sessionState() === 'ready' ? children : 'loading'}
+      {queries.sessionState() === 'ready' ? children : <LoadingReviewPage />}
     </DiffSessionContext.Provider>
   );
 }

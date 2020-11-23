@@ -73,6 +73,40 @@ export function CircularDiffProgress(props) {
   );
 }
 
+export function CircularDiffLoaderProgress(props) {
+  const { total, handled } = props;
+  const classes = useStyles();
+  const value = (handled / total) * 100;
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress
+        variant={handled === 0 ? 'indeterminate' : 'static'}
+        value={handled === 0 ? undefined : value}
+        size={90}
+        style={{ color: UpdatedBlueBackground }}
+      />
+      <Box
+        top={0}
+        left={0}
+        bottom={0}
+        right={0}
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          className={classes.labelCounting}
+          style={{ padding: 5 }}
+          variant="caption"
+          component="div"
+          color="textSecondary"
+        >{`${handled}${total > -1 ? '/' + total : ''}`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   label: {
     fontFamily: 'Ubuntu Mono',
