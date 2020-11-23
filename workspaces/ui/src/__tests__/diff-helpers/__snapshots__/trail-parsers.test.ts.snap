@@ -13,7 +13,9 @@ Object {
 
 exports[`accurate spec trail for all diffs 2`] = `
 Object {
-  "inRequest": false,
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
   "inResponse": false,
   "method": "GET",
   "pathId": "path_it2OyjUysW",
@@ -81,7 +83,10 @@ Object {
 exports[`accurate spec trail for all diffs 8`] = `
 Object {
   "inRequest": false,
-  "inResponse": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
   "method": "GET",
   "pathId": "path_AsEexQkVwC",
 }
@@ -89,7 +94,9 @@ Object {
 
 exports[`accurate spec trail for all diffs 9`] = `
 Object {
-  "inRequest": false,
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
   "inResponse": false,
   "method": "POST",
   "pathId": "path_UOIsxzICu5",
@@ -99,7 +106,10 @@ Object {
 exports[`accurate spec trail for all diffs 10`] = `
 Object {
   "inRequest": false,
-  "inResponse": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
   "method": "POST",
   "pathId": "path_UOIsxzICu5",
 }
@@ -107,7 +117,9 @@ Object {
 
 exports[`accurate spec trail for all diffs 11`] = `
 Object {
-  "inRequest": false,
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
   "inResponse": false,
   "method": "GET",
   "pathId": "path_AsEexQkVwC",
@@ -117,7 +129,10 @@ Object {
 exports[`accurate spec trail for all diffs 12`] = `
 Object {
   "inRequest": false,
-  "inResponse": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
   "method": "GET",
   "pathId": "path_it2OyjUysW",
 }
@@ -125,7 +140,9 @@ Object {
 
 exports[`accurate spec trail for all diffs 13`] = `
 Object {
-  "inRequest": false,
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
   "inResponse": false,
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
@@ -135,7 +152,10 @@ Object {
 exports[`accurate spec trail for all diffs 14`] = `
 Object {
   "inRequest": false,
-  "inResponse": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
   "method": "PATCH",
   "pathId": "path_it2OyjUysW",
 }

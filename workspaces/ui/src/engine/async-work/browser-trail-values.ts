@@ -1,10 +1,4 @@
-import {
-  getOrUndefined,
-  JsonHelper,
-  mapScala,
-  opticEngine,
-  ScalaJSHelpers,
-} from '@useoptic/domain';
+import { JsonHelper, opticEngine, ScalaJSHelpers } from '@useoptic/domain';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../interfaces/diffs';
