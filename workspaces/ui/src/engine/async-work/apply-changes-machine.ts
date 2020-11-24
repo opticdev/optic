@@ -200,8 +200,15 @@ export const newApplyChangesMachine = (
           id: 'collecting-commands-from-suggestions',
           src: async (context, event) => {
             const changes = patch.changes;
-            debugger;
-            return Promise.resolve([]);
+            const allCommands = [];
+            changes.forEach((change) => {
+              change.status.forEach((i) => {
+                if (i.isHandled && !i.ignored) {
+                  allCommands.push(...i.approvedSuggestion.commands);
+                }
+              });
+            });
+            return Promise.resolve(allCommands);
           },
           onDone: {
             target: 'runningCommands',
