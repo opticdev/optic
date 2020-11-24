@@ -61,6 +61,7 @@ search_ws() {
 optic_install_dependencies() {
   (
     set -o errexit;
+#    OPTIC_SKIP_PREBUILT_INSTALLS=true yarn install --verbose
     OPTIC_SKIP_PREBUILT_INSTALLS=true yarn install
   )
 }
@@ -173,25 +174,25 @@ optic_compare_diff_engines() {
 
     echo "running rust diff"
     cd "$API_PROJECT_DIR"
-    rm -rf "./.optic/captures/ccc/diffs/*"
+    rm -rfv ./.optic/captures/ccc/diffs/*
     export OPTIC_RUST_DIFF_ENGINE=true
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
     #@ENHANCEMENT instead of api spec, we can manually start/stop the session via the cli-server api
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec &
     sleep 5
     cd "$OPTIC_SRC_DIR"
-    rm -rf ./output-rust
+    rm -rfv ./output-rust
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-rust "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
 
     echo "running scalajs diff"
     cd "$API_PROJECT_DIR"
-    rm -rf "./.optic/captures/ccc/diffs/*"
+    rm -rfv ./.optic/captures/ccc/diffs/*
     export OPTIC_RUST_DIFF_ENGINE=false
     DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
-    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec &
-    sleep 5
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec
+
     cd "$OPTIC_SRC_DIR"
-    rm -rf ./output-scalajs
+    rm -rfv ./output-scalajs
     node ./workspaces/snapshot-tests/build/e2e/index.js ./output-scalajs "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
 
     echo "comparing..."
@@ -260,7 +261,7 @@ optic_e2e_single() {
       exit
     fi
 
-    rm -rf "$OUTPUT_DIR"
+    rm -rfv "$OUTPUT_DIR"
     mkdir -p "$OUTPUT_DIR"
 
     jq -r ".events" < "$input" > "$OUTPUT_DIR/input-events.json"
@@ -294,5 +295,70 @@ optic_ci_e2e() {
 
     cat "$OUTPUT_DIR/conversion.log"
     cat "$OUTPUT_DIR/comparison.log"
+  )
+}
+
+optic_ci_standard_streams_regression() {
+  (
+    set -o errexit
+    set -x
+    set -v
+
+    API_PROJECT_DIR=./optic-snapshots
+    mkdir -p "$API_PROJECT_DIR"
+
+    NUM_INTERACTIONS=$1
+    export OPTIC_RUST_DIFF_ENGINE=$2
+
+    OUTPUT_DIR="output/$NUM_INTERACTIONS"
+    mkdir -p "$OUTPUT_DIR"
+
+    optic_example_input_to_capture_with_repetition "$NUM_INTERACTIONS"
+
+    cd "$API_PROJECT_DIR"
+    rm -rfv .optic/captures/ccc/diffs/*
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
+    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec
+    cd "$OPTIC_SRC_DIR"
+    node ./workspaces/snapshot-tests/build/e2e/index.js "$OUTPUT_DIR" "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
+    cat $OUTPUT_DIR/*
+
+    cd "$API_PROJECT_DIR"
+    ls -lah .optic/captures/ccc/diffs/*
+  )
+}
+
+optic_ci_standard_streams_regression__on_failure() {
+  (
+    set -o errexit
+    set -x
+    set -v
+
+    API_PROJECT_DIR=./optic-snapshots
+    cd "$API_PROJECT_DIR"
+    ls -lah .optic/captures/ccc/diffs/*
+    cat .optic/captures/ccc/diffs/**/diff-engine-output.log
+  )
+}
+
+optic_example_input_to_capture_with_repetition() {
+  (
+
+    set -o errexit
+    set -x
+    set -v
+
+    NUM_INTERACTIONS=$1
+
+    cd "$OPTIC_SRC_DIR"
+    CAPTURE_ID=ccc
+    API_PROJECT_DIR=./optic-snapshots
+    INPUT_EVENTS_FILE=./workspaces/snapshot-tests/inputs/events/todo/v0.json
+    INPUT_INTERACTIONS_FILE=./workspaces/snapshot-tests/inputs/interactions/todo/get-todos.json
+
+    API_PROJECT_DIR=./optic-snapshots
+    mkdir -p "$API_PROJECT_DIR"
+
+    node ./workspaces/cli-shared/build/captures/avro/file-system/replicated-interactions-capture-saver.js "$INPUT_EVENTS_FILE" "$INPUT_INTERACTIONS_FILE" "$API_PROJECT_DIR" "$CAPTURE_ID" "$NUM_INTERACTIONS"
   )
 }
