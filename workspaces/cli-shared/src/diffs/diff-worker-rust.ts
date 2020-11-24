@@ -5,7 +5,6 @@ import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,
 } from '../captures/avro/file-system/interaction-iterator';
-import { ScalaJSHelpers } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import lockfile from 'proper-lockfile';
@@ -160,7 +159,9 @@ export class DiffWorkerRust {
       await fs.ensureDir(diffOutputPaths.base);
 
       const interactionsStream = chain([
-        Readable.from(interactionIterator),
+        Readable.from(interactionIterator, {
+          objectMode: true,
+        }),
         (item) => {
           skippedInteractionsCounter = item.skippedInteractionsCounter;
           diffedInteractionsCounter = item.diffedInteractionsCounter;
@@ -204,8 +205,19 @@ export class DiffWorkerRust {
       }
       interactionsStream.pipe(fork(processStreams));
       diffEngine.output.pipe(diffsSink);
-      diffEngine.error.pipe(process.stderr);
 
+      // consume diffEngine's stderr:
+      const diffEngineLogFilePath = path.join(
+        diffOutputPaths.base,
+        'diff-engine-output.log'
+      );
+      const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
+      diffEngine.error.pipe(diffEngineLog);
+
+      // provide diffEngine's stdin:
+      interactionsStream.pipe(diffEngine.input);
+
+      // write initial output
       await Promise.all([
         safeWriteJson(diffOutputPaths.stats, {
           diffedInteractionsCounter: diffedInteractionsCounter.toString(),
@@ -215,8 +227,10 @@ export class DiffWorkerRust {
         safeWriteJson(diffOutputPaths.undocumentedUrls, []),
       ]);
 
-      reportProgress(); // initial notification to indicate we've started without issue
+      // initial notification to indicate we've started without issue
+      reportProgress();
     } catch (e) {
+      console.error(e);
       reportProgress.cancel();
       notifyParentOfError(e);
     }
