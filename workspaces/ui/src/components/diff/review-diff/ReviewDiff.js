@@ -167,7 +167,7 @@ export function DiffSummaryRegion(props) {
             onClick={diffActions.unstage}
             style={{ fontSize: 10, fontWeight: 800 }}
           >
-            Unstage
+            Undo
           </Button>
         )}
       </div>
