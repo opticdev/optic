@@ -57,7 +57,6 @@ export function AskFinished(props) {
   useEffect(() => {
     async function saveEvents() {
       const { updatedEvents } = state.context;
-      debugger;
       setSummary({
         oasStats: state.context.oasStats,
         newEndpoints: patch.added.length,
@@ -73,6 +72,8 @@ export function AskFinished(props) {
   }, [isComplete]);
 
   const start = () => send({ type: 'START' });
+  const updateCommitMessage = (message) =>
+    send({ type: 'UPDATE_COMMIT_MESSAGE', message });
 
   return (
     <Dialog
@@ -121,7 +122,13 @@ export function AskFinished(props) {
 
         {state.matches('staged') && (
           <Box style={{ padding: 12, width: '100%' }}>
-            <TextField multiline fullWidth label="Describe your changes..." />
+            <TextField
+              multiline
+              fullWidth
+              label="Describe your changes..."
+              value={state.context.commitMessage}
+              onChange={(e) => updateCommitMessage(e.target.value)}
+            />
             <div style={{ marginTop: 20 }}>
               <RenderPatch patch={patch} />
             </div>

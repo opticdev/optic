@@ -2,7 +2,12 @@ import { InteractiveSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges } from '../hooks/session-hook';
 import { spawn, Thread, Worker } from 'threads';
-import { OpticIds, RequestsCommands } from '@useoptic/domain';
+import {
+  commandToJs,
+  opticEngine,
+  OpticIds,
+  RequestsCommands,
+} from '@useoptic/domain';
 import uuidv4 from 'uuid/v4';
 import { resolvePath } from '../../components/utilities/PathUtilities';
 import { batchCommandHandler } from '../../components/utilities/BatchCommandHandler';
@@ -10,6 +15,7 @@ import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IOasStats } from './oas-preview-machine';
+import { serializeCommands } from '../interpretors/spec-change-dsl';
 
 export interface ApplyChangesStateSchema {
   states: {
@@ -27,9 +33,11 @@ export interface ApplyChangesStateSchema {
 // The events that the machine handles
 export type ApplyChangesEvent =
   | { type: 'START' }
+  | { type: 'UPDATE_COMMIT_MESSAGE'; message: string }
   | { type: 'INCREMENT_BODIES_PROGRESS'; methodAndPath: string };
 
 export interface ApplyChangesContext {
+  commitMessage: string;
   newPaths: {
     commands: any[];
     commandsJS: any[];
@@ -59,6 +67,7 @@ export const newApplyChangesMachine = (
   >({
     id: 'apply-changes',
     context: {
+      commitMessage: '',
       newPaths: { commands: [], commandsJS: [], endpointIds: [] },
       newBodiesProgress: 0,
       newBodiesProgressLastLearned: '',
@@ -71,6 +80,11 @@ export const newApplyChangesMachine = (
     states: {
       staged: {
         on: {
+          UPDATE_COMMIT_MESSAGE: {
+            actions: assign({
+              commitMessage: (_, event) => event.message,
+            }),
+          },
           START: {
             target: 'generatingNewPaths',
           },
@@ -185,12 +199,16 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'collecting-commands-from-suggestions',
           src: async (context, event) => {
-            Promise.resolve([]);
+            const changes = patch.changes;
+            debugger;
+            return Promise.resolve([]);
           },
           onDone: {
             target: 'runningCommands',
             actions: assign({
-              approvedSuggestionsCommands: (context, event) => event.data,
+              approvedSuggestionsCommands: (context, event) => {
+                return event.data;
+              },
             }),
           },
           onError: {
@@ -202,9 +220,36 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'running-commands',
           src: async (context, event) => {
+            const batchId = uuidv4();
+            const {
+              StartBatchCommit,
+              EndBatchCommit,
+            } = opticEngine.com.useoptic.contexts.rfc.Commands;
+
+            // const a = [
+            //   StartBatchCommit(batchId, context.commitMessage),
+            //   EndBatchCommit(batchId),
+            // ];
+            // const s = serializeCommands;
+            //
+            // debugger;
+            // //
+            //
+            // // const a = StartBatchCommit(batchId, context.commitMessage);
+            // // debugger;
+            // // const startBatchCommit = serializeCommands([
+            // //   StartBatchCommit(batchId, context.commitMessage),
+            // // ])[0];
+            // // const endBatchCommit = serializeCommands([
+            // //   commandToJs(EndBatchCommit(batchId)),
+            // // ])[0];
+            // //
+            // // debugger;
+
             const allCommandsToRun = [
               ...context.newPaths.commandsJS,
               ...prepareLearnedBodies(context.newBodiesLearned || []),
+              ...context.approvedSuggestionsCommands,
             ];
 
             const worker = await spawn(
