@@ -62,7 +62,7 @@ function descriptionForNewRegions(
       if (body) {
         return JsonHelper.fromInteractionBodyToJs(body);
       } else {
-        return { asJson: null, asText: null };
+        return { asJson: null, asText: null, noBody: true };
       }
     },
   };
@@ -85,7 +85,7 @@ function descriptionForShapeDiff(
     if (body) {
       return JsonHelper.fromInteractionBodyToJs(body);
     } else {
-      return { asJson: null, asText: null };
+      return { asJson: null, asText: null, noBody: true };
     }
   };
 

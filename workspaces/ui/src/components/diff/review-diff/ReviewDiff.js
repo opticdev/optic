@@ -486,6 +486,7 @@ function IgnoreButton({ selectedPreviewTab, preview, endpointActions }) {
 
   const lastOne = preview.tabs.filter((i) => i.invalid).length === 1;
 
+  console.log('look at me ', selectedPreviewTab);
   return (
     <LightTooltip
       style={{ padding: 0 }}

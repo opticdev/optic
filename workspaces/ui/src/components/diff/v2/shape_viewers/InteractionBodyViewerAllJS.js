@@ -67,7 +67,6 @@ export function Row(props) {
     fieldName,
     fieldValue,
     type,
-
     dispatch,
   } = props;
 
@@ -111,6 +110,7 @@ export function Row(props) {
         <RowFieldName type={type} name={fieldName} />
         <RowSeqIndex type={type} index={seqIndex} />
         <RowValue
+          isRoot={indent === 0}
           type={type}
           value={fieldValue}
           compliant={compliant}
@@ -136,6 +136,7 @@ function RowValue({
   compliant,
   changeDescription,
   trailsAreCorrect,
+  isRoot,
 }) {
   const generalClasses = useShapeViewerStyles();
   const classes = useStyles();
@@ -212,9 +213,12 @@ function RowValue({
   }
 
   if (type === 'string') {
+    const quote = isRoot ? '' : '"';
     return (
       <span className={classNames(classes.stringContent, 'fs-exclude')}>
-        "{value}"
+        {quote}
+        {value}
+        {quote}
       </span>
     );
   }
@@ -531,7 +535,7 @@ const useStyles = makeStyles((theme) => ({
 
 function createInitialState({ diff, jsonTrails, description, body }) {
   const diffTrails = jsonTrails.map(toCommonJsPath);
-  const shape = body.asJson;
+  const shape = !body.noBody ? body.asJson || body.asText : undefined;
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 

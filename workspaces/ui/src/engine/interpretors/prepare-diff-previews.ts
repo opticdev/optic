@@ -15,7 +15,7 @@ import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
 } from './ignores/ignore-rule';
-import { ICoreShapeKinds } from '../interfaces/interfaces';
+import { ICoreShapeKinds, IParsedLocation } from '../interfaces/interfaces';
 import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 
 export function initialTitleForNewRegions(
@@ -46,8 +46,7 @@ export async function prepareNewRegionDiffSuggestionPreview(
 
   const location = diff.location(services.rfcBaseState);
 
-  const name =
-    location.inRequest?.contentType || location.inResponse?.contentType;
+  const name = nameForLocation(location);
 
   const tab1: IInteractionPreviewTab = {
     title: name,
@@ -68,6 +67,14 @@ export async function prepareNewRegionDiffSuggestionPreview(
       services.rfcBaseState
     ),
   };
+}
+
+function nameForLocation(location: IParsedLocation): string {
+  if (location.inRequest) {
+    return location.inRequest.contentType || 'No Body';
+  } else if (location.inResponse) {
+    return location.inResponse.contentType || 'No Body';
+  }
 }
 
 export async function prepareShapeDiffSuggestionPreview(

@@ -29,6 +29,7 @@ export interface IInteractionPreviewTab {
 interface BodyPreview {
   asJson: any | null;
   asText: any | null;
+  noBody: boolean;
 }
 export interface IDiffDescription {
   title: ICopy[];
