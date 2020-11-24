@@ -14,7 +14,6 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
-use std::time::Duration;
 
 fn main() {
   let cli = App::new("Optic Diff engine")
@@ -76,9 +75,8 @@ fn main() {
   runtime_builder.threaded_scheduler();
   if let Some(core_threads) = core_threads_count {
     runtime_builder
-      .max_threads(1)
-      .core_threads(1)
-    ;
+      .max_threads((core_threads as usize) * 2)
+      .core_threads(core_threads as usize);
   }
 
   let mut runtime = runtime_builder.build().unwrap();
@@ -90,7 +88,10 @@ fn main() {
     let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
 
     // set amount of diff tasks queued to be proportional to the amount of threads we'll be using
-    let diff_queue_size = 1;
+    let diff_queue_size = cmp::min(
+      num_cpus::get(),
+      core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+    ) * 4;
     eprintln!("using diff size {}", diff_queue_size);
     let diff_scheduling_permits = Arc::new(Semaphore::new(diff_queue_size));
 
