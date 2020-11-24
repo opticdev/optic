@@ -62,13 +62,6 @@ export function ReviewEndpointInner(props) {
           {...i}
         />
       ))}
-      {grouped.responses.map((i, index) => (
-        <EndpointGrouping
-          handled={handled}
-          key={'diff-responses' + index}
-          {...i}
-        />
-      ))}
 
       {grouped.newRequests.map((i, index) => (
         <EndpointGrouping
@@ -77,6 +70,15 @@ export function ReviewEndpointInner(props) {
           {...i}
         />
       ))}
+
+      {grouped.responses.map((i, index) => (
+        <EndpointGrouping
+          handled={handled}
+          key={'diff-responses' + index}
+          {...i}
+        />
+      ))}
+
       {grouped.newResponses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
@@ -106,14 +108,14 @@ export function EndpointGrouping(props) {
       <Divider />
       <Paper
         className={classes.sectionHeader}
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => !noDiffs && setExpanded(!expanded)}
         square
         elevation={0}
       >
         <IconButton
           disabled={noDiffs}
           size="small"
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => !noDiffs && setExpanded(!expanded)}
           style={{ height: 22, width: 22 }}
         >
           {expanded ? (
@@ -122,7 +124,9 @@ export function EndpointGrouping(props) {
             <ArrowRightIcon style={{ height: 22, width: 22 }} />
           )}
         </IconButton>
-        <LocationBreadcumbX location={props.location} />
+        <div style={{ opacity: noDiffs ? 0.5 : 1 }}>
+          <LocationBreadcumbX location={props.location} />
+        </div>
         <div style={{ flex: 1 }} />
         <div
           style={{

@@ -27,10 +27,6 @@ test('can async work properly', async (done) => {
 
   const running = interpret(machine);
 
-  running.onTransition((state) => {
-    console.log(state.value);
-    // console.log(state.context);
-  });
   running.start();
   running.send('START');
 

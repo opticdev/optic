@@ -73,7 +73,9 @@ function nameForLocation(location: IParsedLocation): string {
   if (location.inRequest) {
     return location.inRequest.contentType || 'No Body';
   } else if (location.inResponse) {
-    return location.inResponse.contentType || 'No Body';
+    return `${location.inResponse.statusCode} with ${
+      location.inResponse.contentType || 'No Body'
+    }`;
   }
 }
 
