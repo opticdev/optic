@@ -142,16 +142,18 @@ export function useDiffSessionMachine(
           diffCount: diffCount || 0,
         });
 
+        const allEndpoints = services.rfcBaseState.queries.endpoints();
+
         const diffEndpoints = context.endpoints;
         return {
-          endpointsNoDiff: services.rfcBaseState.queries
-            .endpoints()
+          endpointsNoDiff: allEndpoints
             .filter((i) =>
               diffEndpoints.find(
                 (d) => d.pathId === i.pathId && d.method === i.pathId
               )
             )
             .map(makeEndpoint),
+          totalEndpoints: allEndpoints.length,
           endpointsWithDiffs: context.endpoints.map((i) =>
             makeEndpoint({ ...i })
           ),

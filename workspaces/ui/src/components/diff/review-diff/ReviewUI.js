@@ -10,26 +10,24 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from '@material-ui/core/Box';
-import Menu from '@material-ui/core/Menu';
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Code } from '../../../storybook/stories/diff-page/DiffSummaryRegion';
 import { PathAndMethodMono } from '../v2/PathAndMethod';
 import { DocDarkGrey, DocGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
 import { CircularDiffProgress } from '../../../storybook/stories/diff-page/CircularDiffProgress';
 import { ReviewUndocumentedUrls } from './learn-api/ReviewUndocumented';
-import Collapse from '@material-ui/core/Collapse';
 import { AskFinished } from './AskFinished';
 import Helmet from 'react-helmet';
 import { ReviewBatchSelect } from './ReviewBatchSelect';
 import Fade from '@material-ui/core/Fade';
+import { useCaptureContext } from '../../../contexts/CaptureContext';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
 
   const results = queries.endpointSections();
+  const { processed, skipped } = useCaptureContext();
+
   const selected = queries.selectedEndpoint();
   const shouldShowUndocumented = queries.showingUndocumented();
   const selectedEndpointHandled = queries.selectedEndpointHandled();
@@ -68,6 +66,8 @@ export function ReviewUI() {
     }
   }, [handledAll.handled, handledAll.total]);
 
+  const noDiffs = handledAll.total === 0;
+
   const NiceSubheader = ({ title, count }) =>
     count > 1 ? (
       <div className={classes.subheader}>
@@ -84,6 +84,7 @@ export function ReviewUI() {
       >
         <Paper square className={classes.left} elevation={0}>
           <DiffInfoCard
+            noDiffs={noDiffs}
             {...handledAll}
             resetAll={resetAll}
             setAskFinish={setAskFinish}
@@ -106,6 +107,17 @@ export function ReviewUI() {
                 selected={selected}
               />
             ))}
+            {noDiffs && (
+              <div className={classes.noDiff}>
+                <Typography variant="subtitle2" color="textSecondary">
+                  Observed {parseInt(processed) + parseInt(skipped)} requests
+                </Typography>
+                <Typography variant="subtitle2" color="textSecondary">
+                  No diffs for {results.totalEndpoints} documented endpoint
+                  {results.totalEndpoints === 1 ? '' : 's'}
+                </Typography>
+              </div>
+            )}
           </List>
           <Divider />
         </Paper>
@@ -122,6 +134,7 @@ export function ReviewUI() {
               )}
             />
           )}
+          {noDiffs && <NoDiffs />}
         </div>
       </Page.Body>
     </Page>
@@ -251,7 +264,7 @@ export function UndocumentedCard(props) {
 
 const DiffInfoCard = (props) => {
   const classes = useStyles();
-  const { total, handled, setAskFinish, resetAll } = props;
+  const { total, noDiffs, handled, setAskFinish, resetAll } = props;
 
   const { queries } = useDiffSession();
 
@@ -273,14 +286,14 @@ const DiffInfoCard = (props) => {
         }`}</title>
       </Helmet>
       <ReviewBatchSelect />
-      <Handled {...{ total, handled, setAskFinish, resetAll }} />
+      <Handled {...{ total, handled, noDiffs, setAskFinish, resetAll }} />
       <Divider />
     </Paper>
   );
 };
 
 export function Handled(props) {
-  const { total, handled, setAskFinish, resetAll } = props;
+  const { total, handled, noDiffs, setAskFinish, resetAll } = props;
   return (
     <Box
       flexDirection="column"
@@ -308,6 +321,7 @@ export function Handled(props) {
             size="small"
             style={{ fontSize: 10, minWidth: 'auto' }}
             color="primary"
+            disabled={noDiffs}
             onClick={resetAll}
           >
             Reset
@@ -330,6 +344,15 @@ export function Handled(props) {
         </Box>
       </div>
     </Box>
+  );
+}
+
+function NoDiffs() {
+  const classes = useStyles();
+  return (
+    <div className={classes.fullPage}>
+      <img src={'/no-diffs.svg'} height={50} />
+    </div>
   );
 }
 
@@ -420,5 +443,16 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 1,
     maxWidth: 260,
     fontSize: 12,
+  },
+  fullPage: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+  },
+  noDiff: {
+    padding: 15,
+    textAlign: 'center',
+    paddingTop: 30,
   },
 }));
