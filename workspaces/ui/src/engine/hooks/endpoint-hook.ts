@@ -41,7 +41,6 @@ export function useEndpointDiffMachine(
 
   if (!endpointDescriptor) {
     const a = { method, pathId };
-    debugger;
   }
 
   function createActions() {

@@ -30,6 +30,11 @@ export function ReviewUI() {
 
   const selected = queries.selectedEndpoint();
 
+  useEffect(() => {
+    console.timeEnd('selected clicked');
+    console.log('selected ', selected);
+  }, [selected]);
+
   const shouldShowUndocumented = queries.showingUndocumented();
   const selectedEndpointHandled = queries.selectedEndpointHandled();
   const handled = queries.handledByEndpoint();
@@ -165,7 +170,10 @@ export function EndpointDetailCard(props) {
       selected={
         selected && selected.pathId === pathId && selected.method === method
       }
-      onClick={() => actions.selectEndpoint(pathId, method)}
+      onClick={() => {
+        console.time('selected clicked');
+        actions.selectEndpoint(pathId, method);
+      }}
       disableGutters
       divider={true}
     >

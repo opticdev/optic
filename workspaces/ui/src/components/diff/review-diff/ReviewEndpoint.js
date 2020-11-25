@@ -48,16 +48,23 @@ export function ReviewEndpoint(props) {
 }
 
 export function ReviewEndpointInner(props) {
-  const { endpointQueries, pathId, method } = useEndpointDiffSession();
+  const {
+    endpointQueries,
+    pathId,
+    method,
+    makeDiffActorHook,
+  } = useEndpointDiffSession();
 
   const handled = endpointQueries.handledByDiffHash();
 
   const grouped = useMemo(() => endpointQueries.groupDiffsByLocation(), []);
+
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
       {grouped.requests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
+          makeDiffActorHook={makeDiffActorHook}
           key={'diff-requests' + index}
           {...i}
         />
@@ -66,6 +73,7 @@ export function ReviewEndpointInner(props) {
       {grouped.newRequests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
+          makeDiffActorHook={makeDiffActorHook}
           key={'diff-new-requests' + index}
           {...i}
         />
@@ -74,6 +82,7 @@ export function ReviewEndpointInner(props) {
       {grouped.responses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
+          makeDiffActorHook={makeDiffActorHook}
           key={'diff-responses' + index}
           {...i}
         />
@@ -82,6 +91,7 @@ export function ReviewEndpointInner(props) {
       {grouped.newResponses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
+          makeDiffActorHook={makeDiffActorHook}
           key={'diff-new-responses' + index}
           {...i}
         />
@@ -97,6 +107,7 @@ export function EndpointGrouping(props) {
   const [expanded, setExpanded] = useState(!noDiffs);
 
   const handledByDiffHash = props.handled;
+  const { makeDiffActorHook } = props;
 
   const handledCount = props.diffs.filter(
     (i) => !!handledByDiffHash[i.diffParsed.diffHash]
@@ -151,7 +162,13 @@ export function EndpointGrouping(props) {
       <Collapse in={expanded && !noDiffs}>
         <div className={classes.diffContainer}>
           {props.diffs.map((i) => (
-            <ReviewDiff key={i.diffParsed.diffHash} diff={i.diffParsed} />
+            <ReviewDiff
+              key={i.diffParsed.diffHash}
+              diff={i.diffParsed}
+              makeActor={() => {
+                return makeDiffActorHook(i.diffParsed.diffHash);
+              }}
+            />
           ))}
         </div>
       </Collapse>

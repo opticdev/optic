@@ -18,6 +18,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import equals from 'lodash.isequal';
 import Collapse from '@material-ui/core/Collapse';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import { makeStyles } from '@material-ui/core/styles';
@@ -42,28 +43,48 @@ export function useSingleDiffSession() {
 }
 
 export function ReviewDiff(props) {
-  const { diff } = props;
+  const { diff, makeActor } = props;
 
-  const { makeDiffActorHook } = useEndpointDiffSession();
+  const useDiffActor = useMemo(() => makeActor(), [diff.diffHash]);
 
-  const useDiffActor = makeDiffActorHook(diff.diffHash);
+  const { value, context, diffQueries, diffActions } = useDiffActor();
 
-  const { value, diffQueries, diffActions } = useDiffActor();
+  useMemo(() => {
+    if (value === 'unfocused') diffActions.showing();
+  }, [value]);
 
-  useEffect(() => diffActions.showing(), []);
+  const { endpointActions } = useEndpointDiffSession();
 
   const reactContext = {
     diff,
     value,
     diffQueries,
     diffActions,
+    endpointActions,
   };
 
   return (
     <SingleDiffSessionContext.Provider value={reactContext}>
-      <DiffSummaryRegion />
+      <DiffSummaryRegionWrapper
+        key={diff.diffHash}
+        value={value}
+        context={context}
+      />
     </SingleDiffSessionContext.Provider>
   );
+}
+
+class DiffSummaryRegionWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return (
+      !equals(nextProps.value, this.props.value) ||
+      !equals(nextProps.context, this.props.context)
+    );
+  }
+
+  render() {
+    return <DiffSummaryRegion />;
+  }
 }
 
 export function DiffSummaryRegion(props) {

@@ -187,6 +187,7 @@ export const newInteractiveEndpointSessionMachine = (
                 };
                 ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
                 ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
+                console.timeEnd('add ignore');
               },
             ],
           },
