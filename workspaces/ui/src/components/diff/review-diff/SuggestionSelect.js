@@ -36,7 +36,7 @@ export function SuggestionSelect(props) {
       <div style={{ display: 'flex' }}>
         <Card className={classes.bounded} elevation={0}>
           <div style={{ paddingTop: 2, paddingBottom: 2, flexShrink: 1 }}>
-            <div className={showAll && classes.collapseHeight}>
+            <div className={showAll ? classes.collapseHeight : undefined}>
               <SelectSuggestionItem
                 copy={suggestions[selectedSuggestionIndex].action.activeTense}
               />

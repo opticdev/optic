@@ -101,8 +101,6 @@ export async function prepareShapeDiffSuggestionPreview(
     ignoreRules
   );
 
-  console.log('ignored', ignoreRules);
-
   const { suggestions, previewTabs, overrideTitle } = interpretShapeDiffs(
     diff,
     trailsWithIgnored,

@@ -29,6 +29,7 @@ export function ReviewUI() {
   const { processed, skipped } = useCaptureContext();
 
   const selected = queries.selectedEndpoint();
+
   const shouldShowUndocumented = queries.showingUndocumented();
   const selectedEndpointHandled = queries.selectedEndpointHandled();
   const handled = queries.handledByEndpoint();

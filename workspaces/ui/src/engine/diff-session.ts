@@ -227,14 +227,14 @@ export const newDiffSessionSessionMachine = (
                 }),
                 showingUndocumented: (ctx, event) => false,
               }),
-              (context) => {
-                const endpointMachine = context.endpoints.find(
-                  (i) =>
-                    i.pathId === context.focus.pathId &&
-                    i.method === context.focus.method
-                )!.ref;
-                send({ type: 'PREPARE' }, { to: endpointMachine }); //warm it up
-              },
+              // (context) => {
+              //   const endpointMachine = context.endpoints.find(
+              //     (i) =>
+              //       i.pathId === context.focus.pathId &&
+              //       i.method === context.focus.method
+              //   )!.ref;
+              //   send({ type: 'PREPARE' }, { to: endpointMachine }); //warm it up
+              // },
             ],
           },
         },

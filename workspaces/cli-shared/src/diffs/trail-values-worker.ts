@@ -43,7 +43,7 @@ export function getTrailWorkerOutputPaths(values: {
     captureBaseDirectory,
     captureId,
     'trail-values',
-    // sha1(serializedDiff),
+    sha1(serializedDiff),
     pathId,
     method
   );

@@ -123,7 +123,7 @@ export function DiffSummaryRegion(props) {
       </div>
       <div style={{ flex: 1 }} />
 
-      <Fade in={suggestions.length}>
+      <Fade in={suggestions.length > 0}>
         <div className={classes.suggestionWrapper}>
           <SuggestionSelect
             suggestions={suggestions}
@@ -195,20 +195,23 @@ export function DiffSummaryRegion(props) {
               >
                 {isNewRegion ? 'new body: ' : 'observed as: '}
               </Typography>
-              <DiffTabs
-                value={previewTab}
-                style={{ marginBottom: 5 }}
-                onChange={(e, newValue) => setPreviewTab(newValue)}
-              >
-                {previewTabs.map((tab, index) => (
-                  <DiffTab
-                    label={tab.title}
-                    value={tab.title}
-                    invalid={tab.invalid}
-                    selected={previewTab === tab.title}
-                  />
-                ))}
-              </DiffTabs>
+              {previewTab && (
+                <DiffTabs
+                  value={previewTab}
+                  style={{ marginBottom: 5 }}
+                  onChange={(e, newValue) => setPreviewTab(newValue)}
+                >
+                  {previewTabs.map((tab, index) => (
+                    <DiffTab
+                      key={index}
+                      label={tab.title}
+                      value={tab.title}
+                      invalid={tab.invalid}
+                      selected={previewTab === tab.title}
+                    />
+                  ))}
+                </DiffTabs>
+              )}
               <div style={{ flex: 1 }} />
               <IgnoreButton
                 {...{ endpointActions, preview, selectedPreviewTab }}
@@ -367,7 +370,11 @@ const DiffTab = withStyles((theme) => {
   return (
     <Tab
       disableRipple
-      {...props}
+      fullWidth={props.fullWidth}
+      value={props.value}
+      onChange={props.onChange}
+      selected={props.selected}
+      classes={{ root: props.classes.root }}
       label={
         <div
           style={{
