@@ -23,7 +23,7 @@ export interface IInteractionPreviewTab {
   assertion: ICopy[];
   jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
   interactionPointers: string[];
-  ignoreRule?: IgnoreRule;
+  ignoreRule: IgnoreRule;
 }
 
 interface BodyPreview {

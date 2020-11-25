@@ -66,7 +66,7 @@ const createNewDiffMachine = <Context>(
     services: InteractiveSessionConfig,
     context: DiffContext<Context>
   ) => Promise<{ preview: IDiffSuggestionPreview; results: Context }>,
-  realodPreview: (
+  reloadPreview: (
     id: string,
     diff: ParsedDiff,
     services: InteractiveSessionConfig,
@@ -140,7 +140,7 @@ const createNewDiffMachine = <Context>(
             invoke: {
               id: 'reloading-preview',
               src: async (context, event) =>
-                await realodPreview(id, diff, services, context),
+                await reloadPreview(id, diff, services, context),
               onDone: {
                 target: 'unhandled',
                 actions: assign({
@@ -216,7 +216,8 @@ export const createNewRegionMachine = (
       const preview = await prepareNewRegionDiffSuggestionPreview(
         parsedDiff,
         services,
-        context.results!
+        context.results!,
+        context.relevantIgnoreRules
       );
       return { preview, results: context.results! };
     },
@@ -229,7 +230,8 @@ export const createNewRegionMachine = (
       return await prepareNewRegionDiffSuggestionPreview(
         parsedDiff,
         services,
-        context.results!
+        context.results!,
+        context.relevantIgnoreRules
       );
     }
   );

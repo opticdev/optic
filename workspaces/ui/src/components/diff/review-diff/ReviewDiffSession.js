@@ -87,7 +87,6 @@ export function DiffSessionMachineStore(props) {
     },
   };
 
-  console.log(queries.sessionState());
   return (
     <DiffSessionContext.Provider value={reactContext}>
       {queries.sessionState() === 'ready' ? children : <LoadingReviewPage />}

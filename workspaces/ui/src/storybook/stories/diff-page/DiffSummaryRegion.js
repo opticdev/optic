@@ -170,7 +170,7 @@ export function DiffSummaryRegion(props) {
       </Typography>
       <div style={{ flex: 1 }} />
       <Button size="small" color="default" onClick={() => setApproved(false)}>
-        Unstage
+        Undo
       </Button>
     </>
   );

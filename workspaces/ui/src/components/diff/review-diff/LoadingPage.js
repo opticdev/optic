@@ -9,6 +9,8 @@ import {
 import { Typography } from '@material-ui/core';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { useServices } from '../../../contexts/SpecServiceContext';
+
+const pJson = require('../../../../package.json');
 export function LoadingReviewPage() {
   const classes = useStyles();
 
@@ -24,8 +26,6 @@ export function LoadingReviewPage() {
   const cursor = parseInt(processed) + parseInt(skipped);
 
   const total = status && status.interactionsCount;
-
-  console.log({ completed, skipped, processed, status });
 
   return (
     <Page>
@@ -51,10 +51,7 @@ export function LoadingReviewPage() {
               Running Diff...
             </Typography>
             <Typography variant="caption" style={{ fontWeight: 200 }}>
-              Rust Diff Engine v8.15.32
-            </Typography>
-            <Typography variant="caption" style={{ fontWeight: 200 }}>
-              Rust Diff Engine v8.15.32
+              Diff Engine v{pJson.version}
             </Typography>
           </div>
         </Paper>
@@ -71,8 +68,13 @@ const useStyles = makeStyles((theme) => ({
     // border: '1px solid #e2e2e2',
   },
   rightRegion: {
-    paddingLeft: 12,
+    paddingLeft: 22,
+    paddingRight: 22,
     marginLeft: 12,
     borderLeft: '1px solid #e2e2e2',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 }));

@@ -32,6 +32,10 @@ export function shapeChangeInterpretor(
         assertion: [plain('expected'), code(expected.shapeName())],
         invalid: additionalKindsObserved.includes(shapeGrouping.kind),
         jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
+        ignoreRule: {
+          diffHash: shapeDiff.diffHash(),
+          examplesOfCoreShapeKinds: shapeGrouping.kind,
+        },
       };
     });
 

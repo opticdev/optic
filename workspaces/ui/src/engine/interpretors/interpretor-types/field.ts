@@ -323,6 +323,10 @@ class FieldShapeInterpretationHelper {
           title: shapeGrouping.label,
           allowsExpand: true,
           invalid: true,
+          ignoreRule: {
+            diffHash: this.diffHash,
+            examplesOfCoreShapeKinds: shapeGrouping.kind,
+          },
           assertion: [plain('undocumented field'), code(key)],
           jsonTrailsByInteractions: shapeGrouping.jsonTrailsByInteractions,
         };

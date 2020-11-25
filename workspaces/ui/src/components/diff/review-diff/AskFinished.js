@@ -41,9 +41,15 @@ export function AskFinished(props) {
   const classes = useStyles();
 
   const patch = queries.endpointsWithSuggestions();
+
   const endpointsWithChanges = patch.changes.filter((i) =>
-    i.status.some((i) => i.isHandled)
+    i.status.some((i) => i.isHandled && !i.ignored)
   );
+
+  const allEmpty =
+    endpointsWithChanges.length === 0 &&
+    patch.added.length === 0 &&
+    patch.endpointsToDocument.length === 0;
 
   const [state, send] = useMachine(
     newApplyChangesMachine(patch, services, clientSessionId, clientId)
@@ -250,11 +256,21 @@ function RenderPatch(props) {
   const { queries, actions } = useDiffSession();
 
   const withChanges = patch.changes.filter((i) =>
-    i.status.some((i) => i.isHandled)
+    i.status.some((i) => i.isHandled && !i.ignored)
   );
+
+  const allEmpty =
+    withChanges.length === 0 &&
+    patch.added.length === 0 &&
+    patch.endpointsToDocument.length === 0;
 
   return (
     <div>
+      {allEmpty && (
+        <Typography variant="subtitle2" color="secondary">
+          No Changes Staged
+        </Typography>
+      )}
       {patch.added.map((i) => {
         return (
           <div className={classes.patchRow}>

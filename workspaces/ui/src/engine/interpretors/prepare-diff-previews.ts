@@ -38,13 +38,17 @@ export function initialTitleForNewRegions(
 export async function prepareNewRegionDiffSuggestionPreview(
   diff: ParsedDiff,
   services: InteractiveSessionConfig,
-  learnedBodies: ILearnedBodies
+  learnedBodies: ILearnedBodies,
+  ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
   const firstInteractionPointer = diff.interactions[0];
 
   await services.captureService.loadInteraction(firstInteractionPointer);
 
   const location = diff.location(services.rfcBaseState);
+
+  const wasIgnored =
+    ignoreRules.length === 1 && ignoreRules[0].diffHash === diff.diffHash;
 
   const name = nameForLocation(location);
 
@@ -55,11 +59,16 @@ export async function prepareNewRegionDiffSuggestionPreview(
     invalid: true,
     assertion: [],
     jsonTrailsByInteractions: {},
+    ignoreRule: {
+      diffHash: diff.diffHash,
+      newBodyInRequest: location.inRequest,
+      newBodyInResponse: location.inResponse,
+    },
   };
 
   return {
     for: 'region',
-    tabs: [tab1],
+    tabs: !wasIgnored ? [tab1] : [],
     diffDescription: descriptionForDiffs(diff, services.rfcBaseState),
     suggestions: newRegionInterpreters(
       diff,
@@ -91,6 +100,8 @@ export async function prepareShapeDiffSuggestionPreview(
     diff.asShapeDiff(services.rfcBaseState).jsonTrail,
     ignoreRules
   );
+
+  console.log('ignored', ignoreRules);
 
   const { suggestions, previewTabs, overrideTitle } = interpretShapeDiffs(
     diff,

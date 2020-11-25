@@ -279,16 +279,18 @@ const DiffInfoCard = (props) => {
   };
 
   return (
-    <Paper elevation={0} square className={classes.info}>
-      <Helmet>
-        <title>{`Review (${handled} / ${total}) diff${
-          total === 1 ? '' : 's'
-        }`}</title>
-      </Helmet>
-      <ReviewBatchSelect />
-      <Handled {...{ total, handled, noDiffs, setAskFinish, resetAll }} />
+    <>
+      <Paper elevation={0} square className={classes.info}>
+        <Helmet>
+          <title>{`Review (${handled} / ${total}) diff${
+            total === 1 ? '' : 's'
+          }`}</title>
+        </Helmet>
+        <ReviewBatchSelect />
+        <Handled {...{ total, handled, noDiffs, setAskFinish, resetAll }} />
+      </Paper>
       <Divider />
-    </Paper>
+    </>
   );
 };
 
