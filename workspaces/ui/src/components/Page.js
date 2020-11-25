@@ -8,8 +8,7 @@ const PageContext = React.createContext(null);
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    overflow: 'hidden',
-    flexGrow: 1,
+    height: '100vh',
   },
   content: ({ padded = true }) => ({
     display: 'flex',

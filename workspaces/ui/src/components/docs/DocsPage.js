@@ -76,13 +76,9 @@ const useStyles = makeStyles((theme) => ({
 export const DocsPage = ({ match, specService }) => {
   const routerPaths = useRouterPaths();
   return (
-    <Page
-      title="Documentation"
-      scrollToTop={true}
-      style={{ overflow: 'scroll' }}
-    >
+    <Page title="Documentation" scrollToTop={true}>
       <Page.Navbar mini={true} />
-      <Page.Body>
+      <Page.Body style={{ height: '100vh', overflow: 'scroll' }}>
         <Switch>
           <Route
             exact

@@ -360,7 +360,6 @@ const useStyles = makeStyles((theme) => ({
   left: {
     minWidth: 350,
     maxWidth: 420,
-    height: '100%',
     background: theme.palette.grey[100],
     overflow: 'scroll',
     display: 'flex',
