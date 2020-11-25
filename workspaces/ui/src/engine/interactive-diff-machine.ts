@@ -100,7 +100,7 @@ const createNewDiffMachine = <Context>(
         invoke: {
           id: 'loading' + id,
           src: async (context, event) =>
-            await loadContext(id, diff, services, context),
+            loadContext(id, diff, services, context),
           onDone: {
             target: 'ready',
             actions: assign({
@@ -140,7 +140,7 @@ const createNewDiffMachine = <Context>(
             invoke: {
               id: 'reloading-preview',
               src: async (context, event) =>
-                await reloadPreview(id, diff, services, context),
+                reloadPreview(id, diff, services, context),
               onDone: {
                 target: 'unhandled',
                 actions: assign({

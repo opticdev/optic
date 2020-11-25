@@ -143,7 +143,7 @@ export function ReviewUI() {
 }
 
 export function EndpointDetailCard(props) {
-  const { method, pathId, diffCount, handled, handledCount, selected } = props;
+  const { method, pathId, handled, handledCount, selected } = props;
   const { queries, actions } = useDiffSession();
   const classes = useStyles();
 
@@ -152,9 +152,6 @@ export function EndpointDetailCard(props) {
     []
   );
 
-  if (!endpointDescriptor) {
-    debugger;
-  }
   const { httpMethod, fullPath, endpointPurpose } = endpointDescriptor || {};
 
   return (

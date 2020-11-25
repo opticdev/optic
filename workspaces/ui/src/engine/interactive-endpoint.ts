@@ -93,7 +93,6 @@ export const newInteractiveEndpointSessionMachine = (
                 });
               return newRegionDiffs;
             },
-            handledByDiffHash: (context) => computeHandled(context),
             shapeDiffs: (context, event) => {
               const shapeDiffsGrouped = new DiffSet(
                 diffs,
@@ -114,6 +113,9 @@ export const newInteractiveEndpointSessionMachine = (
                 }
               );
             },
+          }),
+          assign({
+            handledByDiffHash: (context) => computeHandled(context),
           }),
         ],
         on: {
