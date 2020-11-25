@@ -25,7 +25,7 @@ export interface ApplyChangesStateSchema {
     collectingApprovedSuggestions: {};
     runningCommands: {};
     completed: {};
-    completedWithSummary: {};
+    // completedWithSummary: {};
     failed: {};
   };
 }
@@ -291,24 +291,28 @@ export const newApplyChangesMachine = (
         },
       },
       completed: {
-        invoke: {
-          src: async (context, event) => {
-            const worker = await spawn(new Worker('./oas-preview-machine.ts'));
-
-            const result = await worker.oasPreviewMachine(
-              context.updatedEvents
-            );
-
-            await Thread.terminate(worker);
-            return result;
-          },
-          onDone: {
-            actions: assign({ oasStats: (context, event) => event.data }),
-            target: 'completedWithSummary',
-          },
-        },
+        // this code fails with large specs, not worth it for preview
+        // invoke: {
+        //   src: async (context, event) => {
+        //     const worker = await spawn(new Worker('./oas-preview-machine.ts'));
+        //
+        //     debugger;
+        //
+        //     const result = await worker.oasPreviewMachine(
+        //       context.updatedEvents
+        //     );
+        //
+        //     debugger;
+        //     await Thread.terminate(worker);
+        //     return result;
+        //   },
+        //   onDone: {
+        //     actions: assign({ oasStats: (context, event) => event.data }),
+        //     target: 'completedWithSummary',
+        //   },
+        // },
       },
-      completedWithSummary: {},
+      // completedWithSummary: {},
       failed: {},
     },
   });

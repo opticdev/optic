@@ -59,12 +59,12 @@ export function AskFinished(props) {
     console.log('progress updating spec', state);
   }, [state]);
 
-  const isComplete = state.matches('completedWithSummary');
+  const isComplete = state.matches('completed');
   useEffect(() => {
     async function saveEvents() {
       const { updatedEvents } = state.context;
       setSummary({
-        oasStats: state.context.oasStats,
+        // oasStats: state.context.oasStats,
         newEndpoints: patch.added.length,
         newEndpointsKnownPaths: patch.endpointsToDocument.length,
         endpointsWithChanges: endpointsWithChanges.length,

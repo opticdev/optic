@@ -38,7 +38,7 @@ export function FinalizeSummaryContextStore(props) {
 
 function ResultsDialog(props) {
   const {
-    oasStats,
+    // oasStats,
     newEndpoints,
     newEndpointsKnownPaths,
     endpointsWithChanges,
@@ -97,10 +97,10 @@ function ResultsDialog(props) {
                 {endpointsWithChanges !== 1 && 's'}
               </Typography>
 
-              <Typography variant="h6" style={{ fontWeight: 100 }}>
-                <StatMini number={oasStats.oasLineCount} label="line" /> of
-                OpenAPI maintained by Optic
-              </Typography>
+              {/*<Typography variant="h6" style={{ fontWeight: 100 }}>*/}
+              {/*  <StatMini number={oasStats.oasLineCount} label="line" /> of*/}
+              {/*  OpenAPI maintained by Optic*/}
+              {/*</Typography>*/}
             </div>
           </div>
         </Box>

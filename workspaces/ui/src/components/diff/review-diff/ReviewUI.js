@@ -46,14 +46,14 @@ export function ReviewUI() {
   const startedHandled = useMemo(() => selectedEndpointHandled, [selected]);
   const [askFinish, setAskFinish] = useState(false);
 
-  useEffect(() => {
-    if (selectedEndpointHandled && !startedHandled) {
-      setTimeout(
-        () => actions.selectNextEndpoint(results.endpointsWithDiffs),
-        1250
-      );
-    }
-  }, [selectedEndpointHandled]);
+  // useEffect(() => {
+  //   if (selectedEndpointHandled && !startedHandled) {
+  //     setTimeout(
+  //       () => actions.selectNextEndpoint(results.endpointsWithDiffs),
+  //       1250
+  //     );
+  //   }
+  // }, [selectedEndpointHandled]);
 
   const resetAll = () => actions.resetAll(results.endpointsWithDiffs);
 
