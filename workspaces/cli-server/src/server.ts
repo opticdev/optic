@@ -80,7 +80,12 @@ class CliServer {
     const resourceRoot = path.resolve(basePath);
     const reactRoot = path.join(resourceRoot, 'build');
     const indexHtmlPath = path.join(reactRoot, 'index.html');
-    app.use(express.static(reactRoot));
+    app.use(
+      express.static(reactRoot, {
+        etag: false,
+        maxAge: '5000',
+      })
+    );
     app.use(bodyParser.json({ limit: '1mb' }));
     app.get('*', (req, res) => {
       res.sendFile(indexHtmlPath);
