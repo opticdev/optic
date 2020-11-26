@@ -49,6 +49,7 @@ export interface ApplyChangesContext {
   approvedSuggestionsCommands: any[];
   updatedEvents: any[];
   oasStats: IOasStats | undefined;
+  error: string;
 }
 
 // The context (extended state) of the machine
@@ -227,32 +228,6 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'running-commands',
           src: async (context, event) => {
-            const batchId = uuidv4();
-            const {
-              StartBatchCommit,
-              EndBatchCommit,
-            } = opticEngine.com.useoptic.contexts.rfc.Commands;
-
-            // const a = [
-            //   StartBatchCommit(batchId, context.commitMessage),
-            //   EndBatchCommit(batchId),
-            // ];
-            // const s = serializeCommands;
-            //
-            // debugger;
-            // //
-            //
-            // // const a = StartBatchCommit(batchId, context.commitMessage);
-            // // debugger;
-            // // const startBatchCommit = serializeCommands([
-            // //   StartBatchCommit(batchId, context.commitMessage),
-            // // ])[0];
-            // // const endBatchCommit = serializeCommands([
-            // //   commandToJs(EndBatchCommit(batchId)),
-            // // ])[0];
-            // //
-            // // debugger;
-
             const allCommandsToRun = [
               ...context.newPaths.commandsJS,
               ...prepareLearnedBodies(context.newBodiesLearned || []),
@@ -270,7 +245,8 @@ export const newApplyChangesMachine = (
               ),
               uuidv4(),
               clientSessionId,
-              clientId
+              clientId,
+              context.commitMessage || ''
             );
 
             await Thread.terminate(worker);
@@ -283,36 +259,19 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
-            actions: (context, event) => {
-              console.error(event);
-            },
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.ln,
+              }),
+            ],
             target: 'failed',
           },
         },
       },
-      completed: {
-        // this code fails with large specs, not worth it for preview
-        // invoke: {
-        //   src: async (context, event) => {
-        //     const worker = await spawn(new Worker('./oas-preview-machine.ts'));
-        //
-        //     debugger;
-        //
-        //     const result = await worker.oasPreviewMachine(
-        //       context.updatedEvents
-        //     );
-        //
-        //     debugger;
-        //     await Thread.terminate(worker);
-        //     return result;
-        //   },
-        //   onDone: {
-        //     actions: assign({ oasStats: (context, event) => event.data }),
-        //     target: 'completedWithSummary',
-        //   },
-        // },
-      },
-      // completedWithSummary: {},
+      completed: {},
       failed: {},
     },
   });

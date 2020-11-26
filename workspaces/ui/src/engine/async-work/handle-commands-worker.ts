@@ -11,7 +11,8 @@ function handleCommands(
   eventString: string,
   batchId: string,
   clientSessionId: string,
-  clientId: string
+  clientId: string,
+  commitMessage: string
 ): any[] {
   const {
     universeFromEventsAndAdditionalCommands,
@@ -32,10 +33,17 @@ function handleCommands(
     batchId
   );
 
-  const { rfcId, eventStore } = universeFromEventsAndAdditionalCommands(
+  const {
+    rfcId,
+    eventStore,
+  } = universeFromEventsAndAdditionalCommands(
     JSON.parse(eventString),
     commandContext,
-    inputCommands
+    [
+      StartBatchCommit(batchId, commitMessage),
+      ...inputCommands,
+      EndBatchCommit(batchId),
+    ]
   );
 
   return JSON.parse(eventStore.serializeEvents(rfcId));
