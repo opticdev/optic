@@ -71,7 +71,6 @@ export function AskFinished(props) {
       });
       await specService.saveEventsArray(updatedEvents);
       history.push(`${baseUrl}/documentation`);
-      debugger;
     }
     if (isComplete) {
       saveEvents();
@@ -155,6 +154,12 @@ export function AskFinished(props) {
 
         {(state.matches('runningCommands') || state.matches('completed')) && (
           <UpdatingSpec />
+        )}
+
+        {state.matches('failed') && (
+          <Typography variant="subtitle2" color="error">
+            {state.context.error}
+          </Typography>
         )}
       </div>
     </Dialog>
@@ -272,9 +277,9 @@ function RenderPatch(props) {
           No Changes Staged
         </Typography>
       )}
-      {patch.added.map((i) => {
+      {patch.added.map((i, index) => {
         return (
-          <div className={classes.patchRow}>
+          <div className={classes.patchRow} key={'add' + index}>
             <Typography
               variant="body1"
               className={classes.patchTitle}
@@ -286,9 +291,9 @@ function RenderPatch(props) {
           </div>
         );
       })}
-      {patch.endpointsToDocument.map((i) => {
+      {patch.endpointsToDocument.map((i, index) => {
         return (
-          <div className={classes.patchRow}>
+          <div className={classes.patchRow} key={'documented' + index}>
             <Typography
               variant="body1"
               className={classes.patchTitle}
@@ -300,13 +305,13 @@ function RenderPatch(props) {
           </div>
         );
       })}
-      {withChanges.map(({ method, pathId }) => {
+      {withChanges.map(({ method, pathId }, index) => {
         const { httpMethod, fullPath } = queries.getEndpointDescriptor({
           method,
           pathId,
         });
         return (
-          <div className={classes.patchRow}>
+          <div className={classes.patchRow} key={'changed' + index}>
             <Typography
               variant="body1"
               className={classes.patchTitle}
