@@ -3273,15 +3273,137 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
+"@useoptic/analytics@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/analytics/-/analytics-8.6.0-beta.18.tgz#89f9efbf5b7d41cf323b7ef1d68564c8c01a7b32"
+  integrity sha512-ZhkFByMmVWplka9iDmW/nSLaOD2XpVq8vcx+p9vJZJQFdG8ZHaFe1YiDZmiAArxx/Zen1ayLsi/bV9zW4EqHJA==
+  dependencies:
+    "@hapi/joi" "^17.1.1"
+    joi-extract-type "^15.0.8"
+    keymirror "^0.1.1"
+    uuid "^8.3.0"
+
+"@useoptic/cli-client@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-client/-/cli-client-8.6.0-beta.18.tgz#9327da939055108b031f712f164e1551bcfda65f"
+  integrity sha512-SbTIz44bTMCk9DSZw+DySCos0F3Jvko8iPpYu75+3E8HcGsgsslNFB4FDBQJ5XDLLpp2qSWojfql5JthdOsY9w==
+  dependencies:
+    "@useoptic/analytics" "8.6.0-beta.18"
+    "@useoptic/cli-config" "8.6.0-beta.18"
+    "@useoptic/client-utilities" "8.6.0-beta.18"
+    bottleneck "^2.19.5"
+    cross-fetch "^3.0.4"
+
+"@useoptic/cli-config@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-config/-/cli-config-8.6.0-beta.18.tgz#a0be2c12b81f2217ad3b49c307559f08bc92b8b3"
+  integrity sha512-5Ql2hS1mblA0ty3mXmES8sChUnwB6us12Dv/gthoIhVK4hnPnWKsPOtTT3jXQz1k6FD6kUNGPtMJDqJjMMxxVA==
+  dependencies:
+    debug "^4.1.1"
+    find-up "^4.1.0"
+    get-port "^5.1.0"
+    js-yaml "^3.13.1"
+    path-to-regexp "^3.0.0"
+
+"@useoptic/cli-scripts@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-scripts/-/cli-scripts-8.6.0-beta.18.tgz#625f7564170d5be2665805ec5de5eb9fcb365333"
+  integrity sha512-oQ8oVPpCxEBeon2NM4X0VWF75efS4Ekn9sg4UwxV3b5/tILY4rByj/JpAg1JzT+7d/mhdhSCFOBDkquDHXEp1Q==
+  dependencies:
+    "@useoptic/cli-shared" "8.6.0-beta.18"
+    analytics-node "^3.4.0-beta.1"
+    node-notifier "^7.0.0"
+
+"@useoptic/cli-server@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-server/-/cli-server-8.6.0-beta.18.tgz#be4c5c486a169c8747c02be7bd8acc015db7f08f"
+  integrity sha512-ePRkFmfNKmRI9HH8xdNJAZeVNthLkfa1GzDQi5PPErlqTLiTpgzaGlPr11lf1qkmlKQhIn7Q+93Kpm595D3Ogw==
+  dependencies:
+    "@useoptic/analytics" "8.6.0-beta.18"
+    "@useoptic/cli-client" "8.6.0-beta.18"
+    "@useoptic/cli-config" "8.6.0-beta.18"
+    "@useoptic/cli-scripts" "8.6.0-beta.18"
+    "@useoptic/cli-shared" "8.6.0-beta.18"
+    "@useoptic/ui" "8.6.0-beta.18"
+    analytics-node "^3.4.0-beta.2"
+    avsc "^5.4.18"
+    body-parser "^1.19.0"
+    cors "^2.8.5"
+    express "^4.17.1"
+    find-process "^1.4.3"
+    fs-extra "^9.0.0"
+    get-port "^5.1.0"
+    http-proxy-middleware "^1.0.4"
+    jwt-decode "2.2.0"
+    lodash.sortby "^4.7.0"
+    node-fetch "^2.6.0"
+    proper-lockfile "^4.1.1"
+    stream-chain "^2.2.3"
+    stream-json "^1.7.1"
+    uuid "^8.0.0"
+    wait-on "^5.2.0"
+
+"@useoptic/cli-shared@8.6.0-beta.19":
+  version "8.6.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-shared/-/cli-shared-8.6.0-beta.19.tgz#2818cd2ad296f1b78bf7b3b7b3c9f85aa53e4a9d"
+  integrity sha512-km53QGom7ccgWMPOjx/x+mu6Ns5MKpW5F06Xj6C7dJ2D+/UbxOLoYqKcl8dDI5N2zTwZYnw+++cEiT7cnROxrA==
+  dependencies:
+    "@oclif/command" "^1.6.1"
+    "@useoptic/cli-client" "8.6.0-beta.19"
+    "@useoptic/cli-config" "8.6.0-beta.19"
+    "@useoptic/client-utilities" "8.6.0-beta.19"
+    "@useoptic/diff-engine" "8.6.0-beta.19"
+    "@useoptic/domain" "10.0.17"
+    "@useoptic/domain-types" "10.0.17"
+    "@useoptic/domain-utilities" "10.0.17"
+    avsc "^5.4.21"
+    bottleneck "^2.19.5"
+    colors "^1.4.0"
+    execa "^4.0.3"
+    fs-extra "^9.0.0"
+    lodash.throttle "^4.1.1"
+    mockttp "^0.19.2"
+    oboe "^2.1.5"
+    ora "^4.0.4"
+    proper-lockfile "^4.1.1"
+    shape-hash "^1.0.6"
+    stream-chain "^2.2.3"
+    stream-fork "^1.0.3"
+    stream-json "^1.7.1"
+    tree-kill "^1.2.2"
+    uuid "^8.0.0"
+    wait-on "^4.0.0"
+    whatwg-mimetype "^2.3.0"
+
+"@useoptic/client-utilities@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/client-utilities/-/client-utilities-8.6.0-beta.18.tgz#b57eb30ba0d100a3953e658c658191e51b6018e9"
+  integrity sha512-dfxbJZQtW9CZe2roGffoGU+4LKDbUkbzW3T6Ors97RKi2i0PG7PuUJSmgJ7S4O7+x3zSrxliNK/7YmzaRiOPVA==
+  dependencies:
+    cross-fetch "^3.0.4"
+
+"@useoptic/diff-engine@8.6.0-beta.18":
+  version "8.6.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@useoptic/diff-engine/-/diff-engine-8.6.0-beta.18.tgz#f71603d6efa4afb0fbe947085d359ed743c50d23"
+  integrity sha512-FuCyXxJ+e8mAI8lpAqFxjlu0v8V96YFtW3DUqu9T1zQEFm/TITCEBciWz+dnlcG842OT7is/786/Bu4HryEmVA==
+  dependencies:
+    "@iarna/toml" "^2.2.5"
+    bent "^7.3.12"
+    dotenv "^8.2.0"
+    execa "^4.0.3"
+    read-package-json "^3.0.0"
+    rimraf "^3.0.2"
+    tar "^6.0.5"
+
 "@useoptic/domain-types@10.0.17":
   version "10.0.17"
   resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.17.tgz#afb941214e3a45e944c6620a6a9a3b0185dd0433"
   integrity sha512-bPNDHZsosEbLcl8IxMb4kBIdtpwV0J/NVkb2wvL4eKdzC2MIK6+DnCD3Oadb7sRB1R3DhmdaulSpxCAZJ//3JA==
 
-"@useoptic/domain-types@10.0.18":
-  version "10.0.18"
-  resolved "https://registry.npmjs.org/@useoptic/domain-types/-/domain-types-10.0.18.tgz#4df488a5d76d19cc9ee86f58b9048ffc2e65ac18"
-  integrity sha512-PD6BLbPBdy66XjYe5DG6arJpQtZL/hSIS9SbFu5roQdpmvKGZSMQ2sMnlaottt2hHEaakYdwtDeATXrB5OEh4Q==
+"@useoptic/domain-types@10.0.46":
+  version "10.0.46"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.46.tgz#5c2d5e822a93ff3a056f6e985f0d88a72afda99c"
+  integrity sha512-HuiNSK2P5RbU1wTGS/swusQgYFqI0yudzg87QYpBnlg5Vu3LgK8jx6dqPpEOPxi1E+Io3/h3NQYJECfRUh9qhw==
 
 "@useoptic/domain-utilities@10.0.17":
   version "10.0.17"
@@ -3291,23 +3413,74 @@
     "@useoptic/domain" "10.0.17"
     "@useoptic/domain-types" "10.0.17"
 
-"@useoptic/domain-utilities@10.0.18":
-  version "10.0.18"
-  resolved "https://registry.npmjs.org/@useoptic/domain-utilities/-/domain-utilities-10.0.18.tgz#0c626d742796589674d09d75854e6eabd62fad2c"
-  integrity sha512-c8jAz3KSsS4vo/BCWfJMZHC3yj0kr+YNUNuznhFZ25m62t0mT8TiS6ZMAS5l4YtNbRk3Ljn/r906T/9y3ruxIg==
+"@useoptic/domain-utilities@10.0.46":
+  version "10.0.46"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.46.tgz#525b7ecc3ba3a77247a4b831a2cca57d8ffdad09"
+  integrity sha512-fnnoYmcm2vTnYfoj9YEcBkc4w8MiZ30qiw2YLMfg37i7u4T4t9luxKdel1/JSJF/g4nLOn49jcmMc+N9JFqZ3A==
   dependencies:
-    "@useoptic/domain" "10.0.18"
-    "@useoptic/domain-types" "10.0.18"
+    "@useoptic/domain" "10.0.46"
+    "@useoptic/domain-types" "10.0.46"
 
 "@useoptic/domain@10.0.17":
   version "10.0.17"
   resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.17.tgz#d509b9cb667615fd59807466243c281f496062e0"
   integrity sha512-gB4muRcg/SMv5boYdF/oSjE9oSWf9Hqjy9wTUMPqCwtQhRGEGKKWDFiyZhgXVEZppUX6aZfYHeS3WoW6AHbLbQ==
 
-"@useoptic/domain@10.0.18":
-  version "10.0.18"
-  resolved "https://registry.npmjs.org/@useoptic/domain/-/domain-10.0.18.tgz#c6707ea82716131efac63b60ad5298bb954aaa7e"
-  integrity sha512-eaNfMt55lDq7uMNuEm2QGbzyu5nWyxRE+9hHQpvf+7KQZz2Fxz8LhvyC5db1ry7ssE6Mzr5TMGQjDkAq4PkgBQ==
+"@useoptic/domain@10.0.46":
+  version "10.0.46"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.46.tgz#238b33a8451cec72fef57494917f68daa5d56edf"
+  integrity sha512-vcHJa1SyMYQ7RR3x7/1z6U/+Aqw73rDjACgxKFNKlf1k0MHG8H+fHqNqg2PRwtw3XVmbn7AdueD4CVgzepSQqQ==
+
+"@useoptic/ui@8.6.0-beta.19":
+  version "8.6.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@useoptic/ui/-/ui-8.6.0-beta.19.tgz#ecf2c5d3a1bcc07be5cbc8ad038b55d494e2bb04"
+  integrity sha512-JJCZq3UqFFNrKHCujW9NCwqXAzDLWIiuQxDRxEUZEWaeU3SOQwi09sPg94klYXRQow72hk9Z3O4sowFVQ0iyfQ==
+  dependencies:
+    "@material-ui/core" "^4.9.7"
+    "@material-ui/icons" "^4.9.1"
+    "@material-ui/lab" "^4.0.0-alpha.46"
+    "@useoptic/analytics" "8.6.0-beta.19"
+    "@useoptic/cli-client" "8.6.0-beta.19"
+    "@useoptic/cli-shared" "8.6.0-beta.19"
+    "@useoptic/domain" "10.0.17"
+    "@useoptic/domain-utilities" "10.0.17"
+    bottleneck "^2.19.5"
+    camelcase "^5.2.0"
+    classnames "^2.2.6"
+    color "^3.1.2"
+    date-fns "^2.11.1"
+    invariant "^2.2.4"
+    lodash.compose "^2.4.1"
+    lodash.debounce "^4.0.8"
+    lodash.flattendeep "^4.4.0"
+    lodash.get "^4.4.2"
+    lodash.groupby "^4.6.0"
+    lodash.isequal "^4.5.0"
+    lodash.sortby "^4.7.0"
+    lodash.uniq "^4.5.0"
+    memoize-weak "^1.0.2"
+    mini-css-extract-plugin "0.5.0"
+    node-sha1 "^1.0.1"
+    notistack "^0.8.6"
+    path-to-regexp "^3.0.0"
+    prop-types latest
+    qs "^6.9.4"
+    react "^16.8.6"
+    react-ace "^8.0.0"
+    react-dom "^16.8.6"
+    react-helmet "5.2.1"
+    react-hook-form "^3.27.0"
+    react-markdown "^4.2.2"
+    react-minimal-pie-chart "^6.0.1"
+    react-router-dom "^5.1.2"
+    react-scroll-into-view-if-needed "^2.1.7"
+    reactour "^1.18.0"
+    resolve "1.10.0"
+    scroll-into-view-if-needed "^2.2.24"
+    styled-components "^5.1.1"
+    time-ago "^0.2.1"
+    ts-pnp "1.1.2"
+    url-loader "1.1.2"
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
@@ -11322,6 +11495,11 @@ lodash.debounce@4.0.8, lodash.debounce@^4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.flatten@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
+  integrity sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8=
+
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
@@ -17747,6 +17925,11 @@ xregexp@^4.2.4:
   integrity sha512-7jXDIFXh5yJ/orPn4SXjuVrWWoi4Cr8jfV1eHv9CixKSbU+jY4mxfrBwAuDvupPNKpMUY+FeIqsVw/JLT9+B8g==
   dependencies:
     "@babel/runtime-corejs3" "^7.8.3"
+
+xstate@^4.13.0:
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.14.1.tgz#8902304944aa78ef5bdfa818ca2ca5fd109a3959"
+  integrity sha512-1LyR5c6wgA41660Cp8Dq5VWRtS75l+KnjysgpgZI9FVLvYl5BF2FmkfT5CAlTIo+CKfj/4IznQYkYfURxuY6WA==
 
 xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
   version "4.0.2"
