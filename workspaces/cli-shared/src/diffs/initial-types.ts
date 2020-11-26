@@ -19,6 +19,10 @@ export interface IValueAffordanceSerializationWithCounter {
   interactions: IAffordanceInteractionPointers;
 }
 
+export interface IValueAffordanceSerializationWithCounterGroupedByDiffHash {
+  [key: string]: IValueAffordanceSerializationWithCounter;
+}
+
 export interface IValueAffordanceSerialization {
   trail: IJsonTrail;
   wasString: boolean;

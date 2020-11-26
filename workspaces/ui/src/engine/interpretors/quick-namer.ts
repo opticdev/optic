@@ -1,6 +1,19 @@
 import { ICoreShapeKinds } from '../interfaces/interfaces';
 import sortby from 'lodash.sortby';
 import { code, ICopy, plain } from '../interfaces/interpretors';
+
+export function namer(kinds: ICoreShapeKinds[]): string {
+  if (kinds.length === 0) {
+    return 'Unknown';
+  } else if (kinds.length === 1) {
+    return nameForCoreShapeKind(kinds[0]);
+  } else {
+    return namerForOneOf(kinds)
+      .map((i) => i.text)
+      .join(' ');
+  }
+}
+
 export function nameForCoreShapeKind(kind: ICoreShapeKinds): string {
   switch (kind) {
     case ICoreShapeKinds.ObjectKind:

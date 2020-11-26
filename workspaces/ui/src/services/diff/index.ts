@@ -3,6 +3,7 @@ import { IDiff } from '../../engine/interfaces/diffs';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export interface ICaptureService {
@@ -47,8 +48,8 @@ export interface IDiffService {
     rfcId: any,
     pathId: string,
     method: string,
-    diff: IDiff
-  ): Promise<IValueAffordanceSerializationWithCounter>;
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 }
 
 export interface IRfcCommand {}

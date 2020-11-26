@@ -24,6 +24,7 @@ import { ParsedDiff } from '../parse-diff';
 import invariant from 'invariant';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
 import { FieldContextSpecChange } from './spec-change-dsl';
+import { namer, namerForOneOf } from './quick-namer';
 
 /*
 Goal: Make the shape diff interpretation logic (the hard stuff) drop dead simple to read
@@ -57,12 +58,11 @@ export class Expectation {
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail
   ) {
-    this.expectationsFromSpec = JsonHelper.toJs(
-      ExpectedScalaHelper.expectedForDiffStrings(
-        JSON.stringify(shapeTrail),
-        rfcBaseState.rfcState
-      )
+    const expected = ExpectedScalaHelper.expectedForDiffStrings(
+      JSON.stringify(shapeTrail),
+      rfcBaseState.rfcState
     );
+    this.expectationsFromSpec = JsonHelper.toJs(expected);
   }
 
   isListItemShape(): boolean {
@@ -117,7 +117,8 @@ export class Expectation {
   }
 
   shapeName(): string {
-    return this.expectationsFromSpec.shapeName;
+    this.expectedShapes();
+    return namer(Array.from(this.expectedShapes()));
   }
 
   expectedShapes(): Set<ICoreShapeKinds> {

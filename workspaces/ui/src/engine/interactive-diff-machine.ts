@@ -60,12 +60,7 @@ const createNewDiffMachine = <Context>(
   services: InteractiveSessionConfig,
   createInitialState: (id: string, diff: ParsedDiff) => DiffContext<Context>,
   listenToInitialRegions: boolean,
-  loadContext: (
-    id: string,
-    diff: ParsedDiff,
-    services: InteractiveSessionConfig,
-    context: DiffContext<Context>
-  ) => Promise<{ preview: IDiffSuggestionPreview; results: Context }>,
+  listenToLearnedTrails: boolean,
   reloadPreview: (
     id: string,
     diff: ParsedDiff,
@@ -80,32 +75,34 @@ const createNewDiffMachine = <Context>(
     states: {
       unfocused: {
         on: {
-          SHOWING: {
-            cond: () => !listenToInitialRegions,
+          //@ts-ignore
+          'done.invoke.loading-endpoint-context': {
+            actions: assign({
+              //@ts-ignore
+              results: (context, event) => {
+                //@ts-ignore
+                const { regions, trailValues } = event.data;
+                if (listenToInitialRegions) {
+                  return regions;
+                }
+                if (listenToLearnedTrails) {
+                  return trailValues[diff.diffHash];
+                }
+              },
+            }),
             target: 'loading',
           },
-          //@ts-ignore
-          'done.invoke.loading-initial-regions': listenToInitialRegions
-            ? {
-                actions: assign({
-                  //@ts-ignore
-                  results: (context, event) => event.data,
-                }),
-                target: 'loading',
-              }
-            : {},
         },
       },
       loading: {
         invoke: {
           id: 'loading' + id,
           src: async (context, event) =>
-            loadContext(id, diff, services, context),
+            reloadPreview(id, diff, services, context),
           onDone: {
             target: 'ready',
             actions: assign({
-              results: (context, event) => event.data.results, // cached in case we need to run 'em again
-              preview: (context, event) => event.data.preview,
+              preview: (context, event) => event.data,
             }),
           },
         },
@@ -207,20 +204,7 @@ export const createNewRegionMachine = (
       selectedSuggestionIndex: 0,
     }),
     true,
-    async (
-      id: string,
-      diff: ParsedDiff,
-      services: InteractiveSessionConfig,
-      context: DiffContext<ILearnedBodies>
-    ) => {
-      const preview = await prepareNewRegionDiffSuggestionPreview(
-        parsedDiff,
-        services,
-        context.results!,
-        context.relevantIgnoreRules
-      );
-      return { preview, results: context.results! };
-    },
+    false,
     async (
       id: string,
       diff: ParsedDiff,
@@ -253,32 +237,7 @@ export const createShapeDiffMachine = (
       selectedSuggestionIndex: 0,
     }),
     false,
-    async (
-      id: string,
-      diff: ParsedDiff,
-      services: InteractiveSessionConfig,
-      context: DiffContext<IValueAffordanceSerializationWithCounter>
-    ) => {
-      const { pathId, method } = diff.location(services.rfcBaseState);
-
-      const trailValues = await services.diffService.learnTrailValues(
-        services.rfcBaseState.rfcService,
-        services.rfcBaseState.rfcId,
-        pathId,
-        method,
-        diff.raw()
-      );
-
-      return {
-        preview: await prepareShapeDiffSuggestionPreview(
-          diff,
-          services,
-          trailValues,
-          context.relevantIgnoreRules
-        ),
-        results: trailValues,
-      };
-    },
+    true,
     async (
       id: string,
       diff: ParsedDiff,

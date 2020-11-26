@@ -12,6 +12,7 @@ import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
@@ -138,22 +139,26 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
-      const { events, pathId, method, serializedDiff } = req.body;
+      const { events, pathId, method, serializedDiffs } = req.body;
 
       const onDemandTrailValues = new OnDemandTrailValues({
         captureBaseDirectory: req.optic.paths.capturesPath,
         events: events,
         captureId,
         pathId,
-        serializedDiff,
+        serializedDiffs,
         method,
       });
 
       const result = onDemandTrailValues.run();
 
-      result.then((learnedTrails: IValueAffordanceSerializationWithCounter) => {
-        res.json(learnedTrails);
-      });
+      result.then(
+        (
+          learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+        ) => {
+          res.json(learnedTrails);
+        }
+      );
       result.catch((e) => {
         res.status(500).json({
           message: e.message,

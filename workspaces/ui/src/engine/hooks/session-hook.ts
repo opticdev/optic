@@ -40,6 +40,7 @@ export function useDiffSessionMachine(
         rawDiffs: [IDiff, string[]][],
         unrecognizedUrls: IUnrecognizedUrl[]
       ) {
+        console.log('signaling diff completed!!!');
         send({
           type: 'COMPLETED_DIFF',
           urls: unrecognizedUrls,

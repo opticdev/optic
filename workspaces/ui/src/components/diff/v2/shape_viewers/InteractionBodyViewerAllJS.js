@@ -12,7 +12,7 @@ import { IChangeType } from '../../../../engine/interfaces/interpretors';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { ICopyRenderSpan } from '../../review-diff/ICopyRender';
 import CheckIcon from '@material-ui/icons/Check';
-import { AddedGreen } from '../../../../theme';
+import { AddedGreen, UpdatedBlue } from '../../../../theme';
 export default function InteractionBodyViewerAllJS({
   diff,
   description,
@@ -224,11 +224,25 @@ function RowValue({
   }
 
   if (type === 'boolean') {
-    return <span className="fs-exclude">{value ? 'true' : 'false'}</span>;
+    return (
+      <span
+        className="fs-exclude"
+        style={{ color: '#d9ba99', fontWeight: 600 }}
+      >
+        {value ? 'true' : 'false'}
+      </span>
+    );
   }
 
   if (type === 'number') {
-    return <span className="fs-exclude">{value}</span>;
+    return (
+      <span
+        className="fs-exclude"
+        style={{ color: '#99d9d9', fontWeight: 600 }}
+      >
+        {value}
+      </span>
+    );
   }
 
   if (type === 'undefined') {

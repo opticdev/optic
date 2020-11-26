@@ -1,6 +1,9 @@
 import { JsonHelper, opticEngine, ScalaJSHelpers } from '@useoptic/domain';
 import { IHttpInteraction } from '@useoptic/domain-types';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../interfaces/diffs';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
@@ -9,13 +12,13 @@ export function localTrailValuesLearner(
   rfcState: any,
   pathId: string,
   method: string,
-  diff: IDiff,
+  diffs: { [key: string]: IDiff },
   interactions: any[]
-): IValueAffordanceSerializationWithCounter {
+): IValueAffordanceSerializationWithCounterGroupedByDiffHash {
   const learner = LearnJsonTrailAffordances.newLearner(
     pathId,
     method,
-    JSON.stringify(diff)
+    JSON.stringify(diffs)
   );
 
   const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
@@ -49,5 +52,5 @@ export function localTrailValuesLearner(
 
   return JsonHelper.toJs(
     learner.serialize()
-  ) as IValueAffordanceSerializationWithCounter;
+  ) as IValueAffordanceSerializationWithCounterGroupedByDiffHash;
 }

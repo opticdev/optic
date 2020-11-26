@@ -22,6 +22,7 @@ import {
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../../engine/interfaces/diffs';
 
@@ -143,8 +144,8 @@ export class LocalCliDiffService implements IDiffService {
     rfcId: any,
     pathId: string,
     method: string,
-    diff: IDiff
-  ): Promise<IValueAffordanceSerializationWithCounter> {
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     const events = opticEngine.EventSerialization.toJson(
       rfcService.listEvents(rfcId)
     );
@@ -153,7 +154,7 @@ export class LocalCliDiffService implements IDiffService {
       events,
       pathId,
       method,
-      serializedDiff: JSON.stringify(diff),
+      serializedDiffs: JSON.stringify(diffs),
     });
   }
 }

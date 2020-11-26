@@ -25,6 +25,7 @@ import { getOrUndefined, opticEngine } from '@useoptic/domain';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
 import { IDiff } from '../../engine/interfaces/diffs';
@@ -192,8 +193,8 @@ export class ExampleDiffService implements IDiffService {
     rfcId: any,
     pathId: string,
     method: string,
-    diff: IDiff
-  ): Promise<IValueAffordanceSerializationWithCounter> {
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     const capture = await this.specService.listCapturedSamples(captureId);
     const interactions = capture.samples;
 
@@ -203,7 +204,7 @@ export class ExampleDiffService implements IDiffService {
       rfcState,
       pathId,
       method,
-      diff,
+      diffs,
       interactions
     );
   }

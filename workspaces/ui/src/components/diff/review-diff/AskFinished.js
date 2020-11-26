@@ -71,6 +71,7 @@ export function AskFinished(props) {
       });
       await specService.saveEventsArray(updatedEvents);
       history.push(`${baseUrl}/documentation`);
+      debugger;
     }
     if (isComplete) {
       saveEvents();

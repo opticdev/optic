@@ -156,5 +156,13 @@ function descriptionForShapeDiff(
   }
 
   //we shouldn't ever get there
-  invariant('Unexpected shape diff');
+  console.log('unknown diff kind', expected);
+  return {
+    title: [plain('unknown diff kind')],
+    location,
+    changeType: IChangeType.Changed,
+    assertion: [],
+    getJsonBodyToPreview,
+  };
+  // invariant(false, 'Unexpected shape diff');
 }

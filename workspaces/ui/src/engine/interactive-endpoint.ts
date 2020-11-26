@@ -6,9 +6,13 @@ import {
   createNewRegionMachine,
   createShapeDiffMachine,
 } from './interactive-diff-machine';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
 import { IgnoreRule } from './interpretors/ignores/ignore-rule';
+import { IDiff } from './interfaces/diffs';
 
 export interface InteractiveEndpointSessionStateSchema {
   states: {
@@ -45,11 +49,6 @@ export interface InteractiveEndpointSessionContext {
   shapeDiffs: { diffParsed: ParsedDiff; shapeTrail: IShapeTrail; ref: any }[];
   ignored: IgnoreRule[];
   handledByDiffHash: { [key: string]: boolean };
-  learningContext:
-    | {
-        newRegions: string;
-      }
-    | undefined;
 }
 
 export const newInteractiveEndpointSessionMachine = (
@@ -69,7 +68,6 @@ export const newInteractiveEndpointSessionMachine = (
       newRegions: [],
       shapeDiffs: [],
       ignored: [],
-      learningContext: undefined,
     },
     initial: 'unfocused',
     states: {
@@ -126,7 +124,7 @@ export const newInteractiveEndpointSessionMachine = (
       },
       preparing: {
         invoke: {
-          id: 'loading-initial-regions',
+          id: 'loading-endpoint-context',
           src: async (context, event) => {
             const {
               rfcService,
@@ -150,17 +148,33 @@ export const newInteractiveEndpointSessionMachine = (
                 domainIdGenerator
               );
             }
-            return await newRegionWalker;
+
+            const diffMap: { [key: string]: IDiff } = {};
+            context.shapeDiffs.forEach(
+              (i) => (diffMap[i.diffParsed.diffHash] = i.diffParsed.raw())
+            );
+
+            let trailValuesWalker: Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> = Promise.resolve(
+              {}
+            );
+
+            if (context.shapeDiffs.length > 0) {
+              trailValuesWalker = services.diffService.learnTrailValues(
+                rfcService,
+                rfcId,
+                pathId,
+                method,
+                diffMap
+              );
+            }
+
+            return {
+              regions: await newRegionWalker,
+              trailValues: await trailValuesWalker,
+            };
           },
           onDone: {
             target: 'ready',
-            actions: [
-              assign({
-                learningContext: (context, event) => {
-                  return event.data;
-                },
-              }),
-            ],
           },
         },
       },

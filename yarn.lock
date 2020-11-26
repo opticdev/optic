@@ -3273,23 +3273,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.46":
-  version "10.0.46"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.46.tgz#5c2d5e822a93ff3a056f6e985f0d88a72afda99c"
-  integrity sha512-HuiNSK2P5RbU1wTGS/swusQgYFqI0yudzg87QYpBnlg5Vu3LgK8jx6dqPpEOPxi1E+Io3/h3NQYJECfRUh9qhw==
+"@useoptic/domain-types@10.0.48":
+  version "10.0.48"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.48.tgz#6c05b86a49d3f9ebd6bdaaa3c27783cec31cb26b"
+  integrity sha512-/QWCOZFxxUE+fOv/L0ewZheFmjP+o9QDd+BbB5axda1P2KDbQUXUAlPeiW+Kqiwa7Nyw8cjvCEMwx8p41UTpLQ==
 
-"@useoptic/domain-utilities@10.0.46":
-  version "10.0.46"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.46.tgz#525b7ecc3ba3a77247a4b831a2cca57d8ffdad09"
-  integrity sha512-fnnoYmcm2vTnYfoj9YEcBkc4w8MiZ30qiw2YLMfg37i7u4T4t9luxKdel1/JSJF/g4nLOn49jcmMc+N9JFqZ3A==
+"@useoptic/domain-utilities@10.0.48":
+  version "10.0.48"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.48.tgz#b920295ba8f1bef580b291ea857e359460f15ad6"
+  integrity sha512-IdVrhNEFYylKgN12ZxkKJctVmu5GZdtgch0KFueifDg3/EyWixx3QiSYOfYHwwWG0l/pn4A1iLxI4pcGne9pmA==
   dependencies:
-    "@useoptic/domain" "10.0.46"
-    "@useoptic/domain-types" "10.0.46"
+    "@useoptic/domain" "10.0.48"
+    "@useoptic/domain-types" "10.0.48"
 
-"@useoptic/domain@10.0.46":
-  version "10.0.46"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.46.tgz#238b33a8451cec72fef57494917f68daa5d56edf"
-  integrity sha512-vcHJa1SyMYQ7RR3x7/1z6U/+Aqw73rDjACgxKFNKlf1k0MHG8H+fHqNqg2PRwtw3XVmbn7AdueD4CVgzepSQqQ==
+"@useoptic/domain@10.0.48":
+  version "10.0.48"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.48.tgz#e6d63ec7b7081614870a859c599a9cb44160a78f"
+  integrity sha512-JrVr2nULkumIn/NZGUXjWF6sS5BW3yIy9TE5nrAJa22UfiC6PlEfuJYNqP9avmcHK3g2yZ8F7hmrjM0wYqfkGQ==
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"

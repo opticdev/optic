@@ -66,13 +66,12 @@ export class ParsedDiff {
       rfcBaseState
     );
 
-    const isDocumented = rfcBaseState.queries
-      .endpoints()
-      .find(
-        (i) => i.pathId === location.pathId && i.method === location.method
-      );
+    const allEndpoints = rfcBaseState.queries.endpoints();
+    const isDocumented = allEndpoints.find(
+      (i) => i.pathId === location.pathId && i.method === location.method
+    );
 
-    return location && location.pathId && isDocumented;
+    return location && location.pathId && Boolean(isDocumented);
   }
 
   location(rfcBaseState: DiffRfcBaseState): IParsedLocation {

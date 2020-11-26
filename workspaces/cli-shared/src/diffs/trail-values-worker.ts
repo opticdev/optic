@@ -12,7 +12,7 @@ import {
 import fs from 'fs-extra';
 import Bottleneck from 'bottleneck';
 import path from 'path';
-import { IValueAffordanceSerializationWithCounter } from './initial-types';
+import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from './initial-types';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -22,33 +22,24 @@ export interface ITrailValuesEmitterWorker {
   captureId: string;
   pathId: string;
   method: string;
-  serializedDiff: string;
+  serializedDiffs: string;
 }
 
 export function getTrailWorkerOutputPaths(values: {
   captureBaseDirectory: string;
   pathId: string;
   method: string;
-  serializedDiff: string;
   captureId: string;
 }) {
-  const {
-    captureBaseDirectory,
-    serializedDiff,
-    captureId,
-    pathId,
-    method,
-  } = values;
+  const { captureBaseDirectory, captureId, pathId, method } = values;
   const base = path.join(
     captureBaseDirectory,
     captureId,
     'trail-values',
-    sha1(serializedDiff),
     pathId,
     method
   );
   const events = path.join(base, 'events.json');
-
   return {
     base,
     events,
@@ -88,7 +79,7 @@ export class LearnTrailValueWorker {
       const learner = LearnJsonTrailAffordances.newLearner(
         this.config.pathId,
         this.config.method,
-        this.config.serializedDiff
+        this.config.serializedDiffs
       );
 
       const {
@@ -139,7 +130,9 @@ export class LearnTrailValueWorker {
         maxConcurrent: 1,
       });
 
-      function notifyParent(results: IValueAffordanceSerializationWithCounter) {
+      function notifyParent(
+        results: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+      ) {
         const progress = {
           hasMoreInteractions,
           results,
@@ -158,9 +151,9 @@ export class LearnTrailValueWorker {
       }
 
       async function flush() {
-        const results: IValueAffordanceSerializationWithCounter = JsonHelper.toJs(
+        const results: IValueAffordanceSerializationWithCounterGroupedByDiffHash = JsonHelper.toJs(
           learner.serialize()
-        ) as IValueAffordanceSerializationWithCounter;
+        ) as IValueAffordanceSerializationWithCounterGroupedByDiffHash;
         notifyParent(results);
       }
 

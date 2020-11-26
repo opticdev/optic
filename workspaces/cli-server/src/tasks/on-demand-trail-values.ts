@@ -2,7 +2,10 @@ import { EventEmitter } from 'events';
 import { runManagedScriptByName } from '@useoptic/cli-scripts';
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 import {
   getTrailWorkerOutputPaths,
   ITrailValuesEmitterWorker,
@@ -13,7 +16,7 @@ export interface ITrailValuesConfig {
   method: string;
   captureId: string;
   events: any;
-  serializedDiff: string;
+  serializedDiffs: string;
   captureBaseDirectory: string;
 }
 
@@ -31,10 +34,12 @@ export class OnDemandTrailValues {
 
   private lastProgress: {
     hasMoreInteractions: boolean;
-    results: IValueAffordanceSerializationWithCounter;
+    results: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
   } | null = null;
 
-  async run(): Promise<IValueAffordanceSerializationWithCounter> {
+  async run(): Promise<
+    IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  > {
     const { config } = this;
 
     const outputPaths = this.paths();
@@ -44,7 +49,7 @@ export class OnDemandTrailValues {
       pathId: config.pathId,
       method: config.method,
       specFilePath: outputPaths.events,
-      serializedDiff: config.serializedDiff,
+      serializedDiffs: config.serializedDiffs,
       captureBaseDirectory: config.captureBaseDirectory,
     };
 
@@ -97,7 +102,7 @@ export class OnDemandTrailValues {
 
     this.child = child;
 
-    const completedPromise: Promise<IValueAffordanceSerializationWithCounter> = new Promise(
+    const completedPromise: Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> = new Promise(
       (resolve) => {
         this.events.once('completed', onCompleted);
         function onCompleted(data: any) {
