@@ -214,9 +214,6 @@ export class DiffWorkerRust {
       const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
       diffEngine.error.pipe(diffEngineLog);
 
-      // provide diffEngine's stdin:
-      interactionsStream.pipe(diffEngine.input);
-
       // write initial output
       await Promise.all([
         safeWriteJson(diffOutputPaths.stats, {
