@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ windows-latest, macos-latest, ubuntu-latest ]
-        interaction-count: [0, 1, 100, 1000, 10000]
+        interaction-count: [ 10000 ]
         rust-diff-engine: ["true"]
     runs-on: ${{ matrix.os }}
     steps:
