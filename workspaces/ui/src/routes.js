@@ -5,6 +5,7 @@ import { CaptureManagerPage } from './components/diff/v2/CaptureManagerPage';
 import { DocsPage } from './components/docs/DocsPage';
 import Loading from './components/navigation/Loading';
 import { ApiPage } from './components/api-page/ApiPage';
+import { SetupPage } from './components/setup-page/SetupPage';
 
 const TestingDashboardLoader = React.lazy(() =>
   import('./components/loaders/TestingDashboardLoader')
@@ -23,7 +24,8 @@ export function ApiRoutes(props) {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
-        <Route strict path={routerPaths.dashboardRoot} component={ApiPage} />
+        {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
+        <Route strict path={routerPaths.setup} component={SetupPage} />
         <Route strict path={routerPaths.docsRoot} component={DocsPage} />
         <Route
           strict

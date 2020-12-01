@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 const PageContext = React.createContext(null);
@@ -44,7 +44,7 @@ export default function Page(props) {
 
   return (
     <PageContext.Provider value={pageContext}>
-      <div className={classes.root}>{props.children}</div>;
+      <div className={classes.root}>{props.children}</div>
     </PageContext.Provider>
   );
 }

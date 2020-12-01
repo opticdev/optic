@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <defs>
+        <linearGradient x1="50%" y1="-14.329275%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#F4F4F4" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="63" cy="63" r="63"></circle>
+        <filter x="-5.6%" y="-4.0%" width="111.1%" height="111.1%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(12.000000, 12.000000)">
+            <g id="Oval" fill-rule="nonzero">
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <use fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+            </g>
+            <path d="M86.0523652,32.9777833 C79.5420073,27.9766667 71.3713641,25 62.4999367,25 C53.6285092,25 45.457866,27.9766667 38.9475081,32.9777833 M67.9757433,101 C75.8341528,99.8900833 82.9281281,96.4260667 88.5090682,91.3511667 C96.1866608,84.3693 101,74.3379333 101,63.1915833 C101,54.6700833 98.1864133,46.8002833 93.4307075,40.4463667 M57.0244467,101 C49.1660372,99.8900833 42.0720619,96.4260667 36.4911218,91.3511667 C28.8135292,84.3693 24,74.3379333 24,63.1915833 C24,54.6700833 26.8134601,46.8002833 31.5694825,40.4463667" id="Shape" stroke="#343BE5" stroke-width="4.736844" stroke-linecap="round"></path>
+            <path d="M46.2887811,83.5415992 C50.7699156,86.9635101 56.3935795,89 62.5001583,89 C68.6064205,89 74.2304011,86.9635101 78.7112189,83.5415992 M58.7312047,37 C53.3222401,37.7593691 48.439257,40.1296267 44.5977869,43.6018878 C39.3132719,48.3791365 36,55.2422751 36,62.8688996 C36,68.6997016 37.9367266,74.0843189 41.2100986,78.4315328 M66.2687953,37 C71.6780766,37.7593691 76.5610597,40.1296267 80.4022131,43.6018878 C85.6867281,48.3791365 89,55.2422751 89,62.8688996 C89,68.6997016 87.0632734,74.0843189 83.7899014,78.4315328" id="Shape" stroke="#343BE5" stroke-width="4.736844" stroke-linecap="round"></path>
+        </g>
+    </g>
+</svg>
