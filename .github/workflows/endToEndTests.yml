@@ -71,13 +71,6 @@ jobs:
         if: runner.os == 'macOS'
         run: sudo /usr/sbin/purge
 
-
-      #      - name: 'Install local-cli'
-      #        shell: bash
-      #        run: |
-      #          OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
-      #          echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
-      #          npm install -g "@useoptic/cli@$OPTIC_VERSION"
       - name: 'run scenario'
         run: |
           source sourceme.sh
@@ -88,30 +81,30 @@ jobs:
           source sourceme.sh
           optic_ci_e2e "./workspaces/snapshot-tests/src/e2e/shape-diff-engine/array with object listitem is provided with one matching and one primitive.managed.json"
 
-#  test-end-to-end:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
-#      with:
-#        node-version: 12
-#    - run: echo "::add-path::$(yarn global bin)"
-#    - name: Check out Optic Repo
-#      uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
-#      with:
-#        path: ./optic-repo
-#    - name: Release Optic Locally
-#      run: |
-#        source sourceme.sh && optic_local_registry_start
-#        source sourceme.sh && optic_build_and_publish_locally
-#      working-directory: ./optic-repo
-#    - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
-#      with:
-#        repository: opticdev/optic-end-end-tests
-#        token: ${{ secrets.END_TO_END_ACCESS_KEY }}
-#        path: ./tests
-#    - run: npm install
-#      working-directory: ./tests
-#    - run: npm test
-#      working-directory: ./tests
-#      env:
-#        DEBUG: "*,-babel*" # Helps with tracing errors
+  test-end-to-end:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+      with:
+        node-version: 12
+    - run: echo "::add-path::$(yarn global bin)"
+    - name: Check out Optic Repo
+      uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      with:
+        path: ./optic-repo
+    - name: Release Optic Locally
+      run: |
+        source sourceme.sh && optic_local_registry_start
+        source sourceme.sh && optic_build_and_publish_locally
+      working-directory: ./optic-repo
+    - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      with:
+        repository: opticdev/optic-end-end-tests
+        token: ${{ secrets.END_TO_END_ACCESS_KEY }}
+        path: ./tests
+    - run: npm install
+      working-directory: ./tests
+    - run: npm test
+      working-directory: ./tests
+      env:
+        DEBUG: "*,-babel*" # Helps with tracing errors
