@@ -33,8 +33,7 @@ Tap.test('diff-engine.spawn', async (test) => {
 
     let diffs = (await outputLines).map((line) => JSON.parse(line));
     diffs.sort(([, tagsA, fingerprintA], [, tagsB, fingerprintB]) =>
-      compareString(
-        fingerprintA + tagsA.join(','),
+      (fingerprintA + tagsA.join(',')).localeCompare(
         fingerprintB + tagsB.join(',')
       )
     );
@@ -89,14 +88,4 @@ async function bufferLines(stream) {
   }
 
   return results;
-}
-
-function compareString(a, b) {
-  if (a < b) {
-    return -1;
-  }
-  if (a > b) {
-    return 1;
-  }
-  return 0;
 }
