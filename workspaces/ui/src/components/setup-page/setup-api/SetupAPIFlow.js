@@ -15,19 +15,15 @@ import {
   DocumentAPIFlowEvents,
   EMPTY_SEARCH_RESULTS,
   FRAMEWORK_SELECTED,
-  MARK_API_AS_INITIALIZED,
   MODE_SELECTED,
   MODES,
-  READY_TO_SEE_COMMAND,
   SET_STEP_TO,
 } from './events';
 import Fade from '@material-ui/core/Fade';
 import { StartCommandInput } from './StartCommandInput';
 import { AddressBarInput } from './AddressBarInput';
 import Paper from '@material-ui/core/Paper';
-import { BatteryUnknown } from '@material-ui/icons';
-import { Link } from 'react-router-dom';
-import LinearProgress from '@material-ui/core/LinearProgress';
+
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { CheckHelp } from './CheckHelp';
 import { StartedTaskWithLocalCli } from '@useoptic/analytics/lib/events/tasks';
@@ -108,7 +104,7 @@ export function SetupAPIFlow(props) {
   const guidedFlow = useGuidedFlow(
     documentAPISteps,
     {
-      currentStep: 0,
+      currentStep: 2,
       mode: MODES.RECOMMENDED,
       startOnHostname: 'http://localhost:3500',
       targetUrl: '',
@@ -130,10 +126,6 @@ export function SetupAPIFlow(props) {
           break;
         case DocumentAPIFlowEvents.EMPTY_SEARCH_RESULTS:
           internalState.emptySearch = true;
-          return internalState;
-          break;
-        case DocumentAPIFlowEvents.READY_TO_SEE_COMMAND:
-          internalState.showCommand = true;
           return internalState;
           break;
         case DocumentAPIFlowEvents.CHANGED_START_COMMAND:
@@ -212,7 +204,7 @@ function Step0(props) {
               key="mode-picked"
               onClick={() => dispatch(SET_STEP_TO(1))}
             >
-              Next Step: Initializing Optic in your Project
+              Continue
             </NextButton>
           </div>
         )}
@@ -294,7 +286,7 @@ function Step1(props) {
           color="primary"
           style={{ marginTop: 22 }}
           disabled={!targetUrl}
-          onClick={() => dispatch(READY_TO_SEE_COMMAND())}
+          onClick={() => dispatch(SET_STEP_TO(2))}
         >
           Check Optic Proxy Configuration
         </Button>
@@ -370,7 +362,7 @@ function Step1(props) {
             size="medium"
             color="primary"
             disabled={!startCommand}
-            onClick={() => dispatch(READY_TO_SEE_COMMAND())}
+            onClick={() => dispatch(SET_STEP_TO(2))}
           >
             Check Start Command
           </Button>

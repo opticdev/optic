@@ -19,6 +19,10 @@ import { Code } from './CodeBlock';
 import { MarkdownRender } from '../fetch-docs/BuildMD';
 import { CommonIssues } from '../fetch-docs/IntegrationDocs';
 import { GuidedFlowContext } from './base';
+import { TextField } from '@material-ui/core';
+import { CHANGED_START_COMMAND } from './events';
+import { StartCommandInput } from './StartCommandInput';
+import { ShowCurrentOpticYml } from './UpdateOpticYml';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,7 +47,7 @@ export function CheckHelp(props) {
     return null;
   }
 
-  // console.log(results);
+  console.log('results', results);
 
   // const results = {
   //   passed: false,
@@ -63,7 +67,11 @@ export function CheckHelp(props) {
   // };
   //
 
-  console.log(results);
+  const commandIsInvalid =
+    Boolean(results.recommended) &&
+    (!results.recommended.commandIsLongRunning.passed ||
+      !results.recommended.apiProcessStartsOnAssignedHost.passed ||
+      !results.recommended.apiProcessStartsOnAssignedPort.passed);
 
   const recommendedChecks = Boolean(results.recommended) && (
     <>
@@ -71,7 +79,7 @@ export function CheckHelp(props) {
         variant="subtitle1"
         style={{ fontWeight: 800, marginBottom: 12 }}
       >
-        Your command <Code>{results.task.command}</Code>
+        Problems with command <Code>{results.task.command}</Code>.
       </Typography>
 
       <AssertionRender
@@ -166,6 +174,10 @@ export function CheckHelp(props) {
 
   return (
     <div className={classes.root}>
+      <ShowCurrentOpticYml
+        rawConfig={results.rawConfig}
+        commandIsInvalid={commandIsInvalid}
+      />
       {recommendedChecks}
       {manualCheck}
     </div>

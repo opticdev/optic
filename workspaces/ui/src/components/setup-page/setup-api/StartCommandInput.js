@@ -9,17 +9,23 @@ import { useCodeInputStyles } from './sharedStyles';
 import { Typography } from '@material-ui/core';
 import Fade from '@material-ui/core/Fade';
 import { Code } from './CodeBlock';
+import { RemovedRed, secondary } from '../../../theme';
 
-export function StartCommandInput({ onChange, placeholder, value }) {
+export function StartCommandInput({ onChange, placeholder, value, error }) {
   const classes = useCodeInputStyles();
   const [showHelper, setShowHelper] = useState(false);
 
   return (
-    <Paper component="form" className={classes.root}>
+    <Paper
+      component="form"
+      className={classes.root}
+      style={{ border: error && `1px solid ${secondary}` }}
+    >
       <IconButton disabled>
         <AttachMoneyIcon />
       </IconButton>
       <InputBase
+        error={error}
         value={value}
         onKeyDown={(e) => {
           if (e.keyCode === 13) {

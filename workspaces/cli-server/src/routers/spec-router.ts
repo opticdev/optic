@@ -300,7 +300,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     });
   });
 
-  router.patch(
+  router.post(
     '/config/initial-task',
     bodyParser.json({ limit: '100kb' }),
     async (req, res) => {
@@ -316,6 +316,16 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
       await fs.writeFile(req.optic.paths.configPath, newContents);
 
+      res.sendStatus(200);
+    }
+  );
+
+  router.post(
+    '/config/raw',
+    bodyParser.json({ limit: '100kb' }),
+    async (req, res) => {
+      const { raw } = req.body;
+      await fs.writeFile(req.optic.paths.configPath, raw);
       res.sendStatus(200);
     }
   );
