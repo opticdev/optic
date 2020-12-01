@@ -77,12 +77,17 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     '/diffs',
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
+      debugger;
       const { captureId } = req.params;
       const { ignoreRequests, events, additionalCommands, filters } = req.body;
 
       let diffId;
       try {
-        diffId = await req.optic.session.diffCapture(captureId, events, filters);
+        diffId = await req.optic.session.diffCapture(
+          captureId,
+          events,
+          filters
+        );
       } catch (e) {
         return res.status(500).json({ message: e.message });
       }
@@ -134,7 +139,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     const notifications = chain([
       progress,
       ({ type, data }) => {
-        if (type === 'progress') type = 'message';
+        debugger;
         return [`data: ${JSON.stringify({ type, data })}\n\n`];
       },
     ]);

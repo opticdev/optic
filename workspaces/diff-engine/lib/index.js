@@ -11,12 +11,8 @@ const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
 
-function spawn({ specPath }) {
-  const input = new PassThrough();
-  const output = new PassThrough();
-  const error = new PassThrough();
-
-  const binaryName = Config.binaryName;
+function getBinaryPath(config) {
+  const binaryName = config.binaryName;
   const supportedPlatform = getSupportedPlatform();
 
   const binPaths = [];
@@ -47,6 +43,28 @@ function spawn({ specPath }) {
   }
 
   const binPath = binPaths[0];
+  return binPath;
+}
+
+function dryRun() {
+  const binaryPath = getBinaryPath(Config);
+  const diffProcess = Execa(binaryPath, [], {});
+  return diffProcess.then((result) => {
+    if (result.failed) {
+      throw new Error(result.stderr);
+    }
+    return result;
+  });
+}
+
+function spawn({ specPath }) {
+  const input = new PassThrough();
+  const output = new PassThrough();
+  const error = new PassThrough();
+
+  const binPath = getBinaryPath(Config);
+  console.log({ binPath });
+  debugger;
 
   const diffProcess = Execa(binPath, [specPath], {
     input,
@@ -59,7 +77,7 @@ function spawn({ specPath }) {
   diffProcess.stdout.pipe(output);
   diffProcess.stderr.pipe(error);
 
-  return { input, output, error };
+  return { input, output, error, child: diffProcess };
 }
 
 function getSupportedPlatform() {
@@ -133,3 +151,5 @@ function uninstall(options) {
 exports.spawn = spawn;
 exports.install = install;
 exports.uninstall = uninstall;
+exports.getBinaryPath = getBinaryPath;
+exports.dryRun = dryRun;

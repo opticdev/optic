@@ -9,6 +9,7 @@ async function run(config: IDiffProjectionEmitterConfig) {
 
 const [, , configJsonString] = process.argv;
 const config: IDiffProjectionEmitterConfig = JSON.parse(configJsonString);
+debugger;
 console.log({ config });
 run(config).catch((e) => {
   console.error(e);

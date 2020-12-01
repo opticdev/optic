@@ -19,12 +19,16 @@ export function runManagedScript(modulePath: string, ...args: string[]) {
   const isDebuggingEnabled =
     process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
   // const execArgv = isDebuggingEnabled ? ['--inspect=63694'] : []; // not in spawn
-  const child = cp.spawn(process.argv0, [modulePath, ...args], {
-    windowsHide: true,
-    // make sure stdout and stderr are consumed (by piping to process.stdout & process.stderr)
-    // execution may block, otherwise.
-    stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
-  });
+  const child = cp.spawn(
+    process.argv0,
+    ['--inspect-brk=63694', modulePath, ...args],
+    {
+      windowsHide: true,
+      // make sure stdout and stderr are consumed (by piping to process.stdout & process.stderr)
+      // execution may block, otherwise.
+      stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
+    }
+  );
   return child;
 }
 

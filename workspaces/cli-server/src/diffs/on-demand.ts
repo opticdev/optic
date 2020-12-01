@@ -71,11 +71,14 @@ export class OnDemandDiff implements Diff {
       additionalCommandsFilePath: outputPaths.additionalCommands,
       filtersFilePath: outputPaths.filters,
     };
-    console.log(JSON.stringify(scriptConfig));
-    const child = runManagedScriptByName(
+    const scriptName =
       process.env.OPTIC_RUST_DIFF_ENGINE === 'true'
         ? 'emit-diff-projections-rust'
-        : 'emit-diff-projections',
+        : 'emit-diff-projections';
+    console.log(scriptName, JSON.stringify(scriptConfig));
+    debugger;
+    const child = runManagedScriptByName(
+      scriptName,
       JSON.stringify(scriptConfig)
     );
 
@@ -86,14 +89,17 @@ export class OnDemandDiff implements Diff {
       this.events.emit(x.type, x.data);
     };
     const onError = (err: Error) => {
+      debugger;
       cleanup();
       this.events.emit('error', err);
+      debugger;
     };
     const onExit = (code: number, signal: string | null) => {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
         console.error(`Diff Worker exited with non-zero exit code ${code}`);
+        debugger;
       } else {
         this.finished = true;
         this.events.emit('finish');
@@ -114,6 +120,7 @@ export class OnDemandDiff implements Diff {
 
     return new Promise((resolve, reject) => {
       function onErr(err: Error) {
+        debugger;
         cleanup();
         reject(err);
       }
@@ -153,6 +160,7 @@ export class OnDemandDiff implements Diff {
     stream.write({ type: 'progress', data: this.latestProgress() });
 
     if (this.finished) {
+      debugger;
       stream.end();
     } else {
       let resume = () => {
@@ -165,14 +173,18 @@ export class OnDemandDiff implements Diff {
 
         let end = () => {
           stopListening();
-          stream.end();
+          debugger;
+          //ending the stream here doesn't seem to flush
+          //stream.end({ type: 'idk', data: { finished: true } });
         };
 
         function onProgress(data: any) {
           write({ type: 'progress', data });
         }
         function onErr(data: any) {
+          debugger;
           write({ type: 'error', data });
+
           end();
         }
         function onFinish() {

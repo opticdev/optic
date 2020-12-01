@@ -70,21 +70,25 @@ export class DiffWorkerRust {
     let diffedInteractionsCounter = BigInt(0);
     let skippedInteractionsCounter = BigInt(0);
 
-    const reportProgress = _throttle(function notifyParent() {
-      const progress = {
-        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        hasMoreInteractions,
-      };
-      if (process && process.send) {
-        process.send({
-          type: 'progress',
-          data: progress,
-        });
-      } else {
-        console.log(progress);
-      }
-    }, 1000);
+    const reportProgress = _throttle(
+      function notifyParent() {
+        const progress = {
+          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+          hasMoreInteractions,
+        };
+        if (process && process.send) {
+          process.send({
+            type: 'progress',
+            data: progress,
+          });
+        } else {
+          console.log(progress);
+        }
+      },
+      1000,
+      { leading: true }
+    );
 
     function notifyParentOfError(e: Error) {
       if (process && process.send) {
@@ -195,6 +199,23 @@ export class DiffWorkerRust {
       });
 
       let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+      diffEngine.child
+        .then((result) => {
+          debugger;
+          if (result.failed) {
+            const e = new Error(result.stderr);
+            console.error(e);
+            debugger;
+            reportProgress.cancel();
+            notifyParentOfError(e);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          debugger;
+          reportProgress.cancel();
+          notifyParentOfError(e);
+        });
       let processStreams: Writable[] = [diffEngine.input];
       if (process.env.OPTIC_DEVELOPMENT === 'yes') {
         processStreams.push(

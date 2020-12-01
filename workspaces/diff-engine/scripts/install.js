@@ -1,4 +1,4 @@
-const { install } = require('../lib');
+const { install, dryRun } = require('../lib');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -23,6 +23,8 @@ if (process.env.OPTIC_RUST_DIFF_ENGINE !== 'true') {
 install()
   .then(({ archiveName }) => {
     console.log(`Installed binaries for diff-engine: ${archiveName}`);
+    console.log('Verifying binary can actualy run...');
+    return dryRun();
   })
   .catch((err) => {
     console.error('Could not install diff-engine:', err);

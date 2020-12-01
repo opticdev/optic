@@ -122,11 +122,13 @@ class SessionDiffs {
     this.diffsById.set(diffId, newDiff);
 
     newDiff.events.once('finish', () => {
+      debugger;
       this.activeDiffsByCaptureId.delete(captureId);
     });
     newDiff.events.once('error', (err) => {
       console.error(err);
-      throw err;
+      debugger;
+      //throw err; // if we throw here after newDiff.start() succeeds, this error does not get caught
     });
 
     await newDiff.start();
