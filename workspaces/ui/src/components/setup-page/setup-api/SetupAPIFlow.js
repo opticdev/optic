@@ -109,6 +109,7 @@ export function SetupAPIFlow(props) {
     documentAPISteps,
     {
       currentStep: 0,
+      mode: MODES.RECOMMENDED,
       startOnHostname: 'http://localhost:3500',
       targetUrl: '',
       startCommand: '',
@@ -174,26 +175,7 @@ export function SetupAPIFlow(props) {
         toc={guidedFlow.tocSteps}
         currentStep={guidedFlow.currentStep}
       >
-        {daemonIsUp === null && <LinearProgress color="primary" />}
         {daemonIsUp === true && guidedFlow.centerContent}
-        {daemonIsUp === false && (
-          <>
-            <Typography variant="h5" className={classes.heading}>
-              Start the Optic Daemon
-            </Typography>
-            <Typography variant="body1" className={classes.body}>
-              To use the guided setup, please start the Optic Daemon by running
-              the following command. If you wish to set up your API manually,
-              you can follow along in the.
-              <Link href="https://useoptic.com/docs/getting-started/setup/">
-                Optic documentation
-              </Link>
-              .
-            </Typography>
-
-            <CodeBlock lang="bash" code="api daemon:start" />
-          </>
-        )}
       </GuidedFlow>
     </>
   );
@@ -210,12 +192,13 @@ function Step0(props) {
           Add Optic to your API Project
         </Typography>
         <Typography variant="body1" className={classes.body}>
-          Optic can learn your API's contract by monitoring its traffic and
-          behavior. The easiest way to get started with Optic is to add it to
-          your local development environment.
+          Optic learns your API's contract by monitoring its traffic as you
+          develop. The easiest way to get started with Optic is to add it to
+          your local development environment:
         </Typography>
         <Typography variant="body1" className={classes.body}>
-          Choose a configuration mode to get started:
+          We recommend creating an <Code>api start</Code> command for your
+          project:
         </Typography>
 
         <SetupType
@@ -244,11 +227,11 @@ function Step1(props) {
 
   const { dispatch, state } = useContext(GuidedFlowContext);
 
-  useLatestEvent((latest) => {
-    if (latest.type === 'ApiInitializedInProject') {
-      dispatch(MARK_API_AS_INITIALIZED(latest.data.cwd, latest.data.apiName));
-    }
-  }, events);
+  // useLatestEvent((latest) => {
+  //   if (latest.type === 'ApiInitializedInProject') {
+  //     dispatch(MARK_API_AS_INITIALIZED(latest.data.cwd, latest.data.apiName));
+  //   }
+  // }, events);
 
   const {
     framework,
@@ -313,7 +296,7 @@ function Step1(props) {
           disabled={!targetUrl}
           onClick={() => dispatch(READY_TO_SEE_COMMAND())}
         >
-          Show API Init Command
+          Check Optic Proxy Configuration
         </Button>
       </Collapse>
     </>
@@ -389,7 +372,7 @@ function Step1(props) {
             disabled={!startCommand}
             onClick={() => dispatch(READY_TO_SEE_COMMAND())}
           >
-            Show API Init Command
+            Check Start Command
           </Button>
         </div>
       </Collapse>

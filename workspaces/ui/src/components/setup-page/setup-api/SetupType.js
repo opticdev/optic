@@ -85,8 +85,8 @@ const useStyles = makeStyles((theme) => ({
 export function SetupType({ value, onChoose }) {
   const classes = useStyles();
   return (
-    <Grid container spacing={3}>
-      <Grid xs={7} item>
+    <Grid container spacing={2}>
+      <Grid xs={12} item>
         <Card
           className={classnames(classes.paper, {
             [classes.selected]: value === MODES.RECOMMENDED,
@@ -117,7 +117,7 @@ export function SetupType({ value, onChoose }) {
           </Typography>
         </Card>
       </Grid>
-      <Grid xs={5} item>
+      <Grid xs={12} item>
         <Card
           className={classnames(classes.paper, {
             [classes.selected]: value === MODES.MANUAL,

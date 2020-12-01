@@ -6,7 +6,6 @@ export const DocumentAPIFlowEvents = keymirror({
   EMPTY_SEARCH_RESULTS: null,
   CHANGED_START_COMMAND: null,
   CHANGED_HOSTNAME: null,
-  READY_TO_SEE_COMMAND: null,
   SET_STEP_TO: null,
   CHANGED_TARGET_URL: null,
   MARK_API_AS_INITIALIZED: null,
@@ -24,9 +23,7 @@ export function FRAMEWORK_SELECTED(framework) {
 export function EMPTY_SEARCH_RESULTS() {
   return { type: DocumentAPIFlowEvents.EMPTY_SEARCH_RESULTS };
 }
-export function READY_TO_SEE_COMMAND() {
-  return { type: DocumentAPIFlowEvents.READY_TO_SEE_COMMAND };
-}
+
 export function CHANGED_START_COMMAND(command) {
   return { type: DocumentAPIFlowEvents.CHANGED_START_COMMAND, command };
 }

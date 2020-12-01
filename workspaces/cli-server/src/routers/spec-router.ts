@@ -22,6 +22,7 @@ import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
+import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -288,10 +289,36 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   router.get('/config', async (req, res) => {
     const rules = await req.optic.ignoreHelper.getCurrentIgnoreRules();
+
+    const configRaw = (
+      await fs.readFile(req.optic.paths.configPath)
+    ).toString();
+
     res.json({
       config: { ...req.optic.config, ignoreRequests: rules.allRules },
+      configRaw,
     });
   });
+
+  router.patch(
+    '/config/initial-task',
+    bodyParser.json({ limit: '100kb' }),
+    async (req, res) => {
+      const { task } = req.body;
+
+      const { name, definition } = task;
+
+      const newContents = patchInitialTaskOpticYaml(
+        req.optic.config,
+        definition,
+        name
+      );
+
+      await fs.writeFile(req.optic.paths.configPath, newContents);
+
+      res.sendStatus(200);
+    }
+  );
 
   router.get('/ignores', async (req, res) => {
     const rules = await req.optic.ignoreHelper.getCurrentIgnoreRules();

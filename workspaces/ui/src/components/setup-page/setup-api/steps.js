@@ -2,7 +2,7 @@ export const steps = ['Install Optic', 'Document your API'];
 
 export const documentAPISteps = [
   'Choose Integration',
-  "Run 'api init'",
+  'Configure Optic',
   'Check Setup',
-  'Send API Traffic',
+  'Collect API Traffic',
 ];

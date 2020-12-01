@@ -14,6 +14,7 @@ import {
   ApiCheckCompleted,
   ApiInitializedInProject,
 } from '@useoptic/analytics/lib/events/onboarding';
+import { buildTask } from '@useoptic/cli-config/build/helpers/initial-task';
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';
@@ -59,10 +60,11 @@ export default class Init extends Command {
     //bring me back with an ID please
     // await trackAndSpawn('New API Created', { name });
 
-    const config = `
-name: ${escapeIt(name)}
-tasks:
-${buildInitialTask(flags)}`.trimLeft();
+    const config = buildTask(
+      name,
+      flags,
+      flags.inboundUrl && flags.targetUrl ? 'start-proxy' : 'start'
+    );
 
     // const token: string = await Promise.resolve('token-from-backend')
 
@@ -90,31 +92,4 @@ ${buildInitialTask(flags)}`.trimLeft();
       })
     );
   }
-}
-
-function buildInitialTask(flags: any) {
-  //default config and valid for start injected
-  let commandConfig = `  start:
-     command: ${escapeIt(
-       flags.command || 'echo "Setup A Valid Command to Start your API!"'
-     )}
-     inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
-`.trimRight();
-
-  if (flags.inboundUrl && flags.targetUrl) {
-    commandConfig = `  start-proxy:
-     inboundUrl: ${flags.inboundUrl}
-     targetUrl: ${flags.targetUrl}
-`.trimRight();
-  }
-
-  return commandConfig;
-}
-
-function escapeIt(value: string): string {
-  const escaped = jsesc(value, { quotes: 'double' });
-  if (escaped !== value) {
-    return `"${escaped}"`;
-  }
-  return `"${value}"`;
 }
