@@ -61,7 +61,7 @@ function spawn({ specPath }) {
 
   // get a clean result promise, so we stay in control of the exact API we're exposing
   const result = diffProcess.then(
-    (childResult) => childResult,
+    (childResult) => {},
     (childResult) => {
       throw new DiffEngineError(childResult);
     }

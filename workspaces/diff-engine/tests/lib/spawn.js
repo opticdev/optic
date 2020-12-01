@@ -1,29 +1,67 @@
-// const execa = require('execa')
+const Tap = require('tap');
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
-const interactions = fs.createReadStream(
-  path.join(__dirname, '..', 'fixtures', 'todos-interaction.json_stream')
-);
+Tap.test('diff-engine.spawn', async (test) => {
+  await test.test('can diff a stream of interactions', async (t) => {
+    const interactions = fs.createReadStream(
+      path.join(
+        __dirname,
+        '..',
+        'fixtures',
+        'ergast-captures',
+        'ergast-simulated-traffic.jsonl'
+      )
+    );
 
-const DiffEngine = require('../../lib');
+    const DiffEngine = require('../../lib');
 
-const diff = DiffEngine.spawn({
-  specPath: path.join(__dirname, '..', '..', 'input-events.json'),
+    const diff = DiffEngine.spawn({
+      specPath: path.join(
+        __dirname,
+        '..',
+        'fixtures',
+        'ergast-example-spec.json'
+      ),
+    });
+
+    interactions.pipe(diff.input);
+    let outputLines = bufferLines(diff.output);
+    let errorLines = bufferLines(diff.error);
+
+    let diffs = (await outputLines).map((line) => JSON.parse(line));
+    diffs.sort(([, tagsA, fingerprintA], [, tagsB, fingerprintB]) =>
+      compareString(
+        fingerprintA + tagsA.join(','),
+        fingerprintB + tagsB.join(',')
+      )
+    );
+
+    t.matchSnapshot(diffs, 'generated diffs');
+  });
 });
 
-interactions.pipe(diff.input);
-diff.output.pipe(process.stdout);
-diff.error.pipe(process.stderr);
+async function bufferLines(stream) {
+  const results = [];
+  const lines = readline.createInterface({
+    input: stream,
+    crlfDelay: Infinity,
+  });
 
-diff.result.then(
-  (res) => {
-    console.log('finished diff');
-
-    // console.log(res.exitCode);
-  },
-  (err) => {
-    console.log('something went wrong');
-    console.error(err);
+  for await (const line of lines) {
+    results.push(line);
   }
-);
+
+  return results;
+}
+
+function compareString(a, b) {
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+}

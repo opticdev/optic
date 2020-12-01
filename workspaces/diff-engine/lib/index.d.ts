@@ -8,6 +8,7 @@ export function spawn({
   input: Duplex;
   output: Duplex;
   error: Duplex;
+  result: Promise<void>;
 };
 
 export interface DiffEngineError extends Error {
