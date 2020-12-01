@@ -229,12 +229,15 @@ jobs:
         fi
 
         FLAGS_FILE=.env.$RELEASE_CHANNEL
+        echo "OPTIC__NPM__VERSION=${{ needs.release_logic.outputs.version }}" >> "$FLAGS_FILE"
         if [[ -r $FLAGS_FILE ]]; then
           echo "Feature flags found for $RELEASE_CHANNEL, staging for build and runtime."
           cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/agent-cli/.env
           cp $FLAGS_FILE workspaces/ci-cli/.env
           cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/cli-server/.env
+          cp $FLAGS_FILE workspaces/cli-scripts/.env
           cp $FLAGS_FILE workspaces/diff-engine/.env
           cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi

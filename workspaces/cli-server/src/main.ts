@@ -1,6 +1,20 @@
 import { CliDaemon } from './daemon';
 import fs from 'fs-extra';
 import { userDebugLogger } from '@useoptic/cli-shared';
+import { getSentryWrapper } from './sentry';
+import dotenv from 'dotenv';
+import path from 'path';
+
+const envPath =
+  process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
+
+dotenv.config({
+  path: envPath,
+});
+
+const sentry = getSentryWrapper();
+sentry.init();
+
 console.log('starting daemon', process.argv, process.env.DEBUG);
 console.log(process.cwd(), __dirname, __filename);
 
@@ -24,4 +38,5 @@ daemon
   })
   .catch((e) => {
     console.error(e);
+    throw e;
   });
