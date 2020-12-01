@@ -87,7 +87,7 @@ jobs:
     - uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
       with:
         node-version: 12
-    - run: echo "::add-path::$(yarn global bin)"
+    - run: echo "$(yarn global bin)" >> $GITHUB_PATH
     - name: Check out Optic Repo
       uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
       with:
