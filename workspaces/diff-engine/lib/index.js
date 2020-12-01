@@ -59,9 +59,15 @@ function spawn({ specPath }) {
   diffProcess.stdout.pipe(output);
   diffProcess.stderr.pipe(error);
 
-  return { input, output, error };
+  // get a clean result promise, so we stay in control of the exact API we're exposing
+  const result = diffProcess.then(
+    (childResult) => childResult,
+    (childResult) => {
+      throw new DiffEngineError(childResult);
+    }
+  );
+  return { input, output, error, result };
 }
-
 function getSupportedPlatform() {
   return Config.supportedPlatforms.find(
     ({ arch, type }) => arch === OS.arch() && type === OS.type()
@@ -158,6 +164,40 @@ function uninstall(options) {
   }
 }
 
+class DiffEngineError extends Error {
+  constructor(childResult) {
+    const {
+      exitCode,
+      failed,
+      timedOut,
+      signal,
+      signalDescription,
+      killed,
+      isCanceled,
+    } = childResult;
+
+    let failureMode;
+    if (failed) {
+      failureMode = `process failed with exit code ${exitCode}.`;
+    } else if (timedOut) {
+      failureMode = `process became unresponsive and timed out`;
+    } else if (killed) {
+      failureMode = `process was killed by signal ${signal} (${signalDescription})`;
+    } else {
+      failureMode = `failed for an unknown reason`;
+    }
+    super(`Diff engine ${failureMode}`);
+    this.exitCode = exitCode;
+    this.signal = signal;
+    this.signalDescription = signalDescription;
+    this.failed = failed;
+    this.timedOut = timedOut;
+    this.isCanceled = isCanceled;
+    this.killed = killed;
+  }
+}
+
 exports.spawn = spawn;
 exports.install = install;
 exports.uninstall = uninstall;
+exports.DiffEngineError = DiffEngineError;
