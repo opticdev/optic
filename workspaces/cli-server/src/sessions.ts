@@ -11,7 +11,6 @@ import {
 } from './diffs';
 import { OnDemandDiff } from './diffs/on-demand';
 import * as Uuid from 'uuid';
-import { timingSafeEqual } from 'crypto';
 
 export class SessionsManager {
   private sessions: Session[] = [];
@@ -125,6 +124,7 @@ class SessionDiffs {
       this.activeDiffsByCaptureId.delete(captureId);
     });
     newDiff.events.once('error', (err) => {
+      debugger;
       console.error(err);
       throw err;
     });

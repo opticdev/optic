@@ -1,6 +1,11 @@
 import { CliDaemon } from './daemon';
 import fs from 'fs-extra';
 import { userDebugLogger } from '@useoptic/cli-shared';
+import { getSentryWrapper } from './sentry';
+
+const sentry = getSentryWrapper();
+sentry.init();
+
 console.log('starting daemon', process.argv, process.env.DEBUG);
 console.log(process.cwd(), __dirname, __filename);
 
@@ -24,4 +29,5 @@ daemon
   })
   .catch((e) => {
     console.error(e);
+    throw e;
   });

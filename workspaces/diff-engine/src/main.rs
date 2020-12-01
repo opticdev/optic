@@ -16,6 +16,7 @@ use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
 
 fn main() {
+  process::exit(1);
   let cli = App::new("Optic Diff engine")
     .version(crate_version!())
     .author("Optic Labs Corporation")

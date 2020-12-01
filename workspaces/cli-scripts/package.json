@@ -14,6 +14,8 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
+    "@sentry/node": "^5.28.0",
+    "@sentry/tracing": "^5.28.0",
     "node-notifier": "^7.0.0",
     "analytics-node": "^3.4.0-beta.1",
     "@useoptic/cli-shared": "8.6.0-beta.20"
