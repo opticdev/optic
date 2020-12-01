@@ -24,6 +24,7 @@
     "@types/node-notifier": "^6.0.1"
   },
   "files": [
-    "/build"
+    "/build",
+    "/.env"
   ]
 }
