@@ -111,7 +111,35 @@ async function install(options) {
 
   Fs.mkdirSync(binaryDir, { recursive: true });
 
-  await downloadStream.pipe(Tar.extract({ strip: 1, cwd: binaryDir }));
+  const extracting = new Promise((resolve, reject) => {
+    const extract = Tar.extract({ strip: 1, cwd: binaryDir });
+    extract.once('finish', onFinish);
+    extract.once('error', onError);
+
+    downloadStream.pipe(extract);
+
+    function onFinish() {
+      cleanup();
+      resolve();
+    }
+    function onError(err) {
+      cleanup();
+      reject(err);
+    }
+    function cleanup() {
+      extract.removeListener('finish', onFinish);
+      extract.removeListener('error', onError);
+    }
+  });
+
+  await extracting;
+  try {
+    await Execa(prebuiltPath, ['--version']);
+  } catch (err) {
+    throw new Error(
+      `Downloaded and installed binary could not be run.\n${err.stderr}`
+    );
+  }
 
   return {
     archiveName,

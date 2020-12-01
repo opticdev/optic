@@ -20,11 +20,12 @@ if (process.env.OPTIC_RUST_DIFF_ENGINE !== 'true') {
   process.exit(0);
 }
 
+console.log('Downloading and installing binaries for diff-engine.');
 install()
   .then(({ archiveName }) => {
     console.log(`Installed binaries for diff-engine: ${archiveName}`);
   })
   .catch((err) => {
-    console.error('Could not install diff-engine:', err);
+    console.error('Could not install diff-engine.\n', err);
     process.exit(1);
   });
