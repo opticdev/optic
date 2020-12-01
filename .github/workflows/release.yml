@@ -236,6 +236,8 @@ jobs:
           cp $FLAGS_FILE workspaces/agent-cli/.env
           cp $FLAGS_FILE workspaces/ci-cli/.env
           cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/cli-server/.env
+          cp $FLAGS_FILE workspaces/cli-scripts/.env
           cp $FLAGS_FILE workspaces/diff-engine/.env
           cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi
