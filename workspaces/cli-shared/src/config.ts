@@ -70,3 +70,7 @@ export function create(
 export function isEnvTrue(val: string | undefined) {
   return val === 'yes' || val === 'true';
 }
+
+export function isEnvFalse(val: string | undefined) {
+  return val === 'no' || val === 'false';
+}

@@ -138,5 +138,6 @@ export {
   CliConfigObject,
   Env,
   isEnvTrue,
+  isEnvFalse,
   PackageJson,
 } from './config';
