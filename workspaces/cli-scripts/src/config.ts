@@ -15,7 +15,8 @@ export default {
   errors: {
     sentry: cliConfig.env.production &&
       isEnvTrue(process.env.OPTIC__CLI_SCRIPTS__SENTRY__ENABLED) && {
-        dsn: process.env.OPTIC__CLI_SCRIPTS__SENTRY__DSN,
+        dsn:
+          'https://1f73af94a02f45918fbdd9c2a24d1ff4@o446328.ingest.sentry.io/5540361',
         environment: cliConfig.envName,
         release: cliConfig.version,
         serverName: cliConfig.name,
