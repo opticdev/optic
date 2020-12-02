@@ -3411,6 +3411,13 @@
     "@types/node" "*"
     "@types/stream-chain" "*"
 
+"@types/tap@^14.10.1":
+  version "14.10.1"
+  resolved "https://registry.yarnpkg.com/@types/tap/-/tap-14.10.1.tgz#bd2ce5695e169e5d35e29f63781ad7e87971bc80"
+  integrity sha512-+B+qsPyxMhg0I7NHw68uL0uEM4eXkLS/sfwVWnzRHuIZxV44EM/v0hDD0sqxdmFKI8sh9H8mxsP4pxJsvnIygQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/tapable@*", "@types/tapable@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.6.tgz#a9ca4b70a18b270ccb2bc0aaafefd1d486b7ea74"

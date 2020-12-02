@@ -28,12 +28,14 @@ export function create(
   env: { [key: string]: string | undefined }
 ): CliConfigObject {
   const name = pkg.name;
+  /* istanbul ignore next */
   if (!name) {
     throw new Error(
       'Could not create cli config object: package.json must have a name'
     );
   }
   const version = semver.valid(pkg.version);
+  /* istanbul ignore next */
   if (!version) {
     throw new Error(
       `Could not create cli config object for ${name}: version in package.json not valid semver`

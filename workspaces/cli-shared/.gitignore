@@ -1,2 +1,3 @@
+.nyc_output
 build
 node_modules
