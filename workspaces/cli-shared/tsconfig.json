@@ -4,7 +4,7 @@
     "outDir": "build",
     "rootDir": "src",
   },
-  "exclude": ["./test"],
+  "include": ["./src", "./typings"],
   "typeRoots": [
     "./typings",
     "./node_modules/@types",
