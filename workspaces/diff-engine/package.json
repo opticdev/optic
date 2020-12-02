@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
+    "test": "cd tests && tap ./lib",
     "ws:build-binaries": "scripts/build-binaries.sh",
     "ws:clean": "rm -rf build/* && rm -rf target/*",
     "ws:test": "scripts/test.sh"
@@ -24,5 +25,7 @@
     "rimraf": "^3.0.2",
     "tar": "^6.0.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "tap": "^14.11.0"
+  }
 }
