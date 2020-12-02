@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.6.0-beta.23",
+  "version": "8.6.0-beta.24",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -18,12 +18,12 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "cli-table3": "^0.6.0",
-    "@useoptic/analytics": "8.6.0-beta.23",
-    "@useoptic/cli-client": "8.6.0-beta.23",
-    "@useoptic/cli-config": "8.6.0-beta.23",
-    "@useoptic/cli-scripts": "8.6.0-beta.23",
-    "@useoptic/cli-server": "8.6.0-beta.23",
-    "@useoptic/cli-shared": "8.6.0-beta.23",
+    "@useoptic/analytics": "8.6.0-beta.24",
+    "@useoptic/cli-client": "8.6.0-beta.24",
+    "@useoptic/cli-config": "8.6.0-beta.24",
+    "@useoptic/cli-scripts": "8.6.0-beta.24",
+    "@useoptic/cli-server": "8.6.0-beta.24",
+    "@useoptic/cli-shared": "8.6.0-beta.24",
     "@useoptic/domain": "10.0.17",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
