@@ -11,6 +11,10 @@ import {
   developerDebugLogger,
   ICliDaemonState,
 } from '@useoptic/cli-shared';
+import processExists from 'process-exists';
+// @ts-ignore
+import isPortReachable from 'is-port-reachable';
+
 //@REFACTOR with xstate
 async function waitForFile(
   path: string,
@@ -42,6 +46,7 @@ async function waitForFile(
   });
   return Promise.race([timeout, fileWatcher]);
 }
+
 export async function ensureDaemonStarted(
   lockFilePath: string,
   cloudApiBaseUrl: string
@@ -54,10 +59,38 @@ export async function ensureDaemonStarted(
   await fs.ensureDir(path.dirname(lockFilePath));
   const isLocked = await lockfile.check(lockFilePath);
   developerDebugLogger({ isLocked });
-  if (isLocked && !fileExisted) {
-    developerDebugLogger('lockfile was missing but locked');
+  let shouldStartDaemon = true;
+  if (isLocked) {
+    if (!fileExisted) {
+      developerDebugLogger('lockfile was missing but locked');
+      throw new Error(
+        `did not expect lockfile to be locked when lockfile did not exist`
+      );
+    }
+    //@GOTCHA: check to make sure the lockfile is accurate.
+    // The lockfile can be inaccurate when the daemon does not cleanly exit; for example, an abrupt system shutdown or force killing the daemon
+    const { port, pid } = await fs.readJson(lockFilePath);
+    try {
+      developerDebugLogger(`checking port ${port} and pid ${pid}`);
+      const [foundMatchingProcess, foundReachablePort] = await Promise.all([
+        processExists(pid),
+        isPortReachable(port),
+      ]);
+      if (foundMatchingProcess && foundReachablePort) {
+        developerDebugLogger('the lockfile seems accurate');
+        shouldStartDaemon = false;
+      } else {
+        developerDebugLogger('the lockfile is not accurate');
+        shouldStartDaemon = true;
+      }
+    } catch (e) {
+      developerDebugLogger('the lockfile is not accurate');
+      developerDebugLogger(e.message);
+      shouldStartDaemon = true;
+    }
   }
-  if (!isLocked) {
+
+  if (shouldStartDaemon) {
     const isDebuggingEnabled =
       process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
     if (isDebuggingEnabled) {
@@ -84,7 +117,7 @@ export async function ensureDaemonStarted(
 
     await new Promise(async (resolve, reject) => {
       developerDebugLogger(
-        `waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`
+        `waiting for lock from pid=${child.pid} sentinel file ${sentinelFilePath}`
       );
       try {
         await waitForFile(sentinelFilePath, {
@@ -96,15 +129,14 @@ export async function ensureDaemonStarted(
       }
       await fs.unlink(sentinelFilePath);
 
-      developerDebugLogger(`lock created ${child.pid}`);
+      developerDebugLogger(`lock created from pid=${child.pid}`);
       resolve();
     });
   }
-  developerDebugLogger(`trying to read contents`);
+  developerDebugLogger(`trying to read lockfile contents`);
   const contents = await fs.readJson(lockFilePath);
-  developerDebugLogger(
-    `could read contents ${JSON.stringify(contents.toString)}`
-  );
+  developerDebugLogger(`lockfile contents: ${JSON.stringify(contents)}`);
+
   return contents;
 }
 

@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import lockfile from 'proper-lockfile';
-import { userDebugLogger } from '@useoptic/cli-shared';
+import { ICliDaemonState, userDebugLogger } from '@useoptic/cli-shared';
 import { CliServer, log, shutdownRequested } from './server';
 
 export interface ICliDaemonConfig {
@@ -46,7 +46,11 @@ class CliDaemon {
       this.stop();
     });
     const apiServerInfo = await this.apiServer.start();
-    await fs.writeJson(this.config.lockFilePath, apiServerInfo);
+    const lockFileInfo: ICliDaemonState = {
+      ...apiServerInfo,
+      pid: process.pid,
+    };
+    await fs.writeJson(this.config.lockFilePath, lockFileInfo);
     return apiServerInfo;
   }
 

@@ -10003,6 +10003,11 @@ is-plain-object@^3.0.0:
   resolved "https://registry.yarnpkg.com/is-plain-object/-/is-plain-object-3.0.1.tgz#662d92d24c0aa4302407b0d45d21f2251c85f85b"
   integrity sha512-Xnpx182SBMrr/aBik8y+GuR4U1L9FqMSojwDQwPMmxyC6bvEqly9UBCxhauBF5vNh2gwWJNX6oDV7O+OM4z34g==
 
+is-port-reachable@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/is-port-reachable/-/is-port-reachable-3.0.0.tgz#edf721e7d354e6e00cbeb0fc174ad89bdf6056b3"
+  integrity sha512-056IzLiWHdgVd6Eq1F9HtJl+cIkvi5X2MJ/A1fjQtByHkzQE1wGardnPhqrarOGDF88BOW+297X7PDvZ2vcyVg==
+
 is-potential-custom-element-name@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.0.tgz#0c52e54bcca391bb2c494b21e8626d7336c6e397"
@@ -12371,11 +12376,7 @@ ms@2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
   integrity sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
 
-<<<<<<< HEAD
-ms@2.1.2, ms@^2.0.0, ms@^2.1.1:
-=======
-ms@^2.0.0, ms@^2.1.1, ms@^2.1.2:
->>>>>>> 64057b86... Snapshot test the diff-engine's spawn interface
+ms@2.1.2, ms@^2.0.0, ms@^2.1.1, ms@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
@@ -14237,6 +14238,13 @@ private@~0.1.5:
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
   integrity sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==
 
+process-exists@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/process-exists/-/process-exists-4.0.0.tgz#dc12d87798c17b3f129f716631e2ccdaf240b4ab"
+  integrity sha512-BnlcYPiZjSW+fye12g9B7UeCzMAOdMkxuTz3zcytJ2BHwYZf2RoKvuuwUcJLeXlGj58x9YQrvhT21PmKhUc4UQ==
+  dependencies:
+    ps-list "^6.3.0"
+
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -14341,6 +14349,11 @@ prr@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/prr/-/prr-1.0.1.tgz#d3fc114ba06995a45ec6893f484ceb1d78f5f476"
   integrity sha1-0/wRS6BplaRexok/SEzrHXj19HY=
+
+ps-list@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.npmjs.org/ps-list/-/ps-list-6.3.0.tgz#a2b775c2db7d547a28fbaa3a05e4c281771259be"
+  integrity sha512-qau0czUSB0fzSlBOQt0bo+I2v6R+xiQdj78e1BR/Qjfl5OHWJ/urXi8+ilw1eHe+5hSeDI1wrwVTgDp2wst4oA==
 
 pseudomap@^1.0.2:
   version "1.0.2"

@@ -51,6 +51,7 @@ export interface ICaptureSaver {
 
 export interface ICliDaemonState {
   port: number;
+  pid: number;
 }
 
 export function makeUiBaseUrl(daemonState: ICliDaemonState) {
