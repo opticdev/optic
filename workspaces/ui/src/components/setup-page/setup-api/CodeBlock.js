@@ -34,7 +34,11 @@ const useStyles = makeStyles((theme) => ({
 
 export const Code = (props) => {
   const classes = useStyles();
-  return <span className={classes.codeInline}>{props.children}</span>;
+  return (
+    <span className={classes.codeInline} style={props.style}>
+      {props.children}
+    </span>
+  );
 };
 
 export function CodeBlock({ code, lang, style }) {

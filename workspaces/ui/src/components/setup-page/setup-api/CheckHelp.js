@@ -22,7 +22,7 @@ import { GuidedFlowContext } from './base';
 import { TextField } from '@material-ui/core';
 import { CHANGED_START_COMMAND } from './events';
 import { StartCommandInput } from './StartCommandInput';
-import { ShowCurrentOpticYml } from './UpdateOpticYml';
+import { ShowCurrentOpticYml } from '../yaml/UpdateOpticYml';
 
 const useStyles = makeStyles((theme) => ({
   root: {

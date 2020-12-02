@@ -1,0 +1,267 @@
+{
+    "cpp": {
+        "pretty_name": "C++",
+        "project_url": "https://isocpp.org/",
+        "start_command": "./application",
+        "frameworks": {
+            "cpprestsdk": {
+                "pretty_name": "C++ REST SDK",
+                "project_url": "https://microsoft.github.io/cpprestsdk/index.html",
+                "code_change": true,
+                "language": "cpp",
+                "preamble": "Modify your `Http::Endpoint` address to check for Optic's environment variable when it is provided:",
+                "before": "utility::string_t port = U(\"5000\");\n\nutility::string_t address = U(\"http://127.0.0.1:\");\naddress.append(port);\non_initialize(address);\n",
+                "after": "std::string portStr = \"5000\";\nif (getenv(\"OPTIC_API_PORT\")) {\n    portStr =  getenv (\"OPTIC_API_PORT\");\n}\nutility::string_t port = U(portStr);\n\nutility::string_t address = U(\"http://127.0.0.1:\");\naddress.append(port);\n"
+            },
+            "pistacheio": {
+                "pretty_name": "Pistache",
+                "project_url": "http://pistache.io/",
+                "code_change": true,
+                "language": "cpp",
+                "preamble": "Modify your `Http::Endpoint` address to check for Optic's environment variable when it is provided:",
+                "before": "int main() {\n    Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(8000));\n    auto opts = Pistache::Http::Endpoint::options()\n        .threads(1);\n\n    Http::Endpoint server(addr);\n    server.init(opts);\n    server.setHandler(Http::make_handler<HelloHandler>());\n    server.serve();\n}\n",
+                "after": "#include <stdlib.h>\n#include <string>\n...\n\nint main() {\n    int port = 8000;\n    if (getenv(\"OPTIC_API_PORT\")) {\n            std::string s = getenv (\"OPTIC_API_PORT\");\n            port = std::stoi(s);\n    }\n    Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(port));\n    auto opts = Pistache::Http::Endpoint::options()\n        .threads(1);\n\n    Http::Endpoint server(addr);\n    server.init(opts);\n    server.setHandler(Http::make_handler<HelloHandler>());\n    server.serve();\n}\n"
+            }
+        }
+    },
+    "dotnet": {
+        "pretty_name": ".NET",
+        "project_url": "https://dotnet.microsoft.com/",
+        "start_command": "dotnet run",
+        "frameworks": {
+            "dotnet": {
+                "pretty_name": "C# .NET",
+                "project_url": "https://docs.microsoft.com/en-us/dotnet/csharp/",
+                "code_change": true,
+                "language": "c#",
+                "preamble": "Modify your `webBuilder` call to check for Optic's environment variable before starting:",
+                "before": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:80/\");\n    });\n}\n",
+                "after": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    var portString = (System.Environment.GetEnvironmentVariable(\"OPTIC_API_PORT\"));\n    if (String.IsNullOrEmpty(portString)) {\n        portString = \"80\";\n    }\n\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:\" + portString + \"/\");\n    });\n}\n"
+            }
+        }
+    },
+    "elixir": {
+        "pretty_name": "Elixir",
+        "project_url": "https://elixir-lang.org/",
+        "start_command": "elixir application.exs",
+        "frameworks": {
+            "phoenix": {
+                "pretty_name": "Elixir",
+                "project_url": "https://elixir-lang.org/",
+                "code_change": true,
+                "language": "elixir",
+                "preamble": "In your `./config/dev.exs` file, modify your web endpoint configuration. Whether you are testing with http or https, modify the line that specifies the port to check for the `OPTIC_API_PORT` when it is provided:",
+                "before": "config :hello, HelloWeb.Endpoint,\nhttp: [port: 4000],\ndebug_errors: true,\ncode_reloader: true,\ncheck_origin: false,\nwatchers: [\n  node: [\n    \"node_modules/webpack/bin/webpack.js\",\n    \"--mode\",\n    \"development\",\n    \"--watch-stdin\",\n    cd: Path.expand(\"../assets\", __DIR__)\n  ]\n]\n",
+                "after": "config :hello, HelloWeb.Endpoint,\nhttp: [port: System.get_env(\"OPTIC_API_PORT\") || 4000],\ndebug_errors: true,\ncode_reloader: true,\ncheck_origin: false,\nwatchers: [\n  node: [\n    \"node_modules/webpack/bin/webpack.js\",\n    \"--mode\",\n    \"development\",\n    \"--watch-stdin\",\n    cd: Path.expand(\"../assets\", __DIR__)\n  ]\n]\n"
+            }
+        }
+    },
+    "go": {
+        "pretty_name": "Go",
+        "project_url": "https://golang.org/",
+        "start_command": "go run application.go",
+        "frameworks": {
+            "mux": {
+                "pretty_name": "gorilla/mux",
+                "project_url": "https://github.com/gorilla/mux",
+                "code_change": true,
+                "language": "golang",
+                "preamble": "Before your http call to `ListenAndServe`, check for the `OPTIC_API_PORT` when it is provided:",
+                "before": "http.ListenAndServe(\":8000\", r)\n",
+                "after": "port := \":8000\"\n\nif os.Getenv(\"OPTIC_API_PORT\") != \"\" {\n    port = fmt.Sprintf(\":%s\", os.Getenv(\"OPTIC_API_PORT\"))\n}\n\nhttp.ListenAndServe(port, r)\n"
+            }
+        }
+    },
+    "java": {
+        "pretty_name": "Java",
+        "project_url": "https://www.java.com/en/",
+        "start_command": "java application",
+        "frameworks": {
+            "spring": {
+                "pretty_name": "Spring",
+                "project_url": "https://spring.io/projects/spring-framework",
+                "code_change": false,
+                "default_command": "export SERVER_PORT=$OPTIC_API_PORT ; ./gradlew bootRun",
+                "language": "yaml",
+                "preamble": "If you use `./gradlew bootRun` to run your spring app, update your start command in your `optic.yml` file:",
+                "before": "start:\n  command: ./gradlew bootRun\n",
+                "after": "start:\n  command:  export SERVER_PORT=$OPTIC_API_PORT ; ./gradlew bootRun\n"
+            }
+        }
+    },
+    "node": {
+        "pretty_name": "Node.js",
+        "project_url": "https://nodejs.org/en/",
+        "start_command": "node app.js",
+        "frameworks": {
+            "express": {
+                "pretty_name": "Express",
+                "project_url": "http://expressjs.com/",
+                "code_change": true,
+                "language": "javascript",
+                "preamble": "All Express APIs contain a call to `app.listen(...)`. Update this line to look for Optic's environment variable when it is provided:\n\n**Note**: If you are using [`express-generator`](https://expressjs.com/en/starter/generator.html), the `app.listen` call is located in `./bin/www`.\n",
+                "before": "app.listen(port || 3000)\n",
+                "after": "app.listen(process.env.OPTIC_API_PORT || port || 3000)\n"
+            },
+            "sails": {
+                "pretty_name": "Sails",
+                "project_url": "https://sailsjs.com/",
+                "code_change": false,
+                "default_command": "sails lift --port $OPTIC_API_PORT",
+                "language": "yml",
+                "preamble": "If you use the `sails lift` command to start your Sails app, update your start command in your `optic.yml` file:",
+                "before": "start:\n  command: sails lift\n",
+                "after": "start:\n  command: sails lift --port $OPTIC_API_PORT\n"
+            },
+            "hapi": {
+                "pretty_name": "Hapi",
+                "project_url": "https://hapi.dev/",
+                "code_change": true,
+                "language": "javascript",
+                "preamble": "If you use `Hapi.server()` to start your server, configure it to check for Optic’s environment variable when it is provided:",
+                "before": "const server = Hapi.server({\n    port: 3000,\n    host: 'localhost'\n});\n",
+                "after": "const server = Hapi.server({\n    port: process.env.OPTIC_API_PORT || 3000,\n    host: 'localhost'\n});\n"
+            }
+        }
+    },
+    "php": {
+        "pretty_name": "PHP",
+        "project_url": "https://www.php.net/",
+        "start_command": "php -f application.php",
+        "frameworks": {
+            "laravel": {
+                "pretty_name": "Laravel",
+                "project_url": "https://laravel.com/",
+                "code_change": false,
+                "default_command": "php artisan serve --port=$OPTIC_API_PORT",
+                "language": "yaml",
+                "preamble": "If you use `artisan serve` to run your laravel app, update your start command in your `optic.yml` file:",
+                "before": "start:\n  command: php artisan serve\n",
+                "after": "start:\n  command:  php artisan serve --port=$OPTIC_API_PORT\n"
+            }
+        }
+    },
+    "python": {
+        "pretty_name": "Python",
+        "project_url": "https://www.python.org/",
+        "start_command": "python application.py",
+        "frameworks": {
+            "flask": {
+                "pretty_name": "Flask",
+                "project_url": "https://flask.palletsprojects.com/en/1.1.x/",
+                "code_change": true,
+                "language": "python",
+                "preamble": "All Flask APIs contain a call to `app.run(...)`. Update this line to pass in Optic's environment variable when it is provided:",
+                "before": "app.run(port=5000)\n",
+                "after": "app.run(port=os.environ['OPTIC_API_PORT'] if 'OPTIC_API_PORT' in os.environ else 5000)\n"
+            },
+            "flaskrun": {
+                "pretty_name": "Flask with Run method",
+                "project_url": "https://flask.palletsprojects.com/en/1.1.x/api/?highlight=run#flask.Flask.run",
+                "code_change": false,
+                "default_command": "flask run --port=$OPTIC_API_PORT",
+                "language": "yaml",
+                "preamble": "If you are using [`flask run`](https://flask.palletsprojects.com/en/1.1.x/cli/), adjust the `optic.yml` task to pass in the port:",
+                "before": "start:\n  flask run\n",
+                "after": "start:\n  flask run --port=$OPTIC_API_PORT\n"
+            },
+            "django": {
+                "pretty_name": "Django",
+                "project_url": "https://www.djangoproject.com/",
+                "code_change": true,
+                "language": "python",
+                "preamble": "Django runs by its `manage.py` file. Modify it to use the Optic API Port:",
+                "before": "... # other code\ndef main():\n    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')\n    try:\n        from django.core.management import execute_from_command_line\n... # other code\n",
+                "after": "... # other code\ndef main():\n    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')\n    try:\n        from django.core.management import execute_from_command_line\n        # Add Optic CLI as a port option\n        from django.core.management.commands.runserver import Command as runserver\n        runserver.default_port = os.environ['OPTIC_API_PORT'] if 'OPTIC_API_PORT' in os.environ else 8080\n... # other code\n"
+            },
+            "fastapi": {
+                "pretty_name": "FastAPI",
+                "project_url": "https://fastapi.tiangolo.com/",
+                "code_change": false,
+                "default_command": "uvicorn main:app --port $OPTIC_API_PORT # assuming your app is called main.py",
+                "language": "yaml",
+                "preamble": "If you use the `uvicorn` command to start your FastAPI app, update your start command in your `optic.yml` file:",
+                "before": "start:\n  command: uvicorn main:app # assuming your app is called main.py\n",
+                "after": "start:\n  command: uvicorn main:app --port $OPTIC_API_PORT # assuming your app is called main.py\n"
+            }
+        }
+    },
+    "ruby": {
+        "pretty_name": "Ruby",
+        "project_url": "https://www.ruby-lang.org/en/",
+        "start_command": "ruby application.rb",
+        "frameworks": {
+            "rails": {
+                "pretty_name": "Ruby on Rails",
+                "project_url": "https://rubyonrails.org/",
+                "code_change": false,
+                "default_command": "rails server -p $OPTIC_API_PORT # assuming your app is called main.py",
+                "language": "yaml",
+                "preamble": "If you use the `rails server` command to start your app, update your start command in your `optic.yml` file:",
+                "before": "start:\n  command: rails server # assuming your app is called main.py\n",
+                "after": "start:\n  command: rails server -p $OPTIC_API_PORT # assuming your app is called main.py\n"
+            },
+            "puma": {
+                "pretty_name": "Puma",
+                "project_url": "https://puma.io/",
+                "code_change": false,
+                "default_command": "puma -p $OPTIC_API_PORT # or, if you use bundler (bundle exec puma -p $OPTIC_API_PORT)",
+                "language": "yaml",
+                "preamble": "If you use `puma` to start your app, modify your `optic.yml` file:",
+                "before": "start:\n  command: puma # or, if you use bundler (bundle exec puma)\n",
+                "after": "start:\n  command: puma -p $OPTIC_API_PORT # or, if you use bundler (bundle exec puma -p $OPTIC_API_PORT)\n"
+            }
+        }
+    },
+    "rust": {
+        "pretty_name": "Rust",
+        "project_url": "https://www.rust-lang.org/",
+        "start_command": "./application",
+        "frameworks": {
+            "rocket": {
+                "pretty_name": "Rocket",
+                "project_url": "https://rocket.rs/",
+                "code_change": true,
+                "language": "rust",
+                "preamble": "If you use `Config::build()`, modify it to check for Optic's environment variable:",
+                "before": "use rocket::config::{Config, Environment};\nuse std::env;\n\nlet config = Config::build(Environment::Staging)\n    .port(8000)\n    .unwrap();\n\nrocket::custom(config)\n    .mount(\"/\", routes![hello])\n    .launch();\n",
+                "after": "use rocket::config::{Config, Environment};\nuse std::env;\n\nlet mut port = 8000;\nmatch env::var(\"OPTIC_API_PORT\") {\n    Ok(val) => port = val.parse::<u16>().unwrap(),\n    Err(e) => {}\n}\n\nlet config = Config::build(Environment::Staging)\n    .port(port)\n    .unwrap();\n\nrocket::custom(config)\n    .mount(\"/\", routes![hello])\n    .launch();\n"
+            },
+            "rocketIgnite": {
+                "pretty_name": "Rocket with ignite function",
+                "project_url": "https://api.rocket.rs/v0.4/rocket/fn.ignite.html",
+                "code_change": false,
+                "default_command": "export ROCKET_PORT=$OPTIC_API_PORT ; cargo run",
+                "language": "yaml",
+                "preamble": "If you use `rocket::ignite()`, modify the start command to set `ROCKET_PORT` to be Optic's environment variable:",
+                "before": "start:\n  command: cargo run\n",
+                "after": "start:\n  command: export ROCKET_PORT=$OPTIC_API_PORT ; cargo run\n"
+            },
+            "actix": {
+                "pretty_name": "Actix",
+                "project_url": "https://actix.rs/",
+                "code_change": true,
+                "language": "rust",
+                "preamble": "Modify your `HttpServer.bind()` call to check for Optic's environment variable:",
+                "before": "HttpServer::new(...)\n    .bind(\"127.0.0.1:8000\")?\n    .run()\n    .await\n",
+                "after": "let port = env::var(\"OPTIC_API_PORT\").unwrap_or_else(|e| {\n    return \"8000\".to_string()\n});\n\nHttpServer::new(...)\n    .bind(format!(\"127.0.0.1:{}\" , port))?\n    .run()\n    .await\n"
+            }
+        }
+    },
+    "generic": {
+        "pretty_name": "",
+        "project_url": "",
+        "start_command": "<start command>",
+        "frameworks": {
+            "generic": {
+                "pretty_name": "Generic Instructions (any API framework)",
+                "project_url": "",
+                "code_change": true,
+                "language": "text",
+                "preamble": "Modify your application's start code to listen on `OPTIC_API_PORT` when it is provided:",
+                "before": "server_port = 5000;\nhttp_listen(server_port);\n",
+                "after": "server_port = envvar(\"OPTIC_API_PORT\") || 5000;\nhttp_listen(server_port);\n"
+            }
+        }
+    }
+}

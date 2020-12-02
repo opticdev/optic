@@ -101,6 +101,7 @@ export default ({ onChoose, setStartCommand, touchEmpty, value }) => {
   return (
     <Select
       autoFocus
+      placeholder="Select Framework..."
       value={options.find((i) => i.value === value)}
       onChange={({ value, data }) => {
         onChoose(value);

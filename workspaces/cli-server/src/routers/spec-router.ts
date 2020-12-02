@@ -326,7 +326,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     async (req, res) => {
       const { raw } = req.body;
       await fs.writeFile(req.optic.paths.configPath, raw);
-      res.sendStatus(200);
+      res.json({});
     }
   );
 

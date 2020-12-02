@@ -22,7 +22,8 @@ type ListCapturedSamplesResponse = any;
 type GetCaptureSummaryResponse = any;
 
 export interface ISpecService {
-  loadConfig(): Promise<{ config: IApiCliConfig }>;
+  loadConfig(): Promise<{ config: IApiCliConfig; configRaw: string }>;
+  saveConfig(config: string): Promise<void>;
   addIgnoreRule(rule: string): Promise<void>;
   listEvents(): Promise<string>;
 
@@ -51,9 +52,16 @@ export class Client implements ISpecService {
     );
   }
 
-  loadConfig(): Promise<{ config: IApiCliConfig }> {
-    return JsonHttpClient.getJson(
+  async loadConfig(): Promise<{ config: IApiCliConfig; configRaw: string }> {
+    return await JsonHttpClient.getJson(
       `${this.baseUrl}/specs/${this.specId}/config`
+    );
+  }
+
+  async saveConfig(config: string): Promise<void> {
+    return await JsonHttpClient.postJson(
+      `${this.baseUrl}/specs/${this.specId}/config/raw`,
+      { raw: config }
     );
   }
 
