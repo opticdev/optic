@@ -68,5 +68,5 @@ export function create(
 }
 
 export function isEnvTrue(val: string | undefined) {
-  return val === 'yes' || val === 'true' || val === '1' || val === 'y';
+  return val === 'yes' || val === 'true';
 }
