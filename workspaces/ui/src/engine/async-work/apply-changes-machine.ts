@@ -76,6 +76,7 @@ export const newApplyChangesMachine = (
       approvedSuggestionsCommands: [],
       updatedEvents: [],
       oasStats: undefined,
+      error: '',
     },
     initial: 'staged',
     states: {
@@ -233,8 +234,6 @@ export const newApplyChangesMachine = (
               ...prepareLearnedBodies(context.newBodiesLearned || []),
               ...context.approvedSuggestionsCommands,
             ];
-
-            console.log(allCommandsToRun);
 
             const worker = await spawn(
               new Worker('./handle-commands-worker.ts')

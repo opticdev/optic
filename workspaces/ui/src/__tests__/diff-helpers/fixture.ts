@@ -18,7 +18,10 @@ import {
   ICopy,
   ICopyStyle,
   IDiffSuggestionPreview,
+  ISuggestion,
 } from '../../engine/interfaces/interpretors';
+import { spawn, Thread, Worker } from 'threads';
+import { JsonHelper, opticEngine, RfcCommandContext } from '@useoptic/domain';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
@@ -84,6 +87,72 @@ export async function shapeDiffPreview(
   );
 }
 
+export async function canApplySuggestions(
+  suggestions: ISuggestion[],
+  universe: ITestUniverse
+) {
+  function handleCommands(commands: any[], eventString: string): any[] {
+    const {
+      universeFromEventsAndAdditionalCommands,
+    } = require('@useoptic/domain-utilities');
+
+    const {
+      StartBatchCommit,
+      EndBatchCommit,
+    } = opticEngine.com.useoptic.contexts.rfc.Commands;
+
+    const inputCommands = JsonHelper.vectorToJsArray(
+      opticEngine.CommandSerialization.fromJs(commands)
+    );
+
+    const commandContext = new RfcCommandContext(
+      'clientId',
+      'clientSessionId',
+      'batchId'
+    );
+
+    const {
+      rfcId,
+      eventStore,
+    } = universeFromEventsAndAdditionalCommands(
+      JSON.parse(eventString),
+      commandContext,
+      [
+        StartBatchCommit('batchId', 'commitMessage'),
+        ...inputCommands,
+        EndBatchCommit('batchId'),
+      ]
+    );
+
+    return JSON.parse(eventStore.serializeEvents(rfcId));
+  }
+
+  const events = universe.rfcBaseState.eventStore.serializeEvents(
+    universe.rfcBaseState.rfcId
+  );
+
+  return Promise.all(
+    suggestions.map(async (i) => {
+      const commands = i.commands;
+      try {
+        return handleCommands(commands, events).map((i) => {
+          i[Object.keys(i)[0]].eventContext = null;
+          return i;
+        });
+      } catch (e) {
+        throw new Error(
+          'Count not apply commands for ' +
+            e +
+            '\n' +
+            ICopyToConsole(i.action.activeTense) +
+            '\n' +
+            JSON.stringify(commands, null, 4)
+        );
+      }
+    })
+  );
+}
+
 export async function newRegionPreview(
   diff: ParsedDiff,
   universe: ITestUniverse
@@ -98,7 +167,12 @@ export async function newRegionPreview(
     universe.rfcBaseState.domainIdGenerator
   );
 
-  return await prepareNewRegionDiffSuggestionPreview(diff, universe, initial);
+  return await prepareNewRegionDiffSuggestionPreview(
+    diff,
+    universe,
+    initial,
+    []
+  );
 }
 
 export function ICopyToConsole(i: ICopy[]): string {
