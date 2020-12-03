@@ -2,7 +2,7 @@
     "cpp": {
         "pretty_name": "C++",
         "project_url": "https://isocpp.org/",
-        "start_command": "./application",
+        "start_command": "./application --port $OPTIC_API_PORT",
         "frameworks": {
             "cpprestsdk": {
                 "pretty_name": "C++ REST SDK",
@@ -27,7 +27,7 @@
     "dotnet": {
         "pretty_name": ".NET",
         "project_url": "https://dotnet.microsoft.com/",
-        "start_command": "dotnet run",
+        "start_command": "dotnet run --urls=http://localhost:$OPTIC_API_PORT",
         "frameworks": {
             "dotnet": {
                 "pretty_name": "C# .NET",
@@ -43,7 +43,7 @@
     "elixir": {
         "pretty_name": "Elixir",
         "project_url": "https://elixir-lang.org/",
-        "start_command": "elixir application.exs",
+        "start_command": "elixir application.exs --port $OPTIC_API_PORT",
         "frameworks": {
             "phoenix": {
                 "pretty_name": "Elixir",
@@ -59,7 +59,7 @@
     "go": {
         "pretty_name": "Go",
         "project_url": "https://golang.org/",
-        "start_command": "go run application.go",
+        "start_command": "go run application.go --port $OPTIC_API_PORT",
         "frameworks": {
             "mux": {
                 "pretty_name": "gorilla/mux",
@@ -75,7 +75,7 @@
     "java": {
         "pretty_name": "Java",
         "project_url": "https://www.java.com/en/",
-        "start_command": "java application",
+        "start_command": "java -Dserver.port=$OPTIC_API_PORT application",
         "frameworks": {
             "spring": {
                 "pretty_name": "Spring",
@@ -92,7 +92,7 @@
     "node": {
         "pretty_name": "Node.js",
         "project_url": "https://nodejs.org/en/",
-        "start_command": "node app.js",
+        "start_command": "PORT=$OPTIC_API_PORT node app.js",
         "frameworks": {
             "express": {
                 "pretty_name": "Express",
@@ -127,7 +127,7 @@
     "php": {
         "pretty_name": "PHP",
         "project_url": "https://www.php.net/",
-        "start_command": "php -f application.php",
+        "start_command": "php -f application.php --port=$OPTIC_API_PORT",
         "frameworks": {
             "laravel": {
                 "pretty_name": "Laravel",
@@ -144,7 +144,7 @@
     "python": {
         "pretty_name": "Python",
         "project_url": "https://www.python.org/",
-        "start_command": "python application.py",
+        "start_command": "PORT=$OPTIC_API_PORT python application.py",
         "frameworks": {
             "flask": {
                 "pretty_name": "Flask",
@@ -189,7 +189,7 @@
     "ruby": {
         "pretty_name": "Ruby",
         "project_url": "https://www.ruby-lang.org/en/",
-        "start_command": "ruby application.rb",
+        "start_command": "ruby application.rb -p $OPTIC_API_PORT",
         "frameworks": {
             "rails": {
                 "pretty_name": "Ruby on Rails",
@@ -216,7 +216,7 @@
     "rust": {
         "pretty_name": "Rust",
         "project_url": "https://www.rust-lang.org/",
-        "start_command": "./application",
+        "start_command": "PORT=$OPTIC_API_PORT ./application",
         "frameworks": {
             "rocket": {
                 "pretty_name": "Rocket",
@@ -251,7 +251,7 @@
     "generic": {
         "pretty_name": "",
         "project_url": "",
-        "start_command": "<start command>",
+        "start_command": "PORT=$OPTIC_API_PORT <start command>",
         "frameworks": {
             "generic": {
                 "pretty_name": "Generic Instructions (any API framework)",
