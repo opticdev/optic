@@ -130,3 +130,14 @@ export class DefaultIdGenerator implements IdGenerator<string> {
     return uuid.v4();
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+export {
+  create as createCliConfig,
+  CliConfigObject,
+  Env,
+  isEnvTrue,
+  isEnvFalse,
+  PackageJson,
+} from './config';
