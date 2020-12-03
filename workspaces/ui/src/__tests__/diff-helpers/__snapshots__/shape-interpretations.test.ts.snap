@@ -678,6 +678,10 @@ Object {
           "text": "array",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "2e8435028e8ea2d662e90cc4685c7bb7be6dbdc1",
+        "examplesOfCoreShapeKinds": "$list",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -965,6 +969,10 @@ Object {
           "text": "array",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "2e8435028e8ea2d662e90cc4685c7bb7be6dbdc1",
+        "examplesOfCoreShapeKinds": "$list",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -1208,6 +1216,10 @@ Object {
           "text": "motto",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "da1d4dc99bdd56a6a26317405ee13012c4410727",
+        "examplesOfCoreShapeKinds": "$string",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -1451,6 +1463,10 @@ Object {
           "text": "format",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "6211b9694e5304004dfd7ccf9c8d071d0d1eca2d",
+        "examplesOfCoreShapeKinds": "$string",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -1499,7 +1515,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (2 fields)  (optional)",
+        "text": "Object (optional)",
       },
     ],
     "changeType": 1,
@@ -1528,7 +1544,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (2 fields)  (optional)",
+        "text": "Object (optional)",
       },
     ],
   },
@@ -1894,7 +1910,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (2 fields)  (optional)",
+          "text": "Object (optional)",
         },
       ],
       "ignoreRule": Object {
@@ -1944,7 +1960,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "List of  String",
+        "text": "List",
       },
     ],
     "changeType": 1,
@@ -1973,7 +1989,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "List of  String",
+        "text": "List",
       },
     ],
   },
@@ -2121,7 +2137,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "List of  String",
+          "text": "List",
         },
       ],
       "ignoreRule": Object {
@@ -2374,7 +2390,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (2 fields)  (optional)",
+        "text": "Object (optional)",
       },
     ],
     "changeType": 1,
@@ -2403,7 +2419,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (2 fields)  (optional)",
+        "text": "Object (optional)",
       },
     ],
   },
@@ -2769,7 +2785,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (2 fields)  (optional)",
+          "text": "Object (optional)",
         },
       ],
       "ignoreRule": Object {
@@ -3099,6 +3115,10 @@ Object {
           "text": "favoriteColor",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "20318cc34897119a4e00ce31e04df5d72db6a74d",
+        "examplesOfCoreShapeKinds": "$object",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -3332,6 +3352,10 @@ Object {
           "text": "favoriteColor",
         },
       ],
+      "ignoreRule": Object {
+        "diffHash": "20318cc34897119a4e00ce31e04df5d72db6a74d",
+        "examplesOfCoreShapeKinds": "$string",
+      },
       "interactionPointers": Array [
         "id",
       ],
@@ -3365,7 +3389,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -3394,7 +3418,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
   },
@@ -3508,7 +3532,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (1 field)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -3548,7 +3572,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -3577,7 +3601,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
   },
@@ -3715,7 +3739,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (1 field)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -3967,7 +3991,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -3996,7 +4020,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (1 field)",
+        "text": "Object",
       },
     ],
   },
@@ -4144,7 +4168,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (1 field)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -4184,7 +4208,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -4205,7 +4229,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
   },
@@ -4354,7 +4378,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (3 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -4394,7 +4418,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -4415,7 +4439,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
   },
@@ -4564,7 +4588,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (3 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -4604,7 +4628,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -4625,7 +4649,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (3 fields)",
+        "text": "Object",
       },
     ],
   },
@@ -4752,7 +4776,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (3 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -4787,7 +4811,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (3 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -4827,7 +4851,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (4 fields)",
+        "text": "Object",
       },
     ],
     "changeType": 1,
@@ -4856,7 +4880,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Object (4 fields)",
+        "text": "Object",
       },
     ],
   },
@@ -4994,7 +5018,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (4 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -5059,7 +5083,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Object (4 fields)",
+          "text": "Object",
         },
       ],
       "ignoreRule": Object {
@@ -5719,7 +5743,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "List of  Unknown",
+        "text": "List",
       },
     ],
     "changeType": 1,
@@ -5744,7 +5768,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "List of  Unknown",
+        "text": "List",
       },
     ],
   },
@@ -5897,7 +5921,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "List of  Unknown",
+          "text": "List",
         },
       ],
       "ignoreRule": Object {
@@ -5931,7 +5955,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Unknown  (nullable)",
+        "text": "Unknown (nullable)",
       },
     ],
     "changeType": 1,
@@ -5960,7 +5984,7 @@ Object {
       },
       Object {
         "style": 1,
-        "text": "Unknown  (nullable)",
+        "text": "Unknown (nullable)",
       },
     ],
   },
@@ -6092,7 +6116,7 @@ Object {
         },
         Object {
           "style": 1,
-          "text": "Unknown  (nullable)",
+          "text": "Unknown (nullable)",
         },
       ],
       "ignoreRule": Object {

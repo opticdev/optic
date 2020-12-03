@@ -234,6 +234,8 @@ export const newApplyChangesMachine = (
               ...context.approvedSuggestionsCommands,
             ];
 
+            console.log(allCommandsToRun);
+
             const worker = await spawn(
               new Worker('./handle-commands-worker.ts')
             );

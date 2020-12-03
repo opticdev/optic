@@ -3,15 +3,26 @@ import sortby from 'lodash.sortby';
 import { code, ICopy, plain } from '../interfaces/interpretors';
 
 export function namer(kinds: ICoreShapeKinds[]): string {
-  if (kinds.length === 0) {
-    return 'Unknown';
-  } else if (kinds.length === 1) {
-    return nameForCoreShapeKind(kinds[0]);
-  } else {
-    return namerForOneOf(kinds)
-      .map((i) => i.text)
-      .join(' ');
-  }
+  const kindsFiltered = kinds.filter(
+    (i) =>
+      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
+  );
+
+  const result = (() => {
+    if (kindsFiltered.length === 0) {
+      return 'Unknown';
+    } else if (kindsFiltered.length === 1) {
+      return nameForCoreShapeKind(kindsFiltered[0]);
+    } else {
+      return namerForOneOf(kindsFiltered)
+        .map((i) => i.text)
+        .join(' ');
+    }
+  })();
+
+  return `${result}${
+    kinds.includes(ICoreShapeKinds.OptionalKind) ? ' (optional)' : ''
+  }${kinds.includes(ICoreShapeKinds.NullableKind) ? ' (nullable)' : ''}`;
 }
 
 export function nameForCoreShapeKind(kind: ICoreShapeKinds): string {

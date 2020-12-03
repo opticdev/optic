@@ -74,12 +74,12 @@ export async function shapeDiffPreview(
     universe.rfcBaseState.rfcId,
     pathId,
     method,
-    input.diffs[0]!.raw()
+    { [input.diffs[0]!.diffHash]: input.diffs[0]!.raw() }
   );
   return await prepareShapeDiffSuggestionPreview(
     input.diffs[0],
     universe,
-    trailValues,
+    trailValues[input.diffs[0]!.diffHash],
     []
   );
 }
