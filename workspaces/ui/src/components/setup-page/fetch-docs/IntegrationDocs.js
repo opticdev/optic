@@ -8,7 +8,7 @@ export const integrationDocsOptions = (() => {
       frameworks.push({
         value: key,
         label: value.pretty_name,
-        data: { ...value, start_command: lang.start_command },
+        data: { ...value}, //, start_command: lang.start_command },
         language: lang.pretty_name,
       });
     });

@@ -37,7 +37,7 @@
                 "code_change": true,
                 "language": "c#",
                 "preamble": "Modify your `webBuilder` call to check for Optic's environment variable before starting:",
-                "start_command": "$env:PORT=$OPTIC_API_PORT;dotnet run",
+                "start_command": "dotnet run",
                 "before": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:80/\");\n    });\n}\n",
                 "after": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    var portString = (System.Environment.GetEnvironmentVariable(\"OPTIC_API_PORT\"));\n    if (String.IsNullOrEmpty(portString)) {\n        portString = \"80\";\n    }\n\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:\" + portString + \"/\");\n    });\n}\n"
             }

@@ -45,7 +45,7 @@ const assertionsMap = {
 
 const quickSummary = {
   command: 'how your API is started',
-  inboundUrl: 'where your API starts locally',
+  inboundUrl: 'where you will send local API traffic',
 };
 
 export function HelperCard({ setting, result, noChecks, value }) {
@@ -78,7 +78,7 @@ export function HelperCard({ setting, result, noChecks, value }) {
       </div>
       <div className={classes.assertions}>
         <Typography variant="caption" style={{ color: '#999696' }}>
-          {setting} must:
+          The <strong>{setting}</strong> parameter:
         </Typography>
         {assertions.map((i, index) => (
           <AssertionMini

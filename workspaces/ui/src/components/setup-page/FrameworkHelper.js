@@ -25,7 +25,7 @@ export function FrameworkHelper({
           <ContentStyledTab
             value="recommended"
             label={
-              <LightTooltip title="EXAMPLE OF A LOT MORE INFO">
+              <LightTooltip title="Our recommended way of running your project locally through the Optic proxy while you develop. Optic automatically starts your process with the upstream port and keeps traffic flowing smoothly.">
                 <span>Recommended</span>
               </LightTooltip>
             }
@@ -33,7 +33,7 @@ export function FrameworkHelper({
           <ContentStyledTab
             value="manual"
             label={
-              <LightTooltip title="EXAMPLE OF A LOT MORE INFO">
+              <LightTooltip title="When you are targeting a remote service for tesitng or need more control over configuration, manual mode allows you to specify both sides of the proxy at the expense of automatically starting your application as well.">
                 <span>Manual</span>
               </LightTooltip>
             }

@@ -85,6 +85,8 @@ export function SetupPage(props) {
           {!state.matches('loading') && (
             <>
               <div style={{ minWidth: 600, flex: 1 }}>
+                <h2>Setup a task to start your API with Optic</h2>
+                <p>Optic uses an <code>optic.yml</code> file to define how it will start and observe your API project's traffic. Choose a framework from the drop-down on the right, and Optic will guide you through setting up and checking the necessary parameters. There is a manual configuration mode for those who need more control, as well.</p>
                 <ShowCurrentOpticYml
                   saving={isSaving}
                   hasChanges={hasChanges}

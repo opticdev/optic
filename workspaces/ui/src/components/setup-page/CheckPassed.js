@@ -6,7 +6,7 @@ import { Code } from './setup-api/CodeBlock';
 export function CheckPassed(props) {
   const classes = useStyles();
   return (
-    <Dialog open={true}>
+    <Dialog open={props.open}>
       <DialogContent className={classes.root}>
         <Typography variant="h6" style={{ color: '#e2e2e2' }}>
           Check Passed! Your <Code>api start</Code> command is all set up.
