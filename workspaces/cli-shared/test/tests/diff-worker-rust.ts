@@ -13,12 +13,25 @@ import Fs from 'fs-extra';
 
 Tap.test('diff-worker-rust', async (test) => {
   await test.test('can diff a capture against a spec', async (t) => {
-    let diffConfig = await prepare(
-      exampleInteractions(),
+    const diffConfig = await prepare(
+      exampleInteractions(100),
       Path.join(__dirname, '..', 'fixtures', 'example-events.json')
     );
 
-    await new DiffWorkerRust(diffConfig).run();
+    const worker = new DiffWorkerRust(diffConfig);
+
+    let progressReports = [];
+    for await (let progress of worker.run()) {
+      progressReports.push(progress);
+    }
+
+    t.ok(progressReports.length > 0);
+    let lastProgress = progressReports[progressReports.length - 1];
+    t.deepEqual(lastProgress, {
+      diffedInteractionsCounter: '100',
+      skippedInteractionsCounter: '0',
+      hasMoreInteractions: false,
+    });
   });
 
   await test.test('will propagate errors from the diff engine');
@@ -36,6 +49,8 @@ async function prepare(
   }
   const captureBaseDirectory = __dirname;
   const captureId = 'diff-worker-test-capture';
+
+  await Fs.emptyDir(Path.join(captureBaseDirectory, captureId));
 
   const captureSaver = new CaptureSaver({
     captureBaseDirectory,

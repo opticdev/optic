@@ -63,177 +63,169 @@ async function safeWriteJson(filePath: string, contents: any) {
 export class DiffWorkerRust {
   constructor(private config: IDiffProjectionEmitterConfig) {}
 
-  async run() {
+  async *run(): AsyncIterable<{
+    hasMoreInteractions: boolean;
+    diffedInteractionsCounter: string;
+    skippedInteractionsCounter: string;
+  }> {
     console.log('running');
 
+    let diffing = true;
     let hasMoreInteractions = true;
     let diffedInteractionsCounter = BigInt(0);
     let skippedInteractionsCounter = BigInt(0);
 
-    const reportProgress = _throttle(function notifyParent() {
-      const progress = {
+    console.time('load inputs');
+    const [ignoreRequests, filters] = await Promise.all([
+      fs.readJson(this.config.ignoreRequestsFilePath),
+      fs.readJson(this.config.filtersFilePath),
+    ]);
+    console.timeEnd('load inputs');
+    const ignoredRequests = parseIgnore(ignoreRequests);
+
+    function filterIgnoredRequests(interaction: IHttpInteraction) {
+      return !ignoredRequests.shouldIgnore(
+        interaction.request.method,
+        interaction.request.path
+      );
+    }
+    // TODO: re-enable or reconsider filtering by endpoints, disabled now as we're
+    // trying to not read the spec with Scala
+    const interactionFilter = filterIgnoredRequests;
+    const interactionIterator = CaptureInteractionIterator(
+      {
+        captureId: this.config.captureId,
+        captureBaseDirectory: this.config.captureBaseDirectory,
+      },
+      interactionFilter
+    );
+
+    const diffOutputPaths = getDiffOutputPaths(this.config);
+
+    const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
+      {
+        captureBaseDirectory: this.config.captureBaseDirectory,
+        captureId: this.config.captureId,
+      }
+    );
+
+    await fs.ensureDir(diffOutputPaths.base);
+
+    const interactionsStream = chain([
+      Readable.from(interactionIterator, {
+        objectMode: true,
+      }),
+      (item) => {
+        skippedInteractionsCounter = item.skippedInteractionsCounter;
+        diffedInteractionsCounter = item.diffedInteractionsCounter;
+        hasMoreInteractions = item.hasMoreInteractions;
+        if (!item.hasMoreInteractions) {
+          return Chain.final();
+        }
+
+        if (!item.interaction) return;
+
+        const { batchId, index } = item.interaction.context;
+        let interactionPointer = interactionPointerConverter.toPointer(
+          item.interaction.value,
+          {
+            interactionIndex: index,
+            batchId,
+          }
+        );
+
+        return [[item.interaction.value, [interactionPointer]]];
+      },
+      JSONLStringer(),
+    ]);
+    const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
+    diffsSink.once('finish', () => {
+      hasMoreInteractions = false;
+      diffing = false;
+    });
+
+    let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+
+    const completingDiff = new Promise((resolve, reject) => {
+      let done = false;
+      diffsSink.once('finish', onSinkFinish);
+      diffsSink.once('error', onSinkError);
+
+      diffEngine.result.catch((err) => {
+        if (done) return;
+        cleanup();
+        reject(err);
+      });
+
+      function onSinkFinish() {
+        cleanup();
+        resolve();
+      }
+      function onSinkError() {
+        cleanup();
+        reject();
+      }
+      function cleanup() {
+        done = true;
+        diffsSink.removeListener('finish', onSinkFinish);
+        diffsSink.removeListener('error', onSinkError);
+      }
+    });
+
+    let processStreams: Writable[] = [diffEngine.input];
+    if (process.env.OPTIC_DEVELOPMENT === 'yes') {
+      processStreams.push(
+        fs.createWriteStream(
+          path.join(diffOutputPaths.base, 'interactions.jsonl')
+        )
+      );
+    }
+    interactionsStream.pipe(fork(processStreams));
+    diffEngine.output.pipe(diffsSink);
+
+    // consume diffEngine's stderr:
+    const diffEngineLogFilePath = path.join(
+      diffOutputPaths.base,
+      'diff-engine-output.log'
+    );
+    const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
+    diffEngine.error.pipe(diffEngineLog);
+
+    // write initial output
+    await Promise.all([
+      safeWriteJson(diffOutputPaths.stats, {
+        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+        isDone: !hasMoreInteractions,
+      }),
+      safeWriteJson(diffOutputPaths.undocumentedUrls, []),
+    ]);
+
+    // Progress reporting
+    console.log(hasMoreInteractions, diffing);
+    do {
+      console.log('yielding results');
+      yield {
         diffedInteractionsCounter: diffedInteractionsCounter.toString(),
         skippedInteractionsCounter: skippedInteractionsCounter.toString(),
         hasMoreInteractions,
       };
-      if (process && process.send) {
-        process.send({
-          type: 'progress',
-          data: progress,
-        });
-      } else {
-        console.log(progress);
-      }
-    }, 1000);
 
-    function notifyParentOfError(e: Error) {
-      if (process && process.send) {
-        process.send({
-          type: 'error',
-          data: {
-            message: e.message,
-          },
-        });
-      } else {
-        console.error(e);
-      }
-    }
+      console.log('and we are back');
 
-    try {
-      console.time('load inputs');
-      const [ignoreRequests, filters] = await Promise.all([
-        fs.readJson(this.config.ignoreRequestsFilePath),
-        fs.readJson(this.config.filtersFilePath),
+      await Promise.race([
+        completingDiff,
+        new Promise((r) => setTimeout(r, 1000)),
       ]);
-      console.timeEnd('load inputs');
-      const ignoredRequests = parseIgnore(ignoreRequests);
+    } while (hasMoreInteractions || diffing);
 
-      function filterIgnoredRequests(interaction: IHttpInteraction) {
-        return !ignoredRequests.shouldIgnore(
-          interaction.request.method,
-          interaction.request.path
-        );
-      }
+    yield {
+      diffedInteractionsCounter: diffedInteractionsCounter.toString(),
+      skippedInteractionsCounter: skippedInteractionsCounter.toString(),
+      hasMoreInteractions,
+    };
 
-      // function filterByEndpoint(endpoint: { pathId: string; method: string }) {
-      //   return function (interaction: IHttpInteraction) {
-      //     const pathId = ScalaJSHelpers.getOrUndefined(
-      //       undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
-      //     );
-      //     return (
-      //       endpoint.method === interaction.request.method &&
-      //       endpoint.pathId === pathId &&
-      //       !ignoredRequests.shouldIgnore(
-      //         interaction.request.method,
-      //         interaction.request.path
-      //       )
-      //     );
-      //   };
-      // }
-
-      // const interactionFilter =
-      //   filters.length > 0
-      //     ? filterByEndpoint(filters[0])
-      //     : filterIgnoredRequests;
-      //
-      // TODO: re-enable or reconsider filtering by endpoints, disabled now as we're
-      // trying to not read the spec with Scala
-      const interactionFilter = filterIgnoredRequests;
-      const interactionIterator = CaptureInteractionIterator(
-        {
-          captureId: this.config.captureId,
-          captureBaseDirectory: this.config.captureBaseDirectory,
-        },
-        interactionFilter
-      );
-
-      const diffOutputPaths = getDiffOutputPaths(this.config);
-
-      const interactionPointerConverter = new LocalCaptureInteractionPointerConverter(
-        {
-          captureBaseDirectory: this.config.captureBaseDirectory,
-          captureId: this.config.captureId,
-        }
-      );
-
-      await fs.ensureDir(diffOutputPaths.base);
-
-      const interactionsStream = chain([
-        Readable.from(interactionIterator, {
-          objectMode: true,
-        }),
-        (item) => {
-          skippedInteractionsCounter = item.skippedInteractionsCounter;
-          diffedInteractionsCounter = item.diffedInteractionsCounter;
-          hasMoreInteractions = item.hasMoreInteractions;
-          if (!item.hasMoreInteractions) {
-            return Chain.final();
-          }
-
-          if (!item.interaction) return;
-
-          const { batchId, index } = item.interaction.context;
-          let interactionPointer = interactionPointerConverter.toPointer(
-            item.interaction.value,
-            {
-              interactionIndex: index,
-              batchId,
-            }
-          );
-
-          reportProgress();
-
-          return [[item.interaction.value, [interactionPointer]]];
-        },
-        JSONLStringer(),
-      ]);
-      const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
-      diffsSink.once('finish', () => {
-        hasMoreInteractions = false;
-        reportProgress();
-        reportProgress.flush();
-      });
-
-      let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-      diffEngine.result.catch((err: Error) => {
-        notifyParentOfError(err); // propagate first
-        throw err; // then panic
-      });
-      let processStreams: Writable[] = [diffEngine.input];
-      if (process.env.OPTIC_DEVELOPMENT === 'yes') {
-        processStreams.push(
-          fs.createWriteStream(
-            path.join(diffOutputPaths.base, 'interactions.jsonl')
-          )
-        );
-      }
-      interactionsStream.pipe(fork(processStreams));
-      diffEngine.output.pipe(diffsSink);
-
-      // consume diffEngine's stderr:
-      const diffEngineLogFilePath = path.join(
-        diffOutputPaths.base,
-        'diff-engine-output.log'
-      );
-      const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
-      diffEngine.error.pipe(diffEngineLog);
-
-      // write initial output
-      await Promise.all([
-        safeWriteJson(diffOutputPaths.stats, {
-          diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-          skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-          isDone: !hasMoreInteractions,
-        }),
-        safeWriteJson(diffOutputPaths.undocumentedUrls, []),
-      ]);
-
-      // initial notification to indicate we've started without issue
-      reportProgress();
-    } catch (e) {
-      console.error(e);
-      reportProgress.cancel();
-      notifyParentOfError(e);
-    }
+    console.log('waiting for diff engine to finish');
+    await diffEngine.result;
   }
 }
