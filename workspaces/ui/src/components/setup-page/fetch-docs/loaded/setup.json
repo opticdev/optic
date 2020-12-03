@@ -109,6 +109,17 @@
                 "before": "app.listen(port || 3000)\n",
                 "after": "app.listen(process.env.PORT || port || 3000)\n"
             },
+            "node": {
+                "pretty_name": "Node.js",
+                "project_url": "https://nodejs.org/en/",
+                "code_change": true,
+                "default_command": "sails lift --port $OPTIC_API_PORT",
+                "language": "javascript",
+                "preamble": "For vanilla Node.js, make sure your app will listen to a configurable port (such as the `PORT` environment variable) and pass in Optic's port variable before the command.",
+                "start_command": "PORT=$OPTIC_API_PORT npm start",
+                "before": "start:\n  command: npm start\n",
+                "after": "start:\n  command: PORT=$OPTIC_API_PORT npm start\n"
+            },
             "sails": {
                 "pretty_name": "Sails",
                 "project_url": "https://sailsjs.com/",
