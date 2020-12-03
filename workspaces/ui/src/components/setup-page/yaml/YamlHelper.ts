@@ -29,7 +29,6 @@ export function rangesFromOpticYaml(
 ): RangesFromYaml {
   const result = load(yamlString);
 
-  debugger;
   const allTasks = result.mappings.find((i) => i.key.value === 'tasks');
 
   function stringValueOf(node, key): KeyValues | undefined {

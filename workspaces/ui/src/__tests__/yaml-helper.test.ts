@@ -22,6 +22,15 @@ ignoreRequests:
 - OPTIONS (.*)
 `.trim();
 
+const opticyaml_missing_value = `name: Todo API
+tasks:
+  # The default task, invoke using \`api run start\`
+  # Learn how to set up and use Optic at https://app.useoptic.com
+  start:
+    command:
+    inboundUrl: http://localhost:3005
+`.trim();
+
 it('can parse a start task from optic yaml', () => {
   const result = rangesFromOpticYaml(opticyaml, 'start');
   expect(result).toMatchSnapshot();
@@ -29,5 +38,10 @@ it('can parse a start task from optic yaml', () => {
 
 it('can parse a test task from optic yaml', () => {
   const result = rangesFromOpticYaml(opticyaml, 'test-gets');
+  expect(result).toMatchSnapshot();
+});
+
+it('fails gracefully when missing value', () => {
+  const result = rangesFromOpticYaml(opticyaml_missing_value, 'start');
   expect(result).toMatchSnapshot();
 });

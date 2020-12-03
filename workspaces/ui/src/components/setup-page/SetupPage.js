@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Page from '../Page';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMachine } from '@xstate/react';
+import classnames from 'classnames';
 import { newSetupAndCheckMachine } from './setup-and-check-machine';
 import { useServices } from '../../contexts/SpecServiceContext';
 import { ShowCurrentOpticYml } from './yaml/UpdateOpticYml';
@@ -11,6 +12,16 @@ import { FrameworkHelper } from './FrameworkHelper';
 import { useLatestEvent, useUserTracking } from './setup-api/useUserTracking';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import Box from '@material-ui/core/Box';
+import { useDebounce } from './useDebounceHook';
+import { Paper, Typography, Zoom } from '@material-ui/core';
+import { Code } from './setup-api/CodeBlock';
+import {
+  SubtleBlueBackground,
+  UpdatedBlue,
+  UpdatedBlueBackground,
+} from '../../theme';
+import { defaultCommandInit } from '@useoptic/cli-config/build/helpers/initial-task';
+import { CheckPassed } from './CheckPassed';
 
 export function SetupPage(props) {
   const classes = useStyles();
@@ -41,7 +52,7 @@ export function SetupPage(props) {
 
   const debouncedConfigRaw = useDebounce(stagedConfig, 1500);
   const hasChanges = lastKnownSavedConfig !== stagedConfig;
-  const saving = state.matches('saving');
+  const isSaving = state.matches('saving');
 
   useEffect(() => {
     if (debouncedConfigRaw && hasChanges) {
@@ -75,7 +86,8 @@ export function SetupPage(props) {
             <>
               <div style={{ minWidth: 600, flex: 1 }}>
                 <ShowCurrentOpticYml
-                  saving={saving}
+                  saving={isSaving}
+                  hasChanges={hasChanges}
                   focusTask={focusTask}
                   rawConfig={stagedConfig}
                   result={lastCheckResult}
@@ -96,13 +108,46 @@ export function SetupPage(props) {
                     send({ type: 'USER_TOGGLED_MODE', mode })
                   }
                 />
-                <div style={{ marginTop: 20 }}>{cards}</div>
+                <div style={{ marginTop: 20 }}>
+                  {cards}
+                  <PromptCheck
+                    hasChanges={hasChanges}
+                    stagedConfig={stagedConfig}
+                    lastResult={lastCheckResult}
+                    focusTask={focusTask}
+                    command={stagedRanges.task && stagedRanges.task.command}
+                  />
+                </div>
               </div>
             </>
           )}
         </Box>
+        <CheckPassed open={lastCheckResult && lastCheckResult.passed} />
       </Page.Body>
     </Page>
+  );
+}
+
+function PromptCheck({ hasChanges, lastResult, stagedConfig, focusTask }) {
+  const classes = useStyles();
+  const shouldShow =
+    !lastResult || (lastResult && lastResult.rawConfig !== stagedConfig);
+
+  return (
+    <Zoom in={shouldShow}>
+      <Paper className={classes.promptCheck}>
+        <Typography variant="caption">
+          Run this check command in your terminal:
+        </Typography>
+        <Box display="flex" alignItems="center" style={{ marginTop: 15 }}>
+          <img
+            src={require('../../assets/open-terminal.svg')}
+            style={{ width: 70, marginRight: 15 }}
+          />
+          <Code>api check {focusTask}</Code>
+        </Box>
+      </Paper>
+    </Zoom>
   );
 }
 
@@ -113,32 +158,18 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 900,
     width: '100%',
   },
+  promptCheck: {
+    backgroundColor: SubtleBlueBackground,
+    paddingTop: 15,
+    paddingBottom: 15,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeft: `4px solid ${UpdatedBlue}`,
+  },
   pageBg: {
     backgroundImage: `url(${require('../../assets/agsquare_dark_@2X.png')})`,
     backgroundSize: '100px 100px',
   },
 }));
-
-function useDebounce(value, delay) {
-  // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(
-    () => {
-      // Update debounced value after delay
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      // Cancel the timeout if value changes (also on delay change or unmount)
-      // This is how we prevent debounced value from updating if value is changed ...
-      // .. within the delay period. Timeout gets cleared and restarted.
-      return () => {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay] // Only re-call effect if value or delay changes
-  );
-
-  return debouncedValue;
-}

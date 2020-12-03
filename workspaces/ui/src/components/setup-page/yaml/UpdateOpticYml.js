@@ -12,13 +12,12 @@ import {
   UpdatedBlue,
   UpdatedBlueBackground,
 } from '../../../theme';
-import { rangesFromOpticYaml } from './YamlHelper';
-import { Paper, Typography } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
+import { Fade, Paper, Typography } from '@material-ui/core';
 
 export function ShowCurrentOpticYml({
   rawConfig,
   saving,
+  hasChanges,
   ranges,
   result,
   updateValue,
@@ -90,12 +89,20 @@ export function ShowCurrentOpticYml({
         >
           optic.yml
         </Typography>
+        <div style={{ flex: 1 }} />
+
+        <Typography
+          variant="overline"
+          style={{ textTransform: 'none', color: '#5e738d' }}
+        >
+          {(saving || hasChanges) && 'saving...'}
+          {!hasChanges && 'saved'}
+        </Typography>
       </div>
       <AceEditor
         style={{
           width: '100%',
           height: lineCount < 15 ? 400 : 600,
-          opacity: saving ? 0.5 : 1,
         }}
         mode="yaml"
         theme="solarized_dark"
@@ -154,5 +161,8 @@ const useStyles = makeStyles((theme) => ({
     borderBottomColor: '#736d6d',
     borderBottom: `1px solid`,
     marginBottom: 12,
+    display: 'flex',
+    flexDirection: 'row',
+    paddingRight: 12,
   },
 }));

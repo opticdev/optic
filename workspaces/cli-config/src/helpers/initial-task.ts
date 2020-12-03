@@ -14,12 +14,13 @@ ${buildInitialTask(flags, taskName)}`.trimLeft();
   return config;
 }
 
+export const defaultCommandInit =
+  'echo "Setup A Valid Command to Start your API!"';
+
 function buildInitialTask(flags: any, taskName: string) {
   //default config and valid for start injected
   let commandConfig = `  ${taskName}:
-     command: ${escapeIt(
-       flags.command || 'echo "Setup A Valid Command to Start your API!"'
-     )}
+     command: ${escapeIt(flags.command || defaultCommandInit)}
      inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
 `.trimRight();
 

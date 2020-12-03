@@ -67,7 +67,7 @@ export function HelperCard({ setting, result, noChecks, value }) {
             wordWrap: 'break-word',
           }}
         >
-          {value.value}
+          {(value && value.value) || '________'}
         </Code>
         <Typography
           variant="caption"
