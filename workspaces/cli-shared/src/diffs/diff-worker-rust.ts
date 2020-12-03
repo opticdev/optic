@@ -195,6 +195,10 @@ export class DiffWorkerRust {
       });
 
       let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+      diffEngine.result.catch((err: Error) => {
+        notifyParentOfError(err); // propagate first
+        throw err; // then panic
+      });
       let processStreams: Writable[] = [diffEngine.input];
       if (process.env.OPTIC_DEVELOPMENT === 'yes') {
         processStreams.push(
