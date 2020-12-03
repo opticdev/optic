@@ -47,6 +47,8 @@ async function prepare(
     captureSaver.save(interaction);
   }
 
+  await captureSaver.cleanup();
+
   // prepare output
   const outputBaseDir = Path.join(captureBaseDirectory, captureId, 'diffs');
   const outputDir = Path.join(outputBaseDir, diffId);
