@@ -34,7 +34,20 @@ Tap.test('diff-worker-rust', async (test) => {
     });
   });
 
-  await test.test('will propagate errors from the diff engine');
+  await test.test('will propagate errors from the diff engine', async (t) => {
+    const diffConfig = await prepare(
+      exampleInteractions(10),
+      // this will fail, because interactions aren't a valid spec file
+      Path.join(__dirname, '..', 'fixtures', 'example-interaction.json')
+    );
+
+    const worker = new DiffWorkerRust(diffConfig);
+
+    t.rejects(async () => {
+      for await (const progress of worker.run()) {
+      }
+    });
+  });
 });
 
 async function prepare(
