@@ -4,12 +4,11 @@ mod result;
 pub mod traverser;
 pub mod visitors;
 
-pub use result::ShapeDiffResult;
-pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
-
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
+pub use result::ShapeDiffResult;
+pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
 use visitors::BodyVisitors;
 
 pub fn diff(
