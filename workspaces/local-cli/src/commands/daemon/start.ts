@@ -7,7 +7,11 @@ export default class DaemonStop extends Command {
   static hidden: boolean = true;
 
   async run() {
-    await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
-    this.log('Done!');
+    try {
+      await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
+      this.log('Done!');
+    } catch (e) {
+      this.error(e);
+    }
   }
 }
