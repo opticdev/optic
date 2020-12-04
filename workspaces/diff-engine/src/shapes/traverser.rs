@@ -302,7 +302,7 @@ pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }
 impl JsonTrail {
-  fn empty() -> Self {
+  pub(crate) fn empty() -> Self {
     JsonTrail { path: vec![] }
   }
   pub fn with_component(&self, component: JsonTrailPathComponent) -> Self {

@@ -12,6 +12,7 @@ mod state;
 
 #[cfg(feature = "streams")]
 pub mod streams;
+mod learn_shape;
 
 pub use commands::{CommandContext, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
