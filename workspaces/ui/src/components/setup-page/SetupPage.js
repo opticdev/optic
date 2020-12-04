@@ -16,12 +16,16 @@ import { useDebounce } from './useDebounceHook';
 import { Paper, Typography, Zoom } from '@material-ui/core';
 import { Code } from './setup-api/CodeBlock';
 import {
+  OpticBlue,
   SubtleBlueBackground,
   UpdatedBlue,
   UpdatedBlueBackground,
 } from '../../theme';
 import { defaultCommandInit } from '@useoptic/cli-config/build/helpers/initial-task';
 import { CheckPassed } from './CheckPassed';
+import { MarkdownRender } from './fetch-docs/BuildMD';
+import { DemoStartCommandSetup } from './setup-api/SetupType';
+import { DocDarkGrey, DocGrey } from '../docs/DocConstants';
 
 export function SetupPage(props) {
   const classes = useStyles();
@@ -46,6 +50,7 @@ export function SetupPage(props) {
     framework,
     lastCheckResult,
     lastKnownSavedConfig,
+    checkCount,
   } = state.context;
 
   const noChecks = !Boolean(lastCheckResult);
@@ -81,12 +86,13 @@ export function SetupPage(props) {
     <Page title="Setup your API Start task">
       <Page.Navbar mini={true} />
       <Page.Body padded={true} className={classes.pageBg}>
+        <Box display="flex" className={classes.copyRoot}>
+          <ApiStartCommandCopy />
+        </Box>
         <Box display="flex" className={classes.root}>
           {!state.matches('loading') && (
             <>
               <div style={{ minWidth: 600, flex: 1 }}>
-                <h2>Setup a task to start your API with Optic</h2>
-                <p>Optic uses an <code>optic.yml</code> file to define how it will start and observe your API project's traffic. Choose a framework from the drop-down on the right, and Optic will guide you through setting up and checking the necessary parameters. There is a manual configuration mode for those who need more control, as well.</p>
                 <ShowCurrentOpticYml
                   saving={isSaving}
                   hasChanges={hasChanges}
@@ -97,6 +103,22 @@ export function SetupPage(props) {
                   updateValue={(contents) =>
                     send({ type: 'USER_UPDATED_CONFIG', contents })
                   }
+                />
+
+                <Typography
+                  variant="subtitle1"
+                  style={{ marginTop: 18, opacity: 0.5 }}
+                >
+                  Waiting for Checks to Pass...
+                </Typography>
+
+                <PromptCheck
+                  hasChanges={hasChanges}
+                  stagedConfig={stagedConfig}
+                  lastResult={lastCheckResult}
+                  checkCount={checkCount}
+                  focusTask={focusTask}
+                  command={stagedRanges.task && stagedRanges.task.command}
                 />
               </div>
               <div style={{ paddingLeft: 20, width: 325 }}>
@@ -110,16 +132,7 @@ export function SetupPage(props) {
                     send({ type: 'USER_TOGGLED_MODE', mode })
                   }
                 />
-                <div style={{ marginTop: 20 }}>
-                  {cards}
-                  <PromptCheck
-                    hasChanges={hasChanges}
-                    stagedConfig={stagedConfig}
-                    lastResult={lastCheckResult}
-                    focusTask={focusTask}
-                    command={stagedRanges.task && stagedRanges.task.command}
-                  />
-                </div>
+                <div style={{ marginTop: 20 }}>{cards}</div>
               </div>
             </>
           )}
@@ -130,44 +143,97 @@ export function SetupPage(props) {
   );
 }
 
-function PromptCheck({ hasChanges, lastResult, stagedConfig, focusTask }) {
+function PromptCheck({
+  hasChanges,
+  lastResult,
+  stagedConfig,
+  checkCount,
+  focusTask,
+}) {
   const classes = useStyles();
   const shouldShow =
     !lastResult || (lastResult && lastResult.rawConfig !== stagedConfig);
 
   return (
-    <Zoom in={shouldShow}>
-      <Paper className={classes.promptCheck}>
-        <Typography variant="caption">
-          Run this check command in your terminal:
-        </Typography>
-        <Box display="flex" alignItems="center" style={{ marginTop: 15 }}>
-          <img
-            src={require('../../assets/open-terminal.svg')}
-            style={{ width: 70, marginRight: 15 }}
-          />
-          <Code>api check {focusTask}</Code>
-        </Box>
-      </Paper>
-    </Zoom>
+    <Paper
+      className={classes.promptCheck}
+      style={{ opacity: shouldShow ? 1 : 0.5 }}
+    >
+      <Typography
+        variant="caption"
+        style={{ color: SubtleBlueBackground, marginRight: 15 }}
+      >
+        {checkCount > 0
+          ? 'Run the check again to see if your changes worked:'
+          : 'Check if your alias works by running this command in the terminal:'}
+      </Typography>
+      <Code style={{ color: 'white', fontSize: 18 }}>
+        api check {focusTask}
+      </Code>
+    </Paper>
+  );
+}
+
+function ApiStartCommandCopy(props) {
+  const classes = useStyles();
+
+  return (
+    <div>
+      <Typography variant="h4" style={{ marginBottom: 18 }}>
+        Start your API with Optic:
+      </Typography>
+      <Typography variant="body2" className={classes.copy}>
+        Optic monitors your local API traffic for new endpoints, and any changes
+        you have made to existing ones. The simplest way to fit Optic into your
+        development flow is to alias the command you use to start your API with
+        Optic's <Code>api start</Code> command:
+      </Typography>
+      <DemoStartCommandSetup />
+      <Typography
+        variant="body2"
+        className={classes.copy}
+        style={{ marginTop: 14 }}
+      >
+        Choose your API framework on the right and this wizard will help you
+        setup + check the alias. All the changes you make here will be saved to
+        your <Code>optic.yml</Code> file.
+      </Typography>
+      <Typography variant="body2" className={classes.copy}>
+        After you set up the alias, begin using api start it whenever you're
+        developing. Optic will show you diffs when the process stops.
+      </Typography>
+    </div>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
+  copy: {
+    fontWeight: 200,
+    marginBottom: 13,
+  },
+  copyRoot: {
+    maxWidth: 650,
+    paddingTop: 35,
+    margin: '0 auto',
+  },
   root: {
-    paddingTop: 18,
-    maxWidth: 1500,
+    paddingTop: 30,
+    paddingBottom: 100,
+    maxWidth: 1200,
+    margin: '0 auto',
     minWidth: 900,
     width: '100%',
   },
   promptCheck: {
-    backgroundColor: SubtleBlueBackground,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginTop: 10,
+    backgroundColor: '#0e2a35',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+    justifyContent: 'flex-start',
+    paddingLeft: 15,
     borderLeft: `4px solid ${UpdatedBlue}`,
   },
   pageBg: {

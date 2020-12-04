@@ -26,6 +26,7 @@ export interface SetupAndCheckMachineContext {
   stagedRanges: RangesFromYaml;
   mode: string;
   framework: string;
+  checkCount: number;
   lastCheckResult?: CheckAssertionsResult;
 }
 
@@ -47,6 +48,7 @@ export const newSetupAndCheckMachine = (
       stagedRanges: {
         isValid: false,
       },
+      checkCount: 0,
     },
     initial: 'loading',
     states: {
@@ -120,6 +122,7 @@ export const newSetupAndCheckMachine = (
                   lastCheckResult: (_, event) => event.result,
                   lastKnownSavedConfig: (_, event) => event.result.rawConfig,
                   stagedConfig: (_, event) => event.result.rawConfig,
+                  checkCount: (ctx) => ctx.checkCount + 1,
                 }),
               ],
             },

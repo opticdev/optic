@@ -82,6 +82,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export function DemoStartCommandSetup() {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.demo}>
+      <TextLoop
+        springConfig={{ stiffness: 180, damping: 7 }}
+        className={classes.scroller}
+      >
+        {examples.map((i) => (
+          <span>{i}</span>
+        ))}
+      </TextLoop>
+      {rightArrow}
+      <span style={{ color: primary, fontWeight: 800 }}>api start</span>
+    </div>
+  );
+}
+
 export function SetupType({ value, onChoose }) {
   const classes = useStyles();
   return (
