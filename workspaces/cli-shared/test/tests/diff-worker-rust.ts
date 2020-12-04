@@ -19,9 +19,10 @@ Tap.test('diff-worker-rust', async (test) => {
     );
 
     const worker = new DiffWorkerRust(diffConfig);
+    await worker.start();
 
     let progressReports = [];
-    for await (let progress of worker.run()) {
+    for await (let progress of worker.progress()) {
       progressReports.push(progress);
     }
 
@@ -42,11 +43,12 @@ Tap.test('diff-worker-rust', async (test) => {
     );
 
     const worker = new DiffWorkerRust(diffConfig);
-
-    t.rejects(async () => {
-      for await (const progress of worker.run()) {
-      }
-    });
+    t.rejects(
+      new Promise((_, reject) => {
+        worker.events.once('error', reject);
+      })
+    );
+    await worker.start();
   });
 });
 

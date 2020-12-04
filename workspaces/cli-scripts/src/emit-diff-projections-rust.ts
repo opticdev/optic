@@ -21,9 +21,12 @@ if (Config.errors.sentry) {
 
 async function run(config: IDiffProjectionEmitterConfig) {
   const worker = new DiffWorkerRust(config);
+  worker.events.once('error', onError);
 
   try {
-    for await (let progress of worker.run()) {
+    await worker.start();
+
+    for await (let progress of worker.progress()) {
       if (process && process.send) {
         process.send({
           type: 'progress',
@@ -34,15 +37,19 @@ async function run(config: IDiffProjectionEmitterConfig) {
       }
     }
   } catch (err) {
-    if (process && process.send) {
-      process.send({
-        type: 'error',
-        data: { message: err.message },
-      });
-    }
-
-    throw err;
+    onError(err);
   }
+}
+
+function onError(err: Error) {
+  if (process && process.send) {
+    process.send({
+      type: 'error',
+      data: { message: err.message },
+    });
+  }
+
+  throw err;
 }
 
 const [, , configJsonString] = process.argv;

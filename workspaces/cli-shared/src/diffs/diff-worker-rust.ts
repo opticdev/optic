@@ -13,6 +13,7 @@ import Chain, { chain } from 'stream-chain';
 import { fork } from 'stream-fork';
 import { Readable, Writable } from 'stream';
 import { stringer as JSONLStringer } from 'stream-json/jsonl/Stringer';
+import { EventEmitter } from 'events';
 
 export interface IDiffProjectionEmitterConfig {
   diffId: string;
@@ -61,19 +62,19 @@ async function safeWriteJson(filePath: string, contents: any) {
 }
 
 export class DiffWorkerRust {
-  constructor(private config: IDiffProjectionEmitterConfig) {}
+  events: EventEmitter;
+  private hasMoreInteractions: boolean = true;
+  private diffedInteractionsCounter: BigInt = BigInt(0);
+  private skippedInteractionsCounter: BigInt = BigInt(0);
+  private finished: boolean = false;
+  private ended: boolean = false;
 
-  async *run(): AsyncIterable<{
-    hasMoreInteractions: boolean;
-    diffedInteractionsCounter: string;
-    skippedInteractionsCounter: string;
-  }> {
+  constructor(private config: IDiffProjectionEmitterConfig) {
+    this.events = new EventEmitter();
+  }
+
+  async start() {
     console.log('running');
-
-    let diffing = true;
-    let hasMoreInteractions = true;
-    let diffedInteractionsCounter = BigInt(0);
-    let skippedInteractionsCounter = BigInt(0);
 
     console.time('load inputs');
     const [ignoreRequests, filters] = await Promise.all([
@@ -111,15 +112,16 @@ export class DiffWorkerRust {
 
     await fs.ensureDir(diffOutputPaths.base);
 
+    // setup streams
     const interactionsStream = chain([
       Readable.from(interactionIterator, {
         objectMode: true,
       }),
       (item) => {
-        skippedInteractionsCounter = item.skippedInteractionsCounter;
-        diffedInteractionsCounter = item.diffedInteractionsCounter;
-        hasMoreInteractions = item.hasMoreInteractions;
-        if (!item.hasMoreInteractions) {
+        this.skippedInteractionsCounter = item.skippedInteractionsCounter;
+        this.diffedInteractionsCounter = item.diffedInteractionsCounter;
+        this.hasMoreInteractions = item.hasMoreInteractions;
+        if (!item.hasMoreInteractions || this.ended) {
           return Chain.final();
         }
 
@@ -140,37 +142,20 @@ export class DiffWorkerRust {
     ]);
     const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
     diffsSink.once('finish', () => {
-      hasMoreInteractions = false;
-      diffing = false;
+      this.finish();
+    });
+    diffsSink.once('error', (err) => {
+      this.destroy(err);
     });
 
-    let diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-
-    const completingDiff = new Promise((resolve, reject) => {
-      let done = false;
-      diffsSink.once('finish', onSinkFinish);
-      diffsSink.once('error', onSinkError);
-
-      diffEngine.result.catch((err) => {
-        if (done) return;
-        cleanup();
-        reject(err);
-      });
-
-      function onSinkFinish() {
-        cleanup();
-        resolve();
-      }
-      function onSinkError() {
-        cleanup();
-        reject();
-      }
-      function cleanup() {
-        done = true;
-        diffsSink.removeListener('finish', onSinkFinish);
-        diffsSink.removeListener('error', onSinkError);
-      }
+    const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+    diffEngine.result.catch((err) => {
+      this.destroy(err);
     });
+
+    const diffEngineLog = fs.createWriteStream(
+      path.join(diffOutputPaths.base, 'diff-engine-output.log')
+    );
 
     let processStreams: Writable[] = [diffEngine.input];
     if (process.env.OPTIC_DEVELOPMENT === 'yes') {
@@ -180,52 +165,67 @@ export class DiffWorkerRust {
         )
       );
     }
+
+    // connect it all together to form a pipeline
     interactionsStream.pipe(fork(processStreams));
     diffEngine.output.pipe(diffsSink);
-
-    // consume diffEngine's stderr:
-    const diffEngineLogFilePath = path.join(
-      diffOutputPaths.base,
-      'diff-engine-output.log'
-    );
-    const diffEngineLog = fs.createWriteStream(diffEngineLogFilePath);
     diffEngine.error.pipe(diffEngineLog);
+  }
 
-    // write initial output
-    await Promise.all([
-      safeWriteJson(diffOutputPaths.stats, {
-        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        isDone: !hasMoreInteractions,
-      }),
-      safeWriteJson(diffOutputPaths.undocumentedUrls, []),
-    ]);
+  private destroy(err?: Error) {
+    if (this.ended) return;
+    this.ended = true;
+    if (err) {
+      this.events.emit('error', err);
+    }
+    this.events.emit('end');
+  }
+
+  private finish() {
+    if (this.ended || this.finished) return;
+    this.finished = true;
+    this.ended = true;
+    this.hasMoreInteractions = false;
+    this.events.emit('finish');
+  }
+
+  async *progress(): AsyncIterable<{
+    hasMoreInteractions: boolean;
+    diffedInteractionsCounter: string;
+    skippedInteractionsCounter: string;
+  }> {
+    const report = () => ({
+      diffedInteractionsCounter: this.diffedInteractionsCounter.toString(),
+      skippedInteractionsCounter: this.skippedInteractionsCounter.toString(),
+      // this seems weird, but is right: downstream doesn't care whether we're doing reading interactions
+      // it cares whether we're done diffing
+      hasMoreInteractions: !this.finished,
+    });
+
+    yield report();
 
     // Progress reporting
-    console.log(hasMoreInteractions, diffing);
-    do {
-      console.log('yielding results');
-      yield {
-        diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-        skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-        hasMoreInteractions,
-      };
+    while (!this.ended) {
+      yield await new Promise((resolve) => {
+        const events = this.events;
+        events.once('end', onEnd);
+        let timeout = setTimeout(onTimeout, 1000);
 
-      console.log('and we are back');
+        function onEnd() {
+          cleanup();
+          resolve(report());
+        }
 
-      await Promise.race([
-        completingDiff,
-        new Promise((r) => setTimeout(r, 1000)),
-      ]);
-    } while (hasMoreInteractions || diffing);
+        function onTimeout() {
+          cleanup();
+          resolve(report());
+        }
 
-    yield {
-      diffedInteractionsCounter: diffedInteractionsCounter.toString(),
-      skippedInteractionsCounter: skippedInteractionsCounter.toString(),
-      hasMoreInteractions,
-    };
-
-    console.log('waiting for diff engine to finish');
-    await diffEngine.result;
+        function cleanup() {
+          events.removeListener('end', onEnd);
+          clearTimeout(timeout);
+        }
+      });
+    }
   }
 }
