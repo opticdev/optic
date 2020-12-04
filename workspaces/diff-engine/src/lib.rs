@@ -3,6 +3,7 @@
 mod commands;
 mod events;
 mod interactions;
+mod learn_shape;
 mod projections;
 mod protos;
 mod queries;
@@ -12,7 +13,6 @@ mod state;
 
 #[cfg(feature = "streams")]
 pub mod streams;
-mod learn_shape;
 
 pub use commands::{CommandContext, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;

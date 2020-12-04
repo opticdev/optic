@@ -1,13 +1,10 @@
-use crate::{HttpInteraction, BodyDescriptor};
-use std::collections::HashMap;
-use crate::shapes::{JsonTrail, traverser};
+use crate::learn_shape::traverser::Traverser;
+use crate::learn_shape::visitors::learn_json_values::LearnVisitors;
 use crate::learn_shape::TrailValues;
+use crate::shapes::JsonTrail;
+use crate::BodyDescriptor;
 use serde_json::json;
-use serde_json::Value as JsonValue;
-use crate::shapehash;
-use std::collections::hash_map::RandomState;
-use crate::queries::shape::ShapeQueries;
-use crate::learn_shape::json_traverser::JsonTraverser;
+use std::collections::HashMap;
 
 type TrailValueMap = HashMap<JsonTrail, TrailValues>;
 
@@ -15,12 +12,15 @@ fn for_body_descriptor(body: Option<BodyDescriptor>) -> HashMap<JsonTrail, Trail
   let trail_map: HashMap<JsonTrail, TrailValues> = HashMap::new();
 
   if body.is_some() {
-    let traverser = JsonTraverser::new(JsonTrail::empty());
+    let traverser = Traverser::new();
+    let mut visitors = LearnVisitors::new();
 
-    traverser.traverse_root_shape(
-      body,
-      &mut JsonTraverser::new(JsonTrail::empty()));
-    // let shape_traverser = traverser::Traverser::new();
+    traverser.traverse_root_shape(body, &mut visitors);
+    //
+    // traverser.traverse_root_shape(
+    //   body,
+    //   &mut JsonTraverser::new(JsonTrail::empty()));
+    // // let shape_traverser = traverser::Traverser::new();
     HashMap::new()
   } else {
     HashMap::new()
@@ -35,7 +35,5 @@ fn trail_values_should_produce_map() {
 
   let body: Option<BodyDescriptor> = Some(BodyDescriptor::from(object_body));
 
-
   let a = for_body_descriptor(body);
-
 }

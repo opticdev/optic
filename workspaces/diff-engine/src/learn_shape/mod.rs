@@ -1,10 +1,12 @@
 use crate::shapes::JsonTrail;
-use std::collections::{HashSet, HashMap};
 use crate::HttpInteraction;
+use std::collections::{HashMap, HashSet};
 
 mod trail_values;
+mod traverser;
 mod visitors;
-mod json_traverser;
+
+type FieldSet = HashSet<String>;
 
 struct TrailValues {
   trail: JsonTrail,
@@ -14,5 +16,5 @@ struct TrailValues {
   was_null: bool,
   was_array: bool,
   was_object: bool,
-  field_set: HashSet<HashSet<String>>
+  field_set: HashSet<FieldSet>,
 }
