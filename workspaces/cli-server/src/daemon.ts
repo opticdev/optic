@@ -23,7 +23,9 @@ class CliDaemon {
 
   async acquireInstanceLock() {
     console.log(`acquiring lock`);
-    this.releaseLock = await lockfile.lock(this.config.lockFilePath);
+    this.releaseLock = await lockfile.lock(this.config.lockFilePath, {
+      retries: 3,
+    });
     console.log(`acquired lock`);
     const fileExists = await fs.pathExists(this.config.lockFilePath);
     if (fileExists) {
