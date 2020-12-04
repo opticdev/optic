@@ -228,7 +228,7 @@ export async function getAssertionsFromCommandSession(
     expectedHost: serviceConfig.host,
   };
   const startOnPortAssertion: ApiProcessStartsOnAssignedPort = {
-    passed: serviceRunning && !wrongPortTaken,
+    passed: serviceRunning && !tookProxyPort,
     expectedPort: serviceConfig.port.toString(),
   };
   const longRunningAssertion: CommandIsLongRunning = {
@@ -237,7 +237,7 @@ export async function getAssertionsFromCommandSession(
   };
 
   const proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl = {
-    passed: task.targetUrl ? Boolean(serviceRunning || tookProxyPort) : false,
+    passed: serviceRunning && !tookProxyPort,
     hostname: expected,
   };
 
