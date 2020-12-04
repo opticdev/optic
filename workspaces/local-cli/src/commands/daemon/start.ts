@@ -10,6 +10,7 @@ export default class DaemonStop extends Command {
     try {
       await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
       this.log('Done!');
+      process.exit(0);
     } catch (e) {
       this.error(e);
     }
