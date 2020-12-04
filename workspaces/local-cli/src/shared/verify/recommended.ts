@@ -207,7 +207,6 @@ export async function getAssertionsFromCommandSession(
     })
       .then(() => {
         tookProxyPort = true;
-        serviceRunning = false;
         resolve(true);
       }) //if service resolves we assume it's up.
       .catch(() => resolve(false));
@@ -238,7 +237,7 @@ export async function getAssertionsFromCommandSession(
   };
 
   const proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl = {
-    passed: task.targetUrl ? serviceRunning && !wrongPortTaken : false,
+    passed: task.targetUrl ? Boolean(serviceRunning || tookProxyPort) : false,
     hostname: expected,
   };
 
