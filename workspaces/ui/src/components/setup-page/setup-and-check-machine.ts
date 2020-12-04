@@ -160,7 +160,6 @@ function updateConfig(
 
     if (mode === 'recommended') {
       const docs = integrationDocsOptions.find((i) => i.value === framework);
-      console.log(docs);
       const startCommand = docs
         ? docs.data.start_command
         : 'echo "Replace me with your start command"';

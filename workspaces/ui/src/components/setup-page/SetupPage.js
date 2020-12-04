@@ -26,6 +26,8 @@ import { CheckPassed } from './CheckPassed';
 import { MarkdownRender } from './fetch-docs/BuildMD';
 import { DemoStartCommandSetup } from './setup-api/SetupType';
 import { DocDarkGrey, DocGrey } from '../docs/DocConstants';
+import { LightTooltip } from '../tooltips/LightTooltip';
+import { integrationDocsOptions } from './fetch-docs/IntegrationDocs';
 
 export function SetupPage(props) {
   const classes = useStyles();
@@ -105,6 +107,11 @@ export function SetupPage(props) {
                   }
                 />
 
+                <PortAssumption
+                  style={{ marginTop: 24 }}
+                  framework={framework}
+                />
+
                 <Typography
                   variant="subtitle1"
                   style={{ marginTop: 18, opacity: 0.5 }}
@@ -178,7 +185,7 @@ function ApiStartCommandCopy(props) {
   const classes = useStyles();
 
   return (
-    <div>
+    <div style={{ maxWidth: 670 }}>
       <Typography variant="h4" style={{ marginBottom: 18 }}>
         Start your API with Optic:
       </Typography>
@@ -206,15 +213,99 @@ function ApiStartCommandCopy(props) {
   );
 }
 
+function PortAssumption(props) {
+  const classes = useStyles();
+
+  const docs = integrationDocsOptions.find((i) => i.value === props.framework);
+
+  const examplePorts = [
+    '`<start_command> --port=$PORT`',
+    '`<start_command> --listen=$PORT`',
+    '`<start_command> --p=$PORT`',
+    '`OUR_ENV_VAR=$PORT <start_command>`',
+    '`export OUR_ENV_VAR=$PORT; <start_command>`',
+  ];
+
+  const PortTooltip = (
+    <LightTooltip
+      interactive
+      title={
+        <div>
+          <Typography variant="overline">examples:</Typography>
+          {docs && !docs.data.code_change ? (
+            <MarkdownRender
+              source={
+                docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
+              }
+            />
+          ) : (
+            <MarkdownRender source={examplePorts.join('\n')} />
+          )}
+        </div>
+      }
+    >
+      <span style={{ color: OpticBlue, fontWeight: 600, cursor: 'pointer' }}>
+        map this variable to a flag your API framework looks for
+      </span>
+    </LightTooltip>
+  );
+
+  const LookFor = (
+    <LightTooltip
+      interactive
+      title={
+        <div>
+          <Typography variant="overline">examples:</Typography>
+          {docs && (
+            <MarkdownRender
+              source={
+                docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
+              }
+            />
+          )}
+          {!docs && (
+            <MarkdownRender
+              source={"```\n#psudocode\nlisten(env['PORT'])\n```"}
+            />
+          )}
+        </div>
+      }
+    >
+      <span style={{ color: OpticBlue, fontWeight: 600, cursor: 'pointer' }}>
+        look for the <Code>$PORT</Code> variable when starting up.
+      </span>
+    </LightTooltip>
+  );
+
+  return (
+    <div style={{ maxWidth: 670, ...props.style }}>
+      <Typography variant="h6" style={{ marginBottom: 18 }}>
+        Starting on the correct <Code>$PORT</Code>
+      </Typography>
+      <Typography variant="body2" className={classes.copy}>
+        Optic assumes your API can be started on a specific port, which Optic
+        assigns. To do this, Optic provides
+        <Code>$PORT</Code> as an environment variable. You'll either need to{' '}
+        {PortTooltip}, or modify your code to {LookFor}
+      </Typography>
+    </div>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   copy: {
     fontWeight: 200,
     marginBottom: 13,
   },
   copyRoot: {
-    maxWidth: 650,
     paddingTop: 35,
+    maxWidth: 1200,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     margin: '0 auto',
+    width: '100%',
+    paddingLeft: 5,
   },
   root: {
     paddingTop: 30,
