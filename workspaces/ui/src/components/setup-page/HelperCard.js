@@ -45,7 +45,7 @@ const assertionsMap = {
 
 const quickSummary = {
   command: 'how your API is started',
-  inboundUrl: 'where you will send local API traffic',
+  inboundUrl: 'where the API usually starts locally localhost:PORT',
 };
 
 export function HelperCard({ setting, result, noChecks, value }) {
