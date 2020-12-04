@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import lockfile from 'proper-lockfile';
-import { ICliDaemonState, userDebugLogger } from '@useoptic/cli-shared';
-import { CliServer, log, shutdownRequested } from './server';
+import { delay, ICliDaemonState, userDebugLogger } from '@useoptic/cli-shared';
+import { CliServer, shutdownRequested } from './server';
 
 export interface ICliDaemonConfig {
   lockFilePath: string;
@@ -17,17 +17,19 @@ class CliDaemon {
   async start() {
     await this.acquireInstanceLock();
     const output = await this.startApiServer();
-    log.write(JSON.stringify(output) + '\n');
+    console.log(JSON.stringify(output));
     return output;
   }
 
   async acquireInstanceLock() {
-    log.write(`acquiring lock\n`);
-    this.releaseLock = await lockfile.lock(this.config.lockFilePath);
-    log.write(`acquired lock\n`);
+    console.log(`acquiring lock`);
+    this.releaseLock = await lockfile.lock(this.config.lockFilePath, {
+      retries: 3,
+    });
+    console.log(`acquired lock`);
     const fileExists = await fs.pathExists(this.config.lockFilePath);
     if (fileExists) {
-      log.write(`something exists at lock, deleting\n`);
+      console.log(`something exists at lock, deleting`);
       await fs.unlink(this.config.lockFilePath);
     }
   }
