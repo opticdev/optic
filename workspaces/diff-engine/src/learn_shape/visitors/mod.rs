@@ -1,6 +1,9 @@
 use crate::shapes::JsonTrail;
 use crate::state::body::BodyDescriptor;
 use serde_json::Value as JsonValue;
+use std::collections::HashMap;
+use crate::learn_shape::TrailValues;
+use std::borrow::Borrow;
 
 pub mod learn_json_values;
 
@@ -15,38 +18,36 @@ pub trait BodyVisitors<R> {
   fn object_key(&mut self) -> &mut Self::ObjectKey;
   fn primitive(&mut self) -> &mut Self::Primitive;
 
-  fn take_results(&mut self) -> Option<Vec<R>> {
-    let flattened = vec![
-      self.primitive().take_results(),
-      self.array().take_results(),
-      self.object().take_results(),
-      self.object_key().take_results(),
-    ]
-    .into_iter()
-    .filter_map(|x| x)
-    .flatten()
-    .collect();
-    Some(flattened)
+  fn take_results(&mut self) -> HashMap<JsonTrail, R> {
+    HashMap::new()
   }
 }
 
 pub trait BodyVisitor<R> {
+
   fn results(&mut self) -> Option<&mut VisitorResults<R>> {
     None
   }
 
-  fn push(&mut self, result: R) {
+  fn insert(&mut self, json_trail: JsonTrail, result: R) {
     if let Some(results) = self.results() {
-      results.push(result);
+      results.insert(json_trail, result)
     }
   }
-
-  fn take_results(&mut self) -> Option<Vec<R>> {
+  fn get(&mut self, json_trail: &JsonTrail) -> Option<&mut R> {
     if let Some(results) = self.results() {
-      results.take_results()
+      results.get(json_trail)
     } else {
       None
     }
+  }
+
+  fn take_results(&mut self) -> HashMap<JsonTrail, R> {
+    // if let Some(results) = self.results() {
+    //   results.take_results()
+    // } else {
+    HashMap::new()
+    // }
   }
 }
 
@@ -70,25 +71,25 @@ pub trait BodyPrimitiveVisitor<R>: BodyVisitor<R> {
 // -------
 
 pub struct VisitorResults<R> {
-  results: Option<Vec<R>>,
+  results: HashMap<JsonTrail, R>
 }
 
 impl<R> VisitorResults<R> {
   pub fn new() -> Self {
     VisitorResults {
-      results: Some(vec![]),
+      results: HashMap::new(),
     }
   }
 
-  pub fn push(&mut self, result: R) {
-    if let Some(results) = &mut self.results {
-      results.push(result);
-    }
+  pub fn get(&mut self, json_trail:&JsonTrail) -> Option<&mut R> {
+    self.results.get_mut(&json_trail)
   }
 
-  pub fn take_results(&mut self) -> Option<Vec<R>> {
-    let flushed_results = self.results.take();
-    self.results = Some(vec![]);
-    flushed_results
+  pub fn insert(&mut self, json_trail: JsonTrail, result: R) {
+    self.results.insert(json_trail, result);
+  }
+
+  pub fn take_results(self) -> HashMap<JsonTrail, R> {
+    self.results
   }
 }

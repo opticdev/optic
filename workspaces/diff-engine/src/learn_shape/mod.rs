@@ -8,6 +8,7 @@ mod visitors;
 
 type FieldSet = HashSet<String>;
 
+#[derive(Debug)]
 struct TrailValues {
   trail: JsonTrail,
   was_string: bool,

@@ -285,7 +285,7 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Serialize, Clone, Hash, Eq, PartialEq)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -297,7 +297,7 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Eq, PartialEq)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }
