@@ -13,7 +13,7 @@ import { useLatestEvent, useUserTracking } from './setup-api/useUserTracking';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import Box from '@material-ui/core/Box';
 import { useDebounce } from './useDebounceHook';
-import { Paper, Typography, Zoom } from '@material-ui/core';
+import { Collapse, Paper, Typography, Zoom } from '@material-ui/core';
 import { Code } from './setup-api/CodeBlock';
 import {
   OpticBlue,
@@ -71,6 +71,7 @@ export function SetupPage(props) {
     return (
       <HelperCard
         key={setting}
+        mode={mode}
         noChecks={noChecks}
         result={lastCheckResult}
         setting={setting}
@@ -82,7 +83,7 @@ export function SetupPage(props) {
   const cards =
     mode === 'recommended'
       ? [helperCardFor('command'), helperCardFor('inboundUrl')]
-      : [];
+      : [helperCardFor('targetUrl'), helperCardFor('inboundUrl')];
 
   return (
     <Page title="Setup your API Start task">
@@ -112,13 +113,6 @@ export function SetupPage(props) {
                   framework={framework}
                 />
 
-                <Typography
-                  variant="subtitle1"
-                  style={{ marginTop: 18, opacity: 0.5 }}
-                >
-                  Waiting for Checks to Pass...
-                </Typography>
-
                 <PromptCheck
                   hasChanges={hasChanges}
                   stagedConfig={stagedConfig}
@@ -126,6 +120,11 @@ export function SetupPage(props) {
                   checkCount={checkCount}
                   focusTask={focusTask}
                   command={stagedRanges.task && stagedRanges.task.command}
+                />
+
+                <CheckPassed
+                  passed={lastCheckResult && lastCheckResult.passed}
+                  events={events}
                 />
               </div>
               <div style={{ paddingLeft: 20, width: 325 }}>
@@ -144,7 +143,6 @@ export function SetupPage(props) {
             </>
           )}
         </Box>
-        <CheckPassed open={lastCheckResult && lastCheckResult.passed} />
       </Page.Body>
     </Page>
   );
@@ -158,26 +156,36 @@ function PromptCheck({
   focusTask,
 }) {
   const classes = useStyles();
+  const passed = lastResult && lastResult.passed;
   const shouldShow =
     !lastResult || (lastResult && lastResult.rawConfig !== stagedConfig);
 
   return (
-    <Paper
-      className={classes.promptCheck}
-      style={{ opacity: shouldShow ? 1 : 0.5 }}
-    >
-      <Typography
-        variant="caption"
-        style={{ color: SubtleBlueBackground, marginRight: 15 }}
-      >
-        {checkCount > 0
-          ? 'Run the check again to see if your changes worked:'
-          : 'Check if your alias works by running this command in the terminal:'}
-      </Typography>
-      <Code style={{ color: 'white', fontSize: 18 }}>
-        api check {focusTask}
-      </Code>
-    </Paper>
+    <>
+      {!passed && (
+        <Typography variant="subtitle1" style={{ marginTop: 18, opacity: 0.5 }}>
+          Waiting for Checks to Pass...
+        </Typography>
+      )}
+      <Collapse in={!passed}>
+        <Paper
+          className={classes.promptCheck}
+          style={{ opacity: shouldShow ? 1 : 0.5 }}
+        >
+          <Typography
+            variant="caption"
+            style={{ color: SubtleBlueBackground, marginRight: 15 }}
+          >
+            {checkCount > 0
+              ? 'Run the check again to see if your changes worked:'
+              : 'Check if your alias works by running this command in the terminal:'}
+          </Typography>
+          <Code style={{ color: 'white', fontSize: 18 }}>
+            api check {focusTask}
+          </Code>
+        </Paper>
+      </Collapse>
+    </>
   );
 }
 
@@ -265,7 +273,9 @@ function PortAssumption(props) {
           )}
           {!docs && (
             <MarkdownRender
-              source={"```\n#psudocode\nlisten(env['PORT'])\n```"}
+              source={
+                "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
+              }
             />
           )}
         </div>

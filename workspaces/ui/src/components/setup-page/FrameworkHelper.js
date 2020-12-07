@@ -8,6 +8,8 @@ import { LightTooltip } from '../tooltips/LightTooltip';
 import { ContentStyledTab, ContentStyledTabs } from '../docs/ContentTabs';
 import FrameworkSelect from './setup-api/FrameworkSelect';
 import { Collapse } from '@material-ui/core';
+import { MarkdownRender } from './fetch-docs/BuildMD';
+import Chip from '@material-ui/core/Chip';
 
 export function FrameworkHelper({
   mode,
@@ -21,20 +23,45 @@ export function FrameworkHelper({
   return (
     <>
       <div style={{ paddingBottom: 10 }}>
+        <Typography variant="overline" style={{ color: DocDarkGrey }}>
+          Choose Integration:
+        </Typography>
         <ContentStyledTabs value={mode} onChange={handleChange}>
           <ContentStyledTab
             value="recommended"
             label={
-              <LightTooltip title="Our recommended way of running your project locally through the Optic proxy while you develop. Optic automatically starts your process with the upstream port and keeps traffic flowing smoothly.">
-                <span>Recommended</span>
+              <LightTooltip
+                title={
+                  <InnerToolTip
+                    recommended
+                    children={`Alias your start command with Optic. Use \`api start\` to:
+- start your API process
+- check your local traffic for API diffs
+
+Recommended for most local development flows
+                    `}
+                  />
+                }
+              >
+                <span>Start Command</span>
               </LightTooltip>
             }
           />
           <ContentStyledTab
             value="manual"
             label={
-              <LightTooltip title="When you are targeting a remote service for tesitng or need more control over configuration, manual mode allows you to specify both sides of the proxy at the expense of automatically starting your application as well.">
-                <span>Manual</span>
+              <LightTooltip
+                title={
+                  <InnerToolTip
+                    children={`Manually configure a proxy where Optic monitors traffic. Use when you are developing against:
+- a remote service
+- a hosted development environment
+- a development environment where you need more control
+                    `}
+                  />
+                }
+              >
+                <span>Proxy</span>
               </LightTooltip>
             }
           />
@@ -44,5 +71,19 @@ export function FrameworkHelper({
         <FrameworkSelect value={framework} onChoose={onChooseFramework} />
       </Collapse>
     </>
+  );
+}
+
+function InnerToolTip(props) {
+  const { children } = props;
+  return (
+    <div style={{ width: 300 }}>
+      {props.recommended && (
+        <Chip color="primary" label="Recommended" size="small" />
+      )}
+      <div style={{ padding: 6 }}>
+        <MarkdownRender source={children} />
+      </div>
+    </div>
   );
 }

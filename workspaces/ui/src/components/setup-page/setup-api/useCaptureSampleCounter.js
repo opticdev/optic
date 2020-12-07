@@ -17,11 +17,11 @@ export function useCaptureSampleCounter(cwd, captureId) {
 
       const normalized = (() => {
         if (sessions && Array.isArray(sessions)) {
-          return sessions
+          return sessions;
         } else {
-          return sessions.sessions
+          return sessions.sessions;
         }
-      })()
+      })();
 
       const thisAPISession = normalized.find((i) => i.path === cwd);
       if (thisAPISession) {
@@ -41,7 +41,7 @@ export function useCaptureSampleCounter(cwd, captureId) {
   return { count, diffReviewUrl };
 }
 
-function useRecursiveTimeout(callback, delay) {
+export function useRecursiveTimeout(callback, delay) {
   const savedCallback = useRef(callback);
 
   // Remember the latest callback.

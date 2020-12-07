@@ -1,25 +1,132 @@
-import React from 'react';
-import { Dialog, DialogContent, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import {
+  Collapse,
+  Dialog,
+  DialogContent,
+  LinearProgress,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Code } from './setup-api/CodeBlock';
+import { AddedDarkGreen, AddedGreen, AddedGreenBackground } from '../../theme';
+import { useLatestEvent } from './setup-api/useUserTracking';
+import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
+import { useRecursiveTimeout } from './setup-api/useCaptureSampleCounter';
+import { useServices } from '../../contexts/SpecServiceContext';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import { Link } from 'react-router-dom';
+import { useBaseUrl } from '../../contexts/BaseUrlContext';
 
 export function CheckPassed(props) {
   const classes = useStyles();
+  const { events } = props;
+  const [started, setStarted] = useState();
+  const { specService } = useServices();
+  const [count, setCounter] = useState(0);
+  const baseUrl = useBaseUrl();
+
+  useLatestEvent((latest) => {
+    console.log(latest);
+    if (latest.type === 'StartedTaskWithLocalCli') {
+      setStarted(latest.data);
+    }
+    if (latest.type === 'ExitedTaskWithLocalCli') {
+      setStarted(undefined);
+      setCounter(0);
+    }
+  }, events);
+
+  useRecursiveTimeout(async () => {
+    if (started) {
+      const status = await specService.getCaptureStatus(started.captureId);
+      setCounter(status.interactionsCount);
+    }
+  }, 1500);
+
+  const target = 5;
+  const percentComplete = (count / target) * 100;
+
   return (
-    <Dialog open={props.open}>
-      <DialogContent className={classes.root}>
-        <Typography variant="h6" style={{ color: '#e2e2e2' }}>
-          Check Passed! Your <Code>api start</Code> command is all set up.
+    <Collapse in={props.passed}>
+      <Divider style={{ marginTop: 40, marginBottom: 20 }} />
+      <div className={classes.root}>
+        <Typography variant="h5" style={{ marginBottom: 18 }}>
+          ✅ Check Passed! Your <Code>api start</Code> command is all set up.
         </Typography>
-        next steps...
-      </DialogContent>
-    </Dialog>
+
+        <Typography variant="h6" className={classes.copy}>
+          Now run <Code>api start</Code>
+        </Typography>
+
+        {started ? (
+          <>
+            <Typography variant="h6" style={{ marginTop: 10 }}>
+              Your API is running with Optic on{' '}
+              <Code>
+                {started.inputs['serviceConfig.protocol']}
+                {'//'}
+                {started.inputs['serviceConfig.host']}
+                {':'}
+                {started.inputs['serviceConfig.port']}
+              </Code>
+            </Typography>
+            <Typography
+              variant="body1"
+              style={{ marginTop: 10, marginBottom: 10 }}
+            >
+              Send at least {target} requests to your API using, curl, Postman,
+              your webapp, etc
+            </Typography>
+            <LinearProgress
+              style={{ marginTop: 20 }}
+              variant="determinate"
+              value={percentComplete < 100 ? percentComplete : 100}
+            />
+            <Typography
+              variant="h6"
+              style={{ marginTop: 10, marginBottom: 10 }}
+            >
+              {count}/{target} requests sent
+            </Typography>
+            {count && count >= target && (
+              <>
+                <Typography variant="h5" style={{ marginTop: 20 }}>
+                  ✅ Awesome work! Let's document those endpoints!
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="medium"
+                  component={Link}
+                  color="primary"
+                  to={baseUrl + '/diffs'}
+                  style={{ marginTop: 20 }}
+                >
+                  Start Documenting
+                </Button>
+              </>
+            )}
+          </>
+        ) : (
+          <Typography
+            variant="subtitle1"
+            style={{ marginTop: 10, opacity: 0.5 }}
+          >
+            Waiting for your API to start...{started && JSON.stringify(started)}
+          </Typography>
+        )}
+      </div>
+    </Collapse>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: 15,
-    backgroundColor: '#0e2a35',
+    maxWidth: 640,
+    paddingTop: 22,
+  },
+  copy: {
+    fontWeight: 200,
+    marginBottom: 13,
   },
 }));

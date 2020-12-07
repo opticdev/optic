@@ -231,7 +231,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const sampleCount = summary.interactionsCount;
     const hasDiff = summary.diffsCount > 0;
 
-    trackUserEvent(
+    await trackUserEvent(
       ExitedTaskWithLocalCli.withProps({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),

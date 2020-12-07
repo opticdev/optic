@@ -58,6 +58,29 @@ export function ShowCurrentOpticYml({
             }
           }
 
+          if (key === 'command' && result && result.manual) {
+            return null;
+          }
+
+          if (key === 'inboundUrl' && result && result.manual) {
+            const { proxyCanStartAtInboundUrl } = result.manual;
+
+            if (!proxyCanStartAtInboundUrl.passed) {
+              return classes.highlightError;
+            } else {
+              return classes.highlightCorrect;
+            }
+          }
+          if (key === 'targetUrl' && result && result.manual) {
+            const { proxyTargetUrlResolves } = result.manual;
+
+            if (!proxyTargetUrlResolves.passed) {
+              return classes.highlightError;
+            } else {
+              return classes.highlightCorrect;
+            }
+          }
+
           return classes.highlightRowFocus;
         })();
 
@@ -74,6 +97,7 @@ export function ShowCurrentOpticYml({
 
     highlightX(ranges.task && ranges.task.command, 'command');
     highlightX(ranges.task && ranges.task.inboundUrl, 'inboundUrl');
+    highlightX(ranges.task && ranges.task.targetUrl, 'targetUrl');
 
     return markers;
   })();

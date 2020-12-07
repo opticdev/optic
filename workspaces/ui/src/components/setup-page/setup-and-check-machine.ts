@@ -93,9 +93,21 @@ export const newSetupAndCheckMachine = (
             }),
           },
           USER_TOGGLED_MODE: {
-            actions: assign({
-              mode: (_, event) => event.mode,
-            }),
+            actions: [
+              assign({
+                mode: (_, event) => event.mode,
+              }),
+              send((ctx) => ({
+                type: 'USER_UPDATED_CONFIG',
+                contents: updateConfig(
+                  ctx.mode,
+                  ctx.framework,
+                  ctx.stagedConfig,
+                  taskName,
+                  ctx.stagedRanges
+                ),
+              })),
+            ],
           },
           USER_SELECTED_FRAMEWORK: {
             actions: [
@@ -153,7 +165,6 @@ function updateConfig(
   ): string {
     return s.substring(0, start) + substitute + s.substring(end);
   }
-
   if (stagedRanges.taskRange) {
     const { taskRange } = stagedRanges;
     const { startPosition, endPosition } = taskRange;
@@ -179,6 +190,28 @@ function updateConfig(
         stagedRanges.taskRange.endPosition,
         template
       );
+
+      return replacement;
+    } else if (mode === 'manual') {
+      const inboundUrl =
+        (stagedRanges.task && stagedRanges.task.inboundUrl.value!) ||
+        'http://localhost:3005';
+
+      const targetUrl = 'http://localhost:5000';
+
+      const template =
+        `${taskName}:\n` +
+        `    targetUrl: ${targetUrl}\n` +
+        `    inboundUrl: ${inboundUrl}`;
+
+      const replacement = replaceRange(
+        currentStaged,
+        stagedRanges.taskRange.startPosition,
+        stagedRanges.taskRange.endPosition,
+        template
+      );
+
+      debugger;
 
       return replacement;
     }

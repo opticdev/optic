@@ -24,31 +24,54 @@ const assertionsMap = {
   command: [
     {
       assertion: CommonIssues.commandProcess,
-      getStatus: (result) => result.recommended.commandIsLongRunning,
+      getStatus: (result) =>
+        result.recommended && result.recommended.commandIsLongRunning,
     },
     {
       assertion: CommonIssues.commandPort,
-      getStatus: (result) => result.recommended.apiProcessStartsOnAssignedPort,
+      getStatus: (result) =>
+        result.recommended && result.recommended.apiProcessStartsOnAssignedPort,
     },
     {
       assertion: CommonIssues.commandHost,
-      getStatus: (result) => result.recommended.apiProcessStartsOnAssignedHost,
+      getStatus: (result) =>
+        result.recommended && result.recommended.apiProcessStartsOnAssignedHost,
     },
   ],
   inboundUrl: [
     {
       assertion: CommonIssues.inboundUrlStart,
-      getStatus: (result) => result.recommended.proxyCanStartAtInboundUrl,
+      getStatus: (result) => {
+        if (result.recommended)
+          return result.recommended.proxyCanStartAtInboundUrl;
+        if (result.manual) return result.manual.proxyCanStartAtInboundUrl;
+      },
+    },
+  ],
+  targetUrl: [
+    {
+      assertion: CommonIssues.targetUrlResolve,
+      getStatus: (result) =>
+        result.manual && result.manual.proxyTargetUrlResolves,
     },
   ],
 };
 
-const quickSummary = {
-  command: 'how your API is started',
-  inboundUrl: 'where the API usually starts locally localhost:PORT',
+const quickSummary = (mode) => {
+  if (mode === 'recommended') {
+    return {
+      command: 'how your API is started',
+      inboundUrl: 'where the API usually starts locally localhost:PORT',
+    };
+  } else if (mode === 'manual') {
+    return {
+      targetUrl: 'the hostname of the API ie devapi.site.com',
+      inboundUrl: 'where you want the Optic proxy to start',
+    };
+  }
 };
 
-export function HelperCard({ setting, result, noChecks, value }) {
+export function HelperCard({ setting, mode, result, noChecks, value }) {
   const classes = useStyles();
 
   const assertions = assertionsMap[setting] || [];
@@ -73,7 +96,7 @@ export function HelperCard({ setting, result, noChecks, value }) {
           variant="caption"
           style={{ color: '#999696', fontWeight: 100, paddingLeft: 2 }}
         >
-          {quickSummary[setting]}
+          {quickSummary(mode)[setting]}
         </Typography>
       </div>
       <div className={classes.assertions}>
