@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import Os from 'os';
 
 export function trackWithSentry({
   dsn,
@@ -20,5 +21,19 @@ export function trackWithSentry({
     environment,
     release,
     tracesSampleRate: 1.0,
+  });
+
+  const nodeVersion = process.version;
+  const hostArch = process.arch;
+  const hostPlatform = process.platform;
+  const hostCpuCount = Os.cpus().length.toString();
+  const hostMemorySize = Os.totalmem().toString();
+
+  Sentry.setTags({
+    nodeVersion,
+    hostArch,
+    hostPlatform,
+    hostCpuCount,
+    hostMemorySize,
   });
 }
