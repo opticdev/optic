@@ -2,7 +2,7 @@
   "name": "@useoptic/cli-shared",
   "version": "8.6.0-beta.29",
   "scripts": {
-    "test": "cd test && tap .",
+    "test": "cd test && tap tests",
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
     "ws:test": "yarn run test"

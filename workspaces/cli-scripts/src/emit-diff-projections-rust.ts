@@ -20,7 +20,36 @@ if (Config.errors.sentry) {
 }
 
 async function run(config: IDiffProjectionEmitterConfig) {
-  await new DiffWorkerRust(config).run();
+  const worker = new DiffWorkerRust(config);
+  worker.events.once('error', onError);
+
+  try {
+    await worker.start();
+
+    for await (let progress of worker.progress()) {
+      if (process && process.send) {
+        process.send({
+          type: 'progress',
+          data: progress,
+        });
+      } else {
+        console.log(progress);
+      }
+    }
+  } catch (err) {
+    onError(err);
+  }
+}
+
+function onError(err: Error) {
+  if (process && process.send) {
+    process.send({
+      type: 'error',
+      data: { message: err.message },
+    });
+  }
+
+  throw err;
 }
 
 const [, , configJsonString] = process.argv;
@@ -28,4 +57,5 @@ const config: IDiffProjectionEmitterConfig = JSON.parse(configJsonString);
 console.log({ config });
 run(config).catch((e) => {
   console.error(e);
+  throw e;
 });
