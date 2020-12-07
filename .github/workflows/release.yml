@@ -8,12 +8,15 @@ env:
   BUCKET_NAME: optic-packages
   PACKAGE_NAME: api
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  RELEASE_WORKFLOW_DRY_RUN: false
+  RELEASE_WORKFLOW_DRY_RUN: true
 
 on:
   push:
     branches:
       - release
+      - develop
+  pull_request:
+    branches:
       - develop
 
 jobs:
