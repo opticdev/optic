@@ -1,6 +1,6 @@
 import { CliDaemon } from './daemon';
 import fs from 'fs-extra';
-import { userDebugLogger } from '@useoptic/cli-shared';
+import { isEnvTrue, userDebugLogger } from '@useoptic/cli-shared';
 import dotenv from 'dotenv';
 import path from 'path';
 import Config from './config';
@@ -14,11 +14,8 @@ dotenv.config({
 });
 
 if (Config.errors.sentry) {
-  console.log('Sentry is enabled');
   Errors.trackWithSentry(Config.errors.sentry);
   console.log('Remote error tracking with Sentry enabled');
-} else {
-  console.log('Sentry is disabled');
 }
 
 console.log('starting daemon', process.argv, process.env.DEBUG);
