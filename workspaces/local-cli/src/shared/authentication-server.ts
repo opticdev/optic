@@ -9,12 +9,18 @@ import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
 import path from 'path';
 import os from 'os';
+//@ts-ignore
+import niceTry from 'nice-try';
 import fs from 'fs-extra';
-
-const opticrcPath = path.resolve(os.homedir(), '.opticrc');
+import {
+  defaultStorage,
+  getCurrentStorage,
+  opticrcPath,
+} from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 interface IUserStorage {
-  idToken: string;
+  idToken?: string;
+  anonymousId: string;
 }
 
 interface ICredentialsServerConfig {
@@ -83,7 +89,10 @@ export async function ensureCredentialsServerStarted(
 }
 
 export async function setCredentials(credentials: IUserCredentials) {
-  const storeValue: IUserStorage = {
+  const storage: IUserStorage | undefined = await getCurrentStorage();
+
+  const storeValue = {
+    ...(storage || defaultStorage()),
     idToken: credentials.token,
   };
 

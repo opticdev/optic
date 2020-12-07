@@ -54,19 +54,11 @@ analyticsEvents.listen((event) => {
     ...event.data,
     ...event.context,
   };
-  if (event.context.clientAgent.startsWith('anonymous_')) {
-    analytics.track({
-      anonymousId: event.context.clientAgent,
-      event: event.type,
-      properties,
-    });
-  } else {
-    analytics.track({
-      userId: event.context.clientAgent,
-      event: event.type,
-      properties,
-    });
-  }
+  analytics.track({
+    userId: event.context.clientAgent,
+    event: event.type,
+    properties,
+  });
 });
 
 // lookup credentials
