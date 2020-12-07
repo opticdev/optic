@@ -41,9 +41,6 @@ async function waitForFile(
       }
     }, options.intervalMilliseconds);
     timeout.finally(() => {
-      if (fileWatcherIsDone) {
-        return;
-      }
       clearInterval(intervalId);
     });
   });
@@ -101,7 +98,7 @@ export async function ensureDaemonStarted(
         `node --inspect debugging enabled. go to chrome://inspect and open the node debugger`
       );
     }
-    const sentinelFileName = `optic-daemon-sentinel_${uuid.v4()}`;
+    const sentinelFileName = uuid.v4();
     const sentinelFilePath = path.join(
       path.dirname(lockFilePath),
       sentinelFileName
@@ -117,16 +114,6 @@ export async function ensureDaemonStarted(
       }
     );
     child.unref();
-    child.on('error', (e) => {
-      developerDebugLogger(e);
-      throw e;
-    });
-    child.on('exit', (code, signal) => {
-      developerDebugLogger(
-        `daemon exited with code ${code} and signal ${signal}`
-      );
-      throw new Error(`daemon exited prematurely`);
-    });
 
     await new Promise(async (resolve, reject) => {
       developerDebugLogger(
@@ -137,13 +124,13 @@ export async function ensureDaemonStarted(
           intervalMilliseconds: 50,
           timeoutMilliseconds: 10000,
         });
-        await fs.unlink(sentinelFilePath);
-
-        developerDebugLogger(`lock created from pid=${child.pid}`);
-        resolve();
       } catch (e) {
         reject(e);
       }
+      await fs.unlink(sentinelFilePath);
+
+      developerDebugLogger(`lock created from pid=${child.pid}`);
+      resolve();
     });
   }
   developerDebugLogger(`trying to read lockfile contents`);

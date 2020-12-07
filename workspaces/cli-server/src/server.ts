@@ -1,7 +1,9 @@
 import {
   getPathsRelativeToCwd,
   IApiCliConfig,
+  IOpticTaskRunnerConfig,
   IPathMapping,
+  readApiConfig,
 } from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
 import express from 'express';
@@ -27,14 +29,9 @@ import { Session, SessionsManager } from './sessions';
 
 const pJson = require('../package.json');
 
-const opticHomePath = path.join(os.homedir(), '.optic');
-fs.ensureDirSync(path.dirname(opticHomePath));
-const stdoutLogFilePath = path.join(opticHomePath, 'optic-daemon-stdout.log');
-const stderrLogFilePath = path.join(opticHomePath, 'optic-daemon-stderr.log');
-const stdoutLog = fs.createWriteStream(stdoutLogFilePath);
-const stderrLog = fs.createWriteStream(stderrLogFilePath);
-const fileConsole = new console.Console(stdoutLog, stderrLog);
-global.console = fileConsole;
+const logFilePath = path.join(os.homedir(), '.optic', 'optic-daemon.log');
+fs.ensureDirSync(path.dirname(logFilePath));
+export const log = fs.createWriteStream(logFilePath);
 
 export interface ICliServerConfig {
   cloudApiBaseUrl: string;
@@ -248,10 +245,10 @@ class CliServer {
       });
 
       this.server.on('connection', (connection) => {
-        console.log(`adding connection`);
+        log.write(`adding connection\n`);
         this.connections.push(connection);
         connection.on('close', () => {
-          console.log(`removing connection`);
+          log.write(`removing connection\n`);
           this.connections = this.connections.filter((c) => c !== connection);
         });
       });
@@ -261,21 +258,22 @@ class CliServer {
   async stop() {
     if (this.server) {
       await new Promise((resolve) => {
-        console.log(`server closing ${this.connections.length} open`);
+        log.write(`server closing ${this.connections.length} open\n`);
         this.connections.forEach((connection) => {
-          console.log(`destroying existing connection`);
+          log.write(`destroying existing connection\n`);
           connection.end();
           connection.destroy();
         });
         this.server.close((err) => {
-          console.log(`server closed`);
+          log.write(`server closed\n`);
           this.connections.forEach((connection) => {
-            console.log(`destroying existing connection`);
+            log.write(`destroying existing connection\n`);
             connection.end();
             connection.destroy();
           });
           if (err) {
             console.error(err);
+            log.write(`${err.message}\n`);
           }
           resolve();
         });
