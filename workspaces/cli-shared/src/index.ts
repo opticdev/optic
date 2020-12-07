@@ -51,6 +51,7 @@ export interface ICaptureSaver {
 
 export interface ICliDaemonState {
   port: number;
+  pid: number;
 }
 
 export function makeUiBaseUrl(daemonState: ICliDaemonState) {
@@ -129,3 +130,14 @@ export class DefaultIdGenerator implements IdGenerator<string> {
     return uuid.v4();
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+export {
+  create as createCliConfig,
+  CliConfigObject,
+  Env,
+  isEnvTrue,
+  isEnvFalse,
+  PackageJson,
+} from './config';

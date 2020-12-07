@@ -1,10 +1,11 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "8.6.0-beta.20",
+  "version": "8.6.0-beta.31",
   "scripts": {
+    "test": "cd test && tap tests",
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
-    "ws:test": "echo cli-shared"
+    "ws:test": "yarn run test"
   },
   "repository": {
     "type": "git",
@@ -15,10 +16,10 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "8.6.0-beta.20",
-    "@useoptic/cli-config": "8.6.0-beta.20",
-    "@useoptic/client-utilities": "8.6.0-beta.20",
-    "@useoptic/diff-engine": "8.6.0-beta.20",
+    "@useoptic/cli-client": "8.6.0-beta.31",
+    "@useoptic/cli-config": "8.6.0-beta.31",
+    "@useoptic/client-utilities": "8.6.0-beta.31",
+    "@useoptic/diff-engine": "8.6.0-beta.31",
     "@useoptic/domain": "10.0.17",
     "@useoptic/domain-types": "10.0.17",
     "@useoptic/domain-utilities": "10.0.17",
@@ -28,26 +29,31 @@
     "execa": "^4.0.3",
     "fs-extra": "^9.0.0",
     "lodash.throttle": "^4.1.1",
-    "mockttp": "^0.19.2",
+    "mockttp": "^1.0.3",
     "oboe": "^2.1.5",
     "ora": "^4.0.4",
     "proper-lockfile": "^4.1.1",
+    "semver": "^7.3.4",
     "shape-hash": "^1.0.6",
     "stream-chain": "^2.2.3",
     "stream-fork": "^1.0.3",
     "stream-json": "^1.7.1",
     "tree-kill": "^1.2.2",
     "uuid": "^8.0.0",
-    "whatwg-mimetype": "^2.3.0",
-    "wait-on": "^4.0.0"
+    "wait-on": "^4.0.0",
+    "whatwg-mimetype": "^2.3.0"
   },
   "devDependencies": {
     "@types/lodash.throttle": "^4.1.6",
+    "@types/semver": "^7.3.4",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-fork": "^1.0.0",
     "@types/stream-json": "^1.5.1",
+    "@types/tap": "^14.10.1",
+    "@types/wait-on": "^4.0.0",
     "@types/whatwg-mimetype": "^2.1.0",
-    "@types/wait-on": "^4.0.0"
+    "tap": "^14.11.0",
+    "type-fest": "^0.20.2"
   },
   "files": [
     "/build"
