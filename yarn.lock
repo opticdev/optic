@@ -12470,6 +12470,11 @@ nice-try@^2.0.1:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-2.0.1.tgz#7099dfc79b1fe8ac04870288385217a48a5d6e25"
   integrity sha512-+F6drVcPo6ABeuxhTieYy8aH/JkyrxM0g2nNK9p9mIHAVypyKqPr2fC2qLNNmVUtMWGGXSIJSJQAjpQ+B8bllg==
 
+nice-try@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-2.1.0.tgz#d818aaf628993b4de39d11e9b53be224152b38c3"
+  integrity sha512-ZR863POogZo2DpqQkqeUHM01Fg73CVSVoP2Gq7Wjn8AYv7R1rRkvXx4Bf6PsXhyBGDhsN6rKCPflGDjn3+flWg==
+
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"

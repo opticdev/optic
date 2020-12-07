@@ -10,7 +10,6 @@ import Analytics from 'analytics-node';
 import { runScriptByName } from '@useoptic/cli-scripts';
 import {
   getCredentials,
-  getOrCreateAnonId,
   getUserFromCredentials,
 } from './authentication-server';
 import { IOpticTaskRunnerConfig, IUser } from '@useoptic/cli-config';
@@ -19,6 +18,7 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from './paths';
 import { Config } from '../config';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 const packageJson = require('../../package.json');
 const opticVersion = packageJson.version;

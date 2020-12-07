@@ -9,12 +9,14 @@ import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
 import path from 'path';
 import os from 'os';
-import { hri } from 'human-readable-ids';
 //@ts-ignore
 import niceTry from 'nice-try';
 import fs from 'fs-extra';
-
-const opticrcPath = path.resolve(os.homedir(), '.opticrc');
+import {
+  defaultStorage,
+  getCurrentStorage,
+  opticrcPath,
+} from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 interface IUserStorage {
   idToken?: string;
@@ -86,13 +88,6 @@ export async function ensureCredentialsServerStarted(
   };
 }
 
-function defaultStorage(): IUserStorage {
-  return {
-    idToken: undefined,
-    anonymousId: hri.random(),
-  };
-}
-
 export async function setCredentials(credentials: IUserCredentials) {
   const storage: IUserStorage | undefined = await getCurrentStorage();
 
@@ -109,36 +104,6 @@ export async function deleteCredentials() {
   try {
     await fs.remove(opticrcPath);
   } catch (e) {}
-}
-
-export async function getCurrentStorage(): Promise<IUserStorage | undefined> {
-  try {
-    const storage: IUserStorage = await fs.readJSON(opticrcPath);
-    return storage;
-  } catch (e) {
-    return undefined;
-  }
-}
-
-export async function getOrCreateAnonId(): Promise<string> {
-  const storage: IUserStorage | undefined = await getCurrentStorage();
-
-  if (storage && storage.anonymousId) {
-    return storage.anonymousId;
-  } else if (storage) {
-    const storeValue = {
-      ...storage,
-      anonymousId: hri.random(),
-    };
-    await fs.ensureFile(opticrcPath);
-    await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
-    return storeValue.anonymousId;
-  } else {
-    const storeValue = defaultStorage();
-    await fs.ensureFile(opticrcPath);
-    await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
-    return storeValue.anonymousId;
-  }
 }
 
 export async function getCredentials(): Promise<IUserCredentials | null> {
