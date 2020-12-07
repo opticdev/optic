@@ -8,11 +8,7 @@ import {
   UpdatedBlueBackground,
   UpdatedBlueBackgroundMedium,
 } from '../../../theme';
-import Card from '@material-ui/core/Card';
-import Grid from '@material-ui/core/Grid';
 import TextLoop from 'react-text-loop';
-import { Typography } from '@material-ui/core';
-import { MODES } from './events';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -98,73 +94,6 @@ export function DemoStartCommandSetup() {
       {rightArrow}
       <span style={{ color: primary, fontWeight: 800 }}>api start</span>
     </div>
-  );
-}
-
-export function SetupType({ value, onChoose }) {
-  const classes = useStyles();
-  return (
-    <Grid container spacing={2}>
-      <Grid xs={12} item>
-        <Card
-          className={classnames(classes.paper, {
-            [classes.selected]: value === MODES.RECOMMENDED,
-          })}
-          onClick={() => onChoose(MODES.RECOMMENDED)}
-        >
-          <div className={classes.chip}>Recommended</div>
-          <Typography variant="h6" className={classes.name}>
-            Start your API with Optic
-          </Typography>
-
-          <div className={classes.demo}>
-            <TextLoop
-              springConfig={{ stiffness: 180, damping: 7 }}
-              className={classes.scroller}
-            >
-              {examples.map((i) => (
-                <span>{i}</span>
-              ))}
-            </TextLoop>
-            {rightArrow}
-            <span style={{ color: primary, fontWeight: 800 }}>api start</span>
-          </div>
-
-          <Typography variant="caption" className={classes.caption}>
-            Great for when you have access to the API code and can run it
-            locally
-          </Typography>
-        </Card>
-      </Grid>
-      <Grid xs={12} item>
-        <Card
-          className={classnames(classes.paper, {
-            [classes.selected]: value === MODES.MANUAL,
-          })}
-          onClick={() => onChoose(MODES.MANUAL)}
-        >
-          <div className={classes.chip}>Advanced</div>
-          <Typography variant="h6" className={classes.name}>
-            Manually Configure Proxy
-          </Typography>
-          <div className={classes.demo}>
-            {`localhost`}
-            {rightArrow}
-            <img src={require('../../../assets/only-optic.svg')} width={30} />
-            {rightArrow}
-            {`api.hostname`}
-          </div>
-          <Typography
-            variant="caption"
-            className={classes.caption}
-            style={{ paddingLeft: 10, paddingRight: 10 }}
-          >
-            Great for when the API you are targeting is remote or when you need
-            more control of the Optic proxy.
-          </Typography>
-        </Card>
-      </Grid>
-    </Grid>
   );
 }
 
