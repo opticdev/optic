@@ -86,7 +86,7 @@ function getPrebuiltPath(platform) {
 async function install(options) {
   let platform = getSupportedPlatform();
   if (!platform)
-    new Error(
+    throw new Error(
       `Unsupported platform. Cannot install pre-built ${
         Config.binaryName
       } for os.type=${OS.type()} os.arch=${OS.arch()}`
