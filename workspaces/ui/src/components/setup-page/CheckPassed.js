@@ -39,8 +39,12 @@ export function CheckPassed(props) {
 
   useRecursiveTimeout(async () => {
     if (started) {
-      const status = await specService.getCaptureStatus(started.captureId);
-      setCounter(status.interactionsCount);
+      try {
+        const status = await specService.getCaptureStatus(started.captureId);
+        setCounter(status.interactionsCount);
+      } catch(e) {
+
+      }
     }
   }, 1500);
 
@@ -89,7 +93,7 @@ export function CheckPassed(props) {
             >
               {count}/{target} requests sent
             </Typography>
-            {count && count >= target && (
+            {count && count >= target ? (
               <>
                 <Typography variant="h5" style={{ marginTop: 20 }}>
                   ✅ Awesome work! Let's document those endpoints!
@@ -105,7 +109,7 @@ export function CheckPassed(props) {
                   Start Documenting
                 </Button>
               </>
-            )}
+            ): null }
           </>
         ) : (
           <Typography
