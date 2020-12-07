@@ -9,12 +9,15 @@ import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
 import path from 'path';
 import os from 'os';
+//@ts-ignore
+import niceTry from 'nice-try';
 import fs from 'fs-extra';
 
 const opticrcPath = path.resolve(os.homedir(), '.opticrc');
 
 interface IUserStorage {
-  idToken: string;
+  idToken?: string;
+  anonymousId: string;
 }
 
 interface ICredentialsServerConfig {
@@ -82,8 +85,18 @@ export async function ensureCredentialsServerStarted(
   };
 }
 
+function defaultStorage(): IUserStorage {
+  return {
+    idToken: undefined,
+    anonymousId: require('human-readable-ids').hri.random(),
+  };
+}
+
 export async function setCredentials(credentials: IUserCredentials) {
-  const storeValue: IUserStorage = {
+  const storage: IUserStorage | undefined = await getCurrentStorage();
+
+  const storeValue = {
+    ...(storage || defaultStorage()),
     idToken: credentials.token,
   };
 
@@ -95,6 +108,36 @@ export async function deleteCredentials() {
   try {
     await fs.remove(opticrcPath);
   } catch (e) {}
+}
+
+export async function getCurrentStorage(): Promise<IUserStorage | undefined> {
+  try {
+    const storage: IUserStorage = await fs.readJSON(opticrcPath);
+    return storage;
+  } catch (e) {
+    return undefined;
+  }
+}
+
+export async function getOrCreateAnonId(): Promise<string> {
+  const storage: IUserStorage | undefined = await getCurrentStorage();
+
+  if (storage && storage.anonymousId) {
+    return storage.anonymousId;
+  } else if (storage) {
+    const storeValue = {
+      ...storage,
+      anonymousId: require('human-readable-ids').hri.random(),
+    };
+    await fs.ensureFile(opticrcPath);
+    await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
+    return storeValue.anonymousId;
+  } else {
+    const storeValue = defaultStorage();
+    await fs.ensureFile(opticrcPath);
+    await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
+    return storeValue.anonymousId;
+  }
 }
 
 export async function getCredentials(): Promise<IUserCredentials | null> {

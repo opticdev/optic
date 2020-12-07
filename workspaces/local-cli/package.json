@@ -43,7 +43,8 @@
     "tslib": "^1",
     "url-join": "^4.0.1",
     "uuid": "^8.0.0",
-    "which": "^2.0.2"
+    "which": "^2.0.2",
+    "human-readable-ids": "^1.0.4"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
