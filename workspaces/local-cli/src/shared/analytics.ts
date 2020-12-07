@@ -28,9 +28,7 @@ const analytics = new Analytics(token, {
   flushAt: 1,
 });
 
-const anonIdPromise: Promise<string> = new Promise(async (resolve) => {
-  resolve(await getOrCreateAnonId());
-});
+const anonIdPromise: Promise<string> = getOrCreateAnonId();
 
 export async function getUser(): Promise<IUser | null> {
   return new Promise<IUser | null>(async (resolve, reject) => {
