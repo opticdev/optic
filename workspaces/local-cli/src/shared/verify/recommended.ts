@@ -237,7 +237,7 @@ export async function getAssertionsFromCommandSession(
   };
 
   const proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl = {
-    passed: serviceRunning && !tookProxyPort,
+    passed: !tookProxyPort,
     hostname: expected,
   };
 
