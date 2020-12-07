@@ -22,6 +22,7 @@ import { analyticsEventEmitter, track } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 const pJson = require('../package.json');
 
@@ -91,12 +92,10 @@ class CliServer {
     const sessions = new SessionsManager();
     let user: object | null;
 
+    const anonIdPromise = getOrCreateAnonId();
+
     app.get('/api/identity', async (req, res: express.Response) => {
-      if (user) {
-        res.json({ user });
-      } else {
-        res.sendStatus(404);
-      }
+      res.json({ user, anonymousId: await anonIdPromise });
     });
 
     app.get('/api/daemon/status', async (req, res: express.Response) => {
