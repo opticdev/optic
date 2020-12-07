@@ -9,6 +9,7 @@ import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
 import path from 'path';
 import os from 'os';
+import { hri } from 'human-readable-ids';
 //@ts-ignore
 import niceTry from 'nice-try';
 import fs from 'fs-extra';
@@ -88,7 +89,7 @@ export async function ensureCredentialsServerStarted(
 function defaultStorage(): IUserStorage {
   return {
     idToken: undefined,
-    anonymousId: require('human-readable-ids').hri.random(),
+    anonymousId: hri.random(),
   };
 }
 
@@ -127,7 +128,7 @@ export async function getOrCreateAnonId(): Promise<string> {
   } else if (storage) {
     const storeValue = {
       ...storage,
-      anonymousId: require('human-readable-ids').hri.random(),
+      anonymousId: hri.random(),
     };
     await fs.ensureFile(opticrcPath);
     await fs.writeFile(opticrcPath, JSON.stringify(storeValue));
