@@ -126,12 +126,12 @@ jobs:
           path: |
             ${{ env.CARGO_HOME }}/registry
             ${{ env.CARGO_HOME }}/git
-          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-vendor-v1"
+          key: "${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}-vendor-v1"
       - name: 'Cache build target'
         uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
         with:
           path: target
-          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-release-target-v1"
+          key: "${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}-release-target-v1"
       - name: 'Rust toolchain'
         uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/releases/tag/v1.0.6
         with:
