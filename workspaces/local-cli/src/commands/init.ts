@@ -119,5 +119,6 @@ export default class Init extends Command {
         apiName: name,
       })
     );
+    process.exit(0);
   }
 }
