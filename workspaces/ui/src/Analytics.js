@@ -1,7 +1,6 @@
 import { Client } from '@useoptic/cli-client';
 import packageJson from '../package.json';
 import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
-import { consistentAnonymousId } from '@useoptic/analytics/lib/consistentAnonymousId';
 import niceTry from 'nice-try';
 
 const clientId = `local_cli_${packageJson.version}`;

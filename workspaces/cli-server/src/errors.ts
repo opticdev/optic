@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import Os from 'os';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 export function trackWithSentry({
   dsn,
@@ -35,5 +36,11 @@ export function trackWithSentry({
     hostPlatform,
     hostCpuCount,
     hostMemorySize,
+  });
+
+  getOrCreateAnonId().then((id: string) => {
+    Sentry.setUser({
+      id,
+    });
   });
 }

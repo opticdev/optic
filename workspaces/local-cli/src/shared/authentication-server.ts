@@ -7,10 +7,6 @@ import http from 'http';
 import { EventEmitter } from 'events';
 import getPort from 'get-port';
 import { IUser, IUserCredentials } from '@useoptic/cli-config';
-import path from 'path';
-import os from 'os';
-//@ts-ignore
-import niceTry from 'nice-try';
 import fs from 'fs-extra';
 import {
   defaultStorage,

@@ -1,13 +1,9 @@
-//@ts-ignore
-import Listr from 'listr';
 import Command from '@oclif/command';
 import colors from 'colors';
 //@ts-ignore
 import niceTry from 'nice-try';
 import {
   getPathsRelativeToConfig,
-  IOpticTaskRunnerConfig,
-  IOpticTask,
   readApiConfig,
   TaskToStartConfig,
   IOpticTaskAliased,
@@ -16,25 +12,11 @@ import {
   isManualTask,
   isRecommendedTask,
 } from '@useoptic/cli-config';
-import {
-  HttpToolkitCapturingProxy,
-  CommandSession,
-} from '@useoptic/cli-shared';
-import waitOn from 'wait-on';
-import { opticTaskToProps, trackUserEvent } from '../analytics';
+import { trackUserEvent } from '../analytics';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { fromOptic } from '@useoptic/cli-shared';
-import url from 'url';
-import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
 import { verifyRecommended } from './recommended';
 import { verifyManual } from './manual';
-import {
-  ApiProcessStartsOnAssignedHost,
-  ApiProcessStartsOnAssignedPort,
-  CommandIsLongRunning,
-  ProxyCanStartAtInboundUrl,
-  ProxyTargetUrlResolves,
-} from '@useoptic/analytics/lib/interfaces/ApiCheck';
 import { Modes } from '@useoptic/cli-config/build';
 
 export async function verifyTask(
@@ -55,8 +37,6 @@ export async function verifyTask(
   }
 
   let foundTask: IOpticTaskAliased | null = null;
-
-  let fixUrl = 'https://www.useoptic.com/docs/faqs-and-troubleshooting/';
 
   await niceTry(async () => {
     if (config.tasks) {
