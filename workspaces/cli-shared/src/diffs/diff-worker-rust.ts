@@ -7,7 +7,6 @@ import {
 } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 import path from 'path';
-import lockfile from 'proper-lockfile';
 import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
 import { fork } from 'stream-fork';
@@ -52,13 +51,6 @@ export function getDiffOutputPaths(values: {
     filters,
     additionalCommands,
   };
-}
-
-async function safeWriteJson(filePath: string, contents: any) {
-  await fs.ensureFile(filePath);
-  await lockfile.lock(filePath);
-  await fs.writeJson(filePath, contents);
-  await lockfile.unlock(filePath);
 }
 
 export class DiffWorkerRust {
