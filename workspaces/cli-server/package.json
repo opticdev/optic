@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "8.6.0-beta.32",
+  "version": "8.6.0-beta.34",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -16,12 +16,12 @@
   "dependencies": {
     "@sentry/node": "^5.28.0",
     "@sentry/tracing": "^5.28.0",
-    "@useoptic/analytics": "8.6.0-beta.32",
-    "@useoptic/cli-client": "8.6.0-beta.32",
-    "@useoptic/cli-config": "8.6.0-beta.32",
-    "@useoptic/cli-scripts": "8.6.0-beta.32",
-    "@useoptic/cli-shared": "8.6.0-beta.32",
-    "@useoptic/ui": "8.6.0-beta.32",
+    "@useoptic/analytics": "8.6.0-beta.34",
+    "@useoptic/cli-client": "8.6.0-beta.34",
+    "@useoptic/cli-config": "8.6.0-beta.34",
+    "@useoptic/cli-scripts": "8.6.0-beta.34",
+    "@useoptic/cli-shared": "8.6.0-beta.34",
+    "@useoptic/ui": "8.6.0-beta.34",
     "analytics-node": "^3.4.0-beta.2",
     "avsc": "^5.4.18",
     "body-parser": "^1.19.0",
