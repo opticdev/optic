@@ -1,4 +1,5 @@
-#!/usr/bin/env node --no-warnings
+#!/usr/bin/env node
+process.removeAllListeners('warning');
 require('../lib')
 .run()
 .then(require('@oclif/command/flush'))
