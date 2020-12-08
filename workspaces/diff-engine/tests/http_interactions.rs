@@ -1,5 +1,5 @@
-use optic_diff::streams;
-use optic_diff::HttpInteraction;
+use optic_diff_engine::streams;
+use optic_diff_engine::HttpInteraction;
 use tokio::stream::StreamExt;
 
 // fn can_async_read_stream_of_newline_delimited_json() {

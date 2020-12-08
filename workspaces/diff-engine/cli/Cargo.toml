@@ -1,0 +1,18 @@
+[package]
+name = "optic_diff"
+version = "0.1.0"
+authors = ["Jaap van Hardeveld <jaap@jaaprood.nl>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "~2.33.3"
+futures = "0.3.5"
+num_cpus = "1.13.0"
+optic_diff_engine = { path = "../" }
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0.57"
+# all of tokio for now, until we figure out what we need exactly
+tokio = { version = "~0.2.22", features = ["full"] } 
+tokio-util = { version = "0.3.1", features = ["codec"] }

@@ -1,5 +1,5 @@
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_shape, BodyDescriptor, ShapeProjection, SpecEvent};
+use optic_diff_engine::{diff_shape, BodyDescriptor, ShapeProjection, SpecEvent};
 use petgraph::dot::Dot;
 use serde_json::json;
 
