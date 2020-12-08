@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-process.removeAllListeners('warning');
+if (process.env.OPTIC_DEVELOPMENT !== 'yes') {
+  process.removeAllListeners('warning')
+}
+
 require('../lib')
 .run()
 .then(require('@oclif/command/flush'))
