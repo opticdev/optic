@@ -159,6 +159,8 @@ jobs:
         include:
           - platform_name: macos
             suffix: ''
+          - platform_name: macos-aarch64
+            suffix: ''
           - platform_name: win64
             suffix: .exe
           - platform_name: linux
