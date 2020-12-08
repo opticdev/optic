@@ -17,6 +17,7 @@
     "debug": "^4.1.1",
     "find-up": "^4.1.0",
     "get-port": "^5.1.0",
+    "jsesc": "^3.0.2",
     "js-yaml": "^3.13.1",
     "nice-try": "^2.1.0",
     "path-to-regexp": "^3.0.0",

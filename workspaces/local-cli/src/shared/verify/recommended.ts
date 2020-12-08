@@ -92,7 +92,7 @@ export async function verifyRecommended(
     CommandCheckSteps.run().then(resolve).catch(resolve);
   });
 
-  const proxyStartPromise = getAssertionsFromProxyStartPromise(startConfig);
+  // const proxyStartPromise = getAssertionsFromProxyStartPromise(startConfig);
 
   console.log(
     `\n\nGiven this ${colors.bold('inboundUrl')}: ${colors.gray(
@@ -108,7 +108,7 @@ export async function verifyRecommended(
         }:${startConfig.proxyConfig.port.toString()}`
       )}`,
       task: async (cxt: any, task: any) => {
-        const results = await proxyStartPromise;
+        const results = await commandSessionPromise;
         assert(
           results.proxyCanStartAtInboundUrl.passed,
           'Optic could not start here: ' +
@@ -123,7 +123,6 @@ export async function verifyRecommended(
   });
 
   const assertions = {
-    ...(await proxyStartPromise),
     ...(await commandSessionPromise),
   };
   const failing = failingAssertions([
@@ -144,7 +143,7 @@ export async function getAssertionsFromCommandSession(
   task: IOpticTaskAliased,
   startConfig: IOpticTaskRunnerConfig
 ): Promise<{
-  proxyTargetUrlResolves: ProxyTargetUrlResolves;
+  proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl;
   startOnHostAssertion: ApiProcessStartsOnAssignedHost;
   startOnPortAssertion: ApiProcessStartsOnAssignedPort;
   longRunningAssertion: CommandIsLongRunning;
@@ -160,6 +159,7 @@ export async function getAssertionsFromCommandSession(
   };
 
   const expected = `${serviceConfig.host}:${serviceConfig.port}`;
+  const shouldNotTake = `${startConfig.proxyConfig.host}:${startConfig.proxyConfig.port}`;
 
   await commandSession.start(
     {
@@ -175,6 +175,7 @@ export async function getAssertionsFromCommandSession(
 
   let status = 'running';
   let serviceRunning = false;
+  let tookProxyPort = false;
 
   const commandStoppedPromise = new Promise((resolve) => {
     commandSession.events.on('stopped', ({ state }) => {
@@ -197,8 +198,23 @@ export async function getAssertionsFromCommandSession(
       .catch(() => resolve(false));
   });
 
-  const finished = await Promise.race([
+  const wrongPortTaken = new Promise(async (resolve) => {
+    waitOn({
+      resources: [`tcp:${shouldNotTake}`],
+      delay: 0,
+      tcpTimeout: 500,
+      timeout: 25000,
+    })
+      .then(() => {
+        tookProxyPort = true;
+        resolve(true);
+      }) //if service resolves we assume it's up.
+      .catch(() => resolve(false));
+  });
+
+  await Promise.race([
     commandStoppedPromise,
+    wrongPortTaken,
     serviceRunningPromise,
   ]);
 
@@ -212,7 +228,7 @@ export async function getAssertionsFromCommandSession(
     expectedHost: serviceConfig.host,
   };
   const startOnPortAssertion: ApiProcessStartsOnAssignedPort = {
-    passed: serviceRunning,
+    passed: serviceRunning && !tookProxyPort,
     expectedPort: serviceConfig.port.toString(),
   };
   const longRunningAssertion: CommandIsLongRunning = {
@@ -220,16 +236,16 @@ export async function getAssertionsFromCommandSession(
     command: startConfig.command!,
   };
 
-  const proxyTargetUrlResolves: ProxyTargetUrlResolves = {
-    passed: task.targetUrl ? serviceRunning : false,
-    targetHostname: expected,
+  const proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl = {
+    passed: !tookProxyPort,
+    hostname: expected,
   };
 
   return {
     startOnHostAssertion,
     startOnPortAssertion,
     longRunningAssertion,
-    proxyTargetUrlResolves: proxyTargetUrlResolves,
+    proxyCanStartAtInboundUrl,
   };
 }
 
