@@ -37,7 +37,7 @@
                 "preamble": "Modify your `webBuilder` call to check for a custom port set by environment variable before starting:",
                 "start_command": "dotnet run",
                 "before": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:80/\");\n    });\n}\n",
-                "after": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    var portString = (System.Environment.GetEnvironmentVariable(\"OPTIC_API_PORT\"));\n    if (String.IsNullOrEmpty(portString)) {\n        portString = \"80\";\n    }\n\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:\" + portString + \"/\");\n    });\n}\n"
+                "after": "public static IHostBuilder CreateHostBuilder(string[] args) {\n    var portString = (System.Environment.GetEnvironmentVariable(\"PORT\"));\n    if (String.IsNullOrEmpty(portString)) {\n        portString = \"80\";\n    }\n\n    return Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>\n    {\n        webBuilder.UseStartup<Startup>();\n        webBuilder.UseUrls(\"http://localhost:\" + portString + \"/\");\n    });\n}\n"
             }
         }
     },
@@ -119,12 +119,12 @@
                 "pretty_name": "Sails",
                 "project_url": "https://sailsjs.com/",
                 "code_change": false,
-                "default_command": "sails lift --port $OPTIC_API_PORT",
+                "default_command": "sails lift --port $PORT",
                 "language": "yml",
                 "preamble": "If you use the `sails lift` command to start your Sails app, update your start command in your `optic.yml` file:",
-                "start_command": "sails lift --port $OPTIC_API_PORT",
+                "start_command": "sails lift --port $PORT",
                 "before": "start:\n  command: sails lift\n",
-                "after": "start:\n  command: sails lift --port $OPTIC_API_PORT\n"
+                "after": "start:\n  command: sails lift --port $PORT\n"
             },
             "hapi": {
                 "pretty_name": "Hapi",
@@ -194,12 +194,12 @@
                 "pretty_name": "FastAPI",
                 "project_url": "https://fastapi.tiangolo.com/",
                 "code_change": false,
-                "default_command": "uvicorn main:app --port $OPTIC_API_PORT # assuming your app is called main.py",
+                "default_command": "uvicorn main:app --port $PORT # assuming your app is called main.py",
                 "language": "yaml",
                 "preamble": "If you use the `uvicorn` command to start your FastAPI app, update your start command in your `optic.yml` file:",
-                "start_command": "uvicorn main:app --port $OPTIC_API_PORT",
+                "start_command": "uvicorn main:app --port $PORT",
                 "before": "start:\n  command: uvicorn main:app # assuming your app is called main.py\n",
-                "after": "start:\n  command: uvicorn main:app --port $OPTIC_API_PORT # assuming your app is called main.py\n"
+                "after": "start:\n  command: uvicorn main:app --port $PORT # assuming your app is called main.py\n"
             }
         }
     },
@@ -211,23 +211,23 @@
                 "pretty_name": "Ruby on Rails",
                 "project_url": "https://rubyonrails.org/",
                 "code_change": false,
-                "default_command": "rails server -p $OPTIC_API_PORT # assuming your app is called main.py",
+                "default_command": "rails server -p $PORT # assuming your app is called main.py",
                 "language": "yaml",
                 "preamble": "If you use the `rails server` command to start your app, update your start command in your `optic.yml` file:",
-                "start_command": "rails server -p $OPTIC_API_PORT",
+                "start_command": "rails server -p $PORT",
                 "before": "start:\n  command: rails server # assuming your app is called main.py\n",
-                "after": "start:\n  command: rails server -p $OPTIC_API_PORT # assuming your app is called main.py\n"
+                "after": "start:\n  command: rails server -p $PORT # assuming your app is called main.py\n"
             },
             "puma": {
                 "pretty_name": "Puma",
                 "project_url": "https://puma.io/",
                 "code_change": false,
-                "default_command": "puma -p $OPTIC_API_PORT # or, if you use bundler (bundle exec puma -p $OPTIC_API_PORT)",
+                "default_command": "puma -p $PORT # or, if you use bundler (bundle exec puma -p $PORT)",
                 "language": "yaml",
                 "preamble": "If you use `puma` to start your app, modify your `optic.yml` file:",
-                "start_command": "puma -p $OPTIC_API_PORT # or, if you use bundler (bundle exec puma -p $OPTIC_API_PORT)",
+                "start_command": "puma -p $PORT # or, if you use bundler (bundle exec puma -p $PORT)",
                 "before": "start:\n  command: puma # or, if you use bundler (bundle exec puma)\n",
-                "after": "start:\n  command: puma -p $OPTIC_API_PORT # or, if you use bundler (bundle exec puma -p $OPTIC_API_PORT)\n"
+                "after": "start:\n  command: puma -p $PORT # or, if you use bundler (bundle exec puma -p $PORT)\n"
             }
         }
     },

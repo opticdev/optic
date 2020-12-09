@@ -13,7 +13,14 @@ import { useLatestEvent, useUserTracking } from './setup-api/useUserTracking';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import Box from '@material-ui/core/Box';
 import { useDebounce } from './useDebounceHook';
-import { Collapse, Paper, Typography, Zoom } from '@material-ui/core';
+import HelpIcon from '@material-ui/icons/Help';
+import {
+  Collapse,
+  IconButton,
+  Paper,
+  Typography,
+  Zoom,
+} from '@material-ui/core';
 import { Code } from './setup-api/CodeBlock';
 import {
   OpticBlue,
@@ -235,56 +242,65 @@ function PortAssumption(props) {
   ];
 
   const PortTooltip = (
-    <LightTooltip
-      interactive
-      title={
-        <div>
-          <Typography variant="overline">examples:</Typography>
-          {docs && !docs.data.code_change ? (
-            <MarkdownRender
-              source={
-                docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
-              }
-            />
-          ) : (
-            <MarkdownRender source={examplePorts.join('\n')} />
-          )}
-        </div>
-      }
-    >
-      <span style={{ color: OpticBlue, fontWeight: 600, cursor: 'pointer' }}>
-        map this variable to a flag your API framework looks for
-      </span>
-    </LightTooltip>
+    <span style={{ fontWeight: 600 }}>
+      map this variable to a flag your API framework looks for
+      <LightTooltip
+        interactive
+        title={
+          <div>
+            <Typography variant="overline">examples:</Typography>
+            {docs && !docs.data.code_change ? (
+              <MarkdownRender
+                source={
+                  docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
+                }
+              />
+            ) : (
+              <MarkdownRender source={examplePorts.join('\n')} />
+            )}
+          </div>
+        }
+      >
+        <HelpIcon
+          style={{ width: 12, height: 12, marginLeft: 5 }}
+          color="primary"
+        />
+      </LightTooltip>
+    </span>
   );
 
   const LookFor = (
-    <LightTooltip
-      interactive
-      title={
-        <div>
-          <Typography variant="overline">examples:</Typography>
-          {docs && (
-            <MarkdownRender
-              source={
-                docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
-              }
-            />
-          )}
-          {!docs && (
-            <MarkdownRender
-              source={
-                "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
-              }
-            />
-          )}
-        </div>
-      }
-    >
-      <span style={{ color: OpticBlue, fontWeight: 600, cursor: 'pointer' }}>
-        look for the <Code>$PORT</Code> variable when starting up.
-      </span>
-    </LightTooltip>
+    <span style={{ fontWeight: 600 }}>
+      look for the <Code>$PORT</Code> variable when starting up
+      <LightTooltip
+        interactive
+        title={
+          <div>
+            <Typography variant="overline">examples:</Typography>
+            {docs && (
+              <MarkdownRender
+                source={
+                  docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
+                }
+              />
+            )}
+            {!docs && (
+              <MarkdownRender
+                source={
+                  "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
+                }
+              />
+            )}
+          </div>
+        }
+      >
+        <HelpIcon
+          style={{ width: 12, height: 12, marginLeft: 5 }}
+          color="primary"
+        />
+      </LightTooltip>
+      {'.'}
+    </span>
   );
 
   return (
