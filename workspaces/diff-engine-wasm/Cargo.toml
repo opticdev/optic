@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Jaap Rood <jaap@jaaprood.nl>"]
 edition = "2018"
 
+# works around https://github.com/rustwasm/wasm-pack/issues/886
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]
+
 [lib]
 crate-type = ["cdylib"]
 

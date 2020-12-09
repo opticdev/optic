@@ -3,6 +3,7 @@
   "version": "8.6.0-beta.34",
   "scripts": {
     "test": "echo No tests specified for diff-engine-wasm",
+    "ws:build": "wasm-pack build --target nodejs --out-dir build",
     "ws:clean": "rm -rf pkg/*",
     "ws:test": "echo No workspace tests specified for diff-engine-wasm"
   },
@@ -11,8 +12,8 @@
     "url": "ssh://git@github.com/useoptic/optic-package.git",
     "directory": "workspaces/diff-engine-wasm"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "build/optic_diff_wasm.js",
+  "types": "build/optic_diff_wasm.d.ts",
   "dependencies": {},
   "devDependencies": {
     "tap": "^14.11.0",
