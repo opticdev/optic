@@ -1,13 +1,9 @@
-//@ts-ignore
-import Listr from 'listr';
 import Command from '@oclif/command';
 import colors from 'colors';
 //@ts-ignore
 import niceTry from 'nice-try';
 import {
   getPathsRelativeToConfig,
-  IOpticTaskRunnerConfig,
-  IOpticTask,
   readApiConfig,
   TaskToStartConfig,
   IOpticTaskAliased,
@@ -22,7 +18,6 @@ import { fromOptic } from '@useoptic/cli-shared';
 import { verifyRecommended } from './recommended';
 import { verifyManual } from './manual';
 import fs from 'fs-extra';
-
 import { Modes } from '@useoptic/cli-config/build';
 
 export async function verifyTask(
@@ -46,8 +41,6 @@ export async function verifyTask(
   const rawConfig = (await fs.readFile(paths.configPath)).toString();
 
   let foundTask: IOpticTaskAliased | null = null;
-
-  let fixUrl = 'https://www.useoptic.com/docs/faqs-and-troubleshooting/';
 
   await niceTry(async () => {
     if (config.tasks) {

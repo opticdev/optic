@@ -60,7 +60,7 @@ export async function verifyRecommended(
     },
     {
       title: `On the host Optic assigns it ${colors.bold(
-        '$OPTIC_API_HOST'
+        '$HOST'
       )} (current: ${colors.bold(startConfig.serviceConfig.host)})`,
       task: async () => {
         const results = await commandSessionPromise;
@@ -74,14 +74,14 @@ export async function verifyRecommended(
     },
     {
       title: `On the port Optic assigns it ${colors.bold(
-        '$OPTIC_API_PORT'
+        '$PORT'
       )} (current: ${colors.bold(startConfig.serviceConfig.port.toString())})`,
       task: async () => {
         const results = await commandSessionPromise;
         assert(
           results.startOnPortAssertion.passed,
           `Your command did not start the API on ${colors.bold(
-            '$OPTIC_API_PORT'
+            '$PORT'
           )} after 25 seconds`
         );
       },
@@ -154,6 +154,7 @@ export async function getAssertionsFromCommandSession(
   const servicePort = serviceConfig.port;
   const serviceHost = serviceConfig.host;
   const opticServiceConfig = {
+    PORT: servicePort.toString(),
     OPTIC_API_PORT: servicePort.toString(),
     OPTIC_API_HOST: serviceHost.toString(),
   };
