@@ -21,7 +21,9 @@ export function runManagedScript(modulePath: string, ...args: string[]) {
   // const execArgv = isDebuggingEnabled ? ['--inspect=63694'] : []; // not in spawn
   const child = cp.spawn(process.argv0, [modulePath, ...args], {
     windowsHide: true,
-    stdio: ['ipc'],
+    // make sure stdout and stderr are consumed (by piping to process.stdout & process.stderr)
+    // execution may block, otherwise.
+    stdio: ['ignore', 'inherit', 'inherit', 'ipc'],
   });
   return child;
 }

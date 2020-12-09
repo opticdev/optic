@@ -1,7 +1,7 @@
 use super::traverser::{JsonTrail, ShapeTrail};
 use crate::queries::shape::ChoiceOutput;
 use crate::state::body::BodyDescriptor;
-use crate::state::shape::{FieldId, ShapeId};
+use crate::state::shape::{FieldId, ShapeId, ShapeKind};
 use serde_json::Value as JsonValue;
 pub mod diff;
 
@@ -66,7 +66,7 @@ pub trait BodyObjectKeyVisitor<R>: BodyVisitor<R> {
     &mut self,
     object_json_trail: &JsonTrail,
     object_keys: &Vec<String>,
-    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId)>)>,
+    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId, &ShapeKind)>)>,
   );
 }
 

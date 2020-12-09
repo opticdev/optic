@@ -52,7 +52,7 @@ export class OnDemandInitialBody {
 
     console.log(JSON.stringify(scriptConfig));
 
-    const child = runManagedScriptByName(
+    const child: ChildProcess = runManagedScriptByName(
       'emit-initial-bodies-commands',
       JSON.stringify(scriptConfig)
     );
@@ -74,7 +74,9 @@ export class OnDemandInitialBody {
       cleanup();
       if (code !== 0) {
         // @TODO: wonder how we'll ever find out about this happening.
-        console.error('On Demand Body Worker exited with non-zero exit code');
+        console.error(
+          `On Demand Body Worker exited with non-zero exit code ${code}`
+        );
       } else {
         this.finished = true;
         this.events.emit('finish');
@@ -97,6 +99,7 @@ export class OnDemandInitialBody {
       this.events.once('completed', onCompleted);
       function onCompleted(data: any) {
         cleanup();
+        child.kill();
         resolve(data.results);
       }
       const cleanup = () => {

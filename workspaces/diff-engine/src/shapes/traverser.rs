@@ -90,7 +90,10 @@ impl<'a> Traverser<'a> {
             index: *(indexes.first().unwrap()) as u32,
           });
 
-          let new_trail_origin = trail_origin.clone();
+          let new_trail_origin = match item_choices.first() {
+            Some(choice) => choice.parent_trail.clone(),
+            None => trail_origin.clone(),
+          };
 
           if !item_choices.is_empty() {
             self.traverse(
@@ -130,11 +133,17 @@ impl<'a> Traverser<'a> {
                 choice,
                 field_ids
                   .map(|(field_id, field_name)| {
-                    let field_shape_id = self.shape_queries.resolve_field_shape_node(&field_id);
+                    let field_shape_id = self
+                      .shape_queries
+                      .resolve_field_shape_node(&field_id)
+                      .unwrap();
+                    let field_core_shape_kind =
+                      self.shape_queries.resolve_to_core_shape(&field_shape_id);
                     (
                       field_name.clone(),
                       field_id.clone(),
-                      field_shape_id.unwrap().clone(),
+                      field_shape_id.clone(),
+                      field_core_shape_kind,
                     )
                   })
                   .collect::<Vec<_>>(),
@@ -156,14 +165,14 @@ impl<'a> Traverser<'a> {
           let field_choices = matching_choices
             .iter()
             .flat_map(|choice| {
-              eprintln!("shape-traverser: object choice {:?}", choice);
+              //dbg!("shape-traverser: object choice", choice);
               if let ShapeKind::ObjectKind = &choice.core_shape_kind {
                 // - find field node by key in object's field node edges
                 let field_id_option = self
                   .shape_queries
                   .resolve_field_id(&choice.shape_id, &field_key);
                 if let None = field_id_option {
-                  eprintln!("shape-traverser: no field id could be resolved");
+                  //dbg!("shape-traverser: no field id could be resolved");
                   return vec![];
                 }
 
@@ -172,7 +181,7 @@ impl<'a> Traverser<'a> {
                   .shape_queries
                   .resolve_field_shape_node(&field_id)
                   .expect("field node should have an edge to a shape node describing its value");
-                eprintln!("shape-traverser: field_shape_id {:?}", field_shape_id);
+                //dbg!("shape-traverser: field_shape_id", &field_shape_id);
 
                 let field_trail =
                   choice
@@ -187,9 +196,13 @@ impl<'a> Traverser<'a> {
               }
             })
             .collect::<Vec<ChoiceOutput>>();
-          let new_trail_origin = trail_origin.clone();
+          let new_trail_origin = match field_choices.first() {
+            Some(choice) => choice.parent_trail.clone(),
+            None => trail_origin.clone(),
+          };
+          //dbg!(&new_trail_origin);
 
-          if !field_choices.is_empty() {
+          if !matching_choices.is_empty() {
             self.traverse(
               Some(field_body),
               field_json_trail,

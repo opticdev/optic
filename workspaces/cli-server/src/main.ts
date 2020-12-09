@@ -1,6 +1,26 @@
 import { CliDaemon } from './daemon';
 import fs from 'fs-extra';
 import { userDebugLogger } from '@useoptic/cli-shared';
+import dotenv from 'dotenv';
+import path from 'path';
+import Config from './config';
+import * as Errors from './errors';
+
+const envPath =
+  process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
+
+dotenv.config({
+  path: envPath,
+});
+
+if (Config.errors.sentry) {
+  console.log('Sentry is enabled');
+  Errors.trackWithSentry(Config.errors.sentry);
+  console.log('Remote error tracking with Sentry enabled');
+} else {
+  console.log('Sentry is disabled');
+}
+
 console.log('starting daemon', process.argv, process.env.DEBUG);
 console.log(process.cwd(), __dirname, __filename);
 
@@ -24,4 +44,5 @@ daemon
   })
   .catch((e) => {
     console.error(e);
+    throw e;
   });

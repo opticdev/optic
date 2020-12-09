@@ -23,7 +23,7 @@ pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
 #[derive(Debug)]
 pub struct FieldNode(pub FieldId, pub FieldNodeDescriptor);
 #[derive(Debug)]
-pub struct ShapeParameterNode(ShapeParameterId, ShapeParameterNodeDescriptor);
+pub struct ShapeParameterNode(pub ShapeParameterId, pub ShapeParameterNodeDescriptor);
 
 #[derive(Debug)]
 pub enum Edge {
@@ -115,6 +115,23 @@ fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_ki
 }
 
 impl ShapeProjection {
+  pub fn with_shape_parameter(&mut self, shape_parameter_id: ShapeParameterId, shape_id: ShapeId) {
+    let shape_node_index = *self.get_shape_node_index(&shape_id).unwrap();
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
+      shape_parameter_id.clone(),
+      ShapeParameterNodeDescriptor {},
+    ));
+    let shape_parameter_node_index = self.graph.add_node(shape_parameter_node);
+    self
+      .node_id_to_index
+      .insert(String::from(shape_parameter_id), shape_parameter_node_index);
+
+    self.graph.add_edge(
+      shape_parameter_node_index,
+      shape_node_index,
+      Edge::IsParameterOf,
+    );
+  }
   pub fn with_shape(
     &mut self,
     shape_id: ShapeId,
@@ -139,6 +156,45 @@ impl ShapeProjection {
     self.graph.add_edge(
       shape_node_index,
       *base_shape_node_index,
+      Edge::IsDescendantOf,
+    );
+  }
+
+  pub fn with_base_shape(&mut self, shape_id: ShapeId, base_shape_id: ShapeId) {
+    let shape_node_index = *self.node_id_to_index.get(&shape_id).unwrap_or_else(|| {
+      panic!(
+        "expected shape_id '{}' to have a corresponding node",
+        &shape_id
+      )
+    });
+
+    let mut existing_edges = self
+      .graph
+      .edges_directed(shape_node_index, petgraph::Direction::Outgoing);
+
+    let existing_edge_index = existing_edges
+      .find(|edge| match edge.weight() {
+        Edge::IsDescendantOf => true,
+        _ => false,
+      })
+      .expect("there should be an isDescendantOf edge")
+      .id();
+
+    self.graph.remove_edge(existing_edge_index);
+
+    let base_shape_node_index = *self
+      .node_id_to_index
+      .get(&base_shape_id)
+      .unwrap_or_else(|| {
+        panic!(
+          "expected base_shape_id '{}' to have a corresponding node",
+          &base_shape_id
+        )
+      });
+
+    self.graph.add_edge(
+      shape_node_index,
+      base_shape_node_index,
       Edge::IsDescendantOf,
     );
   }
@@ -201,6 +257,41 @@ impl ShapeProjection {
       }
       _ => panic!("expected specs to only use ParameterShapeDescriptor::ProviderInShape"),
     }
+  }
+
+  pub fn with_field_shape(&mut self, shape_descriptor: FieldShapeDescriptor) {
+    let field_shape = match shape_descriptor {
+      FieldShapeDescriptor::FieldShapeFromShape(field_shape) => {
+        field_shape
+      }
+      _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
+    };
+    let field_node_index = *self
+        .get_field_node_index(&field_shape.field_id)
+        .expect("expected field to exist");
+    let field_node_weight = self
+        .graph
+        .node_weight(field_node_index)
+        .expect("expected field to exist");
+    let existing_field_shape_edge_index = self
+        .graph
+        .edges_directed(field_node_index, petgraph::Direction::Incoming)
+        .find(|edge| match edge.weight() {
+          Edge::BelongsTo => true,
+          _ => false,
+        })
+        .expect("expected field to have a target shape via a BelongsTo edge")
+        .id();
+
+    self.graph.remove_edge(existing_field_shape_edge_index);
+
+    let target_shape_node_index = *self
+        .get_shape_node_index(&field_shape.shape_id)
+        .expect("expected shape_id for field value to have a corresponding node");
+
+    self
+        .graph
+        .add_edge(target_shape_node_index, field_node_index, Edge::BelongsTo);
   }
 
   pub fn with_field(
@@ -295,6 +386,7 @@ impl ShapeProjection {
     Some(child_edge.source())
   }
 
+  //?
   pub fn get_core_shape_nodes(
     &self,
     node_index: &NodeIndex,
@@ -364,13 +456,25 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
       ShapeEvent::ShapeAdded(e) => {
         projection.with_shape(e.shape_id, e.base_shape_id, e.parameters, e.name)
       }
+      ShapeEvent::ShapeParameterAdded(e) => {
+        projection.with_shape_parameter(e.shape_parameter_id, e.shape_id)
+      }
       ShapeEvent::ShapeParameterShapeSet(e) => {
         projection.with_shape_parameter_shape(e.shape_descriptor)
       }
       ShapeEvent::FieldAdded(e) => {
         projection.with_field(e.field_id, e.shape_id, e.shape_descriptor, e.name)
       }
-      _ => {} // TODO: eventually add logging for any ShapeEvent we don't use for this projection for some reason
+      ShapeEvent::FieldShapeSet(e) => {
+        projection.with_field_shape(e.shape_descriptor);
+      }
+      ShapeEvent::BaseShapeSet(e) => {
+        projection.with_base_shape(e.shape_id, e.base_shape_id);
+      }
+      x => {
+        //dbg!("skipping ShapeEvent in ShapeProjection. warning?");
+        //dbg!(&x);
+      }
     }
   }
 }

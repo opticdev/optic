@@ -264,31 +264,40 @@ impl BodyObjectKeyVisitor<ShapeDiffResult> for DiffObjectKeyVisitor {
     &mut self,
     object_json_trail: &JsonTrail,
     object_keys: &Vec<String>,
-    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId)>)>,
+    object_and_field_choices: &Vec<(&ChoiceOutput, Vec<(String, FieldId, ShapeId, &ShapeKind)>)>,
   ) {
+    //dbg!(object_json_trail);
+    //dbg!(object_keys);
+    //dbg!(object_and_field_choices);
     object_and_field_choices.iter().for_each(|entry| {
       let (choice, keys_for_choice) = entry;
       match choice.core_shape_kind {
         ShapeKind::ObjectKind => {
           keys_for_choice.iter().for_each(|key_and_field_id| {
-            let (key, field_id, field_shape_id) = key_and_field_id;
+            let (key, field_id, field_shape_id, field_core_shape_kind) = key_and_field_id;
             if let None = object_keys.iter().find(|object_key| *object_key == key) {
               // emit diff
+              //dbg!(key);
 
-              let shape_trail =
-                choice
-                  .shape_trail()
-                  .with_component(ShapeTrailPathComponent::ObjectFieldTrail {
-                    field_id: field_id.clone(),
-                    field_shape_id: field_shape_id.clone(),
-                  });
-              let json_trail = object_json_trail
-                .with_component(JsonTrailPathComponent::JsonObjectKey { key: key.clone() });
-              let diff = ShapeDiffResult::UnmatchedShape {
-                json_trail,
-                shape_trail,
-              };
-              self.push(diff);
+              match field_core_shape_kind {
+                ShapeKind::OptionalKind => {}
+                _ => {
+                  let shape_trail = choice.shape_trail().with_component(
+                    ShapeTrailPathComponent::ObjectFieldTrail {
+                      field_id: field_id.clone(),
+                      field_shape_id: field_shape_id.clone(),
+                    },
+                  );
+                  let json_trail = object_json_trail
+                    .with_component(JsonTrailPathComponent::JsonObjectKey { key: key.clone() });
+                  let diff = ShapeDiffResult::UnmatchedShape {
+                    json_trail,
+                    shape_trail,
+                  };
+                  //dbg!(&diff);
+                  self.push(diff);
+                }
+              }
             }
           })
         }

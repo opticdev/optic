@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 use futures::SinkExt;
 use num_cpus;
 use optic_diff::diff_interaction;
@@ -17,7 +17,7 @@ use tokio::sync::{mpsc, Semaphore};
 
 fn main() {
   let cli = App::new("Optic Diff engine")
-    .version("1.0")
+    .version(crate_version!())
     .author("Optic Labs Corporation")
     .about("Detects differences between API spec and captured interactions")
     .arg(
@@ -106,12 +106,15 @@ fn main() {
       }
     });
 
+    dbg!("waiting for next interaction");
     while let Some(interaction_json_result) = interaction_lines.next().await {
+      //dbg!("got next interaction");
       let diff_permits = diff_scheduling_permits.clone();
       let projection = spec_projection.clone();
       let mut results_sender = results_sender.clone();
-
+      //dbg!("waiting for permit");
       let diff_task_permit = diff_permits.acquire_owned().await;
+      //dbg!("got permit");
 
       tokio::spawn(async move {
         let diff_comp =
@@ -129,13 +132,15 @@ fn main() {
 
             Some((diff_interaction(&projection, interaction), tags))
           });
-
+        //dbg!("waiting for results");
         let results = diff_comp
           .await
           .expect("diffing of interaction should be successful");
+        //dbg!("got results");
 
         if let Some((results, tags)) = results {
           for result in results {
+            //dbg!(&result);
             if let Err(_) = results_sender
               .send(ResultContainer::from((result, &tags)))
               .await

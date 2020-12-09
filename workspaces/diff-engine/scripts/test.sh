@@ -5,3 +5,4 @@ if [ "$OPTIC_RUST_DIFF_ENGINE" != "true" ]; then
 fi
 
 cargo test
+npm test

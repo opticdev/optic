@@ -466,7 +466,7 @@ function EndpointDiffs(props) {
                         <Typography component="div" variant="subtitle2">
                           {endpointDescriptor.endpointPurpose || (
                             <span style={{ color: DocDarkGrey }}>
-                              Unamed Endpoint
+                              Unnamed Endpoint
                             </span>
                           )}
                         </Typography>

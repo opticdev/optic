@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: 'Set CARGO_HOME and RUSTUP_HOME'
-        run: | 
+        run: |
           echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
           echo "CARGO_HOME=$HOME/.cargo" >> $GITHUB_ENV
       - name: 'Checkout source'
@@ -63,10 +63,10 @@ jobs:
     - name: "checkout source"
       uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
     - name: "set up node.js"
-      uses: actions/setup-node@44c9c187283081e4e88b54b0efad9e9d468165a4 # https://github.com/actions/setup-node/commits/v1
+      uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
       with:
         node-version: "12.x"
     - name: "install dependencies"
       run: yarn install
     - name: "build workspaces"
-      run: yarn wsrun --stages --report --fast-exit ws:build
+      run: yarn wsrun --stages --report --fast-exit --exclude-missing ws:build

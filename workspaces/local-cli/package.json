@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.5.0",
+  "version": "8.6.1",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -18,12 +18,12 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "cli-table3": "^0.6.0",
-    "@useoptic/analytics": "8.5.0",
-    "@useoptic/cli-client": "8.5.0",
-    "@useoptic/cli-config": "8.5.0",
-    "@useoptic/cli-scripts": "8.5.0",
-    "@useoptic/cli-server": "8.5.0",
-    "@useoptic/cli-shared": "8.5.0",
+    "@useoptic/analytics": "8.6.1",
+    "@useoptic/cli-client": "8.6.1",
+    "@useoptic/cli-config": "8.6.1",
+    "@useoptic/cli-scripts": "8.6.1",
+    "@useoptic/cli-server": "8.6.1",
+    "@useoptic/cli-shared": "8.6.1",
     "@useoptic/domain": "10.0.17",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
@@ -72,7 +72,8 @@
     "/lib",
     "/assets",
     "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/.env"
   ],
   "homepage": "https://github.com/opticdev/optic",
   "keywords": [

@@ -1,6 +1,10 @@
 import { Command, flags } from '@oclif/command';
 // @ts-ignore
-import { createFileTree } from '@useoptic/cli-config';
+import {
+  createFileTree,
+  getPathsRelativeToConfig,
+  readApiConfig,
+} from '@useoptic/cli-config';
 import colors from 'colors';
 import cli from 'cli-ux';
 import fs from 'fs-extra';
@@ -8,12 +12,22 @@ import fs from 'fs-extra';
 import jsesc from 'jsesc';
 import path from 'path';
 // @ts-ignore
-import { fromOptic } from '@useoptic/cli-shared';
-import { opticTaskToProps, trackUserEvent } from '../shared/analytics';
+import {
+  developerDebugLogger,
+  fromOptic,
+  makeUiBaseUrl,
+} from '@useoptic/cli-shared';
+import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import {
   ApiCheckCompleted,
   ApiInitializedInProject,
 } from '@useoptic/analytics/lib/events/onboarding';
+import { buildTask } from '@useoptic/cli-config/build/helpers/initial-task';
+import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { lockFilePath } from '../shared/paths';
+import { Config } from '../config';
+import { Client } from '@useoptic/cli-client';
+import openBrowser from 'react-dev-utils/openBrowser';
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';
@@ -59,10 +73,11 @@ export default class Init extends Command {
     //bring me back with an ID please
     // await trackAndSpawn('New API Created', { name });
 
-    const config = `
-name: ${escapeIt(name)}
-tasks:
-${buildInitialTask(flags)}`.trimLeft();
+    const config = buildTask(
+      name,
+      flags,
+      flags.inboundUrl && flags.targetUrl ? 'start-proxy' : 'start'
+    );
 
     // const token: string = await Promise.resolve('token-from-backend')
 
@@ -71,14 +86,29 @@ ${buildInitialTask(flags)}`.trimLeft();
     cli.log(
       fromOptic(`Added Optic configuration to ${colors.bold(configPath)}`)
     );
-    if (Object.entries(flags).length === 0)
-      cli.log(
-        fromOptic(
-          `Open the ${colors.bold(
-            'optic.yml'
-          )} to finish adding Optic to your API`
-        )
+
+    async function startInitFlow() {
+      const paths = await getPathsRelativeToConfig();
+      const config = await readApiConfig(paths.configPath);
+      const daemonState = await ensureDaemonStarted(
+        lockFilePath,
+        Config.apiBaseUrl
       );
+
+      const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
+      developerDebugLogger(`api base url: ${apiBaseUrl}`);
+      const cliClient = new Client(apiBaseUrl);
+      cliClient.setIdentity(await getUser());
+      const cliSession = await cliClient.findSession(paths.cwd, null, null);
+      developerDebugLogger({ cliSession });
+      const uiBaseUrl = makeUiBaseUrl(daemonState);
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/setup`;
+      cli.log(`Finish setting up your API start task here: ${uiUrl}`);
+      openBrowser(uiUrl);
+    }
+
+    await startInitFlow();
+
     await trackUserEvent(
       ApiInitializedInProject.withProps({
         cwd: cwd,
@@ -89,32 +119,6 @@ ${buildInitialTask(flags)}`.trimLeft();
         apiName: name,
       })
     );
+    process.exit(0);
   }
-}
-
-function buildInitialTask(flags: any) {
-  //default config and valid for start injected
-  let commandConfig = `  start:
-     command: ${escapeIt(
-       flags.command || 'echo "Setup A Valid Command to Start your API!"'
-     )}
-     inboundUrl: ${flags.inboundUrl || 'http://localhost:4000'}
-`.trimRight();
-
-  if (flags.inboundUrl && flags.targetUrl) {
-    commandConfig = `  start-proxy:
-     inboundUrl: ${flags.inboundUrl}
-     targetUrl: ${flags.targetUrl}
-`.trimRight();
-  }
-
-  return commandConfig;
-}
-
-function escapeIt(value: string): string {
-  const escaped = jsesc(value, { quotes: 'double' });
-  if (escaped !== value) {
-    return `"${escaped}"`;
-  }
-  return `"${value}"`;
 }

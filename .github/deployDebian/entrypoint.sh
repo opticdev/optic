@@ -17,7 +17,7 @@ echo "Checking out specific branch"
 git checkout release
 echo "Building Optic"
 source sourceme.sh
-optic_build
+optic_build_for_release
 echo "Packing Debian Release"
 cd ./workspaces/local-cli
 npm install
@@ -26,6 +26,4 @@ echo "Installing Ruby"
 apt install ruby-full -y
 gem install deb-s3
 export PATH_TO_DEB_AMD="/tmp/optic/workspaces/local-cli/dist/deb/api_$(npm view $INPUT_NPM_PACKAGE_NAME version)-1_amd64.deb"
-export PATH_TO_DEB_ARM="/tmp/optic/workspaces/local-cli/dist/deb/api_$(npm view $INPUT_NPM_PACKAGE_NAME version)-1_armel.deb"
 deb-s3 upload -e --access-key-id=$INPUT_AWS_ACCESS_KEY_ID --secret-access-key=$INPUT_AWS_SECRET_ACCESS_KEY --bucket $INPUT_BUCKET_NAME --prefix $INPUT_PREFIX_NAME --codename $INPUT_PACKAGE_NAME --preserve-versions $PATH_TO_DEB_AMD
-deb-s3 upload -e --access-key-id=$INPUT_AWS_ACCESS_KEY_ID --secret-access-key=$INPUT_AWS_SECRET_ACCESS_KEY --bucket $INPUT_BUCKET_NAME --prefix $INPUT_PREFIX_NAME --codename $INPUT_PACKAGE_NAME --preserve-versions $PATH_TO_DEB_ARM

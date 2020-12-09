@@ -13,6 +13,6 @@ jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@06d4616a80cd7c09ea3cf12214165ad6c1859e67 # https://github.com/release-drafter/release-drafter/commits/v5
+      - uses: release-drafter/release-drafter@3782ccd1a495040818a9e5d0e8bc4ed22d3b1361 # v5.12.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

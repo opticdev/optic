@@ -1,0 +1,1266 @@
+{
+  "events": [],
+  "session": {
+    "samples": [{
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Eg4KCGxhc3ROYW1lEgIIAhIJCgNhZ2USAggDEhgKBmNpdGllcxIOCAEaAggCGgIIAhoCCAI=",
+            "asJsonString": "{\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+            "asText": "{\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAISGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":\"not a number\",\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":\"not a number\",\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "ElUKCGxvY2F0aW9uEkkSRwoMcHJpbmNpcGFsaXR5EjcSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSFwoFYXJyYXkSDggBGgIIAxoCCAMaAggD",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[1,2,3]}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[1,2,3]}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EkkKCGxvY2F0aW9uEj0SOwoMcHJpbmNpcGFsaXR5EisSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSCwoFYXJyYXkSAggB",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[]}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"array\":[]}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EkkKCGxvY2F0aW9uEj0SOwoMcHJpbmNpcGFsaXR5EisSCwoFbW90dG8SAggCEgoKBGNpdHkSAggCEhAKCnBvcHVsYXRpb24SAggD",
+            "asJsonString": "{\"location\":{\"principality\":{\"motto\":\"Experientia Docet\",\"city\":\"San Fransisco\",\"population\":830000}}}",
+            "asText": "{\"location\":{\"principality\":{\"motto\":\"Experientia Docet\",\"city\":\"San Fransisco\",\"population\":830000}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EnIKCGxvY2F0aW9uEmYSZAoMcHJpbmNpcGFsaXR5ElQSCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSNAoLY29vcmRpbmF0ZXMSJRIMCgZmb3JtYXQSAggCEgkKA2xhdBICCAISCgoEbG9uZxICCAI=",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{\"format\":\"DMS\",\"lat\":\"37.7749° N\",\"long\":\"122.4194° W\"}}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{\"format\":\"DMS\",\"lat\":\"37.7749° N\",\"long\":\"122.4194° W\"}}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Ek8KCGxvY2F0aW9uEkMSQQoMcHJpbmNpcGFsaXR5EjESCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSEQoLY29vcmRpbmF0ZXMSAggC",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":\"N/A\"}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":\"N/A\"}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISDAoGcml2YWxzEgIIARIVCgVzdGF0cxIMEgoKBHJhbmsSAggD",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[],\"stats\":{\"rank\":1}}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[],\"stats\":{\"rank\":1}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGQoGcml2YWxzEg8SDQoHbmVtZXNpcxICCAISFQoFc3RhdHMSDBIKCgRyYW5rEgIIAw==",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":{\"nemesis\":\"Brad\"},\"stats\":{\"rank\":1}}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":{\"nemesis\":\"Brad\"},\"stats\":{\"rank\":1}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISNgoGcml2YWxzEiwIARoMEgoKBGZvb2QSAggCGgwSCgoEZm9vZBICCAIaDBIKCgRmb29kEgIIAhIVCgVzdGF0cxIMEgoKBHJhbmsSAggD",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[{\"food\":\"rice\"},{\"food\":\"cookies\"},{\"food\":\"chips\"}],\"stats\":{\"rank\":1}}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[{\"food\":\"rice\"},{\"food\":\"cookies\"},{\"food\":\"chips\"}],\"stats\":{\"rank\":1}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "ElsKCGxvY2F0aW9uEk8STQoMcHJpbmNpcGFsaXR5Ej0SCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSHQoLY29vcmRpbmF0ZXMSDggBGgIIAxoCCAMaAggD",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":[1,2,3]}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":[1,2,3]}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EgkKA2FnZRICCAMSDgoIbGFzdE5hbWUSAggCEg8KCWZpcnN0TmFtZRICCAISLAoNZmF2b3JpdGVDb2xvchIbEgsKBWZpcnN0EgIIAhIMCgZzZWNvbmQSAggCEhgKBmNpdGllcxIOCAEaAggCGgIIAhoCCAI=",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":{\"first\":\"orange\",\"second\":\"red\"}}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":{\"first\":\"orange\",\"second\":\"red\"}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EgkKA2FnZRICCAMSDgoIbGFzdE5hbWUSAggCEg8KCWZpcnN0TmFtZRICCAISEwoNZmF2b3JpdGVDb2xvchICCAISGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":\"Syracuse-Orange\"}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"],\"favoriteColor\":\"Syracuse-Orange\"}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhILCgVzdGF0cxICCAU=",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":null}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":null}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAg==",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"]}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhIJCgVzdGF0cxIA",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":{}}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":{}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/array-fields",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EiEKBG5hbWUSGRILCgVmaXJzdBICCAISCgoEbGFzdBICCAISGAoGcml2YWxzEg4IARoCCAIaAggCGgIIAhITCgVzdGF0cxIKCAEaAggDGgIIAw==",
+            "asJsonString": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":[12,34]}",
+            "asText": "{\"name\":{\"first\":\"Bob\",\"last\":\"C\"},\"rivals\":[\"user1\",\"user2\",\"user3\"],\"stats\":[12,34]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/root-arrays",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaAggDGgIIAxoCCAMaAggDGgIIAw==",
+            "asJsonString": "[1,2,3,4,5]",
+            "asText": "[1,2,3,4,5]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/root-arrays",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAE=",
+            "asJsonString": "[]",
+            "asText": "[]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-as-array-items",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaAggB",
+            "asJsonString": "[[]]",
+            "asText": "[[]]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-as-array-items",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaDggBGgIIAxoCCAMaAggD",
+            "asJsonString": "[[1,2,3]]",
+            "asText": "[[1,2,3]]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-as-array-items",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAE=",
+            "asJsonString": "[]",
+            "asText": "[]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-as-array-items",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaMRIKCgRuYW1lEgIIAhIJCgNhZ2USAggCEhgKBmNvbG9ycxIOCAEaAggCGgIIAhoCCAIaAggC",
+            "asJsonString": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]},\"hello\"]",
+            "asText": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]},\"hello\"]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-as-array-items",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaMRIKCgRuYW1lEgIIAhIJCgNhZ2USAggCEhgKBmNvbG9ycxIOCAEaAggCGgIIAhoCCAI=",
+            "asJsonString": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]}]",
+            "asText": "[{\"name\":\"joe\",\"age\":\"thirty\",\"colors\":[\"red\",\"green\",\"yellow\"]}]"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSGAoGY2l0aWVzEg4IARoCCAIaAggDGgIIAg==",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\"]}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSIAoGY2l0aWVzEhYIARoCCAIaAggDGgIIAhoCCAMaAggC",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",17584,\"Boston\",16573,\"Chicago\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/object-cases",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Eg8KCWZpcnN0TmFtZRICCAISDgoIbGFzdE5hbWUSAggCEgkKA2FnZRICCAMSGAoGY2l0aWVzEg4IARoCCAIaAggCGgIIAg==",
+            "asJsonString": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}",
+            "asText": "{\"firstName\":\"Aidan\",\"lastName\":\"C\",\"age\":26,\"cities\":[\"San Fransisco\",\"New York\",\"Durham\"]}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/objects-with-polymorphism",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "Ek0KCGxvY2F0aW9uEkESPwoMcHJpbmNpcGFsaXR5Ei8SCgoEY2l0eRICCAISEAoKcG9wdWxhdGlvbhICCAMSDwoLY29vcmRpbmF0ZXMSAA==",
+            "asJsonString": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{}}}}",
+            "asText": "{\"location\":{\"principality\":{\"city\":\"San Fransisco\",\"population\":830000,\"coordinates\":{}}}}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/root-arrays",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EgkKA2ZvbxICCAI=",
+            "asJsonString": "{\"foo\":\"bar\"}",
+            "asText": "{\"foo\":\"bar\"}"
+          }
+        }
+      },
+      "tags": []
+    }, {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/nullables",
+        "query": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
+        }
+      },
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAMaHBINCgdhZGRyZXNzEgIIAhILCgVwcmljZRICCAM=",
+            "asJsonString": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]",
+            "asText": "[{\"address\":\"123\",\"price\":657},{\"address\":\"456\",\"price\":322}]"
+          }
+        }
+      },
+      "tags": []
+    }]
+  }
+}

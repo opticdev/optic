@@ -14,5 +14,6 @@ export default class Check extends Command {
     const { args } = this.parse(Check);
     const { taskName } = args;
     await verifyTask(this, taskName);
+    process.exit(0);
   }
 }

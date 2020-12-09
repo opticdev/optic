@@ -187,25 +187,11 @@ export default function InProgressFullScreen({ type }) {
         );
 
         updatedAdditionalCommands([]); // clear these
-        const oas = OasProjectionHelper.fromEventString(
-          newEventStore.serializeEvents(rfcId)
-        );
-
         setStats({
-          fields: asJs.reduce(
-            (sum, command) => (command.AddField ? sum + 1 : sum),
-            0
-          ),
-          requests: asJs.reduce(
-            (sum, command) => (command.AddRequest ? sum + 1 : sum),
-            0
-          ),
-          responses: asJs.reduce(
-            (sum, command) =>
-              command.AddResponseByPathAndMethod ? sum + 1 : sum,
-            0
-          ),
-          oasLineCount: JSON.stringify(oas, null, 4).split('\n').length,
+          fields: 0,
+          requests: 0,
+          responses: 0,
+          oasLineCount: 0,
         });
         await specService.saveEvents(newEventStore, rfcId);
         setDone(true);
@@ -307,30 +293,30 @@ export default function InProgressFullScreen({ type }) {
             </Collapse>
             <Collapse in={done}>
               <div style={{ textAlign: 'center', marginTop: 19 }}>
-                {stats && !isManual ? (
-                  <Typography variant="body1" color="primary">
-                    <Typography variant="h6" color="textPrimary">
-                      That's <Stat number={stats.oasLineCount} label="line" />{' '}
-                      of OpenAPI that Optic will continue to keep up-to-date for
-                      your team!
-                    </Typography>
+                {/*{stats && !isManual ? (*/}
+                {/*  <Typography variant="body1" color="primary">*/}
+                {/*    <Typography variant="h6" color="textPrimary">*/}
+                {/*      That's <Stat number={stats.oasLineCount} label="line" />{' '}*/}
+                {/*      of OpenAPI that Optic will continue to keep up-to-date for*/}
+                {/*      your team!*/}
+                {/*    </Typography>*/}
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        margin: '0 auto',
-                        justifyContent: 'space-around',
-                        maxWidth: 320,
-                      }}
-                    >
-                      <StatMini number={stats.requests} label="new request" />
-                      <StatMini number={stats.responses} label="new response" />
-                      <StatMini number={stats.fields} label="new field" />
-                    </div>
-                    <div></div>
-                    <div></div>
-                  </Typography>
-                ) : null}
+                {/*    <div*/}
+                {/*      style={{*/}
+                {/*        display: 'flex',*/}
+                {/*        margin: '0 auto',*/}
+                {/*        justifyContent: 'space-around',*/}
+                {/*        maxWidth: 320,*/}
+                {/*      }}*/}
+                {/*    >*/}
+                {/*      <StatMini number={stats.requests} label="new request" />*/}
+                {/*      <StatMini number={stats.responses} label="new response" />*/}
+                {/*      <StatMini number={stats.fields} label="new field" />*/}
+                {/*    </div>*/}
+                {/*    <div></div>*/}
+                {/*    <div></div>*/}
+                {/*  </Typography>*/}
+                {/*) : null}*/}
                 <Button
                   variant="contained"
                   color="primary"

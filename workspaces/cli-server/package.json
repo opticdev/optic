@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "8.5.0",
+  "version": "8.6.1",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,29 +14,33 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "8.5.0",
-    "@useoptic/cli-client": "8.5.0",
-    "@useoptic/cli-config": "8.5.0",
-    "@useoptic/cli-scripts": "8.5.0",
-    "@useoptic/cli-shared": "8.5.0",
-    "@useoptic/ui": "8.5.0",
-    "avsc": "^5.4.18",
+    "@sentry/node": "^5.28.0",
+    "@sentry/tracing": "^5.28.0",
+    "@useoptic/analytics": "8.6.1",
+    "@useoptic/cli-client": "8.6.1",
+    "@useoptic/cli-config": "8.6.1",
+    "@useoptic/cli-scripts": "8.6.1",
+    "@useoptic/cli-shared": "8.6.1",
+    "@useoptic/ui": "8.6.1",
     "analytics-node": "^3.4.0-beta.2",
+    "avsc": "^5.4.18",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "jwt-decode": "2.2.0",
     "express": "^4.17.1",
     "find-process": "^1.4.3",
     "fs-extra": "^9.0.0",
     "get-port": "^5.1.0",
     "http-proxy-middleware": "^1.0.4",
+    "is-port-reachable": "^3.0.0",
+    "jwt-decode": "2.2.0",
     "lodash.sortby": "^4.7.0",
     "node-fetch": "^2.6.0",
+    "process-exists": "^4.0.0",
     "proper-lockfile": "^4.1.1",
     "stream-chain": "^2.2.3",
     "stream-json": "^1.7.1",
     "uuid": "^8.0.0",
-    "wait-on": "^4.0.0"
+    "wait-on": "^5.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
@@ -49,10 +53,11 @@
     "@types/proper-lockfile": "^4.1.1",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-json": "^1.5.1",
-    "@types/wait-on": "^4.0.0"
+    "@types/wait-on": "^5.2.0"
   },
   "files": [
     "/build",
-    "/resources"
+    "/resources",
+    "/.env"
   ]
 }

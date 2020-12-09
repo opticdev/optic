@@ -1,13 +1,9 @@
-//@ts-ignore
-import Listr from 'listr';
 import Command from '@oclif/command';
 import colors from 'colors';
 //@ts-ignore
 import niceTry from 'nice-try';
 import {
   getPathsRelativeToConfig,
-  IOpticTaskRunnerConfig,
-  IOpticTask,
   readApiConfig,
   TaskToStartConfig,
   IOpticTaskAliased,
@@ -16,25 +12,12 @@ import {
   isManualTask,
   isRecommendedTask,
 } from '@useoptic/cli-config';
-import {
-  HttpToolkitCapturingProxy,
-  CommandSession,
-} from '@useoptic/cli-shared';
-import waitOn from 'wait-on';
 import { opticTaskToProps, trackUserEvent } from '../analytics';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { fromOptic } from '@useoptic/cli-shared';
-import url from 'url';
-import { buildQueryStringParser } from '@useoptic/cli-shared/build/query/build-query-string-parser';
 import { verifyRecommended } from './recommended';
 import { verifyManual } from './manual';
-import {
-  ApiProcessStartsOnAssignedHost,
-  ApiProcessStartsOnAssignedPort,
-  CommandIsLongRunning,
-  ProxyCanStartAtInboundUrl,
-  ProxyTargetUrlResolves,
-} from '@useoptic/analytics/lib/interfaces/ApiCheck';
+import fs from 'fs-extra';
 import { Modes } from '@useoptic/cli-config/build';
 
 export async function verifyTask(
@@ -54,9 +37,10 @@ export async function verifyTask(
     return false;
   }
 
-  let foundTask: IOpticTaskAliased | null = null;
+  const paths = await getPathsRelativeToConfig();
+  const rawConfig = (await fs.readFile(paths.configPath)).toString();
 
-  let fixUrl = 'https://www.useoptic.com/docs/faqs-and-troubleshooting/';
+  let foundTask: IOpticTaskAliased | null = null;
 
   await niceTry(async () => {
     if (config.tasks) {
@@ -154,6 +138,7 @@ export async function verifyTask(
           passed: passedAll,
           mode: mode,
           taskName: taskName,
+          rawConfig,
           task: {
             ...foundTask!,
           },
@@ -178,6 +163,7 @@ export async function verifyTask(
           passed: passedAll,
           mode: mode,
           taskName: taskName,
+          rawConfig,
           task: {
             ...foundTask!,
           },

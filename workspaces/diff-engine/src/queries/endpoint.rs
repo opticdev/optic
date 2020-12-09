@@ -6,6 +6,7 @@ use crate::state::endpoint::{
 use crate::HttpInteraction;
 use petgraph::graph::Graph;
 use petgraph::visit::EdgeFilteredNeighborsDirected;
+
 pub struct EndpointQueries<'a> {
   pub endpoint_projection: &'a EndpointProjection,
 }
@@ -16,9 +17,20 @@ impl<'a> EndpointQueries<'a> {
       endpoint_projection,
     }
   }
+
+  fn extract_normalized_path(interaction: &HttpInteraction) -> &str {
+    if interaction.request.path.eq("/") {
+      &interaction.request.path
+    } else if interaction.request.path.ends_with("/") {
+      &interaction.request.path[..interaction.request.path.len() - 1]
+    } else {
+      &interaction.request.path
+    }
+  }
   pub fn resolve_path(&self, interaction: &HttpInteraction) -> Option<PathComponentIdRef> {
+    let path = Self::extract_normalized_path(interaction);
     // eprintln!("{}", path);
-    let mut path_components = interaction.request.path.split('/');
+    let mut path_components = path.split('/');
     // skip leading empty
     path_components.next();
     let mut last_resolved_path_id = Some(ROOT_PATH_ID);
@@ -197,5 +209,78 @@ impl<'a> EndpointQueries<'a> {
       .graph
       .neighbors_directed(*node_index, petgraph::Direction::Incoming);
     return neighbors;
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use serde_json::json;
+  fn interaction_with_path(path: String) -> HttpInteraction {
+    serde_json::from_value(json!(
+      {
+        "uuid": "id",
+        "request": {
+          "host": "example.com",
+          "method": "GET",
+          "path": path,
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ))
+    .unwrap()
+  }
+  #[test]
+  pub fn can_ignore_trailing_slash() {
+    let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c/"));
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    assert_eq!(normalized_path, "/a/b/c")
+  }
+
+  #[test]
+  pub fn can_handle_no_trailing_slash() {
+    let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c"));
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    assert_eq!(normalized_path, "/a/b/c")
+  }
+  #[test]
+  pub fn can_handle_root_path() {
+    let interaction: HttpInteraction = interaction_with_path(String::from("/"));
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    assert_eq!(normalized_path, "/")
   }
 }

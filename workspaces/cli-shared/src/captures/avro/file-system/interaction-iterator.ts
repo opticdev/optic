@@ -51,6 +51,7 @@ export async function* CaptureInteractionIterator(
     let index = 0;
     const items = BatchInteractionIterator(batchFilePath);
     for await (const x of items) {
+      // console.log({ x, index });
       const shouldEmit = filter(x);
       if (shouldEmit) {
         diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
@@ -78,9 +79,17 @@ export async function* CaptureInteractionIterator(
       }
       index = index + 1;
     }
+    const isBatchEmpty = index === 0;
+    if (isBatchEmpty) {
+      yield {
+        hasMoreInteractions: true,
+        interaction: null,
+        skippedInteractionsCounter,
+        diffedInteractionsCounter,
+      };
+    }
     currentBatchId = currentBatchId + BigInt(1);
   }
-
   yield {
     hasMoreInteractions: false,
     interaction: null,
