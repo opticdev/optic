@@ -154,6 +154,7 @@ export async function getAssertionsFromCommandSession(
   const servicePort = serviceConfig.port;
   const serviceHost = serviceConfig.host;
   const opticServiceConfig = {
+    PORT: servicePort.toString(),
     OPTIC_API_PORT: servicePort.toString(),
     OPTIC_API_HOST: serviceHost.toString(),
   };
