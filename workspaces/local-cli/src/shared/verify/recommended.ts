@@ -221,12 +221,17 @@ export async function getAssertionsFromCommandSession(
     })
       .then(() => {
         tookProxyPort = true;
+        serviceRunning = false;
         resolve(true);
       }) //if service resolves we assume it's up.
       .catch(() => resolve(false));
   });
 
-  await Promise.race([commandStoppedPromise, serviceRunningPromise]);
+  await Promise.race([
+    commandStoppedPromise,
+    serviceRunningPromise,
+    wrongPortTaken,
+  ]);
 
   commandSession.stop();
 
