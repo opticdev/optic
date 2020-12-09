@@ -7,7 +7,6 @@ import { cli } from 'cli-ux';
 //@ts-ignore
 import which from 'which';
 import colors from 'colors';
-import { spawn, SpawnOptions } from 'child_process';
 import { IOpticScript } from '@useoptic/cli-config/build';
 import { fromOptic } from '@useoptic/cli-shared';
 import { generateOas } from './generate/oas';

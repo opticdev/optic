@@ -3,8 +3,6 @@ import path from 'path';
 import os from 'os';
 //@ts-ignore
 import { hri } from 'human-readable-ids';
-//@ts-ignore
-import niceTry from 'nice-try';
 
 export const opticrcPath = path.resolve(os.homedir(), '.opticrc');
 
