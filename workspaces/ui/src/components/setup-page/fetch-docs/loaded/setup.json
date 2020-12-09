@@ -67,7 +67,7 @@
                 "code_change": true,
                 "language": "golang",
                 "preamble": "Before your http call to `ListenAndServe`, check for a custom port when it is provided:",
-                "start_command\"": "go run application.go",
+                "start_command": "go run application.go",
                 "before": "http.ListenAndServe(\":8000\", r)\n",
                 "after": "port := \":8000\"\n\nif os.Getenv(\"PORT\") != \"\" {\n    port = fmt.Sprintf(\":%s\", os.Getenv(\"PORT\"))\n}\n\nhttp.ListenAndServe(port, r)\n"
             }
@@ -271,7 +271,6 @@
     "generic": {
         "pretty_name": "",
         "project_url": "",
-        "start_command": "<start command>",
         "frameworks": {
             "generic": {
                 "pretty_name": "Generic Instructions (any API framework)",
@@ -279,6 +278,7 @@
                 "code_change": true,
                 "language": "text",
                 "preamble": "Modify your application's start code to listen on a custom port when it is provided:",
+                "start_command": "<start command>",
                 "before": "server_port = 5000;\nhttp_listen(server_port);\n",
                 "after": "server_port = envvar(\"PORT\") || 5000;\nhttp_listen(server_port);\n"
             }
