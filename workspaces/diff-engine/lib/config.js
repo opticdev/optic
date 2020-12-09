@@ -35,5 +35,11 @@ module.exports = {
       name: 'macos',
       suffix: '',
     },
+    {
+      type: 'Darwin',
+      arch: 'arm64',
+      name: 'macos-aarch64',
+      suffix: '',
+    },
   ],
 };

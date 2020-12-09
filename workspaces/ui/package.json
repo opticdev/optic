@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ui",
-  "version": "8.6.0-beta.32",
+  "version": "8.6.0-beta.34",
   "files": [
     "build",
     "index.js",
@@ -15,13 +15,14 @@
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.46",
-    "@useoptic/cli-shared": "8.6.0-beta.32",
-    "@useoptic/cli-client": "8.6.0-beta.32",
-    "@useoptic/analytics": "8.6.0-beta.32",
+    "@useoptic/cli-shared": "8.6.0-beta.34",
+    "@useoptic/cli-client": "8.6.0-beta.34",
+    "@useoptic/analytics": "8.6.0-beta.34",
     "@useoptic/domain": "10.0.17",
     "@useoptic/domain-utilities": "10.0.17",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",
+    "react-select": "3.1.1",
     "classnames": "^2.2.6",
     "color": "^3.1.2",
     "date-fns": "^2.11.1",
@@ -49,12 +50,19 @@
     "react-markdown": "^4.2.2",
     "react-minimal-pie-chart": "^6.0.1",
     "react-router-dom": "^5.1.2",
+    "yaml-ast-parser": "^0.0.43",
+    "shell-escape": "^0.2.0",
+    "deepcopy": "^2.1.0",
+    "react-countdown": "^2.3.1",
+    "react-text-loop": "^2.3.0",
     "react-scroll-into-view-if-needed": "^2.1.7",
     "reactour": "^1.18.0",
     "resolve": "1.10.0",
     "scroll-into-view-if-needed": "^2.2.24",
     "styled-components": "^5.1.1",
     "time-ago": "^0.2.1",
+    "xstate": "^4.14.1",
+    "@xstate/react": "^1.0.3",
     "ts-pnp": "1.1.2",
     "url-loader": "1.1.2"
   },
@@ -95,6 +103,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.4.3",
+    "babel-jest": "^26.6.0",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.2.0",
     "@storybook/addon-actions": "^5.0.11",
@@ -150,15 +159,10 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
     ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
     "setupFilesAfterEnv": [],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
-    "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
@@ -184,10 +188,6 @@
       "web.jsx",
       "jsx",
       "node"
-    ],
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
     ]
   },
   "proxy": "http://localhost:34444",

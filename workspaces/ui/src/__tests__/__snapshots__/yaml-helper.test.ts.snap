@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can parse a test task from optic yaml 1`] = `
+Object {
+  "isValid": true,
+  "task": Object {
+    "command": Object {
+      "endLine": 15,
+      "endPosition": 373,
+      "startLine": 15,
+      "startPosition": 357,
+      "value": "mocha test2.js",
+    },
+    "inboundUrl": undefined,
+    "name": "test-gets",
+    "targetUrl": undefined,
+    "useTask": Object {
+      "endLine": 16,
+      "endPosition": 392,
+      "startLine": 16,
+      "startPosition": 387,
+      "value": "start",
+    },
+  },
+}
+`;

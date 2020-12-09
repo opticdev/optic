@@ -12,11 +12,12 @@ import {
   isManualTask,
   isRecommendedTask,
 } from '@useoptic/cli-config';
-import { trackUserEvent } from '../analytics';
+import { opticTaskToProps, trackUserEvent } from '../analytics';
 import { ApiCheckCompleted } from '@useoptic/analytics/lib/events/onboarding';
 import { fromOptic } from '@useoptic/cli-shared';
 import { verifyRecommended } from './recommended';
 import { verifyManual } from './manual';
+import fs from 'fs-extra';
 import { Modes } from '@useoptic/cli-config/build';
 
 export async function verifyTask(
@@ -35,6 +36,9 @@ export async function verifyTask(
     );
     return false;
   }
+
+  const paths = await getPathsRelativeToConfig();
+  const rawConfig = (await fs.readFile(paths.configPath)).toString();
 
   let foundTask: IOpticTaskAliased | null = null;
 
@@ -134,6 +138,7 @@ export async function verifyTask(
           passed: passedAll,
           mode: mode,
           taskName: taskName,
+          rawConfig,
           task: {
             ...foundTask!,
           },
@@ -158,6 +163,7 @@ export async function verifyTask(
           passed: passedAll,
           mode: mode,
           taskName: taskName,
+          rawConfig,
           task: {
             ...foundTask!,
           },

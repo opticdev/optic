@@ -84,10 +84,14 @@ export async function verifyManual(
           startConfig
         );
 
-        isTargetResolvable = commandSessionPromise.proxyTargetUrlResolves;
+        isTargetResolvable = {
+          passed: commandSessionPromise.proxyCanStartAtInboundUrl.passed,
+          targetHostname:
+            commandSessionPromise.proxyCanStartAtInboundUrl.hostname,
+        };
 
         assert(
-          commandSessionPromise.proxyTargetUrlResolves!.passed,
+          commandSessionPromise.proxyCanStartAtInboundUrl!.passed,
           'hostname could not be resolved'
         );
       },

@@ -34,6 +34,7 @@ export interface CheckAssertionsResult {
     inboundUrl?: string;
     targetUrl?: string;
   };
+  rawConfig: string;
   recommended?: {
     commandIsLongRunning: CommandIsLongRunning;
     apiProcessStartsOnAssignedHost: ApiProcessStartsOnAssignedHost;

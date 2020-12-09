@@ -24,7 +24,8 @@ class CommandAndProxySessionManager {
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;
     const opticServiceConfig = {
-      OPTIC_API_PORT: servicePort.toString(),
+      PORT: servicePort.toString(),
+      OPTIC_API_PORT: servicePort.toString(), // backwards compatible
       OPTIC_API_HOST: serviceHost.toString(),
       OPTIC_PROXY_PORT: this.config.proxyConfig.port.toString(),
     };

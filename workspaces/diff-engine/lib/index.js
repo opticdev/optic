@@ -85,12 +85,18 @@ function getPrebuiltPath(platform) {
 
 async function install(options) {
   let platform = getSupportedPlatform();
-  if (!platform)
-    new Error(
+  if (!platform) {
+    let issueTitle = `Support for platform (os.type=${OS.type()} os.arch=${OS.arch()})`;
+    let issueLabels = 'feature request';
+    let issueUrl = encodeURI(
+      `https://github.com/opticdev/optic/issues/new?title=${issueTitle}&labels=${issueLabels}`
+    );
+    throw new Error(
       `Unsupported platform. Cannot install pre-built ${
         Config.binaryName
-      } for os.type=${OS.type()} os.arch=${OS.arch()}`
+      } for os.type=${OS.type()} os.arch=${OS.arch()}. You can request support by opening a Github Issue at ${issueUrl}`
     );
+  }
 
   const installDir = Config.prebuilt.installPath;
   if (!Fs.existsSync(installDir)) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
+import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 const PageContext = React.createContext(null);
@@ -44,7 +45,7 @@ export default function Page(props) {
 
   return (
     <PageContext.Provider value={pageContext}>
-      <div className={classes.root}>{props.children}</div>;
+      <div className={classes.root}>{props.children}</div>
     </PageContext.Provider>
   );
 }
@@ -52,7 +53,11 @@ export default function Page(props) {
 function PageBody(props) {
   const classes = useStyles(props);
 
-  return <div className={classes.content}>{props.children}</div>;
+  return (
+    <div className={classNames(classes.content, props.className)}>
+      {props.children}
+    </div>
+  );
 }
 
 export function usePageTitle(title, injectedContext) {
