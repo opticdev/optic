@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import { Link } from 'react-router-dom';
 import { useBaseUrl } from '../../contexts/BaseUrlContext';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 export function CheckPassed(props) {
   const classes = useStyles();
@@ -42,9 +43,7 @@ export function CheckPassed(props) {
       try {
         const status = await specService.getCaptureStatus(started.captureId);
         setCounter(status.interactionsCount);
-      } catch(e) {
-
-      }
+      } catch (e) {}
     }
   }, 1500);
 
@@ -82,11 +81,14 @@ export function CheckPassed(props) {
               Send at least {target} requests to your API using, curl, Postman,
               your webapp, etc
             </Typography>
-            <LinearProgress
-              style={{ marginTop: 20 }}
-              variant="determinate"
-              value={percentComplete < 100 ? percentComplete : 100}
-            />
+
+            <ScrollIntoViewIfNeeded>
+              <LinearProgress
+                style={{ marginTop: 20 }}
+                variant="determinate"
+                value={percentComplete < 100 ? percentComplete : 100}
+              />
+            </ScrollIntoViewIfNeeded>
             <Typography
               variant="h6"
               style={{ marginTop: 10, marginBottom: 10 }}
@@ -109,7 +111,7 @@ export function CheckPassed(props) {
                   Start Documenting
                 </Button>
               </>
-            ): null }
+            ) : null}
           </>
         ) : (
           <Typography

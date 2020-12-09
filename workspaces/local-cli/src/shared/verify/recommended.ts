@@ -162,6 +162,19 @@ export async function getAssertionsFromCommandSession(
   const expected = `${serviceConfig.host}:${serviceConfig.port}`;
   const shouldNotTake = `${startConfig.proxyConfig.host}:${startConfig.proxyConfig.port}`;
 
+  const inboundPortIsOpenAtStart = new Promise(async (resolve) => {
+    waitOn({
+      resources: [`tcp:${shouldNotTake}`],
+      delay: 0,
+      tcpTimeout: 500,
+      timeout: 500,
+    })
+      .then(() => {
+        resolve(false);
+      }) //if service resolves we assume it's up.
+      .catch(() => resolve(true));
+  });
+
   await commandSession.start(
     {
       command: startConfig!.command!,
@@ -213,13 +226,7 @@ export async function getAssertionsFromCommandSession(
       .catch(() => resolve(false));
   });
 
-  await Promise.race([
-    commandStoppedPromise,
-    wrongPortTaken,
-    serviceRunningPromise,
-  ]);
-
-  /////
+  await Promise.race([commandStoppedPromise, serviceRunningPromise]);
 
   commandSession.stop();
 
@@ -238,7 +245,7 @@ export async function getAssertionsFromCommandSession(
   };
 
   const proxyCanStartAtInboundUrl: ProxyCanStartAtInboundUrl = {
-    passed: !tookProxyPort,
+    passed: inboundPortIsOpenAtStart && !tookProxyPort,
     hostname: expected,
   };
 
