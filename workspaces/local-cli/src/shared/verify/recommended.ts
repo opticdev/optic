@@ -229,7 +229,7 @@ export async function getAssertionsFromCommandSession(
     expectedHost: serviceConfig.host,
   };
   const startOnPortAssertion: ApiProcessStartsOnAssignedPort = {
-    passed: serviceRunning && !tookProxyPort,
+    passed: serviceRunning,
     expectedPort: serviceConfig.port.toString(),
   };
   const longRunningAssertion: CommandIsLongRunning = {
