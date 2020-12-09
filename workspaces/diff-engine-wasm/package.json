@@ -4,7 +4,7 @@
   "scripts": {
     "build:node": "wasm-pack build --target nodejs --out-dir build --out-name index",
     "build:browser": "wasm-pack build --target bundler --out-dir browser --out-name index",
-    "test": "echo No tests specified for diff-engine-wasm",
+    "test": "cd test && tap tests",
     "ws:build": "npm run build:node && npm run build:browser",
     "ws:clean": "rm -rf pkg/*",
     "ws:test": "echo No workspace tests specified for diff-engine-wasm"
@@ -16,8 +16,13 @@
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "files": [
+    "Cargo.toml",
+    "/build"
+  ],
   "dependencies": {},
   "devDependencies": {
+    "@types/tap": "^14.10.1",
     "@wasm-tool/wasm-pack-plugin": "^1.3.1",
     "tap": "^14.11.0",
     "wasm-pack": "^0.9.1"
