@@ -6,12 +6,12 @@
     },
     "commandHost": {
         "title": "Your `command` starts a long-running process on the host Optic assigns it",
-        "shortTitle": "starts a long-running process on the host Optic assigns it",
+        "shortTitle": "starts on the host Optic assigns it",
         "resolution": "By default when using the `command` parameter, Optic expects your API to be running on localhost alongside the Optic proxy. You shouldn't have to configure this in a recommended workflow.\n\n- If your API runs on localhost, but uses a different hostname: check your custom hostname mapping (such as in `/etc/hosts`) to assure it is properly resolving to localhost.\n- If your API doesn't run on localhost: Consider a [manual configuration](https://app.useoptic.com) which will let you target another host (such as a cloud-based API gateway).\n"
     },
     "commandPort": {
         "title": "Your `command` starts a long-running process on the port Optic assigns it",
-        "shortTitle": "starts a long-running process on the port Optic assigns it",
+        "shortTitle": "starts on the port Optic assigns it",
         "resolution": "Every time you run api start, Optic assigns your API a random port. If you get this error, it means that your command runs, but the API is not binding to the `$PORT` within 25 seconds of Optic running your command.\n\n- If you can set the port on which your API listens from the command line: make sure the `command` parameter of your task definition in `optic.yml` includes `$PORT`.\n  - For example, `rails -s` becomes `rails -s --port $PORT`.\n- If your development environment already uses `$PORT`, the value provided by Optic may be overridden. Instead, try `$OPTIC_API_PORT`.\n- If you can't set the port from the command line: update your code to bind to the port Optic provides via the `$PORT` environment variable.\n- If your application takes more than 25 seconds to warm up, the `api check` will always fail. As long as all other checks have passed, try using `api run` directly and wait for your application to warm up.\n"
     },
     "inboundUrlStart": {
