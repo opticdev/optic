@@ -4,7 +4,7 @@ const Fs = require('fs');
 const Toml = require('@iarna/toml');
 
 const crate = Toml.parse(
-  Fs.readFileSync(Path.join(__dirname, '..', 'Cargo.toml'))
+  Fs.readFileSync(Path.join(__dirname, '..', 'cli', 'Cargo.toml'))
 );
 
 module.exports = {
