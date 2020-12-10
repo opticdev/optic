@@ -51,13 +51,17 @@ export function CheckPassed(props) {
   const percentComplete = (count / target) * 100;
 
   return (
-    <Collapse in={props.passed}>
+    <Collapse in={props.passed} style={{ marginBottom: 300 }}>
       <Divider style={{ marginTop: 40, marginBottom: 20 }} />
       <div className={classes.root}>
-        <Typography variant="h5" style={{ marginBottom: 18 }}>
-          ✅ Check Passed! Your <Code>api start</Code> command is all set up.
-        </Typography>
-
+        {props.passed && (
+          <ScrollIntoViewIfNeeded>
+            <Typography variant="h5" style={{ marginBottom: 18 }}>
+              ✅ Check Passed! Your <Code>api start</Code> command is all set
+              up.
+            </Typography>
+          </ScrollIntoViewIfNeeded>
+        )}
         <Typography variant="h6" className={classes.copy}>
           Now run <Code>api start</Code>
         </Typography>
