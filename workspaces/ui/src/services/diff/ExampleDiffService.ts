@@ -35,10 +35,6 @@ export class ExampleCaptureService implements ICaptureService {
     additionalCommands: IRfcCommand[],
     filters: { pathId: string; method: string }[]
   ): Promise<IStartDiffResponse> {
-    const spec = DiffEngine.spec_from_events(JSON.stringify(events));
-
-    console.log({ spec });
-
     return {
       diffId: uuidv4(),
       notificationsUrl: '',
