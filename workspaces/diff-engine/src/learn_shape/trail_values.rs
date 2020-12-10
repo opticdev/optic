@@ -5,10 +5,11 @@ use crate::shapes::JsonTrail;
 use crate::BodyDescriptor;
 use serde_json::json;
 use std::collections::HashMap;
+use crate::learn_shape::visitors::BodyVisitors;
 
-type TrailValueMap = HashMap<JsonTrail, TrailValues>;
+pub type TrailValueMap = HashMap<JsonTrail, TrailValues>;
 
-fn for_body_descriptor(body: Option<BodyDescriptor>) -> HashMap<JsonTrail, TrailValues> {
+pub fn for_body_descriptor(body: Option<BodyDescriptor>) -> HashMap<JsonTrail, TrailValues> {
   let trail_map: HashMap<JsonTrail, TrailValues> = HashMap::new();
 
   if body.is_some() {
@@ -16,18 +17,19 @@ fn for_body_descriptor(body: Option<BodyDescriptor>) -> HashMap<JsonTrail, Trail
     let mut visitors = LearnVisitors::new();
 
     traverser.traverse_root_shape(body, &mut visitors);
-    //
-    // traverser.traverse_root_shape(
-    //   body,
-    //   &mut JsonTraverser::new(JsonTrail::empty()));
-    // // let shape_traverser = traverser::Traverser::new();
-    HashMap::new()
+    visitors.take_results()
   } else {
     HashMap::new()
   }
 }
 
-#[test]
+
+#[cfg(test) ]
+mod test {
+  use super::*;
+  use insta::assert_debug_snapshot;
+
+  #[test]
 fn trail_values_should_produce_map() {
   let object_body = json!(
     [{"message": "hello"}, {"message": 123}, {"colors": ["red", true]}]
@@ -35,5 +37,8 @@ fn trail_values_should_produce_map() {
 
   let body: Option<BodyDescriptor> = Some(BodyDescriptor::from(object_body));
 
-  let a = for_body_descriptor(body);
+  let result = for_body_descriptor(body);
+  assert_debug_snapshot!(result);
+}
+
 }

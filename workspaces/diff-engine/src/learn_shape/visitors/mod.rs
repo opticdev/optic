@@ -43,11 +43,11 @@ pub trait BodyVisitor<R> {
   }
 
   fn take_results(&mut self) -> HashMap<JsonTrail, R> {
-    // if let Some(results) = self.results() {
-    //   results.take_results()
-    // } else {
+    if let Some(results) = self.results() {
+      results.take_results()
+    } else {
     HashMap::new()
-    // }
+    }
   }
 }
 
@@ -71,25 +71,27 @@ pub trait BodyPrimitiveVisitor<R>: BodyVisitor<R> {
 // -------
 
 pub struct VisitorResults<R> {
-  results: HashMap<JsonTrail, R>
+  results: Option<HashMap<JsonTrail, R>>
 }
 
 impl<R> VisitorResults<R> {
   pub fn new() -> Self {
     VisitorResults {
-      results: HashMap::new(),
+      results:Some(HashMap::new()),
     }
   }
 
   pub fn get(&mut self, json_trail:&JsonTrail) -> Option<&mut R> {
-    self.results.get_mut(&json_trail)
+    self.results.as_mut().expect("expected results to be present").get_mut(&json_trail)
   }
 
   pub fn insert(&mut self, json_trail: JsonTrail, result: R) {
-    self.results.insert(json_trail, result);
+    self.results.as_mut().expect("expected results to be present").insert(json_trail, result);
   }
 
-  pub fn take_results(self) -> HashMap<JsonTrail, R> {
-    self.results
+  pub fn take_results(&mut self) -> HashMap<JsonTrail, R> {
+    let  results = self.results.take();
+    self.results = Some(HashMap::new());
+    results.expect("expected results to be present")
   }
 }

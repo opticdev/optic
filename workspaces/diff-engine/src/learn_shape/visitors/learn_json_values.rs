@@ -11,7 +11,8 @@ use crate::state::shape::{FieldId, ShapeId, ShapeKind};
 use serde_json::Value as JsonValue;
 use std::borrow::Borrow;
 use crate::learn_shape::TrailValues;
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
+use std::collections::hash_map::RandomState;
 
 pub struct LearnVisitors {
   array: LearnArrayVisitor,
@@ -54,6 +55,11 @@ impl BodyVisitors<TrailValues> for LearnVisitors {
   fn primitive(&mut self) -> &mut LearnPrimitiveVisitor {
     &mut self.primitive
   }
+
+  fn take_results(&mut self) -> HashMap<JsonTrail, TrailValues, RandomState> {
+    dbg!("@TODO merge self.object, array, etc.");
+    self.primitive().take_results()
+  }
 }
 
 // Primitive visitor
@@ -79,26 +85,24 @@ impl BodyVisitor<TrailValues> for LearnPrimitiveVisitor {
 
 impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
   fn visit(&mut self, body: BodyDescriptor, json_trail: JsonTrail) {
+    if let None = self.get(&json_trail) {
+      let value = TrailValues::new(&json_trail);
+      self.insert(json_trail.clone(), value);
+    }
+    let trail_values =  self.get(&json_trail).expect("expected map to contain a value at the json_trail");
 
-    // dbg!(&body);
-    // dbg!(&json_trail);
+    dbg!(&trail_values);
 
-    let default = &mut default_trail(&json_trail);
-    let current_trail_values = self.get(&json_trail).unwrap_or(default);
+    match body {
+      BodyDescriptor::Boolean => trail_values.was_boolean = true,
+      BodyDescriptor::Number => trail_values.was_number = true,
+      BodyDescriptor::String => trail_values.was_string = true,
+      BodyDescriptor::Null => trail_values.was_null = true,
+      _ => unreachable!("should not call primitive visitor without a primitive value"),
+    }
 
-    dbg!(current_trail_values);
-    // if let Some(results) = self.get(&json_trail) {
-    //   dbg!(results);
-    // }
+    dbg!(&trail_values);
 
-
-    // match &body {
-    //   BodyDescriptor::Boolean => trail.was_boolean = true,
-    //   BodyDescriptor::Number => trail.was_number = true,
-    //   BodyDescriptor::String => trail.was_string = true,
-    //   BodyDescriptor::Null => trail.was_null = true,
-    //   _ => unreachable!("should not call primitive visitor without a primitive value"),
-    // }
   }
 }
 
@@ -209,17 +213,4 @@ impl BodyVisitor<TrailValues> for LearnObjectKeyVisitor {
 
 impl BodyObjectKeyVisitor<TrailValues> for LearnObjectKeyVisitor {
   fn visit(&mut self, object_json_trail: &JsonTrail, object_keys: &Vec<String>) {}
-}
-
-fn default_trail(json_trail: &JsonTrail) -> TrailValues {
-  TrailValues {
-    trail: json_trail.clone(),
-    was_string: false,
-    was_number: false,
-    was_boolean: false,
-    was_null: false,
-    was_array: false,
-    was_object: false,
-    field_set: Default::default()
-  }
 }

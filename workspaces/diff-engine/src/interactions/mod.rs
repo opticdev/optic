@@ -8,6 +8,10 @@ pub use crate::queries::endpoint::EndpointQueries;
 use crate::shapes::diff as diff_shape;
 pub use result::InteractionDiffResult;
 use visitors::{InteractionVisitors, PathVisitor};
+use crate::BodyDescriptor;
+use crate::protos::shapehash::ShapeDescriptor;
+use crate::events::http_interaction::Body;
+use crate::learn_shape::trail_values::for_body_descriptor;
 
 pub fn diff(
   spec_projection: &SpecProjection,
@@ -61,10 +65,37 @@ pub fn diff(
     .collect()
 }
 
-#[cfg(test)]
-mod test {
-  #[test]
-  pub fn try_diff() {
-    assert_eq!(true, true);
-  }
+
+pub struct BodyAnalysisResult {}
+pub fn analyze_undocumented_bodies(
+    spec_projection: &SpecProjection,
+    http_interaction: HttpInteraction,
+) -> Vec<BodyAnalysisResult> {
+    let endpoint_projection = spec_projection.endpoint();
+    let endpoint_queries = EndpointQueries::new(endpoint_projection);
+    let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
+    let mut diff_visitors = visitors::diff::DiffVisitors::new();
+
+    interaction_traverser.traverse(&http_interaction, &mut diff_visitors);
+
+    let results = diff_visitors.take_results().unwrap();
+
+    let body_analysis_results: Vec<BodyAnalysisResult> = results
+        .into_iter()
+        .flat_map(move |result| {
+            match result {
+                InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+                    let body: Option<BodyDescriptor> = (&http_interaction.request.body.value).into();
+                    let value_map = for_body_descriptor(body);
+                    vec![BodyAnalysisResult{}]
+                }
+                InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
+                    vec![]
+
+                }
+                _ => vec![]
+            }
+        }).collect();
+
+    body_analysis_results
 }
