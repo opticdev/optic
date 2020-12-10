@@ -7,10 +7,10 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-import {
-  ExampleCaptureService,
-  ExampleDiffService,
-} from '../services/diff/ExampleDiffService';
+// import {
+//   ExampleCaptureService,
+//   ExampleDiffService,
+// } from '../services/diff/ExampleDiffService';
 import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Snackbar, makeStyles } from '@material-ui/core';
@@ -70,6 +70,9 @@ export default function DemoSessions(props) {
   });
 
   const captureServiceFactory = async (specService, captureId) => {
+    const { ExampleCaptureService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
     return new ExampleCaptureService(specService);
   };
 
@@ -82,6 +85,10 @@ export default function DemoSessions(props) {
     config,
     captureId
   ) => {
+    const { ExampleDiffService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
+
     async function computeInitialDiff() {
       const capture = await specService.listCapturedSamples(captureId);
       const commandContext = new RfcCommandContext(

@@ -1,0 +1,26 @@
+[package]
+name = "optic_diff_wasm"
+version = "0.1.0"
+authors = ["Jaap Rood <jaap@jaaprood.nl>"]
+edition = "2018"
+
+# works around https://github.com/rustwasm/wasm-pack/issues/886
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[workspace] # Creating a new workspace prevents this from being built as part of the pre-built binaries
+
+[dependencies]
+console_error_panic_hook = "0.1.6"
+log = "0.4.6"
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0.57"
+wasm-bindgen = "0.2.68"
+wasm-logger = "0.2.0"
+
+[dependencies.optic_diff_engine]
+path = "../diff-engine" 
+default-features = false

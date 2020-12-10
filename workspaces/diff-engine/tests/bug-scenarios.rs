@@ -1,12 +1,12 @@
 #![recursion_limit = "2560"]
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
+use optic_diff_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
 use serde_json::json;
 
 #[test]
 fn scenario_32() {
-    let events: Vec<SpecEvent> =
+  let events: Vec<SpecEvent> =
         serde_json::from_value(json!([
     {
         "PathComponentAdded": {
@@ -523,7 +523,7 @@ fn scenario_32() {
         }
     }
 ])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
   {
     "uuid": "8d8d28eb-2fa4-4835-bd3c-b3855d731d05",
     "request": {
@@ -568,26 +568,26 @@ fn scenario_32() {
     "tags": []
   }
   ]))
-        .expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_32__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_32__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_32__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_32__results", results)
+  });
 }
 
 #[test]
 fn scenario_33() {
-    let events: Vec<SpecEvent> =
+  let events: Vec<SpecEvent> =
         serde_json::from_value(json!([
     {
         "PathComponentAdded": {
@@ -1164,7 +1164,7 @@ fn scenario_33() {
         }
     }
 ])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
   {
     "uuid": "8d8d28eb-2fa4-4835-bd3c-b3855d731d05",
     "request": {
@@ -1209,26 +1209,26 @@ fn scenario_33() {
     "tags": []
   }
   ]))
-        .expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_33__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_33__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_33__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_33__results", results)
+  });
 }
 
 #[test]
 fn scenario_34() {
-    let events: Vec<SpecEvent> =
+  let events: Vec<SpecEvent> =
         serde_json::from_value(json!([
     {
         "PathComponentAdded": {
@@ -1883,7 +1883,7 @@ fn scenario_34() {
         }
     }
 ])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
   {
     "uuid": "63cdbd35-d5d2-43aa-b2b8-0ba7d726b610",
     "request": {
@@ -1928,19 +1928,19 @@ fn scenario_34() {
     "tags": []
   }
   ]))
-        .expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_34__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_34__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_34__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_34__results", results)
+  });
 }

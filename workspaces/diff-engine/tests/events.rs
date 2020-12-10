@@ -1,5 +1,5 @@
 use insta::assert_debug_snapshot;
-use optic_diff::SpecEvent;
+use optic_diff_engine::SpecEvent;
 
 #[test]
 fn spec_should_deserialize() {

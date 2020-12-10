@@ -7,10 +7,6 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-import {
-  ExampleCaptureService,
-  ExampleDiffService,
-} from '../services/diff/ExampleDiffService';
 import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
@@ -27,6 +23,9 @@ export default function PrivateSessions(props) {
   });
 
   const captureServiceFactory = async (specService, captureId) => {
+    const { ExampleCaptureService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
     return new ExampleCaptureService(specService);
   };
 
@@ -39,6 +38,9 @@ export default function PrivateSessions(props) {
     config,
     captureId
   ) => {
+    const { ExampleDiffService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
     async function computeInitialDiff() {
       const capture = await specService.listCapturedSamples(captureId);
       const commandContext = new RfcCommandContext(

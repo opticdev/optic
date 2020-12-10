@@ -1,6 +1,6 @@
 use futures::sink::SinkExt;
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
+use optic_diff_engine::{diff_interaction, streams, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
 use serde_json::json;
 use tokio::io::{AsyncBufReadExt, BufReader};

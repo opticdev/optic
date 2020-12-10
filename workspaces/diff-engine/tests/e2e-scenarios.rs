@@ -1,466 +1,466 @@
-#![recursion_limit="2560"]
+#![recursion_limit = "2560"]
 use insta::assert_debug_snapshot;
-use optic_diff::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
+use optic_diff_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
 use serde_json::json;
 
 #[test]
 fn scenario_1() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -506,340 +506,339 @@ fn scenario_1() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_1__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_1__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_1__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_1__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_2() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "people",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_14",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "people",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_14",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_14",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_12",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_12",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_12",
-      "name": "colors",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_10"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_12",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_12",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_11"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_13",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_10",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_10",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_9"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_12",
+        "name": "colors",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_10"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_13",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_12"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_11",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_12",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_11"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_13",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_10",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_9"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_13",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_12"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_13",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -885,685 +884,683 @@ fn scenario_2() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_2__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_2__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_2__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_2__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_3() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "events",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "events",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_4",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$unknown",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_4",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_3",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_2"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$unknown",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_3",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_3",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_2"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_3",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/events",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/events",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "CAEaAggDGgIIAxoCCAMaAggDGgIIAw==",
-          "asJsonString": "[1,2,3,4,5]",
-          "asText": "[1,2,3,4,5]"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaAggDGgIIAxoCCAMaAggDGgIIAw==",
+            "asJsonString": "[1,2,3,4,5]",
+            "asText": "[1,2,3,4,5]"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_3__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_3__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_3__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_3__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_4() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -1609,382 +1606,381 @@ fn scenario_4() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_4__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_4__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_4__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_4__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_5() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -2030,340 +2026,339 @@ fn scenario_5() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_5__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_5__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_5__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_5__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_6() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "people",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_14",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "people",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_14",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_14",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_12",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_12",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_12",
-      "name": "colors",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_10"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_12",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_12",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_11"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_13",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_10",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_10",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_9"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_12",
+        "name": "colors",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_10"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_13",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_12"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_11",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_12",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_11"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_13",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_10",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_9"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_13",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_12"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_13",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -2409,303 +2404,302 @@ fn scenario_6() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_6__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_6__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_6__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_6__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_7() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "homes",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "homes",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "address",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_5"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$unknown",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$nullable",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "price",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "address",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_6"
-            }
-          },
-          "consumingParameterId": "$nullableInner"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$unknown",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_9",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_8"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$nullable",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "price",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_6"
+              }
+            },
+            "consumingParameterId": "$nullableInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_9",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_8"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -2751,835 +2745,833 @@ fn scenario_7() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_7__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_7__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_7__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_7__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_8() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "people",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_14",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "people",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_14",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_14",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_12",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_12",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_12",
-      "name": "colors",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_10"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_12",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_12",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_11"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_13",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_10",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_10",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_9"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_12",
+        "name": "colors",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_10"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_13",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_12"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_11",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_12",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_11"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_13",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_10",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_9"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_13",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_12"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_13",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/people",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/people",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "CAEaAggB",
-          "asJsonString": "[[]]",
-          "asText": "[[]]"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaAggB",
+            "asJsonString": "[[]]",
+            "asText": "[[]]"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_8__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_8__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_8__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_8__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_9() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -3625,480 +3617,479 @@ fn scenario_9() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_9__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_9__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_9__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_9__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_10() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -4144,382 +4135,381 @@ fn scenario_10() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_10__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_10__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_10__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_10__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_11() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -4565,835 +4555,833 @@ fn scenario_11() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_11__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_11__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_11__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_11__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_12() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "people",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_14",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "people",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_14",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_14",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_12",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_12",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_12",
-      "name": "colors",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_10"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_12",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_12",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_11"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_13",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_10",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_10",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_9"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_12",
+        "name": "colors",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_10"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_13",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_12"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_11",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_12",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_11"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_13",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_10",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_9"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_13",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_12"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_13",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/people",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/people",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "CAEaDggBGgIIAxoCCAMaAggD",
-          "asJsonString": "[[1,2,3]]",
-          "asText": "[[1,2,3]]"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAEaDggBGgIIAxoCCAMaAggD",
+            "asJsonString": "[[1,2,3]]",
+            "asText": "[[1,2,3]]"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_12__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_12__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_12__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_12__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_13() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -5439,611 +5427,609 @@ fn scenario_13() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_13__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_13__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_13__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_13__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_14() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "events",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "events",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_4",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$unknown",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_4",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_3",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_2"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$unknown",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_3",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_3",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_2"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_3",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/events",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/events",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "CAE=",
-          "asJsonString": "[]",
-          "asText": "[]"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAE=",
+            "asJsonString": "[]",
+            "asText": "[]"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_14__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_14__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_14__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_14__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_15() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -6089,456 +6075,455 @@ fn scenario_15() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_15__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_15__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_15__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_15__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_16() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -6584,456 +6569,455 @@ fn scenario_16() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_16__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_16__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_16__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_16__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_17() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -7079,382 +7063,381 @@ fn scenario_17() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_17__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_17__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_17__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_17__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_18() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -7500,685 +7483,683 @@ fn scenario_18() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_18__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_18__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_18__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_18__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_19() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "events",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "events",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_4",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$unknown",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_4",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_3",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_2"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$unknown",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_3",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_3",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_2"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_3",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/events",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/events",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "EgkKA2ZvbxICCAI=",
-          "asJsonString": "{\"foo\":\"bar\"}",
-          "asText": "{\"foo\":\"bar\"}"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "EgkKA2ZvbxICCAI=",
+            "asJsonString": "{\"foo\":\"bar\"}",
+            "asText": "{\"foo\":\"bar\"}"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_19__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_19__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_19__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_19__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_20() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -8224,382 +8205,381 @@ fn scenario_20() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_20__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_20__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_20__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_20__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_21() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -8645,382 +8625,381 @@ fn scenario_21() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_21__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_21__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_21__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_21__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_22() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -9066,480 +9045,479 @@ fn scenario_22() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_22__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_22__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_22__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_22__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_23() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -9585,480 +9563,479 @@ fn scenario_23() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_23__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_23__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_23__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_23__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_24() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -10104,480 +10081,479 @@ fn scenario_24() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_24__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_24__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_24__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_24__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_25() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -10623,26 +10599,25 @@ fn scenario_25() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_25__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_25__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_25__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_25__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_26() {
-    let events: Vec<SpecEvent> =
+  let events: Vec<SpecEvent> =
         serde_json::from_value(json!([
   {
     "PathComponentAdded": {
@@ -13165,7 +13140,7 @@ fn scenario_26() {
     }
   }
 ])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -13211,480 +13186,479 @@ fn scenario_26() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_26__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_26__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_26__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_26__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_27() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -13730,859 +13704,857 @@ fn scenario_27() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_27__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_27__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_27__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_27__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_28() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "people",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_14",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "people",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_14",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_1",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_14",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_12",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_1",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_12",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_12",
-      "name": "colors",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_10"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_12",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_12",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_11"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_13",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_10",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_10",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_9"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_12",
+        "name": "colors",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_10"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_13",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_12"
-            }
-          },
-          "consumingParameterId": "$listItem"
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_11",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_12",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_11"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_13",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_10",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_9"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_13",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_12"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_13",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
-  {
-    "uuid": "id",
-    "request": {
-      "host": "example.com",
-      "method": "GET",
-      "path": "/people",
-      "query": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
-      },
-      "body": {
-        "contentType": null,
-        "value": {
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> = serde_json::from_value(json!([
+    {
+      "uuid": "id",
+      "request": {
+        "host": "example.com",
+        "method": "GET",
+        "path": "/people",
+        "query": {
           "shapeHashV1Base64": null,
           "asJsonString": null,
           "asText": null
+        },
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": null,
+          "value": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          }
         }
-      }
-    },
-    "response": {
-      "statusCode": 200,
-      "headers": {
-        "shapeHashV1Base64": null,
-        "asJsonString": null,
-        "asText": null
       },
-      "body": {
-        "contentType": "application/json",
-        "value": {
-          "shapeHashV1Base64": "CAE=",
-          "asJsonString": "[]",
-          "asText": "[]"
+      "response": {
+        "statusCode": 200,
+        "headers": {
+          "shapeHashV1Base64": null,
+          "asJsonString": null,
+          "asText": null
+        },
+        "body": {
+          "contentType": "application/json",
+          "value": {
+            "shapeHashV1Base64": "CAE=",
+            "asJsonString": "[]",
+            "asText": "[]"
+          }
         }
-      }
-    },
-    "tags": []
-  }
-])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+      },
+      "tags": []
+    }
+  ]))
+  .expect("should be able to deserialize interactions");
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_28__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_28__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_28__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_28__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_29() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "locations",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":city",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "locations",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":city",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_2",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_2",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_8",
-      "name": "city",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_5",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_5",
-      "name": "lat",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_5",
-      "name": "long",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$optional",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_8",
-      "name": "coordinates",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_8",
-      "name": "population",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_9",
-      "name": "principality",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_7",
-      "shapeId": "shape_10",
-      "name": "location",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_7",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_6",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_5"
-            }
-          },
-          "consumingParameterId": "$optionalInner"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_8",
+        "name": "city",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_5",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_5",
+        "name": "lat",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_5",
+        "name": "long",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$optional",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_8",
+        "name": "coordinates",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_8",
+        "name": "population",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_9",
+        "name": "principality",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_7",
+        "shapeId": "shape_10",
+        "name": "location",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_7",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_6",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_5"
+              }
+            },
+            "consumingParameterId": "$optionalInner"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -14628,382 +14600,381 @@ fn scenario_29() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_29__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_29__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_29__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_29__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_30() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "baseline-path_2",
-      "parentPathId": "baseline-path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_9",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "baseline-path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "baseline-path_2",
+        "parentPathId": "baseline-path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_9",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "baseline-path_3",
-      "parentPathId": "baseline-path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "baseline-request-parameter_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": {
+          "shapeId": "baseline-shape_9",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "baseline-path_3",
+        "parentPathId": "baseline-path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "baseline-request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "baseline-request-parameter_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "baseline-request_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "baseline-response_1",
-      "pathId": "baseline-path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_8",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_2",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "baseline-request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "baseline-shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_1",
-      "shapeId": "baseline-shape_8",
-      "name": "age",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_1",
-          "shapeId": "baseline-shape_2"
+    },
+    {
+      "RequestAdded": {
+        "requestId": "baseline-request_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_4",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "baseline-response_1",
+        "pathId": "baseline-path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_5",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_2",
-      "shapeId": "baseline-shape_8",
-      "name": "cities",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_2",
-          "shapeId": "baseline-shape_5"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_3",
-      "shapeId": "baseline-shape_8",
-      "name": "firstName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_3",
-          "shapeId": "baseline-shape_6"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "baseline-shape_7",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "baseline-field_4",
-      "shapeId": "baseline-shape_8",
-      "name": "lastName",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "baseline-field_4",
-          "shapeId": "baseline-shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "baseline-shape_5",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "baseline-shape_4"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "baseline-response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "baseline-shape_8",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_2",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_1",
+        "shapeId": "baseline-shape_8",
+        "name": "age",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_4",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_5",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_2",
+        "shapeId": "baseline-shape_8",
+        "name": "cities",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_3",
+        "shapeId": "baseline-shape_8",
+        "name": "firstName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "baseline-shape_7",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "baseline-field_4",
+        "shapeId": "baseline-shape_8",
+        "name": "lastName",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "baseline-shape_5",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "baseline-shape_4"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "baseline-response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "baseline-shape_8",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -15049,456 +15020,455 @@ fn scenario_30() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_30__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_30__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_30__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_30__results", results)
+  });
 }
-
 
 #[test]
 fn scenario_31() {
-    let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
-  {
-    "PathComponentAdded": {
-      "pathId": "path_1",
-      "parentPathId": "root",
-      "name": "users",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "PathParameterAdded": {
-      "pathId": "path_2",
-      "parentPathId": "path_1",
-      "name": ":userId",
-      "eventContext": null
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_11",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+  let events: Vec<SpecEvent> = serde_json::from_value(json!([
+    {
+      "PathComponentAdded": {
+        "pathId": "path_1",
+        "parentPathId": "root",
+        "name": "users",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": null
-    }
-  },
-  {
-    "PathParameterShapeSet": {
-      "pathId": "path_2",
-      "shapeDescriptor": {
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_2",
+        "parentPathId": "path_1",
+        "name": ":userId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_11",
-        "isRemoved": false
-      },
-      "eventContext": null
-    }
-  },
-  {
-    "PathComponentAdded": {
-      "pathId": "path_3",
-      "parentPathId": "path_2",
-      "name": "profile",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
       }
-    }
-  },
-  {
-    "RequestParameterAddedByPathAndMethod": {
-      "parameterId": "request-parameter_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "parameterLocation": "query",
-      "name": "queryString",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_2",
+        "shapeDescriptor": {
+          "shapeId": "shape_11",
+          "isRemoved": false
+        },
+        "eventContext": null
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_12",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "PathComponentAdded": {
+        "pathId": "path_3",
+        "parentPathId": "path_2",
+        "name": "profile",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "RequestParameterShapeSet": {
-      "parameterId": "request-parameter_1",
-      "parameterDescriptor": {
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "request-parameter_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_12",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "RequestAdded": {
-      "requestId": "request_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseAddedByPathAndMethod": {
-      "responseId": "response_1",
-      "pathId": "path_3",
-      "httpMethod": "GET",
-      "httpStatusCode": 200,
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_10",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_4",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "request-parameter_1",
+        "parameterDescriptor": {
+          "shapeId": "shape_12",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_2",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_1",
-      "shapeId": "shape_4",
-      "name": "first",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_1",
-          "shapeId": "shape_2"
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_1",
+        "pathId": "path_3",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
         }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
       }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_3",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_2",
-      "shapeId": "shape_4",
-      "name": "last",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_2",
-          "shapeId": "shape_3"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_3",
-      "shapeId": "shape_10",
-      "name": "name",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_3",
-          "shapeId": "shape_4"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_6",
-      "baseShapeId": "$string",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_7",
-      "baseShapeId": "$list",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_4",
-      "shapeId": "shape_10",
-      "name": "rivals",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_4",
-          "shapeId": "shape_7"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_9",
-      "baseShapeId": "$object",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeAdded": {
-      "shapeId": "shape_8",
-      "baseShapeId": "$number",
-      "parameters": {
-        "DynamicParameterList": {
-          "shapeParameterIds": []
-        }
-      },
-      "name": "",
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_5",
-      "shapeId": "shape_9",
-      "name": "rank",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_5",
-          "shapeId": "shape_8"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "FieldAdded": {
-      "fieldId": "field_6",
-      "shapeId": "shape_10",
-      "name": "stats",
-      "shapeDescriptor": {
-        "FieldShapeFromShape": {
-          "fieldId": "field_6",
-          "shapeId": "shape_9"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ShapeParameterShapeSet": {
-      "shapeDescriptor": {
-        "ProviderInShape": {
-          "shapeId": "shape_7",
-          "providerDescriptor": {
-            "ShapeProvider": {
-              "shapeId": "shape_6"
-            }
-          },
-          "consumingParameterId": "$listItem"
-        }
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
-      }
-    }
-  },
-  {
-    "ResponseBodySet": {
-      "responseId": "response_1",
-      "bodyDescriptor": {
-        "httpContentType": "application/json",
+    },
+    {
+      "ShapeAdded": {
         "shapeId": "shape_10",
-        "isRemoved": false
-      },
-      "eventContext": {
-        "clientId": "ccc",
-        "clientSessionId": "sss",
-        "clientCommandBatchId": "bbb",
-        "createdAt": "NOW"
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_4",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_2",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_1",
+        "shapeId": "shape_4",
+        "name": "first",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_1",
+            "shapeId": "shape_2"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_3",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_2",
+        "shapeId": "shape_4",
+        "name": "last",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_2",
+            "shapeId": "shape_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_3",
+        "shapeId": "shape_10",
+        "name": "name",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_3",
+            "shapeId": "shape_4"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_6",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_7",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_4",
+        "shapeId": "shape_10",
+        "name": "rivals",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_4",
+            "shapeId": "shape_7"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_9",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_8",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_5",
+        "shapeId": "shape_9",
+        "name": "rank",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_5",
+            "shapeId": "shape_8"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "field_6",
+        "shapeId": "shape_10",
+        "name": "stats",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "field_6",
+            "shapeId": "shape_9"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_7",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "shape_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_1",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "shape_10",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "ccc",
+          "clientSessionId": "sss",
+          "clientCommandBatchId": "bbb",
+          "createdAt": "NOW"
+        }
       }
     }
-  }
-])).expect("should be able to deserialize events");
-    let interactions: Vec<HttpInteraction> =
+  ]))
+  .expect("should be able to deserialize events");
+  let interactions: Vec<HttpInteraction> =
         serde_json::from_value(json!([
   {
     "uuid": "id",
@@ -15544,19 +15514,18 @@ fn scenario_31() {
     "tags": []
   }
 ])).expect("should be able to deserialize interactions");
-    let spec_projection = SpecProjection::from(events);
-    assert_debug_snapshot!(
+  let spec_projection = SpecProjection::from(events);
+  assert_debug_snapshot!(
     "scenario_31__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
-    assert_debug_snapshot!(
+  assert_debug_snapshot!(
     "scenario_31__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
 
-    interactions.into_iter().for_each(|interaction| {
-        let results = diff_interaction(&spec_projection, interaction);
-        assert_debug_snapshot!("scenario_31__results", results)
-    });
+  interactions.into_iter().for_each(|interaction| {
+    let results = diff_interaction(&spec_projection, interaction);
+    assert_debug_snapshot!("scenario_31__results", results)
+  });
 }
-
