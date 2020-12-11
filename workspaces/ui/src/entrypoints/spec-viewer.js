@@ -1,16 +1,14 @@
 import React from 'react';
 import { useParams, useRouteMatch, matchPath } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
-import {
-  useSpecSession,
-} from '../contexts/SpecViewerContext';
-import {Provider as DebugSessionContextProvider} from '../contexts/MockDataContext'
+import { useSpecSession } from '../contexts/SpecViewerContext';
+import { Provider as DebugSessionContextProvider } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-import {
-  ExampleCaptureService,
-  ExampleDiffService,
-} from '../services/diff/ExampleDiffService';
+// import {
+//   ExampleCaptureService,
+//   ExampleDiffService,
+// } from '../services/diff/ExampleDiffService';
 import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
 import {
   cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
@@ -21,9 +19,12 @@ export default function SpecViewer(props) {
   const match = useRouteMatch();
   const { specId } = useParams();
 
-  const session = useSpecSession(specId)
+  const session = useSpecSession(specId);
 
   const captureServiceFactory = async (specService, captureId) => {
+    const { ExampleCaptureService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
     return new ExampleCaptureService(specService);
   };
 
@@ -36,6 +37,9 @@ export default function SpecViewer(props) {
     config,
     captureId
   ) => {
+    const { ExampleDiffService } = await import(
+      '../services/diff/ExampleDiffService'
+    );
     async function computeInitialDiff() {
       const capture = await specService.listCapturedSamples(captureId);
       const commandContext = new RfcCommandContext(
@@ -48,13 +52,13 @@ export default function SpecViewer(props) {
         resolvers,
         rfcState,
       } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-          _events,
+        _events,
         commandContext,
         additionalCommands
       );
       let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
       for (const interaction of capture.samples) {
-          diffs = DiffHelpers.groupInteractionPointerByDiffs(
+        diffs = DiffHelpers.groupInteractionPointerByDiffs(
           resolvers,
           rfcState,
           JsonHelper.fromInteraction(interaction),

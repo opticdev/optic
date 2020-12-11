@@ -7,6 +7,8 @@ mod protos;
 mod queries;
 mod shapes;
 mod state;
+
+#[cfg(feature = "streams")]
 pub mod streams;
 
 pub use cqrs_core::Aggregate;

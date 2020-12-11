@@ -61,7 +61,7 @@ const quickSummary = (mode) => {
   if (mode === 'recommended') {
     return {
       command: 'how your API is started',
-      inboundUrl: 'where the API usually starts locally localhost:PORT',
+      inboundUrl: 'where the API should listen locally',
     };
   } else if (mode === 'manual') {
     return {
@@ -96,22 +96,26 @@ export function HelperCard({ setting, mode, result, noChecks, value }) {
           variant="caption"
           style={{ color: '#999696', fontWeight: 100, paddingLeft: 2 }}
         >
+          <span style={{ fontWeight: 800 }}>{setting}</span>:{' '}
           {quickSummary(mode)[setting]}
         </Typography>
       </div>
-      <div className={classes.assertions}>
-        <Typography variant="caption" style={{ color: '#999696' }}>
-          The <strong>{setting}</strong> parameter:
-        </Typography>
-        {assertions.map((i, index) => (
-          <AssertionMini
-            issue={i.assertion}
-            noChecks={noChecks}
-            result={result && i.getStatus(result)}
-            key={'assertion' + index}
-          />
-        ))}
-      </div>
+      <Collapse in={!noChecks}>
+        <div className={classes.assertions}>
+          <Typography variant="caption" style={{ color: '#999696' }}>
+            The <strong>{setting}</strong> parameter:
+          </Typography>
+
+          {assertions.map((i, index) => (
+            <AssertionMini
+              issue={i.assertion}
+              noChecks={noChecks}
+              result={result && i.getStatus(result)}
+              key={'assertion' + index}
+            />
+          ))}
+        </div>
+      </Collapse>
     </Card>
   );
 }
@@ -177,8 +181,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     paddingLeft: 9,
     padding: 7,
-    borderBottomColor: '#736d6d',
-    borderBottom: `1px solid`,
     marginBottom: 5,
   },
   error: {
@@ -199,5 +201,7 @@ const useStyles = makeStyles((theme) => ({
   assertions: {
     padding: 8,
     paddingTop: 0,
+    borderTopColor: '#736d6d',
+    borderTop: `1px solid`,
   },
 }));
