@@ -22,11 +22,16 @@ export default function TestingSessions(props) {
     exampleSessionCollection: 'example-sessions',
   });
 
+  let exampleDiff;
+
   const captureServiceFactory = async (specService, captureId) => {
-    const { ExampleCaptureService } = await import(
+    const { ExampleDiff, ExampleCaptureService } = await import(
       '../services/diff/ExampleDiffService'
     );
-    return new ExampleCaptureService(specService);
+
+    if (!exampleDiff) exampleDiff = new ExampleDiff();
+
+    return new ExampleCaptureService(specService, exampleDiff);
   };
 
   const diffServiceFactory = async (
