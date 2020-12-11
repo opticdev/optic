@@ -41,15 +41,19 @@ export class ExampleDiff {
     this.diffing = (async function* () {
       for (let [i, interaction] of interactions.entries()) {
         let results = DiffEngine.diff_interaction(
-          JSON.stringify([interaction, [`${i}`]]),
+          JSON.stringify([interaction, [`${interaction.uuid}`]]),
           spec
         );
 
         let parsedResults = JSON.parse(results);
+        let taggedResults = (parsedResults = parsedResults.map((diffResult) => [
+          diffResult,
+          [interaction.uuid],
+        ]));
 
-        diffResults.push(...parsedResults);
+        diffResults.push(...taggedResults);
 
-        for (let result of parsedResults) {
+        for (let result of taggedResults) {
           yield result;
         }
         // make sure this is async so we don't block the UI thread
@@ -153,6 +157,7 @@ export class ExampleCaptureService implements ICaptureService {
 
 export class ExampleDiffService implements IDiffService {
   constructor(
+    private exampleDiff: ExampleDiff,
     private specService: ISpecService,
     private captureService: ICaptureService,
     private diffConfig: IStartDiffResponse,
@@ -165,8 +170,14 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
+    const diffsJson = this.exampleDiff.getResults();
+
+    const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
+      diffsJson
+    );
+
     const endpointDiffs = ScalaJSHelpers.toJsArray(
-      DiffResultHelper.endpointDiffs(this.diffs, this.rfcState)
+      DiffResultHelper.endpointDiffs(diffs, this.rfcState)
     );
 
     return Promise.resolve({ diffs: endpointDiffs });
