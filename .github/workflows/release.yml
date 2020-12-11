@@ -35,6 +35,8 @@ jobs:
       - name: Set version output
         id: version
         run: |
+          rustc -V
+          cargo -V
           OPTIC_VERSION=$(node -e "console.log(require('./workspaces/local-cli/package.json').version)")
           echo "OPTIC_VERSION=$OPTIC_VERSION" >> $GITHUB_ENV
           echo "::set-output name=version::$OPTIC_VERSION"
@@ -231,6 +233,8 @@ jobs:
         key: "${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}-vendor-v1"
     - name: Install Dependencies and Build Optic
       run:  |
+        rustc -V
+        cargo -V
         if [ "${{ needs.release_logic.outputs.is_prerelease }}" == "true" ] && [ -n "${{ needs.release_logic.outputs.prerelease_tag }}" ]; then
           echo "Prelease with a tag detected. Staging any feature flags for '${{ needs.release_logic.outputs.prerelease_tag }}'."
           RELEASE_CHANNEL=${{ needs.release_logic.outputs.prerelease_tag }}
