@@ -41,15 +41,18 @@ export class ExampleDiff {
     this.diffing = (async function* () {
       for (let [i, interaction] of interactions.entries()) {
         let results = DiffEngine.diff_interaction(
-          JSON.stringify([interaction, [`${interaction.uuid}`]]),
+          JSON.stringify(interaction),
           spec
         );
 
         let parsedResults = JSON.parse(results);
-        let taggedResults = (parsedResults = parsedResults.map((diffResult) => [
-          diffResult,
-          [interaction.uuid],
-        ]));
+        let taggedResults = (parsedResults = parsedResults.map(
+          ([diffResult, fingerprint]) => [
+            diffResult,
+            [interaction.uuid],
+            fingerprint,
+          ]
+        ));
 
         diffResults.push(...taggedResults);
 
@@ -63,49 +66,49 @@ export class ExampleDiff {
 
     // TODO: remove this when we get the undocumented urls in order. Need this now
     // as async generators are lazy!
-    (async function (diffing) {
-      for await (let diff of diffing) {
-        console.log('diff yielded');
-      }
-    })(this.diffing);
+    // (async function (diffing) {
+    //   for await (let diff of diffing) {
+    //     console.log('diff yielded');
+    //   }
+    // })(this.diffing);
 
     // counting undocumented urls
     // TODO: we already have this for the cli-server side, perhaps we can re-use that logic
     // somehow.
-    // (async function (diffing) {
-    //   let countsByFingerprint: Map<String, number> = new Map();
-    //   let undocumentedUrls: Array<{
-    //     path: string;
-    //     method: string;
-    //     fingerprint: string;
-    //   }> = [];
+    (async function (diffing) {
+      let countsByFingerprint: Map<String, number> = new Map();
+      let undocumentedUrls: Array<{
+        path: string;
+        method: string;
+        fingerprint: string;
+      }> = [];
 
-    //   for await (let [diff, _, fingerprint] of diffing) {
-    //     let urlDiff = diff['UnmatchedRequestUrl'];
-    //     if (!urlDiff || !fingerprint) continue;
+      for await (let [diff, _, fingerprint] of diffing) {
+        let urlDiff = diff['UnmatchedRequestUrl'];
+        if (!urlDiff || !fingerprint) continue;
 
-    //     let existingCount = countsByFingerprint.get(fingerprint) || 0;
-    //     if (existingCount < 1) {
-    //       let path = urlDiff.interactionTrail.path.find(
-    //         (interactionComponent: any) =>
-    //           interactionComponent.Url && interactionComponent.Url.path
-    //       ).Url.path as string;
-    //       let method = urlDiff.interactionTrail.path.find(
-    //         (interactionComponent: any) =>
-    //           interactionComponent.Method && interactionComponent.Method.method
-    //       ).Method.method as string;
+        let existingCount = countsByFingerprint.get(fingerprint) || 0;
+        if (existingCount < 1) {
+          let path = urlDiff.interactionTrail.path.find(
+            (interactionComponent: any) =>
+              interactionComponent.Url && interactionComponent.Url.path
+          ).Url.path as string;
+          let method = urlDiff.interactionTrail.path.find(
+            (interactionComponent: any) =>
+              interactionComponent.Method && interactionComponent.Method.method
+          ).Method.method as string;
 
-    //       undocumentedUrls.push({ path, method, fingerprint });
-    //     }
-    //     countsByFingerprint.set(fingerprint, existingCount + 1);
-    //   }
+          undocumentedUrls.push({ path, method, fingerprint });
+        }
+        countsByFingerprint.set(fingerprint, existingCount + 1);
+      }
 
-    //   for (let { path, method, fingerprint } of undocumentedUrls) {
-    //     let count = countsByFingerprint.get(fingerprint);
-    //     if (!count) throw new Error('unreachable');
-    //     unrecognizedUrls.push({ path, method, count });
-    //   }
-    // })(diffing);
+      for (let { path, method, fingerprint } of undocumentedUrls) {
+        let count = countsByFingerprint.get(fingerprint);
+        if (!count) throw new Error('unreachable');
+        unrecognizedUrls.push({ path, method, count });
+      }
+    })(this.diffing);
 
     return this.diffId;
   }
@@ -170,7 +173,9 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const diffsJson = this.exampleDiff.getResults();
+    const diffsJson = this.exampleDiff
+      .getResults()
+      .map(([diff, tags, _fingerprint]) => [diff, tags]);
 
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
       diffsJson
