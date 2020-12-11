@@ -26,6 +26,89 @@ import { getOrUndefined, opticEngine } from '@useoptic/domain';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../components/diff/v2/learn-api/browser-initial-body';
 
+export class ExampleDiff {
+  private diffResults: any[];
+  private diffId?: any;
+  private diffing?: AsyncIterable<any>;
+  private unrecognizedUrls: any[];
+
+  constructor(private events: string, private interactions: any[]) {}
+
+  start() {
+    const spec = DiffEngine.spec_from_events(this.events);
+    this.diffId = 'example-diff';
+    const diffResults = (this.diffResults = []);
+    const unrecognizedUrls = (this.unrecognizedUrls = []);
+
+    this.diffing = (async function* () {
+      for (let [i, interaction] of this.interactions.entries()) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify([interaction, [`${i}`]]),
+          spec
+        );
+
+        let parsedResults = JSON.parse(results);
+
+        diffResults.push(...parsedResults);
+
+        for (let result of parsedResults) {
+          yield result;
+        }
+        // make sure this is async so we don't block the UI thread
+        await new Promise((resolve) => setTimeout(resolve));
+      }
+    })();
+
+    // counting undocumented urls
+    // TODO: we already have this for the cli-server side, perhaps we can re-use that logic
+    // somehow.
+    (async function (diffing) {
+      let countsByFingerprint: Map<String, number> = new Map();
+      let undocumentedUrls: Array<{
+        path: string;
+        method: string;
+        fingerprint: string;
+      }> = [];
+
+      for await (let [diff, _, fingerprint] of diffing) {
+        let urlDiff = diff['UnmatchedRequestUrl'];
+        if (!urlDiff || !fingerprint) continue;
+
+        let existingCount = countsByFingerprint.get(fingerprint) || 0;
+        if (existingCount < 1) {
+          let path = urlDiff.interactionTrail.path.find(
+            (interactionComponent: any) =>
+              interactionComponent.Url && interactionComponent.Url.path
+          ).Url.path as string;
+          let method = urlDiff.interactionTrail.path.find(
+            (interactionComponent: any) =>
+              interactionComponent.Method && interactionComponent.Method.method
+          ).Method.method as string;
+
+          undocumentedUrls.push({ path, method, fingerprint });
+        }
+        countsByFingerprint.set(fingerprint, existingCount + 1);
+      }
+
+      for (let { path, method, fingerprint } of undocumentedUrls) {
+        let count = countsByFingerprint.get(fingerprint);
+        if (!count) throw new Error('unreachable');
+        unrecognizedUrls.push({ path, method, count });
+      }
+    })(this.diffing);
+
+    return this.diffId;
+  }
+
+  getResults() {
+    return [...this.diffResults];
+  }
+
+  getUnrecognizedUrls() {
+    return [...this.unrecognizedUrls];
+  }
+}
+
 export class ExampleCaptureService implements ICaptureService {
   constructor(private specService: ISpecService) {}
 
