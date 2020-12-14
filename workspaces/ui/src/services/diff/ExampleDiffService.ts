@@ -27,18 +27,14 @@ import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../components/diff/v2/learn-api/browser-initial-body';
 
 export class ExampleDiff {
-  private diffResults: any[];
   private diffId?: any;
-  private diffing?: AsyncIterable<any>;
-  private unrecognizedUrls: any[];
+  private diffing?: Promise<any[]>;
 
   start(events: any[], interactions: any[]) {
     const spec = DiffEngine.spec_from_events(JSON.stringify(events));
     this.diffId = uuidv4();
-    const diffResults = (this.diffResults = []);
-    const unrecognizedUrls = (this.unrecognizedUrls = []);
 
-    this.diffing = (async function* () {
+    const diffingStream = (async function* () {
       for (let [i, interaction] of interactions.entries()) {
         let results = DiffEngine.diff_interaction(
           JSON.stringify(interaction),
@@ -54,8 +50,6 @@ export class ExampleDiff {
           ]
         ));
 
-        diffResults.push(...taggedResults);
-
         for (let result of taggedResults) {
           yield result;
         }
@@ -64,22 +58,26 @@ export class ExampleDiff {
       }
     })();
 
-    // TODO: remove this when we get notifications working or decide we don't need them.
-    // Need this now as async generators are lazy!
-    (async function (diffing) {
+    // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
+    this.diffing = (async function (diffing) {
+      const diffs = [];
       for await (let diff of diffing) {
-        console.log('diff yielded');
+        diffs.push(diff);
       }
-    })(this.diffing);
+
+      return diffs;
+    })(diffingStream);
 
     return this.diffId;
   }
 
-  getResults() {
-    return [...this.diffResults];
+  async getResults() {
+    return [...(await this.diffing)];
   }
 
-  getUnrecognizedUrls() {
+  async getUnrecognizedUrls() {
+    const diffResults = await this.diffing;
+
     let countsByFingerprint: Map<String, number> = new Map();
     let undocumentedUrls: Array<{
       path: string;
@@ -87,7 +85,7 @@ export class ExampleDiff {
       fingerprint: string;
     }> = [];
 
-    for (let [diff, _, fingerprint] of this.diffResults) {
+    for (let [diff, _, fingerprint] of diffResults) {
       let urlDiff = diff['UnmatchedRequestUrl'];
       if (!urlDiff || !fingerprint) continue;
 
@@ -166,9 +164,9 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const diffsJson = this.exampleDiff
-      .getResults()
-      .map(([diff, tags, _fingerprint]) => [diff, tags]);
+    const diffsJson = (
+      await this.exampleDiff.getResults()
+    ).map(([diff, tags, _fingerprint]) => [diff, tags]);
 
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
       diffsJson
@@ -182,8 +180,7 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    // TODO: source the undocumented urls from the example diff
-    const urls = this.exampleDiff.getUnrecognizedUrls();
+    const urls = await this.exampleDiff.getUnrecognizedUrls();
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
 
     return Promise.resolve(result);
