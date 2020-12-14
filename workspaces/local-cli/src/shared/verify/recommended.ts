@@ -162,7 +162,7 @@ export async function getAssertionsFromCommandSession(
   const expected = `${serviceConfig.host}:${serviceConfig.port}`;
   const shouldNotTake = `${startConfig.proxyConfig.host}:${startConfig.proxyConfig.port}`;
 
-  const inboundPortIsOpenAtStart = new Promise(async (resolve) => {
+  const inboundPortIsOpenAtStart:boolean = await new Promise(async (resolve) => {
     waitOn({
       resources: [`tcp:${shouldNotTake}`],
       delay: 0,
@@ -220,9 +220,11 @@ export async function getAssertionsFromCommandSession(
       timeout: 25000,
     })
       .then(() => {
-        tookProxyPort = true;
-        serviceRunning = false;
-        resolve(true);
+        if (inboundPortIsOpenAtStart) {
+          tookProxyPort = true;
+          serviceRunning = false;
+          resolve(true);
+        }
       }) //if service resolves we assume it's up.
       .catch(() => resolve(false));
   });
@@ -237,7 +239,7 @@ export async function getAssertionsFromCommandSession(
 
   //assertions
   const startOnHostAssertion: ApiProcessStartsOnAssignedHost = {
-    passed: serviceRunning || serviceHost === 'localhost',
+    passed: serviceRunning,
     expectedHost: serviceConfig.host,
   };
   const startOnPortAssertion: ApiProcessStartsOnAssignedPort = {
