@@ -64,49 +64,11 @@ export class ExampleDiff {
       }
     })();
 
-    // TODO: remove this when we get the undocumented urls in order. Need this now
-    // as async generators are lazy!
-    // (async function (diffing) {
-    //   for await (let diff of diffing) {
-    //     console.log('diff yielded');
-    //   }
-    // })(this.diffing);
-
-    // counting undocumented urls
-    // TODO: we already have this for the cli-server side, perhaps we can re-use that logic
-    // somehow.
+    // TODO: remove this when we get notifications working or decide we don't need them.
+    // Need this now as async generators are lazy!
     (async function (diffing) {
-      let countsByFingerprint: Map<String, number> = new Map();
-      let undocumentedUrls: Array<{
-        path: string;
-        method: string;
-        fingerprint: string;
-      }> = [];
-
-      for await (let [diff, _, fingerprint] of diffing) {
-        let urlDiff = diff['UnmatchedRequestUrl'];
-        if (!urlDiff || !fingerprint) continue;
-
-        let existingCount = countsByFingerprint.get(fingerprint) || 0;
-        if (existingCount < 1) {
-          let path = urlDiff.interactionTrail.path.find(
-            (interactionComponent: any) =>
-              interactionComponent.Url && interactionComponent.Url.path
-          ).Url.path as string;
-          let method = urlDiff.interactionTrail.path.find(
-            (interactionComponent: any) =>
-              interactionComponent.Method && interactionComponent.Method.method
-          ).Method.method as string;
-
-          undocumentedUrls.push({ path, method, fingerprint });
-        }
-        countsByFingerprint.set(fingerprint, existingCount + 1);
-      }
-
-      for (let { path, method, fingerprint } of undocumentedUrls) {
-        let count = countsByFingerprint.get(fingerprint);
-        if (!count) throw new Error('unreachable');
-        unrecognizedUrls.push({ path, method, count });
+      for await (let diff of diffing) {
+        console.log('diff yielded');
       }
     })(this.diffing);
 
@@ -118,7 +80,38 @@ export class ExampleDiff {
   }
 
   getUnrecognizedUrls() {
-    return [...this.unrecognizedUrls];
+    let countsByFingerprint: Map<String, number> = new Map();
+    let undocumentedUrls: Array<{
+      path: string;
+      method: string;
+      fingerprint: string;
+    }> = [];
+
+    for (let [diff, _, fingerprint] of this.diffResults) {
+      let urlDiff = diff['UnmatchedRequestUrl'];
+      if (!urlDiff || !fingerprint) continue;
+
+      let existingCount = countsByFingerprint.get(fingerprint) || 0;
+      if (existingCount < 1) {
+        let path = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Url && interactionComponent.Url.path
+        ).Url.path as string;
+        let method = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Method && interactionComponent.Method.method
+        ).Method.method as string;
+
+        undocumentedUrls.push({ path, method, fingerprint });
+      }
+      countsByFingerprint.set(fingerprint, existingCount + 1);
+    }
+
+    return undocumentedUrls.map(({ path, method, fingerprint }) => {
+      let count = countsByFingerprint.get(fingerprint);
+      if (!count) throw new Error('unreachable');
+      return { path, method, count };
+    });
   }
 }
 
@@ -189,17 +182,8 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const capture = await this.specService.listCapturedSamples(captureId);
-    const samplesSeq = JsonHelper.jsArrayToSeq(
-      capture.samples.map((x) => JsonHelper.fromInteraction(x))
-    );
-    const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlHelpers();
-    const counter = undocumentedUrlHelpers.countUndocumentedUrls(
-      this.rfcState,
-      samplesSeq
-    );
-    const urls = opticEngine.UrlCounterJsonSerializer.toFriendlyJs(counter);
-
+    // TODO: source the undocumented urls from the example diff
+    const urls = this.exampleDiff.getUnrecognizedUrls();
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
 
     return Promise.resolve(result);
