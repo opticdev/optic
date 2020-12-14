@@ -28,6 +28,7 @@ export function ApiRoutes(props) {
         {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
         <Route strict path={routerPaths.setup} component={SetupPage} />
         <Route strict path={routerPaths.docsRoot} component={DocsPage} />
+        <Route strict path={routerPaths.review} component={ReviewDiffPage} />
         <Route
           strict
           path={routerPaths.diffsRoot}

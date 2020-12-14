@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "8.6.0-beta.18",
+  "version": "8.6.2",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
