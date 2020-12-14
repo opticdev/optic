@@ -145,6 +145,7 @@ export function AskFinished(props) {
           (state.matches('generatingNewBodyCommands') && (
             <GeneratingNewPaths
               endpointIds={state.context.newPaths.endpointIds}
+              endpointsToDocument={patch.endpointsToDocument}
               newBodiesProgress={state.context.newBodiesProgress}
               newBodiesProgressLastLearned={
                 state.context.newBodiesProgressLastLearned
@@ -169,10 +170,12 @@ export function AskFinished(props) {
 function GeneratingNewPaths(props) {
   const {
     endpointIds,
+    endpointsToDocument,
     newBodiesProgress,
     newBodiesProgressLastLearned,
   } = props;
   const classes = useStyles();
+  const total = endpointIds.length + endpointsToDocument.length;
   return (
     <div className={classes.commonStatus}>
       <Box display="flex" flexDirection="row" alignItems="center">
@@ -182,7 +185,7 @@ function GeneratingNewPaths(props) {
         <div style={{ width: 250, marginLeft: 20, marginTop: 2 }}>
           <LinearProgress
             variant="determinate"
-            value={(newBodiesProgress / endpointIds.length) * 100}
+            value={(newBodiesProgress / total) * 100}
           />
         </div>
       </Box>
