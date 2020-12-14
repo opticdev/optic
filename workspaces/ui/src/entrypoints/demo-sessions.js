@@ -7,12 +7,6 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-// import {
-//   ExampleCaptureService,
-//   ExampleDiffService,
-// } from '../services/diff/ExampleDiffService';
-import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
-import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Snackbar, makeStyles } from '@material-ui/core';
 import { analyticsEvents } from '../Analytics';
 import * as DiffEvents from '@useoptic/analytics/lib/events/diffs';
@@ -68,55 +62,6 @@ export default function DemoSessions(props) {
     sessionId: sessionId,
     exampleSessionCollection: 'demos',
   });
-
-  let exampleDiff;
-
-  const captureServiceFactory = async (specService, captureId) => {
-    const { ExampleDiff, ExampleCaptureService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
-
-    if (!exampleDiff) exampleDiff = new ExampleDiff();
-
-    return new ExampleCaptureService(specService, exampleDiff);
-  };
-
-  const diffServiceFactory = async (
-    specService,
-    captureService,
-    _events,
-    _rfcState,
-    additionalCommands,
-    config
-  ) => {
-    const commandContext = new RfcCommandContext(
-      'simulated',
-      'simulated',
-      'simulated'
-    );
-    const {
-      rfcState,
-    } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-      _events,
-      commandContext,
-      additionalCommands
-    );
-
-    const { ExampleDiff, ExampleDiffService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
-
-    if (!exampleDiff) exampleDiff = new ExampleDiff();
-
-    return new ExampleDiffService(
-      exampleDiff,
-      specService,
-      captureService,
-      config,
-      [],
-      rfcState
-    );
-  };
 
   // info boxes / guides for the demo
   const [message, setMessage] = useState({
@@ -357,10 +302,7 @@ export default function DemoSessions(props) {
     <>
       <BaseUrlContext value={{ path: match.path, url: match.url }}>
         <DebugSessionContextProvider value={session}>
-          <ApiSpecServiceLoader
-            captureServiceFactory={captureServiceFactory}
-            diffServiceFactory={diffServiceFactory}
-          >
+          <ApiSpecServiceLoader>
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
 
             <Snackbar
