@@ -706,6 +706,7 @@ export const useCaptureManagerPageStyles = makeStyles((theme) => ({
   center: {
     flex: 1,
     maxWidth: 1200,
+    overflow: 'scroll',
   },
   statsSection: {
     paddingBottom: theme.spacing(2),

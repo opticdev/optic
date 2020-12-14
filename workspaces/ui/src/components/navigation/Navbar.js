@@ -71,7 +71,9 @@ export default function Navbar(props) {
             {
               name: 'Review Diff',
               icon: <ChangeHistoryIcon className={classes.iconStyles} />,
-              link: routerPaths.diffsRoot,
+              link: process.env.REACT_APP_DIFF_REVIEW_PAGE
+                ? routerPaths.reviewRoot
+                : routerPaths.diffsRoot,
             },
           ]
         : []),
@@ -80,15 +82,6 @@ export default function Navbar(props) {
         icon: <DescriptionIcon className={classes.iconStyles} />,
         link: routerPaths.docsRoot,
       },
-      ...(enabledFeatures && enabledFeatures.TESTING_DASHBOARD
-        ? [
-            {
-              name: 'Live Contract Testing',
-              icon: <PolicyIcon className={classes.iconStyles} />,
-              link: routerPaths.testingDashboard,
-            },
-          ]
-        : []),
     ],
     [routerPaths]
   );
