@@ -4,6 +4,8 @@ import { useRouterPaths } from './RouterPaths';
 import { CaptureManagerPage } from './components/diff/v2/CaptureManagerPage';
 import { DocsPage } from './components/docs/DocsPage';
 import Loading from './components/navigation/Loading';
+import { ApiPage } from './components/api-page/ApiPage';
+import { SetupPage } from './components/setup-page/SetupPage';
 import { ReviewDiffPage } from './components/diff/review-diff/ReviewDiffPage';
 
 const TestingDashboardLoader = React.lazy(() =>
@@ -23,13 +25,14 @@ export function ApiRoutes(props) {
   return (
     <Suspense fallback={<Loading />}>
       <Switch>
+        {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
+        <Route strict path={routerPaths.setup} component={SetupPage} />
         <Route strict path={routerPaths.docsRoot} component={DocsPage} />
         <Route
           strict
           path={routerPaths.diffsRoot}
           component={CaptureManagerPage}
         />
-        <Route strict path={routerPaths.review} component={ReviewDiffPage} />
         {process.env.REACT_APP_TESTING_DASHBOARD === 'true' && (
           <Route
             strict

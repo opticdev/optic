@@ -59,9 +59,15 @@ function spawn({ specPath }) {
   diffProcess.stdout.pipe(output);
   diffProcess.stderr.pipe(error);
 
-  return { input, output, error };
+  // get a clean result promise, so we stay in control of the exact API we're exposing
+  const result = diffProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      throw new DiffEngineError(childResult);
+    }
+  );
+  return { input, output, error, result };
 }
-
 function getSupportedPlatform() {
   return Config.supportedPlatforms.find(
     ({ arch, type }) => arch === OS.arch() && type === OS.type()
@@ -79,12 +85,18 @@ function getPrebuiltPath(platform) {
 
 async function install(options) {
   let platform = getSupportedPlatform();
-  if (!platform)
-    new Error(
+  if (!platform) {
+    let issueTitle = `Support for platform (os.type=${OS.type()} os.arch=${OS.arch()})`;
+    let issueLabels = 'feature request';
+    let issueUrl = encodeURI(
+      `https://github.com/opticdev/optic/issues/new?title=${issueTitle}&labels=${issueLabels}`
+    );
+    throw new Error(
       `Unsupported platform. Cannot install pre-built ${
         Config.binaryName
-      } for os.type=${OS.type()} os.arch=${OS.arch()}`
+      } for os.type=${OS.type()} os.arch=${OS.arch()}. You can request support by opening a Github Issue at ${issueUrl}`
     );
+  }
 
   const installDir = Config.prebuilt.installPath;
   if (!Fs.existsSync(installDir)) {
@@ -111,7 +123,35 @@ async function install(options) {
 
   Fs.mkdirSync(binaryDir, { recursive: true });
 
-  await downloadStream.pipe(Tar.extract({ strip: 1, cwd: binaryDir }));
+  const extracting = new Promise((resolve, reject) => {
+    const extract = Tar.extract({ strip: 1, cwd: binaryDir });
+    extract.once('finish', onFinish);
+    extract.once('error', onError);
+
+    downloadStream.pipe(extract);
+
+    function onFinish() {
+      cleanup();
+      resolve();
+    }
+    function onError(err) {
+      cleanup();
+      reject(err);
+    }
+    function cleanup() {
+      extract.removeListener('finish', onFinish);
+      extract.removeListener('error', onError);
+    }
+  });
+
+  await extracting;
+  try {
+    await Execa(prebuiltPath, ['--version']);
+  } catch (err) {
+    throw new Error(
+      `Downloaded and installed binary could not be run.\n${err.stderr}`
+    );
+  }
 
   return {
     archiveName,
@@ -130,6 +170,40 @@ function uninstall(options) {
   }
 }
 
+class DiffEngineError extends Error {
+  constructor(childResult) {
+    const {
+      exitCode,
+      failed,
+      timedOut,
+      signal,
+      signalDescription,
+      killed,
+      isCanceled,
+    } = childResult;
+
+    let failureMode;
+    if (failed) {
+      failureMode = `process failed with exit code ${exitCode}.`;
+    } else if (timedOut) {
+      failureMode = `process became unresponsive and timed out`;
+    } else if (killed) {
+      failureMode = `process was killed by signal ${signal} (${signalDescription})`;
+    } else {
+      failureMode = `failed for an unknown reason`;
+    }
+    super(`Diff engine ${failureMode}`);
+    this.exitCode = exitCode;
+    this.signal = signal;
+    this.signalDescription = signalDescription;
+    this.failed = failed;
+    this.timedOut = timedOut;
+    this.isCanceled = isCanceled;
+    this.killed = killed;
+  }
+}
+
 exports.spawn = spawn;
 exports.install = install;
 exports.uninstall = uninstall;
+exports.DiffEngineError = DiffEngineError;

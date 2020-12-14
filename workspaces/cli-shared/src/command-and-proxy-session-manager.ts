@@ -24,7 +24,8 @@ class CommandAndProxySessionManager {
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;
     const opticServiceConfig = {
-      OPTIC_API_PORT: servicePort.toString(),
+      PORT: servicePort.toString(),
+      OPTIC_API_PORT: servicePort.toString(), // backwards compatible
       OPTIC_API_HOST: serviceHost.toString(),
       OPTIC_PROXY_PORT: this.config.proxyConfig.port.toString(),
     };
@@ -116,13 +117,16 @@ class CommandAndProxySessionManager {
     });
     promises.push(processInterruptedPromise);
 
-    developerDebugLogger(`waiting for command to complete or ^C`);
+    developerDebugLogger(`waiting for command to complete or ^C...`);
     await Promise.race(promises);
     commandSession.stop();
-    developerDebugLogger(`waiting for proxy to stop`);
+    developerDebugLogger(`done waiting for command to complete or ^C`);
+    developerDebugLogger(`waiting for proxy to stop...`);
     await inboundProxy.stop();
-    developerDebugLogger(`waiting for persistence manager to stop`);
+    developerDebugLogger(`done waiting for proxy to stop`);
+    developerDebugLogger(`waiting for persistence manager to stop...`);
     await persistenceManager.cleanup();
+    developerDebugLogger(`done waiting for persistence manager to stop`);
   }
 }
 

@@ -4,7 +4,7 @@ const Fs = require('fs');
 const Toml = require('@iarna/toml');
 
 const crate = Toml.parse(
-  Fs.readFileSync(Path.join(__dirname, '..', 'Cargo.toml'))
+  Fs.readFileSync(Path.join(__dirname, '..', 'cli', 'Cargo.toml'))
 );
 
 module.exports = {
@@ -33,6 +33,12 @@ module.exports = {
       type: 'Darwin',
       arch: 'x64',
       name: 'macos',
+      suffix: '',
+    },
+    {
+      type: 'Darwin',
+      arch: 'arm64',
+      name: 'macos-aarch64',
       suffix: '',
     },
   ],

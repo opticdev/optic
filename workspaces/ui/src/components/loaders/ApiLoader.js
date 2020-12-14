@@ -118,15 +118,23 @@ export async function createExampleSpecServiceFactory(data) {
 
   const ignoreRequests = [];
 
+  const config = {
+    config: {
+      apiName: 'Example API',
+      ignoreRequests,
+    },
+    configRaw:
+      'name: Todo API\ntasks:\n  start:\n    command: npm run server-start\n    inboundUrl: http://localhost:3005',
+  };
+
   const specService = {
     eventEmitter,
     loadConfig: async function () {
-      return Promise.resolve({
-        config: {
-          apiName: 'Example API',
-          ignoreRequests,
-        },
-      });
+      return Promise.resolve(config);
+    },
+    saveConfig: async function (config) {
+      config.configRaw = config;
+      return Promise.resolve();
     },
     addIgnoreRule: async (rule) => {
       ignoreRequests.push(rule);

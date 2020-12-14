@@ -81,14 +81,22 @@ jobs:
           - os: macos-latest
             target: x86_64-apple-darwin
             platform_name: macos
+            rustup_channel: stable
+            suffix: ''
+          - os: macos-11.0
+            target: aarch64-apple-darwin
+            platform_name: macos-aarch64
+            rustup_channel: beta
             suffix: ''
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             platform_name: win64
+            rustup_channel: stable
             suffix: .exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             platform_name: linux
+            rustup_channel: stable
             suffix: ''
     runs-on: ${{ matrix.os }}
     env:
@@ -115,16 +123,17 @@ jobs:
           path: |
             ${{ env.CARGO_HOME }}/registry
             ${{ env.CARGO_HOME }}/git
-          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-vendor-v1"
+          key: "${{ matrix.target }}-cargo-${{ hashFiles('Cargo.lock') }}-vendor-v1"
       - name: 'Cache build target'
         uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
         with:
           path: target
-          key: "${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-release-target-v1"
+          key: "${{ matrix.target }}-cargo-${{ hashFiles('Cargo.lock') }}-release-target-v1"
       - name: 'Rust toolchain'
         uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/releases/tag/v1.0.6
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.rustup_channel }}
+          target: ${{ matrix.target }}
           profile: minimal
           override: true
       - name: 'Build'
@@ -146,6 +155,8 @@ jobs:
       matrix:
         include:
           - platform_name: macos
+            suffix: ''
+          - platform_name: macos-aarch64
             suffix: ''
           - platform_name: win64
             suffix: .exe
@@ -229,12 +240,15 @@ jobs:
         fi
 
         FLAGS_FILE=.env.$RELEASE_CHANNEL
+        echo "OPTIC__NPM__VERSION=${{ needs.release_logic.outputs.version }}" >> "$FLAGS_FILE"
         if [[ -r $FLAGS_FILE ]]; then
           echo "Feature flags found for $RELEASE_CHANNEL, staging for build and runtime."
           cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/agent-cli/.env
           cp $FLAGS_FILE workspaces/ci-cli/.env
           cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/cli-server/.env
+          cp $FLAGS_FILE workspaces/cli-scripts/.env
           cp $FLAGS_FILE workspaces/diff-engine/.env
           cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi

@@ -20,6 +20,7 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain/build';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
 import uuidv4 from 'uuid/v4';
 import { getOrUndefined, opticEngine } from '@useoptic/domain';
 import {

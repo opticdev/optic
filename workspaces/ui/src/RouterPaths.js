@@ -1,4 +1,4 @@
-import { useBaseUrl } from './contexts/BaseUrlContext';
+import {useBaseUrl} from './contexts/BaseUrlContext';
 
 const routerPaths = {
   testingDashboard: (base = '') => `${base}/testing`,
@@ -6,6 +6,8 @@ const routerPaths = {
   testingEndpointDetails: (base = '') =>
     `${base}/testing/captures/:captureId/endpoints/:endpointId`,
   docsRoot: (base = '') => `${base}/documentation`,
+  dashboardRoot: (base = '') => `${base}/dashboard`,
+  setup: (base = '') => `${base}/setup`,
   requestDocsRoot: (base = '') =>
     `${routerPaths.docsRoot(base)}/paths/:pathId/methods/:method`,
   diffsRoot: (base = '') => `${base}/diffs`,

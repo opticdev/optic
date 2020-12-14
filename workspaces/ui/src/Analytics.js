@@ -1,7 +1,6 @@
 import { Client } from '@useoptic/cli-client';
 import packageJson from '../package.json';
 import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
-import { consistentAnonymousId } from '@useoptic/analytics/lib/consistentAnonymousId';
 import niceTry from 'nice-try';
 
 const clientId = `local_cli_${packageJson.version}`;
@@ -13,21 +12,27 @@ if (!isAnalyticsEnabled) {
 const client = new Client('/api');
 
 const userPromise = new Promise(async (resolve) => {
-  const userToken = await niceTry(async () => {
+  const anonymousId = await niceTry(async () => {
     const response = await client.getIdentity();
     if (response.ok) {
-      const { user } = await response.json();
+      const { user, anonymousId } = await response.json();
       if (isAnalyticsEnabled) {
-        window.FS.identify(user.sub, {
-          email: user.email,
+        window.FS.identify(anonymousId, {
+          email: user && user.email,
         });
-        window.Intercom('update', { user_id: user.sub, email: user.email });
+        window.Intercom('update', {
+          user_id: anonymousId,
+          id: user && user.sub,
+          email: user && user.email,
+        });
       }
-      resolve(user.sub);
+      return anonymousId;
     }
+
+    return 'anon_id';
   });
 
-  resolve(userToken || consistentAnonymousId);
+  resolve(anonymousId);
 });
 
 export const analyticsEvents = newAnalyticsEventBus(async (batchId) => {

@@ -1,9 +1,5 @@
 ## Optic Diff engine written in Rust
 
-# WARNING: _EXPERIMENTAL_ and _INCOMPLETE_.
-
-Do not use this unless you know what you're doing: it's an experimental re-implementation of logic in a language that's new to us. Don't us this with sensitive or production data, as there are chances of data-loss, incorrect results, etc.
-
 ## Building
 
 ### Dependencies
@@ -65,35 +61,3 @@ With this `.env` file in place and the line added to it, running `apidev start` 
 Once a version of the Optic daemon is running, any diffs performed through visiting the UI are performed using this experimental engine. One could verify by looking for a process called `optic_diff` during diffing.
 
 Note: you might have to run `apidev daemon:stop` to spin down running Optic daemon, so it can be restarted with the feature flag enabled.
-
-## Available functionality and known issues:
-
-TODO: expand.
-
-Implemented:
-
-- Diffing of request and response level diffs (endpoints, content types, status codes).
-- Basic shape diffing of recursive JSON structures:
-  - JSON primitives (strings, numbers, boolean, etc.)
-  - JSON arrays
-  - Objects, object field shapes and missing fields
-
-Yet to be implemented:
-
-- Undocumented urls projection
-- Normalisation / grouping of diffs
-- All polymorphic types (optional, nullable, oneOf, etc.)
-- Endpoint level filtering
-
-## Programmatic usage example
-
-A small Node.js module interface is provided which runs the diff binary in a child process and attaches the inputs / outputs:
-
-```
-import spawnDiffEngine from '@useoptic/diff-engine';
-
-const diffEngine = spawnDiffEngine({ specPath: pathToSpec });
-interactionsStream.pipe(diffEngine.input); // newline delimited json of [interaction,interactionPointer] pairs
-diffEngine.output.pipe(process.stdout); // newline delimited json of [InteractionDiffResult,interactionPointers]
-diffEngine.error.pipe(process.stderr);
-```

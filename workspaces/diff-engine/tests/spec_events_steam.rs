@@ -1,4 +1,4 @@
-use optic_diff::SpecEvent;
+use optic_diff_engine::SpecEvent;
 
 #[test]
 fn can_read_json() {

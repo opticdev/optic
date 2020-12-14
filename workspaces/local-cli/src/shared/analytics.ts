@@ -18,6 +18,7 @@ import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEv
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from './paths';
 import { Config } from '../config';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 
 const packageJson = require('../../package.json');
 const opticVersion = packageJson.version;
@@ -27,16 +28,22 @@ const analytics = new Analytics(token, {
   flushAt: 1,
 });
 
+const anonIdPromise: Promise<string> = getOrCreateAnonId();
+
 export async function getUser(): Promise<IUser | null> {
   return new Promise<IUser | null>(async (resolve, reject) => {
     const credentials = await getCredentials();
     if (credentials) {
       const user = await getUserFromCredentials(credentials);
       analytics.identify({
-        userId: user.sub,
-        traits: { name: user.name, email: user.email },
+        userId: await anonIdPromise,
+        traits: { userId: user.sub, name: user.name, email: user.email },
       });
       resolve(user);
+    } else {
+      analytics.identify({
+        userId: await anonIdPromise,
+      });
     }
     resolve(null);
   });

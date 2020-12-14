@@ -1,5 +1,6 @@
 [workspace]
 
 members = [
-  "workspaces/diff-engine"
+  "workspaces/diff-engine",
+  "workspaces/diff-engine/cli"
 ]
