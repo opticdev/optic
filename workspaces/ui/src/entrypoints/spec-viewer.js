@@ -21,11 +21,16 @@ export default function SpecViewer(props) {
 
   const session = useSpecSession(specId);
 
+  let exampleDiff;
+
   const captureServiceFactory = async (specService, captureId) => {
-    const { ExampleCaptureService } = await import(
+    const { ExampleDiff, ExampleCaptureService } = await import(
       '../services/diff/ExampleDiffService'
     );
-    return new ExampleCaptureService(specService);
+
+    if (!exampleDiff) exampleDiff = new ExampleDiff();
+
+    return new ExampleCaptureService(specService, exampleDiff);
   };
 
   const diffServiceFactory = async (
@@ -34,52 +39,33 @@ export default function SpecViewer(props) {
     _events,
     _rfcState,
     additionalCommands,
-    config,
-    captureId
+    config
   ) => {
-    const { ExampleDiffService } = await import(
+    const commandContext = new RfcCommandContext(
+      'simulated',
+      'simulated',
+      'simulated'
+    );
+    const {
+      rfcState,
+    } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+      _events,
+      commandContext,
+      additionalCommands
+    );
+
+    const { ExampleDiff, ExampleDiffService } = await import(
       '../services/diff/ExampleDiffService'
     );
-    async function computeInitialDiff() {
-      const capture = await specService.listCapturedSamples(captureId);
-      const commandContext = new RfcCommandContext(
-        'simulated',
-        'simulated',
-        'simulated'
-      );
 
-      const {
-        resolvers,
-        rfcState,
-      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        _events,
-        commandContext,
-        additionalCommands
-      );
-      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-      for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByDiffs(
-          resolvers,
-          rfcState,
-          JsonHelper.fromInteraction(interaction),
-          interaction.uuid,
-          diffs
-        );
-      }
-      return {
-        diffs,
-        rfcState,
-        resolvers,
-      };
-    }
-
-    const { diffs, rfcState } = await computeInitialDiff();
+    if (!exampleDiff) exampleDiff = new ExampleDiff();
 
     return new ExampleDiffService(
+      exampleDiff,
       specService,
       captureService,
       config,
-      diffs,
+      [],
       rfcState
     );
   };

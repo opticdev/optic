@@ -40,44 +40,8 @@ export default function TestingSessions(props) {
     _events,
     _rfcState,
     additionalCommands,
-    config,
-    captureId
+    config
   ) => {
-    // async function computeInitialDiff() {
-    //   const capture = await specService.listCapturedSamples(captureId);
-    //   const commandContext = new RfcCommandContext(
-    //     'simulated',
-    //     'simulated',
-    //     'simulated'
-    //   );
-
-    //   const {
-    //     resolvers,
-    //     rfcState,
-    //   } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-    //     _events,
-    //     commandContext,
-    //     additionalCommands
-    //   );
-    //   const a = DiffHelpers;
-    //   let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-    //   for (const interaction of capture.samples) {
-    //     diffs = DiffHelpers.groupInteractionPointerByDiffs(
-    //       resolvers,
-    //       rfcState,
-    //       JsonHelper.fromInteraction(interaction),
-    //       interaction.uuid,
-    //       diffs
-    //     );
-    //   }
-    //   return {
-    //     diffs,
-    //     rfcState,
-    //     resolvers,
-    //   };
-    // }
-
-    // const { diffs, rfcState } = await computeInitialDiff();
     const commandContext = new RfcCommandContext(
       'simulated',
       'simulated',
