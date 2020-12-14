@@ -71,8 +71,30 @@ export class ExampleDiff {
     return this.diffId;
   }
 
-  async getResults() {
-    return [...(await this.diffing)];
+  async getNormalizedDiffs() {
+    const diffResults = await this.diffing;
+
+    let pointersByFingerprint: Map<String, string[]> = new Map();
+    let diffs: [any, string][] = [];
+    let results: [any, string[]][] = [];
+
+    for (let [diff, pointers, fingerprint] of diffResults) {
+      if (!fingerprint) results.push([diff, pointers]);
+
+      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
+      if (existingPointers.length < 1) {
+        diffs.push([diff, fingerprint]);
+      }
+      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
+    }
+
+    for (let [diff, fingerprint] of diffs) {
+      let pointers = pointersByFingerprint.get(fingerprint);
+      if (!pointers) throw new Error('unreachable');
+      results.push([diff, pointers]);
+    }
+
+    return results;
   }
 
   async getUnrecognizedUrls() {
@@ -164,9 +186,7 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const diffsJson = (
-      await this.exampleDiff.getResults()
-    ).map(([diff, tags, _fingerprint]) => [diff, tags]);
+    const diffsJson = await this.exampleDiff.getNormalizedDiffs();
 
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
       diffsJson
