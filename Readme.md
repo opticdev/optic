@@ -47,7 +47,7 @@ name: project
 tasks:
   start:
     command: echo "your project start command goes here"
-    baseUrl: http://localhost:4000
+    inboundUrl: http://localhost:4000
 ```
 
 For further information, please check out our [setup instructions](https://app.useoptic.com/).
