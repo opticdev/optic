@@ -25,7 +25,7 @@
 
 > Optic is like Git, but for your APIs
 
-### Add Optic to your Development Enviroment 
+### Add Optic to your Development Environment 
 
 Optic acts as a proxy, observing all API traffic during a session with your application. It's installed with the Yarn package manager, and initialized per API project you want to monitor.
 
@@ -40,14 +40,14 @@ api init
 
 ![The api start command initializing](https://www.useoptic.com/static/init-9a9c43677e29e2b6f9f04bd7ce81ec26.svg)
 
-Then, add your start command to the `optic.yml` file created by `api init`. This allows Optic to start your project and observe its request traffic.
+This will open a local, guided initialization flow. Optic will walk you through setting up your project in the Optic Dashboard. Once setup is validated, you're ready to start your API with Optic and observe API traffic locally to build your API specification and documentation. As part of the initialization flow, Optic creates an `optic.yml` file for you with your configuration:
 
 ``` yaml
 name: project
 tasks:
   start:
     command: echo "your project start command goes here"
-    baseUrl: http://localhost:4000
+    inboundUrl: http://localhost:4000
 ```
 
 For further information, please check out our [setup instructions](https://app.useoptic.com/).
@@ -76,7 +76,7 @@ Optic constantly diffs your API's actual behavior against its specification. Opt
 - Update the specification when it observes new behavior for an existing API Endpoint 
 - Catch bugs and unexpected API behavior early :) 
 
-As you committ the observed diffs, Optic builds documentation in OpenAPI format on the fly. You can see how your documentation looks, and how it changes, right in the Optic Dashboard as you work.
+As you commit the observed diffs, Optic builds documentation in OpenAPI format on the fly. You can see how your documentation looks, and how it changes, right in the Optic Dashboard as you work.
 
 ### See it for Yourself
 
