@@ -17555,7 +17555,7 @@ Changes:
 ]
 `;
 
-exports[`field is array of strings, and > 1 items does not match expected type.managed 1`] = `
+exports[`field is array of strings, and more than 1 items does not match expected type.managed 1`] = `
 Object {
   "diffDescription": Object {
     "assertion": Array [
@@ -17873,7 +17873,7 @@ Object {
 }
 `;
 
-exports[`field is array of strings, and > 1 items does not match expected type.managed 2`] = `
+exports[`field is array of strings, and more than 1 items does not match expected type.managed 2`] = `
 Array [
   Array [
     Object {
