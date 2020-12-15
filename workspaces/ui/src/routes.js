@@ -36,8 +36,8 @@ export function ApiRoutes(props) {
             component={CaptureManagerPage}
           />
           <Route path={routerPaths.review} component={ReviewDiffPage} />
+          <Redirect to={defaultRoute} />
         </Switch>
-        <Redirect to={defaultRoute} />
       </Suspense>
     </FinalizeSummaryContextStore>
   );

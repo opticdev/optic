@@ -13,6 +13,7 @@ import {
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { captureId } from '../../components/loaders/ApiLoader';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
 import {
   DiffResultHelper,
   JsonHelper,
@@ -201,9 +202,7 @@ export class ExampleDiffService implements IDiffService {
       DiffResultHelper.endpointDiffs(diffs, this.rfcState)
     );
 
-    const asJs = opticEngine.DiffWithPointersJsonSerializer.toJs(this.diffs);
-
-    return Promise.resolve({ diffs: endpointDiffs, rawDiffs: asJs });
+    return Promise.resolve({ diffs: endpointDiffs, rawDiffs: diffsJson });
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
