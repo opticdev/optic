@@ -23,17 +23,16 @@ pub fn diff_interaction(
   interaction_json: String,
   spec: &WasmSpecProjection,
 ) -> Result<String, JsValue> {
-  let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-    serde_json::from_str(&interaction_json).unwrap();
+  let interaction: HttpInteraction = serde_json::from_str(&interaction_json).unwrap();
 
-  let results = spec.diff_interaction(interaction);
+  let results: Vec<ResultContainer<InteractionDiffResult>> = spec
+    .diff_interaction(interaction)
+    .into_iter()
+    .map(|result| result.into())
+    .collect();
 
   Ok(serde_json::to_string(&results).unwrap())
 }
-
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
-struct TaggedInput<T>(T, Tags);
-type Tags = Vec<String>;
 
 #[wasm_bindgen]
 pub struct WasmSpecProjection {
@@ -49,5 +48,15 @@ impl WasmSpecProjection {
 impl From<SpecProjection> for WasmSpecProjection {
   fn from(projection: SpecProjection) -> Self {
     Self { projection }
+  }
+}
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+struct ResultContainer<T>(T, String);
+
+impl From<InteractionDiffResult> for ResultContainer<InteractionDiffResult> {
+  fn from(result: InteractionDiffResult) -> Self {
+    let fingerprint = result.fingerprint();
+    Self(result, fingerprint)
   }
 }

@@ -22,77 +22,59 @@ export default function TestingSessions(props) {
     exampleSessionCollection: 'example-sessions',
   });
 
-  const captureServiceFactory = async (specService, captureId) => {
-    const { ExampleCaptureService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
-    return new ExampleCaptureService(specService);
-  };
+  // let exampleDiff;
 
-  const diffServiceFactory = async (
-    specService,
-    captureService,
-    _events,
-    _rfcState,
-    additionalCommands,
-    config,
-    captureId
-  ) => {
-    async function computeInitialDiff() {
-      const capture = await specService.listCapturedSamples(captureId);
-      const commandContext = new RfcCommandContext(
-        'simulated',
-        'simulated',
-        'simulated'
-      );
+  // const captureServiceFactory = async (specService, captureId) => {
+  //   const { ExampleDiff, ExampleCaptureService } = await import(
+  //     '../services/diff/ExampleDiffService'
+  //   );
 
-      const {
-        resolvers,
-        rfcState,
-      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        _events,
-        commandContext,
-        additionalCommands
-      );
-      const a = DiffHelpers;
-      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-      for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByDiffs(
-          resolvers,
-          rfcState,
-          JsonHelper.fromInteraction(interaction),
-          interaction.uuid,
-          diffs
-        );
-      }
-      return {
-        diffs,
-        rfcState,
-        resolvers,
-      };
-    }
+  //   if (!exampleDiff) exampleDiff = new ExampleDiff();
 
-    const { diffs, rfcState } = await computeInitialDiff();
-    const { ExampleDiffService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
+  //   return new ExampleCaptureService(specService, exampleDiff);
+  // };
 
-    return new ExampleDiffService(
-      specService,
-      captureService,
-      config,
-      diffs,
-      rfcState
-    );
-  };
+  // const diffServiceFactory = async (
+  //   specService,
+  //   captureService,
+  //   _events,
+  //   _rfcState,
+  //   additionalCommands,
+  //   config
+  // ) => {
+  //   const commandContext = new RfcCommandContext(
+  //     'simulated',
+  //     'simulated',
+  //     'simulated'
+  //   );
+  //   const {
+  //     rfcState,
+  //   } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+  //     _events,
+  //     commandContext,
+  //     additionalCommands
+  //   );
+
+  //   const { ExampleDiff, ExampleDiffService } = await import(
+  //     '../services/diff/ExampleDiffService'
+  //   );
+
+  //   if (!exampleDiff) exampleDiff = new ExampleDiff();
+
+  //   return new ExampleDiffService(
+  //     exampleDiff,
+  //     specService,
+  //     captureService,
+  //     config,
+  //     [],
+  //     rfcState
+  //   );
+  // };
 
   return (
     <BaseUrlContext value={{ path: match.path, url: match.url }}>
       <DebugSessionContextProvider value={session}>
-        <ApiSpecServiceLoader
-          captureServiceFactory={captureServiceFactory}
-          diffServiceFactory={diffServiceFactory}
-        >
+        <ApiSpecServiceLoader>
           <ApiRoutes />
         </ApiSpecServiceLoader>
       </DebugSessionContextProvider>
