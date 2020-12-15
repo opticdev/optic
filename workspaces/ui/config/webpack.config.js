@@ -26,6 +26,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const DiffEngineWebpackPlugin = require('@useoptic/diff-engine-wasm/webpack.plugin');
 const ThreadsPlugin = require('threads-plugin');
 
 const postcssNormalize = require('postcss-normalize');
@@ -466,7 +467,12 @@ module.exports = function (webpackEnv) {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              exclude: [
+                /\.(js|mjs|jsx|ts|tsx)$/,
+                /\.html$/,
+                /\.json$/,
+                /\.wasm$/,
+              ],
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
@@ -504,6 +510,7 @@ module.exports = function (webpackEnv) {
             : undefined
         )
       ),
+      new DiffEngineWebpackPlugin(),
       new ThreadsPlugin(),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.

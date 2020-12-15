@@ -1,5 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can parse a start task from optic yaml 1`] = `
+Object {
+  "isValid": true,
+  "task": Object {
+    "command": Object {
+      "endLine": 5,
+      "endPosition": 181,
+      "startLine": 5,
+      "startPosition": 161,
+      "value": "npm run server-start",
+    },
+    "inboundUrl": Object {
+      "endLine": 6,
+      "endPosition": 219,
+      "startLine": 6,
+      "startPosition": 198,
+      "value": "http://localhost:3005",
+    },
+    "name": "start",
+    "targetUrl": undefined,
+    "useTask": undefined,
+  },
+  "taskRange": Object {
+    "endPosition": 219,
+    "startPosition": 141,
+  },
+}
+`;
+
 exports[`can parse a test task from optic yaml 1`] = `
 Object {
   "isValid": true,
@@ -21,6 +50,29 @@ Object {
       "startPosition": 387,
       "value": "start",
     },
+  },
+}
+`;
+
+exports[`fails gracefully when missing value 1`] = `
+Object {
+  "isValid": true,
+  "task": Object {
+    "command": undefined,
+    "inboundUrl": Object {
+      "endLine": 6,
+      "endPosition": 198,
+      "startLine": 6,
+      "startPosition": 177,
+      "value": "http://localhost:3005",
+    },
+    "name": "start",
+    "targetUrl": undefined,
+    "useTask": undefined,
+  },
+  "taskRange": Object {
+    "endPosition": 198,
+    "startPosition": 141,
   },
 }
 `;
