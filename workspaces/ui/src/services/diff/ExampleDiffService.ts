@@ -31,8 +31,120 @@ import { localInitialBodyLearner } from '../../components/diff/review-diff/learn
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
 
+export class ExampleDiff {
+  private diffId?: any;
+  private diffing?: Promise<any[]>;
+
+  start(events: any[], interactions: any[]) {
+    const spec = DiffEngine.spec_from_events(JSON.stringify(events));
+    this.diffId = uuidv4();
+
+    const diffingStream = (async function* () {
+      for (let [i, interaction] of interactions.entries()) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          spec
+        );
+
+        let parsedResults = JSON.parse(results);
+        let taggedResults = (parsedResults = parsedResults.map(
+          ([diffResult, fingerprint]) => [
+            diffResult,
+            [interaction.uuid],
+            fingerprint,
+          ]
+        ));
+
+        for (let result of taggedResults) {
+          yield result;
+        }
+        // make sure this is async so we don't block the UI thread
+        await new Promise((resolve) => setTimeout(resolve));
+      }
+    })();
+
+    // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
+    this.diffing = (async function (diffing) {
+      const diffs = [];
+      for await (let diff of diffing) {
+        diffs.push(diff);
+      }
+
+      return diffs;
+    })(diffingStream);
+
+    return this.diffId;
+  }
+
+  async getNormalizedDiffs() {
+    const diffResults = await this.diffing;
+
+    let pointersByFingerprint: Map<String, string[]> = new Map();
+    let diffs: [any, string][] = [];
+    let results: [any, string[]][] = [];
+
+    for (let [diff, pointers, fingerprint] of diffResults) {
+      if (!fingerprint) results.push([diff, pointers]);
+
+      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
+      if (existingPointers.length < 1) {
+        diffs.push([diff, fingerprint]);
+      }
+      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
+    }
+
+    for (let [diff, fingerprint] of diffs) {
+      let pointers = pointersByFingerprint.get(fingerprint);
+      if (!pointers) throw new Error('unreachable');
+      results.push([diff, pointers]);
+    }
+
+    return results;
+  }
+
+  async getUnrecognizedUrls() {
+    const diffResults = await this.diffing;
+
+    let countsByFingerprint: Map<String, number> = new Map();
+    let undocumentedUrls: Array<{
+      path: string;
+      method: string;
+      fingerprint: string;
+    }> = [];
+
+    for (let [diff, _, fingerprint] of diffResults) {
+      let urlDiff = diff['UnmatchedRequestUrl'];
+      if (!urlDiff || !fingerprint) continue;
+
+      let existingCount = countsByFingerprint.get(fingerprint) || 0;
+      if (existingCount < 1) {
+        let path = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Url && interactionComponent.Url.path
+        ).Url.path as string;
+        let method = urlDiff.interactionTrail.path.find(
+          (interactionComponent: any) =>
+            interactionComponent.Method && interactionComponent.Method.method
+        ).Method.method as string;
+
+        undocumentedUrls.push({ path, method, fingerprint });
+      }
+      countsByFingerprint.set(fingerprint, existingCount + 1);
+    }
+
+    return undocumentedUrls.map(({ path, method, fingerprint }) => {
+      let count = countsByFingerprint.get(fingerprint);
+      if (!count) throw new Error('unreachable');
+      return { path, method, count };
+    });
+  }
+}
+
 export class ExampleCaptureService implements ICaptureService {
-  constructor(private specService: ISpecService) {}
+  constructor(
+    private specService: ISpecService,
+    private exampleDiff: ExampleDiff
+  ) {}
 
   async startDiff(
     events: any[],
@@ -40,8 +152,11 @@ export class ExampleCaptureService implements ICaptureService {
     additionalCommands: IRfcCommand[],
     filters: { pathId: string; method: string }[]
   ): Promise<IStartDiffResponse> {
+    const capture = await this.specService.listCapturedSamples(captureId);
+    const diffId = await this.exampleDiff.start(events, capture.samples);
+
     return {
-      diffId: uuidv4(),
+      diffId,
       notificationsUrl: '',
     };
   }
@@ -63,6 +178,7 @@ export class ExampleCaptureService implements ICaptureService {
 
 export class ExampleDiffService implements IDiffService {
   constructor(
+    private exampleDiff: ExampleDiff,
     private specService: ISpecService,
     private captureService: ICaptureService,
     private diffConfig: IStartDiffResponse,
@@ -75,8 +191,14 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
+    const diffsJson = await this.exampleDiff.getNormalizedDiffs();
+
+    const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
+      diffsJson
+    );
+
     const endpointDiffs = ScalaJSHelpers.toJsArray(
-      DiffResultHelper.endpointDiffs(this.diffs, this.rfcState)
+      DiffResultHelper.endpointDiffs(diffs, this.rfcState)
     );
 
     const asJs = opticEngine.DiffWithPointersJsonSerializer.toJs(this.diffs);
@@ -85,17 +207,7 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const capture = await this.specService.listCapturedSamples(captureId);
-    const samplesSeq = JsonHelper.jsArrayToSeq(
-      capture.samples.map((x) => JsonHelper.fromInteraction(x))
-    );
-    const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlHelpers();
-    const counter = undocumentedUrlHelpers.countUndocumentedUrls(
-      this.rfcState,
-      samplesSeq
-    );
-    const urls = opticEngine.UrlCounterJsonSerializer.toFriendlyJs(counter);
-
+    const urls = await this.exampleDiff.getUnrecognizedUrls();
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
     return Promise.resolve({ result, raw: urls });
   }

@@ -7,6 +7,7 @@ import Loading from './components/navigation/Loading';
 import { ApiPage } from './components/api-page/ApiPage';
 import { SetupPage } from './components/setup-page/SetupPage';
 import { ReviewDiffPage } from './components/diff/review-diff/ReviewDiffPage';
+import { FinalizeSummaryContextStore } from './components/diff/review-diff/FinalizeSummaryContext';
 
 const TestingDashboardLoader = React.lazy(() =>
   import('./components/loaders/TestingDashboardLoader')
@@ -23,19 +24,21 @@ export function ApiRoutes(props) {
     : routerPaths.docsRoot;
 
   return (
-    <Suspense fallback={<Loading />}>
-      <Switch>
-        {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
-        <Route path={routerPaths.setup} component={SetupPage} />
-        <Route path={routerPaths.docsRoot} component={DocsPage} />
-        <Route
-          strict
-          path={routerPaths.diffsRoot}
-          component={CaptureManagerPage}
-        />
-        <Route path={routerPaths.review} component={ReviewDiffPage} />
-      </Switch>
-      <Redirect to={defaultRoute} />
-    </Suspense>
+    <FinalizeSummaryContextStore>
+      <Suspense fallback={<Loading />}>
+        <Switch>
+          {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
+          <Route path={routerPaths.setup} component={SetupPage} />
+          <Route path={routerPaths.docsRoot} component={DocsPage} />
+          <Route
+            strict
+            path={routerPaths.diffsRoot}
+            component={CaptureManagerPage}
+          />
+          <Route path={routerPaths.review} component={ReviewDiffPage} />
+        </Switch>
+        <Redirect to={defaultRoute} />
+      </Suspense>
+    </FinalizeSummaryContextStore>
   );
 }

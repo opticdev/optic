@@ -1,43 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useMockData } from '../../contexts/MockDataContext';
 import { SpecServiceStore } from '../../contexts/SpecServiceContext';
 import { LinearProgress } from '@material-ui/core';
 import { LocalRfcStore, RfcStore } from '../../contexts/RfcContext';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
 import EventEmitter from 'events';
+import { RfcCommandContext } from '@useoptic/domain';
+import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 
 export function ApiSpecServiceLoader(props) {
-  const { diffServiceFactory, captureServiceFactory } = props;
   const debugData = useMockData();
 
-  const [service, setService] = useState(null);
+  const specService = useSpecService(debugData);
   const [events, setEvents] = useState(null);
+  const loadingExampleDiff = useLoadExampleDiff(specService);
+
   useEffect(() => {
-    if (debugData.available && debugData.loading) return;
-
-    const serviceFactory = () =>
-      createExampleSpecServiceFactory(debugData.data);
-
-    const task = async () => {
-      const { specService } = await serviceFactory();
-      setService(specService);
-      specService.eventEmitter.on('events-updated', async () => {
+    if (specService) {
+      const task = async () => {
         const events = await specService.listEvents();
         setEvents(events);
-      });
-    };
-    task();
-  }, [debugData.available, debugData.loading]);
-
-  useEffect(() => {
-    if (service) {
-      const task = async () => {
-        const events = await service.listEvents();
-        setEvents(events);
       };
+      specService.eventEmitter.on('events-updated', () => {
+        task();
+      });
       task();
     }
-  }, [service]);
+  }, [specService]);
+
+  const captureServiceFactory = useCaptureServiceFactory(loadingExampleDiff);
+  const diffServiceFactory = useDiffServiceFactory(loadingExampleDiff);
 
   if (!events) {
     return <LinearProgress />;
@@ -45,8 +37,8 @@ export function ApiSpecServiceLoader(props) {
 
   return (
     <SpecServiceStore
-      specService={service}
-      specServiceEvents={service.eventEmitter}
+      specService={specService}
+      specServiceEvents={specService.eventEmitter}
       diffServiceFactory={diffServiceFactory}
       captureServiceFactory={captureServiceFactory}
     >
@@ -55,7 +47,7 @@ export function ApiSpecServiceLoader(props) {
         rfcId="testRfcId"
         instance="the one in ApiSpecServiceLoader"
       >
-        <RfcStore specService={service}>{props.children}</RfcStore>
+        <RfcStore specService={specService}>{props.children}</RfcStore>
       </InitialRfcCommandsStore>
     </SpecServiceStore>
   );
@@ -107,6 +99,108 @@ export function LocalCliSpecServiceLoader(props) {
       </InitialRfcCommandsStore>
     </SpecServiceStore>
   );
+}
+
+function useSpecService(debugData) {
+  const [service, setService] = useState(null);
+  useEffect(() => {
+    if (debugData.available && debugData.loading) return;
+
+    const serviceFactory = () =>
+      createExampleSpecServiceFactory(debugData.data);
+
+    const task = async () => {
+      const { specService } = await serviceFactory();
+      setService(specService);
+    };
+    task();
+  }, [debugData.available, debugData.loading]);
+
+  return service;
+}
+
+function useLoadExampleDiff() {
+  // produce a Promise that resolves with example diff instance
+  const resolveExampleDiff = useRef(null);
+
+  const loadingRef = useRef(
+    !resolveExampleDiff.current
+      ? new Promise((resolve) => {
+          resolveExampleDiff.current = resolve;
+        })
+      : null
+  );
+
+  useEffect(() => {
+    let createExampleDiff = async () => {
+      const { ExampleDiff } = await import(
+        '../../services/diff/ExampleDiffService'
+      );
+      let diff = new ExampleDiff();
+
+      resolveExampleDiff.current(diff);
+      resolveExampleDiff.current = null;
+    };
+
+    createExampleDiff();
+  }, []);
+
+  return loadingRef.current;
+}
+
+function useCaptureServiceFactory(loadingExampleDiff) {
+  const factoryRef = useRef(async (specService) => {
+    const [{ ExampleCaptureService }, exampleDiff] = await Promise.all([
+      import('../../services/diff/ExampleDiffService'),
+      loadingExampleDiff,
+    ]);
+
+    return new ExampleCaptureService(specService, exampleDiff);
+  });
+
+  return factoryRef.current;
+}
+
+function useDiffServiceFactory(loadingExampleDiff) {
+  const factoryRef = useRef(
+    async (
+      specService,
+      captureService,
+      _events,
+      _rfcState,
+      additionalCommands,
+      config
+    ) => {
+      const commandContext = new RfcCommandContext(
+        'simulated',
+        'simulated',
+        'simulated'
+      );
+      const {
+        rfcState,
+      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
+        _events,
+        commandContext,
+        additionalCommands
+      );
+
+      const [{ ExampleDiffService }, exampleDiff] = await Promise.all([
+        import('../../services/diff/ExampleDiffService'),
+        loadingExampleDiff,
+      ]);
+
+      return new ExampleDiffService(
+        exampleDiff,
+        specService,
+        captureService,
+        config,
+        [],
+        rfcState
+      );
+    }
+  );
+
+  return factoryRef.current;
 }
 
 export const captureId = 'example-session';
