@@ -245,7 +245,7 @@ test('field is array of strings, and 1 item does not match expected type.managed
   ).toMatchSnapshot();
 });
 
-test('field is array of strings, and > 1 items does not match expected type.managed', async () => {
+test('field is array of strings, and more than 1 items does not match expected type.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
