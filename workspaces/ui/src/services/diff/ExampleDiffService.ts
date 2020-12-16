@@ -31,7 +31,8 @@ import {
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
-import { AsyncTools, Streams } from '@useoptic/cli-shared';
+import * as AsyncTools from '@useoptic/cli-shared/build/async-tools';
+import * as Streams from '@useoptic/cli-shared/build/streams';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -92,40 +93,16 @@ export class ExampleDiff {
   }
 
   async getUnrecognizedUrls() {
-    const diffResults = await this.diffing;
+    // Q: Why not consume diff stream straight up? A: we don't have a way to fork streams yet
+    // allowing only a single consumer, and we need multiple (results themselves + urls)!
+    const diffResults = AsyncTools.from(await this.diffing);
 
-    let countsByFingerprint: Map<String, number> = new Map();
-    let undocumentedUrls: Array<{
-      path: string;
-      method: string;
-      fingerprint: string;
-    }> = [];
+    const undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
+      diffResults
+    );
+    const lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
 
-    for (let [diff, _, fingerprint] of diffResults) {
-      let urlDiff = diff['UnmatchedRequestUrl'];
-      if (!urlDiff || !fingerprint) continue;
-
-      let existingCount = countsByFingerprint.get(fingerprint) || 0;
-      if (existingCount < 1) {
-        let path = urlDiff.interactionTrail.path.find(
-          (interactionComponent: any) =>
-            interactionComponent.Url && interactionComponent.Url.path
-        ).Url.path as string;
-        let method = urlDiff.interactionTrail.path.find(
-          (interactionComponent: any) =>
-            interactionComponent.Method && interactionComponent.Method.method
-        ).Method.method as string;
-
-        undocumentedUrls.push({ path, method, fingerprint });
-      }
-      countsByFingerprint.set(fingerprint, existingCount + 1);
-    }
-
-    return undocumentedUrls.map(({ path, method, fingerprint }) => {
-      let count = countsByFingerprint.get(fingerprint);
-      if (!count) throw new Error('unreachable');
-      return { path, method, count };
-    });
+    return AsyncTools.toArray(lastUnique);
   }
 }
 
@@ -198,7 +175,12 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const urls = await this.exampleDiff.getUnrecognizedUrls();
+    const urls = (await this.exampleDiff.getUnrecognizedUrls()).map(
+      ({ fingerprint, ...rest }) => {
+        return rest;
+      }
+    );
+
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
     return Promise.resolve({ result, raw: urls });
   }
