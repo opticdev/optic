@@ -235,6 +235,8 @@ class CliServer {
         });
       });
 
+      this.server.setTimeout(600000);
+
       this.server.on('connection', (connection) => {
         console.log(`adding connection`);
         this.connections.push(connection);
