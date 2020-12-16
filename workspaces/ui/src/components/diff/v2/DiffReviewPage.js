@@ -4,14 +4,8 @@ import Tabs from '@material-ui/core/Tabs';
 import { CustomNavTab, CustomNavTabDense } from './CustomNavTab';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Fab from '@material-ui/core/Fab';
-import DoneIcon from '@material-ui/icons/Done';
 import { EndpointsContext } from '../../../contexts/EndpointContext';
 import { PathAndMethod, PathAndMethodOverflowFriendly } from './PathAndMethod';
-import {
-  CaptureContext,
-  useCaptureContext,
-} from '../../../contexts/CaptureContext';
 import {
   DiffResultHelper,
   getOrUndefined,

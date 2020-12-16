@@ -211,9 +211,9 @@ export class DiffWorker {
       }
 
       batcher.on('batch', () => {
-        console.log('scheduling batch flush');
+        console.log('scheduling batch flushSuggestions');
         queue.schedule(() => {
-          console.log('executing batch flush');
+          console.log('executing batch flushSuggestions');
           return flush().catch((e) => {
             notifyParentOfError(e);
           });

@@ -4,12 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { DocDarkGrey } from '../../docs/DocConstants';
-import {
-  AddedDarkGreen,
-  AddedGreen,
-  AddedGreenBackground,
-  primary,
-} from '../../../theme';
 import Fade from '@material-ui/core/Fade';
 
 export function DiffStats(props) {

@@ -73,7 +73,6 @@ import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
 import { trackUserEvent, track } from '../../../Analytics';
 import qs from 'qs';
-import { LearnAPIPage } from './learn-api/LearnAPIPage';
 
 const {
   Context: AllCapturesContext,
@@ -81,7 +80,7 @@ const {
 } = GenericContextFactory(null);
 export { AllCapturesContext };
 
-function AllCapturesStore(props) {
+export function AllCapturesStore(props) {
   const baseUrl = useBaseUrl();
   const [captures, setCaptures] = useState([]);
   const [dismissed, setDismissed] = useState([]);
@@ -101,15 +100,15 @@ function AllCapturesStore(props) {
     update();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener('focus', update);
-
-    function cleanup() {
-      window.removeEventListener('focus', update);
-    }
-
-    return cleanup;
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('focus', update);
+  //
+  //   function cleanup() {
+  //     window.removeEventListener('focus', update);
+  //   }
+  //
+  //   return cleanup;
+  // }, []);
 
   useEffect(() => {
     global.opticDump = dumpSpecServiceState(specService);
@@ -332,12 +331,15 @@ function CaptureChooserComponent(props) {
           {subtabs.ENDPOINT_DIFF === tab && (
             <EndpointDiffs captureId={captureId} />
           )}
-          {subtabs.UNDOCUMENTED_URL === tab &&
-            (process.env.REACT_APP_LEARN_API_MODE ? (
-              <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
-            ) : (
+          {
+            subtabs.UNDOCUMENTED_URL === tab && (
+              // (process.env.REACT_APP_LEARN_API_MODE ? (
+              //   <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
+              // ) : (
               <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
-            ))}
+            )
+            // ))}
+          }
         </div>
       </div>
     </div>
@@ -704,6 +706,7 @@ export const useCaptureManagerPageStyles = makeStyles((theme) => ({
   center: {
     flex: 1,
     maxWidth: 1200,
+    overflow: 'scroll',
   },
   statsSection: {
     paddingBottom: theme.spacing(2),

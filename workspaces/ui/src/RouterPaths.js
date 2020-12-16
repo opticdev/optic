@@ -1,4 +1,4 @@
-import { useBaseUrl } from './contexts/BaseUrlContext';
+import {useBaseUrl} from './contexts/BaseUrlContext';
 
 const routerPaths = {
   testingDashboard: (base = '') => `${base}/testing`,
@@ -11,6 +11,9 @@ const routerPaths = {
   requestDocsRoot: (base = '') =>
     `${routerPaths.docsRoot(base)}/paths/:pathId/methods/:method`,
   diffsRoot: (base = '') => `${base}/diffs`,
+  reviewRoot: (base = '') => `${base}/review`,
+  reviewRootWithBoundary: (base = '') => `${base}/review/:boundaryId`,
+  reviewFinalize: (base = '') => `${base}/review/:boundaryId/finalize`,
   captureRoot: (base = '') => `${routerPaths.diffsRoot(base)}/:captureId`,
   captureRequestDiffsRoot: (base = '') =>
     `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method`,

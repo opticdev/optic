@@ -9,9 +9,9 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
 import { LightTooltip } from '../tooltips/LightTooltip';
-import { track } from '../../Analytics';
 
 const drawerWidth = 270;
+const miniWidth = 30;
 
 const useStyles = makeStyles({
   drawer: {
@@ -19,22 +19,22 @@ const useStyles = makeStyles({
     flexShrink: 0,
   },
   miniDrawer: {
-    width: 55,
+    width: miniWidth,
     flexShrink: 0,
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: '#1B2958',
+    backgroundColor: '#0E1837',
     display: 'flex',
     flexDirection: 'row',
   },
   miniDrawerPaper: {
-    backgroundColor: '#1B2958',
+    backgroundColor: '#0E1837',
     display: 'flex',
     flexDirection: 'row',
   },
   topLevel: {
-    width: 55,
+    width: miniWidth,
     // backgroundColor: '#2b3966',
     overflow: 'hidden',
     borderRight: '1px solid #3F5597',
@@ -51,6 +51,11 @@ const useStyles = makeStyles({
   mainSection: {
     flex: 1,
   },
+  iconStyles: {
+    color: '#e2e2e2',
+    width: 20,
+    height: 20,
+  },
 });
 
 export default function Navbar(props) {
@@ -58,28 +63,25 @@ export default function Navbar(props) {
   const routerPaths = useRouterPaths();
 
   const enabledFeatures = useEnabledFeatures();
-  
+
   const menuItems = useMemo(
     () => [
-      ...(!process.env.REACT_APP_DONT_SHOW_DIFF ? [{
-        name: 'Review Diff',
-        icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.diffsRoot,
-      }] : []),
-      {
-        name: 'Documentation',
-        icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.docsRoot,
-      },
-      ...(enabledFeatures && enabledFeatures.TESTING_DASHBOARD
+      ...(!process.env.REACT_APP_DONT_SHOW_DIFF
         ? [
             {
-              name: 'Live Contract Testing',
-              icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
-              link: routerPaths.testingDashboard,
+              name: 'Review Diff',
+              icon: <ChangeHistoryIcon className={classes.iconStyles} />,
+              link: process.env.REACT_APP_DIFF_REVIEW_PAGE
+                ? routerPaths.reviewRoot
+                : routerPaths.diffsRoot,
             },
           ]
         : []),
+      {
+        name: 'Documentation',
+        icon: <DescriptionIcon className={classes.iconStyles} />,
+        link: routerPaths.docsRoot,
+      },
     ],
     [routerPaths]
   );
@@ -99,7 +101,7 @@ export default function Navbar(props) {
         className={classes.topLevel}
         style={props.mini && { borderRight: 'none' }}
       >
-        <img src="/optic-logo.svg" width={50} className={classes.opticLogo} />
+        <img src="/optic-logo.svg" width={25} className={classes.opticLogo} />
         {menuItems.map((i) => (
           <LightTooltip
             key={i.link}

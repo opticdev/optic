@@ -2,29 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
-import {
-  CompareEquality,
-  DiffPreviewer,
-  DiffResultHelper,
-  getIndex,
-  getOrUndefined,
-  JsonHelper,
-  lengthScala,
-  toOption,
-} from '@useoptic/domain';
+import { CompareEquality, getIndex, getOrUndefined } from '@useoptic/domain';
 import { DocDarkGrey, DocDivider } from '../../docs/DocConstants';
 import { Show } from '../../shared/Show';
-import DiffHunkViewer from './DiffHunkViewer';
-import { DiffContext } from './DiffContext';
 import { RfcContext } from '../../../contexts/RfcContext';
 import { ShapeExpandedStore } from './shape_viewers/ShapeRenderContext';
 import { PathAndMethod } from './PathAndMethod';
 import { DiffHelperCard } from './DiffHelperCard';
-import SimulatedCommandContext from '../SimulatedCommandContext';
 import { BreadcumbX } from './DiffNewRegions';
 import { primary } from '../../../theme';
 import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
 import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';

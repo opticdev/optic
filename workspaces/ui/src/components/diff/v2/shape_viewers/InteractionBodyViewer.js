@@ -6,17 +6,7 @@ import _isEqual from 'lodash.isequal';
 import _get from 'lodash.get';
 import _uniq from 'lodash.uniq';
 
-import {
-  getOrUndefined,
-  getOrUndefinedJson,
-  headOrUndefined,
-  JsonHelper,
-  JsonTrailHelper,
-  lengthScala,
-  mapScala,
-  getJson,
-  toOption,
-} from '@useoptic/domain';
+import { getOrUndefined, JsonHelper, JsonTrailHelper } from '@useoptic/domain';
 
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
@@ -25,13 +15,14 @@ export default function InteractionBodyViewer({
   diff,
   diffDescription,
   body,
+  jsonBody,
   selectedInterpretation,
 }) {
   const generalClasses = useShapeViewerStyles();
 
   const [{ rows }, dispatch] = useReducer(
     updateState,
-    { diff, body },
+    { diff, body, jsonBody },
     createInitialState
   );
 
@@ -495,15 +486,21 @@ const useStyles = makeStyles((theme) => ({
 // TODO: consider moving this to it's own module, partly to enable the usecase
 // stated above.
 
-function createInitialState({ diff, body }) {
+function createInitialState({ diff, body, jsonBody }) {
   const diffTrails = diff
     ? JsonHelper.seqToJsArray(diff.jsonTrails).map((jsonTrail) =>
         JsonTrailHelper.toJs(jsonTrail)
       )
     : [];
 
-  const bodyJson = getOrUndefined(body.jsonOption);
-  const shape = bodyJson && JsonHelper.toJs(bodyJson);
+  debugger;
+
+  const shape = jsonBody
+    ? jsonBody
+    : (() => {
+        const bodyJson = getOrUndefined(body.jsonOption);
+        return bodyJson && JsonHelper.toJs(bodyJson);
+      })();
 
   const [rows, collapsedTrails] = shapeRows(shape, diffTrails);
 

@@ -39,6 +39,47 @@ export const PathAndMethod = ({ path, method }) => {
   );
 };
 
+export const PathAndMethodMono = ({ path, method }) => {
+  const methodRender = (
+    <Typography
+      variant="body1"
+      component="span"
+      style={{
+        fontWeight: 400,
+        fontFamily: 'Ubuntu Mono',
+        color: '#ffffff',
+        padding: 4,
+        fontSize: 10,
+        borderRadius: 2,
+        marginTop: 2,
+        backgroundColor: methodColorsDark[method.toUpperCase()],
+      }}
+    >
+      {method.toUpperCase()}
+    </Typography>
+  );
+  const pathRender = (
+    <Typography
+      variant="subtitle1"
+      component="span"
+      style={{
+        fontSize: 12,
+        marginLeft: 3,
+        fontFamily: 'Ubuntu Mono',
+      }}
+    >
+      {path}
+    </Typography>
+  );
+
+  return (
+    <span>
+      {' '}
+      {methodRender} {pathRender}{' '}
+    </span>
+  );
+};
+
 export const PathAndMethodOverflowFriendly = ({ path, method }) => {
   const methodRender = (
     <Typography

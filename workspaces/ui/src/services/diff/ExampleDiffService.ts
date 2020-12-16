@@ -13,6 +13,7 @@ import {
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { captureId } from '../../components/loaders/ApiLoader';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
 import {
   DiffResultHelper,
   JsonHelper,
@@ -20,11 +21,16 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain/build';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
 import uuidv4 from 'uuid/v4';
 import { getOrUndefined, opticEngine } from '@useoptic/domain';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { localInitialBodyLearner } from '../../components/diff/v2/learn-api/browser-initial-body';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
+import { IDiff } from '../../engine/interfaces/diffs';
+import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -196,14 +202,13 @@ export class ExampleDiffService implements IDiffService {
       DiffResultHelper.endpointDiffs(diffs, this.rfcState)
     );
 
-    return Promise.resolve({ diffs: endpointDiffs });
+    return Promise.resolve({ diffs: endpointDiffs, rawDiffs: diffsJson });
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
     const urls = await this.exampleDiff.getUnrecognizedUrls();
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
-
-    return Promise.resolve(result);
+    return Promise.resolve({ result, raw: urls });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
@@ -277,13 +282,41 @@ export class ExampleDiffService implements IDiffService {
     rfcService: any,
     rfcId: any,
     pathId: string,
-    method: string
+    method: string,
+    opticIds: any = undefined
   ): Promise<ILearnedBodies> {
     const capture = await this.specService.listCapturedSamples(captureId);
     const interactions = capture.samples;
 
     const rfcState = rfcService.currentState(rfcId);
 
-    return localInitialBodyLearner(rfcState, pathId, method, interactions);
+    return localInitialBodyLearner(
+      rfcState,
+      pathId,
+      method,
+      interactions,
+      opticIds
+    );
+  }
+
+  async learnTrailValues(
+    rfcService: any,
+    rfcId: any,
+    pathId: string,
+    method: string,
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+    const capture = await this.specService.listCapturedSamples(captureId);
+    const interactions = capture.samples;
+
+    const rfcState = rfcService.currentState(rfcId);
+
+    return localTrailValuesLearner(
+      rfcState,
+      pathId,
+      method,
+      diffs,
+      interactions
+    );
   }
 }

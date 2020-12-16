@@ -1,0 +1,162 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`accurate spec trail for all diffs 1`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "GET",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs 2`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "GET",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs 3`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
+}
+`;
+
+exports[`accurate spec trail for all diffs 4`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "GET",
+  "pathId": "path_xhUZ8irdJO",
+}
+`;
+
+exports[`accurate spec trail for all diffs 5`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_wPHNu8BDab",
+}
+`;
+
+exports[`accurate spec trail for all diffs 6`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "GET",
+  "pathId": "path_wPHNu8BDab",
+}
+`;
+
+exports[`accurate spec trail for all diffs 7`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs 8`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_AsEexQkVwC",
+}
+`;
+
+exports[`accurate spec trail for all diffs 9`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "POST",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs 10`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "POST",
+  "pathId": "path_UOIsxzICu5",
+}
+`;
+
+exports[`accurate spec trail for all diffs 11`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "GET",
+  "pathId": "path_AsEexQkVwC",
+}
+`;
+
+exports[`accurate spec trail for all diffs 12`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "GET",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs 13`] = `
+Object {
+  "inRequest": Object {
+    "contentType": "application/json",
+  },
+  "inResponse": false,
+  "method": "PATCH",
+  "pathId": "path_it2OyjUysW",
+}
+`;
+
+exports[`accurate spec trail for all diffs 14`] = `
+Object {
+  "inRequest": false,
+  "inResponse": Object {
+    "contentType": "application/json",
+    "statusCode": 200,
+  },
+  "method": "PATCH",
+  "pathId": "path_it2OyjUysW",
+}
+`;

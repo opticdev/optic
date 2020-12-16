@@ -204,7 +204,7 @@ function useDiffServiceFactory(loadingExampleDiff) {
 }
 
 export const captureId = 'example-session';
-async function createExampleSpecServiceFactory(data) {
+export async function createExampleSpecServiceFactory(data) {
   let events = JSON.stringify(data.events);
 
   const examples = data.examples || {};
@@ -254,6 +254,11 @@ async function createExampleSpecServiceFactory(data) {
     saveEvents: (eventStore, rfcId) => {
       const serializedEvents = eventStore.serializeEvents(rfcId);
       events = serializedEvents;
+      eventEmitter.emit('events-updated');
+      return Promise.resolve();
+    },
+    saveEventsArray: (serializedEvents) => {
+      events = JSON.stringify(serializedEvents);
       eventEmitter.emit('events-updated');
       return Promise.resolve();
     },

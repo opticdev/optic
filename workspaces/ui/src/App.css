@@ -1,7 +1,8 @@
 #root {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .blob {
@@ -17,6 +18,14 @@
   border-radius: 50%;
   width: 72px;
   height: 72px;
+  box-shadow: 0 0 0 0 rgb(85, 108, 161);
+  transform: scale(1);
+  animation: pulse 2s infinite;
+}
+.blobMedium {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
   box-shadow: 0 0 0 0 rgb(85, 108, 161);
   transform: scale(1);
   animation: pulse 2s infinite;

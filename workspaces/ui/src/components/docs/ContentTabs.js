@@ -67,7 +67,7 @@ export const ContentStyledTab = withStyles((theme) => {
       height: 25,
       minHeight: 'inherit',
       minWidth: 'inherit',
-      fontWeight: 500,
+      fontWeight: 800,
       fontSize: theme.typography.pxToRem(14),
       marginRight: theme.spacing(2),
       '&:focus': {
@@ -96,7 +96,6 @@ class ContentTabs extends React.Component {
   componentDidMount() {
     const {
       inRequest,
-      responseContentType,
       setResponseContentType,
       setResponseStatusCode,
       responseStatusCode,

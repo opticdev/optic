@@ -1,8 +1,10 @@
 import {
   commandsToJson,
   Facade,
+  JsonHelper,
   lengthScala,
   mapScala,
+  opticEngine,
   Queries,
   RfcCommandContext,
 } from '@useoptic/domain';
@@ -41,5 +43,9 @@ export function batchCommandHandler(eventStore, rfcId) {
       });
     },
     getAllCommands: () => pendingCommands,
+    getAllCommandsJs: () => {
+      const commandsAsVector = JsonHelper.jsArrayToVector(pendingCommands);
+      return opticEngine.CommandSerialization.toJs(commandsAsVector);
+    },
   };
 }

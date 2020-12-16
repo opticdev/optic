@@ -26,8 +26,8 @@ import { ShapeBox } from '../diff/v2/DiffReviewExpanded';
 import Paper from '@material-ui/core/Paper';
 import EmptyState from '../support/EmptyState';
 import { AddOpticLink, DocumentingYourApi } from '../support/Links';
-import { trackUserEvent } from '../../Analytics'
-import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs'
+import { trackUserEvent } from '../../Analytics';
+import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs';
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
     width: '100%',
@@ -78,7 +78,7 @@ export const DocsPage = ({ match, specService }) => {
   return (
     <Page title="Documentation" scrollToTop={true}>
       <Page.Navbar mini={true} />
-      <Page.Body>
+      <Page.Body style={{ height: '100vh', overflow: 'scroll' }}>
         <Switch>
           <Route
             exact
@@ -146,7 +146,13 @@ export const DocumentationToc = () => {
                             label="What does this endpoint do?"
                             onChange={(value) => {
                               updateContribution(endpointId, PURPOSE, value);
-                              trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: PURPOSE, value}))
+                              trackUserEvent(
+                                UpdateContribution.withProps({
+                                  id: endpointId,
+                                  purpose: PURPOSE,
+                                  value,
+                                })
+                              );
                             }}
                           />
 
@@ -168,7 +174,13 @@ export const DocumentationToc = () => {
                                 DESCRIPTION,
                                 value
                               );
-                              trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: DESCRIPTION, value}));
+                              trackUserEvent(
+                                UpdateContribution.withProps({
+                                  id: endpointId,
+                                  purpose: DESCRIPTION,
+                                  value,
+                                })
+                              );
                             }}
                           />
                         </div>
@@ -293,7 +305,13 @@ export const EndpointDocs = (props) => {
                   label="What does this endpoint do?"
                   onChange={(value) => {
                     updateContribution(endpointId, PURPOSE, value);
-                    trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: PURPOSE, value}))
+                    trackUserEvent(
+                      UpdateContribution.withProps({
+                        id: endpointId,
+                        purpose: PURPOSE,
+                        value,
+                      })
+                    );
                   }}
                 />
                 <MarkdownContribution
@@ -301,7 +319,13 @@ export const EndpointDocs = (props) => {
                   label="Detailed Description"
                   onChange={(value) => {
                     updateContribution(endpointId, DESCRIPTION, value);
-                    trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: DESCRIPTION, value}))
+                    trackUserEvent(
+                      UpdateContribution.withProps({
+                        id: endpointId,
+                        purpose: DESCRIPTION,
+                        value,
+                      })
+                    );
                   }}
                 />
 
@@ -343,7 +367,13 @@ export const EndpointDocs = (props) => {
                           label="Request Body Description"
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
-                            trackUserEvent(UpdateContribution.withProps({ id, purpose: DESCRIPTION, value}))
+                            trackUserEvent(
+                              UpdateContribution.withProps({
+                                id,
+                                purpose: DESCRIPTION,
+                                value,
+                              })
+                            );
                           }}
                         />
                       );
@@ -387,7 +417,13 @@ export const EndpointDocs = (props) => {
                           label={`${statusCode} Response Description`}
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
-                            trackUserEvent(UpdateContribution.withProps({ id, purpose: DESCRIPTION, value}))
+                            trackUserEvent(
+                              UpdateContribution.withProps({
+                                id,
+                                purpose: DESCRIPTION,
+                                value,
+                              })
+                            );
                           }}
                         />
                       );

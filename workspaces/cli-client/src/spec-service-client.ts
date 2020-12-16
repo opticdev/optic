@@ -28,6 +28,7 @@ export interface ISpecService {
   listEvents(): Promise<string>;
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
+  saveEventsArray(serializedEvents: any[]): Promise<void>;
 
   listCaptures(): Promise<ListCapturesResponse>;
 
@@ -82,6 +83,16 @@ export class Client implements ISpecService {
     return JsonHttpClient.putJsonString(
       `${this.baseUrl}/specs/${this.specId}/events`,
       serializedEvents
+    ).then((x) => {
+      this.eventEmitter.emit('events-updated');
+      return x;
+    });
+  }
+
+  saveEventsArray(serializedEvents: any[]): Promise<void> {
+    return JsonHttpClient.putJsonString(
+      `${this.baseUrl}/specs/${this.specId}/events`,
+      JSON.stringify(serializedEvents)
     ).then((x) => {
       this.eventEmitter.emit('events-updated');
       return x;

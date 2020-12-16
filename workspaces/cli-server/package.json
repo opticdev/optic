@@ -34,6 +34,7 @@
     "is-port-reachable": "^3.0.0",
     "jwt-decode": "2.2.0",
     "lodash.sortby": "^4.7.0",
+    "node-sha1": "^1.0.1",
     "node-fetch": "^2.6.0",
     "process-exists": "^4.0.0",
     "proper-lockfile": "^4.1.1",

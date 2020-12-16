@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu',
   },
   code: {
-    fontFamily: "'Source Code Pro', monospace",
+    fontFamily: 'Ubuntu Mono',
     fontWeight: 600,
     paddingLeft: 2,
     paddingRight: 2,

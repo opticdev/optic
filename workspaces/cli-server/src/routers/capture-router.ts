@@ -9,11 +9,16 @@ import {
 import { chain, final } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
 import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
 import { Diff } from '../diffs';
+import { OnDemandTrailValues } from '../tasks/on-demand-trail-values';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -82,7 +87,11 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
       let diffId;
       try {
-        diffId = await req.optic.session.diffCapture(captureId, events, filters);
+        diffId = await req.optic.session.diffCapture(
+          captureId,
+          events,
+          filters
+        );
       } catch (e) {
         return res.status(500).json({ message: e.message });
       }
@@ -115,6 +124,41 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
       result.then((learnedBodies: ILearnedBodies) => {
         res.json(learnedBodies);
       });
+      result.catch((e) => {
+        res.status(500).json({
+          message: e.message,
+        });
+      });
+    }
+  );
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  router.post(
+    '/trail-values',
+    bodyParser.json({ limit: '100mb' }),
+    async (req, res) => {
+      const { captureId } = req.params;
+      const { events, pathId, method, serializedDiffs } = req.body;
+
+      const onDemandTrailValues = new OnDemandTrailValues({
+        captureBaseDirectory: req.optic.paths.capturesPath,
+        events: events,
+        captureId,
+        pathId,
+        serializedDiffs,
+        method,
+      });
+
+      const result = onDemandTrailValues.run();
+
+      result.then(
+        (
+          learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+        ) => {
+          res.json(learnedTrails);
+        }
+      );
       result.catch((e) => {
         res.status(500).json({
           message: e.message,

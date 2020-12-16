@@ -18,6 +18,11 @@ export interface EndpointDescriptor {
   method: string;
   pathId: string;
   fullPath: string;
+  pathTrails: Array<{
+    isPathParameter: boolean;
+    pathComponentId: string;
+    pathComponentName: string;
+  }>;
   pathParameters: Array<{
     pathId: string;
     name: string;
@@ -69,6 +74,7 @@ export function createEndpointDescriptor(
 
   let fullPath;
   let pathParameters = [];
+  let pathTrails = [];
 
   //try to resolve this path
   try {
@@ -81,12 +87,16 @@ export function createEndpointDescriptor(
       return {
         pathComponentName,
         pathComponentId,
+        isPathParameter: !!pathComponent.descriptor
+          .ParameterizedPathComponentDescriptor,
       };
     });
 
     fullPath = pathTrailWithNames
       .map(({ pathComponentName }) => pathComponentName)
       .join('/');
+
+    pathTrails = pathTrailWithNames;
 
     pathParameters = pathTrail
       .map((pathId) => pathsById[pathId])
@@ -102,7 +112,9 @@ export function createEndpointDescriptor(
     console.error(e);
   }
 
-  if (!fullPath) return null; // can not find endpoint requests
+  if (fullPath === '') {
+    fullPath = '/';
+  }
 
   const requestBodies = requestsOnPathAndMethod.map(
     ({ requestId, requestDescriptor }) => {
@@ -141,6 +153,7 @@ export function createEndpointDescriptor(
     method,
     pathId,
     fullPath,
+    pathTrails,
     pathParameters,
     requestBodies,
     responses: responsesForPathAndMethod,
