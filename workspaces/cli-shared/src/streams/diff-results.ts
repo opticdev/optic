@@ -1,5 +1,7 @@
-type DiffResult = [any, string[], string];
-type UndocumentedUrl = {
+import { lastBy } from '../async-tools';
+
+export type DiffResult = [any, string[], string];
+export type UndocumentedUrl = {
   path: string;
   method: string;
   count: number;
@@ -48,3 +50,8 @@ export async function* undocumentedUrls(
     yield { path, method, fingerprint, count: newCount };
   }
 }
+
+// return the last unique diff result (using fingerprint as identity)
+export const lastUnique = lastBy(
+  ([_diff, _tags, fingerprint]: DiffResult) => fingerprint
+);

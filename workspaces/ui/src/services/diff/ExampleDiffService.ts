@@ -31,6 +31,7 @@ import {
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
+import { AsyncTools, Streams } from '@useoptic/cli-shared';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -40,7 +41,9 @@ export class ExampleDiff {
     const spec = DiffEngine.spec_from_events(JSON.stringify(events));
     this.diffId = uuidv4();
 
-    const diffingStream = (async function* () {
+    const diffingStream = (async function* (): AsyncIterable<
+      Streams.DiffResults.DiffResult
+    > {
       for (let [i, interaction] of interactions.entries()) {
         let results = DiffEngine.diff_interaction(
           JSON.stringify(interaction),
@@ -78,29 +81,14 @@ export class ExampleDiff {
   }
 
   async getNormalizedDiffs() {
-    const diffResults = await this.diffing;
+    // Q: Why not consume diff stream straight up? A: we don't have a way to fork streams yet
+    // allowing only a single consumer, and we need multiple (results themselves + urls)!
+    const diffResults = AsyncTools.from(await this.diffing);
 
-    let pointersByFingerprint: Map<String, string[]> = new Map();
-    let diffs: [any, string][] = [];
-    let results: [any, string[]][] = [];
+    const normalizedDiffs = Streams.DiffResults.normalize(diffResults);
+    const lastUniqueResults = Streams.DiffResults.lastUnique(normalizedDiffs);
 
-    for (let [diff, pointers, fingerprint] of diffResults) {
-      if (!fingerprint) results.push([diff, pointers]);
-
-      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
-      if (existingPointers.length < 1) {
-        diffs.push([diff, fingerprint]);
-      }
-      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
-    }
-
-    for (let [diff, fingerprint] of diffs) {
-      let pointers = pointersByFingerprint.get(fingerprint);
-      if (!pointers) throw new Error('unreachable');
-      results.push([diff, pointers]);
-    }
-
-    return results;
+    return AsyncTools.toArray(lastUniqueResults);
   }
 
   async getUnrecognizedUrls() {
