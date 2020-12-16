@@ -141,3 +141,13 @@ export {
   isEnvFalse,
   PackageJson,
 } from './config';
+
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO: This isn't particularly CLI specific, so should perhaps live somewhere
+// else. It just happens to be **the** shared package at the moment. Perhaps it
+// should be part of the 'diff-engine-wasm' /  'core' / 'domain' package, as it
+// gives tools to work with the results from and provides derivatives from
+// it's main types that aren't necessarily interface (cli / ui) specific.
+export * as AsyncTools from './async-tools';
+export * as Streams from './streams';
