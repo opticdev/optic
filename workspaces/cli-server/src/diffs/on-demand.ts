@@ -7,6 +7,7 @@ import {
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
+import { Streams, AsyncTools } from '@useoptic/cli-shared';
 
 import {
   Diff,
@@ -16,7 +17,7 @@ import {
 } from '.';
 
 import lockfile from 'proper-lockfile';
-import { Readable, PassThrough } from 'stream';
+import { Readable, PassThrough, Stream } from 'stream';
 import { chain } from 'stream-chain';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
@@ -224,13 +225,19 @@ export class DiffQueries implements DiffQueriesInterface {
 
   diffs(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffs = chain([
-        fs.createReadStream(this.paths.diffsStream),
-        jsonlParser(),
-        (data) => [data.value],
-      ]);
+      let diffsSource = fs.createReadStream(this.paths.diffsStream);
+      let parsed = AsyncTools.fromReadable<{
+        value: Streams.DiffResults.DiffResult;
+      }>(diffsSource.pipe(jsonlParser()));
+      let lines = parsed();
 
-      return Readable.from(this.normalizedDiffs(diffs));
+      let diffResults = AsyncTools.map(
+        (line: { value: Streams.DiffResults.DiffResult }) => line.value
+      )(lines);
+
+      let normalized = Streams.DiffResults.normalize(diffResults);
+
+      return Readable.from(normalized);
     } else {
       let reading = lockedRead<any>(this.paths.diffs);
       let itemsGenerator = jsonStreamGenerator(reading);

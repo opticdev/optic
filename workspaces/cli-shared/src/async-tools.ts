@@ -2,6 +2,8 @@ export * from 'axax/esnext';
 import _ from 'axax/esnext';
 import { reduce } from 'axax/esnext/reduce';
 export { reduce };
+import { Subject } from 'axax/esnext';
+import { Readable } from 'stream';
 
 export function lastBy<T>(
   predicate: (subject: T) => string
@@ -28,6 +30,14 @@ export function lastBy<T>(
       const lastSubject = lastByKey.get(key);
       if (!lastSubject) throw new Error('unreachable');
       yield lastSubject;
+    }
+  };
+}
+
+export function fromReadable<T>(stream: Readable): () => AsyncIterable<T> {
+  return async function* () {
+    for await (const chunk of stream) {
+      yield chunk;
     }
   };
 }
