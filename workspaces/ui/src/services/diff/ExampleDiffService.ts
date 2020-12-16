@@ -180,7 +180,11 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const diffsJson = await this.exampleDiff.getNormalizedDiffs();
+    const diffsJson = (await this.exampleDiff.getNormalizedDiffs()).map(
+      ([diff, tags]) => {
+        return [diff, tags];
+      }
+    );
 
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
       diffsJson
