@@ -227,7 +227,7 @@ export class HttpToolkitCapturingProxy {
   ): IBody {
     if (req.headers['content-type'] || req.headers['transfer-encoding']) {
       const contentType = mime.parse(req.headers['content-type'] || '');
-      const json = req.body.json || req.body.formData || null;
+      const json = req.body.json || null;
       return {
         contentType: (req.body.text && contentType?.essence) || null,
         value: {
