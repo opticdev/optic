@@ -12,9 +12,9 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/domain": "10.0.49",
-    "@useoptic/domain-types": "10.0.49",
-    "@useoptic/domain-utilities": "10.0.49",
+    "@useoptic/domain": "10.0.50",
+    "@useoptic/domain-types": "10.0.50",
+    "@useoptic/domain-utilities": "10.0.50",
     "@useoptic/client-utilities": "8.6.2-beta.0",
     "@useoptic/cli-shared": "8.6.2-beta.0",
     "dataloader": "^2.0.0",
