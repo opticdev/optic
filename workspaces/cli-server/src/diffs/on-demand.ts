@@ -225,19 +225,12 @@ export class DiffQueries implements DiffQueriesInterface {
 
   diffs(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffsSource = fs.createReadStream(this.paths.diffsStream);
-      let parsed = AsyncTools.fromReadable<{
-        value: Streams.DiffResults.DiffResult;
-      }>(diffsSource.pipe(jsonlParser()));
-      let lines = parsed();
-
-      let diffResults = AsyncTools.map(
-        (line: { value: Streams.DiffResults.DiffResult }) => line.value
-      )(lines);
+      let diffResults = this.createDiffsStream(this.paths.diffsStream);
 
       let normalized = Streams.DiffResults.normalize(diffResults);
+      let lastUnique = Streams.DiffResults.lastUnique(normalized);
 
-      return Readable.from(normalized);
+      return Readable.from(lastUnique);
     } else {
       let reading = lockedRead<any>(this.paths.diffs);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -247,13 +240,14 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   undocumentedUrls(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffs = chain([
-        fs.createReadStream(this.paths.diffsStream),
-        jsonlParser(),
-        (data) => [data.value],
-      ]);
+      let diffResults = this.createDiffsStream(this.paths.diffsStream);
 
-      return Readable.from(this.countUndocumentedUrls(diffs));
+      let undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
+        diffResults
+      );
+      let lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
+
+      return Readable.from(lastUnique);
     } else {
       let reading = lockedRead<any>(this.paths.undocumentedUrls);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -263,6 +257,22 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
+  }
+
+  private createDiffsStream(
+    diffStreamPath: string
+  ): AsyncIterable<Streams.DiffResults.DiffResult> {
+    let diffsSource = chain([
+      fs.createReadStream(diffStreamPath),
+      jsonlParser(),
+      (data) => [data.value],
+    ]);
+
+    let createIterable = AsyncTools.fromReadable<
+      Streams.DiffResults.DiffResult
+    >(diffsSource);
+
+    return createIterable();
   }
 
   private async *normalizedDiffs(
