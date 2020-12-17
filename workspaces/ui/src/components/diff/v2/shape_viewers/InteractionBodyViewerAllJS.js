@@ -683,8 +683,6 @@ function unfoldObjectRows(currentState, index) {
 
   const offset = endIndex - startIndex;
 
-  debugger;
-
   updatedRows.splice(startIndex, offset, ...replacementRows);
   const updatedCollapsedTrails = currentState.collapsedTrails
     .filter((trail) => !_isEqual(trail, row.trail))
