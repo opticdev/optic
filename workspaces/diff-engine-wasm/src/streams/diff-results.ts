@@ -1,6 +1,6 @@
 import { lastBy } from '../async-tools';
 
-// TOOD: more strictly type the interaction diff result
+// TODO: more strictly type the interaction diff result
 export type DiffResult = [any, string[], string];
 
 export async function* normalize(
