@@ -6,8 +6,10 @@ import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { CaptureContextStore } from '../../../contexts/CaptureContext';
 import { useServices } from '../../../contexts/SpecServiceContext';
-import { ReviewDiffSession } from './ReviewDiffSession';
+import { LoadingDiffPage, ReviewDiffSession } from './ReviewDiffSession';
 import { ReviewUI } from './ReviewUI';
+import Page from '../../Page';
+import { debugDump } from '../../../utilities/debug-dump';
 
 export function ReviewDiffPage(props) {
   const routerPaths = useRouterPaths();
@@ -28,7 +30,7 @@ function RootComponent() {
   const { captures } = useContext(AllCapturesContext);
   const baseUrl = useBaseUrl();
   if (captures.length === 0) {
-    return <LinearProgress />;
+    return null;
   }
   return <Redirect to={`${baseUrl}/review/${captures[0].captureId}`} />;
 }
@@ -42,9 +44,15 @@ export const ReviewDiffRoutes = (props) => {
 
   const baseDiffReviewPath = props.location.pathname;
 
+  useEffect(() => {
+    global.debugOptic =
+      boundaryId && debugDump(services.specService, boundaryId);
+  }, [boundaryId]);
+
   if (captures.length === 0) {
-    return <LinearProgress />;
+    return <LoadingDiffPage />;
   }
+
   return (
     <CaptureContextStore
       captureId={boundaryId}

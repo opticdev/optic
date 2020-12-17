@@ -92,7 +92,7 @@ export class FieldContextSpecChange {
         fieldInnerShapeId: wrapperShapeId,
       };
     } else {
-      return { commands: [], fieldInnerShapeId: fieldInnerShapeId };
+      return { commands: commands, fieldInnerShapeId: fieldInnerShapeId };
     }
   }
 
@@ -188,8 +188,9 @@ export class FieldContextSpecChange {
   toCommands(): any[] {
     const ids = this.rfcBaseState.domainIdGenerator;
 
+    const defaultMostInner = this.getMostInnerShapeId();
     // order of shapes primitive, oneOf, nullable, optional (provided below)
-    const innerShape = this.wrapInNullableIfNeeded(this.getMostInnerShapeId());
+    const innerShape = this.wrapInNullableIfNeeded(defaultMostInner);
     // might be the same fieldShapeId as before, could be different
     const fieldInnerShapeId = innerShape.fieldInnerShapeId;
     //seed these with commands needed to build/modify the inner shape

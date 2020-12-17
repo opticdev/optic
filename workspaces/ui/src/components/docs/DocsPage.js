@@ -442,7 +442,6 @@ export const EndpointDocs = (props) => {
                             toOption(response.responseBody.shapeId)
                           )
                         );
-
                       return (
                         renderedShape && (
                           <ShapeBox

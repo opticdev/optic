@@ -114,6 +114,10 @@ export function EndpointGrouping(props) {
   ).length;
   const percent = Math.round((handledCount / props.diffs.length) * 100);
 
+  if (noDiffs) {
+    return null;
+  }
+
   return (
     <>
       <Divider />

@@ -21,6 +21,7 @@ import Helmet from 'react-helmet';
 import { ReviewBatchSelect } from './ReviewBatchSelect';
 import Fade from '@material-ui/core/Fade';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
+import { debugDump } from '../../../utilities/debug-dump';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -29,11 +30,6 @@ export function ReviewUI() {
   const { processed, skipped } = useCaptureContext();
 
   const selected = queries.selectedEndpoint();
-
-  useEffect(() => {
-    console.timeEnd('selected clicked');
-    console.log('selected ', selected);
-  }, [selected]);
 
   const shouldShowUndocumented = queries.showingUndocumented();
   const selectedEndpointHandled = queries.selectedEndpointHandled();

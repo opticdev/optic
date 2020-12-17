@@ -28,14 +28,18 @@ export function ApiRoutes(props) {
       <Suspense fallback={<Loading />}>
         <Switch>
           {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
-          <Route path={routerPaths.setup} component={SetupPage} />
+          <Route exact path={routerPaths.setup} component={SetupPage} />
           <Route path={routerPaths.docsRoot} component={DocsPage} />
           <Route
             strict
             path={routerPaths.diffsRoot}
             component={CaptureManagerPage}
           />
-          <Route path={routerPaths.review} component={ReviewDiffPage} />
+          <Route
+            strict
+            path={routerPaths.reviewRoot}
+            component={ReviewDiffPage}
+          />
           <Redirect to={defaultRoute} />
         </Switch>
       </Suspense>

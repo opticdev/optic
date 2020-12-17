@@ -156,7 +156,7 @@ function descriptionForShapeDiff(
   }
 
   //we shouldn't ever get there
-  console.log('unknown diff kind', expected);
+
   return {
     title: [plain('unknown diff kind')],
     location,

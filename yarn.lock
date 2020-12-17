@@ -3582,23 +3582,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.48":
-  version "10.0.48"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.48.tgz#6c05b86a49d3f9ebd6bdaaa3c27783cec31cb26b"
-  integrity sha512-/QWCOZFxxUE+fOv/L0ewZheFmjP+o9QDd+BbB5axda1P2KDbQUXUAlPeiW+Kqiwa7Nyw8cjvCEMwx8p41UTpLQ==
+"@useoptic/domain-types@10.0.50":
+  version "10.0.50"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.50.tgz#78faf558dfaaa21e951e86445c4449eee830122c"
+  integrity sha512-qkl+x4WQLTNrCsZzE6N/6cHQXdkqnbsU6G3bBlO/M+IH7vFPFCXG9/iuCpuQ68YG219jgESL/OliC39gNDHYoA==
 
-"@useoptic/domain-utilities@10.0.48":
-  version "10.0.48"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.48.tgz#b920295ba8f1bef580b291ea857e359460f15ad6"
-  integrity sha512-IdVrhNEFYylKgN12ZxkKJctVmu5GZdtgch0KFueifDg3/EyWixx3QiSYOfYHwwWG0l/pn4A1iLxI4pcGne9pmA==
+"@useoptic/domain-utilities@10.0.50":
+  version "10.0.50"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.50.tgz#988bfd9eabd73dbe3b0dbb5d5df1516250557981"
+  integrity sha512-16ltOgTTuAopDD7DszaC1jgdMLF60ECJY2Q1I0gaxci1grm59DnfIKx4hQCyzzRkPDGdIOxJgyl3HczkX/bpDA==
   dependencies:
-    "@useoptic/domain" "10.0.48"
-    "@useoptic/domain-types" "10.0.48"
+    "@useoptic/domain" "10.0.50"
+    "@useoptic/domain-types" "10.0.50"
 
-"@useoptic/domain@10.0.48":
-  version "10.0.48"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.48.tgz#e6d63ec7b7081614870a859c599a9cb44160a78f"
-  integrity sha512-JrVr2nULkumIn/NZGUXjWF6sS5BW3yIy9TE5nrAJa22UfiC6PlEfuJYNqP9avmcHK3g2yZ8F7hmrjM0wYqfkGQ==
+"@useoptic/domain@10.0.50":
+  version "10.0.50"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.50.tgz#8c9a4423db2137c802dd72750f6ddbf9912c786b"
+  integrity sha512-BWzu01rHACv1phN8yyQEzyDGZpKEKk9AI75NWF2O91Q7pKK4zGwf61RrTir9N8//emZnndTWtwdE7NzGF787cQ==
 
 "@wasm-tool/wasm-pack-plugin@^1.3.1":
   version "1.3.1"
