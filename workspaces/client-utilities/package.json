@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/client-utilities",
-  "version": "8.6.2-beta.0",
+  "version": "8.6.3-beta.0",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",

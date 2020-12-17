@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/diff-engine-wasm",
-  "version": "8.6.2-beta.0",
+  "version": "8.6.3-beta.0",
   "scripts": {
     "build:node": "wasm-pack build --target nodejs --out-dir build --out-name index",
     "build:browser": "wasm-pack build --target bundler --out-dir browser --out-name index",
