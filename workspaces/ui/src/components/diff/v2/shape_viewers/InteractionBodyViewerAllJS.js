@@ -796,7 +796,9 @@ function objectRows(
   const collapseAt = 9;
 
   const shouldCollapse =
-    objectKeys.length > collapseAt && !_isEqual(expandObjectWithTrail, trail);
+    objectKeys.length > collapseAt &&
+    !_isEqual(expandObjectWithTrail, trail) &&
+    keysWithDiffs.length === 0;
 
   if (shouldCollapse) {
     collapsedTrails.push(trail);
