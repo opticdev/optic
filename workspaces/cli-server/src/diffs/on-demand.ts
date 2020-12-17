@@ -7,7 +7,7 @@ import {
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
-import { Streams, AsyncTools } from '@useoptic/cli-shared';
+import { Streams, AsyncTools } from '@useoptic/diff-engine-wasm';
 
 import {
   Diff,
@@ -42,7 +42,7 @@ export class OnDemandDiff implements Diff {
     hasMoreInteractions: string;
   } | null = null;
 
-  async start(): Promise<any> {
+  async start(): Promise<void> {
     const { config } = this;
 
     const ignoreHelper = new IgnoreFileHelper(

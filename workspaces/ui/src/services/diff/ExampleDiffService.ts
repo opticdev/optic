@@ -13,7 +13,7 @@ import {
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { captureId } from '../../components/loaders/ApiLoader';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/browser';
 import {
   DiffResultHelper,
   JsonHelper,
@@ -31,8 +31,7 @@ import {
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
-import * as AsyncTools from '@useoptic/cli-shared/build/async-tools';
-import * as Streams from '@useoptic/cli-shared/build/streams';
+import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
 
 export class ExampleDiff {
   private diffId?: any;

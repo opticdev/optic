@@ -24,7 +24,6 @@
     "@useoptic/domain-types": "10.0.50",
     "@useoptic/domain-utilities": "10.0.50",
     "avsc": "^5.4.21",
-    "axax": "^0.2.2",
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",
     "execa": "^4.0.3",
