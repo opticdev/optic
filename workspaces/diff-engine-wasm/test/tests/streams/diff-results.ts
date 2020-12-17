@@ -57,5 +57,5 @@ Tap.test('DiffResults.lastUnique', async (t) => {
 
 // TODO: source this from a more representative place
 async function createExampleDiff() {
-  return [{ UnmatchedRequestUrl: {} }];
+  return { UnmatchedRequestUrl: {} };
 }
