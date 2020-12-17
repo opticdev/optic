@@ -31,7 +31,7 @@ Tap.test('DiffResults.normalize', async (test) => {
 
 Tap.test('DiffResults.lastUnique', async (t) => {
   await t.test(
-    'will only emit the last occurence of each result by fingerprint, in order of key occurence',
+    'will only emit the last occurence of each result by fingerprint, in order of last key occurence',
     async (t) => {
       const testDiff = await createExampleDiff();
 

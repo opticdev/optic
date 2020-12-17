@@ -15,7 +15,7 @@ Tap.test('UndocumentedUrls.fromDiffResults', async (test) => {
           ['interaction-4'],
           'ccc',
         ],
-        [unmatchedRequestUrlDiff('/todos', 'GET'), ['interaction-2'], 'bbb'],
+        [unmatchedRequestUrlDiff('/todos', 'GET'), ['interaction-4'], 'bbb'],
       ];
 
       const undocumentedUrls = UndocumentedUrls.fromDiffResults(
@@ -31,6 +31,34 @@ Tap.test('UndocumentedUrls.fromDiffResults', async (test) => {
         { path: '/todos', method: 'GET', count: 1, fingerprint: 'bbb' },
         { path: '/todos/1', method: 'GET', count: 2, fingerprint: 'aaa' },
         { path: '/todos', method: 'GET', count: 2, fingerprint: 'bbb' },
+      ]);
+    }
+  );
+});
+
+Tap.test('UndocumentedUrls.lastUnique', async (test) => {
+  await test.test(
+    'will only emit the last occurence of each undocumented url by fingerprint, in order of last key occurence',
+    async (t) => {
+      const testDiffs: DiffResults.DiffResult[] = [
+        [unmatchedRequestUrlDiff('/todos/1', 'GET'), ['interaction-1'], 'aaa'],
+        [unmatchedRequestUrlDiff('/todos', 'GET'), ['interaction-2'], 'bbb'],
+        [unmatchedRequestUrlDiff('/todos', 'GET'), ['interaction-3'], 'bbb'],
+        [unmatchedRequestUrlDiff('/todos/1', 'GET'), ['interaction-4'], 'aaa'],
+      ];
+
+      const undocumentedUrls = UndocumentedUrls.fromDiffResults(
+        AT.from(testDiffs)
+      );
+      const lastUnique = UndocumentedUrls.lastUnique(undocumentedUrls);
+
+      const results = await AT.toArray<UndocumentedUrls.UndocumentedUrl>(
+        lastUnique
+      );
+
+      t.deepEqual(results, [
+        { path: '/todos', method: 'GET', count: 2, fingerprint: 'bbb' },
+        { path: '/todos/1', method: 'GET', count: 2, fingerprint: 'aaa' },
       ]);
     }
   );
