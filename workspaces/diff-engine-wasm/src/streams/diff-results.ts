@@ -9,8 +9,6 @@ export async function* normalize(
   let pointersByFingerprint: Map<String, string[]> = new Map();
 
   for await (let [diff, pointers, fingerprint] of diffResults) {
-    if (!fingerprint) yield [diff, pointers, fingerprint];
-
     let existingPointers = pointersByFingerprint.get(fingerprint) || [];
     let newPointers = [...existingPointers, ...pointers];
     pointersByFingerprint.set(fingerprint, newPointers);
