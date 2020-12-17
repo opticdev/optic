@@ -13,6 +13,7 @@ import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { ICopyRenderSpan } from '../../review-diff/ICopyRender';
 import CheckIcon from '@material-ui/icons/Check';
 import { AddedGreen, UpdatedBlue } from '../../../../theme';
+import { Typography } from '@material-ui/core';
 export default function InteractionBodyViewerAllJS({
   diff,
   description,
@@ -520,8 +521,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   correctTrailIcon: {
-    width: 14,
-    height: 14,
+    width: 20,
+    height: 20,
     marginRight: theme.spacing(1),
     color: AddedGreen,
   },

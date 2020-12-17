@@ -7,6 +7,7 @@ import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
 import { LoadingReviewPage } from './LoadingPage';
+import Page from '../../Page';
 
 export const DiffSessionContext = React.createContext(null);
 
@@ -39,10 +40,20 @@ export function ReviewDiffSession(props) {
     );
   }
 
+  return <LoadingDiffPage />;
+}
+
+export function LoadingDiffPage() {
   return (
-    <div>
-      <LinearProgress />
-    </div>
+    <Page>
+      <Page.Navbar mini={true} />
+      <Page.Body
+        padded={false}
+        // style={{ flexDirection: 'row', height: '100vh' }}
+      >
+        <LinearProgress />
+      </Page.Body>
+    </Page>
   );
 }
 
