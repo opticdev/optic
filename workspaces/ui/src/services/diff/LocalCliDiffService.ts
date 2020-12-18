@@ -42,7 +42,7 @@ export class LocalCliDiffService implements IDiffService {
     const url = `${this.baseUrl}/diffs`;
     const diffsJson = await JsonHttpClient.getJson(url);
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
-      diffsJson
+      diffsJson.map(([diff, tags, _fingerprint]) => [diff, tags])
     );
     return {
       rawDiffs: diffsJson,
