@@ -44,7 +44,7 @@ export class ExampleDiff {
     const diffingStream = (async function* (): AsyncIterable<
       Streams.DiffResults.DiffResult
     > {
-      for (let [i, interaction] of interactions.entries()) {
+      for (let interaction of interactions) {
         let results = DiffEngine.diff_interaction(
           JSON.stringify(interaction),
           spec
@@ -68,14 +68,7 @@ export class ExampleDiff {
     })();
 
     // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
-    this.diffing = (async function (diffing) {
-      const diffs = [];
-      for await (let diff of diffing) {
-        diffs.push(diff);
-      }
-
-      return diffs;
-    })(diffingStream);
+    this.diffing = AsyncTools.toArray(diffingStream);
 
     return this.diffId;
   }
