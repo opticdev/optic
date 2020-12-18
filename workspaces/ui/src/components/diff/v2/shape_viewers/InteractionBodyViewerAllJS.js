@@ -64,6 +64,7 @@ export function Row(props) {
     diffDetails,
     indent,
     index,
+    fieldsHidden,
     seqIndex,
     fieldName,
     fieldValue,
@@ -76,7 +77,10 @@ export function Row(props) {
       if (!collapsed) return;
       e.preventDefault();
       if (type === 'array_item_collapsed') {
-        dispatch({ type: 'unfold', payload: index });
+        dispatch({ type: 'unfold-index', payload: index });
+      }
+      if (type === 'object_keys_collapsed') {
+        dispatch({ type: 'unfold-fields', payload: index });
       }
     },
     [index, type, dispatch]
@@ -113,6 +117,7 @@ export function Row(props) {
         <RowValue
           isRoot={indent === 0}
           type={type}
+          fieldsHidden={fieldsHidden}
           value={fieldValue}
           compliant={compliant}
           changeDescription={diffDetails && diffDetails.changeDescription}
@@ -138,6 +143,7 @@ function RowValue({
   changeDescription,
   trailsAreCorrect,
   isRoot,
+  fieldsHidden,
 }) {
   const generalClasses = useShapeViewerStyles();
   const classes = useStyles();
@@ -179,6 +185,14 @@ function RowValue({
         ) : (
           ''
         )}
+      </span>
+    );
+  }
+
+  if (type === 'object_keys_collapsed') {
+    return (
+      <span className={classes.collapsedObjectSymbol}>
+        {`...expand ${fieldsHidden} additional fields`}
       </span>
     );
   }
@@ -390,6 +404,32 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  collapsedObjectSymbol: {
+    paddingRight: theme.spacing(1),
+    paddingTop: 3,
+    color: '#8f8f8f',
+    fontSize: 10,
+    borderRadius: 12,
+    '$isCollapsedIncompliant$requiresAddition &': {
+      backgroundColor: theme.palette.added.background,
+      color: theme.palette.added.main,
+    },
+
+    '$isCollapsedIncompliant$requiresRemoval &': {
+      backgroundColor: theme.palette.removed.background,
+      color: theme.palette.removed.main,
+    },
+
+    '$isCollapsedIncompliant$requiresUpdate &': {
+      backgroundColor: theme.palette.changed.background,
+      color: theme.palette.changed.main,
+    },
+    '$trailsAreCorrect &': {
+      backgroundColor: theme.palette.added.background,
+      color: theme.palette.added.main,
+    },
+  },
+
   collapsedWarning: {
     width: 10,
     height: 10,
@@ -558,10 +598,12 @@ function createInitialState({ diff, jsonTrails, description, body }) {
 }
 
 function updateState(state, action) {
+  const index = action.payload;
   switch (action.type) {
-    case 'unfold':
-      let index = action.payload;
+    case 'unfold-index':
       return unfoldRows(state, index);
+    case 'unfold-fields':
+      return unfoldObjectRows(state, index);
     default:
       throw new Error(
         `State cannot be updated through action of type '${action.type}'`
@@ -602,6 +644,57 @@ function unfoldRows(currentState, index) {
   };
 }
 
+function unfoldObjectRows(currentState, index) {
+  const row = currentState.rows[index];
+  if (row.type !== 'object_keys_collapsed') return currentState;
+
+  const updatedRows = [...currentState.rows];
+
+  const startIndex = updatedRows.findIndex(
+    (i) => i.type === 'object_open' && _isEqual(i.trail, row.trail)
+  );
+
+  const open = updatedRows[startIndex];
+  const collapsedShape = _get(currentState.body, open.trail, currentState.body);
+  const rowField = {
+    fieldValue: open.fieldValue,
+    fieldName: open.fieldName,
+    seqIndex: open.seqIndex,
+    trail: [...open.trail],
+  };
+
+  const [replacementRows, newCollapsedTrails] = shapeRows(
+    collapsedShape,
+    currentState.diffTrails,
+    [],
+    [],
+    row.indent - 1,
+    rowField,
+    row.trail
+  );
+
+  const endIndex =
+    updatedRows.findIndex(
+      (i, index) =>
+        i.type === 'object_close' &&
+        index > startIndex &&
+        _isEqual(i.trail, row.trail)
+    ) + 1;
+
+  const offset = endIndex - startIndex;
+
+  updatedRows.splice(startIndex, offset, ...replacementRows);
+  const updatedCollapsedTrails = currentState.collapsedTrails
+    .filter((trail) => !_isEqual(trail, row.trail))
+    .concat(newCollapsedTrails);
+
+  return {
+    ...currentState,
+    rows: updatedRows,
+    collapsedTrails: updatedCollapsedTrails,
+  };
+}
+
 // Since we've run into performance issue before traversing entire shapes, we're doing this
 // the mutative way to prevent a lot of re-alloctions for big bodies.
 function shapeRows(
@@ -615,18 +708,35 @@ function shapeRows(
     fieldValue: undefined,
     seqIndex: undefined,
     trail: [],
-  }
+  },
+  expandObjectWithTrail = null
 ) {
   const typeString = Object.prototype.toString.call(shape);
 
   switch (typeString) {
     case '[object Object]':
       // debugger;
-      objectRows(shape, diffTrails, rows, collapsedTrails, indent, field);
+      objectRows(
+        shape,
+        diffTrails,
+        rows,
+        collapsedTrails,
+        indent,
+        field,
+        expandObjectWithTrail
+      );
       break;
     case '[object Array]':
       // debugger;
-      listRows(shape, diffTrails, rows, collapsedTrails, indent, field);
+      listRows(
+        shape,
+        diffTrails,
+        rows,
+        collapsedTrails,
+        indent,
+        field,
+        expandObjectWithTrail
+      );
       break;
     default:
       // debugger
@@ -648,7 +758,8 @@ function objectRows(
   rows,
   collapsedTrails,
   indent,
-  field
+  field,
+  expandObjectWithTrail
 ) {
   const { trail } = field;
 
@@ -668,20 +779,63 @@ function objectRows(
   const nestedDiffs = diffTrails.filter((diffTrail) =>
     trail.every((trailComponent, n) => trailComponent === diffTrail[n])
   );
+
+  function hasNestedDiff(trail) {
+    return nestedDiffs.some((i) => _isEqual(i.slice(0, trail.length), trail));
+  }
+
   const keysWithDiffs = nestedDiffs
     .filter((nestedDiff) => nestedDiff.length === trail.length + 1)
     .map((diff) => diff[diff.length - 1]);
+
   const objectKeys = _uniq([...Object.keys(objectShape), ...keysWithDiffs]);
+  let collapsedCount = 0;
+
+  const collapseAt = 9;
+
+  const shouldCollapse =
+    objectKeys.length > collapseAt &&
+    !_isEqual(expandObjectWithTrail, trail) &&
+    keysWithDiffs.length === 0;
+
+  if (shouldCollapse) {
+    collapsedTrails.push(trail);
+    rows.push(
+      createRow({
+        type: 'object_keys_collapsed',
+        collapsed: true,
+        indent: indent + 1,
+        fieldsHidden: objectKeys.filter(
+          (key) =>
+            !(keysWithDiffs.includes(key) || hasNestedDiff([...trail, key]))
+        ).length,
+        trail: trail,
+      })
+    );
+  }
 
   objectKeys.sort(alphabetizeCaseInsensitve).forEach((key) => {
     const fieldName = key;
+    const fieldTrail = [...trail, fieldName];
     const value = objectShape[key];
 
-    return shapeRows(value, nestedDiffs, rows, collapsedTrails, indent + 1, {
-      fieldName,
-      fieldValue: value,
-      trail: [...trail, fieldName],
-    });
+    if (shouldCollapse) {
+      if (keysWithDiffs.includes(key) || hasNestedDiff(fieldTrail)) {
+        shapeRows(value, nestedDiffs, rows, collapsedTrails, indent + 1, {
+          fieldName,
+          fieldValue: value,
+          trail: fieldTrail,
+        });
+      } else {
+        collapsedCount++;
+      }
+    } else {
+      shapeRows(value, nestedDiffs, rows, collapsedTrails, indent + 1, {
+        fieldName,
+        fieldValue: value,
+        trail: fieldTrail,
+      });
+    }
   });
 
   rows.push(createRow({ type: 'object_close', indent, trail }));
