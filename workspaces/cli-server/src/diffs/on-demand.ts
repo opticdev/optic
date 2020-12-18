@@ -7,6 +7,7 @@ import {
 import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
+import { Streams, AsyncTools } from '@useoptic/diff-engine-wasm';
 
 import {
   Diff,
@@ -16,7 +17,7 @@ import {
 } from '.';
 
 import lockfile from 'proper-lockfile';
-import { Readable, PassThrough } from 'stream';
+import { Readable, PassThrough, Stream } from 'stream';
 import { chain } from 'stream-chain';
 import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
@@ -41,7 +42,7 @@ export class OnDemandDiff implements Diff {
     hasMoreInteractions: string;
   } | null = null;
 
-  async start(): Promise<any> {
+  async start(): Promise<void> {
     const { config } = this;
 
     const ignoreHelper = new IgnoreFileHelper(
@@ -224,13 +225,12 @@ export class DiffQueries implements DiffQueriesInterface {
 
   diffs(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffs = chain([
-        fs.createReadStream(this.paths.diffsStream),
-        jsonlParser(),
-        (data) => [data.value],
-      ]);
+      let diffResults = this.createDiffsStream(this.paths.diffsStream);
 
-      return Readable.from(this.normalizedDiffs(diffs));
+      let normalized = Streams.DiffResults.normalize(diffResults);
+      let lastUnique = Streams.DiffResults.lastUnique(normalized);
+
+      return Readable.from(lastUnique);
     } else {
       let reading = lockedRead<any>(this.paths.diffs);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -240,13 +240,14 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   undocumentedUrls(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffs = chain([
-        fs.createReadStream(this.paths.diffsStream),
-        jsonlParser(),
-        (data) => [data.value],
-      ]);
+      let diffResults = this.createDiffsStream(this.paths.diffsStream);
 
-      return Readable.from(this.countUndocumentedUrls(diffs));
+      let undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
+        diffResults
+      );
+      let lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
+
+      return Readable.from(lastUnique);
     } else {
       let reading = lockedRead<any>(this.paths.undocumentedUrls);
       let itemsGenerator = jsonStreamGenerator(reading);
@@ -256,6 +257,22 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   stats(): Promise<DiffStats> {
     return lockedRead<DiffStats>(this.paths.stats);
+  }
+
+  private createDiffsStream(
+    diffStreamPath: string
+  ): AsyncIterable<Streams.DiffResults.DiffResult> {
+    let diffsSource = chain([
+      fs.createReadStream(diffStreamPath),
+      jsonlParser(),
+      (data) => [data.value],
+    ]);
+
+    let createIterable = AsyncTools.fromReadable<
+      Streams.DiffResults.DiffResult
+    >(diffsSource);
+
+    return createIterable();
   }
 
   private async *normalizedDiffs(

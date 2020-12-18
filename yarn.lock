@@ -4508,6 +4508,11 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.0.tgz#a17b3a8ea811060e74d47d306122400ad4497ae2"
   integrity sha512-3YDiu347mtVtjpyV3u5kVqQLP242c06zwDOgpeRnybmXlYYsLbtTrUBUm8i8srONt+FWobl5aibnU1030PeeuA==
 
+axax@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/axax/-/axax-0.2.2.tgz#bce20fb7e4eef04fcece8a8b6156c084f11c6425"
+  integrity sha512-xPTMeQzPOENNONCFLFsPLjubtrnjju9FdOr6u/P0dFKDjC3m+/8NydLNvrukNxxto+usR2dKGZ8DVKOz4MBo2g==
+
 axios-retry@^3.0.2:
   version "3.1.8"
   resolved "https://registry.yarnpkg.com/axios-retry/-/axios-retry-3.1.8.tgz#ffcfed757e1fab8cbf832f8505bb0e0af47c520c"

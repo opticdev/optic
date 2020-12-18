@@ -22,5 +22,5 @@ wasm-bindgen = "0.2.68"
 wasm-logger = "0.2.0"
 
 [dependencies.optic_diff_engine]
-path = "../diff-engine" 
+path = "../../diff-engine" 
 default-features = false
