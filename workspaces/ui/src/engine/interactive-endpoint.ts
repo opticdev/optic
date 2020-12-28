@@ -11,7 +11,7 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InteractiveSessionConfig } from './interfaces/session';
-import { IgnoreRule } from './interpretors/ignores/ignore-rule';
+import { IgnoreRule } from './interpreter/ignores/ignore-rule';
 import { IDiff } from './interfaces/diffs';
 
 export interface InteractiveEndpointSessionStateSchema {

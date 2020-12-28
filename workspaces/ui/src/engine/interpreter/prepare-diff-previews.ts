@@ -1,12 +1,12 @@
 import { ParsedDiff } from '../../engine/parse-diff';
-import { newRegionInterpreters } from '../../engine/interpretors/new-regions-interpretors';
-import { descriptionForDiffs } from '../../engine/interpretors/diff-description-interpretors';
+import { newRegionInterpreters } from './new-regions-interpreter';
+import { descriptionForDiffs } from './diff-description-interpreter';
 import { InteractiveSessionConfig } from '../../engine/interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { interpretShapeDiffs } from './interpretor-types/shape-diffs';
+import { interpretShapeDiffs } from './interpreter-types/shape-diffs';
 import {
   IDiffSuggestionPreview,
   IInteractionPreviewTab,

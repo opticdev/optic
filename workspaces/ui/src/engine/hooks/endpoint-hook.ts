@@ -11,7 +11,7 @@ import {
 } from '../interactive-endpoint';
 import { useActor } from '@xstate/react';
 import { useSingleDiffMachine } from './diff-hook';
-import { IgnoreRule } from '../interpretors/ignores/ignore-rule';
+import { IgnoreRule } from '../interpreter/ignores/ignore-rule';
 
 export function useEndpointDiffMachine(
   pathId: string,

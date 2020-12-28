@@ -12,7 +12,7 @@ import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
-} from '../../engine/interpretors/prepare-diff-previews';
+} from '../../engine/interpreter/prepare-diff-previews';
 import {
   IChangeType,
   ICopy,

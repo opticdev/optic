@@ -11,7 +11,7 @@ import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from './shape-diff-dsl';
 import { JsonHelper } from '@useoptic/domain';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { rootShapeDiffInterpreter } from './interpretor-types/root';
+import { rootShapeDiffInterpreter } from './interpreter-types/root';
 
 export function descriptionForDiffs(
   diff: ParsedDiff,

@@ -15,7 +15,7 @@ import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IOasStats } from './oas-preview-machine';
-import { serializeCommands } from '../interpretors/spec-change-dsl';
+import { serializeCommands } from '../interpreter/spec-change-dsl';
 
 export interface ApplyChangesStateSchema {
   states: {
