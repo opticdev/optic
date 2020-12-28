@@ -299,7 +299,10 @@ class FieldShapeInterpretationHelper {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: changeField.changeShape(shapeChange).toCommands(),
+      commands: changeField
+        .changeShape(shapeChange)
+        .makeRequired()
+        .toCommands(),
       changeType: IChangeType.Changed,
     };
   }

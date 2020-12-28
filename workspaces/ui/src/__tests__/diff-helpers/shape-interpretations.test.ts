@@ -70,7 +70,6 @@ test('a primitive type is provided to an optional object.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  logResult(preview);
   expect(preview).toMatchSnapshot();
   expect(
     await canApplySuggestions(preview.suggestions, universe)
@@ -281,6 +280,7 @@ test('when a nullable is provided with a concrete type.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
+  logResult(preview);
   expect(preview).toMatchSnapshot();
   expect(
     await canApplySuggestions(preview.suggestions, universe)
