@@ -48,7 +48,10 @@ export default class Init extends Command {
     ) {
       return this.log(
         colors.red(
-          `This directory already has an ${colors.bold('optic.yml')} file.`
+          `This directory already has an ${colors.bold('optic.yml')} file.\r\n`
+        ),
+        colors.yellow(
+          `You can see the current documentation for this project with ${colors.bold('api spec')}.`
         )
       );
     }
