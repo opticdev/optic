@@ -43,7 +43,7 @@ export async function prepareNewRegionDiffSuggestionPreview(
 ): Promise<IDiffSuggestionPreview> {
   const firstInteractionPointer = diff.interactions[0];
 
-  await services.captureService.loadInteraction(firstInteractionPointer);
+  await services.loadInteraction(firstInteractionPointer);
 
   const location = diff.location(services.rfcBaseState);
 

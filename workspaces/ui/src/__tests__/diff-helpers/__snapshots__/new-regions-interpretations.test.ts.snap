@@ -221,14 +221,13 @@ Object {
       "allowsExpand": true,
       "assertion": Array [],
       "ignoreRule": Object {
-        "diffHash": "7246e7137011af5f6e0b85ab8262cda5d16e1b45",
+        "diffHash": "48b9c0094ee8694e07f49d37a48c28650cb82029",
         "newBodyInRequest": Object {
           "contentType": "application/json",
         },
         "newBodyInResponse": false,
       },
       "interactionPointers": Array [
-        "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
         "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
       ],
       "invalid": true,

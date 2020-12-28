@@ -1,8 +1,11 @@
-import { ICaptureService, IDiffService } from '../../services/diff';
+import {
+  ICaptureService,
+  IDiffService,
+  ILoadInteractionResponse,
+} from '../../services/diff';
 import { DiffRfcBaseState } from './diff-rfc-base-state';
 
 export interface InteractiveSessionConfig {
-  captureService: ICaptureService;
-  diffService: IDiffService;
+  loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
   rfcBaseState: DiffRfcBaseState;
 }

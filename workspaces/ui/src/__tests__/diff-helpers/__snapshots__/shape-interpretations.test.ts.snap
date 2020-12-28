@@ -916,6 +916,64 @@ Object {
       "changeType": 1,
       "commands": Array [
         Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "baseline-shape_2",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
           "SetFieldShape": Object {
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
@@ -968,6 +1026,13 @@ Object {
       },
       "changeType": 1,
       "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
         Object {
           "SetFieldShape": Object {
             "shapeDescriptor": Object {
@@ -1023,8 +1088,679 @@ Object {
 
 exports[`a known field is provided the wrong shape.managed 2`] = `
 Array [
-  "error",
-  "error",
+  Array [
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "users",
+        "parentPathId": "root",
+        "pathId": "baseline-path_1",
+      },
+    },
+    Object {
+      "PathParameterAdded": Object {
+        "eventContext": null,
+        "name": ":userId",
+        "parentPathId": "baseline-path_1",
+        "pathId": "baseline-path_2",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_9",
+      },
+    },
+    Object {
+      "PathParameterShapeSet": Object {
+        "eventContext": null,
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_9",
+        },
+      },
+    },
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "profile",
+        "parentPathId": "baseline-path_2",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "RequestParameterAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "name": "queryString",
+        "parameterId": "baseline-request-parameter_1",
+        "parameterLocation": "query",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_10",
+      },
+    },
+    Object {
+      "RequestParameterShapeSet": Object {
+        "eventContext": null,
+        "parameterDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_10",
+        },
+        "parameterId": "baseline-request-parameter_1",
+      },
+    },
+    Object {
+      "RequestAdded": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "pathId": "baseline-path_3",
+        "requestId": "baseline-request_1",
+      },
+    },
+    Object {
+      "ResponseAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "baseline-path_3",
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$number",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_2",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_1",
+        "name": "age",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_4",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$list",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_5",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_2",
+        "name": "cities",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_6",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_3",
+        "name": "firstName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_7",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_4",
+        "name": "lastName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "baseline-shape_8",
+        },
+        "eventContext": null,
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "BatchCommitStarted": Object {
+        "batchId": "batchId",
+        "commitMessage": "commitMessage",
+        "eventContext": null,
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$oneOf",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+      },
+    },
+    Object {
+      "ShapeParameterAdded": Object {
+        "eventContext": null,
+        "name": "",
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_1",
+            "providerDescriptor": Object {
+              "NoProvider": Object {},
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+        "shapeParameterId": "incrementing-id-shape-parameter_1",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_2",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "ShapeParameterAdded": Object {
+        "eventContext": null,
+        "name": "",
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_2",
+            "providerDescriptor": Object {
+              "NoProvider": Object {},
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+        "shapeParameterId": "incrementing-id-shape-parameter_2",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_2",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "FieldShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "BatchCommitEnded": Object {
+        "batchId": "batchId",
+        "eventContext": null,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "users",
+        "parentPathId": "root",
+        "pathId": "baseline-path_1",
+      },
+    },
+    Object {
+      "PathParameterAdded": Object {
+        "eventContext": null,
+        "name": ":userId",
+        "parentPathId": "baseline-path_1",
+        "pathId": "baseline-path_2",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_9",
+      },
+    },
+    Object {
+      "PathParameterShapeSet": Object {
+        "eventContext": null,
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_9",
+        },
+      },
+    },
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "profile",
+        "parentPathId": "baseline-path_2",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "RequestParameterAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "name": "queryString",
+        "parameterId": "baseline-request-parameter_1",
+        "parameterLocation": "query",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_10",
+      },
+    },
+    Object {
+      "RequestParameterShapeSet": Object {
+        "eventContext": null,
+        "parameterDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_10",
+        },
+        "parameterId": "baseline-request-parameter_1",
+      },
+    },
+    Object {
+      "RequestAdded": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "pathId": "baseline-path_3",
+        "requestId": "baseline-request_1",
+      },
+    },
+    Object {
+      "ResponseAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "baseline-path_3",
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$number",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_2",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_1",
+        "name": "age",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_4",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$list",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_5",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_2",
+        "name": "cities",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_6",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_3",
+        "name": "firstName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_7",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_4",
+        "name": "lastName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "baseline-shape_8",
+        },
+        "eventContext": null,
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "BatchCommitStarted": Object {
+        "batchId": "batchId",
+        "commitMessage": "commitMessage",
+        "eventContext": null,
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_3",
+      },
+    },
+    Object {
+      "FieldShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+      },
+    },
+    Object {
+      "BatchCommitEnded": Object {
+        "batchId": "batchId",
+        "eventContext": null,
+      },
+    },
+  ],
 ]
 `;
 
@@ -17555,6 +18291,609 @@ Changes:
 ]
 `;
 
+exports[`field is array of strings, and 1 item does not match expected type.managed 1`] = `
+Object {
+  "diffDescription": Object {
+    "assertion": Array [
+      Object {
+        "style": 0,
+        "text": "expected",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+    "changeType": 1,
+    "getJsonBodyToPreview": [Function],
+    "location": Object {
+      "inRequest": false,
+      "inResponse": Object {
+        "contentType": "application/json",
+        "statusCode": 200,
+      },
+      "method": "GET",
+      "pathId": "baseline-path_3",
+    },
+    "title": Array [
+      Object {
+        "style": 0,
+        "text": "list items did not match",
+      },
+      Object {
+        "style": 1,
+        "text": "String",
+      },
+    ],
+  },
+  "for": "shape",
+  "overrideTitle": undefined,
+  "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make list item",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked list item a",
+          },
+          Object {
+            "style": 0,
+            "text": "",
+          },
+          Object {
+            "style": 1,
+            "text": "Number",
+          },
+          Object {
+            "style": 0,
+            "text": "or",
+          },
+          Object {
+            "style": 1,
+            "text": "String",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$number",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$oneOf",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_1",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_1",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_1",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "AddShapeParameter": Object {
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+            "shapeParameterId": "incrementing-id-shape-parameter_2",
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "incrementing-id-shape-parameter_2",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "baseline-shape_4",
+                  },
+                },
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "tabs": Array [
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$number",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": true,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 1,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "number",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected",
+        },
+        Object {
+          "style": 1,
+          "text": "String",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
+        "examplesOfCoreShapeKinds": "$string",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "cities",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "string",
+    },
+  ],
+}
+`;
+
+exports[`field is array of strings, and 1 item does not match expected type.managed 2`] = `
+Array [
+  Array [
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "users",
+        "parentPathId": "root",
+        "pathId": "baseline-path_1",
+      },
+    },
+    Object {
+      "PathParameterAdded": Object {
+        "eventContext": null,
+        "name": ":userId",
+        "parentPathId": "baseline-path_1",
+        "pathId": "baseline-path_2",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_9",
+      },
+    },
+    Object {
+      "PathParameterShapeSet": Object {
+        "eventContext": null,
+        "pathId": "baseline-path_2",
+        "shapeDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_9",
+        },
+      },
+    },
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "profile",
+        "parentPathId": "baseline-path_2",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "RequestParameterAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "name": "queryString",
+        "parameterId": "baseline-request-parameter_1",
+        "parameterLocation": "query",
+        "pathId": "baseline-path_3",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_10",
+      },
+    },
+    Object {
+      "RequestParameterShapeSet": Object {
+        "eventContext": null,
+        "parameterDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "baseline-shape_10",
+        },
+        "parameterId": "baseline-request-parameter_1",
+      },
+    },
+    Object {
+      "RequestAdded": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "pathId": "baseline-path_3",
+        "requestId": "baseline-request_1",
+      },
+    },
+    Object {
+      "ResponseAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "baseline-path_3",
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$number",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_2",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_1",
+        "name": "age",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_1",
+            "shapeId": "baseline-shape_2",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_4",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$list",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_5",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_2",
+        "name": "cities",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_2",
+            "shapeId": "baseline-shape_5",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_6",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_3",
+        "name": "firstName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_3",
+            "shapeId": "baseline-shape_6",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "baseline-shape_7",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "baseline-field_4",
+        "name": "lastName",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "baseline-field_4",
+            "shapeId": "baseline-shape_7",
+          },
+        },
+        "shapeId": "baseline-shape_8",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "baseline-shape_8",
+        },
+        "eventContext": null,
+        "responseId": "baseline-response_1",
+      },
+    },
+    Object {
+      "BatchCommitStarted": Object {
+        "batchId": "batchId",
+        "commitMessage": "commitMessage",
+        "eventContext": null,
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$number",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$oneOf",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+      },
+    },
+    Object {
+      "ShapeParameterAdded": Object {
+        "eventContext": null,
+        "name": "",
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_1",
+            "providerDescriptor": Object {
+              "NoProvider": Object {},
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+        "shapeParameterId": "incrementing-id-shape-parameter_1",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_1",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "ShapeParameterAdded": Object {
+        "eventContext": null,
+        "name": "",
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_2",
+            "providerDescriptor": Object {
+              "NoProvider": Object {},
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        "shapeId": "incrementing-id-shape_2",
+        "shapeParameterId": "incrementing-id-shape-parameter_2",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "incrementing-id-shape-parameter_2",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "baseline-shape_4",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "BatchCommitEnded": Object {
+        "batchId": "batchId",
+        "eventContext": null,
+      },
+    },
+  ],
+]
+`;
+
 exports[`field is array of strings, and more than 1 items does not match expected type.managed 1`] = `
 Object {
   "diffDescription": Object {
@@ -18275,609 +19614,6 @@ Array [
               },
             },
             "shapeId": "incrementing-id-shape_3",
-          },
-        },
-      },
-    },
-    Object {
-      "BatchCommitEnded": Object {
-        "batchId": "batchId",
-        "eventContext": null,
-      },
-    },
-  ],
-]
-`;
-
-exports[`field is array of strings, and 1 item does not match expected type.managed 1`] = `
-Object {
-  "diffDescription": Object {
-    "assertion": Array [
-      Object {
-        "style": 0,
-        "text": "expected",
-      },
-      Object {
-        "style": 1,
-        "text": "String",
-      },
-    ],
-    "changeType": 1,
-    "getJsonBodyToPreview": [Function],
-    "location": Object {
-      "inRequest": false,
-      "inResponse": Object {
-        "contentType": "application/json",
-        "statusCode": 200,
-      },
-      "method": "GET",
-      "pathId": "baseline-path_3",
-    },
-    "title": Array [
-      Object {
-        "style": 0,
-        "text": "list items did not match",
-      },
-      Object {
-        "style": 1,
-        "text": "String",
-      },
-    ],
-  },
-  "for": "shape",
-  "overrideTitle": undefined,
-  "suggestions": Array [
-    Object {
-      "action": Object {
-        "activeTense": Array [
-          Object {
-            "style": 0,
-            "text": "make list item",
-          },
-          Object {
-            "style": 0,
-            "text": "",
-          },
-          Object {
-            "style": 1,
-            "text": "Number",
-          },
-          Object {
-            "style": 0,
-            "text": "or",
-          },
-          Object {
-            "style": 1,
-            "text": "String",
-          },
-        ],
-        "pastTense": Array [
-          Object {
-            "style": 0,
-            "text": "Marked list item a",
-          },
-          Object {
-            "style": 0,
-            "text": "",
-          },
-          Object {
-            "style": 1,
-            "text": "Number",
-          },
-          Object {
-            "style": 0,
-            "text": "or",
-          },
-          Object {
-            "style": 1,
-            "text": "String",
-          },
-        ],
-      },
-      "changeType": 1,
-      "commands": Array [
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$number",
-            "name": "",
-            "shapeId": "incrementing-id-shape_1",
-          },
-        },
-        Object {
-          "AddShape": Object {
-            "baseShapeId": "$oneOf",
-            "name": "",
-            "shapeId": "incrementing-id-shape_2",
-          },
-        },
-        Object {
-          "AddShapeParameter": Object {
-            "name": "",
-            "shapeId": "incrementing-id-shape_2",
-            "shapeParameterId": "incrementing-id-shape-parameter_1",
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "incrementing-id-shape-parameter_1",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_1",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_2",
-              },
-            },
-          },
-        },
-        Object {
-          "AddShapeParameter": Object {
-            "name": "",
-            "shapeId": "incrementing-id-shape_2",
-            "shapeParameterId": "incrementing-id-shape-parameter_2",
-          },
-        },
-        Object {
-          "SetParameterShape": Object {
-            "shapeDescriptor": Object {
-              "ProviderInShape": Object {
-                "consumingParameterId": "incrementing-id-shape-parameter_2",
-                "providerDescriptor": Object {
-                  "ShapeProvider": Object {
-                    "shapeId": "baseline-shape_4",
-                  },
-                },
-                "shapeId": "incrementing-id-shape_2",
-              },
-            },
-          },
-        },
-      ],
-    },
-  ],
-  "tabs": Array [
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [
-        Object {
-          "style": 0,
-          "text": "expected",
-        },
-        Object {
-          "style": 1,
-          "text": "String",
-        },
-      ],
-      "ignoreRule": Object {
-        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
-        "examplesOfCoreShapeKinds": "$number",
-      },
-      "interactionPointers": Array [
-        "id",
-      ],
-      "invalid": true,
-      "jsonTrailsByInteractions": Object {
-        "id": Array [
-          Object {
-            "path": Array [
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "cities",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 1,
-                },
-              },
-            ],
-          },
-        ],
-      },
-      "title": "number",
-    },
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [
-        Object {
-          "style": 0,
-          "text": "expected",
-        },
-        Object {
-          "style": 1,
-          "text": "String",
-        },
-      ],
-      "ignoreRule": Object {
-        "diffHash": "702af24de94d6bedfb6c7aa26fd1ce13178a1ca7",
-        "examplesOfCoreShapeKinds": "$string",
-      },
-      "interactionPointers": Array [
-        "id",
-      ],
-      "invalid": false,
-      "jsonTrailsByInteractions": Object {
-        "id": Array [
-          Object {
-            "path": Array [
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "cities",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 0,
-                },
-              },
-            ],
-          },
-        ],
-      },
-      "title": "string",
-    },
-  ],
-}
-`;
-
-exports[`field is array of strings, and 1 item does not match expected type.managed 2`] = `
-Array [
-  Array [
-    Object {
-      "PathComponentAdded": Object {
-        "eventContext": null,
-        "name": "users",
-        "parentPathId": "root",
-        "pathId": "baseline-path_1",
-      },
-    },
-    Object {
-      "PathParameterAdded": Object {
-        "eventContext": null,
-        "name": ":userId",
-        "parentPathId": "baseline-path_1",
-        "pathId": "baseline-path_2",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$string",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_9",
-      },
-    },
-    Object {
-      "PathParameterShapeSet": Object {
-        "eventContext": null,
-        "pathId": "baseline-path_2",
-        "shapeDescriptor": Object {
-          "isRemoved": false,
-          "shapeId": "baseline-shape_9",
-        },
-      },
-    },
-    Object {
-      "PathComponentAdded": Object {
-        "eventContext": null,
-        "name": "profile",
-        "parentPathId": "baseline-path_2",
-        "pathId": "baseline-path_3",
-      },
-    },
-    Object {
-      "RequestParameterAddedByPathAndMethod": Object {
-        "eventContext": null,
-        "httpMethod": "GET",
-        "name": "queryString",
-        "parameterId": "baseline-request-parameter_1",
-        "parameterLocation": "query",
-        "pathId": "baseline-path_3",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$object",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_10",
-      },
-    },
-    Object {
-      "RequestParameterShapeSet": Object {
-        "eventContext": null,
-        "parameterDescriptor": Object {
-          "isRemoved": false,
-          "shapeId": "baseline-shape_10",
-        },
-        "parameterId": "baseline-request-parameter_1",
-      },
-    },
-    Object {
-      "RequestAdded": Object {
-        "eventContext": null,
-        "httpMethod": "GET",
-        "pathId": "baseline-path_3",
-        "requestId": "baseline-request_1",
-      },
-    },
-    Object {
-      "ResponseAddedByPathAndMethod": Object {
-        "eventContext": null,
-        "httpMethod": "GET",
-        "httpStatusCode": 200,
-        "pathId": "baseline-path_3",
-        "responseId": "baseline-response_1",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$object",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_8",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$number",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_2",
-      },
-    },
-    Object {
-      "FieldAdded": Object {
-        "eventContext": null,
-        "fieldId": "baseline-field_1",
-        "name": "age",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "baseline-field_1",
-            "shapeId": "baseline-shape_2",
-          },
-        },
-        "shapeId": "baseline-shape_8",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$string",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_4",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$list",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_5",
-      },
-    },
-    Object {
-      "FieldAdded": Object {
-        "eventContext": null,
-        "fieldId": "baseline-field_2",
-        "name": "cities",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "baseline-field_2",
-            "shapeId": "baseline-shape_5",
-          },
-        },
-        "shapeId": "baseline-shape_8",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$string",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_6",
-      },
-    },
-    Object {
-      "FieldAdded": Object {
-        "eventContext": null,
-        "fieldId": "baseline-field_3",
-        "name": "firstName",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "baseline-field_3",
-            "shapeId": "baseline-shape_6",
-          },
-        },
-        "shapeId": "baseline-shape_8",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$string",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "baseline-shape_7",
-      },
-    },
-    Object {
-      "FieldAdded": Object {
-        "eventContext": null,
-        "fieldId": "baseline-field_4",
-        "name": "lastName",
-        "shapeDescriptor": Object {
-          "FieldShapeFromShape": Object {
-            "fieldId": "baseline-field_4",
-            "shapeId": "baseline-shape_7",
-          },
-        },
-        "shapeId": "baseline-shape_8",
-      },
-    },
-    Object {
-      "ShapeParameterShapeSet": Object {
-        "eventContext": null,
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "$listItem",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "baseline-shape_4",
-              },
-            },
-            "shapeId": "baseline-shape_5",
-          },
-        },
-      },
-    },
-    Object {
-      "ResponseBodySet": Object {
-        "bodyDescriptor": Object {
-          "httpContentType": "application/json",
-          "isRemoved": false,
-          "shapeId": "baseline-shape_8",
-        },
-        "eventContext": null,
-        "responseId": "baseline-response_1",
-      },
-    },
-    Object {
-      "BatchCommitStarted": Object {
-        "batchId": "batchId",
-        "commitMessage": "commitMessage",
-        "eventContext": null,
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$number",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "incrementing-id-shape_1",
-      },
-    },
-    Object {
-      "ShapeAdded": Object {
-        "baseShapeId": "$oneOf",
-        "eventContext": null,
-        "name": "",
-        "parameters": Object {
-          "DynamicParameterList": Object {
-            "shapeParameterIds": Array [],
-          },
-        },
-        "shapeId": "incrementing-id-shape_2",
-      },
-    },
-    Object {
-      "ShapeParameterAdded": Object {
-        "eventContext": null,
-        "name": "",
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "incrementing-id-shape-parameter_1",
-            "providerDescriptor": Object {
-              "NoProvider": Object {},
-            },
-            "shapeId": "incrementing-id-shape_2",
-          },
-        },
-        "shapeId": "incrementing-id-shape_2",
-        "shapeParameterId": "incrementing-id-shape-parameter_1",
-      },
-    },
-    Object {
-      "ShapeParameterShapeSet": Object {
-        "eventContext": null,
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "incrementing-id-shape-parameter_1",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "incrementing-id-shape_1",
-              },
-            },
-            "shapeId": "incrementing-id-shape_2",
-          },
-        },
-      },
-    },
-    Object {
-      "ShapeParameterAdded": Object {
-        "eventContext": null,
-        "name": "",
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "incrementing-id-shape-parameter_2",
-            "providerDescriptor": Object {
-              "NoProvider": Object {},
-            },
-            "shapeId": "incrementing-id-shape_2",
-          },
-        },
-        "shapeId": "incrementing-id-shape_2",
-        "shapeParameterId": "incrementing-id-shape-parameter_2",
-      },
-    },
-    Object {
-      "ShapeParameterShapeSet": Object {
-        "eventContext": null,
-        "shapeDescriptor": Object {
-          "ProviderInShape": Object {
-            "consumingParameterId": "incrementing-id-shape-parameter_2",
-            "providerDescriptor": Object {
-              "ShapeProvider": Object {
-                "shapeId": "baseline-shape_4",
-              },
-            },
-            "shapeId": "incrementing-id-shape_2",
           },
         },
       },
