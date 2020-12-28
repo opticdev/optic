@@ -13,7 +13,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { descriptionForDiffs } from './interpreter/diff-description-interpretors';
+import { descriptionForDiffs } from './interpreter/diff-description-interpreter';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,

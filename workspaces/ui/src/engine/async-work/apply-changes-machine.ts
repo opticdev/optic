@@ -16,6 +16,7 @@ import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IOasStats } from './oas-preview-machine';
 import { serializeCommands } from '../interpreter/spec-change-dsl';
+import { IDiffService } from '../../services/diff';
 
 export interface ApplyChangesStateSchema {
   states: {
@@ -58,6 +59,7 @@ export interface ApplyChangesContext {}
 export const newApplyChangesMachine = (
   patch: IAllChanges,
   services: InteractiveSessionConfig,
+  diffService: IDiffService,
   clientSessionId: string = 'default',
   clientId: string = 'default'
 ) => {
@@ -152,7 +154,7 @@ export const newApplyChangesMachine = (
                   console.log(`learning started for ${pathId} ${method}`);
                   let promise;
                   batchHandler.doWork(async ({ rfcService, rfcId }) => {
-                    promise = services.diffService.learnInitial(
+                    promise = diffService.learnInitial(
                       rfcService,
                       rfcId,
                       pathId,
