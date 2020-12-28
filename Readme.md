@@ -50,7 +50,7 @@ tasks:
     inboundUrl: http://localhost:4000
 ```
 
-For further information, please check out our [setup instructions](https://app.useoptic.com/).
+For further information, please check out our [setup instructions](https://useoptic.com/docs/getting-started/).
 
 ### Use the Optic Proxy to Monitor your API's Behavior 
 
@@ -63,7 +63,7 @@ api start
 
 Optic will start your application, and observe API requests run against it. Optic manages these observations in a capture session. When Optic observes traffic that it hasn't yet seen, or that has changed from previous observations, it will list it with examples of payloads in the Optic Dashboard for the capture session. As you make changes to your code, such as adding or updating API endpoints, Optic will establish new capture sessions for each build and report back on observed behavior.
 
-Our detailed [setup instructions](https://app.useoptic.com/) will get you started with additional context for several popular languages and frameworks.
+Our detailed [setup instructions](https://useoptic.com/docs/getting-started/) will get you started with additional context for several popular languages and frameworks.
 
 ### Use Optic to Manage your API Specification 
 
@@ -80,7 +80,7 @@ As you commit the observed diffs, Optic builds documentation in OpenAPI format o
 
 ### See it for Yourself
 
-The best way to see Optic in action is to get [set up](https://app.useoptic.com/) in your current API project. You can also try our [interactive demo](https://demo.useoptic.com) to get a highlight of Optic's workflow and capabilities.
+The best way to see Optic in action is to get [set up](https://useoptic.com/docs/getting-started/) in your current API project. You can also try our [interactive demo](https://demo.useoptic.com) to get a highlight of Optic's workflow and capabilities.
 
 ## Key Features
 📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
