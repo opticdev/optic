@@ -80,7 +80,7 @@ const {
 } = GenericContextFactory(null);
 export { AllCapturesContext };
 
-function AllCapturesStore(props) {
+export function AllCapturesStore(props) {
   const baseUrl = useBaseUrl();
   const [captures, setCaptures] = useState([]);
   const [dismissed, setDismissed] = useState([]);
@@ -100,15 +100,15 @@ function AllCapturesStore(props) {
     update();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener('focus', update);
-
-    function cleanup() {
-      window.removeEventListener('focus', update);
-    }
-
-    return cleanup;
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('focus', update);
+  //
+  //   function cleanup() {
+  //     window.removeEventListener('focus', update);
+  //   }
+  //
+  //   return cleanup;
+  // }, []);
 
   useEffect(() => {
     global.opticDump = dumpSpecServiceState(specService);
@@ -156,7 +156,7 @@ export function CaptureManagerPage(props) {
 }
 
 export const CaptureManager = ({ location }) => {
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
   const baseUrl = useBaseUrl();
@@ -189,7 +189,7 @@ export const subtabs = {
 function CaptureChooserComponent(props) {
   const { captureId } = props;
   const specService = useSpecService();
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const captureContext = useContext(AllCapturesContext);
   const {
     endpointDiffs,
@@ -205,8 +205,7 @@ function CaptureChooserComponent(props) {
     (i) => i.count > 0 && i.isDocumentedEndpoint
   ).length;
 
-  const totalEndpoints = endpointDiffs.filter((i) => i.isDocumentedEndpoint)
-    .length;
+  const totalEndpoints = endpointDiffs.length;
 
   const urlsSplit = DiffResultHelper.splitUnmatchedUrls(
     JsonHelper.jsArrayToSeq(unrecognizedUrls),
@@ -219,10 +218,17 @@ function CaptureChooserComponent(props) {
 
   let defaultTab = subtabs.ENDPOINT_DIFF;
 
-  if (query.tab === subtabs.UNDOCUMENTED_URL) {
-    defaultTab = subtabs.UNDOCUMENTED_URL;
-  }
   const [tab, setTab] = useState(defaultTab);
+
+  useEffect(() => {
+    if (query.tab === subtabs.UNDOCUMENTED_URL) {
+      setTab(subtabs.UNDOCUMENTED_URL);
+    }
+
+    if (query.tab === subtabs.ENDPOINT_DIFF) {
+      setTab(subtabs.ENDPOINT_DIFF);
+    }
+  }, [query.tab]);
 
   useEffect(() => {
     trackUserEvent(
@@ -250,9 +256,6 @@ function CaptureChooserComponent(props) {
     window.location.reload();
   }
 
-  const showNewCaptureMode =
-    process.env.REACT_APP_GITFLOW_CAPTURE && !captureId.startsWith('uuid-');
-
   return (
     <div className={classes.container}>
       <div className={classes.navigationContainer}>
@@ -261,47 +264,42 @@ function CaptureChooserComponent(props) {
             <FiberManualRecordIcon
               color="secondary"
               fontSize="small"
-              style={{ marginRight: 10, fontSize: 14 }}
+              style={{ marginRight: 10 }}
             />
             <Typography variant="h6" style={{ fontSize: 19 }}>
               Local Capture
             </Typography>
           </div>
 
-          {showNewCaptureMode && (
-            <div className={classes.formControl2}>
-              <Typography variant="caption" className={classes.lastCommitText}>
-                Since last commit:{' '}
-              </Typography>
-              <Typography variant="caption" style={{ fontWeight: 300 }}>
-                {captureId.substr(0, 7)}
-                ea7272a
-              </Typography>
-            </div>
-          )}
-
-          {!showNewCaptureMode && (
-            <FormControl className={classes.formControl} fullWidth>
-              <Select
-                size="small"
-                placeholder="Select Capture"
-                value={captureId}
-                onChange={handleChange}
-              >
-                {captureContext.captures.map((capture, index) => {
-                  return (
-                    <MenuItem value={capture.captureId} key={capture.captureId}>
-                      <ListItemText
-                        primary={`${time.ago(capture.lastUpdate)} ${
-                          index === 0 ? '(LATEST) ' : ''
-                        } `}
-                      />
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          )}
+          <FormControl className={classes.formControl} fullWidth>
+            <Select
+              size="small"
+              placeholder="Select Capture"
+              value={captureId}
+              onChange={handleChange}
+            >
+              {captureContext.captures.map((capture, index) => {
+                return (
+                  <MenuItem value={capture.captureId} key={capture.captureId}>
+                    <ListItemText
+                      primary={`${time.ago(capture.lastUpdate)} ${
+                        index === 0 ? '(LATEST) ' : ''
+                      } `}
+                    />
+                    <ListItemSecondaryAction>
+                      {capture.hasDiff && (
+                        <WarningIcon
+                          fontSize="small"
+                          color="secondary"
+                          style={{ marginRight: 8, paddingTop: 5 }}
+                        />
+                      )}
+                    </ListItemSecondaryAction>
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
 
           <DocDivider style={{ marginTop: 22, marginBottom: 15 }} />
 
@@ -333,9 +331,15 @@ function CaptureChooserComponent(props) {
           {subtabs.ENDPOINT_DIFF === tab && (
             <EndpointDiffs captureId={captureId} />
           )}
-          {subtabs.UNDOCUMENTED_URL === tab && (
-            <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
-          )}
+          {
+            subtabs.UNDOCUMENTED_URL === tab && (
+              // (process.env.REACT_APP_LEARN_API_MODE ? (
+              //   <LearnAPIPage captureId={captureId} urlsSplit={urlsSplit} />
+              // ) : (
+              <UnrecognizedUrls captureId={captureId} urlsSplit={urlsSplit} />
+            )
+            // ))}
+          }
         </div>
       </div>
     </div>
@@ -344,7 +348,7 @@ function CaptureChooserComponent(props) {
 
 function RequestDiffWrapper(props) {
   const specService = useSpecService();
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
 
   return (
     // sessionId={props.match.params.captureId}
@@ -366,7 +370,7 @@ Not setup yet? Follow the [Getting Started Tutorial](${AddOpticLink})
 
 function CaptureDiffWrapper(props) {
   const { captureId } = props.match.params;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
 
   const rfcContext = useContext(RfcContext);
   const services = useServices();
@@ -390,7 +394,7 @@ function CaptureDiffWrapper(props) {
 }
 
 function CaptureDiffStat() {
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   // const { stats } = useCaptureContext();
   //also available
   // stats.captureCompleted
@@ -415,14 +419,13 @@ function CaptureDiffStat() {
 
 function EndpointDiffs(props) {
   const { captureId } = props;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const { endpointDiffs, completed } = useCaptureContext();
   const history = useHistory();
   const baseUrl = useBaseUrl();
 
-  const real = endpointDiffs.filter((i) => i.isDocumentedEndpoint);
-  const realCount = real.length;
-  const anyHaveDiffs = real.some((i) => i.count > 0);
+  const realCount = endpointDiffs.length;
+  const anyHaveDiffs = endpointDiffs.some((i) => i.count > 0);
 
   if (realCount === 0 && !completed) {
     return <DiffLoadingOverview show={true} />;
@@ -442,11 +445,6 @@ function EndpointDiffs(props) {
       </div>
       <List style={{ padding: 13, paddingTop: 4 }}>
         {endpointDiffs.map((i) => {
-          //skip undocumented
-          if (!i.isDocumentedEndpoint) {
-            return null;
-          }
-
           const to = `${baseUrl}/diffs/${captureId}/paths/${i.pathId}/methods/${i.method}`;
           return (
             <EndpointsContextStore key={to} pathId={i.pathId} method={i.method}>
@@ -463,14 +461,14 @@ function EndpointDiffs(props) {
                       component={Link}
                       to={to}
                       onClick={() => {
-                        // track('Viewing Endpoint Diff', i);
+                        // track('Viewing Endpoint IAsyncTask', i);
                       }}
                     >
                       <div className={classes.listItemInner}>
                         <Typography component="div" variant="subtitle2">
                           {endpointDescriptor.endpointPurpose || (
                             <span style={{ color: DocDarkGrey }}>
-                              Unamed Endpoint
+                              Unnamed Endpoint
                             </span>
                           )}
                         </Typography>
@@ -515,7 +513,7 @@ function EndpointDiffs(props) {
 
 function UnrecognizedUrls(props) {
   const { captureId, urlsSplit } = props;
-  const classes = useStyles();
+  const classes = useCaptureManagerPageStyles();
   const history = useHistory();
   const { unrecognizedUrls, endpointDiffs, completed } = useCaptureContext();
   const baseUrl = useBaseUrl();
@@ -644,7 +642,7 @@ function UnrecognizedUrls(props) {
   );
 }
 
-const Stat = ({ number, label }) => {
+export const Stat = ({ number, label }) => {
   return (
     <span>
       {number !== 0 && (
@@ -657,7 +655,12 @@ const Stat = ({ number, label }) => {
           {number}{' '}
         </Typography>
       )}
-      <Typography variant="h6" component="span" style={{ fontWeight: 800 }}>
+      <Typography
+        variant="h6"
+        component="span"
+        style={{ fontWeight: 800 }}
+        color="primary"
+      >
         {number === 0 && 'no '}
         {label}
         {number === 1 ? '' : 's'}
@@ -666,7 +669,7 @@ const Stat = ({ number, label }) => {
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+export const useCaptureManagerPageStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     overflow: 'hidden',
@@ -703,6 +706,7 @@ const useStyles = makeStyles((theme) => ({
   center: {
     flex: 1,
     maxWidth: 1200,
+    overflow: 'scroll',
   },
   statsSection: {
     paddingBottom: theme.spacing(2),
@@ -723,16 +727,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     margin: theme.spacing(2),
   },
-  lastCommitText: {
-    color: DocDarkGrey,
-    fontWeight: 100,
-  },
   formControl: {
     paddingLeft: 35,
-    paddingRight: 15,
-  },
-  formControl2: {
-    paddingLeft: 20,
     paddingRight: 15,
   },
   selectEmpty: {

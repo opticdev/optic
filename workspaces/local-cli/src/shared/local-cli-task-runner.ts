@@ -15,12 +15,12 @@ import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
-import cliux from 'cli-ux';
 import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
 } from '@useoptic/analytics/lib/events/tasks';
-
+// @ts-ignore
+import niceTry from 'nice-try';
 import {
   getCredentials,
   getUserFromCredentials,
@@ -44,6 +44,7 @@ import { Config } from '../config';
 import { printCoverage } from './coverage';
 import { spawnProcess } from './spawn-process';
 import { command } from '@oclif/test';
+import { getCaptureId } from './git/git-context-capture';
 
 export const runCommandFlags = {
   'collect-coverage': flags.boolean({
@@ -73,7 +74,8 @@ export async function LocalTaskSessionWrapper(
   deprecationLogger.enabled = true;
 
   const { paths, config } = await loadPathsAndConfig(cli);
-  const captureId = uuid.v4();
+  const captureId = getCaptureId(paths);
+  console.log('capture id ' + captureId);
   const runner = new LocalCliTaskRunner(captureId, paths);
   const session = new CliTaskSession(runner);
 
