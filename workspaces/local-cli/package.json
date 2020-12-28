@@ -29,6 +29,7 @@
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
+    "eventsource": "^1.0.7",
     "find-process": "^1.4.3",
     "lodash.sortby": "^4.7.0",
     "fs-extra": "^9.0.0",
