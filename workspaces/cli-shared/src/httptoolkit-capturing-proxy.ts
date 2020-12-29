@@ -146,13 +146,16 @@ export class HttpToolkitCapturingProxy {
         }
 
         developerDebugLogger(req);
+
+        const path = url.parse(req.url).pathname!;
+
         const sample: IHttpInteraction = {
           tags: [],
           uuid: res.id,
           request: {
             host: req.hostname || '',
             method: req.method,
-            path: req.path,
+            path,
             headers: {
               asJsonString: null,
               asText: null,
