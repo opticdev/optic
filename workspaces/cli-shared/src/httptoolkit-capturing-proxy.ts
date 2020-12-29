@@ -16,6 +16,7 @@ import { toBytes } from 'shape-hash';
 import { developerDebugLogger } from './index';
 import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
+import util from 'util';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -174,7 +175,7 @@ export class HttpToolkitCapturingProxy {
             body: this.extractBody(res),
           },
         };
-        developerDebugLogger({ sample });
+        developerDebugLogger(util.inspect(sample, {showHidden: false, depth: null, colors: true, getters: true}));
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }
