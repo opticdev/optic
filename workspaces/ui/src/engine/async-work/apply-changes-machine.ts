@@ -1,4 +1,4 @@
-import { InteractiveSessionConfig } from '../interfaces/session';
+import { DiffSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges } from '../hooks/session-hook';
 import { spawn, Thread, Worker } from 'threads';
@@ -58,7 +58,7 @@ export interface ApplyChangesContext {}
 
 export const newApplyChangesMachine = (
   patch: IAllChanges,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
   diffService: IDiffService,
   clientSessionId: string = 'default',
   clientId: string = 'default'

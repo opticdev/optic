@@ -10,7 +10,10 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { InteractiveSessionConfig } from './interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from './interfaces/session';
 import { IgnoreRule } from './interpreter/ignores/ignore-rule';
 import { IDiff } from './interfaces/diffs';
 
@@ -55,7 +58,7 @@ export const newInteractiveEndpointSessionMachine = (
   pathId: string,
   method: string,
   diffs: ParsedDiff[],
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) => {
   return Machine<
     InteractiveEndpointSessionContext,

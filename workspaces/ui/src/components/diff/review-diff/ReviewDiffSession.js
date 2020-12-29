@@ -65,6 +65,7 @@ export function DiffSessionMachineStore(props) {
     captureService,
     diffService,
     rfcBaseState,
+    loadInteraction: captureService.loadInteraction.bind(captureService),
   });
 
   const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();

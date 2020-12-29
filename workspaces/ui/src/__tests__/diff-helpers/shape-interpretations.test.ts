@@ -1,9 +1,4 @@
-import {
-  canApplySuggestions,
-  logResult,
-  shapeDiffPreview,
-  testCase,
-} from './fixture';
+import { canApplySuggestions, shapeDiffPreview, testCase } from './fixture';
 const cases = testCase('shape-diff-engine');
 
 test('a known field is missing.managed', async () => {
@@ -171,6 +166,7 @@ test('an required object field is provided with an array.managed', async () => {
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
 });
+
 // THIS IS WRONG. IN THE DIFF ENGINE. PRODUCES NO DIFF
 // test('array unknown is provided with concrete values.managed', async () => {
 //   const universe = await cases(expect.getState().currentTestName);
@@ -179,7 +175,7 @@ test('an required object field is provided with an array.managed', async () => {
 //   logResult(preview);
 //   expect(preview.suggestions.length).toBeGreaterThan(0);
 // });
-//
+
 test('array unknown is provided with no values.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   expect(universe.diffs.count()).toBe(0);
@@ -280,7 +276,6 @@ test('when a nullable is provided with a concrete type.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
-  logResult(preview);
   expect(preview).toMatchSnapshot();
   expect(
     await canApplySuggestions(preview.suggestions, universe)

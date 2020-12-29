@@ -256,7 +256,7 @@ Object {
         "statusCode": 200,
       },
       "method": "GET",
-      "pathId": "path_AsEexQkVwC",
+      "pathId": "path_it2OyjUysW",
     },
     "title": Array [
       Object {
@@ -328,109 +328,109 @@ Object {
           "AddResponseByPathAndMethod": Object {
             "httpMethod": "GET",
             "httpStatusCode": 200,
-            "pathId": "path_AsEexQkVwC",
-            "responseId": "incrementing-id-response_2",
+            "pathId": "path_it2OyjUysW",
+            "responseId": "incrementing-id-response_1",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$object",
             "name": "",
-            "shapeId": "incrementing-id-shape_51",
+            "shapeId": "incrementing-id-shape_25",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$string",
             "name": "",
-            "shapeId": "incrementing-id-shape_46",
+            "shapeId": "incrementing-id-shape_20",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$optional",
             "name": "",
-            "shapeId": "incrementing-id-shape_47",
+            "shapeId": "incrementing-id-shape_21",
           },
         },
         Object {
           "AddField": Object {
-            "fieldId": "incrementing-id-field_29",
+            "fieldId": "incrementing-id-field_13",
             "name": "dueDate",
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_29",
-                "shapeId": "incrementing-id-shape_47",
+                "fieldId": "incrementing-id-field_13",
+                "shapeId": "incrementing-id-shape_21",
               },
             },
-            "shapeId": "incrementing-id-shape_51",
+            "shapeId": "incrementing-id-shape_25",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$string",
             "name": "",
-            "shapeId": "incrementing-id-shape_48",
+            "shapeId": "incrementing-id-shape_22",
           },
         },
         Object {
           "AddField": Object {
-            "fieldId": "incrementing-id-field_30",
+            "fieldId": "incrementing-id-field_14",
             "name": "id",
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_30",
-                "shapeId": "incrementing-id-shape_48",
+                "fieldId": "incrementing-id-field_14",
+                "shapeId": "incrementing-id-shape_22",
               },
             },
-            "shapeId": "incrementing-id-shape_51",
+            "shapeId": "incrementing-id-shape_25",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$boolean",
             "name": "",
-            "shapeId": "incrementing-id-shape_49",
+            "shapeId": "incrementing-id-shape_23",
           },
         },
         Object {
           "AddField": Object {
-            "fieldId": "incrementing-id-field_31",
+            "fieldId": "incrementing-id-field_15",
             "name": "isDone",
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_31",
-                "shapeId": "incrementing-id-shape_49",
+                "fieldId": "incrementing-id-field_15",
+                "shapeId": "incrementing-id-shape_23",
               },
             },
-            "shapeId": "incrementing-id-shape_51",
+            "shapeId": "incrementing-id-shape_25",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$string",
             "name": "",
-            "shapeId": "incrementing-id-shape_50",
+            "shapeId": "incrementing-id-shape_24",
           },
         },
         Object {
           "AddField": Object {
-            "fieldId": "incrementing-id-field_32",
+            "fieldId": "incrementing-id-field_16",
             "name": "task",
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_32",
-                "shapeId": "incrementing-id-shape_50",
+                "fieldId": "incrementing-id-field_16",
+                "shapeId": "incrementing-id-shape_24",
               },
             },
-            "shapeId": "incrementing-id-shape_51",
+            "shapeId": "incrementing-id-shape_25",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$list",
             "name": "",
-            "shapeId": "incrementing-id-shape_52",
+            "shapeId": "incrementing-id-shape_26",
           },
         },
         Object {
@@ -440,10 +440,10 @@ Object {
                 "consumingParameterId": "$optionalInner",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_46",
+                    "shapeId": "incrementing-id-shape_20",
                   },
                 },
-                "shapeId": "incrementing-id-shape_47",
+                "shapeId": "incrementing-id-shape_21",
               },
             },
           },
@@ -455,10 +455,10 @@ Object {
                 "consumingParameterId": "$listItem",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_51",
+                    "shapeId": "incrementing-id-shape_25",
                   },
                 },
-                "shapeId": "incrementing-id-shape_52",
+                "shapeId": "incrementing-id-shape_26",
               },
             },
           },
@@ -468,9 +468,9 @@ Object {
             "bodyDescriptor": Object {
               "httpContentType": "application/json",
               "isRemoved": false,
-              "shapeId": "incrementing-id-shape_52",
+              "shapeId": "incrementing-id-shape_26",
             },
-            "responseId": "incrementing-id-response_2",
+            "responseId": "incrementing-id-response_1",
           },
         },
       ],
@@ -481,7 +481,7 @@ Object {
       "allowsExpand": true,
       "assertion": Array [],
       "ignoreRule": Object {
-        "diffHash": "759a4df02ed6d5ae3bd7a496a37f27fa70cf1753",
+        "diffHash": "a39bbdce2d74b25e1815653cb4fa6282f6c7b0f3",
         "newBodyInRequest": false,
         "newBodyInResponse": Object {
           "contentType": "application/json",
@@ -489,7 +489,7 @@ Object {
         },
       },
       "interactionPointers": Array [
-        "a3af782f-8e44-4e17-806d-032323fb0a4fd",
+        "8eff95b1-4f6d-4d3c-ba71-5e37923780ce4",
       ],
       "invalid": true,
       "jsonTrailsByInteractions": Object {},

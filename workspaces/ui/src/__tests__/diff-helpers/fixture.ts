@@ -4,10 +4,6 @@ import { ParsedDiff } from '../../engine/parse-diff';
 import path from 'path';
 import colors from 'colors';
 import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
-import {
-  ExampleCaptureService,
-  ExampleDiffService,
-} from '../../services/diff/ExampleDiffService';
 import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
   prepareNewRegionDiffSuggestionPreview,

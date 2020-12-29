@@ -1,7 +1,7 @@
 import { ParsedDiff } from '../../engine/parse-diff';
 import { newRegionInterpreters } from './new-regions-interpreter';
 import { descriptionForDiffs } from './diff-description-interpreter';
-import { InteractiveSessionConfig } from '../../engine/interfaces/session';
+import { DiffSessionConfig } from '../../engine/interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
@@ -37,11 +37,13 @@ export function initialTitleForNewRegions(
 
 export async function prepareNewRegionDiffSuggestionPreview(
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
   learnedBodies: ILearnedBodies,
   ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
   const firstInteractionPointer = diff.interactions[0];
+
+  debugger;
 
   await services.loadInteraction(firstInteractionPointer);
 
@@ -90,7 +92,7 @@ function nameForLocation(location: IParsedLocation): string {
 
 export async function prepareShapeDiffSuggestionPreview(
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter,
   ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {

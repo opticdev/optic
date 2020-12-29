@@ -1,6 +1,9 @@
 import sortby from 'lodash.sortby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
-import { InteractiveSessionConfig } from '../interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from '../interfaces/session';
 import { useEffect, useMemo, useState } from 'react';
 import { ParsedDiff } from '../parse-diff';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
@@ -18,7 +21,7 @@ export function useEndpointDiffMachine(
   method: string,
   getSessionActions: () => any,
   getSelf: () => any,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) {
   const [state, send] = useActor<InteractiveEndpointSessionEvent>(getSelf());
   const context: InteractiveEndpointSessionContext = state.context;

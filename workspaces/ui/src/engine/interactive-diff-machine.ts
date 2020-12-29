@@ -8,7 +8,10 @@ import {
   IDiffSuggestionPreview,
   IDiffDescription,
 } from './interfaces/interpretors';
-import { InteractiveSessionConfig } from './interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from './interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
@@ -57,14 +60,14 @@ export interface DiffContext<InterpretationContext> {
 const createNewDiffMachine = <Context>(
   id: string,
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: InteractiveDiffSessionConfig,
   createInitialState: (id: string, diff: ParsedDiff) => DiffContext<Context>,
   listenToInitialRegions: boolean,
   listenToLearnedTrails: boolean,
   reloadPreview: (
     id: string,
     diff: ParsedDiff,
-    services: InteractiveSessionConfig,
+    services: DiffSessionConfig,
     context: DiffContext<Context>
   ) => Promise<IDiffSuggestionPreview>
 ) =>
@@ -187,7 +190,7 @@ const createNewDiffMachine = <Context>(
 export const createNewRegionMachine = (
   id: string,
   parsedDiff: ParsedDiff,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) =>
   createNewDiffMachine<ILearnedBodies>(
     id,
@@ -208,7 +211,7 @@ export const createNewRegionMachine = (
     async (
       id: string,
       diff: ParsedDiff,
-      services: InteractiveSessionConfig,
+      services: DiffSessionConfig,
       context: DiffContext<ILearnedBodies>
     ) => {
       return await prepareNewRegionDiffSuggestionPreview(
@@ -223,7 +226,7 @@ export const createNewRegionMachine = (
 export const createShapeDiffMachine = (
   id: string,
   parsedDiff: ParsedDiff,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) =>
   createNewDiffMachine<IValueAffordanceSerializationWithCounter>(
     id,
@@ -241,7 +244,7 @@ export const createShapeDiffMachine = (
     async (
       id: string,
       diff: ParsedDiff,
-      services: InteractiveSessionConfig,
+      services: DiffSessionConfig,
       context: DiffContext<IValueAffordanceSerializationWithCounter>
     ) => {
       return await prepareShapeDiffSuggestionPreview(

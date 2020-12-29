@@ -19,7 +19,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
-import { InteractiveSessionConfig } from '../../interfaces/session';
+import { DiffSessionConfig } from '../../interfaces/session';
 import { Simulate } from 'react-dom/test-utils';
 import sortBy from 'lodash.sortby';
 import { addNewFieldCommands, IShapeChange } from '../spec-change-dsl';
@@ -33,7 +33,7 @@ export function fieldShapeDiffInterpretor(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
-  services: InteractiveSessionConfig
+  services: DiffSessionConfig
 ): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
