@@ -28,6 +28,7 @@ import EmptyState from '../support/EmptyState';
 import { AddOpticLink, DocumentingYourApi } from '../support/Links';
 import { trackUserEvent } from '../../Analytics';
 import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
     width: '100%',
@@ -300,20 +301,22 @@ export const EndpointDocs = (props) => {
 
             return (
               <div>
-                <HeadingContribution
-                  value={getContribution(endpointId, PURPOSE)}
-                  label="What does this endpoint do?"
-                  onChange={(value) => {
-                    updateContribution(endpointId, PURPOSE, value);
-                    trackUserEvent(
-                      UpdateContribution.withProps({
-                        id: endpointId,
-                        purpose: PURPOSE,
-                        value,
-                      })
-                    );
-                  }}
-                />
+                <ScrollIntoViewIfNeeded options={{ scrollMode: 'if-needed' }}>
+                  <HeadingContribution
+                    value={getContribution(endpointId, PURPOSE)}
+                    label="What does this endpoint do?"
+                    onChange={(value) => {
+                      updateContribution(endpointId, PURPOSE, value);
+                      trackUserEvent(
+                        UpdateContribution.withProps({
+                          id: endpointId,
+                          purpose: PURPOSE,
+                          value,
+                        })
+                      );
+                    }}
+                  />
+                </ScrollIntoViewIfNeeded>
                 <MarkdownContribution
                   value={getContribution(endpointId, DESCRIPTION)}
                   label="Detailed Description"
