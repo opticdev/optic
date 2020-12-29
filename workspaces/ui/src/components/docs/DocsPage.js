@@ -195,9 +195,8 @@ export const DocumentationToc = () => {
                               to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
                               size="medium"
                               color="primary"
-                              endIcon={<ExpandMoreIcon />}
                             >
-                              Full Documentation
+                              Full Documentation ➔
                             </Button>
                             <div style={{ flex: 1 }} />
 
