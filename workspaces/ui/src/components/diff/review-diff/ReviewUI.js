@@ -200,9 +200,7 @@ export function EndpointDetailCard(props) {
         selected && selected.pathId === pathId && selected.method === method
       }
       onClick={() => {
-        console.time('selected clicked');
         actions.selectEndpoint(pathId, method);
-        console.timeEnd('selected clicked');
       }}
       disableGutters
       divider={true}

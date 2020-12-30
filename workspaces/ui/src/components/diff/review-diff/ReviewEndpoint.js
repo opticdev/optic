@@ -84,8 +84,6 @@ export function ReviewEndpointInner(props) {
     handled,
   } = props;
 
-  console.log('re-render endpoints ');
-
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
       {groupDiffsByLocation.requests.map((i, index) => (
