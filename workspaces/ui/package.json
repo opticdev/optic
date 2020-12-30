@@ -84,7 +84,7 @@
     "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
     "build-demo": "node --max-old-space-size=8192 scripts/build-demo.js",
     "build-spec": "node --max-old-space-size=8192 scripts/build-spec.js",
-    "test": "node scripts/test.js",
+    "test": "jest",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "ws:build": "echo building ui",
