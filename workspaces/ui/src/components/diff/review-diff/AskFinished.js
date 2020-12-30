@@ -52,7 +52,13 @@ export function AskFinished(props) {
     patch.endpointsToDocument.length === 0;
 
   const [state, send] = useMachine(
-    newApplyChangesMachine(patch, services, clientSessionId, clientId)
+    newApplyChangesMachine(
+      patch,
+      services,
+      services.diffService,
+      clientSessionId,
+      clientId
+    )
   );
 
   useEffect(() => {

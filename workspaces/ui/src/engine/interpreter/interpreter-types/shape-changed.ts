@@ -2,7 +2,7 @@ import { BodyShapeDiff } from '../../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl';
 
 import { JsonHelper, opticEngine } from '@useoptic/domain';
-import { InteractiveSessionConfig } from '../../interfaces/session';
+import { DiffSessionConfig } from '../../interfaces/session';
 import {
   code,
   IInteractionPreviewTab,
@@ -16,7 +16,7 @@ export function shapeChangeInterpretor(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
-  services: InteractiveSessionConfig
+  services: DiffSessionConfig
 ): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
 

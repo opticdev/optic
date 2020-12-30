@@ -22,6 +22,7 @@ export class FieldContextSpecChange {
   private shapeChanges: IShapeChange = {
     add: new Set([]),
     remove: new Set([]),
+    wrapNullable: false,
   };
 
   constructor(
@@ -45,7 +46,7 @@ export class FieldContextSpecChange {
   }
 
   makeRequired() {
-    if (this.expectation.isOptionalField()) this.shouldMakeRequired = false;
+    this.shouldMakeRequired = true;
     return this;
   }
 
@@ -63,7 +64,7 @@ export class FieldContextSpecChange {
   }): { commands: any[]; fieldInnerShapeId: string } {
     const ids = this.rfcBaseState.domainIdGenerator;
     const shouldWrap =
-      this.shapeChanges.add.has(ICoreShapeKinds.NullableKind) &&
+      this.shapeChanges.wrapNullable &&
       this.expectation
         .unionWithActual(this.actual)
         .some((i) => ICoreShapeKinds.NullableKind);
@@ -308,6 +309,7 @@ export function addNewFieldCommands(
 export interface IShapeChange {
   add: Set<ICoreShapeKinds>;
   remove: Set<ICoreShapeKinds>;
+  wrapNullable: boolean;
 }
 
 export function serializeCommands(commands: any[]): any[] {

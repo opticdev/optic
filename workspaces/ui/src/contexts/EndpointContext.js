@@ -48,7 +48,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       };
 
       return (
-        <EndpointsContext.Provider value={context}>
+        <EndpointsContext.Provider value={context} key={endpointId}>
           {this.props.children}
         </EndpointsContext.Provider>
       );

@@ -9,10 +9,12 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { IconButton } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import { DocDarkGrey } from '../../docs/DocConstants';
+import classNames from 'classnames';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DiffSummaryRegion, ReviewDiff } from './ReviewDiff';
 import Divider from '@material-ui/core/Divider';
 import equals from 'lodash.isequal';
+import Button from '@material-ui/core/Button';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -86,6 +88,24 @@ export function ReviewEndpointInner(props) {
 
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
+     {!endpointQueries.allHandled() && (
+        <Paper
+          key="bulk-actions"
+          className={classNames(classes.sectionHeader, classes.bulkActions)}
+          square
+          elevation={0}
+        >
+          <Button
+            size="small"
+            color="primary"
+            disabled={!endpointQueries.isReady()}
+            onClick={endpointActions.approveAll}
+            style={{ fontSize: 10, fontWeight: 800 }}
+          >
+            Approve All ({Object.keys(handled).length})
+          </Button>
+        </Paper>
+      )}
       {groupDiffsByLocation.requests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
@@ -242,6 +262,12 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
     textTransform: 'uppercase',
   },
+  bulkActions: {
+    borderBottom: 'none',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    flexDirection: 'column',
+  },
   sectionHeader: {
     backgroundColor: 'white',
     display: 'flex',
@@ -254,6 +280,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 3,
     paddingLeft: 5,
     borderBottom: `1px solid #e2e2e2`,
+    boxShadow: 0,
     transition: '.2s background-color',
     '&:hover': {
       backgroundColor: '#efeff1',

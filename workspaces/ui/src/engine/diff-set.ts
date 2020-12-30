@@ -5,6 +5,10 @@ import { diff } from 'react-ace';
 import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
 import { isDiffForKnownEndpoint } from './interfaces/interfaces';
 import { DiffTypes } from './interfaces/diffs';
+import {
+  Expectation,
+  expectationsFromSpecOption,
+} from './interpreter/shape-diff-dsl';
 
 export class DiffSet {
   constructor(
@@ -88,6 +92,27 @@ export class DiffSet {
     });
 
     return result.filter((i) => i.pathId !== 'root');
+  }
+
+  filterToValidExpectations(): DiffSet {
+    return new DiffSet(
+      this.diffs.filter((i) => {
+        const hasExpectation = expectationsFromSpecOption(
+          i,
+          this.rfcBaseState,
+          i.asShapeDiff(this.rfcBaseState).shapeTrail,
+          i.asShapeDiff(this.rfcBaseState).jsonTrail
+        );
+
+        if (!hasExpectation) {
+          console.error('expectation error, hiding diff ', {
+            diff: i.raw(),
+          });
+        }
+        return hasExpectation;
+      }),
+      this.rfcBaseState
+    );
   }
 
   groupedByEndpointAndShapeTrail(): {
