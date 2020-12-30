@@ -240,14 +240,13 @@ export class DiffQueries implements DiffQueriesInterface {
   }
   undocumentedUrls(): Readable {
     if (fs.existsSync(this.paths.diffsStream)) {
-      let diffResults = this.createDiffsStream(this.paths.diffsStream);
+      let diffs = chain([
+        fs.createReadStream(this.paths.diffsStream),
+        jsonlParser(),
+        (data) => [data.value],
+      ]);
 
-      let undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
-        diffResults
-      );
-      let lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
-
-      return Readable.from(lastUnique);
+      return Readable.from(this.countUndocumentedUrls(diffs));
     } else {
       let reading = lockedRead<any>(this.paths.undocumentedUrls);
       let itemsGenerator = jsonStreamGenerator(reading);
