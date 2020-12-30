@@ -1,4 +1,4 @@
-import { InteractiveSessionConfig } from '../interfaces/session';
+import { DiffSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges } from '../hooks/session-hook';
 import { spawn, Thread, Worker } from 'threads';
@@ -15,7 +15,8 @@ import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IOasStats } from './oas-preview-machine';
-import { serializeCommands } from '../interpretors/spec-change-dsl';
+import { serializeCommands } from '../interpreter/spec-change-dsl';
+import { IDiffService } from '../../services/diff';
 
 export interface ApplyChangesStateSchema {
   states: {
@@ -57,7 +58,8 @@ export interface ApplyChangesContext {}
 
 export const newApplyChangesMachine = (
   patch: IAllChanges,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
+  diffService: IDiffService,
   clientSessionId: string = 'default',
   clientId: string = 'default'
 ) => {
@@ -152,7 +154,7 @@ export const newApplyChangesMachine = (
                   console.log(`learning started for ${pathId} ${method}`);
                   let promise;
                   batchHandler.doWork(async ({ rfcService, rfcId }) => {
-                    promise = services.diffService.learnInitial(
+                    promise = diffService.learnInitial(
                       rfcService,
                       rfcId,
                       pathId,

@@ -2,6 +2,7 @@ import {
   ExampleCaptureService,
   ExampleDiffService,
 } from '../../../services/diff/ExampleDiffService';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import {
   DiffHelpers,
   Facade,
@@ -14,11 +15,24 @@ import {
   universeFromEvents,
 } from '@useoptic/domain-utilities';
 import { createExampleSpecServiceFactory } from '../../../components/loaders/ApiLoader';
-import { ICaptureService, IDiffService } from '../../../services/diff';
+import {
+  ICaptureService,
+  IDiffService,
+  ILoadInteractionResponse,
+} from '../../../services/diff';
 import {
   DiffRfcBaseState,
   makeDiffRfcBaseState,
 } from '../../../engine/interfaces/diff-rfc-base-state';
+import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
+import { IHttpInteraction } from '@useoptic/domain-types';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { localInitialBodyLearner } from '../../../components/diff/review-diff/learn-api/browser-initial-body';
+import { IDiff } from '../../../engine/interfaces/diffs';
+import { localTrailValuesLearner } from '../../../engine/async-work/browser-trail-values';
 
 export async function makeUniverse(
   json: any
@@ -26,111 +40,115 @@ export async function makeUniverse(
   specService: any;
   rawDiffs: any[];
   rfcBaseState: DiffRfcBaseState;
-  diffServiceFactory: (
-    specService,
-    captureService,
-    _events,
-    _rfcState,
-    additionalCommands,
-    config,
-    captureId
-  ) => Promise<ExampleDiffService>;
   jsonUniverse: any;
-  captureServiceFactory: () => Promise<ExampleCaptureService>;
-  diffService: ExampleDiffService;
-  captureService: ExampleCaptureService;
+  loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
+  learnInitial(
+    pathId: string,
+    method: string,
+    opticIds: any
+  ): Promise<ILearnedBodies>;
+  learnTrailValues(
+    pathId: string,
+    method: string,
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 }> {
   const { specService } = await createExampleSpecServiceFactory(json);
-
-  const captureServiceFactory = async () => {
-    return new ExampleCaptureService(specService);
-  };
-
-  const diffServiceFactory = async (
-    specService,
-    captureService,
-    _events,
-    _rfcState,
-    additionalCommands,
-    config,
-    captureId
-  ) => {
-    async function computeInitialDiff() {
-      const capture = await specService.listCapturedSamples(captureId);
-      const commandContext = new RfcCommandContext(
-        'simulated',
-        'simulated',
-        'simulated'
-      );
-
-      const {
-        resolvers,
-        rfcState,
-      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        _events,
-        commandContext,
-        additionalCommands
-      );
-
-      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-      for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByDiffs(
-          resolvers,
-          rfcState,
-          JsonHelper.fromInteraction(interaction),
-          interaction.uuid,
-          diffs
-        );
-      }
-      return {
-        diffs,
-        rfcState,
-        resolvers,
-      };
-    }
-
-    const { diffs, rfcState } = await computeInitialDiff();
-
-    return new ExampleDiffService(
-      specService,
-      captureService,
-      config,
-      diffs,
-      rfcState
-    );
-  };
-
-  const services = {
-    diffServiceFactory,
-    captureServiceFactory,
-    specService,
-    jsonUniverse: json,
-  };
-
-  const captureService = await captureServiceFactory();
+  const captureId = 'simulated';
+  const capture = await specService.listCapturedSamples(captureId);
   const events = JSON.parse(await specService.listEvents());
+  async function newDiff() {
+    const spec = DiffEngine.spec_from_events(JSON.stringify(events));
+    const diffingStream = (async function* (): AsyncIterable<
+      Streams.DiffResults.DiffResult
+    > {
+      for (let interaction of capture.samples) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          spec
+        );
 
-  const diffService = await diffServiceFactory(
-    specService,
-    captureService,
-    events,
-    universeFromEvents(events).rfcState,
-    [],
-    await specService.loadConfig(),
+        let parsedResults = JSON.parse(results);
+        let taggedResults = (parsedResults = parsedResults.map(
+          ([diffResult, fingerprint]) => [
+            diffResult,
+            [interaction.uuid],
+            fingerprint,
+          ]
+        ));
+
+        for (let result of taggedResults) {
+          yield result;
+        }
+        // make sure this is async so we don't block the UI thread
+        await new Promise((resolve) => setTimeout(resolve));
+      }
+    })();
+
+    // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
+    return AsyncTools.toArray(diffingStream);
+  }
+
+  //normalize it? we don't handle diff hash here yet
+  const diffs = (await newDiff()).map((i) => {
+    return [i[0], i[1]];
+  });
+
+  const commandContext = new RfcCommandContext(
+    'simulated',
+    'simulated',
     'simulated'
   );
-
-  const { rawDiffs } = await diffService.listDiffs();
 
   const { eventStore, rfcId, rfcService } = universeFromEvents(events);
 
   const opticIds = opticEngine.com.useoptic.OpticIdsJsHelper().deterministic;
 
+  const rfcBaseState = makeDiffRfcBaseState(
+    eventStore,
+    rfcService,
+    rfcId,
+    opticIds
+  );
+
   return {
-    ...services,
-    rfcBaseState: makeDiffRfcBaseState(eventStore, rfcService, rfcId, opticIds),
-    captureService,
-    diffService,
-    rawDiffs,
+    rawDiffs: diffs,
+    rfcBaseState,
+    jsonUniverse: json,
+    specService,
+    loadInteraction: async (interactionPointer) => {
+      const interaction = capture.samples.find(
+        (x: IHttpInteraction) => x.uuid === interactionPointer
+      );
+      return {
+        interaction,
+      };
+    },
+    learnInitial: async (
+      pathId: string,
+      method: string,
+      opticIds: any = undefined
+    ) => {
+      return localInitialBodyLearner(
+        rfcBaseState.rfcState,
+        pathId,
+        method,
+        capture.samples,
+        opticIds
+      );
+    },
+    learnTrailValues: async (
+      pathId: string,
+      method: string,
+      diffs: { [key: string]: IDiff }
+    ) => {
+      return localTrailValuesLearner(
+        rfcBaseState.rfcState,
+        pathId,
+        method,
+        diffs,
+        capture.samples
+      );
+    },
   };
 }

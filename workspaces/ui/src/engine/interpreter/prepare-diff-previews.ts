@@ -1,12 +1,12 @@
 import { ParsedDiff } from '../../engine/parse-diff';
-import { newRegionInterpreters } from '../../engine/interpretors/new-regions-interpretors';
-import { descriptionForDiffs } from '../../engine/interpretors/diff-description-interpretors';
-import { InteractiveSessionConfig } from '../../engine/interfaces/session';
+import { newRegionInterpreters } from './new-regions-interpreter';
+import { descriptionForDiffs } from './diff-description-interpreter';
+import { DiffSessionConfig } from '../../engine/interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { interpretShapeDiffs } from './interpretor-types/shape-diffs';
+import { interpretShapeDiffs } from './interpreter-types/shape-diffs';
 import {
   IDiffSuggestionPreview,
   IInteractionPreviewTab,
@@ -37,13 +37,12 @@ export function initialTitleForNewRegions(
 
 export async function prepareNewRegionDiffSuggestionPreview(
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
   learnedBodies: ILearnedBodies,
   ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
   const firstInteractionPointer = diff.interactions[0];
-
-  await services.captureService.loadInteraction(firstInteractionPointer);
+  await services.loadInteraction(firstInteractionPointer);
 
   const location = diff.location(services.rfcBaseState);
 
@@ -90,7 +89,7 @@ function nameForLocation(location: IParsedLocation): string {
 
 export async function prepareShapeDiffSuggestionPreview(
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
   learnedTrails: IValueAffordanceSerializationWithCounter,
   ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {

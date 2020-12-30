@@ -41,14 +41,16 @@ export function targetKindSuggestion(
     new Set([...targetCoreShapeKinds])
   );
 
+  const targetFinal = new Set([...targetCoreShapeKinds]);
   const shapeChange = {
     add: add,
     remove: remove,
+    wrapNullable: targetFinal.has(ICoreShapeKinds.NullableKind),
   };
 
   return {
     shapeChange,
     updatedShapeName: previewName,
-    targetFinal: new Set([...targetCoreShapeKinds]),
+    targetFinal,
   };
 }
