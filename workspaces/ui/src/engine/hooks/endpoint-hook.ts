@@ -54,6 +54,9 @@ export function useEndpointDiffMachine(
       handledUpdated: () => {
         send({ type: 'HANDLED_UPDATED' });
       },
+      approveAll: () => {
+        send({ type: 'APPROVE_FIRST_SUGGESTIONS' });
+      },
       addIgnoreRule: (newRule: IgnoreRule) => {
         send({ type: 'ADD_IGNORE', newRule });
       },
@@ -66,6 +69,11 @@ export function useEndpointDiffMachine(
   function createQueries() {
     return {
       handledByDiffHash: () => context.handledByDiffHash,
+      allHandled: () => {
+        const handled = Object.values(context.handledByDiffHash);
+        return handled.length > 0 && handled.every((i) => Boolean(i));
+      },
+      isReady: () => state.value === 'ready',
       newRegionDiffs: () => context.newRegions,
       shapeDiffs: () => context.shapeDiffs,
       getDiffActor: (diffHash) => {

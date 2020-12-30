@@ -45,7 +45,8 @@ type DiffEvent =
   | { type: 'DISMISS_TYPE'; type_slug: string }
   | { type: 'STAGE' }
   | { type: 'UNSTAGE' }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'APPROVE_FIRST_SUGGESTION' };
 
 // The context (extended state) of the machine
 export interface DiffContext<InterpretationContext> {
@@ -154,6 +155,10 @@ const createNewDiffMachine = <Context>(
             on: {
               STAGE: {
                 target: 'handled',
+              },
+              APPROVE_FIRST_SUGGESTION: {
+                target: 'handled',
+                cond: (ctx) => Boolean(ctx.preview.suggestions.length),
               },
             },
             invoke: {
