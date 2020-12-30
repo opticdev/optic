@@ -4,7 +4,10 @@ import {
   newDiffSessionSessionMachine,
   nextEndpointToFocusOn,
 } from '../diff-session';
-import { InteractiveSessionConfig } from '../interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from '../interfaces/session';
 import { useMemo } from 'react';
 
 import { IDiff } from '../interfaces/diffs';
@@ -20,7 +23,7 @@ import { ISuggestion } from '../interfaces/interpretors';
 
 export function useDiffSessionMachine(
   diffId: string,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) {
   const [state, send] = useMachine(
     newDiffSessionSessionMachine(diffId, services),

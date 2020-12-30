@@ -4,15 +4,11 @@ import { ParsedDiff } from '../../engine/parse-diff';
 import path from 'path';
 import colors from 'colors';
 import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
-import {
-  ExampleCaptureService,
-  ExampleDiffService,
-} from '../../services/diff/ExampleDiffService';
 import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
-} from '../../engine/interpretors/prepare-diff-previews';
+} from '../../engine/interpreter/prepare-diff-previews';
 import {
   IChangeType,
   ICopy,
@@ -22,12 +18,27 @@ import {
 } from '../../engine/interfaces/interpretors';
 import { spawn, Thread, Worker } from 'threads';
 import { JsonHelper, opticEngine, RfcCommandContext } from '@useoptic/domain';
+import { ILoadInteractionResponse } from '../../services/diff';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IDiff } from '../../engine/interfaces/diffs';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
   diffs: DiffSet;
-  diffService: ExampleDiffService;
-  captureService: ExampleCaptureService;
+  loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
+  learnInitial(
+    pathId: string,
+    method: string,
+    opticIds: any
+  ): Promise<ILearnedBodies>;
+  learnTrailValues(
+    pathId: string,
+    method: string,
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 }
 
 export async function loadsDiffsFromUniverse(
@@ -35,8 +46,14 @@ export async function loadsDiffsFromUniverse(
 ): Promise<ITestUniverse> {
   const universe_raw = require(path);
   const universePromise = makeUniverse(universe_raw);
-  const { captureService, diffService, rfcBaseState } = await universePromise;
-  const diffsRaw = (await diffService.listDiffs()).rawDiffs;
+  const {
+    rawDiffs,
+    rfcBaseState,
+    loadInteraction,
+    learnInitial,
+    learnTrailValues,
+  } = await universePromise;
+  const diffsRaw = rawDiffs;
 
   const diffs = new DiffSet(
     diffsRaw.map(([diff, interactions]) => {
@@ -48,9 +65,10 @@ export async function loadsDiffsFromUniverse(
 
   return {
     diffs,
-    captureService,
-    diffService,
     rfcBaseState,
+    loadInteraction,
+    learnInitial,
+    learnTrailValues,
   };
 }
 
@@ -72,13 +90,9 @@ export async function shapeDiffPreview(
 ): Promise<IDiffSuggestionPreview> {
   const { pathId, method } = input.diffs[0].location(universe.rfcBaseState);
 
-  const trailValues = await universe.diffService.learnTrailValues(
-    universe.rfcBaseState.rfcService,
-    universe.rfcBaseState.rfcId,
-    pathId,
-    method,
-    { [input.diffs[0]!.diffHash]: input.diffs[0]!.raw() }
-  );
+  const trailValues = await universe.learnTrailValues(pathId, method, {
+    [input.diffs[0]!.diffHash]: input.diffs[0]!.raw(),
+  });
   return await prepareShapeDiffSuggestionPreview(
     input.diffs[0],
     universe,
@@ -159,9 +173,7 @@ export async function newRegionPreview(
 ): Promise<IDiffSuggestionPreview> {
   const { pathId, method } = diff.location(universe.rfcBaseState);
 
-  const initial = await universe.diffService.learnInitial(
-    universe.rfcBaseState.rfcService,
-    universe.rfcBaseState.rfcId,
+  const initial = await universe.learnInitial(
     pathId,
     method,
     universe.rfcBaseState.domainIdGenerator

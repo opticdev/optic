@@ -2,7 +2,10 @@ import { assign, spawn, Machine, StateMachine, send } from 'xstate';
 import { ParsedDiff } from './parse-diff';
 import { DiffSet } from './diff-set';
 import equals from 'lodash.isequal';
-import { InteractiveSessionConfig } from './interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from './interfaces/session';
 import {
   InteractiveEndpointSessionContext,
   InteractiveEndpointSessionEvent,
@@ -88,7 +91,7 @@ export interface DiffSessionSessionContext {
 
 export const newDiffSessionSessionMachine = (
   diffId: string,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) => {
   return Machine<
     DiffSessionSessionContext,
