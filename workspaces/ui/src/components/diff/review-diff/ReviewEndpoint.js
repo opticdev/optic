@@ -10,8 +10,9 @@ import { IconButton } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import { DocDarkGrey } from '../../docs/DocConstants';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { ReviewDiff } from './ReviewDiff';
+import { DiffSummaryRegion, ReviewDiff } from './ReviewDiff';
 import Divider from '@material-ui/core/Divider';
+import equals from 'lodash.isequal';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -40,28 +41,54 @@ export function ReviewEndpoint(props) {
     makeDiffActorHook,
   };
 
+  const handled = queries.handledByDiffHash();
+  const groupDiffsByLocation = useMemo(
+    () => queries.groupDiffsByLocation(),
+    []
+  );
+
   return (
     <EndpointDiffSessionContext.Provider value={contextValue}>
-      <ReviewEndpointInner />
+      <ReviewEndpointInnerWrapper
+        {...{
+          pathId,
+          method,
+          makeDiffActorHook,
+          handled,
+          groupDiffsByLocation,
+        }}
+      />
     </EndpointDiffSessionContext.Provider>
   );
 }
 
+class ReviewEndpointInnerWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return (
+      !equals(nextProps.handled, this.props.handled) ||
+      !equals(nextProps.groupDiffsByLocation, this.props.groupDiffsByLocation)
+    );
+  }
+
+  render() {
+    return <ReviewEndpointInner {...this.props} />;
+  }
+}
+
 export function ReviewEndpointInner(props) {
   const {
-    endpointQueries,
     pathId,
     method,
     makeDiffActorHook,
-  } = useEndpointDiffSession();
+    groupDiffsByLocation,
+    handled,
+  } = props;
 
-  const handled = endpointQueries.handledByDiffHash();
-
-  const grouped = useMemo(() => endpointQueries.groupDiffsByLocation(), []);
+  console.log('re-render endpoints ');
 
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
-      {grouped.requests.map((i, index) => (
+      {groupDiffsByLocation.requests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -70,7 +97,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.newRequests.map((i, index) => (
+      {groupDiffsByLocation.newRequests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -79,7 +106,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.responses.map((i, index) => (
+      {groupDiffsByLocation.responses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -88,7 +115,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.newResponses.map((i, index) => (
+      {groupDiffsByLocation.newResponses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}

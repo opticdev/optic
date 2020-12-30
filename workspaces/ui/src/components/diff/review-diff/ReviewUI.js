@@ -22,6 +22,8 @@ import { ReviewBatchSelect } from './ReviewBatchSelect';
 import Fade from '@material-ui/core/Fade';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { debugDump } from '../../../utilities/debug-dump';
+import equals from 'lodash.isequal';
+import { DiffSummaryRegion } from './ReviewDiff';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -100,12 +102,14 @@ export function ReviewUI() {
               count={results.endpointsWithDiffs.length}
             />
             {results.endpointsWithDiffs.map((i) => (
-              <EndpointDetailCard
+              <EndpointDetailCardWrapper
                 key={i.pathId + i.method}
                 {...i}
                 handledCount={handled.find(
                   (h) => h.pathId === i.pathId && h.method === i.method
                 )}
+                queries={queries}
+                actions={actions}
                 selected={selected}
               />
             ))}
@@ -143,9 +147,38 @@ export function ReviewUI() {
   );
 }
 
+class EndpointDetailCardWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    const isSelected = (selected) => {
+      return (
+        selected &&
+        selected.pathId === this.props.pathId &&
+        selected.method === this.props.method
+      );
+    };
+    const shouldUpdate =
+      !equals(nextProps.handledCount, this.props.handledCount) ||
+      !equals(isSelected(nextProps.selected), isSelected(this.props.selected));
+
+    return shouldUpdate;
+  }
+
+  render() {
+    return <EndpointDetailCard {...this.props} />;
+  }
+}
+
 export function EndpointDetailCard(props) {
-  const { method, pathId, handled, handledCount, selected } = props;
-  const { queries, actions } = useDiffSession();
+  const {
+    method,
+    pathId,
+    handledCount,
+    handled,
+    selected,
+    queries,
+    actions,
+  } = props;
+
   const classes = useStyles();
 
   const endpointDescriptor = useMemo(
@@ -169,6 +202,7 @@ export function EndpointDetailCard(props) {
       onClick={() => {
         console.time('selected clicked');
         actions.selectEndpoint(pathId, method);
+        console.timeEnd('selected clicked');
       }}
       disableGutters
       divider={true}
