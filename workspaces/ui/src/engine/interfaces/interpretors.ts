@@ -37,6 +37,7 @@ export interface IDiffDescription {
   location: IParsedLocation;
   changeType: IChangeType;
   getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  unknownDiffBehavior?: boolean;
 }
 
 export interface ISuggestion {

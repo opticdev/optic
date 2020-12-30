@@ -42,9 +42,6 @@ export async function prepareNewRegionDiffSuggestionPreview(
   ignoreRules: IgnoreRule[]
 ): Promise<IDiffSuggestionPreview> {
   const firstInteractionPointer = diff.interactions[0];
-
-  debugger;
-
   await services.loadInteraction(firstInteractionPointer);
 
   const location = diff.location(services.rfcBaseState);

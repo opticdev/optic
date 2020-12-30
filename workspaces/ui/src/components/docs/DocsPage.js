@@ -124,7 +124,11 @@ export const DocumentationToc = () => {
       <div>
         {endpoints.map((i) => {
           return (
-            <EndpointsContextStore method={i.method} pathId={i.pathId}>
+            <EndpointsContextStore
+              method={i.method}
+              pathId={i.pathId}
+              key={i.method + i.pathId}
+            >
               <EndpointsContext.Consumer>
                 {({
                   endpointDescriptor,
@@ -227,6 +231,7 @@ export const DocumentationToc = () => {
                               {endpointDescriptor.responses.map((res) => {
                                 return (
                                   <SquareChip
+                                    key={res.statusCode}
                                     label={res.statusCode}
                                     bgColor={'#32536a'}
                                     color="white"

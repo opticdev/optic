@@ -99,7 +99,10 @@ export const newInteractiveEndpointSessionMachine = (
               const shapeDiffsGrouped = new DiffSet(
                 diffs,
                 services.rfcBaseState
-              ).groupedByEndpointAndShapeTrail();
+              )
+                .shapeDiffs()
+                .filterToValidExpectations()
+                .groupedByEndpointAndShapeTrail();
 
               return shapeDiffsGrouped.map(
                 ({ diffs, shapeDiffGroupingHash, shapeTrail }) => {

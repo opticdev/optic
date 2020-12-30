@@ -156,12 +156,12 @@ function descriptionForShapeDiff(
   }
 
   //we shouldn't ever get there
-
   return {
     title: [plain('unknown diff kind')],
     location,
     changeType: IChangeType.Changed,
     assertion: [],
+    unknownDiffBehavior: true,
     getJsonBodyToPreview,
   };
   // invariant(false, 'Unexpected shape diff');
