@@ -1,6 +1,6 @@
 import { IParsedLocation } from './interfaces';
 import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IgnoreRule } from '../interpretors/ignores/ignore-rule';
+import { IgnoreRule } from '../interpreter/ignores/ignore-rule';
 
 export interface IInterpretation {
   suggestions: ISuggestion[];
@@ -37,6 +37,7 @@ export interface IDiffDescription {
   location: IParsedLocation;
   changeType: IChangeType;
   getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  unknownDiffBehavior?: boolean;
 }
 
 export interface ISuggestion {

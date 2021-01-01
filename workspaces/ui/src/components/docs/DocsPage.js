@@ -28,6 +28,7 @@ import EmptyState from '../support/EmptyState';
 import { AddOpticLink, DocumentingYourApi } from '../support/Links';
 import { trackUserEvent } from '../../Analytics';
 import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
     width: '100%',
@@ -123,7 +124,11 @@ export const DocumentationToc = () => {
       <div>
         {endpoints.map((i) => {
           return (
-            <EndpointsContextStore method={i.method} pathId={i.pathId}>
+            <EndpointsContextStore
+              method={i.method}
+              pathId={i.pathId}
+              key={i.method + i.pathId}
+            >
               <EndpointsContext.Consumer>
                 {({
                   endpointDescriptor,
@@ -194,9 +199,8 @@ export const DocumentationToc = () => {
                               to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
                               size="medium"
                               color="primary"
-                              endIcon={<ExpandMoreIcon />}
                             >
-                              Full Documentation
+                              Full Documentation ➔
                             </Button>
                             <div style={{ flex: 1 }} />
 
@@ -227,6 +231,7 @@ export const DocumentationToc = () => {
                               {endpointDescriptor.responses.map((res) => {
                                 return (
                                   <SquareChip
+                                    key={res.statusCode}
                                     label={res.statusCode}
                                     bgColor={'#32536a'}
                                     color="white"
@@ -300,20 +305,22 @@ export const EndpointDocs = (props) => {
 
             return (
               <div>
-                <HeadingContribution
-                  value={getContribution(endpointId, PURPOSE)}
-                  label="What does this endpoint do?"
-                  onChange={(value) => {
-                    updateContribution(endpointId, PURPOSE, value);
-                    trackUserEvent(
-                      UpdateContribution.withProps({
-                        id: endpointId,
-                        purpose: PURPOSE,
-                        value,
-                      })
-                    );
-                  }}
-                />
+                <ScrollIntoViewIfNeeded options={{ scrollMode: 'if-needed' }}>
+                  <HeadingContribution
+                    value={getContribution(endpointId, PURPOSE)}
+                    label="What does this endpoint do?"
+                    onChange={(value) => {
+                      updateContribution(endpointId, PURPOSE, value);
+                      trackUserEvent(
+                        UpdateContribution.withProps({
+                          id: endpointId,
+                          purpose: PURPOSE,
+                          value,
+                        })
+                      );
+                    }}
+                  />
+                </ScrollIntoViewIfNeeded>
                 <MarkdownContribution
                   value={getContribution(endpointId, DESCRIPTION)}
                   label="Detailed Description"

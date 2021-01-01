@@ -1,6 +1,9 @@
 import sortby from 'lodash.sortby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
-import { InteractiveSessionConfig } from '../interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from '../interfaces/session';
 import { useEffect, useMemo, useState } from 'react';
 import { ParsedDiff } from '../parse-diff';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
@@ -11,14 +14,14 @@ import {
 } from '../interactive-endpoint';
 import { useActor } from '@xstate/react';
 import { useSingleDiffMachine } from './diff-hook';
-import { IgnoreRule } from '../interpretors/ignores/ignore-rule';
+import { IgnoreRule } from '../interpreter/ignores/ignore-rule';
 
 export function useEndpointDiffMachine(
   pathId: string,
   method: string,
   getSessionActions: () => any,
   getSelf: () => any,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) {
   const [state, send] = useActor<InteractiveEndpointSessionEvent>(getSelf());
   const context: InteractiveEndpointSessionContext = state.context;
@@ -51,6 +54,9 @@ export function useEndpointDiffMachine(
       handledUpdated: () => {
         send({ type: 'HANDLED_UPDATED' });
       },
+      approveAll: () => {
+        send({ type: 'APPROVE_FIRST_SUGGESTIONS' });
+      },
       addIgnoreRule: (newRule: IgnoreRule) => {
         send({ type: 'ADD_IGNORE', newRule });
       },
@@ -63,6 +69,11 @@ export function useEndpointDiffMachine(
   function createQueries() {
     return {
       handledByDiffHash: () => context.handledByDiffHash,
+      allHandled: () => {
+        const handled = Object.values(context.handledByDiffHash);
+        return handled.length > 0 && handled.every((i) => Boolean(i));
+      },
+      isReady: () => state.value === 'ready',
       newRegionDiffs: () => context.newRegions,
       shapeDiffs: () => context.shapeDiffs,
       getDiffActor: (diffHash) => {
