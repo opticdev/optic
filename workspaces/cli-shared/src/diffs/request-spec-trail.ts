@@ -1,3 +1,4 @@
+//@ts-ignore
 import keymirror from 'keymirror';
 
 export type IRequestSpecTrail =

@@ -21,7 +21,6 @@ import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
 } from './interpreter/prepare-diff-previews';
-import { IShapeTrail } from './interfaces/shape-trail';
 
 interface DiffStateSchema {
   states: {

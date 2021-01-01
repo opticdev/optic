@@ -9,15 +9,11 @@ import {
   cleanupAndExit,
   developerDebugLogger,
   fromOptic,
-  loadPathsAndConfig,
-  makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
-import {
-  getCredentials,
-  getUserFromCredentials,
-} from '../shared/authentication-server';
+//@ts-ignore
+import { isInRepo } from '../shared/git/git-rev-sync-insourced';
 import { EventEmitter } from 'events';
 import {
   getPathsRelativeToConfig,
@@ -32,29 +28,17 @@ import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
 import { getUser } from '../shared/analytics';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { cli } from 'cli-ux';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
 
   async run() {
-    let paths: IPathMapping;
-    let config: IApiCliConfig;
-    try {
-      paths = await getPathsRelativeToConfig();
-      config = await readApiConfig(paths.configPath);
-    } catch (e) {
-      userDebugLogger(e);
-      this.log(
-        fromOptic(
-          `No optic.yml file found here. Add Optic to your API by running ${colors.bold(
-            'api init'
-          )}`
-        )
-      );
-      process.exit(0);
-    }
-    developerDebugLogger(paths);
+    await this.requiresInGit();
+    let { paths, config } = (await this.requiresSpec())!;
+
     const captureId = getCaptureId(paths);
+
     const diffsPromise = this.getDiffsAndEvents(paths, captureId, config);
 
     diffsPromise.then(({ diffs }) => {
@@ -64,6 +48,45 @@ export default class Status extends Command {
     diffsPromise.catch(() => {
       cleanupAndExit();
     });
+  }
+
+  async exitWithError(error: string) {
+    this.log(fromOptic(error));
+    process.exit(0);
+  }
+
+  async requiresInGit() {
+    if (isInRepo()) {
+      return;
+    } else {
+      await this.exitWithError(
+        `"${colors.bold('api init')}" only works when Optic is in a Git repo`
+      );
+    }
+  }
+
+  async requiresSpec(): Promise<
+    | {
+        paths: IPathMapping;
+        config: IApiCliConfig;
+      }
+    | undefined
+  > {
+    let paths: IPathMapping;
+    let config: IApiCliConfig;
+
+    try {
+      paths = await getPathsRelativeToConfig();
+      config = await readApiConfig(paths.configPath);
+      return { paths, config };
+    } catch (e) {
+      userDebugLogger(e);
+      await this.exitWithError(
+        `No optic.yml file found here. Add Optic to your API by running ${colors.bold(
+          'api init'
+        )}`
+      );
+    }
   }
 
   async getDiffsAndEvents(
@@ -117,11 +140,29 @@ export default class Status extends Command {
       `http://localhost:${daemonState.port}` + notificationsUrl
     );
 
+    let customBar: any | undefined;
+    captureStatus.then(({ interactionsCount }) => {
+      customBar = cli.progress({
+        format: 'PROGRESS | {bar} | {value}/{total} interactions',
+        barCompleteChar: '\u2588',
+        barIncompleteChar: '\u2591',
+      });
+      customBar.start(interactionsCount, 0);
+    });
+
     await new Promise((resolve, reject) => {
       notificationChannel.onmessage = (event) => {
         const { type, data } = JSON.parse(event.data);
         if (type === 'message') {
-          resolve();
+          if (Boolean(customBar)) {
+            customBar.update(
+              parseInt(data.diffedInteractionsCounter) +
+                parseInt(data.skippedInteractionsCounter)
+            );
+          }
+          if (!data.hasMoreInteractions) {
+            resolve();
+          }
         } else if (type === 'error') {
           reject();
         }
@@ -131,6 +172,7 @@ export default class Status extends Command {
       };
     });
 
+    customBar && customBar.stop();
     notificationChannel.close();
 
     const diffs = await JsonHttpClient.getJson(getDiffsUrl);

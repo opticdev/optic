@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "rootDir": "src",
+    "strict": false
   },
   "include": ["./src", "./typings"],
   "typeRoots": [

@@ -9,8 +9,6 @@ import {
   InteractiveDiffSessionConfig,
 } from '../interfaces/session';
 import { useMemo } from 'react';
-
-import { IDiff } from '../interfaces/diffs';
 import { ParsedDiff } from '../parse-diff';
 import { useEndpointDiffMachine } from './endpoint-hook';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
@@ -20,6 +18,7 @@ import { IUnrecognizedUrl } from '../../services/diff';
 import { IToDocument } from '../interfaces/interfaces';
 import { InteractiveEndpointSessionContext } from '../interactive-endpoint';
 import { ISuggestion } from '../interfaces/interpretors';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export function useDiffSessionMachine(
   diffId: string,

@@ -3,8 +3,6 @@ import { DiffSet } from '../../engine/diff-set';
 import { ParsedDiff } from '../../engine/parse-diff';
 import path from 'path';
 import colors from 'colors';
-import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
-import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
@@ -16,14 +14,15 @@ import {
   IDiffSuggestionPreview,
   ISuggestion,
 } from '../../engine/interfaces/interpretors';
-import { spawn, Thread, Worker } from 'threads';
 import { JsonHelper, opticEngine, RfcCommandContext } from '@useoptic/domain';
 import { ILoadInteractionResponse } from '../../services/diff';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IDiff } from '../../engine/interfaces/diffs';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
+import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;

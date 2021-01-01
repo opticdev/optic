@@ -10,8 +10,6 @@ import {
   plain,
 } from '../../interfaces/interpretors';
 import { ICoreShapeKinds } from '../../interfaces/interfaces';
-import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
-import { IObjectFieldTrail, IShapeTrail } from '../../interfaces/shape-trail';
 import flatten from 'lodash.flatten';
 import {
   IJsonObjectKey,
@@ -26,6 +24,8 @@ import { addNewFieldCommands, IShapeChange } from '../spec-change-dsl';
 import { setDifference, setEquals } from '../../set-ops';
 import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
 import { targetKindSuggestion } from '../target-shape-kind';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 

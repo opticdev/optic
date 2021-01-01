@@ -7,7 +7,13 @@ import {
   IResponseStatusCode,
 } from './interaction-trail';
 import { DiffRfcBaseState } from './diff-rfc-base-state';
-import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
+
+function getNormalizedBodyDescriptor(value) {
+  if (value && value.ShapedBodyDescriptor) {
+    return value.ShapedBodyDescriptor;
+  }
+  return {};
+}
 
 export function locationForTrails(
   trail: IRequestSpecTrail,
