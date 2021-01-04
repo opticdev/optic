@@ -57,6 +57,8 @@ export function ReviewEndpoint(props) {
           method,
           makeDiffActorHook,
           handled,
+          endpointQueries: queries,
+          endpointActions: actions,
           groupDiffsByLocation,
         }}
       />
@@ -84,11 +86,15 @@ export function ReviewEndpointInner(props) {
     makeDiffActorHook,
     groupDiffsByLocation,
     handled,
+    endpointQueries,
+    endpointActions,
   } = props;
+
+  const classes = useStyles();
 
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
-     {!endpointQueries.allHandled() && (
+      {!endpointQueries.allHandled() && (
         <Paper
           key="bulk-actions"
           className={classNames(classes.sectionHeader, classes.bulkActions)}
