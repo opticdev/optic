@@ -82,7 +82,10 @@ export function DiffSessionMachineStore(props) {
           context.endpoints[0].pathId,
           context.endpoints[0].method
         );
-      } else if (context.unrecognizedUrls.length) {
+      } else if (
+        context.unrecognizedUrls.length ||
+        context.undocumentedEndpoints.length
+      ) {
         actions.toggleUndocumented(true);
       }
     }

@@ -20,7 +20,6 @@ export function ReviewUndocumentedUrls(props) {
       urls={urls}
       undocumentedEndpoints={undocumentedEndpoints}
       onChange={(status) => {
-        console.log('status', status);
         actions.updateToDocument(
           status.toDocument,
           status.endpoints,

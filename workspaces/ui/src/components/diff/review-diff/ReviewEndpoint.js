@@ -57,6 +57,9 @@ export function ReviewEndpoint(props) {
           method,
           makeDiffActorHook,
           handled,
+          endpointQueries: queries,
+          endpointActions: actions,
+          isReady: queries.isReady(),
           groupDiffsByLocation,
         }}
       />
@@ -68,6 +71,7 @@ class ReviewEndpointInnerWrapper extends React.Component {
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return (
       !equals(nextProps.handled, this.props.handled) ||
+      !equals(nextProps.isReady, this.props.isReady) ||
       !equals(nextProps.groupDiffsByLocation, this.props.groupDiffsByLocation)
     );
   }
@@ -84,11 +88,16 @@ export function ReviewEndpointInner(props) {
     makeDiffActorHook,
     groupDiffsByLocation,
     handled,
+    isReady,
+    endpointQueries,
+    endpointActions,
   } = props;
+
+  const classes = useStyles();
 
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
-     {!endpointQueries.allHandled() && (
+      {!endpointQueries.allHandled() && (
         <Paper
           key="bulk-actions"
           className={classNames(classes.sectionHeader, classes.bulkActions)}
@@ -98,7 +107,7 @@ export function ReviewEndpointInner(props) {
           <Button
             size="small"
             color="primary"
-            disabled={!endpointQueries.isReady()}
+            disabled={!isReady}
             onClick={endpointActions.approveAll}
             style={{ fontSize: 10, fontWeight: 800 }}
           >

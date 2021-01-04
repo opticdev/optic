@@ -452,7 +452,10 @@ function UndocumentedRow(props) {
           <Fade in={!alsoMatchesCurrent}>
             <Checkbox
               checked={isItemSelected}
-              onClick={(event) => handleClick(row)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(row);
+              }}
               color="primary"
               style={{ marginLeft: 14 }}
             />
@@ -576,7 +579,10 @@ function UndocumentedEndpointRow(props) {
           </LightTooltip>
           <Checkbox
             checked={isSelected}
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
             color="primary"
             style={{ marginLeft: 14 }}
           />
