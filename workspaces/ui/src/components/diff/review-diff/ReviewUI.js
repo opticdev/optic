@@ -64,8 +64,6 @@ export function ReviewUI() {
       unrecognizedCount,
   };
 
-  console.log('handledUndocumentedCount', handledUndocumentedCount);
-
   useEffect(() => {
     if (handledAll.handled === handledAll.total && handledAll.total > 0) {
       setAskFinish(true);

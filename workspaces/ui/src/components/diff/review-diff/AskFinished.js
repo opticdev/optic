@@ -40,7 +40,7 @@ export function AskFinished(props) {
   );
   const classes = useStyles();
 
-  const patch = queries.endpointsWithSuggestions();
+  const patch = useMemo(() => queries.endpointsWithSuggestions(), []);
 
   const endpointsWithChanges = patch.changes.filter((i) =>
     i.status.some((i) => i.isHandled && !i.ignored)

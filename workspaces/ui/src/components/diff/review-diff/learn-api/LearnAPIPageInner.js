@@ -273,7 +273,7 @@ export default function EnhancedTable(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} elevation={0} square>
         <EnhancedTableToolbar
           numSelected={checkedIds.length}
           endpointsSelected={endpointsToDocument.length}
