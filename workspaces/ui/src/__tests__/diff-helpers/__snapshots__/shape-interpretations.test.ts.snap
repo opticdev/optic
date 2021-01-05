@@ -114,7 +114,7 @@ Object {
                 "consumingParameterId": "$optionalInner",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "baseline-shape_8",
+                    "shapeId": "baseline-shape_6",
                   },
                 },
                 "shapeId": "incrementing-id-shape_1",
@@ -496,7 +496,7 @@ Array [
             "consumingParameterId": "$optionalInner",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "baseline-shape_8",
+                "shapeId": "baseline-shape_6",
               },
             },
             "shapeId": "incrementing-id-shape_1",
@@ -15240,7 +15240,7 @@ Object {
                 "consumingParameterId": "$optionalInner",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "shape_10",
+                    "shapeId": "shape_9",
                   },
                 },
                 "shapeId": "incrementing-id-shape_1",
@@ -15676,7 +15676,7 @@ Array [
             "consumingParameterId": "$optionalInner",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "shape_10",
+                "shapeId": "shape_9",
               },
             },
             "shapeId": "incrementing-id-shape_1",
@@ -16152,7 +16152,7 @@ Object {
                 "consumingParameterId": "$optionalInner",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "shape_9",
+                    "shapeId": "shape_8",
                   },
                 },
                 "shapeId": "incrementing-id-shape_1",
@@ -16593,7 +16593,7 @@ Array [
             "consumingParameterId": "$optionalInner",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "shape_9",
+                "shapeId": "shape_8",
               },
             },
             "shapeId": "incrementing-id-shape_1",
@@ -19939,7 +19939,7 @@ Object {
                 "consumingParameterId": "$optionalInner",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "shape_XA5M5sp7FW",
+                    "shapeId": "shape_ZaQCM40d39",
                   },
                 },
                 "shapeId": "incrementing-id-shape_1",
@@ -22041,7 +22041,7 @@ Changes:
             "consumingParameterId": "$optionalInner",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "shape_XA5M5sp7FW",
+                "shapeId": "shape_ZaQCM40d39",
               },
             },
             "shapeId": "incrementing-id-shape_1",

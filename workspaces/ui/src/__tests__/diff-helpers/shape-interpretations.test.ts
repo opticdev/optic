@@ -1,4 +1,9 @@
-import { canApplySuggestions, shapeDiffPreview, testCase } from './fixture';
+import {
+  canApplySuggestions,
+  logResult,
+  shapeDiffPreview,
+  testCase,
+} from './fixture';
 const cases = testCase('shape-diff-engine');
 
 test('a known field is missing.managed', async () => {
@@ -142,6 +147,7 @@ test('an required object field is ommitted.managed', async () => {
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
+  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
