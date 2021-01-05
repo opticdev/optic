@@ -273,7 +273,7 @@ export default function EnhancedTable(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} elevation={0} square>
         <EnhancedTableToolbar
           numSelected={checkedIds.length}
           endpointsSelected={endpointsToDocument.length}
@@ -452,7 +452,10 @@ function UndocumentedRow(props) {
           <Fade in={!alsoMatchesCurrent}>
             <Checkbox
               checked={isItemSelected}
-              onClick={(event) => handleClick(row)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(row);
+              }}
               color="primary"
               style={{ marginLeft: 14 }}
             />
@@ -576,7 +579,10 @@ function UndocumentedEndpointRow(props) {
           </LightTooltip>
           <Checkbox
             checked={isSelected}
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
             color="primary"
             style={{ marginLeft: 14 }}
           />

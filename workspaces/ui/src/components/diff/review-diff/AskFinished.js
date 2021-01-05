@@ -40,7 +40,7 @@ export function AskFinished(props) {
   );
   const classes = useStyles();
 
-  const patch = queries.endpointsWithSuggestions();
+  const patch = useMemo(() => queries.endpointsWithSuggestions(), []);
 
   const endpointsWithChanges = patch.changes.filter((i) =>
     i.status.some((i) => i.isHandled && !i.ignored)
@@ -186,7 +186,7 @@ function GeneratingNewPaths(props) {
     <div className={classes.commonStatus}>
       <Box display="flex" flexDirection="row" alignItems="center">
         <Typography variant="subtitle1" style={{ fontWeight: 400 }}>
-          Learning New Endpoints ({newBodiesProgress} / {endpointIds.length})
+          Learning New Endpoints ({newBodiesProgress} / {total})
         </Typography>
         <div style={{ width: 250, marginLeft: 20, marginTop: 2 }}>
           <LinearProgress
