@@ -3,6 +3,7 @@ import { DiffSet } from '../../engine/diff-set';
 import { ParsedDiff } from '../../engine/parse-diff';
 import path from 'path';
 import colors from 'colors';
+import { DiffPreviewer, Queries, toOption } from '@useoptic/domain';
 import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
 import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
@@ -24,6 +25,7 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../../engine/interfaces/diffs';
+import { universeFromEvents } from '@useoptic/domain-utilities';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
@@ -138,7 +140,28 @@ export async function canApplySuggestions(
       ]
     );
 
-    return JSON.parse(eventStore.serializeEvents(rfcId));
+    const serializedEvents = JSON.parse(eventStore.serializeEvents(rfcId));
+
+    const firstResponseSetShapeId = serializedEvents.find(
+      (i) => i['ResponseBodySet']
+    )['ResponseBodySet'].bodyDescriptor.shapeId;
+
+    function shapeCanRender() {
+      //medium confidence in this test, since it's a scalajs vestige
+      const { rfcState, eventStore, rfcService, rfcId } = universeFromEvents(
+        serializedEvents
+      );
+      const queries = Queries(eventStore, rfcService, rfcId);
+      const shapesResolvers = queries.shapesResolvers();
+
+      const previewer = new DiffPreviewer(shapesResolvers, rfcState);
+      const bodyOption = toOption(firstResponseSetShapeId);
+      const result = previewer.previewShape(bodyOption);
+    }
+
+    shapeCanRender();
+
+    return serializedEvents;
   }
 
   const events = universe.rfcBaseState.eventStore.serializeEvents(
