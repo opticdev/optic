@@ -64,7 +64,6 @@ import {
   useInteractionWithPointer,
 } from './DiffHooks';
 import { Show } from '../../shared/Show';
-import { trackUserEvent } from '../../../Analytics';
 import { ShowInitialDocumentingView } from '@useoptic/analytics/lib/events/diffs';
 function _NewRegions(props) {
   const { newRegions, ignoreDiff, captureId, endpointId } = props;
@@ -80,7 +79,7 @@ function _NewRegions(props) {
   const [inferPolymorphism, setInferPolymorphism] = React.useState(false);
 
   useEffect(() => {
-    trackUserEvent(ShowInitialDocumentingView.withProps({}));
+    // trackUserEvent(ShowInitialDocumentingView.withProps({}));
   }, []);
 
   if (newRegions.length === 0) {
@@ -180,16 +179,16 @@ function _NewRegions(props) {
       .filter((i) => !!i);
 
   if (newRequests.length || newResponses.length) {
-    trackUserEvent(
-      NewBodyDiffRendered.withProps({
-        requestCount: newRequests.length,
-        responseCount: newResponses.length,
-        regions: [
-          ...newRequests.map((i) => i.locationString),
-          ...newResponses.map((i) => i.locationString),
-        ],
-      })
-    );
+    // trackUserEvent(
+    //   NewBodyDiffRendered.withProps({
+    //     requestCount: newRequests.length,
+    //     responseCount: newResponses.length,
+    //     regions: [
+    //       ...newRequests.map((i) => i.locationString),
+    //       ...newResponses.map((i) => i.locationString),
+    //     ],
+    //   })
+    // );
   }
 
   // track('Show Initial Documentation Page', props);
@@ -233,12 +232,12 @@ function _NewRegions(props) {
                   onChange={(e) => {
                     setInferPolymorphism(e.target.checked);
                     if (e.target.checked) {
-                      trackUserEvent(
-                        UserEnabledInferPolymorphism.withProps({
-                          captureId,
-                          endpointId,
-                        })
-                      );
+                      // trackUserEvent(
+                      //   UserEnabledInferPolymorphism.withProps({
+                      //     captureId,
+                      //     endpointId,
+                      //   })
+                      // );
                     }
                   }}
                   color="primary"

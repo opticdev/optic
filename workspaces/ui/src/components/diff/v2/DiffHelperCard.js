@@ -14,7 +14,6 @@ import { IgnoreDiffContext } from './DiffPageNew';
 import { useDiffDescription, useSuggestionsForDiff } from './DiffHooks';
 import { diff } from 'react-ace';
 import { DiffCopy } from './DiffCopy';
-import { trackUserEvent, track } from '../../../Analytics.js';
 import { SuggestionDisplayed } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
@@ -81,11 +80,11 @@ export const DiffHelperCard = (props) => {
     const suggestion = mapScala(description.summary)((i) => {
       return i.value;
     }).join(' ');
-    trackUserEvent(
-      SuggestionDisplayed.withProps({
-        suggestion,
-      })
-    );
+    // trackUserEvent(
+    //   SuggestionDisplayed.withProps({
+    //     suggestion,
+    //   })
+    // );
   }, [showIt, description.summary]);
 
   if (!showIt) {

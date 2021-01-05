@@ -12,7 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import { TextField } from '@material-ui/core';
 import { UserCommittedChanges } from '@useoptic/analytics/lib/events/diffs';
-import { trackUserEvent } from '../../../Analytics';
 import {
   Facade,
   JsonHelper,
@@ -98,13 +97,13 @@ export default function FinalizeDialog(props) {
     // neccesary for demo flow
     // TODO: Switch demo implementation to use better state machine to mitigate this problem
     setTimeout(() => {
-      trackUserEvent(
-        UserCommittedChanges.withProps({
-          message: commitMessage,
-          captureId,
-          suggestions: acceptedSuggestions.length,
-        })
-      );
+      // trackUserEvent(
+      //   UserCommittedChanges.withProps({
+      //     message: commitMessage,
+      //     captureId,
+      //     suggestions: acceptedSuggestions.length,
+      //   })
+      // );
     }, 500);
   };
 
