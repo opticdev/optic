@@ -4,8 +4,10 @@ import gitRev from '../shared/git/git-rev-sync-insourced.js';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
+//@ts-ignore
 import groupBy from 'lodash.groupby';
 import EventSource from 'eventsource';
+//@ts-ignore
 import padLeft from 'pad-left';
 import {
   cleanupAndExit,
@@ -56,6 +58,9 @@ export default class Status extends Command {
 
     const diffsPromise = this.getDiffsAndEvents(paths, captureId, config);
 
+    diffsPromise.catch(() => {
+      this.printStatus([], [], []);
+    });
     diffsPromise.then(({ diffs, undocumentedUrls, events }) => {
       const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
       const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
@@ -275,9 +280,9 @@ export default class Status extends Command {
     this.log('\n');
 
     if (ordered.length === 0) {
-      this.log(colors.bold(` ✅  No diffs observed for existing endpoints`));
+      this.log(colors.bold(` ✅  No undocumented URLs observed`));
     } else {
-      this.log(colors.bold(` ↘️   Diffs observed for existing endpoints`));
+      this.log(colors.bold(` ↘️   Undocumented URLs observed`));
       this.log(
         colors.grey(
           `      (use ${colors.bold(
