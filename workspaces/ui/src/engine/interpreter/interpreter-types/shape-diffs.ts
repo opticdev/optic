@@ -12,7 +12,7 @@ import {
 import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from '../shape-diff-dsl';
 import { fieldShapeDiffInterpretor } from './field';
-import { InteractiveSessionConfig } from '../../interfaces/session';
+import { DiffSessionConfig } from '../../interfaces/session';
 import { shapeChangeInterpretor } from './shape-changed';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { listItemShapeDiffInterpreter } from './list';
@@ -22,7 +22,7 @@ import { rootShapeDiffInterpreter } from './root';
 export function interpretShapeDiffs(
   diff: ParsedDiff,
   learnedTrails: IValueAffordanceSerializationWithCounter,
-  services: InteractiveSessionConfig
+  services: DiffSessionConfig
 ): IInterpretation {
   const asShapeDiff = diff.asShapeDiff(services.rfcBaseState)!;
   const { rfcBaseState } = services;

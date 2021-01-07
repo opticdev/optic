@@ -50,6 +50,20 @@ interface IExpectationHelper {
   shapeName?: string;
 }
 
+export function expectationsFromSpecOption(
+  diff: ParsedDiff,
+  rfcBaseState: DiffRfcBaseState,
+  shapeTrail: IShapeTrail,
+  jsonTrail: IJsonTrail
+) {
+  try {
+    return new Expectation(diff, rfcBaseState, shapeTrail, jsonTrail);
+  } catch (e) {
+    console.error('scala domain confused by diff', e);
+    return undefined;
+  }
+}
+
 export class Expectation {
   private expectationsFromSpec: IExpectationHelper;
   constructor(

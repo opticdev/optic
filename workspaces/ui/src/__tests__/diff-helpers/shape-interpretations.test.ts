@@ -147,6 +147,7 @@ test('an required object field is ommitted.managed', async () => {
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
+  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
@@ -171,6 +172,7 @@ test('an required object field is provided with an array.managed', async () => {
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
 });
+
 // THIS IS WRONG. IN THE DIFF ENGINE. PRODUCES NO DIFF
 // test('array unknown is provided with concrete values.managed', async () => {
 //   const universe = await cases(expect.getState().currentTestName);
@@ -179,7 +181,7 @@ test('an required object field is provided with an array.managed', async () => {
 //   logResult(preview);
 //   expect(preview.suggestions.length).toBeGreaterThan(0);
 // });
-//
+
 test('array unknown is provided with no values.managed', async () => {
   const universe = await cases(expect.getState().currentTestName);
   expect(universe.diffs.count()).toBe(0);

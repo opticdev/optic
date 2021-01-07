@@ -1,6 +1,6 @@
 import { BodyShapeDiff } from '../../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl';
-import { InteractiveSessionConfig } from '../../interfaces/session';
+import { DiffSessionConfig } from '../../interfaces/session';
 import {
   code,
   IChangeType,
@@ -32,7 +32,7 @@ export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
-  services: InteractiveSessionConfig
+  services: DiffSessionConfig
 ): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
@@ -90,7 +90,7 @@ function suggestionFor(
   },
   expected: Expectation,
   actual: Actual,
-  services: InteractiveSessionConfig
+  services: DiffSessionConfig
 ): ISuggestion {
   const ids = services.rfcBaseState.domainIdGenerator;
 

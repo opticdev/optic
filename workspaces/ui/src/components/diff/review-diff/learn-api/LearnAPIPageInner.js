@@ -41,6 +41,8 @@ import { LightTooltip } from '../../../tooltips/LightTooltip';
 import InProgressFullScreen from './InProgressFullScreen';
 import { useDiffSession } from '../ReviewDiffSession';
 import ButtonBase from '@material-ui/core/ButtonBase';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 
 export function LearnAPIPageInner(props) {
   const { urls, undocumentedEndpoints } = props;
@@ -271,7 +273,7 @@ export default function EnhancedTable(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} elevation={0} square>
         <EnhancedTableToolbar
           numSelected={checkedIds.length}
           endpointsSelected={endpointsToDocument.length}
@@ -394,6 +396,9 @@ function UndocumentedRow(props) {
       tabIndex={-1}
       key={rowId}
       selected={isItemSelected || alsoMatchesCurrent}
+      onClick={(event) => {
+        !isItemSelected && handleClick(row);
+      }}
       classes={{
         selected: alsoMatchesCurrent
           ? classes.selectedRowMatches
@@ -447,13 +452,31 @@ function UndocumentedRow(props) {
           <Fade in={!alsoMatchesCurrent}>
             <Checkbox
               checked={isItemSelected}
-              onClick={(event) => handleClick(row)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(row);
+              }}
               color="primary"
               style={{ marginLeft: 14 }}
             />
           </Fade>
-          <LightTooltip title="Mark as Ignored">
-            <IconButton size="small" onClick={() => setIgnore(row)}>
+          <LightTooltip
+            title={
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Mark this path and method as ignored?{' '}
+                <Button color="secondary" onClick={() => setIgnore(row)}>
+                  Confirm
+                </Button>
+              </Box>
+            }
+            interactive
+          >
+            <IconButton size="small">
               <RemoveCircleIcon
                 fontSizeAdjust="small"
                 style={{ width: '.8rem', height: '.8rem' }}
@@ -499,6 +522,9 @@ function UndocumentedEndpointRow(props) {
       tabIndex={-1}
       key={rowId}
       selected={isSelected}
+      onClick={(event) => {
+        !isSelected && handleClick();
+      }}
       classes={{ selected: classes.selectedRow }}
     >
       <TableCell align="left" style={{ verticalAlign: 'initial' }}>
@@ -507,50 +533,56 @@ function UndocumentedEndpointRow(props) {
         </div>
       </TableCell>
       <TableCell align="left">
-        <LightTooltip title="This path is already in the specification. Check 'Document' to add this method and its bodies specification">
-          <div className={classes.pathPatternRender}>
-            {pathTrails.map((i) => {
-              const dash = (
-                <Typography
-                  style={{ marginRight: 2, marginLeft: 2, fontWeight: 200 }}
-                >
-                  {'/'}
-                </Typography>
-              );
+        <div className={classes.pathPatternRender}>
+          {pathTrails.map((i) => {
+            const dash = (
+              <Typography
+                style={{ marginRight: 2, marginLeft: 2, fontWeight: 200 }}
+              >
+                {'/'}
+              </Typography>
+            );
 
-              if (i.pathComponentId === 'root') {
-                return null;
-              } else if (i.isPathParameter) {
-                return (
-                  <>
-                    {dash}
-                    <Typography className={classes.thick}>{`${
-                      i.pathComponentName || '   '
-                    }`}</Typography>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    {dash}
-                    <Typography className={classes.thin}>
-                      {i.pathComponentName || '   '}
-                    </Typography>
-                  </>
-                );
-              }
-            })}
-          </div>
-        </LightTooltip>
+            if (i.pathComponentId === 'root') {
+              return null;
+            } else if (i.isPathParameter) {
+              return (
+                <>
+                  {dash}
+                  <Typography className={classes.thick}>{`${
+                    i.pathComponentName || '   '
+                  }`}</Typography>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  {dash}
+                  <Typography className={classes.thin}>
+                    {i.pathComponentName || '   '}
+                  </Typography>
+                </>
+              );
+            }
+          })}
+        </div>
       </TableCell>
       <TableCell padding="checkbox" align="right">
         <div className={classes.innerCheck}>
-          <Typography variant="caption" color="secondary">
-            Matches Documented Path
-          </Typography>
+          <LightTooltip title="This path is already in the specification. Check 'Document' to add this method and its bodies specification">
+            <Typography
+              variant="overline"
+              style={{ color: DocDarkGrey, fontSize: 10 }}
+            >
+              Matches Documented Path
+            </Typography>
+          </LightTooltip>
           <Checkbox
             checked={isSelected}
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
             color="primary"
             style={{ marginLeft: 14 }}
           />

@@ -10,8 +10,11 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { InteractiveSessionConfig } from './interfaces/session';
-import { IgnoreRule } from './interpretors/ignores/ignore-rule';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from './interfaces/session';
+import { IgnoreRule } from './interpreter/ignores/ignore-rule';
 import { IDiff } from './interfaces/diffs';
 
 export interface InteractiveEndpointSessionStateSchema {
@@ -38,7 +41,8 @@ export type InteractiveEndpointSessionEvent =
   | {
       type: 'HANDLED_UPDATED';
     }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'APPROVE_FIRST_SUGGESTIONS' };
 
 // The context (extended state) of the machine
 export interface InteractiveEndpointSessionContext {
@@ -55,7 +59,7 @@ export const newInteractiveEndpointSessionMachine = (
   pathId: string,
   method: string,
   diffs: ParsedDiff[],
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) => {
   return Machine<
     InteractiveEndpointSessionContext,
@@ -95,7 +99,10 @@ export const newInteractiveEndpointSessionMachine = (
               const shapeDiffsGrouped = new DiffSet(
                 diffs,
                 services.rfcBaseState
-              ).groupedByEndpointAndShapeTrail();
+              )
+                .shapeDiffs()
+                .filterToValidExpectations()
+                .groupedByEndpointAndShapeTrail();
 
               return shapeDiffsGrouped.map(
                 ({ diffs, shapeDiffGroupingHash, shapeTrail }) => {
@@ -214,6 +221,21 @@ export const newInteractiveEndpointSessionMachine = (
                 //send all ignore rules to children. they decide which ones they care about
                 const notifyChildren = {
                   type: 'RESET',
+                };
+                ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
+                ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));
+              },
+              assign({
+                handledByDiffHash: (context) => computeHandled(context),
+              }),
+            ],
+          },
+          APPROVE_FIRST_SUGGESTIONS: {
+            actions: [
+              (ctx) => {
+                //send all ignore rules to children. they decide which ones they care about
+                const notifyChildren = {
+                  type: 'APPROVE_FIRST_SUGGESTION',
                 };
                 ctx.shapeDiffs.forEach((i) => i.ref.send(notifyChildren));
                 ctx.newRegions.forEach((i) => i.ref.send(notifyChildren));

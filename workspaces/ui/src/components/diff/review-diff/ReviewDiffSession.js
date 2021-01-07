@@ -65,6 +65,7 @@ export function DiffSessionMachineStore(props) {
     captureService,
     diffService,
     rfcBaseState,
+    loadInteraction: captureService.loadInteraction.bind(captureService),
   });
 
   const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();
@@ -81,7 +82,10 @@ export function DiffSessionMachineStore(props) {
           context.endpoints[0].pathId,
           context.endpoints[0].method
         );
-      } else if (context.unrecognizedUrls.length) {
+      } else if (
+        context.unrecognizedUrls.length ||
+        context.undocumentedEndpoints.length
+      ) {
         actions.toggleUndocumented(true);
       }
     }
