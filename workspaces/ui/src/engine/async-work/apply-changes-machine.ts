@@ -115,6 +115,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -186,6 +194,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -223,6 +239,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -267,7 +291,7 @@ export const newApplyChangesMachine = (
                 console.error(event);
               },
               assign({
-                error: (ctx, event) => event.data.ln,
+                error: (ctx, event) => event.data.message,
               }),
             ],
             target: 'failed',
