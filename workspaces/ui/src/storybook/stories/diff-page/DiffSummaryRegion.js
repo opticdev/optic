@@ -29,12 +29,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
-import InteractionBodyViewer from '../../../components/diff/v2/shape_viewers/InteractionBodyViewer';
+import InteractionBodyViewer from '../../../components/diff/review-diff/shape-viewers/InteractionBodyViewer';
 import Chip from '@material-ui/core/Chip';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { HardCodedDiffExamples } from '../../../components/diff/v2/shape_viewers/DiffReviewTypes';
+import { HardCodedDiffExamples } from '../../../components/diff/review-diff/shape-viewers/DiffReviewTypes';
 import { DiffCopy } from '../../../components/diff/v2/DiffCopy';
 export default {
   title: 'Diff/Summary Card',
