@@ -77,7 +77,9 @@ export default class DebugCapture extends Command {
       events,
       configJson,
       ignoreRules,
-      interactions: cleanedInteraction,
+      session: {
+        samples: cleanedInteraction,
+      },
       opticVersion: pJson.version,
       os: {
         arch: OS.arch(),
