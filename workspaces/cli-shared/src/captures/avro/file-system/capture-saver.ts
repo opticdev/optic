@@ -5,7 +5,7 @@ import avro from 'avsc';
 import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
 import { developerDebugLogger, ICaptureSaver } from '../../../index';
 import { captureFileSuffix } from './index';
-import { schema } from '../index';
+import { serdesWithBodies } from './avro-schemas/interaction-batch-helpers';
 
 interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string;
@@ -80,7 +80,7 @@ export class CaptureSaver implements ICaptureSaver {
       `${batchId}${captureFileSuffix}`
     );
     try {
-      const encoder = avro.createFileEncoder(outputFile, schema);
+      const encoder = avro.createFileEncoder(outputFile, serdesWithBodies);
       await new Promise((resolve, reject) => {
         for (const item of items) {
           encoder.write(item, (err) => {
