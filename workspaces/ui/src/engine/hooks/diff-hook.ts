@@ -2,7 +2,10 @@ import {
   createShapeDiffMachine,
   DiffContext,
 } from '../interactive-diff-machine';
-import { InteractiveSessionConfig } from '../interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from '../interfaces/session';
 import { ParsedDiff } from '../parse-diff';
 import { useActor } from '@xstate/react';
 import { useEffect } from 'react';
@@ -11,7 +14,7 @@ export function useSingleDiffMachine(
   diff: ParsedDiff,
   getSelf: () => any,
   getEndpointActions: () => any,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) {
   const [state, send] = useActor(getSelf());
   const context: DiffContext<any> = state.context;

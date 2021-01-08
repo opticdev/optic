@@ -2440,19 +2440,41 @@
   resolved "https://registry.npmjs.org/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@sinonjs/commons@^1.7.0":
+"@sinonjs/commons@^1", "@sinonjs/commons@^1.6.0", "@sinonjs/commons@^1.7.0", "@sinonjs/commons@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"
   integrity sha512-892K+kWUUi3cl+LlqEWIDrhvLgdL79tECi8JZUyq6IviKy/DNhuzCRlbHUjxK89f4ypPMMaFnFuR9Ie6DoIMsw==
   dependencies:
     type-detect "4.0.8"
 
-"@sinonjs/fake-timers@^6.0.1":
+"@sinonjs/fake-timers@^6.0.0", "@sinonjs/fake-timers@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@sinonjs/fake-timers/-/fake-timers-6.0.1.tgz#293674fccb3262ac782c7aadfdeca86b10c75c40"
   integrity sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==
   dependencies:
     "@sinonjs/commons" "^1.7.0"
+
+"@sinonjs/formatio@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@sinonjs/formatio/-/formatio-5.0.1.tgz#f13e713cb3313b1ab965901b01b0828ea6b77089"
+  integrity sha512-KaiQ5pBf1MpS09MuA0kp6KBQt2JUOQycqVG1NZXvzeaXe5LGFqAKueIS0bw4w0P9r7KuBSVdUk5QjXsUdu2CxQ==
+  dependencies:
+    "@sinonjs/commons" "^1"
+    "@sinonjs/samsam" "^5.0.2"
+
+"@sinonjs/samsam@^5.0.2", "@sinonjs/samsam@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@sinonjs/samsam/-/samsam-5.3.0.tgz#1d2f0743dc54bf13fe9d508baefacdffa25d4329"
+  integrity sha512-hXpcfx3aq+ETVBwPlRFICld5EnrkexXuXDwqUNhDdr5L8VjvMeSRwyOa0qL7XFmR+jVWR4rUZtnxlG7RX72sBg==
+  dependencies:
+    "@sinonjs/commons" "^1.6.0"
+    lodash.get "^4.4.2"
+    type-detect "^4.0.8"
+
+"@sinonjs/text-encoding@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
+  integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
 "@storybook/addon-actions@^5.0.11":
   version "5.3.19"
@@ -3582,23 +3604,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.50":
-  version "10.0.50"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.50.tgz#78faf558dfaaa21e951e86445c4449eee830122c"
-  integrity sha512-qkl+x4WQLTNrCsZzE6N/6cHQXdkqnbsU6G3bBlO/M+IH7vFPFCXG9/iuCpuQ68YG219jgESL/OliC39gNDHYoA==
+"@useoptic/domain-types@10.0.52":
+  version "10.0.52"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.52.tgz#eec51820095f097eb56ae7277432a3a112e1cc45"
+  integrity sha512-0JFvcofY4i3kWTf4jElnDMNl3eVGAv+aqpAFdVdBxHOmMLX6efltdnclPHeI+EBV9aMzH03Y3tAOCirPD8AC5A==
 
-"@useoptic/domain-utilities@10.0.50":
-  version "10.0.50"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.50.tgz#988bfd9eabd73dbe3b0dbb5d5df1516250557981"
-  integrity sha512-16ltOgTTuAopDD7DszaC1jgdMLF60ECJY2Q1I0gaxci1grm59DnfIKx4hQCyzzRkPDGdIOxJgyl3HczkX/bpDA==
+"@useoptic/domain-utilities@10.0.52":
+  version "10.0.52"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.52.tgz#b6a89cac0750374bbeabb75c7fabfd00e0c1a0a2"
+  integrity sha512-qs03xdipDZdHKg1aw40oQfUCLlcrmmuh5liHTB1OYA1VHd4Ocot8oTU4m9bRGDtiEMQSkwhuB4HHLiiu4xrnWw==
   dependencies:
-    "@useoptic/domain" "10.0.50"
-    "@useoptic/domain-types" "10.0.50"
+    "@useoptic/domain" "10.0.52"
+    "@useoptic/domain-types" "10.0.52"
 
-"@useoptic/domain@10.0.50":
-  version "10.0.50"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.50.tgz#8c9a4423db2137c802dd72750f6ddbf9912c786b"
-  integrity sha512-BWzu01rHACv1phN8yyQEzyDGZpKEKk9AI75NWF2O91Q7pKK4zGwf61RrTir9N8//emZnndTWtwdE7NzGF787cQ==
+"@useoptic/domain@10.0.52":
+  version "10.0.52"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.52.tgz#8371875d9ae43b53c65c8dc54b7a9bf553228604"
+  integrity sha512-cHi5WH/ntQ6/wyWegdvxUb0BS/slHRgv5Uqf5BKKf+LSD1/tdoNKoYDYfOqShbTTPZMxsaCcE850h3b6/fpxnw==
 
 "@wasm-tool/wasm-pack-plugin@^1.3.1":
   version "1.3.1"
@@ -7116,7 +7138,7 @@ diff@3.5.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
 
-diff@^4.0.1:
+diff@^4.0.1, diff@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
@@ -11556,6 +11578,11 @@ jsx-ast-utils@^2.0.1:
     array-includes "^3.1.1"
     object.assign "^4.1.0"
 
+just-extend@^4.0.2:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-4.1.1.tgz#158f1fdb01f128c411dc8b286a7b4837b3545282"
+  integrity sha512-aWgeGFW67BP3e5181Ep1Fv2v8z//iBJfrvyTnq8wG86vEESwmonn1zPBJ0VfmT9CJq2FIT0VsETtrNFm2a+SHA==
+
 jwt-decode@2.2.0, jwt-decode@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
@@ -12691,6 +12718,17 @@ nice-try@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-2.1.0.tgz#d818aaf628993b4de39d11e9b53be224152b38c3"
   integrity sha512-ZR863POogZo2DpqQkqeUHM01Fg73CVSVoP2Gq7Wjn8AYv7R1rRkvXx4Bf6PsXhyBGDhsN6rKCPflGDjn3+flWg==
+
+nise@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/nise/-/nise-4.0.4.tgz#d73dea3e5731e6561992b8f570be9e363c4512dd"
+  integrity sha512-bTTRUNlemx6deJa+ZyoCUTRvH3liK5+N6VQZ4NIw90AgDXY6iPnsqplNFf6STcj+ePk0H/xqxnP75Lr0J0Fq3A==
+  dependencies:
+    "@sinonjs/commons" "^1.7.0"
+    "@sinonjs/fake-timers" "^6.0.0"
+    "@sinonjs/text-encoding" "^0.7.1"
+    just-extend "^4.0.2"
+    path-to-regexp "^1.7.0"
 
 no-case@^2.2.0:
   version "2.3.2"
@@ -16136,6 +16174,19 @@ simplebar@^4.2.3:
     lodash.memoize "^4.1.2"
     lodash.throttle "^4.1.1"
     resize-observer-polyfill "^1.5.1"
+
+sinon@^9.2.2:
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-9.2.2.tgz#b83cf5d43838f99cfa3644453f4c7db23e7bd535"
+  integrity sha512-9Owi+RisvCZpB0bdOVFfL314I6I4YoRlz6Isi4+fr8q8YQsDPoCe5UnmNtKHRThX3negz2bXHWIuiPa42vM8EQ==
+  dependencies:
+    "@sinonjs/commons" "^1.8.1"
+    "@sinonjs/fake-timers" "^6.0.1"
+    "@sinonjs/formatio" "^5.0.1"
+    "@sinonjs/samsam" "^5.3.0"
+    diff "^4.0.2"
+    nise "^4.0.4"
+    supports-color "^7.1.0"
 
 sisteransi@^1.0.4:
   version "1.0.5"

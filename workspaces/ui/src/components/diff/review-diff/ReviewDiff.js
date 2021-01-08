@@ -69,6 +69,10 @@ export function ReviewDiff(props) {
         key={diff.diffHash}
         value={value}
         context={context}
+        diff={diff}
+        diffActions={diffActions}
+        diffQueries={diffQueries}
+        endpointActions={endpointActions}
       />
     </SingleDiffSessionContext.Provider>
   );
@@ -83,17 +87,23 @@ class DiffSummaryRegionWrapper extends React.Component {
   }
 
   render() {
-    return <DiffSummaryRegion />;
+    return (
+      <DiffSummaryRegion
+        diff={this.props.diff}
+        diffActions={this.props.diffActions}
+        diffQueries={this.props.diffQueries}
+        endpointActions={this.props.endpointActions}
+      />
+    );
   }
 }
 
 export function DiffSummaryRegion(props) {
   const classes = useStyles();
+  const { diff, diffQueries, diffActions, endpointActions } = props;
 
-  const { endpointActions } = useEndpointDiffSession();
   const [expandExample, setExpandExample] = useState(false);
 
-  const { diff, diffQueries, diffActions } = useSingleDiffSession();
   const status = diffQueries.status();
 
   const isLoading = !status.ready;
@@ -205,7 +215,7 @@ export function DiffSummaryRegion(props) {
       <div className={classes.cardHeader} style={{ backgroundColor: 'white' }}>
         {isHandled ? approvedHeader : openHeader}
       </div>
-      <Collapse in={!isHandled}>
+      {!isHandled && (
         <div className={classes.preview}>
           {isLoading && <LoadingExample lines={3} />}
           {previewTabs.length && (
@@ -265,7 +275,7 @@ export function DiffSummaryRegion(props) {
             );
           })}
         </div>
-      </Collapse>
+      )}
     </Card>
   );
 }

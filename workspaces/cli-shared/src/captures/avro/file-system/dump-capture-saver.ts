@@ -8,10 +8,12 @@ import { CaptureSaver } from './capture-saver';
 async function main(
   inputFilePath: string,
   outputBaseDirectory: string,
-  captureId: string = 'ccc'
+  repeatSampleTimes: string = '1',
+  captureId: string = 'ccc',
 ) {
   console.log({ inputFilePath });
   const input = fs.createReadStream(inputFilePath);
+  const repeatSampleCount = isNaN(parseInt(repeatSampleTimes))? 1 : parseInt(repeatSampleTimes);
   const events: any[] = [];
   const captureBaseDirectory = path.join(
     outputBaseDirectory,
@@ -33,9 +35,11 @@ async function main(
           events.push(event);
         },
         'session.samples.*': function (sample: IHttpInteraction) {
-          console.count('sample');
-          //console.log({ sample });
-          captureSaver.save(sample);
+          for (var i = 0; i < repeatSampleCount; i++) {
+            console.count('sample');
+            //console.log({ sample });
+            captureSaver.save(sample);
+          }
         },
       })
       .on('done', function () {
@@ -91,5 +95,5 @@ async function main(
   );
 }
 
-const [, , inputFilePath, outputBaseDirectory, captureId] = process.argv;
-main(inputFilePath, outputBaseDirectory, captureId);
+const [, , inputFilePath, outputBaseDirectory, repeatSampleTimes, captureId] = process.argv;
+main(inputFilePath, outputBaseDirectory, repeatSampleTimes, captureId);

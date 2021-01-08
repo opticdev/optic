@@ -9,9 +9,12 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { IconButton } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import { DocDarkGrey } from '../../docs/DocConstants';
+import classNames from 'classnames';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { ReviewDiff } from './ReviewDiff';
+import { DiffSummaryRegion, ReviewDiff } from './ReviewDiff';
 import Divider from '@material-ui/core/Divider';
+import equals from 'lodash.isequal';
+import Button from '@material-ui/core/Button';
 
 export const EndpointDiffSessionContext = React.createContext(null);
 
@@ -40,28 +43,79 @@ export function ReviewEndpoint(props) {
     makeDiffActorHook,
   };
 
+  const handled = queries.handledByDiffHash();
+  const groupDiffsByLocation = useMemo(
+    () => queries.groupDiffsByLocation(),
+    []
+  );
+
   return (
     <EndpointDiffSessionContext.Provider value={contextValue}>
-      <ReviewEndpointInner />
+      <ReviewEndpointInnerWrapper
+        {...{
+          pathId,
+          method,
+          makeDiffActorHook,
+          handled,
+          endpointQueries: queries,
+          endpointActions: actions,
+          isReady: queries.isReady(),
+          groupDiffsByLocation,
+        }}
+      />
     </EndpointDiffSessionContext.Provider>
   );
 }
 
+class ReviewEndpointInnerWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return (
+      !equals(nextProps.handled, this.props.handled) ||
+      !equals(nextProps.isReady, this.props.isReady) ||
+      !equals(nextProps.groupDiffsByLocation, this.props.groupDiffsByLocation)
+    );
+  }
+
+  render() {
+    return <ReviewEndpointInner {...this.props} />;
+  }
+}
+
 export function ReviewEndpointInner(props) {
   const {
-    endpointQueries,
     pathId,
     method,
     makeDiffActorHook,
-  } = useEndpointDiffSession();
+    groupDiffsByLocation,
+    handled,
+    isReady,
+    endpointQueries,
+    endpointActions,
+  } = props;
 
-  const handled = endpointQueries.handledByDiffHash();
-
-  const grouped = useMemo(() => endpointQueries.groupDiffsByLocation(), []);
+  const classes = useStyles();
 
   return (
     <Box display="flex" flexDirection="column" key={pathId + method}>
-      {grouped.requests.map((i, index) => (
+      {!endpointQueries.allHandled() && (
+        <Paper
+          key="bulk-actions"
+          className={classNames(classes.sectionHeader, classes.bulkActions)}
+          square
+          elevation={0}
+        >
+          <Button
+            size="small"
+            color="primary"
+            disabled={!isReady}
+            onClick={endpointActions.approveAll}
+            style={{ fontSize: 10, fontWeight: 800 }}
+          >
+            Approve All ({Object.keys(handled).length})
+          </Button>
+        </Paper>
+      )}
+      {groupDiffsByLocation.requests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -70,7 +124,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.newRequests.map((i, index) => (
+      {groupDiffsByLocation.newRequests.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -79,7 +133,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.responses.map((i, index) => (
+      {groupDiffsByLocation.responses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -88,7 +142,7 @@ export function ReviewEndpointInner(props) {
         />
       ))}
 
-      {grouped.newResponses.map((i, index) => (
+      {groupDiffsByLocation.newResponses.map((i, index) => (
         <EndpointGrouping
           handled={handled}
           makeDiffActorHook={makeDiffActorHook}
@@ -217,6 +271,12 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 10,
     textTransform: 'uppercase',
   },
+  bulkActions: {
+    borderBottom: 'none',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    flexDirection: 'column',
+  },
   sectionHeader: {
     backgroundColor: 'white',
     display: 'flex',
@@ -229,6 +289,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 3,
     paddingLeft: 5,
     borderBottom: `1px solid #e2e2e2`,
+    boxShadow: 0,
     transition: '.2s background-color',
     '&:hover': {
       backgroundColor: '#efeff1',
