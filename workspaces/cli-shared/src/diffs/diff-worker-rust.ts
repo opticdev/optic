@@ -7,7 +7,6 @@ import {
 } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 import path from 'path';
-import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
 import { fork } from 'stream-fork';
 import { Readable, Writable } from 'stream';
@@ -110,6 +109,7 @@ export class DiffWorkerRust {
         objectMode: true,
       }),
       (item) => {
+        debugger;
         this.skippedInteractionsCounter = item.skippedInteractionsCounter;
         this.diffedInteractionsCounter = item.diffedInteractionsCounter;
         this.hasMoreInteractions = item.hasMoreInteractions;

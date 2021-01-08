@@ -1,14 +1,19 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { IHttpInteraction, IInteractionBatch } from '@useoptic/domain-types';
+import { IHttpInteraction } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { captureFileSuffix } from './index';
 import avro from 'avsc';
 import { CaptureId } from '@useoptic/saas-types';
+import {
+  serdesWithBodies,
+  serdesWithoutBodies,
+} from './avro-schemas/interaction-batch-helpers';
 
 export interface FilterPredicate<T> {
   (item: T): boolean;
 }
+
 export type InteractionIteratorItem =
   | {
       hasMoreInteractions: false;
@@ -28,6 +33,7 @@ export type InteractionIteratorItem =
       skippedInteractionsCounter: bigint;
       diffedInteractionsCounter: bigint;
     };
+
 export async function* CaptureInteractionIterator(
   config: IFileSystemCaptureLoaderConfig,
   filter: FilterPredicate<IHttpInteraction>
@@ -49,34 +55,26 @@ export async function* CaptureInteractionIterator(
     }
     console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
-    const items = BatchInteractionIterator(batchFilePath);
-    for await (const x of items) {
-      // console.log({ x, index });
-      const shouldEmit = filter(x);
-      if (shouldEmit) {
-        diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
-        yield {
-          hasMoreInteractions: true,
-          interaction: {
-            context: {
-              batchId: currentBatchId.toString(),
-              index,
-            },
-            value: x,
+    const { items, skippedItemsCount } = await loadBatchFileWithFilter(
+      batchFilePath,
+      filter
+    );
+    skippedInteractionsCounter =
+      skippedInteractionsCounter + BigInt(skippedItemsCount);
+    for (const item of items) {
+      diffedInteractionsCounter = diffedInteractionsCounter + BigInt(1);
+      yield {
+        hasMoreInteractions: true,
+        interaction: {
+          context: {
+            batchId: currentBatchId.toString(),
+            index,
           },
-          skippedInteractionsCounter,
-          diffedInteractionsCounter,
-        };
-      } else {
-        skippedInteractionsCounter = skippedInteractionsCounter + BigInt(1);
-        yield {
-          hasMoreInteractions: true,
-          interaction: null,
-          skippedInteractionsCounter,
-          diffedInteractionsCounter,
-        };
-        console.log(`skipping ${x.request.method} ${x.request.path}`);
-      }
+          value: item,
+        },
+        skippedInteractionsCounter,
+        diffedInteractionsCounter,
+      };
       index = index + 1;
     }
     const isBatchEmpty = index === 0;
@@ -99,8 +97,8 @@ export async function* CaptureInteractionIterator(
 }
 
 export async function* BatchInteractionIterator(batchFilePath: string) {
-  const contents = await loadBatchFile(batchFilePath);
-  for (const item of contents.batchItems) {
+  const items = await loadBatchFile(batchFilePath);
+  for (const item of items) {
     yield item;
   }
 }
@@ -108,13 +106,78 @@ export async function* BatchInteractionIterator(batchFilePath: string) {
 export async function loadBatchFile(batchFilePath: string) {
   console.time(`loadBatchFile-${batchFilePath}`);
   const decoder = avro.createFileDecoder(batchFilePath);
-  const contents = await new Promise<IInteractionBatch>((resolve, reject) => {
-    decoder.once('data', (contents: IInteractionBatch) => {
-      resolve(contents);
+  const contents = await new Promise<IHttpInteraction[]>((resolve, reject) => {
+    const items: IHttpInteraction[] = [];
+    decoder.on('data', (item: IHttpInteraction) => {
+      items.push(item);
     });
     decoder.once('error', (err) => reject(err));
+    decoder.once('end', () => {
+      resolve(items);
+    });
   });
   console.timeEnd(`loadBatchFile-${batchFilePath}`);
+  return contents;
+}
+
+export interface BatchContainer {
+  items: IHttpInteraction[];
+  skippedItemsCount: number;
+}
+
+export async function loadBatchFileWithFilter(
+  batchFilePath: string,
+  filter: FilterPredicate<IHttpInteraction>
+) {
+  console.time(`loadBatchFileWithFilter-${batchFilePath}`);
+  const contents = await new Promise<BatchContainer>(
+    async (resolve, reject) => {
+      const result: BatchContainer = {
+        items: [],
+        skippedItemsCount: 0,
+      };
+      const decoder = avro.createFileDecoder(batchFilePath, {
+        noDecode: true,
+      });
+
+      decoder.on('data', (buffer: Buffer) => {
+        const resolver = serdesWithoutBodies.createResolver(serdesWithBodies);
+        const offset = 0;
+        const itemWithoutBodies = serdesWithoutBodies.decode(
+          buffer,
+          offset,
+          resolver
+        );
+        if (!itemWithoutBodies.value) {
+          throw new Error(
+            `expected avro bytes to deserialize as IHttpInteraction`
+          );
+        }
+        const shouldEmit = filter(itemWithoutBodies.value);
+
+        if (shouldEmit) {
+          const itemWithBodies = serdesWithBodies.decode(buffer, offset);
+          if (!itemWithBodies.value) {
+            throw new Error(
+              `expected avro bytes to deserialize as IHttpInteraction`
+            );
+          }
+          result.items.push(itemWithBodies.value);
+        } else {
+          result.skippedItemsCount = result.skippedItemsCount + 1;
+        }
+      });
+      decoder.once('error', (err) => {
+        debugger;
+        reject(err);
+      });
+      decoder.once('end', () => {
+        debugger;
+        resolve(result);
+      });
+    }
+  );
+  console.timeEnd(`loadBatchFileWithFilter-${batchFilePath}`);
   return contents;
 }
 
@@ -149,7 +212,7 @@ export class LocalCaptureInteractionPointerConverter
       `${batchId}${captureFileSuffix}`
     );
     const contents = await loadBatchFile(batchFilePath);
-    return contents.batchItems[interactionIndex];
+    return contents[interactionIndex];
   }
 
   toPointer(
