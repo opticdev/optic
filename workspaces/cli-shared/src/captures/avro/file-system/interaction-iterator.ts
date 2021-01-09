@@ -53,7 +53,7 @@ export async function* CaptureInteractionIterator(
       //@TODO: determine if we should wait
       return;
     }
-    console.log(batchFilePath + '\n\nxxx\n\n');
+    // console.log(batchFilePath + '\n\nxxx\n\n');
     let index = 0;
     const { items, skippedItemsCount } = await loadBatchFileWithFilter(
       batchFilePath,
@@ -104,7 +104,7 @@ export async function* BatchInteractionIterator(batchFilePath: string) {
 }
 
 export async function loadBatchFile(batchFilePath: string) {
-  console.time(`loadBatchFile-${batchFilePath}`);
+  // console.time(`loadBatchFile-${batchFilePath}`);
   const decoder = avro.createFileDecoder(batchFilePath);
   const contents = await new Promise<IHttpInteraction[]>((resolve, reject) => {
     const items: IHttpInteraction[] = [];
@@ -116,7 +116,7 @@ export async function loadBatchFile(batchFilePath: string) {
       resolve(items);
     });
   });
-  console.timeEnd(`loadBatchFile-${batchFilePath}`);
+  // console.timeEnd(`loadBatchFile-${batchFilePath}`);
   return contents;
 }
 
@@ -129,18 +129,23 @@ export async function loadBatchFileWithFilter(
   batchFilePath: string,
   filter: FilterPredicate<IHttpInteraction>
 ) {
-  console.time(`loadBatchFileWithFilter-${batchFilePath}`);
+  // console.time(`${prefix}-loadBatchFileWithFilter-${batchFilePath}`);
   const contents = await new Promise<BatchContainer>(
     async (resolve, reject) => {
       const result: BatchContainer = {
         items: [],
         skippedItemsCount: 0,
       };
+      // console.time(`${prefix}-lbitem-buffer`);
       const decoder = avro.createFileDecoder(batchFilePath, {
         noDecode: true,
       });
-
+      let x = 0;
       decoder.on('data', (buffer: Buffer) => {
+        if (x === 0) {
+          // console.timeEnd(`${prefix}-lbitem-buffer`);
+        }
+        // console.time(`${prefix}-lbitem-${x}`);
         const resolver = serdesWithoutBodies.createResolver(serdesWithBodies);
         const offset = 0;
         const itemWithoutBodies = serdesWithoutBodies.decode(
@@ -153,7 +158,7 @@ export async function loadBatchFileWithFilter(
             `expected avro bytes to deserialize as IHttpInteraction`
           );
         }
-        const shouldEmit = filter(itemWithoutBodies.value);
+        const shouldEmit = true; // filter(itemWithoutBodies.value);
 
         if (shouldEmit) {
           const itemWithBodies = serdesWithBodies.decode(buffer, offset);
@@ -162,22 +167,24 @@ export async function loadBatchFileWithFilter(
               `expected avro bytes to deserialize as IHttpInteraction`
             );
           }
-          result.items.push(itemWithBodies.value);
+          for (let i = 0; i < parseInt(process.env.TRAFFIC_M || '1'); i++) {
+            result.items.push(itemWithBodies.value);
+          }
         } else {
           result.skippedItemsCount = result.skippedItemsCount + 1;
         }
+        // console.timeEnd(`${prefix}-lbitem-${x}`);
+        x++;
       });
       decoder.once('error', (err) => {
-        debugger;
         reject(err);
       });
       decoder.once('end', () => {
-        debugger;
         resolve(result);
       });
     }
   );
-  console.timeEnd(`loadBatchFileWithFilter-${batchFilePath}`);
+  // console.timeEnd(`${prefix}-loadBatchFileWithFilter-${batchFilePath}`);
   return contents;
 }
 
