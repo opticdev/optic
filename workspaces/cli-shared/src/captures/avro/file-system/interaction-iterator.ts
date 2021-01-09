@@ -158,7 +158,8 @@ export async function loadBatchFileWithFilter(
             `expected avro bytes to deserialize as IHttpInteraction`
           );
         }
-        const shouldEmit = true; // filter(itemWithoutBodies.value);
+
+        const shouldEmit = filter(itemWithoutBodies.value);
 
         if (shouldEmit) {
           const itemWithBodies = serdesWithBodies.decode(buffer, offset);

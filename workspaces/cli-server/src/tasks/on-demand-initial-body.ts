@@ -72,7 +72,7 @@ export class OnDemandInitialBody {
     };
     const onExit = (code: number, signal: string | null) => {
       cleanup();
-      if (code !== 0) {
+      if (code !== 0 && code !== null) {
         // @TODO: wonder how we'll ever find out about this happening.
         console.error(
           `On Demand Body Worker exited with non-zero exit code ${code}`
