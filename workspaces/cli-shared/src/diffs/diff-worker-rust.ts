@@ -109,7 +109,6 @@ export class DiffWorkerRust {
         objectMode: true,
       }),
       (item) => {
-        debugger;
         this.skippedInteractionsCounter = item.skippedInteractionsCounter;
         this.diffedInteractionsCounter = item.diffedInteractionsCounter;
         this.hasMoreInteractions = item.hasMoreInteractions;
