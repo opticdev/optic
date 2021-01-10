@@ -141,7 +141,8 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/56100?v=4",
       "profile": "http://kinlane.com/",
       "contributions": [
-        "ideas"
+        "ideas",
+        "content"
       ]
     },
     {
@@ -150,7 +151,8 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/6105650?v=4",
       "profile": "https://viljami.io/",
       "contributions": [
-        "ideas"
+        "ideas",
+        "content"
       ]
     },
     {
@@ -159,7 +161,17 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/11151?v=4",
       "profile": "http://rcrowley.org/",
       "contributions": [
-        "research"
+        "research",
+        "ideas"
+      ]
+    },
+    {
+      "login": "danMateer",
+      "name": "dnmtr",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/34169713?v=4",
+      "profile": "https://github.com/danMateer",
+      "contributions": [
+        "review"
       ]
     }
   ],
