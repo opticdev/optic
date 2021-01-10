@@ -130,7 +130,18 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/3299155?v=4",
       "profile": "http://ross-nordstrom.github.io/",
       "contributions": [
-        "design"
+        "design",
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "kinlane",
+      "name": "Kin Lane",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/56100?v=4",
+      "profile": "http://kinlane.com/",
+      "contributions": [
+        "ideas"
       ]
     }
   ],
