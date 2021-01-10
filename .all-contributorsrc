@@ -123,6 +123,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ross-nordstrom",
+      "name": "Ross Nordstrom",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3299155?v=4",
+      "profile": "http://ross-nordstrom.github.io/",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7
