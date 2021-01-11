@@ -201,13 +201,13 @@ fn main() {
       };
 
       // panic when scheduling, diff tasks 
-      next_action.unwrap();
+      next_action.expect("essential worker task panicked");
     }
 
     drop(results_sender);
 
     let completing_diff_tasks = future::try_join_all(diff_tasks);
-    try_join!(completing_diff_tasks, results_manager).unwrap();
+    try_join!(completing_diff_tasks, results_manager).expect("essential worker task panicked");
   })
 }
 
