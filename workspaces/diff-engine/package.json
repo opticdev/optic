@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/diff-engine",
-  "version": "8.6.3-beta.7",
+  "version": "8.6.3-beta.8",
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
