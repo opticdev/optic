@@ -1,4 +1,5 @@
-use clap::{App, Arg, crate_version};
+use clap::{crate_version, App, Arg};
+use futures::future;
 use futures::SinkExt;
 use num_cpus;
 use optic_diff_engine::diff_interaction;
@@ -14,6 +15,7 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
+use tokio::task::{JoinError, JoinHandle};
 
 fn main() {
   let cli = App::new("Optic Diff engine")
@@ -106,54 +108,93 @@ fn main() {
       }
     });
 
+    let mut diff_tasks: Vec<JoinHandle<()>> = vec![];
+
+    tokio::pin!(results_manager);
+    // tokio::pin!(diff_tasks);
+
     dbg!("waiting for next interaction");
-    while let Some(interaction_json_result) = interaction_lines.next().await {
-      //dbg!("got next interaction");
-      let diff_permits = diff_scheduling_permits.clone();
-      let projection = spec_projection.clone();
-      let mut results_sender = results_sender.clone();
-      //dbg!("waiting for permit");
-      let diff_task_permit = diff_permits.acquire_owned().await;
-      //dbg!("got permit");
 
-      tokio::spawn(async move {
-        let diff_comp =
-          tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
-            let interaction_json =
-              interaction_json_result.expect("can read interaction json line from stdin");
-            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-              match serde_json::from_str(&interaction_json) {
-                Ok(tagged_interaction) => tagged_interaction,
-                Err(parse_error) => {
-                  eprintln!("could not parse interaction json: {}", parse_error);
-                  return None;
-                }
-              };
-
-            Some((diff_interaction(&projection, interaction), tags))
-          });
-        //dbg!("waiting for results");
-        let results = diff_comp
-          .await
-          .expect("diffing of interaction should be successful");
-        //dbg!("got results");
-
-        if let Some((results, tags)) = results {
-          for result in results {
-            //dbg!(&result);
-            if let Err(_) = results_sender
-              .send(ResultContainer::from((result, &tags)))
-              .await
-            {
-              panic!("could not write diff result to results channel");
-              // TODO: Find way to actually write error info
-            }
+    loop {
+      let next_action = tokio::select! {
+        next_interaction = interaction_lines.next() => {
+          if let None = next_interaction {
+            // end of input, stop looping
+            break;
           }
-        }
 
-        drop(diff_task_permit);
-      });
+          let interaction_json_result = next_interaction.unwrap();
+
+          //dbg!("got next interaction");
+          let diff_permits = diff_scheduling_permits.clone();
+          let projection = spec_projection.clone();
+          let mut results_sender = results_sender.clone();
+          //dbg!("waiting for permit");
+          let diff_task_permit = diff_permits.acquire_owned().await;
+          //dbg!("got permit");
+
+          let diff_task = tokio::spawn(async move {
+            let diff_comp =
+              tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
+                let interaction_json =
+                  interaction_json_result.expect("can read interaction json line from stdin");
+                let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
+                  match serde_json::from_str(&interaction_json) {
+                    Ok(tagged_interaction) => tagged_interaction,
+                    Err(parse_error) => {
+                      eprintln!("could not parse interaction json: {}", parse_error);
+                      return None;
+                    }
+                  };
+
+                Some((diff_interaction(&projection, interaction), tags))
+              });
+            //dbg!("waiting for results");
+            let results = diff_comp
+              .await
+              .expect("diffing of interaction should be successful");
+            //dbg!("got results");
+
+            if let Some((results, tags)) = results {
+              for result in results {
+                //dbg!(&result);
+                if let Err(_) = results_sender
+                  .send(ResultContainer::from((result, &tags)))
+                  .await
+                {
+                  panic!("could not write diff result to results channel");
+                  // TODO: Find way to actually write error info
+                }
+              }
+            }
+
+            drop(diff_task_permit);
+          });
+
+          diff_tasks.push(diff_task);
+
+          Ok::<_, JoinError>(())
+        },
+
+        res = async {
+          let (finished_diff_task_result, task_index, _) = future::select_all(&mut diff_tasks).await;
+          diff_tasks.remove(task_index);
+
+          finished_diff_task_result
+        }, if !diff_tasks.is_empty() => {
+          res
+        },
+
+        Err(err) = &mut results_manager => {
+          Err(err)
+        }
+      };
+
+      next_action.unwrap();
     }
+
+    // TOOD: Also wait for all diff tasks to complete. That's implicit since results_manager won't 
+    // finish until all results senders have been dropped, but we need to handle errors as well!
 
     drop(results_sender);
     results_manager.await.unwrap(); // make sure the results manager is done flushing
