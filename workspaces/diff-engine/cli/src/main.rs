@@ -171,17 +171,24 @@ fn main() {
             drop(diff_task_permit);
           });
 
+          // dbg!("Scheduling task", diff_tasks.len() + 1);
           diff_tasks.push(diff_task);
 
           Ok::<_, JoinError>(())
         },
 
-        res = async {
-          let (finished_diff_task_result, task_index, _) = future::select_all(&mut diff_tasks).await;
-          diff_tasks.remove(task_index);
+        Some(res) = async {
+          if diff_tasks.is_empty() {
+            None
+          } else {
+            // dbg!("Waiting for a worker task to finish");
+            let (finished_diff_task_result, task_index, _) = future::select_all(&mut diff_tasks).await;
+            // dbg!("Task finished!", task_index);
+            diff_tasks.remove(task_index);
 
-          finished_diff_task_result
-        }, if !diff_tasks.is_empty() => {
+            Some(finished_diff_task_result)
+          }
+        } => {
           res
         },
 
