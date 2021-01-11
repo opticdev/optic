@@ -1,5 +1,6 @@
 use clap::{crate_version, App, Arg};
 use futures::future;
+use futures::try_join;
 use futures::SinkExt;
 use num_cpus;
 use optic_diff_engine::diff_interaction;
@@ -200,11 +201,10 @@ fn main() {
       next_action.unwrap();
     }
 
-    // TOOD: Also wait for all diff tasks to complete. That's implicit since results_manager won't 
-    // finish until all results senders have been dropped, but we need to handle errors as well!
-
     drop(results_sender);
-    results_manager.await.unwrap(); // make sure the results manager is done flushing
+
+    let completing_diff_tasks = future::try_join_all(diff_tasks);
+    try_join!(completing_diff_tasks, results_manager).unwrap();
   })
 }
 
