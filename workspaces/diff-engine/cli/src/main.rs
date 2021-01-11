@@ -108,7 +108,7 @@ fn main() {
       }
     });
 
-    let mut diff_tasks: Vec<JoinHandle<()>> = vec![];
+    let mut diff_tasks: Vec<JoinHandle<()>> = Vec::with_capacity(diff_queue_size);
 
     tokio::pin!(results_manager);
     // tokio::pin!(diff_tasks);
