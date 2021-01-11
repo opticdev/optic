@@ -123,6 +123,56 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ross-nordstrom",
+      "name": "Ross Nordstrom",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3299155?v=4",
+      "profile": "http://ross-nordstrom.github.io/",
+      "contributions": [
+        "design",
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "kinlane",
+      "name": "Kin Lane",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/56100?v=4",
+      "profile": "http://kinlane.com/",
+      "contributions": [
+        "ideas",
+        "content"
+      ]
+    },
+    {
+      "login": "anttiviljami",
+      "name": "Viljami Kuosmanen",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6105650?v=4",
+      "profile": "https://viljami.io/",
+      "contributions": [
+        "ideas",
+        "content"
+      ]
+    },
+    {
+      "login": "rcrowley",
+      "name": "Richard Crowley",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/11151?v=4",
+      "profile": "http://rcrowley.org/",
+      "contributions": [
+        "research",
+        "ideas"
+      ]
+    },
+    {
+      "login": "danMateer",
+      "name": "dnmtr",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/34169713?v=4",
+      "profile": "https://github.com/danMateer",
+      "contributions": [
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7
