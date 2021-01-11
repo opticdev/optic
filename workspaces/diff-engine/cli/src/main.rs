@@ -112,12 +112,12 @@ fn main() {
     let mut diff_tasks: Vec<JoinHandle<()>> = Vec::with_capacity(diff_queue_size);
 
     tokio::pin!(results_manager);
-    // tokio::pin!(diff_tasks);
 
     dbg!("waiting for next interaction");
 
     loop {
       let next_action = tokio::select! {
+        // scheduling a diff task upon new input
         next_interaction = interaction_lines.next() => {
           if let None = next_interaction {
             // end of input, stop looping
@@ -178,6 +178,7 @@ fn main() {
           Ok::<_, JoinError>(())
         },
 
+        // propagating errors / panics from the diff tasks
         Some(res) = async {
           if diff_tasks.is_empty() {
             None
@@ -193,11 +194,13 @@ fn main() {
           res
         },
 
+        // propagating errors / panics from the results manager
         Err(err) = &mut results_manager => {
           Err(err)
         }
       };
 
+      // panic when scheduling, diff tasks 
       next_action.unwrap();
     }
 
