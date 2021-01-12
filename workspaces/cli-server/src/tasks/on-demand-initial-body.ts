@@ -70,9 +70,10 @@ export class OnDemandInitialBody {
       cleanup();
       this.events.emit('error', err);
     };
-    const onExit = (code: number, signal: string | null) => {
+    const onExit = (code: number | null, signal: string | null) => {
+      console.log(`exiting learner with signal ${signal} and code ${code}`);
       cleanup();
-      if (code !== 0) {
+      if (code !== 0 && code !== null) {
         // @TODO: wonder how we'll ever find out about this happening.
         console.error(
           `On Demand Body Worker exited with non-zero exit code ${code}`

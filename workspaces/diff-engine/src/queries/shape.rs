@@ -57,7 +57,16 @@ impl<'a> ShapeQueries<'a> {
           _ => unreachable!("expected to be a core shape node"),
         };
         let trails: Vec<ChoiceOutput> = match core_shape_descriptor.kind {
-          ShapeKind::UnknownKind => vec![],
+          ShapeKind::UnknownKind => {
+            let output = vec![ChoiceOutput {
+              parent_trail: shape_trail.clone(),
+              additional_components: vec![ShapeTrailPathComponent::UnknownTrail {
+              }],
+              shape_id: shape_id.clone(),
+              core_shape_kind: core_shape_descriptor.kind.clone(),
+            }];
+            output
+          },
           ShapeKind::NullableKind => {
             let nullable_parameter_id = core_shape_descriptor
               .kind
