@@ -1,9 +1,0 @@
----
-source: workspaces/diff-engine/tests/shape_diff.rs
-expression: fingerprints
----
-[
-    "1db406dd0c46798",
-    "1db406dd0c46798",
-    "1db406dd0c46798",
-]

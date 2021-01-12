@@ -152,7 +152,7 @@ export const newApplyChangesMachine = (
             batchHandler.doWork(({ emitCommands }) => emitCommands(commands));
 
             const throttler = new Bottleneck({
-              maxConcurrent: 1,
+              maxConcurrent: 5,
               minTime: 100,
             });
 

@@ -238,8 +238,10 @@ class CliServer {
       this.server.setTimeout(600000);
 
       this.server.on('connection', (connection) => {
+        console.log(`adding connection`);
         this.connections.push(connection);
         connection.on('close', () => {
+          console.log(`removing connection`);
           this.connections = this.connections.filter((c) => c !== connection);
         });
       });

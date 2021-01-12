@@ -96,66 +96,6 @@ fn can_diff_primitive_json_and_yield_unspecified_shape() {
 }
 
 #[test]
-fn can_diff_empty_json_array() {
-  let events: Vec<SpecEvent> = serde_json::from_value(json!([
-      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
-      {"ShapeAdded":{"shapeId":"number_shape_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
-      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"number_shape_1"}},"consumingParameterId":"$listItem"}}}},
-  ])).expect("should be able to deserialize shape added events as spec events");
-  let shape_projection = ShapeProjection::from(events);
-
-  assert_debug_snapshot!(
-    "can_diff_empty_json_array__shape_projection_graph",
-    Dot::with_config(&shape_projection.graph, &[])
-  );
-  let array_body = json!([]);
-  let shape_id = String::from("list_1");
-  let results = diff_shape(
-    &shape_projection,
-    Some(BodyDescriptor::from(array_body)),
-    &shape_id,
-  );
-  let fingerprints = results
-      .iter()
-      .map(|result| result.fingerprint())
-      .collect::<Vec<_>>();
-
-  assert_debug_snapshot!("can_diff_empty_json_array__results", results);
-  assert_eq!(results.len(), 0);
-  assert_debug_snapshot!("can_diff_empty_json_array__fingerprints", fingerprints);
-}
-#[test]
-fn can_diff_list_of_unknown() {
-  let events: Vec<SpecEvent> = serde_json::from_value(json!([
-      {"ShapeAdded":{"shapeId":"list_1","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
-      {"ShapeAdded":{"shapeId":"unknown_shape_1","baseShapeId":"$unknown","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
-      {"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"list_1","providerDescriptor":{"ShapeProvider":{"shapeId":"unknown_shape_1"}},"consumingParameterId":"$listItem"}}}},
-
-  ])).expect("should be able to deserialize shape added events as spec events");
-  let shape_projection = ShapeProjection::from(events);
-
-  assert_debug_snapshot!(
-    "can_diff_list_of_unknown__shape_projection_graph",
-    Dot::with_config(&shape_projection.graph, &[])
-  );
-  let array_body = json!(["a", 1, false]);
-  let shape_id = String::from("list_1");
-  let results = diff_shape(
-    &shape_projection,
-    Some(BodyDescriptor::from(array_body)),
-    &shape_id,
-  );
-  let fingerprints = results
-      .iter()
-      .map(|result| result.fingerprint())
-      .collect::<Vec<_>>();
-
-  assert_debug_snapshot!("can_diff_list_of_unknown__results", results);
-  assert_eq!(results.len(), 3);
-  assert_debug_snapshot!("can_diff_list_of_unknown__fingerprints", fingerprints);
-}
-
-#[test]
 fn can_match_array_json() {
   let events : Vec<SpecEvent> = serde_json::from_value(
     json!([

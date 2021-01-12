@@ -2,7 +2,9 @@ import {
   ExampleCaptureService,
   ExampleDiffService,
 } from '../../../services/diff/ExampleDiffService';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as DiffEngine from '@useoptic/diff-engine-wasm';
+console.log(DiffEngine);
+process.exit(0);
 import {
   DiffHelpers,
   Facade,

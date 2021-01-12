@@ -159,7 +159,7 @@ export class InitialBodiesWorker {
       const { pathId, method } = this.config;
 
       const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(pathId, method);
-      console.time('emit commands');
+
       async function flush() {
         const results: ILearnedBodies = {
           pathId,
@@ -182,7 +182,6 @@ export class InitialBodiesWorker {
             })
           ),
         };
-        console.timeEnd('emit commands');
         notifyParent(results);
       }
 
