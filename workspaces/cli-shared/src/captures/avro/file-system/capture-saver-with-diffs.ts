@@ -5,37 +5,38 @@ import {
 import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
 import { IFileSystemCaptureLoaderConfig } from './capture-loader';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
-import {
-  diffFromRfcStateAndInteractions,
-  universeFromEvents,
-} from '@useoptic/domain-utilities';
-import {
-  DiffHelpers,
-  JsonHelper,
-  opticEngine,
-  Queries,
-} from '@useoptic/domain';
+import { universeFromEvents } from '@useoptic/domain-utilities';
+import { JsonHelper, opticEngine, Queries } from '@useoptic/domain';
 import fs from 'fs-extra';
 import path from 'path';
 import { IApiCliConfig, parseIgnore } from '@useoptic/cli-config';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export const coverageFilePrefix = 'coverage-';
 
+interface IFileSystemCaptureLoaderWithDiffsAndCoverageConfig
+  extends IFileSystemCaptureLoaderConfig {
+  shouldCollectCoverage: boolean;
+}
+
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
+  private spec!: any;
   private rfcState!: any;
   private shapesResolvers!: any;
 
   constructor(
-    config: IFileSystemCaptureLoaderConfig,
+    private _config: IFileSystemCaptureLoaderWithDiffsAndCoverageConfig,
     private cliConfig: IApiCliConfig,
     private specServiceClient: ISpecService
   ) {
-    super(config);
+    super(_config);
   }
 
   async init() {
     //@GOTCHA: if the user updates the spec while the capture is live, the diff data will potentially be inaccurate
     const eventsString = await this.specServiceClient.listEvents();
+    const spec = DiffEngine.spec_from_events(eventsString);
+    this.spec = spec;
     const events = JSON.parse(eventsString);
     const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
       events
@@ -67,15 +68,23 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       (x) => !filter.shouldIgnore(x.request.method, x.request.path)
     );
 
-    // diff report
-    const diffs = diffFromRfcStateAndInteractions(
-      this.shapesResolvers,
-      this.rfcState,
-      items
-    );
+    const distinctDiffs = new Set<string>();
+    const diffs = [];
+    for (let interaction of filteredItems) {
+      const resultsString: string = DiffEngine.diff_interaction(
+        JSON.stringify(interaction),
+        this.spec
+      );
+      const results = JSON.parse(resultsString);
+      results.forEach((result: any) => {
+        developerDebugLogger(result);
+        const [diff] = result;
+        distinctDiffs.add(JSON.stringify(diff));
+      });
+      diffs.push(...results);
+    }
 
-    const distinctDiffCount = DiffHelpers.distinctDiffCount(diffs);
-    const diffsAsJs = opticEngine.DiffJsonSerializer.toJs(diffs);
+    const distinctDiffCount = distinctDiffs.size;
     developerDebugLogger({ distinctDiffCount });
     await fs.writeJson(
       path.join(outputDirectory, `interactions-${batchId}.json`),
@@ -88,24 +97,27 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
     );
     await fs.writeJson(
       path.join(outputDirectory, `diffs-${batchId}.json`),
-      diffsAsJs
+      diffs
     );
 
-    // coverage report as JS
-    const report = opticEngine.com.useoptic.diff.helpers
-      .CoverageHelpers()
-      .getCoverage(
-        this.shapesResolvers,
-        this.rfcState,
-        JsonHelper.jsArrayToSeq(items.map((x) => JsonHelper.fromInteraction(x)))
+    if (this._config.shouldCollectCoverage) {
+      const report = opticEngine.com.useoptic.diff.helpers
+        .CoverageHelpers()
+        .getCoverage(
+          this.shapesResolvers,
+          this.rfcState,
+          JsonHelper.jsArrayToSeq(
+            items.map((x) => JsonHelper.fromInteraction(x))
+          )
+        );
+
+      const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
+
+      await fs.writeJson(
+        path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
+        asJs
       );
-
-    const asJs = opticEngine.CoverageReportJsonSerializer.toJs(report);
-
-    await fs.writeJson(
-      path.join(outputDirectory, `${coverageFilePrefix}${batchId}.json`),
-      asJs
-    );
+    }
 
     return result;
   }

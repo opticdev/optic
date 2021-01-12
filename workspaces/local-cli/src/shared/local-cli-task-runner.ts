@@ -74,7 +74,9 @@ export async function LocalTaskSessionWrapper(
 
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
-  const runner = new LocalCliTaskRunner(captureId, paths);
+  const runner = new LocalCliTaskRunner(captureId, paths, {
+    shouldCollectCoverage: flags['collect-coverage'] || false,
+  });
   const session = new CliTaskSession(runner);
 
   const task = config.tasks[taskName];
@@ -114,7 +116,11 @@ export async function LocalTaskSessionWrapper(
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
-  constructor(private captureId: string, private paths: IPathMapping) {}
+  constructor(
+    private captureId: string,
+    private paths: IPathMapping,
+    private options: { shouldCollectCoverage: boolean }
+  ) {}
 
   async run(
     cli: Command,
@@ -192,6 +198,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       {
         captureBaseDirectory: capturesPath,
         captureId,
+        shouldCollectCoverage: this.options.shouldCollectCoverage,
       },
       config,
       specServiceClient
