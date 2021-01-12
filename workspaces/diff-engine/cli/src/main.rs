@@ -118,21 +118,26 @@ fn main() {
     loop {
       let next_action = tokio::select! {
         // scheduling a diff task upon new input
-        next_interaction = interaction_lines.next() => {
+        (next_interaction, diff_task_permit) = async {
+          let diff_permits = diff_scheduling_permits.clone();
+          //dbg!("waiting for permit");
+          let diff_task_permit = diff_permits.acquire_owned().await;
+          //dbg!("got permit");
+          
+          let next_interaction = interaction_lines.next().await;
+
+          (next_interaction, diff_task_permit)
+        } => {
           if let None = next_interaction {
             // end of input, stop looping
             break;
-          }
+          } 
 
           let interaction_json_result = next_interaction.unwrap();
 
           //dbg!("got next interaction");
-          let diff_permits = diff_scheduling_permits.clone();
           let projection = spec_projection.clone();
           let mut results_sender = results_sender.clone();
-          //dbg!("waiting for permit");
-          let diff_task_permit = diff_permits.acquire_owned().await;
-          //dbg!("got permit");
 
           let diff_task = tokio::spawn(async move {
             let diff_comp =
