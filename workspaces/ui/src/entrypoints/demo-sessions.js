@@ -8,7 +8,6 @@ import {
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 import { Snackbar, makeStyles } from '@material-ui/core';
-import { analyticsEvents } from '../Analytics';
 import * as DiffEvents from '@useoptic/analytics/lib/events/diffs';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
@@ -274,10 +273,9 @@ export default function DemoSessions(props) {
       }
     };
 
-    analyticsEvents.listen(eventsHandler);
+    // analyticsEvents.listen(eventsHandler);
 
-    return () =>
-      analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
+    // return () => analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
   }, []);
 
   // event specific info boxes
