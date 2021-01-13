@@ -4,6 +4,8 @@ import { newAnalyticsEventBus } from '@useoptic/analytics/lib/eventbus';
 import niceTry from 'nice-try';
 import { Client } from '@useoptic/cli-client';
 import packageJson from '../../package.json';
+import { wildcardEvent } from '@useoptic/analytics/lib/events/wildcard';
+
 const clientId = `local_cli_${packageJson.version}`;
 
 export function useApiNameAnalytics(specService) {
@@ -67,22 +69,36 @@ export function AnalyticsContextStore({ children, specService }) {
     }
   });
 
-  const analyticsEvents = useMemo(
-    () =>
-      newAnalyticsEventBus(async (batchId) => {
-        const clientAgent = await userPromise;
+  const analyticsEvents = useMemo(() => {
+    const bus = newAnalyticsEventBus(async (batchId) => {
+      const clientAgent = await userPromise;
 
-        const clientContext = {
-          clientAgent: clientAgent,
-          clientId: clientId,
-          clientSessionInstanceId: batchId,
-          clientTimestamp: new Date().toISOString(),
-        };
-        console.log('chosen context ', clientAgent);
-        return clientContext;
-      }),
-    [userPromise, apiName]
-  );
+      const clientContext = {
+        clientAgent: clientAgent,
+        clientId: clientId,
+        clientSessionInstanceId: batchId,
+        clientTimestamp: new Date().toISOString(),
+        apiName,
+      };
+      return clientContext;
+    });
+
+    // segment io sink
+    analyticsEvents.listen((event) => {
+      if (!window.opticAnalyticsEnabled) return;
+      const properties = {
+        ...event.data,
+        ...event.context,
+      };
+      window.analytics.track({
+        userId: event.context.clientAgent,
+        event: event.type,
+        properties,
+      });
+    });
+
+    return bus;
+  }, [userPromise, apiName]);
 
   const track = async (event) => {
     if (apiName) {
@@ -97,7 +113,7 @@ export function AnalyticsContextStore({ children, specService }) {
   );
 }
 
-function useAnalyticsHook() {
+export function useAnalyticsHook() {
   const { track } = useContext(AnalyticsContext);
-  return { track };
+  return (event, props) => track(wildcardEvent(event, props));
 }

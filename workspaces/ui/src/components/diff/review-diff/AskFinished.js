@@ -25,6 +25,10 @@ import { useServices } from '../../../contexts/SpecServiceContext';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { useFinalizeSummaryContext } from './FinalizeSummaryContext';
 import { PathAndMethod } from './PathAndMethod';
+import {
+  useAnalyticsHook,
+  useApiNameAnalytics,
+} from '../../../utilities/useAnalyticsHook';
 
 export function AskFinished(props) {
   const { setAskFinish } = props;
@@ -36,6 +40,9 @@ export function AskFinished(props) {
   const { clientSessionId, clientId, eventStore, rfcId } = useContext(
     RfcContext
   );
+
+  const track = useAnalyticsHook();
+
   const classes = useStyles();
 
   const patch = useMemo(() => queries.endpointsWithSuggestions(), []);

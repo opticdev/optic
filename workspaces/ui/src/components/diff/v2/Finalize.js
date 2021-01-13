@@ -55,6 +55,7 @@ export default function FinalizeDialog(props) {
   const backToHome = () => {
     history.push(`${baseUrl}/diffs/${captureId}`);
   };
+
   const commit = async () => {
     const newEventStore = initialEventStore.getCopy(rfcId);
     const {

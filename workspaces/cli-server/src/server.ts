@@ -18,7 +18,7 @@ import {
 import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
-import { analyticsEventEmitter, track } from './analytics';
+import { analyticsEventEmitter, track, trackWithApiName } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
@@ -120,7 +120,7 @@ class CliServer {
       bodyParser.json({ limit: '100kb' }),
       async (req, res: express.Response) => {
         const events: TrackingEventBase<any>[] = req.body.events;
-        track(...events);
+        trackWithApiName(req.optic.config.name)(...events);
         res.status(200).json({});
       }
     );
