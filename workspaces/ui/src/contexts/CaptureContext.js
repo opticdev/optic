@@ -196,6 +196,7 @@ class _CaptureContextStore extends React.Component {
           this.state.reloadDebounce(data);
         } else if (type === 'error') {
           console.error(data);
+          notificationChannel.close();
           debugger;
         }
       };

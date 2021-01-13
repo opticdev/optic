@@ -35,21 +35,61 @@ Tap.test('diff-worker-rust', async (test) => {
     });
   });
 
-  await test.test('will propagate errors from the diff engine', async (t) => {
-    const diffConfig = await prepare(
-      exampleInteractions(10),
-      // this will fail, because interactions aren't a valid spec file
-      Path.join(__dirname, '..', 'fixtures', 'example-interaction.json')
-    );
+  await test.test(
+    'will propagate errors in parsing spec from the diff engine',
+    async (t) => {
+      const diffConfig = await prepare(
+        exampleInteractions(10),
+        // this will fail, because interactions aren't a valid spec file
+        Path.join(__dirname, '..', 'fixtures', 'example-interaction.json')
+      );
 
-    const worker = new DiffWorkerRust(diffConfig);
-    t.rejects(
-      new Promise((_, reject) => {
-        worker.events.once('error', reject);
-      })
-    );
-    await worker.start();
-  });
+      const worker = new DiffWorkerRust(diffConfig);
+      const rejecting = t.rejects(
+        new Promise((_, reject) => {
+          worker.events.once('error', reject);
+        })
+      );
+      await worker.start();
+
+      await rejecting;
+    }
+  );
+
+  await test.test(
+    'will propagate errors in diffing an interaction from the diff engine',
+    async (t) => {
+      const specPath = Path.join(
+        __dirname,
+        '..',
+        'fixtures',
+        'unsupported-reference-base-shapes',
+        'events.json'
+      );
+      const interactionPath = Path.join(
+        __dirname,
+        '..',
+        'fixtures',
+        'unsupported-reference-base-shapes',
+        'interaction.json'
+      );
+
+      const diffConfig = await prepare(
+        exampleInteractions(1, interactionPath),
+        specPath
+      );
+
+      const worker = new DiffWorkerRust(diffConfig);
+      const rejecting = t.rejects(
+        new Promise((_, reject) => {
+          worker.events.once('error', reject);
+        })
+      );
+
+      await worker.start();
+      await rejecting;
+    }
+  );
 });
 
 async function prepare(
