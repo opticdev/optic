@@ -29,7 +29,9 @@ export class OnDemandDiff implements Diff {
   private child!: ChildProcess;
   public readonly id: string;
   private readonly config: DiffConfigObject;
+  private failed: boolean = false;
   private finished: boolean = false;
+  private diffError: Error | null = null;
 
   constructor(config: DiffConfigObject) {
     this.id = config.diffId;
@@ -83,23 +85,41 @@ export class OnDemandDiff implements Diff {
     const onMessage = (x: any) => {
       if (x.type && x.type === 'progress') {
         this.lastProgress = { ...x.data };
+        this.events.emit('progress', x.data);
+      } else if (x.type && x.type === 'error') {
+        fail(x.data);
       }
-      this.events.emit(x.type, x.data);
     };
     const onError = (err: Error) => {
       cleanup();
-      this.events.emit('error', err);
+      fail(err);
     };
     const onExit = (code: number, signal: string | null) => {
       cleanup();
       if (code !== 0) {
-        // @TODO: wonder how we'll ever find out about this happening.
-        console.error(`Diff Worker exited with non-zero exit code ${code}`);
+        fail(new Error(`Diff Worker exited with non-zero exit code ${code}`));
       } else {
-        this.finished = true;
-        this.events.emit('finish');
+        finish();
       }
     };
+    const fail = (err: Error) => {
+      if (this.finished || this.failed) return;
+      this.diffError = err;
+      this.failed = true;
+      // Errors from the diffing happen in their own process, so can be safely
+      // reported and recovered from. Because of that we don't use 'error', which
+      // in Node.js world are generally in-process and unrecoverable (process
+      // should crash as it got into an undefined state, which it does if error
+      // event not explicitly consumed).
+      this.events.emit('failed', err);
+    };
+
+    const finish = () => {
+      if (this.finished || this.failed) return;
+      this.finished = true;
+      this.events.emit('finish');
+    };
+
     function cleanup() {
       child.removeListener('message', onMessage);
       child.removeListener('error', onError);
@@ -126,14 +146,21 @@ export class OnDemandDiff implements Diff {
         cleanup();
         resolve();
       }
+      function onFailure() {
+        cleanup();
+        resolve();
+      }
       const cleanup = () => {
         this.events.removeListener('progress', onProgress);
         this.events.removeListener('error', onErr);
+        this.events.removeListener('failure', onFailure);
         this.events.removeListener('finish', onFinish);
       };
 
       this.events.once('progress', onProgress);
       this.events.once('error', onErr);
+      this.events.once('failure', onFailure);
+      this.events.once('finish', onFinish);
     });
   }
 
@@ -152,8 +179,11 @@ export class OnDemandDiff implements Diff {
     // drains again.
     const stream = new PassThrough({ objectMode: true, highWaterMark: 4 });
     stream.write({ type: 'progress', data: this.latestProgress() });
+    if (this.failed && this.diffError) {
+      stream.write({ type: 'error', data: { ...this.diffError } });
+    }
 
-    if (this.finished) {
+    if (this.finished || this.failed) {
       stream.end();
     } else {
       let resume = () => {
@@ -172,6 +202,10 @@ export class OnDemandDiff implements Diff {
         function onProgress(data: any) {
           write({ type: 'progress', data });
         }
+        function onFailed(data: any) {
+          write({ type: 'error', data });
+          end();
+        }
         function onErr(data: any) {
           write({ type: 'error', data });
           end();
@@ -184,10 +218,12 @@ export class OnDemandDiff implements Diff {
           this.events.removeListener('progress', onProgress);
           this.events.removeListener('error', onErr);
           this.events.removeListener('finish', onFinish);
+          this.events.removeListener('failed', onFailed);
         };
 
         this.events.on('progress', onProgress);
-        this.events.once('error', onErr);
+        this.events.once('failed', onFailed); // error in diffing process (isolated, daemon lives on)
+        this.events.once('error', onErr); // error in daemon process (unrecoverable, crashes daemon)
         this.events.once('finish', onFinish);
       };
 
