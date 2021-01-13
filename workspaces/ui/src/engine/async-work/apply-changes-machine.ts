@@ -179,12 +179,14 @@ export const newApplyChangesMachine = (
                     });
                   });
 
-                  return await promise;
+                  return await promise.catch(() => null);
                 });
               }
             );
 
-            const allBodies: ILearnedBodies[] = await Promise.all(results);
+            const allBodies: ILearnedBodies[] = (
+              await Promise.all(results)
+            ).filter((i) => Boolean(i));
             return allBodies;
           },
           onDone: {
