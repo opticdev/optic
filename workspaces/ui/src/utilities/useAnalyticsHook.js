@@ -84,7 +84,7 @@ export function AnalyticsContextStore({ children, specService }) {
     });
 
     // segment io sink
-    analyticsEvents.listen((event) => {
+    bus.listen((event) => {
       if (!window.opticAnalyticsEnabled) return;
       const properties = {
         ...event.data,
