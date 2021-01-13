@@ -17,6 +17,7 @@ export const coverageFilePrefix = 'coverage-';
 interface IFileSystemCaptureLoaderWithDiffsAndCoverageConfig
   extends IFileSystemCaptureLoaderConfig {
   shouldCollectCoverage: boolean;
+  shouldCollectDiffs: boolean;
 }
 
 export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
@@ -68,37 +69,39 @@ export class CaptureSaverWithDiffs extends FileSystemAvroCaptureSaver {
       (x) => !filter.shouldIgnore(x.request.method, x.request.path)
     );
 
-    const distinctDiffs = new Set<string>();
-    const diffs = [];
-    for (let interaction of filteredItems) {
-      const resultsString: string = DiffEngine.diff_interaction(
-        JSON.stringify(interaction),
-        this.spec
-      );
-      const results = JSON.parse(resultsString);
-      results.forEach((result: any) => {
-        developerDebugLogger(result);
-        const [diff] = result;
-        distinctDiffs.add(JSON.stringify(diff));
-      });
-      diffs.push(...results);
-    }
-
-    const distinctDiffCount = distinctDiffs.size;
-    developerDebugLogger({ distinctDiffCount });
-    await fs.writeJson(
-      path.join(outputDirectory, `interactions-${batchId}.json`),
-      {
-        interactionsCount: filteredItems.length,
-        totalInteractionsCount: items.length,
-        diffsCount: distinctDiffCount,
-        createdAt: new Date().toISOString(),
+    if (this._config.shouldCollectDiffs) {
+      const distinctDiffs = new Set<string>();
+      const diffs = [];
+      for (let interaction of filteredItems) {
+        const resultsString: string = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          this.spec
+        );
+        const results = JSON.parse(resultsString);
+        results.forEach((result: any) => {
+          developerDebugLogger(result);
+          const [diff] = result;
+          distinctDiffs.add(JSON.stringify(diff));
+        });
+        diffs.push(...results);
       }
-    );
-    await fs.writeJson(
-      path.join(outputDirectory, `diffs-${batchId}.json`),
-      diffs
-    );
+
+      const distinctDiffCount = distinctDiffs.size;
+      developerDebugLogger({ distinctDiffCount });
+      await fs.writeJson(
+        path.join(outputDirectory, `interactions-${batchId}.json`),
+        {
+          interactionsCount: filteredItems.length,
+          totalInteractionsCount: items.length,
+          diffsCount: distinctDiffCount,
+          createdAt: new Date().toISOString(),
+        }
+      );
+      await fs.writeJson(
+        path.join(outputDirectory, `diffs-${batchId}.json`),
+        diffs
+      );
+    }
 
     if (this._config.shouldCollectCoverage) {
       const report = opticEngine.com.useoptic.diff.helpers

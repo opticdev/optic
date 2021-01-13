@@ -51,9 +51,15 @@ export const runCommandFlags = {
     default: false,
     required: false,
   }),
+  'collect-diffs': flags.boolean({
+    char: 'd',
+    default: true,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
   'collect-coverage'?: boolean;
+  'collect-diffs'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -75,7 +81,8 @@ export async function LocalTaskSessionWrapper(
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
   const runner = new LocalCliTaskRunner(captureId, paths, {
-    shouldCollectCoverage: flags['collect-coverage'] || false,
+    shouldCollectCoverage: flags['collect-coverage'] !== false,
+    shouldCollectDiffs: flags['collect-diffs'] !== false,
   });
   const session = new CliTaskSession(runner);
 
