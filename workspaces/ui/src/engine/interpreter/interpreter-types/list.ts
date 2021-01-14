@@ -205,16 +205,20 @@ function suggestionFor(
       )
     );
   } else {
-    SetParameterShape(
-      ProviderInShape(
-        expected.lastList(),
-        ShapeProvider(innerShape.listInnerShapeId),
-        ICoreShapeInnerParameterNames.ListInner
+    commands.push(
+      SetParameterShape(
+        ProviderInShape(
+          expected.lastList(),
+          ShapeProvider(innerShape.listInnerShapeId),
+          ICoreShapeInnerParameterNames.ListInner
+        )
       )
     );
   }
 
   const sharedCopy: ICopy[] = isWrappedInNullable ? [code('Nullable')] : [];
+
+  console.log('commands here ', serializeCommands(commands));
 
   return {
     action: {

@@ -19414,6 +19414,21 @@ Object {
             },
           },
         },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "shape_13",
+              },
+            },
+          },
+        },
       ],
     },
   ],
@@ -19811,6 +19826,22 @@ Array [
               },
             },
             "shapeId": "incrementing-id-shape_2",
+          },
+        },
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "shape_13",
           },
         },
       },
