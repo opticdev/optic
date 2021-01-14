@@ -29,7 +29,7 @@ const initialState = (debouncer = null) => {
     completed: false,
     skipped: '0',
     processed: '0',
-
+    didFail: false,
     reloadDebounce: debouncer,
     unrecognizedUrls: [],
     endpointDiffs: [],
@@ -196,8 +196,8 @@ class _CaptureContextStore extends React.Component {
           this.state.reloadDebounce(data);
         } else if (type === 'error') {
           console.error(data);
+          this.setState({ didFail: true });
           notificationChannel.close();
-          debugger;
         }
       };
       notificationChannel.onerror = (e) => {
@@ -239,6 +239,7 @@ class _CaptureContextStore extends React.Component {
       diffService,
       captureService,
       completed,
+      didFail,
       skipped,
       processed,
       rawDiffs,
@@ -261,6 +262,7 @@ class _CaptureContextStore extends React.Component {
       unrecognizedUrls,
       diffService,
       captureService,
+      didFail,
       completed,
       skipped,
       processed,
