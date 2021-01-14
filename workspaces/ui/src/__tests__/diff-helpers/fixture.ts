@@ -30,6 +30,7 @@ import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
+  rawSamples: any;
   diffs: DiffSet;
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
   learnInitial(
@@ -53,8 +54,10 @@ export async function loadsDiffsFromUniverse(
     rawDiffs,
     rfcBaseState,
     loadInteraction,
+    specService,
     learnInitial,
     learnTrailValues,
+    captureId,
   } = await universePromise;
   const diffsRaw = rawDiffs;
 
@@ -71,6 +74,7 @@ export async function loadsDiffsFromUniverse(
     rfcBaseState,
     loadInteraction,
     learnInitial,
+    rawSamples: (await specService.listCapturedSamples(captureId)).samples,
     learnTrailValues,
   };
 }
@@ -161,7 +165,16 @@ export async function canApplySuggestions(
     }
 
     function newEventStreamHasIntegrity() {
-      DiffEngine.spec_from_events(JSON.stringify(serializedEvents));
+      const spec = DiffEngine.spec_from_events(
+        JSON.stringify(serializedEvents)
+      );
+
+      for (let interaction of universe.rawSamples) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          spec
+        );
+      }
     }
 
     shapeCanRender();
