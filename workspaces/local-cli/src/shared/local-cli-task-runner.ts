@@ -189,7 +189,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     ////////////////////////////////////////////////////////////////////////////////
 
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
+    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review`;
     cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     );
 
     if (hasDiff) {
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
       const iconPath = path.join(__dirname, '../../assets/optic-logo-png.png');
       runScriptByName('notify', uiUrl, iconPath);
 

@@ -2,13 +2,13 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/core/styles';
-import { PathAndMethodLarge } from '../v2/PathAndMethod';
 import { Typography } from '@material-ui/core';
 import { JsonHelper } from '@useoptic/domain';
 import { getReasonPhrase } from 'http-status-codes';
-import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewerAllJS';
+import InteractionBodyViewerAllJS from './shape-viewers/InteractionBodyViewerAllJS';
 import Grid from '@material-ui/core/Grid';
 import { OpticBlue } from '../../../theme';
+import { PathAndMethodLarge } from './PathAndMethod';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

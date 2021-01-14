@@ -7,6 +7,7 @@ import {
 } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 import path from 'path';
+import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
 import { fork } from 'stream-fork';
 import { Readable, Writable } from 'stream';
@@ -132,17 +133,34 @@ export class DiffWorkerRust {
       JSONLStringer(),
     ]);
     const diffsSink = fs.createWriteStream(diffOutputPaths.diffsStream);
-    diffsSink.once('finish', () => {
-      this.finish();
-    });
-    diffsSink.once('error', (err) => {
-      this.destroy(err);
+    let writingDiffs: Promise<void> = new Promise((resolve, reject) => {
+      function onFinish() {
+        cleanup();
+        resolve();
+      }
+      function onError(err: Error) {
+        cleanup();
+        reject(err);
+      }
+
+      function cleanup() {
+        diffsSink.removeListener('finish', onFinish);
+        diffsSink.removeListener('error', onError);
+      }
+
+      diffsSink.once('finish', onFinish);
+      diffsSink.once('error', onError);
     });
 
     const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-    diffEngine.result.catch((err) => {
-      this.destroy(err);
-    });
+    Promise.all([diffEngine.result, writingDiffs]).then(
+      () => {
+        this.finish();
+      },
+      (err) => {
+        this.destroy(err);
+      }
+    );
 
     const diffEngineLog = fs.createWriteStream(
       path.join(diffOutputPaths.base, 'diff-engine-output.log')

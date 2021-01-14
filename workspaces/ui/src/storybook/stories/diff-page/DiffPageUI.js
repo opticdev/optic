@@ -23,7 +23,7 @@ import { CoverageDots } from './CoverageDots';
 import { DiffCounter } from './DiffCounter';
 import Checkbox from '@material-ui/core/Checkbox';
 import Zoom from '@material-ui/core/Zoom';
-import { HardCodedDiffExamples } from '../../../components/diff/v2/shape_viewers/DiffReviewTypes';
+import { HardCodedDiffExamples } from '../../../components/diff/review-diff/shape-viewers/DiffReviewTypes';
 import { Code, DiffSummaryRegion } from './DiffSummaryRegion';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';

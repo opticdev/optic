@@ -7,6 +7,7 @@ import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContex
 import EventEmitter from 'events';
 import { RfcCommandContext } from '@useoptic/domain';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
+import { AnalyticsContextStore } from '../../utilities/useAnalyticsHook';
 
 export function ApiSpecServiceLoader(props) {
   const debugData = useMockData();
@@ -42,13 +43,15 @@ export function ApiSpecServiceLoader(props) {
       diffServiceFactory={diffServiceFactory}
       captureServiceFactory={captureServiceFactory}
     >
-      <InitialRfcCommandsStore
-        initialEventsString={events}
-        rfcId="testRfcId"
-        instance="the one in ApiSpecServiceLoader"
-      >
-        <RfcStore specService={specService}>{props.children}</RfcStore>
-      </InitialRfcCommandsStore>
+      <AnalyticsContextStore specService={specService}>
+        <InitialRfcCommandsStore
+          initialEventsString={events}
+          rfcId="testRfcId"
+          instance="the one in ApiSpecServiceLoader"
+        >
+          <RfcStore specService={specService}>{props.children}</RfcStore>
+        </InitialRfcCommandsStore>
+      </AnalyticsContextStore>
     </SpecServiceStore>
   );
 }
@@ -88,15 +91,17 @@ export function LocalCliSpecServiceLoader(props) {
       diffServiceFactory={diffServiceFactory}
       captureServiceFactory={captureServiceFactory}
     >
-      <InitialRfcCommandsStore
-        initialEventsString={events}
-        rfcId="testRfcId"
-        instance="the one in LocalCliSpecServiceLoader"
-      >
-        <LocalRfcStore specService={specService}>
-          {props.children}
-        </LocalRfcStore>
-      </InitialRfcCommandsStore>
+      <AnalyticsContextStore specService={specService}>
+        <InitialRfcCommandsStore
+          initialEventsString={events}
+          rfcId="testRfcId"
+          instance="the one in LocalCliSpecServiceLoader"
+        >
+          <LocalRfcStore specService={specService}>
+            {props.children}
+          </LocalRfcStore>
+        </InitialRfcCommandsStore>
+      </AnalyticsContextStore>
     </SpecServiceStore>
   );
 }
@@ -214,7 +219,7 @@ export async function createExampleSpecServiceFactory(data) {
 
   const config = {
     config: {
-      apiName: 'Example API',
+      name: 'Example API',
       ignoreRequests,
     },
     configRaw:

@@ -241,7 +241,10 @@ class FieldShapeInterpretationHelper {
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
     });
-    return sortBy(previews, (i) => !i.invalid);
+    return sortBy(
+      sortBy(previews, (i) => [!i.invalid]),
+      (i) => i.title !== 'missing'
+    );
   }
 
   private wrapFieldShapeWithOptional(

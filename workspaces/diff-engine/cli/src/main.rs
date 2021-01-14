@@ -1,4 +1,6 @@
-use clap::{App, Arg, crate_version};
+use clap::{crate_version, App, Arg};
+use futures::future;
+use futures::try_join;
 use futures::SinkExt;
 use num_cpus;
 use optic_diff_engine::diff_interaction;
@@ -14,6 +16,7 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
+use tokio::task::{JoinError, JoinHandle};
 
 fn main() {
   let cli = App::new("Optic Diff engine")
@@ -106,57 +109,110 @@ fn main() {
       }
     });
 
+    let mut diff_tasks: Vec<JoinHandle<()>> = Vec::with_capacity(diff_queue_size);
+
+    tokio::pin!(results_manager);
+
     dbg!("waiting for next interaction");
-    while let Some(interaction_json_result) = interaction_lines.next().await {
-      //dbg!("got next interaction");
-      let diff_permits = diff_scheduling_permits.clone();
-      let projection = spec_projection.clone();
-      let mut results_sender = results_sender.clone();
-      //dbg!("waiting for permit");
-      let diff_task_permit = diff_permits.acquire_owned().await;
-      //dbg!("got permit");
 
-      tokio::spawn(async move {
-        let diff_comp =
-          tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
-            let interaction_json =
-              interaction_json_result.expect("can read interaction json line from stdin");
-            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-              match serde_json::from_str(&interaction_json) {
-                Ok(tagged_interaction) => tagged_interaction,
-                Err(parse_error) => {
-                  eprintln!("could not parse interaction json: {}", parse_error);
-                  return None;
-                }
-              };
+    loop {
+      let next_action = tokio::select! {
+        // scheduling a diff task upon new input
+        (next_interaction, diff_task_permit) = async {
+          let diff_permits = diff_scheduling_permits.clone();
+          //dbg!("waiting for permit");
+          let diff_task_permit = diff_permits.acquire_owned().await;
+          //dbg!("got permit");
+          
+          let next_interaction = interaction_lines.next().await;
 
-            Some((diff_interaction(&projection, interaction), tags))
-          });
-        //dbg!("waiting for results");
-        let results = diff_comp
-          .await
-          .expect("diffing of interaction should be successful");
-        //dbg!("got results");
+          (next_interaction, diff_task_permit)
+        } => {
+          if let None = next_interaction {
+            // end of input, stop looping
+            break;
+          } 
 
-        if let Some((results, tags)) = results {
-          for result in results {
-            //dbg!(&result);
-            if let Err(_) = results_sender
-              .send(ResultContainer::from((result, &tags)))
+          let interaction_json_result = next_interaction.unwrap();
+
+          //dbg!("got next interaction");
+          let projection = spec_projection.clone();
+          let mut results_sender = results_sender.clone();
+
+          let diff_task = tokio::spawn(async move {
+            let diff_comp =
+              tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
+                let interaction_json =
+                  interaction_json_result.expect("can read interaction json line from stdin");
+                let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
+                  match serde_json::from_str(&interaction_json) {
+                    Ok(tagged_interaction) => tagged_interaction,
+                    Err(parse_error) => {
+                      eprintln!("could not parse interaction json: {}", parse_error);
+                      return None;
+                    }
+                  };
+
+                Some((diff_interaction(&projection, interaction), tags))
+              });
+            //dbg!("waiting for results");
+            let results = diff_comp
               .await
-            {
-              panic!("could not write diff result to results channel");
-              // TODO: Find way to actually write error info
-            }
-          }
-        }
+              .expect("diffing of interaction should be successful");
+            //dbg!("got results");
 
-        drop(diff_task_permit);
-      });
+            if let Some((results, tags)) = results {
+              for result in results {
+                //dbg!(&result);
+                if let Err(_) = results_sender
+                  .send(ResultContainer::from((result, &tags)))
+                  .await
+                {
+                  panic!("could not write diff result to results channel");
+                  // TODO: Find way to actually write error info
+                }
+              }
+            }
+
+            drop(diff_task_permit);
+          });
+
+          // dbg!("Scheduling task", diff_tasks.len() + 1);
+          diff_tasks.push(diff_task);
+
+          Ok::<_, JoinError>(())
+        },
+
+        // propagating errors / panics from the diff tasks
+        Some(res) = async {
+          if diff_tasks.is_empty() {
+            None
+          } else {
+            // dbg!("Waiting for a worker task to finish");
+            let (finished_diff_task_result, task_index, _) = future::select_all(&mut diff_tasks).await;
+            // dbg!("Task finished!", task_index);
+            diff_tasks.remove(task_index);
+
+            Some(finished_diff_task_result)
+          }
+        } => {
+          res
+        },
+
+        // propagating errors / panics from the results manager
+        Err(err) = &mut results_manager => {
+          Err(err)
+        }
+      };
+
+      // panic when scheduling, diff tasks 
+      next_action.expect("essential worker task panicked");
     }
 
     drop(results_sender);
-    results_manager.await.unwrap(); // make sure the results manager is done flushing
+
+    let completing_diff_tasks = future::try_join_all(diff_tasks);
+    try_join!(completing_diff_tasks, results_manager).expect("essential worker task panicked");
   })
 }
 

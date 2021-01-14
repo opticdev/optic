@@ -2,10 +2,14 @@ import Bottleneck from 'bottleneck';
 import fs from 'fs-extra';
 import path from 'path';
 import avro from 'avsc';
-import { IGroupingIdentifiers, IHttpInteraction } from '@useoptic/domain-types';
+import {
+  IInteractionBatch,
+  IGroupingIdentifiers,
+  IHttpInteraction,
+} from '@useoptic/domain-types';
 import { developerDebugLogger, ICaptureSaver } from '../../../index';
 import { captureFileSuffix } from './index';
-import { serdesWithBodies } from './avro-schemas/interaction-batch-helpers';
+import { schema } from '../index';
 
 interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string;
@@ -79,17 +83,20 @@ export class CaptureSaver implements ICaptureSaver {
       outputDirectory,
       `${batchId}${captureFileSuffix}`
     );
+    const output: IInteractionBatch = {
+      groupingIdentifiers,
+      batchItems: items,
+    };
+
     try {
-      const encoder = avro.createFileEncoder(outputFile, serdesWithBodies);
+      const encoder = avro.createFileEncoder(outputFile, schema);
       await new Promise((resolve, reject) => {
-        for (const item of items) {
-          encoder.write(item, (err) => {
-            if (err) {
-              return reject(err);
-            }
-          });
-        }
-        resolve();
+        encoder.write(output, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
       });
       await new Promise((resolve, reject) => {
         encoder.end(() => {

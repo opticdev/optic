@@ -31,6 +31,7 @@ const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
       clientId: clientId,
       clientSessionInstanceId: batchId,
       clientTimestamp: new Date().toISOString(),
+      apiName: '',
     };
     return clientContext;
   }
@@ -38,6 +39,12 @@ const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
 
 export function track(...events: TrackingEventBase<any>[]): void {
   analyticsEvents.emit(...events);
+}
+
+export function trackWithApiName(apiName: string) {
+  return (...events: TrackingEventBase<any>[]) => {
+    analyticsEvents.emit(...events);
+  };
 }
 
 export const analyticsEventEmitter = analyticsEvents.eventEmitter;

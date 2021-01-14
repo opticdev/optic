@@ -115,6 +115,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -144,7 +152,7 @@ export const newApplyChangesMachine = (
             batchHandler.doWork(({ emitCommands }) => emitCommands(commands));
 
             const throttler = new Bottleneck({
-              maxConcurrent: 1,
+              maxConcurrent: 5,
               minTime: 100,
             });
 
@@ -171,12 +179,14 @@ export const newApplyChangesMachine = (
                     });
                   });
 
-                  return await promise;
+                  return await promise.catch(() => null);
                 });
               }
             );
 
-            const allBodies: ILearnedBodies[] = await Promise.all(results);
+            const allBodies: ILearnedBodies[] = (
+              await Promise.all(results)
+            ).filter((i) => Boolean(i));
             return allBodies;
           },
           onDone: {
@@ -186,6 +196,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -223,6 +241,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -267,7 +293,7 @@ export const newApplyChangesMachine = (
                 console.error(event);
               },
               assign({
-                error: (ctx, event) => event.data.ln,
+                error: (ctx, event) => event.data.message,
               }),
             ],
             target: 'failed',
