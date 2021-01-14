@@ -58,6 +58,7 @@ export function ReviewBatchSelect(props) {
       </div>
       <Menu
         open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         classes={{ list: classes.menuListClass }}
       >
