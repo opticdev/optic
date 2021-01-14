@@ -6,7 +6,7 @@ import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-s
 import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
-import { LoadingReviewPage } from './LoadingPage';
+import { ErrorLoadingReviewPage, LoadingReviewPage } from './LoadingPage';
 import Page from '../../Page';
 import { useAnalyticsHook } from '../../../utilities/useAnalyticsHook';
 
@@ -70,7 +70,12 @@ export function DiffSessionMachineStore(props) {
     loadInteraction: captureService.loadInteraction.bind(captureService),
   });
 
-  const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();
+  const {
+    completed,
+    rawDiffs,
+    unrecognizedUrlsRaw,
+    didFail,
+  } = useCaptureContext();
 
   const [statedTime] = useState(Date.now());
 
@@ -112,6 +117,10 @@ export function DiffSessionMachineStore(props) {
       return captureService.loadInteraction(interactionPointer);
     },
   };
+
+  if (didFail) {
+    return <ErrorLoadingReviewPage />;
+  }
 
   return (
     <DiffSessionContext.Provider value={reactContext}>
