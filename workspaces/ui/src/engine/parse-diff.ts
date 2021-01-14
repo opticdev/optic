@@ -92,10 +92,12 @@ export class ParsedDiff {
       method: location!.method,
       inRequest: DiffInRequest(this.diffType) && {
         contentType: location.contentType,
+        requestId: location.requestId,
       },
       inResponse: DiffInResponse(this.diffType) && {
         statusCode: location.statusCode!,
         contentType: location.contentType,
+        responseId: location.responseId,
       },
     };
   }

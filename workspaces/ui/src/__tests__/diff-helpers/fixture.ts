@@ -26,9 +26,11 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { universeFromEvents } from '@useoptic/domain-utilities';
+import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
+  rawSamples: any;
   diffs: DiffSet;
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
   learnInitial(
@@ -52,8 +54,10 @@ export async function loadsDiffsFromUniverse(
     rawDiffs,
     rfcBaseState,
     loadInteraction,
+    specService,
     learnInitial,
     learnTrailValues,
+    captureId,
   } = await universePromise;
   const diffsRaw = rawDiffs;
 
@@ -70,6 +74,7 @@ export async function loadsDiffsFromUniverse(
     rfcBaseState,
     loadInteraction,
     learnInitial,
+    rawSamples: (await specService.listCapturedSamples(captureId)).samples,
     learnTrailValues,
   };
 }
@@ -142,6 +147,8 @@ export async function canApplySuggestions(
 
     const serializedEvents = JSON.parse(eventStore.serializeEvents(rfcId));
 
+    // console.log(JSON.stringify(serializedEvents));
+
     const firstResponseSetShapeId = serializedEvents.find(
       (i) => i['ResponseBodySet']
     )['ResponseBodySet'].bodyDescriptor.shapeId;
@@ -159,7 +166,21 @@ export async function canApplySuggestions(
       const result = previewer.previewShape(bodyOption);
     }
 
+    function newEventStreamHasIntegrity() {
+      const spec = DiffEngine.spec_from_events(
+        JSON.stringify(serializedEvents)
+      );
+
+      for (let interaction of universe.rawSamples) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          spec
+        );
+      }
+    }
+
     shapeCanRender();
+    newEventStreamHasIntegrity();
 
     return serializedEvents;
   }

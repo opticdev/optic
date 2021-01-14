@@ -205,11 +205,13 @@ function suggestionFor(
       )
     );
   } else {
-    SetParameterShape(
-      ProviderInShape(
-        expected.lastList(),
-        ShapeProvider(innerShape.listInnerShapeId),
-        ICoreShapeInnerParameterNames.ListInner
+    commands.push(
+      SetParameterShape(
+        ProviderInShape(
+          expected.lastList(),
+          ShapeProvider(innerShape.listInnerShapeId),
+          ICoreShapeInnerParameterNames.ListInner
+        )
       )
     );
   }

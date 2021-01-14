@@ -17,6 +17,8 @@ export function locationForTrails(
   | {
       pathId: string;
       method: string;
+      requestId?: string;
+      responseId?: string;
       inRequest?: boolean;
       inResponse?: boolean;
       statusCode?: number;
@@ -41,6 +43,7 @@ export function locationForTrails(
     return {
       pathId: pathComponentId,
       method: httpMethod,
+      requestId,
       contentType,
       inRequest: true,
     };
@@ -56,6 +59,7 @@ export function locationForTrails(
 
     return {
       pathId: pathComponentId,
+      requestId,
       method: httpMethod,
       contentType,
       inRequest: true,
@@ -74,6 +78,7 @@ export function locationForTrails(
       pathId: pathId,
       method: httpMethod,
       statusCode: httpStatusCode,
+      responseId,
       contentType,
       inResponse: true,
     };
@@ -92,6 +97,7 @@ export function locationForTrails(
       pathId: pathId,
       method: httpMethod,
       statusCode: httpStatusCode,
+      responseId,
       contentType,
       inResponse: true,
     };

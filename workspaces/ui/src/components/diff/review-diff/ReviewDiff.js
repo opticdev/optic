@@ -522,7 +522,9 @@ function IgnoreButton({ selectedPreviewTab, preview, endpointActions }) {
     return null;
   }
 
-  const lastOne = preview.tabs.filter((i) => i.invalid).length === 1;
+  const lastOne =
+    preview.tabs.filter((i) => i.invalid).length === 1 &&
+    selectedPreviewTab.invalid;
 
   return (
     <LightTooltip
