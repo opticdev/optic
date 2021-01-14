@@ -397,7 +397,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 350,
     maxWidth: 420,
     background: theme.palette.grey[100],
-    overflow: 'scroll',
+    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 900,
@@ -413,6 +413,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: '#d2d2d2',
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
   },
   listInner: {
     padding: 9,
@@ -446,6 +447,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
     paddingTop: 0,
   },
   rightAction: {
