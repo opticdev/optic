@@ -126,7 +126,10 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   constructor(
     private captureId: string,
     private paths: IPathMapping,
-    private options: { shouldCollectCoverage: boolean, shouldCollectDiffs: boolean }
+    private options: {
+      shouldCollectCoverage: boolean;
+      shouldCollectDiffs: boolean;
+    }
   ) {}
 
   async run(
@@ -138,6 +141,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     ////////////////////////////////////////////////////////////////////////////////
 
     await trackUserEvent(
+      config.name,
       StartedTaskWithLocalCli.withProps({
         inputs: opticTaskToProps('', taskConfig),
         cwd: this.paths.cwd,
@@ -206,7 +210,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
         captureBaseDirectory: capturesPath,
         captureId,
         shouldCollectCoverage: this.options.shouldCollectCoverage,
-        shouldCollectDiffs: this.options.shouldCollectDiffs
+        shouldCollectDiffs: this.options.shouldCollectDiffs,
       },
       config,
       specServiceClient
@@ -247,6 +251,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const hasDiff = summary.diffsCount > 0;
 
     await trackUserEvent(
+      config.name,
       ExitedTaskWithLocalCli.withProps({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),

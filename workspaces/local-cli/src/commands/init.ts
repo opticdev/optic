@@ -115,6 +115,7 @@ export default class Init extends Command {
     await startInitFlow();
 
     await trackUserEvent(
+      name,
       ApiInitializedInProject.withProps({
         cwd: cwd,
         source:

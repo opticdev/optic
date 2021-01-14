@@ -42,8 +42,12 @@ export function track(...events: TrackingEventBase<any>[]): void {
 }
 
 export function trackWithApiName(apiName: string) {
-  return (...events: TrackingEventBase<any>[]) => {
-    analyticsEvents.emit(...events);
+  return (events: TrackingEventBase<any>[]) => {
+    analyticsEvents.emit(
+      ...events.map((i) => {
+        return { ...i, context: { ...i.context, apiName } };
+      })
+    );
   };
 }
 
