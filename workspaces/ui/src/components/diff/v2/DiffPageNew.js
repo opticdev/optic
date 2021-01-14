@@ -28,7 +28,6 @@ import {
   useCaptureContext,
 } from '../../../contexts/CaptureContext';
 import { DiffReviewPage } from './DiffReviewPage';
-import { trackUserEvent } from '../../../Analytics';
 import {
   UserResetDiff,
   UserAcceptedSuggestion,
@@ -158,7 +157,7 @@ const InnerDiffWrapper = function (props) {
         updatedAdditionalCommands([]);
         resetIgnored();
         resetAccepted();
-        trackUserEvent(UserResetDiff.withProps({}));
+        // trackUserEvent(UserResetDiff.withProps({}));
       }}
       acceptSuggestion={(...suggestions) => {
         if (suggestions) {
@@ -169,12 +168,12 @@ const InnerDiffWrapper = function (props) {
             .reduce(flatten, []);
           updatedAdditionalCommands(simulatedCommands);
           suggestions.map((i) => {
-            trackUserEvent(
-              UserAcceptedSuggestion.withProps({
-                captureId,
-                suggestion: i.action,
-              })
-            );
+            // trackUserEvent(
+            //   UserAcceptedSuggestion.withProps({
+            //     captureId,
+            //     suggestion: i.action,
+            //   })
+            // );
           });
         }
       }}

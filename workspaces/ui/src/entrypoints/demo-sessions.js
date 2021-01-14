@@ -8,7 +8,6 @@ import {
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
 import { Snackbar, makeStyles } from '@material-ui/core';
-import { analyticsEvents } from '../Analytics';
 import * as DiffEvents from '@useoptic/analytics/lib/events/diffs';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
@@ -16,7 +15,6 @@ import {
   ColorButton,
   SubtleBlueBackground,
 } from '../theme';
-import { subtabs } from '../components/diff/v2/CaptureManagerPage';
 
 const snackbarStyles = makeStyles({
   alert: {
@@ -127,11 +125,7 @@ export default function DemoSessions(props) {
             message: `Nice! Descriptions will stay attached to their endpoint/fields even when the specification changes!\n\nLet's check back and see if there are any other diffs to approve`,
             action: {
               text: 'Review all diffs',
-              href: `/demos/todo/diffs/example-session?tab=${
-                hasDocumentedAllEndpointDiffs
-                  ? subtabs.UNDOCUMENTED_URL
-                  : subtabs.ENDPOINT_DIFF
-              }`,
+              href: `/demos/todo/diffs/example-session`,
             },
           });
           break;
@@ -279,10 +273,9 @@ export default function DemoSessions(props) {
       }
     };
 
-    analyticsEvents.listen(eventsHandler);
+    // analyticsEvents.listen(eventsHandler);
 
-    return () =>
-      analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
+    // return () => analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
   }, []);
 
   // event specific info boxes

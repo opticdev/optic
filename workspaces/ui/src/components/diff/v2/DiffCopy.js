@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { mapScala } from '@useoptic/domain';
 import { UpdatedBlue, UpdatedBlueBackground } from '../../../theme';
-import { track } from '../../../Analytics';
 
 export function DiffCopy(props) {
   const classes = useStyles();
