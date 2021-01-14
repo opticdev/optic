@@ -273,6 +273,7 @@ test('root array is provided with object.managed', async () => {
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
+  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();

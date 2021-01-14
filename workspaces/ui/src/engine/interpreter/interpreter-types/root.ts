@@ -43,10 +43,10 @@ export function rootShapeDiffInterpreter(
   if (isUnmatched) {
     const withUnion = targetKindSuggestion(true, expected, actual);
     const withoutUnion = targetKindSuggestion(false, expected, actual);
-    suggestions.push(suggestionFor(withUnion, expected, actual, services));
-    if (!setEquals(withoutUnion.targetFinal, withoutUnion.targetFinal)) {
+    if (!setEquals(withUnion.targetFinal, withoutUnion.targetFinal)) {
       suggestions.push(suggestionFor(withoutUnion, expected, actual, services));
     }
+    suggestions.push(suggestionFor(withUnion, expected, actual, services));
   }
 
   invariant(

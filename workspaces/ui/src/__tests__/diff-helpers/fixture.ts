@@ -26,6 +26,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { universeFromEvents } from '@useoptic/domain-utilities';
+import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
@@ -159,7 +160,12 @@ export async function canApplySuggestions(
       const result = previewer.previewShape(bodyOption);
     }
 
+    function newEventStreamHasIntegrity() {
+      DiffEngine.spec_from_events(JSON.stringify(serializedEvents));
+    }
+
     shapeCanRender();
+    newEventStreamHasIntegrity();
 
     return serializedEvents;
   }
