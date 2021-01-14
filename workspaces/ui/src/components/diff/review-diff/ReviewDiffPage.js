@@ -1,14 +1,12 @@
 import { useRouterPaths } from '../../../RouterPaths';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import React, { useContext, useEffect } from 'react';
-import { AllCapturesContext, AllCapturesStore } from '../v2/CaptureManagerPage';
+import { AllCapturesContext, AllCapturesStore } from './AllCapturesContext';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { CaptureContextStore } from '../../../contexts/CaptureContext';
 import { useServices } from '../../../contexts/SpecServiceContext';
 import { LoadingDiffPage, ReviewDiffSession } from './ReviewDiffSession';
 import { ReviewUI } from './ReviewUI';
-import Page from '../../Page';
 import { debugDump } from '../../../utilities/debug-dump';
 
 export function ReviewDiffPage(props) {

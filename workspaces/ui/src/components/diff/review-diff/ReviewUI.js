@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from '@material-ui/core/Box';
-import { PathAndMethodMono } from '../v2/PathAndMethod';
 import { DocDarkGrey, DocGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
@@ -24,6 +23,7 @@ import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { debugDump } from '../../../utilities/debug-dump';
 import equals from 'lodash.isequal';
 import { DiffSummaryRegion } from './ReviewDiff';
+import { PathAndMethodMono } from './PathAndMethod';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();

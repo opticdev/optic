@@ -28,7 +28,7 @@ import Tab from '@material-ui/core/Tab';
 import { DocDarkGrey } from '../../docs/DocConstants';
 import { ICopyRender, ICopyRenderMultiline } from './ICopyRender';
 import Skeleton from '@material-ui/lab/Skeleton';
-import InteractionBodyViewerAllJS from '../v2/shape_viewers/InteractionBodyViewerAllJS';
+import InteractionBodyViewerAllJS from './shape-viewers/InteractionBodyViewerAllJS';
 import { SuggestionSelect } from './SuggestionSelect';
 import Fade from '@material-ui/core/Fade';
 import { plain, code, bold } from '../../../engine/interfaces/interpretors';

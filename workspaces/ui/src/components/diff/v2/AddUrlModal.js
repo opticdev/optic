@@ -27,7 +27,6 @@ import { pathMethodKeyBuilder, PURPOSE } from '../../../ContributionKeys';
 import { PathAndMethod } from './PathAndMethod';
 import { useHistory } from 'react-router-dom';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
-import { trackUserEvent, track } from '../../../Analytics';
 import {
   AddUrlModalNaming,
   AddUrlModalIdentifyingPathComponents,
@@ -70,33 +69,33 @@ export const NewUrlModal = withRfcContext((props) => {
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
   const handleClickOpen = () => {
-    trackUserEvent(
-      UserBeganAddingNewUrl.withProps({
-        captureId: captureId,
-        method: newUrl.method,
-        path: newUrl.path,
-        knownPathId,
-      })
-    );
+    // trackUserEvent(
+    //   UserBeganAddingNewUrl.withProps({
+    //     captureId: captureId,
+    //     method: newUrl.method,
+    //     path: newUrl.path,
+    //     knownPathId,
+    //   })
+    // );
   };
 
   useEffect(() => {
     if (naming) {
       // AddUrlModal - Naming Endpoint
-      trackUserEvent(
-        AddUrlModalNaming.withProps({
-          path: newUrl.path,
-          method: newUrl.method,
-        })
-      );
+      // trackUserEvent(
+      //   AddUrlModalNaming.withProps({
+      //     path: newUrl.path,
+      //     method: newUrl.method,
+      //   })
+      // );
     } else {
       // AddUrlModal - Path Components
-      trackUserEvent(
-        AddUrlModalIdentifyingPathComponents.withProps({
-          path: newUrl.path,
-          method: newUrl.method,
-        })
-      );
+      // trackUserEvent(
+      //   AddUrlModalIdentifyingPathComponents.withProps({
+      //     path: newUrl.path,
+      //     method: newUrl.method,
+      //   })
+      // );
     }
   }, [naming]);
 
@@ -111,14 +110,14 @@ export const NewUrlModal = withRfcContext((props) => {
   };
 
   const handleCreate = (purpose) => {
-    trackUserEvent(
-      UserFinishedAddingNewUrl.withProps({
-        purpose,
-        captureId,
-        method: newUrl.method,
-        pathExpression,
-      })
-    );
+    // trackUserEvent(
+    //   UserFinishedAddingNewUrl.withProps({
+    //     purpose,
+    //     captureId,
+    //     method: newUrl.method,
+    //     pathExpression,
+    //   })
+    // );
 
     let lastParentPathId = knownPathId;
     const commands = [];
