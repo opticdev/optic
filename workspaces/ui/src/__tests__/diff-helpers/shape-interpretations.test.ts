@@ -147,7 +147,6 @@ test('an required object field is ommitted.managed', async () => {
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
-  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
@@ -217,7 +216,6 @@ test('array with object listitem is provided with one matching and one primitive
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
-  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();
@@ -274,7 +272,6 @@ test('root array is provided with object.managed', async () => {
   const diff = universe.diffs.groupedByEndpointAndShapeTrail()[0];
   const preview = await shapeDiffPreview(diff, universe);
   expect(preview).toMatchSnapshot();
-  logResult(preview);
   expect(
     await canApplySuggestions(preview.suggestions, universe)
   ).toMatchSnapshot();

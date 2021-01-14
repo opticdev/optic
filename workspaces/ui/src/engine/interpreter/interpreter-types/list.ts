@@ -218,8 +218,6 @@ function suggestionFor(
 
   const sharedCopy: ICopy[] = isWrappedInNullable ? [code('Nullable')] : [];
 
-  console.log('commands here ', serializeCommands(commands));
-
   return {
     action: {
       activeTense: [

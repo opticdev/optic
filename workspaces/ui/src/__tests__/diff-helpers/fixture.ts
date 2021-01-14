@@ -147,6 +147,8 @@ export async function canApplySuggestions(
 
     const serializedEvents = JSON.parse(eventStore.serializeEvents(rfcId));
 
+    // console.log(JSON.stringify(serializedEvents));
+
     const firstResponseSetShapeId = serializedEvents.find(
       (i) => i['ResponseBodySet']
     )['ResponseBodySet'].bodyDescriptor.shapeId;

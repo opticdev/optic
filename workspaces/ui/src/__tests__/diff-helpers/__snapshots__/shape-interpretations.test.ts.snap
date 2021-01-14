@@ -19,6 +19,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -823,6 +824,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -1779,6 +1781,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -2919,6 +2922,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -4059,6 +4063,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -5097,6 +5102,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -6144,6 +6150,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -8376,6 +8383,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -9538,6 +9546,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -9680,6 +9689,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "shape_7",
               },
             },
           },
@@ -10174,6 +10198,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_7",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -10202,6 +10242,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -12634,6 +12675,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -13704,6 +13746,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -14590,6 +14633,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -15145,6 +15189,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -16057,6 +16102,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -16974,6 +17020,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18144,6 +18191,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18288,6 +18336,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_4",
+                  },
+                },
+                "shapeId": "shape_13",
               },
             },
           },
@@ -18688,6 +18751,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -18716,6 +18795,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18860,6 +18940,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_4",
+                  },
+                },
+                "shapeId": "shape_13",
               },
             },
           },
@@ -19260,6 +19355,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -19288,6 +19399,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -19875,6 +19987,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_KBRwJqndED",
         "statusCode": 200,
       },
       "method": "GET",
@@ -20038,6 +20151,71 @@ Object {
       ],
       "ignoreRule": Object {
         "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Time",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
         "examplesOfCoreShapeKinds": "$optional",
       },
       "interactionPointers": Array [
@@ -20127,71 +20305,6 @@ Object {
         ],
       },
       "title": "missing",
-    },
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [
-        Object {
-          "style": 0,
-          "text": "expected required",
-        },
-        Object {
-          "style": 1,
-          "text": "Object",
-        },
-      ],
-      "ignoreRule": Object {
-        "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
-        "examplesOfCoreShapeKinds": "$object",
-      },
-      "interactionPointers": Array [
-        "id",
-      ],
-      "invalid": false,
-      "jsonTrailsByInteractions": Object {
-        "id": Array [
-          Object {
-            "path": Array [
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "MRData",
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "RaceTable",
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Races",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 0,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Results",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 0,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Time",
-                },
-              },
-            ],
-          },
-        ],
-      },
-      "title": "object",
     },
   ],
 }
@@ -23985,6 +24098,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -24107,6 +24221,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "baseline-shape_5",
               },
             },
           },
@@ -24560,6 +24689,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -24588,6 +24733,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -24755,6 +24901,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "baseline-shape_5",
               },
             },
           },
@@ -25294,6 +25455,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -25322,6 +25499,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -25398,9 +25576,13 @@ Object {
           },
         },
         Object {
-          "SetBaseShape": Object {
-            "baseShapeId": "incrementing-id-shape_2",
-            "shapeId": "shape_3",
+          "SetResponseBodyShape": Object {
+            "bodyDescriptor": Object {
+              "httpContentType": "application/json",
+              "isRemoved": false,
+              "shapeId": "incrementing-id-shape_2",
+            },
+            "responseId": "response_1",
           },
         },
       ],
@@ -25533,9 +25715,13 @@ Object {
           },
         },
         Object {
-          "SetBaseShape": Object {
-            "baseShapeId": "incrementing-id-shape_5",
-            "shapeId": "shape_3",
+          "SetResponseBodyShape": Object {
+            "bodyDescriptor": Object {
+              "httpContentType": "application/json",
+              "isRemoved": false,
+              "shapeId": "incrementing-id-shape_5",
+            },
+            "responseId": "response_1",
           },
         },
       ],
@@ -25737,10 +25923,14 @@ Array [
       },
     },
     Object {
-      "BaseShapeSet": Object {
-        "baseShapeId": "incrementing-id-shape_2",
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "incrementing-id-shape_2",
+        },
         "eventContext": null,
-        "shapeId": "shape_3",
+        "responseId": "response_1",
       },
     },
     Object {
@@ -25989,10 +26179,14 @@ Array [
       },
     },
     Object {
-      "BaseShapeSet": Object {
-        "baseShapeId": "incrementing-id-shape_5",
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "incrementing-id-shape_5",
+        },
         "eventContext": null,
-        "shapeId": "shape_3",
+        "responseId": "response_1",
       },
     },
     Object {
@@ -26024,6 +26218,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
