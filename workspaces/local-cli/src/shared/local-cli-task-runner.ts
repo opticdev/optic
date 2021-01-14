@@ -51,9 +51,15 @@ export const runCommandFlags = {
     default: false,
     required: false,
   }),
+  'collect-diffs': flags.boolean({
+    char: 'd',
+    default: true,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
   'collect-coverage'?: boolean;
+  'collect-diffs'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -74,7 +80,10 @@ export async function LocalTaskSessionWrapper(
 
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
-  const runner = new LocalCliTaskRunner(captureId, paths);
+  const runner = new LocalCliTaskRunner(captureId, paths, {
+    shouldCollectCoverage: flags['collect-coverage'] !== false,
+    shouldCollectDiffs: flags['collect-diffs'] !== false,
+  });
   const session = new CliTaskSession(runner);
 
   const task = config.tasks[taskName];
@@ -114,7 +123,11 @@ export async function LocalTaskSessionWrapper(
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
-  constructor(private captureId: string, private paths: IPathMapping) {}
+  constructor(
+    private captureId: string,
+    private paths: IPathMapping,
+    private options: { shouldCollectCoverage: boolean, shouldCollectDiffs: boolean }
+  ) {}
 
   async run(
     cli: Command,
@@ -192,6 +205,8 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       {
         captureBaseDirectory: capturesPath,
         captureId,
+        shouldCollectCoverage: this.options.shouldCollectCoverage,
+        shouldCollectDiffs: this.options.shouldCollectDiffs
       },
       config,
       specServiceClient
