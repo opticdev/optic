@@ -126,7 +126,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
   constructor(
     private captureId: string,
     private paths: IPathMapping,
-    private options: { shouldCollectCoverage: boolean }
+    private options: { shouldCollectCoverage: boolean, shouldCollectDiffs: boolean }
   ) {}
 
   async run(
@@ -206,6 +206,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
         captureBaseDirectory: capturesPath,
         captureId,
         shouldCollectCoverage: this.options.shouldCollectCoverage,
+        shouldCollectDiffs: this.options.shouldCollectDiffs
       },
       config,
       specServiceClient
