@@ -50,13 +50,13 @@ function ResultsDialog(props) {
   const allNewEndpoints = newEndpoints + newEndpointsKnownPaths;
 
   useEffect(() => {
-    if (props) {
+    if (props && props.open) {
       track('CHANGES_COMMITTED', {
         newEndpoints: allNewEndpoints,
         endpointsWithChanges,
       });
     }
-  }, [props]);
+  }, [props.open]);
 
   if (!props.open) {
     return null;
