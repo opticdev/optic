@@ -171,7 +171,7 @@ export const newApplyChangesMachine = (
                       pathId,
                       method,
                       services.rfcBaseState.domainIdGenerator
-                    );
+                    ).catch(() => null);
                   });
 
                   promise.finally(() => {
@@ -182,7 +182,7 @@ export const newApplyChangesMachine = (
                     });
                   });
 
-                  return await promise.catch(() => null);
+                  return await promise
                 });
               }
             );
