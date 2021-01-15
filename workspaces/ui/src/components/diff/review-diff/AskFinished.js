@@ -62,7 +62,8 @@ export function AskFinished(props) {
       services,
       services.diffService,
       clientSessionId,
-      clientId
+      clientId,
+      track
     )
   );
 

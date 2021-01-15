@@ -61,7 +61,8 @@ export const newApplyChangesMachine = (
   services: DiffSessionConfig,
   diffService: IDiffService,
   clientSessionId: string = 'default',
-  clientId: string = 'default'
+  clientId: string = 'default',
+  track: (event: string, props: any) => void = (event: string, props: any) => {}
 ) => {
   return Machine<
     ApplyChangesContext,
@@ -131,6 +132,8 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'body-generating',
           src: (context, event) => async (callback, onReceive) => {
+            const timeStated = Date.now();
+
             const { endpointIds, commands } = context.newPaths;
 
             const mergedEndpointIds = [
@@ -187,6 +190,12 @@ export const newApplyChangesMachine = (
             const allBodies: ILearnedBodies[] = (
               await Promise.all(results)
             ).filter((i) => Boolean(i));
+
+            track('LEARNED_BODIES', {
+              endpoints: endpointIds,
+              elapsedTime: Date.now() - timeStated,
+            });
+
             return allBodies;
           },
           onDone: {
@@ -257,6 +266,7 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'running-commands',
           src: async (context, event) => {
+            const timeStated = Date.now();
             const allCommandsToRun = [
               ...context.newPaths.commandsJS,
               ...prepareLearnedBodies(context.newBodiesLearned || []),
@@ -279,6 +289,12 @@ export const newApplyChangesMachine = (
             );
 
             await Thread.terminate(worker);
+
+            track('RUNNING_NEW_COMMANDS', {
+              commands: allCommandsToRun.length,
+              elapsedTime: Date.now() - timeStated,
+            });
+
             return result;
           },
           onDone: {

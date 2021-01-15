@@ -82,7 +82,7 @@ export function DiffSessionMachineStore(props) {
   useEffect(() => {
     if (completed) {
       actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
-      track('Diff Completed', {
+      track('DIFF_COMPLETED', {
         elapsedTime: Date.now() - statedTime,
         diffsCount: rawDiffs.length,
         unrecognizedUrlsRaw: unrecognizedUrlsRaw.length,

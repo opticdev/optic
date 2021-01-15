@@ -7,6 +7,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { ParsedDiff } from '../parse-diff';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
+import { useAnalyticsHook } from '../../utilities/useAnalyticsHook';
 import {
   InteractiveEndpointSessionContext,
   InteractiveEndpointSessionEvent,
@@ -26,6 +27,7 @@ export function useEndpointDiffMachine(
   const [state, send] = useActor<InteractiveEndpointSessionEvent>(getSelf());
   const context: InteractiveEndpointSessionContext = state.context;
   const value = state.value;
+  const track = useAnalyticsHook();
 
   useEffect(() => {
     if (value === 'ready') sessionActions.signalHandled(pathId, method);
@@ -58,6 +60,7 @@ export function useEndpointDiffMachine(
         send({ type: 'APPROVE_FIRST_SUGGESTIONS' });
       },
       addIgnoreRule: (newRule: IgnoreRule) => {
+        track('MARKED_DIFF_INCORRECT');
         send({ type: 'ADD_IGNORE', newRule });
       },
       resetIgnores: (diffHash: string) => {
