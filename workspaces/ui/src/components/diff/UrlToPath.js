@@ -6,9 +6,11 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import DoneIcon from '@material-ui/icons/Done';
+import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
+import debounce from 'lodash.debounce';
 import Collapse from '@material-ui/core/Collapse';
-import { LearnAPIPageContext } from './v2/learn-api/LearnAPIPageContext';
+import { LearnAPIPageContext } from './review-diff/learn-api/LearnAPIPageContext';
 import { useHover } from '../utilities/useHoverHook';
 
 export function urlStringToPathComponents(url) {
@@ -39,6 +41,9 @@ const useStyles = makeStyles((theme) =>
     thick: {
       fontWeight: 600,
     },
+    paramLabel: {
+      textAlign: 'left',
+    },
   })
 );
 
@@ -51,11 +56,13 @@ function PathComponentItem(props) {
     return (
       <ButtonBase className={classes.component} onClick={onClick}>
         {item.isParameter ? (
-          <Typography className={classes.thick}>{`{${
-            item.name || '   '
-          }}`}</Typography>
+          <Typography
+            className={classNames(classes.thick, classes.paramLabel)}
+          >{`{${item.name || '   '}}`}</Typography>
         ) : (
-          <Typography className={classes.thin}>{item.name}</Typography>
+          <Typography className={classNames(classes.thin, classes.paramLabel)}>
+            {item.name}
+          </Typography>
         )}
       </ButtonBase>
     );
@@ -106,6 +113,7 @@ function PathComponentItem(props) {
             if (param && param.isParameter) {
               return true;
             }
+            return false;
           })[0];
 
         return firstMatchingParamName ? firstMatchingParamName.name : '';
@@ -155,7 +163,7 @@ function UrlToPath(props) {
 
   useEffect(() => {
     onAccept(pathComponents);
-  }, []);
+  }, [onAccept]);
 
   function setItemAt(index) {
     return function (newItem) {
@@ -174,9 +182,17 @@ function UrlToPath(props) {
   }
 
   const parameters = pathComponents.filter((x) => x.isParameter);
+
+  const canFinish =
+    parameters.length === 0 || parameters.every((i) => Boolean(i.name));
+  const finish = () => {
+    setCollapseParams(true);
+    onUserCompleted && onUserCompleted();
+  };
+
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         {pathComponents.flatMap((item) => [
           <ButtonBase key={`${item.index}-1`} disabled>
             <Typography
@@ -203,20 +219,27 @@ function UrlToPath(props) {
             </div>
             {parameters.map((item, index) => {
               const updater = setItemAt(item.index);
+              const changeValueOf = debounce((value) => {
+                updater({ ...item, name: value });
+              }, 500);
               return (
                 <div
                   style={{ marginBottom: 11 }}
                   key={'name-param-' + index.toString()}
                 >
                   <TextField
+                    onKeyUp={(e) => {
+                      console.log(e.keyCode);
+                      if (e.keyCode === 13 && canFinish) finish();
+                    }}
                     key={item.index}
                     autoFocus={item.index === lastInteractedIndex}
                     fullWidth
-                    value={item.name}
+                    defaultValue={item.name}
                     label={`"${item.originalName}" is an example of a...`}
-                    onChange={(e) =>
-                      updater({ ...item, name: e.target.value.trim() })
-                    }
+                    onChange={(e) => {
+                      changeValueOf((e.target.value || '').replace(/\s/g, ''));
+                    }}
                   >
                     {item.name}
                   </TextField>
@@ -225,13 +248,11 @@ function UrlToPath(props) {
             })}
             <Button
               startIcon={<DoneIcon />}
+              disabled={!canFinish}
               color="primary"
               size="small"
               variant="contained"
-              onClick={() => {
-                setCollapseParams(true);
-                onUserCompleted && onUserCompleted();
-              }}
+              onClick={finish}
             >
               Done
             </Button>

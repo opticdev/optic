@@ -29,7 +29,7 @@ const initialState = (debouncer = null) => {
     completed: false,
     skipped: '0',
     processed: '0',
-
+    didFail: false,
     reloadDebounce: debouncer,
     unrecognizedUrls: [],
     endpointDiffs: [],
@@ -106,15 +106,11 @@ class _CaptureContextStore extends React.Component {
 
       console.log('results', [diffsResponse.diffs.length, urlsResponse.length]);
 
-      // track('IAsyncTask Incremental Results', {
-      //   captureId: this.props.captureId,
-      //   diffs: diffsResponse.diffs.length,
-      //   newUrls: urlsResponse.length,
-      // });
-      //
       this.setState({
         endpointDiffs: diffsResponse.diffs,
-        unrecognizedUrls: urlsResponse,
+        rawDiffs: diffsResponse.rawDiffs,
+        unrecognizedUrls: urlsResponse.result,
+        unrecognizedUrlsRaw: urlsResponse.raw,
         pendingUpdates: true,
         lastUpdate: new Date(),
         ...notifDataUpdates,
@@ -200,7 +196,8 @@ class _CaptureContextStore extends React.Component {
           this.state.reloadDebounce(data);
         } else if (type === 'error') {
           console.error(data);
-          debugger;
+          this.setState({ didFail: true });
+          notificationChannel.close();
         }
       };
       notificationChannel.onerror = (e) => {
@@ -242,8 +239,11 @@ class _CaptureContextStore extends React.Component {
       diffService,
       captureService,
       completed,
+      didFail,
       skipped,
       processed,
+      rawDiffs,
+      unrecognizedUrlsRaw,
     } = this.state;
 
     const endpointDiffsWithoutIgnored = CompareEquality.filterIgnored(
@@ -253,6 +253,8 @@ class _CaptureContextStore extends React.Component {
 
     const value = {
       pendingUpdates,
+      rawDiffs,
+      unrecognizedUrlsRaw,
       captureId: this.props.captureId,
       config,
       lastUpdate,
@@ -260,6 +262,7 @@ class _CaptureContextStore extends React.Component {
       unrecognizedUrls,
       diffService,
       captureService,
+      didFail,
       completed,
       skipped,
       processed,

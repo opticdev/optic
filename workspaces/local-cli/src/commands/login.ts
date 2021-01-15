@@ -55,6 +55,7 @@ export default class Login extends Command {
       cli.action.stop('Received Credentials');
 
       await trackUserEvent(
+        '',
         UserLoggedInFromCLI.withProps({ userId: decodedToken.sub })
       );
 

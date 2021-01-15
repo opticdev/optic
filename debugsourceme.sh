@@ -5,7 +5,7 @@ export OPTIC_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && p
 debug_to_capture() {
   (
     set -o errexit
-    node "$OPTIC_SRC_DIR/workspaces/cli-shared/build/captures/avro/file-system/dump-capture-saver.js" $1 .
+    node "$OPTIC_SRC_DIR/workspaces/cli-shared/build/captures/avro/file-system/dump-capture-saver.js" $1 . ${2:-1}
   )
 }
 

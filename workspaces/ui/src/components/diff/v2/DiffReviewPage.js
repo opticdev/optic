@@ -4,14 +4,8 @@ import Tabs from '@material-ui/core/Tabs';
 import { CustomNavTab, CustomNavTabDense } from './CustomNavTab';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Fab from '@material-ui/core/Fab';
-import DoneIcon from '@material-ui/icons/Done';
 import { EndpointsContext } from '../../../contexts/EndpointContext';
 import { PathAndMethod, PathAndMethodOverflowFriendly } from './PathAndMethod';
-import {
-  CaptureContext,
-  useCaptureContext,
-} from '../../../contexts/CaptureContext';
 import {
   DiffResultHelper,
   getOrUndefined,
@@ -31,7 +25,6 @@ import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
 import Button from '@material-ui/core/Button';
-import { trackUserEvent } from '../../../Analytics';
 import { ShowCommitCard } from '@useoptic/analytics/lib/events/diffs';
 
 export const newRegionsConst = 'new_regions';
@@ -114,7 +107,7 @@ export function DiffReviewPage(props) {
   useEffect(() => {
     if (showFinalize || (completed && regions.empty)) {
       // track('Rendered Finalize Card');
-      trackUserEvent(ShowCommitCard.withProps({}));
+      // trackUserEvent(ShowCommitCard.withProps({}));
     }
   }, [showFinalize, completed, regions.empty]);
 

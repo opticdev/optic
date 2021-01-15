@@ -51,9 +51,15 @@ export const runCommandFlags = {
     default: false,
     required: false,
   }),
+  'collect-diffs': flags.boolean({
+    char: 'd',
+    default: true,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
   'collect-coverage'?: boolean;
+  'collect-diffs'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -74,7 +80,10 @@ export async function LocalTaskSessionWrapper(
 
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = uuid.v4();
-  const runner = new LocalCliTaskRunner(captureId, paths);
+  const runner = new LocalCliTaskRunner(captureId, paths, {
+    shouldCollectCoverage: flags['collect-coverage'] !== false,
+    shouldCollectDiffs: flags['collect-diffs'] !== false,
+  });
   const session = new CliTaskSession(runner);
 
   const task = config.tasks[taskName];
@@ -114,7 +123,14 @@ export async function LocalTaskSessionWrapper(
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
-  constructor(private captureId: string, private paths: IPathMapping) {}
+  constructor(
+    private captureId: string,
+    private paths: IPathMapping,
+    private options: {
+      shouldCollectCoverage: boolean;
+      shouldCollectDiffs: boolean;
+    }
+  ) {}
 
   async run(
     cli: Command,
@@ -125,6 +141,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     ////////////////////////////////////////////////////////////////////////////////
 
     await trackUserEvent(
+      config.name,
       StartedTaskWithLocalCli.withProps({
         inputs: opticTaskToProps('', taskConfig),
         cwd: this.paths.cwd,
@@ -176,7 +193,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     ////////////////////////////////////////////////////////////////////////////////
 
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
+    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review`;
     cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +209,8 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       {
         captureBaseDirectory: capturesPath,
         captureId,
+        shouldCollectCoverage: this.options.shouldCollectCoverage,
+        shouldCollectDiffs: this.options.shouldCollectDiffs,
       },
       config,
       specServiceClient
@@ -232,6 +251,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const hasDiff = summary.diffsCount > 0;
 
     await trackUserEvent(
+      config.name,
       ExitedTaskWithLocalCli.withProps({
         interactionCount: sampleCount,
         inputs: opticTaskToProps('', taskConfig),
@@ -240,7 +260,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     );
 
     if (hasDiff) {
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
       const iconPath = path.join(__dirname, '../../assets/optic-logo-png.png');
       runScriptByName('notify', uiUrl, iconPath);
 

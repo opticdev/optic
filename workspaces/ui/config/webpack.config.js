@@ -27,6 +27,7 @@ const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpack
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const DiffEngineWebpackPlugin = require('@useoptic/diff-engine-wasm/webpack.plugin');
+const ThreadsPlugin = require('threads-plugin');
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -509,8 +510,8 @@ module.exports = function (webpackEnv) {
             : undefined
         )
       ),
-      // Triggers and watches diff-engine-rust to wasm + browser glue compilation
-      DiffEngineWebpackPlugin(),
+      new DiffEngineWebpackPlugin(),
+      new ThreadsPlugin(),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       isEnvProduction &&

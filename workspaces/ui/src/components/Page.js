@@ -1,7 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import Navbar from './navigation/Navbar';
 import { useLocation } from 'react-router-dom';
-import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 const PageContext = React.createContext(null);
@@ -9,12 +8,11 @@ const PageContext = React.createContext(null);
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    flexGrow: 1,
+    height: '100vh',
   },
   content: ({ padded = true }) => ({
     display: 'flex',
     flexDirection: 'column', // default to vertical stacking of child elements by default
-
     flexGrow: 1,
     paddingLeft: padded ? theme.spacing(4) : 0,
     paddingRight: padded ? theme.spacing(4) : 0,
@@ -45,7 +43,10 @@ export default function Page(props) {
 
   return (
     <PageContext.Provider value={pageContext}>
-      <div className={classes.root}>{props.children}</div>
+      <div className={classes.root} style={props.style}>
+        {props.children}
+      </div>
+      ;
     </PageContext.Provider>
   );
 }
@@ -54,7 +55,7 @@ function PageBody(props) {
   const classes = useStyles(props);
 
   return (
-    <div className={classNames(classes.content, props.className)}>
+    <div className={classes.content} style={props.style}>
       {props.children}
     </div>
   );

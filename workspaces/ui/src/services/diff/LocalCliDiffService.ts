@@ -19,7 +19,12 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounter,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IDiff } from '../../engine/interfaces/diffs';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
@@ -37,9 +42,10 @@ export class LocalCliDiffService implements IDiffService {
     const url = `${this.baseUrl}/diffs`;
     const diffsJson = await JsonHttpClient.getJson(url);
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
-      diffsJson
+      diffsJson.map(([diff, tags, _fingerprint]) => [diff, tags])
     );
     return {
+      rawDiffs: diffsJson,
       diffs: ScalaJSHelpers.toJsArray(
         DiffResultHelper.endpointDiffs(diffs, this.rfcState)
       ),
@@ -50,7 +56,7 @@ export class LocalCliDiffService implements IDiffService {
     const url = `${this.baseUrl}/undocumented-urls`;
     const json = (await JsonHttpClient.getJson(url)).urls;
     const result = UrlCounterHelper.fromJsonToSeq(json, this.rfcState);
-    return result;
+    return Promise.resolve({ result, raw: json });
   }
 
   async loadStats(): Promise<ILoadStatsResponse> {
@@ -130,6 +136,25 @@ export class LocalCliDiffService implements IDiffService {
       events,
       pathId,
       method,
+    });
+  }
+
+  async learnTrailValues(
+    rfcService: any,
+    rfcId: any,
+    pathId: string,
+    method: string,
+    diffs: { [key: string]: IDiff }
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+    const events = opticEngine.EventSerialization.toJson(
+      rfcService.listEvents(rfcId)
+    );
+    const url = `${this.captureService.baseUrl}/trail-values`;
+    return await JsonHttpClient.postJson(url, {
+      events,
+      pathId,
+      method,
+      serializedDiffs: JSON.stringify(diffs),
     });
   }
 }

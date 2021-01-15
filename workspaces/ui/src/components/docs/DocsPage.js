@@ -11,7 +11,6 @@ import {
   EndpointsContext,
   EndpointsContextStore,
 } from '../../contexts/EndpointContext';
-import { PathAndMethodLarge, SquareChip } from '../diff/v2/PathAndMethod';
 import Typography from '@material-ui/core/Typography';
 import { DocDivider } from './DocConstants';
 import { DocParameter } from './DocParameter';
@@ -19,15 +18,18 @@ import { HeadingContribution, MarkdownContribution } from './DocContribution';
 import { DESCRIPTION, PURPOSE } from '../../ContributionKeys';
 import groupBy from 'lodash.groupby';
 import ContentTabs, { RequestTabsContextStore } from './ContentTabs';
-import { BreadcumbX } from '../diff/v2/DiffNewRegions';
-import { ShapeExpandedStore } from '../diff/v2/shape_viewers/ShapeRenderContext';
-import { ShapeOnlyViewer } from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
-import { ShapeBox } from '../diff/v2/DiffReviewExpanded';
+import { ShapeExpandedStore } from '../diff/review-diff/shape-viewers/ShapeRenderContext';
+import { ShapeOnlyViewer } from '../diff/review-diff/shape-viewers/ShapeOnlyShapeRows';
 import Paper from '@material-ui/core/Paper';
 import EmptyState from '../support/EmptyState';
 import { AddOpticLink, DocumentingYourApi } from '../support/Links';
-import { trackUserEvent } from '../../Analytics'
-import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs'
+import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
+import { BreadcumbX, ShapeBox } from '../diff/review-diff/BreadcrumbX';
+import {
+  PathAndMethodLarge,
+  SquareChip,
+} from '../diff/review-diff/PathAndMethod';
 const useStyles = makeStyles((theme) => ({
   maxWidth: {
     width: '100%',
@@ -78,7 +80,7 @@ export const DocsPage = ({ match, specService }) => {
   return (
     <Page title="Documentation" scrollToTop={true}>
       <Page.Navbar mini={true} />
-      <Page.Body>
+      <Page.Body style={{ height: '100vh', overflow: 'scroll' }}>
         <Switch>
           <Route
             exact
@@ -123,7 +125,11 @@ export const DocumentationToc = () => {
       <div>
         {endpoints.map((i) => {
           return (
-            <EndpointsContextStore method={i.method} pathId={i.pathId}>
+            <EndpointsContextStore
+              method={i.method}
+              pathId={i.pathId}
+              key={i.method + i.pathId}
+            >
               <EndpointsContext.Consumer>
                 {({
                   endpointDescriptor,
@@ -146,7 +152,13 @@ export const DocumentationToc = () => {
                             label="What does this endpoint do?"
                             onChange={(value) => {
                               updateContribution(endpointId, PURPOSE, value);
-                              trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: PURPOSE, value}))
+                              // trackUserEvent(
+                              //   UpdateContribution.withProps({
+                              //     id: endpointId,
+                              //     purpose: PURPOSE,
+                              //     value,
+                              //   })
+                              // );
                             }}
                           />
 
@@ -168,7 +180,13 @@ export const DocumentationToc = () => {
                                 DESCRIPTION,
                                 value
                               );
-                              trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: DESCRIPTION, value}));
+                              // trackUserEvent(
+                              //   UpdateContribution.withProps({
+                              //     id: endpointId,
+                              //     purpose: DESCRIPTION,
+                              //     value,
+                              //   })
+                              // );
                             }}
                           />
                         </div>
@@ -182,9 +200,8 @@ export const DocumentationToc = () => {
                               to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
                               size="medium"
                               color="primary"
-                              endIcon={<ExpandMoreIcon />}
                             >
-                              Full Documentation
+                              Full Documentation ➔
                             </Button>
                             <div style={{ flex: 1 }} />
 
@@ -215,6 +232,7 @@ export const DocumentationToc = () => {
                               {endpointDescriptor.responses.map((res) => {
                                 return (
                                   <SquareChip
+                                    key={res.statusCode}
                                     label={res.statusCode}
                                     bgColor={'#32536a'}
                                     color="white"
@@ -288,20 +306,34 @@ export const EndpointDocs = (props) => {
 
             return (
               <div>
-                <HeadingContribution
-                  value={getContribution(endpointId, PURPOSE)}
-                  label="What does this endpoint do?"
-                  onChange={(value) => {
-                    updateContribution(endpointId, PURPOSE, value);
-                    trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: PURPOSE, value}))
-                  }}
-                />
+                <ScrollIntoViewIfNeeded options={{ scrollMode: 'if-needed' }}>
+                  <HeadingContribution
+                    value={getContribution(endpointId, PURPOSE)}
+                    label="What does this endpoint do?"
+                    onChange={(value) => {
+                      updateContribution(endpointId, PURPOSE, value);
+                      // trackUserEvent(
+                      //   UpdateContribution.withProps({
+                      //     id: endpointId,
+                      //     purpose: PURPOSE,
+                      //     value,
+                      //   })
+                      // );
+                    }}
+                  />
+                </ScrollIntoViewIfNeeded>
                 <MarkdownContribution
                   value={getContribution(endpointId, DESCRIPTION)}
                   label="Detailed Description"
                   onChange={(value) => {
                     updateContribution(endpointId, DESCRIPTION, value);
-                    trackUserEvent(UpdateContribution.withProps({ id: endpointId, purpose: DESCRIPTION, value}))
+                    // trackUserEvent(
+                    //   UpdateContribution.withProps({
+                    //     id: endpointId,
+                    //     purpose: DESCRIPTION,
+                    //     value,
+                    //   })
+                    // );
                   }}
                 />
 
@@ -343,7 +375,13 @@ export const EndpointDocs = (props) => {
                           label="Request Body Description"
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
-                            trackUserEvent(UpdateContribution.withProps({ id, purpose: DESCRIPTION, value}))
+                            // trackUserEvent(
+                            //   UpdateContribution.withProps({
+                            //     id,
+                            //     purpose: DESCRIPTION,
+                            //     value,
+                            //   })
+                            // );
                           }}
                         />
                       );
@@ -387,7 +425,13 @@ export const EndpointDocs = (props) => {
                           label={`${statusCode} Response Description`}
                           onChange={(value) => {
                             updateContribution(id, DESCRIPTION, value);
-                            trackUserEvent(UpdateContribution.withProps({ id, purpose: DESCRIPTION, value}))
+                            // trackUserEvent(
+                            //   UpdateContribution.withProps({
+                            //     id,
+                            //     purpose: DESCRIPTION,
+                            //     value,
+                            //   })
+                            // );
                           }}
                         />
                       );
@@ -406,7 +450,6 @@ export const EndpointDocs = (props) => {
                             toOption(response.responseBody.shapeId)
                           )
                         );
-
                       return (
                         renderedShape && (
                           <ShapeBox

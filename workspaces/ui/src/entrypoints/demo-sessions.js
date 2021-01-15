@@ -7,14 +7,7 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-// import {
-//   ExampleCaptureService,
-//   ExampleDiffService,
-// } from '../services/diff/ExampleDiffService';
-import { DiffHelpers, JsonHelper, RfcCommandContext } from '@useoptic/domain';
-import { cachingResolversAndRfcStateFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 import { Snackbar, makeStyles } from '@material-ui/core';
-import { analyticsEvents } from '../Analytics';
 import * as DiffEvents from '@useoptic/analytics/lib/events/diffs';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
@@ -22,7 +15,6 @@ import {
   ColorButton,
   SubtleBlueBackground,
 } from '../theme';
-import { subtabs } from '../components/diff/v2/CaptureManagerPage';
 
 const snackbarStyles = makeStyles({
   alert: {
@@ -68,70 +60,6 @@ export default function DemoSessions(props) {
     sessionId: sessionId,
     exampleSessionCollection: 'demos',
   });
-
-  const captureServiceFactory = async (specService, captureId) => {
-    const { ExampleCaptureService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
-    return new ExampleCaptureService(specService);
-  };
-
-  const diffServiceFactory = async (
-    specService,
-    captureService,
-    _events,
-    _rfcState,
-    additionalCommands,
-    config,
-    captureId
-  ) => {
-    const { ExampleDiffService } = await import(
-      '../services/diff/ExampleDiffService'
-    );
-
-    async function computeInitialDiff() {
-      const capture = await specService.listCapturedSamples(captureId);
-      const commandContext = new RfcCommandContext(
-        'simulated',
-        'simulated',
-        'simulated'
-      );
-
-      const {
-        resolvers,
-        rfcState,
-      } = cachingResolversAndRfcStateFromEventsAndAdditionalCommands(
-        _events,
-        commandContext,
-        additionalCommands
-      );
-      let diffs = DiffHelpers.emptyInteractionPointersGroupedByDiff();
-      for (const interaction of capture.samples) {
-        diffs = DiffHelpers.groupInteractionPointerByDiffs(
-          resolvers,
-          rfcState,
-          JsonHelper.fromInteraction(interaction),
-          interaction.uuid,
-          diffs
-        );
-      }
-      return {
-        diffs,
-        rfcState,
-        resolvers,
-      };
-    }
-
-    const { diffs, rfcState } = await computeInitialDiff();
-
-    return new ExampleDiffService(
-      specService,
-      captureService,
-      config,
-      diffs,
-      rfcState
-    );
-  };
 
   // info boxes / guides for the demo
   const [message, setMessage] = useState({
@@ -197,11 +125,7 @@ export default function DemoSessions(props) {
             message: `Nice! Descriptions will stay attached to their endpoint/fields even when the specification changes!\n\nLet's check back and see if there are any other diffs to approve`,
             action: {
               text: 'Review all diffs',
-              href: `/demos/todo/diffs/example-session?tab=${
-                hasDocumentedAllEndpointDiffs
-                  ? subtabs.UNDOCUMENTED_URL
-                  : subtabs.ENDPOINT_DIFF
-              }`,
+              href: `/demos/todo/diffs/example-session`,
             },
           });
           break;
@@ -349,10 +273,9 @@ export default function DemoSessions(props) {
       }
     };
 
-    analyticsEvents.listen(eventsHandler);
+    // analyticsEvents.listen(eventsHandler);
 
-    return () =>
-      analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
+    // return () => analyticsEvents.eventEmitter.removeListener('event', eventsHandler);
   }, []);
 
   // event specific info boxes
@@ -372,10 +295,7 @@ export default function DemoSessions(props) {
     <>
       <BaseUrlContext value={{ path: match.path, url: match.url }}>
         <DebugSessionContextProvider value={session}>
-          <ApiSpecServiceLoader
-            captureServiceFactory={captureServiceFactory}
-            diffServiceFactory={diffServiceFactory}
-          >
+          <ApiSpecServiceLoader>
             <ApiRoutes getDefaultRoute={(options) => options.diffsRoot} />
 
             <Snackbar

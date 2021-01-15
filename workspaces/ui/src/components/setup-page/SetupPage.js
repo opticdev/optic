@@ -95,7 +95,7 @@ export function SetupPage(props) {
   return (
     <Page title="Setup your API Start task">
       <Page.Navbar mini={true} />
-      <Page.Body padded={true} className={classes.pageBg}>
+      <Page.Body padded={true} className={classes.pageBg} style={{overflowY:"scroll"}}>
         <Box display="flex" className={classes.copyRoot}>
           <ApiStartCommandCopy />
         </Box>

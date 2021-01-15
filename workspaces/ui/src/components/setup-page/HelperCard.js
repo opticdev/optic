@@ -32,11 +32,6 @@ const assertionsMap = {
       getStatus: (result) =>
         result.recommended && result.recommended.apiProcessStartsOnAssignedPort,
     },
-    {
-      assertion: CommonIssues.commandHost,
-      getStatus: (result) =>
-        result.recommended && result.recommended.apiProcessStartsOnAssignedHost,
-    },
   ],
   inboundUrl: [
     {

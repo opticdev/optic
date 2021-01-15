@@ -11,9 +11,14 @@ export const RemovedRedBackground = 'rgba(248,51,60,0.3)';
 export const AddedGreen = '#17c8a3';
 export const AddedDarkGreen = '#1b6d5c';
 export const ChangedYellow = '#c8b768';
+export const ChangedYellowDark = '#867b46';
 export const RemovedRed = '#c86363';
 export const OpticBlue = '#1B2958';
+export const OpticBlueLightened = '#2a3764';
+export const OpticBlueReadable = '#868da4';
 export const SubtleBlueBackground = '#F5F6FA';
+export const LightBlueBackground = '#edeff6';
+export const SubtleGreyBackground = '#eaeaea';
 
 export const methodColors = {
   OPTIONS: '#686868',
@@ -42,7 +47,7 @@ export const appTheme = createMuiTheme({
     added: { main: AddedGreen, background: AddedGreenBackground },
     removed: { main: RemovedRed, background: RemovedRedBackground },
     info: {
-      main: "#323232"
+      main: '#323232',
     },
 
     httpMethods: {
@@ -64,18 +69,17 @@ export const appTheme = createMuiTheme({
         '&[class*="variantInfo"]': {
           backgroundColor: SubtleBlueBackground,
         },
-      }
+      },
     },
-  }
+  },
 });
-
 
 export const ColorButton = withStyles(() => ({
   root: {
-    color: "white",
-    backgroundColor: "#4696FF",
+    color: 'white',
+    backgroundColor: '#4696FF',
     '&:hover': {
-      backgroundColor: "#71ABFF",
+      backgroundColor: '#71ABFF',
     },
   },
 }))(Button);

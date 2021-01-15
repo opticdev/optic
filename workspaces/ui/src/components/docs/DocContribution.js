@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { TextField, Typography } from '@material-ui/core';
 import ReactMarkdown from 'react-markdown';
 import { DocDarkGrey, DocSubHeading, SubHeadingStyles } from './DocConstants';
-import { SymbolColor } from '../diff/v2/shape_viewers/styles';
+import { SymbolColor } from '../diff/review-diff/shape-viewers/styles';
 
 export function MarkdownRender({ source, style, noHeadings }) {
   return (
@@ -114,7 +114,9 @@ class _MarkdownContribution extends React.Component {
 
   handleChange = (e) => this.setState({ inputValue: e.target.value });
   setEditing = (b) => () => {
-    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') { return; }
+    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') {
+      return;
+    }
 
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
@@ -176,8 +178,10 @@ class _HeadingContribution extends React.Component {
 
   handleChange = (e) => this.setState({ inputValue: e.target.value });
   setEditing = (b) => () => {
-    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') { return; }
-    
+    if (process.env.REACT_APP_SPEC_ENABLE_EDITING === 'no') {
+      return;
+    }
+
     this.setState({ editing: b });
     if (!b && this.props.onChange) {
       if (this.state.inputValue !== (this.props.value || '')) {
