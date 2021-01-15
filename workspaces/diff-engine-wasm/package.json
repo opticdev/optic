@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/diff-engine-wasm",
-  "version": "9.0.0",
+  "version": "9.0.2",
   "scripts": {
     "build:lib": "tsc -b --verbose",
     "build:node": "cd engine && wasm-pack build --target nodejs --out-dir build --out-name index",
@@ -8,6 +8,7 @@
     "test": "cd test && tap tests",
     "ws:build": "npm run build:node && npm run build:browser && npm run build:lib",
     "ws:clean": "rm -rf engine/build && rm -rf engine/browser",
+    "prepack": "rm -rf engine/build/.gitignore",
     "ws:test": "echo No workspace tests specified for diff-engine-wasm"
   },
   "repository": {
