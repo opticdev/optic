@@ -71,11 +71,11 @@ export function CheckPassed(props) {
             <Typography variant="h6" style={{ marginTop: 10 }}>
               Your API is running with Optic on{' '}
               <Code>
-                {started.inputs['serviceConfig.protocol']}
+                {started.inputs['proxyConfig.protocol']}
                 {'//'}
-                {started.inputs['serviceConfig.host']}
+                {started.inputs['proxyConfig.host']}
                 {':'}
-                {started.inputs['serviceConfig.port']}
+                {started.inputs['proxyConfig.port']}
               </Code>
             </Typography>
             <Typography
@@ -109,7 +109,7 @@ export function CheckPassed(props) {
                   size="medium"
                   component={Link}
                   color="primary"
-                  to={baseUrl + '/diffs'}
+                  to={baseUrl + '/review'}
                   style={{ marginTop: 20 }}
                 >
                   Start Documenting
