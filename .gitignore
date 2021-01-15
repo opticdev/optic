@@ -7,8 +7,3 @@ node_modules
 #Added by cargo
 
 /target
-
-#Moving these here to avoid npm pack ignoring important outputs
-workspaces/diff-engine-wasm/engine/target
-workspaces/diff-engine-wasm/engine/build
-workspaces/diff-engine-wasm/engine/browser
