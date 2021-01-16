@@ -7,3 +7,6 @@ node_modules
 #Added by cargo
 
 /target
+
+/workspaces/diff-engine-wasm/engine/browser
+/workspaces/diff-engine-wasm/engine/build

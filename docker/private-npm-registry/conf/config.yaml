@@ -17,3 +17,5 @@ uplinks:
     url: https://registry.npmjs.org/
 logs:
   - {type: stdout, format: pretty, level: trace}
+
+max_body_size: 100

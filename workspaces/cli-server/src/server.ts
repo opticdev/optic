@@ -18,7 +18,7 @@ import {
 import { basePath } from '@useoptic/ui';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
-import { analyticsEventEmitter, trackWithApiName } from './analytics';
+import { analyticsEvents, trackWithApiName } from './analytics';
 import cors from 'cors';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { Session, SessionsManager } from './sessions';
@@ -139,7 +139,7 @@ class CliServer {
       };
       res.writeHead(200, headers);
 
-      analyticsEventEmitter.on('event', (event: any) => {
+      analyticsEvents.eventEmitter.on('event', (event: any) => {
         emit({ type: 'message', data: event });
       });
 

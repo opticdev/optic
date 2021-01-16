@@ -18,8 +18,8 @@ export function useSingleDiffMachine(
   getEndpointActions: () => any,
   services: InteractiveDiffSessionConfig
 ) {
-  const [state, send] = useActor(getSelf());
-  const context: DiffContext<any> = state.context;
+  const [state, send]: any = useActor(getSelf());
+  const context: any = state.context;
   const value = state.value;
   const track = useAnalyticsHook();
 
