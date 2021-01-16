@@ -20,7 +20,7 @@ const packageJson = require('../package.json');
 const clientId = `local_cli_${packageJson.version}`;
 
 //event bus for tracking events
-const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
+export const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
   async (batchId: string) => {
     const user = await getCredentials();
     const decodedSub = niceTry(() => jwtDecode(user!.token).sub);
@@ -50,8 +50,6 @@ export function trackWithApiName(apiName: string) {
     );
   };
 }
-
-export const analyticsEventEmitter = analyticsEvents.eventEmitter;
 
 const inDevelopment = process.env.OPTIC_DEVELOPMENT === 'yes';
 
