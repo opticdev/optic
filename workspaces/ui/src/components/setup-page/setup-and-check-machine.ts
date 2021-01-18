@@ -3,6 +3,7 @@ import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { CheckAssertionsResult } from '@useoptic/analytics/lib/interfaces/ApiCheck';
 import { rangesFromOpticYaml, RangesFromYaml } from './yaml/YamlHelper';
 import { integrationDocsOptions } from './fetch-docs/IntegrationDocs';
+import {load} from "yaml-ast-parser";
 
 export interface SetupAndCheckMachineSchema {
   states: {
@@ -72,6 +73,12 @@ export const newSetupAndCheckMachine = (
       saving: {
         invoke: {
           src: async (context, event) => {
+            const isValid = load(context.stagedConfig).errors.length === 0;
+
+            if (!isValid) {
+              return Promise.resolve()
+            }
+
             return await specService.saveConfig(context.stagedConfig);
           },
           onDone: {
