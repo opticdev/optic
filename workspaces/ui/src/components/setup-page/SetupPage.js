@@ -277,20 +277,11 @@ function PortAssumption(props) {
         title={
           <div>
             <Typography variant="overline">examples:</Typography>
-            {docs && (
-              <MarkdownRender
-                source={
-                  docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
-                }
-              />
-            )}
-            {!docs && (
               <MarkdownRender
                 source={
                   "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
                 }
               />
-            )}
           </div>
         }
       >
