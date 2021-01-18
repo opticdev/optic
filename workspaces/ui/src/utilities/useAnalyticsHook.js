@@ -40,6 +40,7 @@ export function useClientAgent() {
               window.FS.identify(anonymousId, {
                 email: user && user.email,
               });
+              window.analytics.identify(anonymousId);
               window.Intercom('update', {
                 user_id: anonymousId,
                 id: user && user.sub,
