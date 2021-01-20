@@ -65,7 +65,7 @@ export function ReviewUI() {
   };
 
   useEffect(() => {
-    if (handledAll.handled === handledAll.total && handledAll.total > 0) {
+    if (handledAll.handled === handledAll.total && handledAll.total > 0 && !shouldShowUndocumented) {
       setAskFinish(true);
     }
   }, [handledAll.handled, handledAll.total]);

@@ -12,6 +12,9 @@ export function debugDump(specService, captureId) {
 
         i.response.body.value.asJsonString = null;
         i.response.body.value.asText = null;
+      } else {
+        i.request.body.value.asShapeHashBytes = null;
+        i.response.body.value.asShapeHashBytes = null;
       }
     });
 
