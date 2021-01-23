@@ -10,10 +10,9 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 import { IChangeType } from '../../../../engine/interfaces/interpretors';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
-import { ICopyRenderSpan } from '../../review-diff/ICopyRender';
+import { ICopyRenderSpan } from '../ICopyRender';
 import CheckIcon from '@material-ui/icons/Check';
 import { AddedGreen, UpdatedBlue } from '../../../../theme';
-import { Typography } from '@material-ui/core';
 export default function InteractionBodyViewerAllJS({
   diff,
   description,

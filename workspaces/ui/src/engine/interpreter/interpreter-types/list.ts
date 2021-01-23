@@ -15,8 +15,7 @@ import {
   ICoreShapeInnerParameterNames,
   ICoreShapeKinds,
 } from '../../interfaces/interfaces';
-import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
-import { setDifference, setEquals, setUnion } from '../../set-ops';
+import { setEquals } from '../../set-ops';
 import { targetKindSuggestion } from '../target-shape-kind';
 import {
   IShapeChange,
@@ -24,7 +23,7 @@ import {
   serializeCommands,
 } from '../spec-change-dsl';
 import sortBy from 'lodash.sortby';
-import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
+import { opticEngine } from '@useoptic/domain';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -53,18 +52,20 @@ export function listItemShapeDiffInterpreter(
   const expectedShapes = expected.expectedShapes();
   const previews: IInteractionPreviewTab[] = [];
   actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
-    previews.push({
-      title: i.label,
-      invalid: !expectedShapes.has(i.kind),
-      allowsExpand: true,
-      interactionPointers: i.interactions,
-      ignoreRule: {
-        diffHash: shapeDiff.diffHash(),
-        examplesOfCoreShapeKinds: i.kind,
-      },
-      assertion: [plain('expected'), code(expected.shapeName())],
-      jsonTrailsByInteractions: i.jsonTrailsByInteractions,
-    });
+    if (i.kind !== ICoreShapeKinds.OptionalKind) {
+      previews.push({
+        title: i.label,
+        invalid: !expectedShapes.has(i.kind),
+        allowsExpand: true,
+        interactionPointers: i.interactions,
+        ignoreRule: {
+          diffHash: shapeDiff.diffHash(),
+          examplesOfCoreShapeKinds: i.kind,
+        },
+        assertion: [plain('expected'), code(expected.shapeName())],
+        jsonTrailsByInteractions: i.jsonTrailsByInteractions,
+      });
+    }
   });
   ////////////////
 
@@ -204,11 +205,13 @@ function suggestionFor(
       )
     );
   } else {
-    SetParameterShape(
-      ProviderInShape(
-        expected.lastList(),
-        ShapeProvider(innerShape.listInnerShapeId),
-        ICoreShapeInnerParameterNames.ListInner
+    commands.push(
+      SetParameterShape(
+        ProviderInShape(
+          expected.lastList(),
+          ShapeProvider(innerShape.listInnerShapeId),
+          ICoreShapeInnerParameterNames.ListInner
+        )
       )
     );
   }

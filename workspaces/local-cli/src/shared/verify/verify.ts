@@ -134,6 +134,7 @@ export async function verifyTask(
       passedAll = results.passedAll;
 
       await trackUserEvent(
+        config.name,
         ApiCheckCompleted.withProps({
           passed: passedAll,
           mode: mode,
@@ -159,6 +160,7 @@ export async function verifyTask(
       const results = await verifyManual(foundTask!, startConfig!);
       passedAll = results.passedAll;
       await trackUserEvent(
+        config.name,
         ApiCheckCompleted.withProps({
           passed: passedAll,
           mode: mode,

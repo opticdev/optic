@@ -34,7 +34,7 @@ import {
   getJson,
   toOption,
 } from '@useoptic/domain';
-import { withDiffContext } from '../DiffContext';
+import { withDiffContext } from '../../v2/DiffContext';
 import { DepthContext, Indent, IndentIncrement } from './Indent';
 import {
   HiddenItemEllipsis,

@@ -20,13 +20,15 @@ import { useMachine } from '@xstate/react';
 import { newApplyChangesMachine } from '../../../engine/async-work/apply-changes-machine';
 import { RfcContext } from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { Stat } from '../v2/CaptureManagerPage';
 import Divider from '@material-ui/core/Divider';
-import { PathAndMethod } from '../v2/PathAndMethod';
-import { Add } from '@material-ui/icons';
 import { useServices } from '../../../contexts/SpecServiceContext';
 import { useBaseUrl } from '../../../contexts/BaseUrlContext';
 import { useFinalizeSummaryContext } from './FinalizeSummaryContext';
+import { PathAndMethod } from './PathAndMethod';
+import {
+  useAnalyticsHook,
+  useApiNameAnalytics,
+} from '../../../utilities/useAnalyticsHook';
 
 export function AskFinished(props) {
   const { setAskFinish } = props;
@@ -38,6 +40,9 @@ export function AskFinished(props) {
   const { clientSessionId, clientId, eventStore, rfcId } = useContext(
     RfcContext
   );
+
+  const track = useAnalyticsHook();
+
   const classes = useStyles();
 
   const patch = useMemo(() => queries.endpointsWithSuggestions(), []);
@@ -57,7 +62,8 @@ export function AskFinished(props) {
       services,
       services.diffService,
       clientSessionId,
-      clientId
+      clientId,
+      track
     )
   );
 
@@ -413,3 +419,30 @@ const useStyles = makeStyles((theme) => ({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+export const Stat = ({ number, label }) => {
+  return (
+    <span>
+      {number !== 0 && (
+        <Typography
+          variant="h6"
+          component="span"
+          color="secondary"
+          style={{ fontWeight: 800 }}
+        >
+          {number}{' '}
+        </Typography>
+      )}
+      <Typography
+        variant="h6"
+        component="span"
+        style={{ fontWeight: 800 }}
+        color="primary"
+      >
+        {number === 0 && 'no '}
+        {label}
+        {number === 1 ? '' : 's'}
+      </Typography>
+    </span>
+  );
+};

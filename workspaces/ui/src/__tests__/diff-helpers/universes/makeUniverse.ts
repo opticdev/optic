@@ -28,6 +28,7 @@ export async function makeUniverse(
 ): Promise<{
   specService: any;
   rawDiffs: any[];
+  captureId: string;
   rfcBaseState: DiffRfcBaseState;
   jsonUniverse: any;
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
@@ -104,6 +105,7 @@ export async function makeUniverse(
     rawDiffs: diffs,
     rfcBaseState,
     jsonUniverse: json,
+    captureId,
     specService,
     loadInteraction: async (interactionPointer) => {
       const interaction = capture.samples.find(

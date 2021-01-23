@@ -119,9 +119,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         method,
       });
 
+      console.time('learn ' + pathId + method);
       const result = initialBodyGenerator.run();
-
       result.then((learnedBodies: ILearnedBodies) => {
+        console.timeEnd('learn ' + pathId + method);
         res.json(learnedBodies);
       });
       result.catch((e) => {

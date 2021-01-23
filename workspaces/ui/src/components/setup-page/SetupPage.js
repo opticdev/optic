@@ -95,7 +95,7 @@ export function SetupPage(props) {
   return (
     <Page title="Setup your API Start task">
       <Page.Navbar mini={true} />
-      <Page.Body padded={true} className={classes.pageBg}>
+      <Page.Body padded={true} className={classes.pageBg} style={{overflowY:"scroll"}}>
         <Box display="flex" className={classes.copyRoot}>
           <ApiStartCommandCopy />
         </Box>
@@ -277,20 +277,11 @@ function PortAssumption(props) {
         title={
           <div>
             <Typography variant="overline">examples:</Typography>
-            {docs && (
-              <MarkdownRender
-                source={
-                  docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
-                }
-              />
-            )}
-            {!docs && (
               <MarkdownRender
                 source={
                   "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
                 }
               />
-            )}
           </div>
         }
       >

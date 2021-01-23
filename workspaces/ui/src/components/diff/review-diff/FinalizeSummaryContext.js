@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import { Button, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,6 +6,7 @@ import Slide from '@material-ui/core/Slide';
 import { makeStyles } from '@material-ui/core/styles';
 import { StatMini } from './AskFinished';
 import { LightBlueBackground } from '../../../theme';
+import { useAnalyticsHook } from '../../../utilities/useAnalyticsHook';
 
 export const FinalizeSummaryContext = React.createContext(null);
 
@@ -44,12 +45,22 @@ function ResultsDialog(props) {
     endpointsWithChanges,
   } = props;
   const classes = useStyles();
-  if (!props.open) {
-    return null;
-  }
+  const track = useAnalyticsHook();
 
   const allNewEndpoints = newEndpoints + newEndpointsKnownPaths;
 
+  useEffect(() => {
+    if (props && props.open) {
+      track('CHANGES_COMMITTED', {
+        newEndpoints: allNewEndpoints,
+        endpointsWithChanges,
+      });
+    }
+  }, [props.open]);
+
+  if (!props.open) {
+    return null;
+  }
   return (
     <Dialog
       open={props.open}

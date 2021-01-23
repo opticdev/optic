@@ -15,7 +15,6 @@ import { useDiffDescription, useInteractionWithPointer } from './DiffHooks';
 import { DiffReviewLoading } from './LoadingNextDiff';
 import { DiffViewSimulation } from './DiffViewSimulation';
 import InteractionBodyViewer from './shape_viewers/InteractionBodyViewer';
-import { trackUserEvent } from '../../../Analytics';
 import { UserPreviewedSuggestion } from '@useoptic/analytics/lib/events/diffs';
 
 const useStyles = makeStyles((theme) => ({
@@ -92,14 +91,14 @@ export const DiffReviewExpanded = (props) => {
 
   const setSelectedInterpretation = (s) => {
     if (description && s) {
-      trackUserEvent(
-        UserPreviewedSuggestion.withProps({
-          captureId,
-          diff: description.title,
-          diffAssertion: description.assertion,
-          suggestion: s.action,
-        })
-      );
+      // trackUserEvent(
+      //   UserPreviewedSuggestion.withProps({
+      //     captureId,
+      //     diff: description.title,
+      //     diffAssertion: description.assertion,
+      //     suggestion: s.action,
+      //   })
+      // );
     }
     setSelectedInterpretationInner(s);
   };

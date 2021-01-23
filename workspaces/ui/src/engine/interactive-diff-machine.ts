@@ -153,6 +153,13 @@ const createNewDiffMachine = <Context>(
           unhandled: {
             on: {
               STAGE: {
+                actions: (ctx) => {
+                  console.log(
+                    'commands',
+                    ctx.preview.suggestions[ctx.selectedSuggestionIndex]
+                      .commands
+                  );
+                },
                 target: 'handled',
               },
               APPROVE_FIRST_SUGGESTION: {

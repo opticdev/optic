@@ -1,4 +1,9 @@
-import { canApplySuggestions, shapeDiffPreview, testCase } from './fixture';
+import {
+  canApplySuggestions,
+  logResult,
+  shapeDiffPreview,
+  testCase,
+} from './fixture';
 const cases = testCase('shape-diff-engine');
 
 test('a known field is missing.managed', async () => {

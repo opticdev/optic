@@ -1,8 +1,8 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import UrlToPath from './UrlToPath';
-import { pathComponentsToString } from './v2/AddUrlModal';
 import isEqual from 'lodash.isequal';
+import { pathComponentsToString } from './review-diff/learn-api/LearnAPIPageContext';
 
 const styles = (theme) => ({
   pathWrapper: {

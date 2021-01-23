@@ -241,7 +241,8 @@ class FieldShapeInterpretationHelper {
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
     });
-    return sortBy(previews, (i) => !i.invalid);
+
+    return orderTabs(false, previews);
   }
 
   private wrapFieldShapeWithOptional(
@@ -356,10 +357,27 @@ class FieldShapeInterpretationHelper {
 
     return {
       suggestions: suggestOptionalFirst ? suggestions.reverse() : suggestions,
-      previewTabs: tabs,
+      previewTabs: orderTabs(true, tabs),
     };
   }
 }
 
 const targetFinalNotNullable = (target: Set<ICoreShapeKinds>) =>
   !(target.has(ICoreShapeKinds.NullableKind) && target.size === 1);
+
+function orderTabs(newField: boolean, tabs: IInteractionPreviewTab[]) {
+  const ordering = {
+    missing: 10,
+  };
+
+  return tabs.sort((a, b) => {
+    const aI = ordering[a.title] || 0;
+    const bI = ordering[b.title] || 0;
+
+    if (aI > bI) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+}

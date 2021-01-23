@@ -47,7 +47,8 @@
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
 <script>
-    window.opticAnalyticsEnabled = '%REACT_APP_ENABLE_ANALYTICS%' === 'yes';
+    window.inAppAnalytics = '%REACT_APP_ENABLE_ANALYTICS%'
+    window.opticAnalyticsEnabled = window.inAppAnalytics === 'yes';
 </script>
 <script>
   window['_fs_debug'] = false;

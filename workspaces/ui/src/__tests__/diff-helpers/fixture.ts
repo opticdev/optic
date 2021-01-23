@@ -3,6 +3,9 @@ import { DiffSet } from '../../engine/diff-set';
 import { ParsedDiff } from '../../engine/parse-diff';
 import path from 'path';
 import colors from 'colors';
+import { DiffPreviewer, Queries, toOption } from '@useoptic/domain';
+import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
+import { IShapeTrail } from '../../engine/interfaces/shape-trail';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
@@ -14,18 +17,20 @@ import {
   IDiffSuggestionPreview,
   ISuggestion,
 } from '../../engine/interfaces/interpretors';
+import { spawn, Thread, Worker } from 'threads';
 import { JsonHelper, opticEngine, RfcCommandContext } from '@useoptic/domain';
 import { ILoadInteractionResponse } from '../../services/diff';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
-import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
+import { IDiff } from '../../engine/interfaces/diffs';
+import { universeFromEvents } from '@useoptic/domain-utilities';
+import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
+  rawSamples: any;
   diffs: DiffSet;
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
   learnInitial(
@@ -49,8 +54,10 @@ export async function loadsDiffsFromUniverse(
     rawDiffs,
     rfcBaseState,
     loadInteraction,
+    specService,
     learnInitial,
     learnTrailValues,
+    captureId,
   } = await universePromise;
   const diffsRaw = rawDiffs;
 
@@ -67,6 +74,7 @@ export async function loadsDiffsFromUniverse(
     rfcBaseState,
     loadInteraction,
     learnInitial,
+    rawSamples: (await specService.listCapturedSamples(captureId)).samples,
     learnTrailValues,
   };
 }
@@ -137,7 +145,44 @@ export async function canApplySuggestions(
       ]
     );
 
-    return JSON.parse(eventStore.serializeEvents(rfcId));
+    const serializedEvents = JSON.parse(eventStore.serializeEvents(rfcId));
+
+    // console.log(JSON.stringify(serializedEvents));
+
+    const firstResponseSetShapeId = serializedEvents.find(
+      (i) => i['ResponseBodySet']
+    )['ResponseBodySet'].bodyDescriptor.shapeId;
+
+    function shapeCanRender() {
+      //medium confidence in this test, since it's a scalajs vestige
+      const { rfcState, eventStore, rfcService, rfcId } = universeFromEvents(
+        serializedEvents
+      );
+      const queries = Queries(eventStore, rfcService, rfcId);
+      const shapesResolvers = queries.shapesResolvers();
+
+      const previewer = new DiffPreviewer(shapesResolvers, rfcState);
+      const bodyOption = toOption(firstResponseSetShapeId);
+      const result = previewer.previewShape(bodyOption);
+    }
+
+    function newEventStreamHasIntegrity() {
+      const spec = DiffEngine.spec_from_events(
+        JSON.stringify(serializedEvents)
+      );
+
+      for (let interaction of universe.rawSamples) {
+        let results = DiffEngine.diff_interaction(
+          JSON.stringify(interaction),
+          spec
+        );
+      }
+    }
+
+    shapeCanRender();
+    newEventStreamHasIntegrity();
+
+    return serializedEvents;
   }
 
   const events = universe.rfcBaseState.eventStore.serializeEvents(

@@ -66,17 +66,11 @@ export default function Navbar(props) {
 
   const menuItems = useMemo(
     () => [
-      ...(!process.env.REACT_APP_DONT_SHOW_DIFF
-        ? [
-            {
-              name: 'Review Diff',
-              icon: <ChangeHistoryIcon className={classes.iconStyles} />,
-              link: process.env.REACT_APP_DIFF_REVIEW_PAGE
-                ? routerPaths.reviewRoot
-                : routerPaths.diffsRoot,
-            },
-          ]
-        : []),
+      {
+        name: 'Review Diff',
+        icon: <ChangeHistoryIcon className={classes.iconStyles} />,
+        link: routerPaths.reviewRoot
+      },
       {
         name: 'Documentation',
         icon: <DescriptionIcon className={classes.iconStyles} />,

@@ -9,6 +9,8 @@ import {
 import { Typography } from '@material-ui/core';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { useServices } from '../../../contexts/SpecServiceContext';
+import { CodeBlock } from '../../setup-page/setup-api/CodeBlock';
+import { MarkdownRender } from '../../docs/DocContribution';
 
 const pJson = require('../../../../package.json');
 export function LoadingReviewPage() {
@@ -53,6 +55,57 @@ export function LoadingReviewPage() {
             <Typography variant="caption" style={{ fontWeight: 200 }}>
               Diff Engine v{pJson.version}
             </Typography>
+          </div>
+        </Paper>
+      </Page.Body>
+    </Page>
+  );
+}
+
+export function ErrorLoadingReviewPage() {
+  const classes = useStyles();
+
+  const { specService } = useServices();
+
+  const { completed, skipped, processed, captureId } = useCaptureContext();
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    specService.getCaptureStatus(captureId).then((i) => setStatus(i));
+  }, [captureId]);
+
+  const cursor = parseInt(processed) + parseInt(skipped);
+
+  const total = status && status.interactionsCount;
+
+  return (
+    <Page>
+      <Page.Navbar mini={true} />
+      <Page.Body
+        padded={false}
+        style={{
+          flexDirection: 'row',
+          height: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Paper elevation={1} className={classes.loading}>
+          <div>
+            <Typography variant="h6" color="error" style={{ fontWeight: 200 }}>
+              Diff Could Not be Completed
+            </Typography>
+            <Typography variant="caption" style={{ fontWeight: 200 }}>
+              Diff Engine v{pJson.version}
+            </Typography>
+
+            <MarkdownRender
+              source={`
+- Share a debug capture with the Optic team on Slack (JSON values omitted)
+- Revert recent changes to specification.json to get unblocked`}
+            />
+
+            <CodeBlock lang="bash" code={`api debug:capture ${captureId}`} />
           </div>
         </Paper>
       </Page.Body>

@@ -4,7 +4,7 @@ import { GenericContextFactory } from '../../contexts/GenericContextFactory';
 import { secondary } from '../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import ReusableDiffRow from '../diff/v2/shape_viewers/ReusableDiffRow';
+import ReusableDiffRow from '../diff/review-diff/shape-viewers/ReusableDiffRow';
 import { Typography } from '@material-ui/core';
 
 const {

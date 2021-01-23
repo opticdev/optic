@@ -155,6 +155,7 @@ function UrlToPath(props) {
   );
   const [lastInteractedIndex, setLastInteractedIndex] = useState(null);
   const [collapseParams, setCollapseParams] = useState(false);
+  const [firstTimeMap, setFirstTime] = useState({});
 
   function setPathComponents(pathComponents) {
     setPathComponentsInternal(pathComponents);
@@ -167,8 +168,12 @@ function UrlToPath(props) {
 
   function setItemAt(index) {
     return function (newItem) {
-      setCollapseParams(false);
+
+      const firstTime = !Boolean(firstTimeMap[index])
+
+      setCollapseParams(firstTime ? newItem.name && newItem.isParameter : false)
       setLastInteractedIndex(index);
+      setFirstTime((value) => ({...value, [index]: true}))
 
       setPathComponents(
         pathComponents.map((item) => {
@@ -229,7 +234,6 @@ function UrlToPath(props) {
                 >
                   <TextField
                     onKeyUp={(e) => {
-                      console.log(e.keyCode);
                       if (e.keyCode === 13 && canFinish) finish();
                     }}
                     key={item.index}
