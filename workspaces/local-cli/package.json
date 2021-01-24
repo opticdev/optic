@@ -25,6 +25,7 @@
     "@useoptic/cli-server": "9.0.5",
     "@useoptic/cli-shared": "9.0.5",
     "@useoptic/domain": "10.0.64",
+    "pad-left": "^2.1.0",
     "analytics-node": "^3.4.0-beta.1",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",

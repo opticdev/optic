@@ -12,7 +12,7 @@ import padLeft from 'pad-left';
 import {
   cleanupAndExit,
   developerDebugLogger,
-  fromOptic,
+  fromOptic, makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
@@ -30,38 +30,56 @@ import fs from 'fs-extra';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
-import { getUser } from '../shared/analytics';
-import openBrowser from 'react-dev-utils/openBrowser';
+import {getUser, opticTaskToProps, trackUserEvent} from '../shared/analytics';
 import { cli } from 'cli-ux';
-import { diff } from 'semver';
 import { makeDiffRfcBaseStateFromEvents } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
-import { universeFromEvents } from '@useoptic/domain-utilities';
-import { Queries } from '@useoptic/domain';
 import sortBy from 'lodash.sortby';
 import {
   createEndpointDescriptor,
   getCachedQueryResults,
   KnownEndpoint,
 } from '../shared/coverage';
+import openBrowser from "react-dev-utils/openBrowser";
+import {StatusRun} from "@useoptic/analytics/lib/events/status";
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
+
+  static flags = {
+    'pre-commit': flags.boolean(),
+    'review': flags.boolean(),
+  }
+
   async run() {
+
+    const {flags} = this.parse(Status)
+
+    const timeStated = Date.now()
+
+    let diffFound = false
+    const exitOnDiff = Boolean(flags["pre-commit"])
+    const openReviewPage = Boolean(flags["review"])
+
     await this.requiresInGit();
     let { paths, config } = (await this.requiresSpec())!;
 
-    const captureId = getCaptureId(paths);
+    const captureId = await getCaptureId(paths);
+    developerDebugLogger('using capture id ', captureId)
 
-    const diffsPromise = this.getDiffsAndEvents(paths, captureId, config);
+    if (openReviewPage) {
+      return this.openDiffPage(paths.cwd, captureId)
+    }
 
-    diffsPromise.catch(() => {
+    const diffsPromise = this.getDiffsAndEvents(paths, captureId);
+    diffsPromise.catch((e) => {
+      console.error(e)
       this.printStatus([], [], []);
     });
-    diffsPromise.then(({ diffs, undocumentedUrls, events }) => {
+    diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
       const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
       const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
 
@@ -94,9 +112,25 @@ export default class Status extends Command {
         diffsGroupedByPathAndMethod,
         undocumentedUrls
       );
+
+      diffFound = diffs.length > 0 || undocumentedUrls.length > 0
+
+      await trackUserEvent(
+        config.name,
+        StatusRun.withProps({
+          captureId,
+          diffCount: diffs.length,
+          undocumentedCount: undocumentedUrls.length,
+          timeMs: Date.now() - timeStated
+        })
+      );
     });
 
-    diffsPromise.catch(() => {
+    diffsPromise.finally(() => {
+      if (diffFound && exitOnDiff) {
+        console.error(colors.red('Optic detected an unhandled API diff. Run "api status --review"'))
+        process.exit(1)
+      }
       cleanupAndExit();
     });
   }
@@ -118,11 +152,11 @@ export default class Status extends Command {
 
   async requiresSpec(): Promise<
     | {
-        paths: IPathMapping;
-        config: IApiCliConfig;
-      }
+    paths: IPathMapping;
+    config: IApiCliConfig;
+  }
     | undefined
-  > {
+    > {
     let paths: IPathMapping;
     let config: IApiCliConfig;
 
@@ -143,7 +177,6 @@ export default class Status extends Command {
   async getDiffsAndEvents(
     paths: IPathMapping,
     captureId: string,
-    config: IApiCliConfig
   ) {
     const daemonState = await ensureDaemonStarted(
       lockFilePath,
@@ -171,8 +204,6 @@ export default class Status extends Command {
     const ignoreRules = (await ignoreHelper.getCurrentIgnoreRules()).allRules;
     const events = await fs.readJSON(paths.specStorePath);
 
-    const captureStatus = specService.getCaptureStatus(captureId);
-
     const startDiffUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs`;
 
     const { diffId, notificationsUrl } = await JsonHttpClient.postJson(
@@ -192,31 +223,25 @@ export default class Status extends Command {
       `http://localhost:${daemonState.port}` + notificationsUrl
     );
 
-    let customBar: any | undefined;
-    captureStatus.then(({ interactionsCount }) => {
-      customBar = cli.progress({
-        format: '{bar} | {value}/{total} diffed',
-        barCompleteChar: '\u2588',
-        barIncompleteChar: '\u2591',
-        clearOnComplete: true,
-      });
-      customBar.start(interactionsCount, 0);
+    // let customBar: any | undefined;
+    let totalInteractions = 0
+    cli.action.start('computing diffs for observations')
+    specService.getCaptureStatus(captureId).then(({ interactionsCount }) => {
+      totalInteractions = interactionsCount
     });
 
     await new Promise((resolve, reject) => {
       notificationChannel.onmessage = (event) => {
         const { type, data } = JSON.parse(event.data);
         if (type === 'message') {
-          if (Boolean(customBar)) {
-            customBar.update(
-              parseInt(data.diffedInteractionsCounter) +
-                parseInt(data.skippedInteractionsCounter)
-            );
-          }
+          cli.action.start(
+            `computing diffs for observations ${parseInt(data.diffedInteractionsCounter) +parseInt(data.skippedInteractionsCounter)}${totalInteractions > 0 ? `/${totalInteractions.toString()}`: ''}`)
           if (!data.hasMoreInteractions) {
+            cli.action.stop('done')
             resolve();
           }
         } else if (type === 'error') {
+          cli.action.stop('done')
           reject();
         }
       };
@@ -225,7 +250,6 @@ export default class Status extends Command {
       };
     });
 
-    customBar && customBar.stop();
     notificationChannel.close();
 
     const diffs = await JsonHttpClient.getJson(getDiffsUrl);
@@ -237,7 +261,6 @@ export default class Status extends Command {
       diffs,
       events,
       undocumentedUrls: undocumentedUrls.urls,
-      captureStatus: await captureStatus,
     };
   }
 
@@ -254,12 +277,10 @@ export default class Status extends Command {
       colors.yellow(generateEndpointString(i.method, i.fullPath))
     );
 
-    this.log('\n');
-
     if (changed.length === 0) {
-      this.log(colors.bold(` ✅  No diffs observed for existing endpoints`));
+      this.log(`✓  No diffs observed for existing endpoints`);
     } else {
-      this.log(colors.bold(` ↘️   Diffs observed for existing endpoints`));
+      this.log(colors.bold(`   Diffs observed for existing endpoints`));
       this.log(
         colors.grey(
           `     (use ${colors.bold(
@@ -277,12 +298,10 @@ export default class Status extends Command {
       .slice(0, onlyShow)
       .map((i) => colors.green(generateEndpointString(i.method, i.path)));
 
-    this.log('\n');
-
     if (ordered.length === 0) {
-      this.log(colors.bold(` ✅  No undocumented URLs observed`));
+      this.log(`✓  No undocumented URLs observed`);
     } else {
-      this.log(colors.bold(` ↘️   Undocumented URLs observed`));
+      this.log(colors.bold(`   Undocumented URLs observed`));
       this.log(
         colors.grey(
           `      (use ${colors.bold(
@@ -296,7 +315,24 @@ export default class Status extends Command {
       }
     }
 
-    this.log('\n');
+  }
+
+  async openDiffPage(basePath: string, captureId: string) {
+    const daemonState = await ensureDaemonStarted(
+      lockFilePath,
+      Config.apiBaseUrl
+    );
+
+    const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
+    developerDebugLogger(`api base url: ${apiBaseUrl}`);
+    const cliClient = new Client(apiBaseUrl);
+    cliClient.setIdentity(await getUser());
+    const cliSession = await cliClient.findSession(basePath, null, null);
+    developerDebugLogger({ cliSession });
+    const uiBaseUrl = makeUiBaseUrl(daemonState);
+    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
+    openBrowser(uiUrl);
+    cleanupAndExit();
   }
 }
 

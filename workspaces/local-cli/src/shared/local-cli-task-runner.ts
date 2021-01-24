@@ -80,7 +80,7 @@ export async function LocalTaskSessionWrapper(
   deprecationLogger.enabled = true;
 
   const { paths, config } = await loadPathsAndConfig(cli);
-  const captureId = getCaptureId(paths);
+  const captureId = await getCaptureId(paths);
   const runner = new LocalCliTaskRunner(captureId, paths, taskName, {
     shouldCollectCoverage: flags['collect-coverage'] !== false,
     shouldCollectDiffs: flags['collect-diffs'] !== false,
@@ -263,12 +263,9 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     if (hasDiff) {
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-      const iconPath = path.join(__dirname, '../../assets/optic-logo-png.png');
-      runScriptByName('notify', uiUrl, iconPath);
-
       cli.log(
         fromOptic(
-          `Observed Unexpected API Behavior. Click here to review: ${uiUrl}`
+          `Observed Unexpected API Behavior. Run "api status"`
         )
       );
     } else {
