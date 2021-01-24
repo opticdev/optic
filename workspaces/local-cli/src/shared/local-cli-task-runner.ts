@@ -57,10 +57,15 @@ export const runCommandFlags = {
     default: true,
     required: false,
   }),
+  'exit-on-diff': flags.boolean({
+    default: false,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
   'collect-coverage'?: boolean;
   'collect-diffs'?: boolean;
+  'exit-on-diff'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -79,11 +84,16 @@ export async function LocalTaskSessionWrapper(
   };
   deprecationLogger.enabled = true;
 
+  const usesTaskSpecificBoundary = flags["collect-coverage"] || flags["exit-on-diff"]
+
   const { paths, config } = await loadPathsAndConfig(cli);
-  const captureId = await getCaptureId(paths);
+
+  const captureId = usesTaskSpecificBoundary ? uuid.v4() : await getCaptureId(paths);
+
   const runner = new LocalCliTaskRunner(captureId, paths, taskName, {
     shouldCollectCoverage: flags['collect-coverage'] !== false,
     shouldCollectDiffs: flags['collect-diffs'] !== false,
+    shouldExitOnDiff: flags["exit-on-diff"] !== false
   });
   const session = new CliTaskSession(runner);
 
@@ -120,10 +130,17 @@ export async function LocalTaskSessionWrapper(
     await printCoverage(paths, taskName, captureId);
   }
 
+  if (runner.foundDiff && flags["exit-on-diff"]) {
+    return await cleanupAndExit(1)
+  }
+
   return await cleanupAndExit();
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
+
+  public foundDiff: boolean = false
+
   constructor(
     private captureId: string,
     private paths: IPathMapping,
@@ -131,6 +148,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
     private options: {
       shouldCollectCoverage: boolean;
       shouldCollectDiffs: boolean;
+      shouldExitOnDiff: boolean;
     }
   ) {}
 
@@ -263,11 +281,26 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     if (hasDiff) {
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-      cli.log(
-        fromOptic(
-          `Observed Unexpected API Behavior. Run "api status"`
-        )
-      );
+
+      const usesTaskSpecificCapture = this.options.shouldExitOnDiff || this.options.shouldCollectCoverage
+
+      if (usesTaskSpecificCapture) {
+        cli.log(
+          fromOptic(
+            `Observed Unexpected API Behavior. Review at ${uiUrl}`
+          )
+        );
+
+      } else {
+        cli.log(
+          fromOptic(
+            `Observed Unexpected API Behavior. Run "api status"`
+          )
+        );
+      }
+
+      this.foundDiff = true
+
     } else {
       if (sampleCount > 0) {
         cli.log(

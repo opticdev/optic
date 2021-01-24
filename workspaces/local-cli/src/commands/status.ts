@@ -128,7 +128,7 @@ export default class Status extends Command {
 
     diffsPromise.finally(() => {
       if (diffFound && exitOnDiff) {
-        console.error(colors.red('Optic detected an unhandled API diff. Run "api status --review"'))
+        console.error(colors.red('Optic detected an API diff. Run "api status --review"'))
         process.exit(1)
       }
       cleanupAndExit();
