@@ -63,7 +63,8 @@ jobs:
             --acl=public-read \
             --metadata='{"Cache-Control":"no-store"}' \
             --cache-control=no-store
-          aws s3 cp ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
+          aws s3 sync ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
+            --delete \
             --recursive \
             --exclude=index.html \
             --sse=AES256 \
