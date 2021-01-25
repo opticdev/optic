@@ -69,7 +69,7 @@ export const PathAndMethodMono = ({ path, method }) => {
         whiteSpace: 'pre-wrap',
         maxWidth: 240,
         overflow: 'hidden',
-        textOverflow: 'ellipsis'
+        textOverflow: 'ellipsis',
       }}
     >
       {path}
@@ -77,7 +77,7 @@ export const PathAndMethodMono = ({ path, method }) => {
   );
 
   return (
-    <div style={{display: 'flex', flexWrap: 'no-wrap'}}>
+    <div style={{ display: 'flex', flexWrap: 'no-wrap' }}>
       {' '}
       {methodRender} {pathRender}{' '}
     </div>
@@ -121,8 +121,11 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
     </Typography>
   );
 
-  if (path.length > 47) {
-    return <LightTooltip title={<PathAndMethod method={method} path={path} />} enterDelay={500}>
+  return (
+    <LightTooltip
+      title={<PathAndMethod method={method} path={path} />}
+      enterDelay={500}
+    >
       <div
         style={{
           display: 'flex',
@@ -134,20 +137,7 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
         {methodRender} {pathRender}{' '}
       </div>
     </LightTooltip>
-  } else {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          paddingRight: 8,
-        }}
-      >
-        {' '}
-        {methodRender} {pathRender}{' '}
-      </div>
-    )
-  }
+  );
 };
 
 export const MethodRenderLarge = ({ method, style }) => {

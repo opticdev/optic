@@ -12,12 +12,11 @@ import padLeft from 'pad-left';
 import {
   cleanupAndExit,
   developerDebugLogger,
-  fromOptic, makeUiBaseUrl,
+  fromOptic,
+  makeUiBaseUrl,
   userDebugLogger,
 } from '@useoptic/cli-shared';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
-//@ts-ignore
-import { isInRepo } from '../shared/git/git-rev-sync-insourced';
 import { EventEmitter } from 'events';
 import {
   getPathsRelativeToConfig,
@@ -25,12 +24,12 @@ import {
   IPathMapping,
   readApiConfig,
 } from '@useoptic/cli-config';
-import { getCaptureId } from '../shared/git/git-context-capture';
+import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
 import fs from 'fs-extra';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
-import {getUser, opticTaskToProps, trackUserEvent} from '../shared/analytics';
+import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import { cli } from 'cli-ux';
 import { makeDiffRfcBaseStateFromEvents } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
@@ -43,40 +42,40 @@ import {
   getCachedQueryResults,
   KnownEndpoint,
 } from '../shared/coverage';
-import openBrowser from "react-dev-utils/openBrowser";
-import {StatusRun} from "@useoptic/analytics/lib/events/status";
+import openBrowser from 'react-dev-utils/openBrowser';
+import { StatusRun } from '@useoptic/analytics/lib/events/status';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
 
   static flags = {
     'pre-commit': flags.boolean(),
-    'review': flags.boolean(),
-  }
+    review: flags.boolean(),
+  };
 
   async run() {
+    const { flags } = this.parse(Status);
 
-    const {flags} = this.parse(Status)
+    const timeStated = Date.now();
 
-    const timeStated = Date.now()
+    let diffFound = false;
+    const exitOnDiff = Boolean(flags['pre-commit']);
+    const openReviewPage = Boolean(flags['review']);
 
-    let diffFound = false
-    const exitOnDiff = Boolean(flags["pre-commit"])
-    const openReviewPage = Boolean(flags["review"])
-
-    await this.requiresInGit();
     let { paths, config } = (await this.requiresSpec())!;
 
+    await this.requiresInGit(paths.basePath);
+
     const captureId = await getCaptureId(paths);
-    developerDebugLogger('using capture id ', captureId)
+    developerDebugLogger('using capture id ', captureId);
 
     if (openReviewPage) {
-      return this.openDiffPage(paths.cwd, captureId)
+      return this.openDiffPage(paths.cwd, captureId);
     }
 
     const diffsPromise = this.getDiffsAndEvents(paths, captureId);
     diffsPromise.catch((e) => {
-      console.error(e)
+      console.error(e);
       this.printStatus([], [], []);
     });
     diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
@@ -113,7 +112,7 @@ export default class Status extends Command {
         undocumentedUrls
       );
 
-      diffFound = diffs.length > 0 || undocumentedUrls.length > 0
+      diffFound = diffs.length > 0 || undocumentedUrls.length > 0;
 
       await trackUserEvent(
         config.name,
@@ -121,15 +120,17 @@ export default class Status extends Command {
           captureId,
           diffCount: diffs.length,
           undocumentedCount: undocumentedUrls.length,
-          timeMs: Date.now() - timeStated
+          timeMs: Date.now() - timeStated,
         })
       );
     });
 
     diffsPromise.finally(() => {
       if (diffFound && exitOnDiff) {
-        console.error(colors.red('Optic detected an API diff. Run "api status --review"'))
-        process.exit(1)
+        console.error(
+          colors.red('Optic detected an API diff. Run "api status --review"')
+        );
+        process.exit(1);
       }
       cleanupAndExit();
     });
@@ -140,23 +141,23 @@ export default class Status extends Command {
     process.exit(0);
   }
 
-  async requiresInGit() {
-    if (isInRepo()) {
+  async requiresInGit(basepath: string) {
+    if (isInRepo(basepath)) {
       return;
     } else {
       await this.exitWithError(
-        `"${colors.bold('api init')}" only works when Optic is in a Git repo`
+        `"${colors.bold('api status')}" only works when Optic is in a Git repo`
       );
     }
   }
 
   async requiresSpec(): Promise<
     | {
-    paths: IPathMapping;
-    config: IApiCliConfig;
-  }
+        paths: IPathMapping;
+        config: IApiCliConfig;
+      }
     | undefined
-    > {
+  > {
     let paths: IPathMapping;
     let config: IApiCliConfig;
 
@@ -174,10 +175,7 @@ export default class Status extends Command {
     }
   }
 
-  async getDiffsAndEvents(
-    paths: IPathMapping,
-    captureId: string,
-  ) {
+  async getDiffsAndEvents(paths: IPathMapping, captureId: string) {
     const daemonState = await ensureDaemonStarted(
       lockFilePath,
       Config.apiBaseUrl
@@ -224,10 +222,10 @@ export default class Status extends Command {
     );
 
     // let customBar: any | undefined;
-    let totalInteractions = 0
-    cli.action.start('computing diffs for observations')
+    let totalInteractions = 0;
+    cli.action.start('computing diffs for observations');
     specService.getCaptureStatus(captureId).then(({ interactionsCount }) => {
-      totalInteractions = interactionsCount
+      totalInteractions = interactionsCount;
     });
 
     await new Promise((resolve, reject) => {
@@ -235,13 +233,17 @@ export default class Status extends Command {
         const { type, data } = JSON.parse(event.data);
         if (type === 'message') {
           cli.action.start(
-            `computing diffs for observations ${parseInt(data.diffedInteractionsCounter) +parseInt(data.skippedInteractionsCounter)}${totalInteractions > 0 ? `/${totalInteractions.toString()}`: ''}`)
+            `computing diffs for observations ${
+              parseInt(data.diffedInteractionsCounter) +
+              parseInt(data.skippedInteractionsCounter)
+            }${totalInteractions > 0 ? `/${totalInteractions.toString()}` : ''}`
+          );
           if (!data.hasMoreInteractions) {
-            cli.action.stop('done')
+            cli.action.stop('done');
             resolve();
           }
         } else if (type === 'error') {
-          cli.action.stop('done')
+          cli.action.stop('done');
           reject();
         }
       };
@@ -314,7 +316,6 @@ export default class Status extends Command {
         this.log(`   and ${ordered.length - onlyShow} more...`);
       }
     }
-
   }
 
   async openDiffPage(basePath: string, captureId: string) {
