@@ -2,8 +2,7 @@
   "extends": "../config/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
-    "rootDir": "src",
-    "strict": false
+    "rootDir": "src"
   },
   "include": ["./src", "./typings"],
   "typeRoots": [

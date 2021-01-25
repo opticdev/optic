@@ -8,7 +8,14 @@ export type IRequestSpecTrail =
   | ISpecResponseBody
   | ISpecResponseRoot;
 
-export const RequestTrailConstants = keymirror({
+export const RequestTrailConstants: {
+  SpecRequestRoot: string;
+  SpecRoot: string;
+  SpecResponseRoot: string;
+  SpecRequestBody: string;
+  SpecPath: string;
+  SpecResponseBody: string;
+} = keymirror({
   SpecResponseBody: null,
   SpecRequestRoot: null,
   SpecPath: null,

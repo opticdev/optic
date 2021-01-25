@@ -8,7 +8,7 @@ import {
 } from './interaction-trail';
 import { DiffRfcBaseState } from './diff-rfc-base-state';
 
-function getNormalizedBodyDescriptor(value) {
+function getNormalizedBodyDescriptor(value: any) {
   if (value && value.ShapedBodyDescriptor) {
     return value.ShapedBodyDescriptor;
   }
@@ -33,12 +33,12 @@ export function locationForTrails(
   | undefined {
   const { requests, responses } = diffRfcBaseState.queries.requestsState();
 
-  if (trail[RequestTrailConstants.SpecRoot]) {
+  if ((trail as any)[RequestTrailConstants.SpecRoot]) {
     return undefined;
   }
 
-  if (trail[RequestTrailConstants.SpecRequestBody]) {
-    const { requestId } = trail[RequestTrailConstants.SpecRequestBody];
+  if ((trail as any)[RequestTrailConstants.SpecRequestBody]) {
+    const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestBody];
     const { pathComponentId, httpMethod, bodyDescriptor } = requests[
       requestId
     ].requestDescriptor;
@@ -55,8 +55,8 @@ export function locationForTrails(
     };
   }
 
-  if (trail[RequestTrailConstants.SpecRequestRoot]) {
-    const { requestId } = trail[RequestTrailConstants.SpecRequestRoot];
+  if ((trail as any)[RequestTrailConstants.SpecRequestRoot]) {
+    const { requestId } = (trail as any)[RequestTrailConstants.SpecRequestRoot];
     const { pathComponentId, httpMethod, bodyDescriptor } = requests[
       requestId
     ].requestDescriptor;
@@ -72,8 +72,10 @@ export function locationForTrails(
     };
   }
 
-  if (trail[RequestTrailConstants.SpecResponseBody]) {
-    const { responseId } = trail[RequestTrailConstants.SpecResponseBody];
+  if ((trail as any)[RequestTrailConstants.SpecResponseBody]) {
+    const { responseId } = (trail as any)[
+      RequestTrailConstants.SpecResponseBody
+    ];
     const { pathId, httpMethod, httpStatusCode, bodyDescriptor } = responses[
       responseId
     ].responseDescriptor;
@@ -90,8 +92,10 @@ export function locationForTrails(
     };
   }
 
-  if (trail[RequestTrailConstants.SpecResponseRoot]) {
-    const { responseId } = trail[RequestTrailConstants.SpecResponseRoot];
+  if ((trail as any)[RequestTrailConstants.SpecResponseRoot]) {
+    const { responseId } = (trail as any)[
+      RequestTrailConstants.SpecResponseRoot
+    ];
     const { pathId, httpMethod, httpStatusCode, bodyDescriptor } = responses[
       responseId
     ].responseDescriptor;
@@ -110,8 +114,8 @@ export function locationForTrails(
   }
 
   // New Bodies
-  if (trail[RequestTrailConstants.SpecPath]) {
-    const { pathId } = trail[RequestTrailConstants.SpecPath];
+  if ((trail as any)[RequestTrailConstants.SpecPath]) {
+    const { pathId } = (trail as any)[RequestTrailConstants.SpecPath];
     const methodOption = methodForInteractionTrail(interactionTrail);
 
     const inRequest = inRequestForInteractionTrail(interactionTrail);
@@ -134,7 +138,7 @@ export function methodForInteractionTrail(
 ): string | undefined {
   //@ts-ignore
   const Method: IMethod | undefined = interactionTrail.path.find((i) => {
-    return i['Method'];
+    return (i as any)['Method'];
   });
 
   if (Method) {
@@ -146,11 +150,11 @@ export function inResponseForInteractionTrail(
   interactionTrail: IInteractionTrail
 ): { statusCode: number; contentType?: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
-  if (last['ResponseBody']) {
+  if ((last as any)['ResponseBody']) {
     const asResponseBody = last as IResponseBody;
     return asResponseBody.ResponseBody;
   }
-  if (last['ResponseStatusCode']) {
+  if ((last as any)['ResponseStatusCode']) {
     const asResponseBody = last as IResponseStatusCode;
     return {
       statusCode: asResponseBody.ResponseStatusCode.statusCode,
@@ -162,7 +166,7 @@ export function inRequestForInteractionTrail(
   interactionTrail: IInteractionTrail
 ): { contentType: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
-  if (last['RequestBody']) {
+  if ((last as any)['RequestBody']) {
     const asRequestBody = last as IRequestBody;
     return asRequestBody.RequestBody;
   }
