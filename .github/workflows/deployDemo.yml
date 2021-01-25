@@ -65,7 +65,6 @@ jobs:
             --cache-control=no-store
           aws s3 sync ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
             --delete \
-            --recursive \
             --exclude=index.html \
             --sse=AES256 \
             --acl=public-read
