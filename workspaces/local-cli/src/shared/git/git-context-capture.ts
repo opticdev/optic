@@ -4,12 +4,16 @@ import * as uuid from 'uuid';
 import niceTry from 'nice-try';
 //@ts-ignore
 import gitRev from './git-rev-sync-insourced.js';
-import fs from 'fs-extra'
+import fs from 'fs-extra';
+import md5file from 'md5-file';
 
 export async function getCaptureId(paths: IPathMapping): Promise<string> {
   if (gitRev.isInRepo()) {
-    const specSize = (await fs.stat(paths.specStorePath)).size
-    return niceTry(() => `${gitRev.short(paths.basePath)}-${specSize.toString()}`) || `uuid-${uuid.v4()}`;
+    const specHash = await md5file(paths.specStorePath);
+    return (
+      niceTry(() => `${gitRev.short(paths.basePath)}-${specHash}`) ||
+      `uuid-${uuid.v4()}`
+    );
   } else {
     return uuid.v4();
   }
