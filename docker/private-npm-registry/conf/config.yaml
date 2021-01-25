@@ -18,4 +18,4 @@ uplinks:
 logs:
   - {type: stdout, format: pretty, level: trace}
 
-max_body_size: 100
+max_body_size: 100mb
