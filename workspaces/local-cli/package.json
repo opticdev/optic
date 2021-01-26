@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "The Optic CLI",
-  "version": "9.0.5",
+  "version": "9.0.6@beta.0",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -16,12 +16,12 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/analytics": "9.0.5",
-    "@useoptic/cli-client": "9.0.5",
-    "@useoptic/cli-config": "9.0.5",
-    "@useoptic/cli-scripts": "9.0.5",
-    "@useoptic/cli-server": "9.0.5",
-    "@useoptic/cli-shared": "9.0.5",
+    "@useoptic/analytics": "9.0.6@beta.0",
+    "@useoptic/cli-client": "9.0.6@beta.0",
+    "@useoptic/cli-config": "9.0.6@beta.0",
+    "@useoptic/cli-scripts": "9.0.6@beta.0",
+    "@useoptic/cli-server": "9.0.6@beta.0",
+    "@useoptic/cli-shared": "9.0.6@beta.0",
     "@useoptic/domain": "10.0.64",
     "analytics-node": "^3.4.0-beta.1",
     "assert": "^2.0.0",
