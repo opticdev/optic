@@ -3,7 +3,7 @@ import {
   IDiffService,
   ILoadInteractionResponse,
 } from '../../services/diff';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { DiffRfcBaseState } from './diff-rfc-base-state';
 
 export interface DiffSessionConfig {
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;

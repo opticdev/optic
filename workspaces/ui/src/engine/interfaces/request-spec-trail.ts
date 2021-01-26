@@ -1,4 +1,3 @@
-//@ts-ignore
 import keymirror from 'keymirror';
 
 export type IRequestSpecTrail =
@@ -8,14 +7,7 @@ export type IRequestSpecTrail =
   | ISpecResponseBody
   | ISpecResponseRoot;
 
-export const RequestTrailConstants: {
-  SpecRequestRoot: string;
-  SpecRoot: string;
-  SpecResponseRoot: string;
-  SpecRequestBody: string;
-  SpecPath: string;
-  SpecResponseBody: string;
-} = keymirror({
+export const RequestTrailConstants = keymirror({
   SpecResponseBody: null,
   SpecRequestRoot: null,
   SpecPath: null,

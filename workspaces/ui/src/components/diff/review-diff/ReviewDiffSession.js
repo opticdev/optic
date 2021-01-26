@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { sendMessageToEndpoint } from '../../../engine/diff-session';
+import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-state';
 import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
 import { ErrorLoadingReviewPage, LoadingReviewPage } from './LoadingPage';
 import Page from '../../Page';
 import { useAnalyticsHook } from '../../../utilities/useAnalyticsHook';
-import {makeDiffRfcBaseState} from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 
 export const DiffSessionContext = React.createContext(null);
 

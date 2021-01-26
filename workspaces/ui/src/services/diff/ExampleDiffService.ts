@@ -29,9 +29,9 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
+import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export class ExampleDiff {
   private diffId?: any;

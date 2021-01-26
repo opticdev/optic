@@ -1,3 +1,5 @@
+import { IDiff } from './diffs';
+
 interface SerializedDiff {
   [key: string]: {
     interactionTrail: {

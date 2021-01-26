@@ -64,7 +64,6 @@ export function makeUiBaseUrl(daemonState: ICliDaemonState) {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticTaskRunner {
-  foundDiff: boolean;
   run(
     cli: Command,
     cliConfig: IApiCliConfig,
@@ -107,8 +106,8 @@ export async function loadPathsAndConfig(cli: Command) {
   }
 }
 
-export function cleanupAndExit(code: number = 0) {
-  return process.exit(code);
+export function cleanupAndExit() {
+  return process.exit(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

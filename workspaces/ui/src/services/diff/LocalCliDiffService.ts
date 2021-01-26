@@ -24,7 +24,7 @@ import {
   IValueAffordanceSerializationWithCounter,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
+import { IDiff } from '../../engine/interfaces/diffs';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
