@@ -3,6 +3,7 @@ export const defaultIgnoreRules = [
   'HEAD *',
   'GET (.*).htm',
   'GET (.*).html',
+  'GET (.*).ico',
   'GET (.*).css',
   'GET (.*).js',
   'GET (.*).woff',
