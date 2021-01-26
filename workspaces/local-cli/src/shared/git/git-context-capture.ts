@@ -8,6 +8,10 @@ import fs from 'fs-extra';
 import crypto from 'crypto';
 
 export async function getCaptureId(paths: IPathMapping): Promise<string> {
+  if (!process.env.GITFLOW_CAPTURE) {
+    return uuid.v4();
+  }
+
   if (isInRepo(paths.basePath)) {
     const specHash = await fileHash(paths.specStorePath);
     return (

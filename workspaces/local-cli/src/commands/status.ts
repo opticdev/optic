@@ -44,6 +44,7 @@ import {
 } from '../shared/coverage';
 import openBrowser from 'react-dev-utils/openBrowser';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
+import * as uuid from 'uuid';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -55,6 +56,14 @@ export default class Status extends Command {
 
   async run() {
     const { flags } = this.parse(Status);
+
+    if (!process.env.GITFLOW_CAPTURE) {
+      return this.log(
+        fromOptic(
+          '"api status" is only available on beta channels. yarn global add @useoptic/cli@beta'
+        )
+      );
+    }
 
     const timeStated = Date.now();
 

@@ -84,16 +84,19 @@ export async function LocalTaskSessionWrapper(
   };
   deprecationLogger.enabled = true;
 
-  const usesTaskSpecificBoundary = flags["collect-coverage"] || flags["exit-on-diff"]
+  const usesTaskSpecificBoundary =
+    flags['collect-coverage'] || flags['exit-on-diff'];
 
   const { paths, config } = await loadPathsAndConfig(cli);
 
-  const captureId = usesTaskSpecificBoundary ? uuid.v4() : await getCaptureId(paths);
+  const captureId = usesTaskSpecificBoundary
+    ? uuid.v4()
+    : await getCaptureId(paths);
 
   const runner = new LocalCliTaskRunner(captureId, paths, taskName, {
     shouldCollectCoverage: flags['collect-coverage'] !== false,
     shouldCollectDiffs: flags['collect-diffs'] !== false,
-    shouldExitOnDiff: flags["exit-on-diff"] !== false
+    shouldExitOnDiff: flags['exit-on-diff'] !== false,
   });
   const session = new CliTaskSession(runner);
 
@@ -130,16 +133,15 @@ export async function LocalTaskSessionWrapper(
     await printCoverage(paths, taskName, captureId);
   }
 
-  if (runner.foundDiff && flags["exit-on-diff"]) {
-    return await cleanupAndExit(1)
+  if (runner.foundDiff && flags['exit-on-diff']) {
+    return await cleanupAndExit(1);
   }
 
   return await cleanupAndExit();
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
-
-  public foundDiff: boolean = false
+  public foundDiff: boolean = false;
 
   constructor(
     private captureId: string,
@@ -282,25 +284,20 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     if (hasDiff) {
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
 
-      const usesTaskSpecificCapture = this.options.shouldExitOnDiff || this.options.shouldCollectCoverage
+      const usesTaskSpecificCapture =
+        this.options.shouldExitOnDiff || this.options.shouldCollectCoverage;
 
-      if (usesTaskSpecificCapture) {
+      if (usesTaskSpecificCapture || !process.env.GITFLOW_CAPTURE) {
         cli.log(
-          fromOptic(
-            `Observed Unexpected API Behavior. Review at ${uiUrl}`
-          )
+          fromOptic(`Observed Unexpected API Behavior. Review at ${uiUrl}`)
         );
-
       } else {
         cli.log(
-          fromOptic(
-            `Observed Unexpected API Behavior. Run "api status"`
-          )
+          fromOptic(`Observed Unexpected API Behavior. Run "api status"`)
         );
       }
 
-      this.foundDiff = true
-
+      this.foundDiff = true;
     } else {
       if (sampleCount > 0) {
         cli.log(
