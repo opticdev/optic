@@ -43,15 +43,15 @@ export const PathAndMethodMono = ({ path, method }) => {
   const methodRender = (
     <Typography
       variant="body1"
-      component="div"
+      component="span"
       style={{
         fontWeight: 400,
         fontFamily: 'Ubuntu Mono',
         color: '#ffffff',
-        padding: 3,
-        paddingTop: 4,
+        padding: 4,
         fontSize: 10,
         borderRadius: 2,
+        marginTop: 2,
         backgroundColor: methodColorsDark[method.toUpperCase()],
       }}
     >
@@ -61,15 +61,11 @@ export const PathAndMethodMono = ({ path, method }) => {
   const pathRender = (
     <Typography
       variant="subtitle1"
-      component="div"
+      component="span"
       style={{
         fontSize: 12,
         marginLeft: 3,
         fontFamily: 'Ubuntu Mono',
-        whiteSpace: 'pre-wrap',
-        maxWidth: 240,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
       }}
     >
       {path}
@@ -77,10 +73,10 @@ export const PathAndMethodMono = ({ path, method }) => {
   );
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'no-wrap' }}>
+    <span>
       {' '}
       {methodRender} {pathRender}{' '}
-    </div>
+    </span>
   );
 };
 
@@ -109,8 +105,7 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
       style={{
         fontSize: 10,
         marginLeft: 8,
-        marginTop: 1,
-        maxWidth: 265,
+        maxWidth: 220,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         wordBreak: 'break-all',
@@ -122,14 +117,12 @@ export const PathAndMethodOverflowFriendly = ({ path, method }) => {
   );
 
   return (
-    <LightTooltip
-      title={<PathAndMethod method={method} path={path} />}
-      enterDelay={500}
-    >
+    <LightTooltip title={<PathAndMethod method={method} path={path} />}>
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
+          paddingLeft: 8,
           paddingRight: 8,
         }}
       >

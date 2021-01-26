@@ -23,8 +23,8 @@ export default function WelcomePage(props) {
           title={'Optic is Monitoring your APIs'}
           content={`
 **Getting Started**
-- [Add Optic to your API Project](${OpticDocs})
-- [Document your API with Optic](${OpticDocs})
+- [Add Optic to your API Project](${AddOpticLink})
+- [Document your API with Optic](${DocumentingYourApi})
 - [Explore all the Optic Documentation](${OpticDocs})
 `.trim()}
         />

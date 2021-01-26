@@ -195,7 +195,7 @@ export async function printCoverage(
   console.log(resultTable.toString());
 }
 
-export interface KnownEndpoint {
+interface KnownEndpoint {
   method: string;
   pathId: string;
   fullPath: string;
@@ -249,7 +249,7 @@ async function getReport(paths: IPathMapping, captureId: string): Promise<any> {
   return report;
 }
 
-export function getCachedQueryResults(queries: any) {
+function getCachedQueryResults(queries: any) {
   const contributions = queries.contributions();
 
   const {
