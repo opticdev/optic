@@ -44,7 +44,12 @@ tasks:
       - yarn build-spec
 
   npm:publish:
-
+    deps:
+      - workspaces:build
+    env:
+      OPTIC_SKIP_PREBUILT_INSTALLS: "false"
+    cmds:
+      - yarn install
 
   flush-disk:
     - sudo /usr/sbin/purge
