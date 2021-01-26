@@ -2,20 +2,26 @@ import {
   createShapeDiffMachine,
   DiffContext,
 } from '../interactive-diff-machine';
-import { InteractiveSessionConfig } from '../interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from '../interfaces/session';
 import { ParsedDiff } from '../parse-diff';
 import { useActor } from '@xstate/react';
 import { useEffect } from 'react';
+import niceTry from 'nice-try';
+import { useAnalyticsHook } from '../../utilities/useAnalyticsHook';
 
 export function useSingleDiffMachine(
   diff: ParsedDiff,
   getSelf: () => any,
   getEndpointActions: () => any,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) {
   const [state, send] = useActor(getSelf());
   const context: DiffContext<any> = state.context;
   const value = state.value;
+  const track = useAnalyticsHook();
 
   const endpointActions = getEndpointActions();
 
@@ -31,6 +37,13 @@ export function useSingleDiffMachine(
         send({ type: 'SET_SUGGESTION_INDEX', index }),
       stage: () => {
         send({ type: 'STAGE' });
+        niceTry(() => {
+          track('ACCEPTED_SUGGESTION', {
+            description: context.preview.diffDescription.title.map(i => i.text).join(' '),
+            suggestion: context.preview.suggestions[context.selectedSuggestionIndex]
+                .action.activeTense.map(i => i.text).join(' ')
+          });
+        });
       },
       unstage: () => {
         send({ type: 'UNSTAGE' });

@@ -196,7 +196,6 @@ export class InitialBodiesWorker {
       });
 
       await fs.ensureDir(outputPaths.base);
-      await flush();
 
       for await (const item of interactionIterator) {
         hasMoreInteractions = item.hasMoreInteractions;
@@ -214,8 +213,6 @@ export class InitialBodiesWorker {
         );
 
         LearnAPIHelper.learnBody(deserializedInteraction, shapeBuilderMap);
-
-        batcher.add(null);
       }
       hasMoreInteractions = false;
       batcher.add(null);

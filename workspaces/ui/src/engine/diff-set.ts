@@ -1,10 +1,16 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import groupby from 'lodash.groupby';
-import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
-import { diff } from 'react-ace';
-import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
+import {
+  Expectation,
+  expectationsFromSpecOption,
+} from './interpreter/shape-diff-dsl';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import { isDiffForKnownEndpoint } from './interfaces/interfaces';
-import { DiffTypes } from './interfaces/diffs';
+import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
+import {
+  IShapeTrail,
+  normalizeShapeTrail,
+} from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 export class DiffSet {
   constructor(
@@ -88,6 +94,27 @@ export class DiffSet {
     });
 
     return result.filter((i) => i.pathId !== 'root');
+  }
+
+  filterToValidExpectations(): DiffSet {
+    return new DiffSet(
+      this.diffs.filter((i) => {
+        const hasExpectation = expectationsFromSpecOption(
+          i,
+          this.rfcBaseState,
+          i.asShapeDiff(this.rfcBaseState).shapeTrail,
+          i.asShapeDiff(this.rfcBaseState).jsonTrail
+        );
+
+        if (!hasExpectation) {
+          console.error('expectation error, hiding diff ', {
+            diff: i.raw(),
+          });
+        }
+        return hasExpectation;
+      }),
+      this.rfcBaseState
+    );
   }
 
   groupedByEndpointAndShapeTrail(): {

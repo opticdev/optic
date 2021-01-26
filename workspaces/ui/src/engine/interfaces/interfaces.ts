@@ -1,5 +1,3 @@
-import { IDiff } from './diffs';
-
 interface SerializedDiff {
   [key: string]: {
     interactionTrail: {
@@ -107,11 +105,13 @@ export const DiffInResponse = (key: string): boolean =>
 
 export interface IRequestBodyLocation {
   contentType?: string;
+  requestId?: string;
 }
 
 export interface IResponseBodyLocation {
   statusCode: number;
   contentType?: string;
+  responseId?: string;
 }
 
 export interface IParsedLocation {

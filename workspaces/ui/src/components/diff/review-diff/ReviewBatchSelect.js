@@ -1,8 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import { AllCapturesContext, AllCapturesStore } from '../v2/CaptureManagerPage';
-import { Code } from './ICopyRender';
+import { AllCapturesContext, AllCapturesStore } from './AllCapturesContext';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import time from 'time-ago';
 import {
@@ -44,21 +43,22 @@ export function ReviewBatchSelect(props) {
       <div className={classes.current}>
         <div className={classes.innerChip}>task</div>{' '}
         <div className={classes.startedAt}>
-          captured {time.ago(currentCapture.lastUpdate)}
+          captured since last commit
         </div>
         <div style={{ flex: 1 }} />
-        <IconButton
-          size="small"
-          disabled={captures.length === 1}
-          onClick={(e) => setAnchorEl(e.target)}
-          color="primary"
-          style={{ width: 17, height: 17, marginRight: 3 }}
-        >
-          <FilterListIcon style={{ width: 17, height: 17 }} />
-        </IconButton>
+        {/*<IconButton*/}
+        {/*  size="small"*/}
+        {/*  disabled={captures.length === 1}*/}
+        {/*  onClick={(e) => setAnchorEl(e.target)}*/}
+        {/*  color="primary"*/}
+        {/*  style={{ width: 17, height: 17, marginRight: 3 }}*/}
+        {/*>*/}
+        {/*  <FilterListIcon style={{ width: 17, height: 17 }} />*/}
+        {/*</IconButton>*/}
       </div>
       <Menu
         open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         classes={{ list: classes.menuListClass }}
       >

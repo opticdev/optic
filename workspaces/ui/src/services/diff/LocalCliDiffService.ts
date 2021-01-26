@@ -24,7 +24,7 @@ import {
   IValueAffordanceSerializationWithCounter,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IDiff } from '../../engine/interfaces/diffs';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export class LocalCliDiffService implements IDiffService {
   constructor(
@@ -42,7 +42,7 @@ export class LocalCliDiffService implements IDiffService {
     const url = `${this.baseUrl}/diffs`;
     const diffsJson = await JsonHttpClient.getJson(url);
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
-      diffsJson
+      diffsJson.map(([diff, tags, _fingerprint]) => [diff, tags])
     );
     return {
       rawDiffs: diffsJson,

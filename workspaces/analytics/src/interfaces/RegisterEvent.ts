@@ -13,6 +13,7 @@ function RegisterEvent<T>(
       return {
         type: type,
         context: {
+          apiName: '',
           clientAgent: '',
           clientId: '',
           clientSessionInstanceId: '',

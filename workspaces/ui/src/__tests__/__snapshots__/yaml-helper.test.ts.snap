@@ -34,9 +34,9 @@ Object {
   "isValid": true,
   "task": Object {
     "command": Object {
-      "endLine": 15,
+      "endLine": 14,
       "endPosition": 373,
-      "startLine": 15,
+      "startLine": 14,
       "startPosition": 357,
       "value": "mocha test2.js",
     },
@@ -44,12 +44,16 @@ Object {
     "name": "test-gets",
     "targetUrl": undefined,
     "useTask": Object {
-      "endLine": 16,
+      "endLine": 15,
       "endPosition": 392,
-      "startLine": 16,
+      "startLine": 15,
       "startPosition": 387,
       "value": "start",
     },
+  },
+  "taskRange": Object {
+    "endPosition": 392,
+    "startPosition": 333,
   },
 }
 `;

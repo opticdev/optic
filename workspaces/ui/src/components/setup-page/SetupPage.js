@@ -23,7 +23,7 @@ import {
 } from '@material-ui/core';
 import { Code } from './setup-api/CodeBlock';
 import {
-  OpticBlue,
+  OpticBlue, primary,
   SubtleBlueBackground,
   UpdatedBlue,
   UpdatedBlueBackground,
@@ -35,6 +35,7 @@ import { DemoStartCommandSetup } from './setup-api/SetupType';
 import { DocDarkGrey, DocGrey } from '../docs/DocConstants';
 import { LightTooltip } from '../tooltips/LightTooltip';
 import { integrationDocsOptions } from './fetch-docs/IntegrationDocs';
+import {Link} from '../Router';
 
 export function SetupPage(props) {
   const classes = useStyles();
@@ -95,7 +96,7 @@ export function SetupPage(props) {
   return (
     <Page title="Setup your API Start task">
       <Page.Navbar mini={true} />
-      <Page.Body padded={true} className={classes.pageBg}>
+      <Page.Body padded={true} className={classes.pageBg} style={{overflowY:"scroll"}}>
         <Box display="flex" className={classes.copyRoot}>
           <ApiStartCommandCopy />
         </Box>
@@ -145,7 +146,12 @@ export function SetupPage(props) {
                     send({ type: 'USER_TOGGLED_MODE', mode })
                   }
                 />
-                <div style={{ marginTop: 20 }}>{cards}</div>
+                <div style={{ marginTop: 20 }}>{cards}
+
+                <a href="https://discord.gg/t9hADkuYjP" target="_blank" style={{color: primary}}>
+                <Typography variant="subtitle2" style={{marginTop: 15}}>Need Help? Join us on Discord</Typography>
+                </a>
+                </div>
               </div>
             </>
           )}
@@ -277,20 +283,11 @@ function PortAssumption(props) {
         title={
           <div>
             <Typography variant="overline">examples:</Typography>
-            {docs && (
-              <MarkdownRender
-                source={
-                  docs.data.preamble + '\n\n```' + docs.data.after + '\n```'
-                }
-              />
-            )}
-            {!docs && (
               <MarkdownRender
                 source={
                   "\n```\n//when your starts and binds to a port...\napi.listen(env['PORT'])\n```"
                 }
               />
-            )}
           </div>
         }
       >

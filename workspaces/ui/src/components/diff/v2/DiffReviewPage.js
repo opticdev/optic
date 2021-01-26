@@ -25,7 +25,6 @@ import { DiffLoading } from './LoadingNextDiff';
 import { IgnoreDiffContext, SuggestionsContext } from './DiffPageNew';
 import FinalizeDialog from './Finalize';
 import Button from '@material-ui/core/Button';
-import { trackUserEvent } from '../../../Analytics';
 import { ShowCommitCard } from '@useoptic/analytics/lib/events/diffs';
 
 export const newRegionsConst = 'new_regions';
@@ -108,7 +107,7 @@ export function DiffReviewPage(props) {
   useEffect(() => {
     if (showFinalize || (completed && regions.empty)) {
       // track('Rendered Finalize Card');
-      trackUserEvent(ShowCommitCard.withProps({}));
+      // trackUserEvent(ShowCommitCard.withProps({}));
     }
   }, [showFinalize, completed, regions.empty]);
 

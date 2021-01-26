@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from '@material-ui/core/Box';
-import { PathAndMethodMono } from '../v2/PathAndMethod';
 import { DocDarkGrey, DocGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
@@ -21,6 +20,10 @@ import Helmet from 'react-helmet';
 import { ReviewBatchSelect } from './ReviewBatchSelect';
 import Fade from '@material-ui/core/Fade';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
+import { debugDump } from '../../../utilities/debug-dump';
+import equals from 'lodash.isequal';
+import { DiffSummaryRegion } from './ReviewDiff';
+import {PathAndMethodMono, PathAndMethodOverflowFriendly} from './PathAndMethod';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -29,11 +32,6 @@ export function ReviewUI() {
   const { processed, skipped } = useCaptureContext();
 
   const selected = queries.selectedEndpoint();
-
-  useEffect(() => {
-    console.timeEnd('selected clicked');
-    console.log('selected ', selected);
-  }, [selected]);
 
   const shouldShowUndocumented = queries.showingUndocumented();
   const selectedEndpointHandled = queries.selectedEndpointHandled();
@@ -67,7 +65,7 @@ export function ReviewUI() {
   };
 
   useEffect(() => {
-    if (handledAll.handled === handledAll.total && handledAll.total > 0) {
+    if (handledAll.handled === handledAll.total && handledAll.total > 0 && !shouldShowUndocumented) {
       setAskFinish(true);
     }
   }, [handledAll.handled, handledAll.total]);
@@ -104,12 +102,14 @@ export function ReviewUI() {
               count={results.endpointsWithDiffs.length}
             />
             {results.endpointsWithDiffs.map((i) => (
-              <EndpointDetailCard
+              <EndpointDetailCardWrapper
                 key={i.pathId + i.method}
                 {...i}
                 handledCount={handled.find(
                   (h) => h.pathId === i.pathId && h.method === i.method
                 )}
+                queries={queries}
+                actions={actions}
                 selected={selected}
               />
             ))}
@@ -147,9 +147,38 @@ export function ReviewUI() {
   );
 }
 
+class EndpointDetailCardWrapper extends React.Component {
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    const isSelected = (selected) => {
+      return (
+        selected &&
+        selected.pathId === this.props.pathId &&
+        selected.method === this.props.method
+      );
+    };
+    const shouldUpdate =
+      !equals(nextProps.handledCount, this.props.handledCount) ||
+      !equals(isSelected(nextProps.selected), isSelected(this.props.selected));
+
+    return shouldUpdate;
+  }
+
+  render() {
+    return <EndpointDetailCard {...this.props} />;
+  }
+}
+
 export function EndpointDetailCard(props) {
-  const { method, pathId, handled, handledCount, selected } = props;
-  const { queries, actions } = useDiffSession();
+  const {
+    method,
+    pathId,
+    handledCount,
+    handled,
+    selected,
+    queries,
+    actions,
+  } = props;
+
   const classes = useStyles();
 
   const endpointDescriptor = useMemo(
@@ -171,7 +200,6 @@ export function EndpointDetailCard(props) {
         selected && selected.pathId === pathId && selected.method === method
       }
       onClick={() => {
-        console.time('selected clicked');
         actions.selectEndpoint(pathId, method);
       }}
       disableGutters
@@ -179,7 +207,7 @@ export function EndpointDetailCard(props) {
     >
       <div className={classes.listInner}>
         <div className={classes.endpointDescriptor}>
-          <PathAndMethodMono path={fullPath} method={httpMethod} />
+          <PathAndMethodOverflowFriendly path={fullPath} method={httpMethod} />
           <Typography variant="caption" className={classes.name}>
             {endpointPurpose || (
               <span style={{ color: DocDarkGrey }}>Unnamed Endpoint</span>
@@ -369,7 +397,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 350,
     maxWidth: 420,
     background: theme.palette.grey[100],
-    overflow: 'scroll',
+    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 900,
@@ -385,6 +413,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: '#d2d2d2',
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
   },
   listInner: {
     padding: 9,
@@ -418,6 +447,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
     paddingTop: 0,
   },
   rightAction: {

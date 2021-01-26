@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { sendMessageToEndpoint } from '../../../engine/diff-session';
-import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-state';
 import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
-import { LoadingReviewPage } from './LoadingPage';
+import { ErrorLoadingReviewPage, LoadingReviewPage } from './LoadingPage';
+import Page from '../../Page';
+import { useAnalyticsHook } from '../../../utilities/useAnalyticsHook';
+import {makeDiffRfcBaseState} from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 
 export const DiffSessionContext = React.createContext(null);
 
@@ -39,27 +41,53 @@ export function ReviewDiffSession(props) {
     );
   }
 
+  return <LoadingDiffPage />;
+}
+
+export function LoadingDiffPage() {
   return (
-    <div>
-      <LinearProgress />
-    </div>
+    <Page>
+      <Page.Navbar mini={true} />
+      <Page.Body
+        padded={false}
+        // style={{ flexDirection: 'row', height: '100vh' }}
+      >
+        <LinearProgress />
+      </Page.Body>
+    </Page>
   );
 }
 
 export function DiffSessionMachineStore(props) {
   const { children, services, diffId, baseDiffReviewPath } = props;
   const { captureService, diffService, rfcBaseState } = services;
+  const track = useAnalyticsHook();
 
   const { value, context, actions, queries } = useDiffSessionMachine(diffId, {
     captureService,
     diffService,
     rfcBaseState,
+    loadInteraction: captureService.loadInteraction.bind(captureService),
   });
 
-  const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();
-  //
+  const {
+    completed,
+    rawDiffs,
+    unrecognizedUrlsRaw,
+    didFail,
+  } = useCaptureContext();
+
+  const [statedTime] = useState(Date.now());
+
   useEffect(() => {
-    if (completed) actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
+    if (completed) {
+      actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
+      track('DIFF_COMPLETED', {
+        elapsedTime: Date.now() - statedTime,
+        diffsCount: rawDiffs.length,
+        unrecognizedUrlsRaw: unrecognizedUrlsRaw.length,
+      });
+    }
   }, [completed]);
 
   useEffect(() => {
@@ -70,7 +98,10 @@ export function DiffSessionMachineStore(props) {
           context.endpoints[0].pathId,
           context.endpoints[0].method
         );
-      } else if (context.unrecognizedUrls.length) {
+      } else if (
+        context.unrecognizedUrls.length ||
+        context.undocumentedEndpoints.length
+      ) {
         actions.toggleUndocumented(true);
       }
     }
@@ -86,6 +117,10 @@ export function DiffSessionMachineStore(props) {
       return captureService.loadInteraction(interactionPointer);
     },
   };
+
+  if (didFail) {
+    return <ErrorLoadingReviewPage />;
+  }
 
   return (
     <DiffSessionContext.Provider value={reactContext}>

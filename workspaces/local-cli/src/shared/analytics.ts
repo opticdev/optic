@@ -49,7 +49,10 @@ export async function getUser(): Promise<IUser | null> {
   });
 }
 
-export async function trackUserEvent(event: TrackingEventBase<any>) {
+export async function trackUserEvent(
+  apiName: string,
+  event: TrackingEventBase<any>
+) {
   const daemonState = await ensureDaemonStarted(
     lockFilePath,
     Config.apiBaseUrl
@@ -59,7 +62,7 @@ export async function trackUserEvent(event: TrackingEventBase<any>) {
     `http://localhost:${daemonState.port}/api`
   );
 
-  await cliServerClient.postTrackingEvents([event]);
+  await cliServerClient.postTrackingEvents(apiName, [event]);
 }
 
 export function opticTaskToProps(

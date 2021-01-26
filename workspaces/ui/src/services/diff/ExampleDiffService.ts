@@ -13,7 +13,7 @@ import {
 import { IHttpInteraction } from '@useoptic/domain-types';
 import { ISpecService } from '@useoptic/cli-client/build/spec-service-client';
 import { captureId } from '../../components/loaders/ApiLoader';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/browser';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/browser';
 import {
   DiffResultHelper,
   JsonHelper,
@@ -29,8 +29,9 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../components/diff/review-diff/learn-api/browser-initial-body';
-import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
+import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -40,8 +41,10 @@ export class ExampleDiff {
     const spec = DiffEngine.spec_from_events(JSON.stringify(events));
     this.diffId = uuidv4();
 
-    const diffingStream = (async function* () {
-      for (let [i, interaction] of interactions.entries()) {
+    const diffingStream = (async function* (): AsyncIterable<
+      Streams.DiffResults.DiffResult
+    > {
+      for (let interaction of interactions) {
         let results = DiffEngine.diff_interaction(
           JSON.stringify(interaction),
           spec
@@ -65,79 +68,33 @@ export class ExampleDiff {
     })();
 
     // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
-    this.diffing = (async function (diffing) {
-      const diffs = [];
-      for await (let diff of diffing) {
-        diffs.push(diff);
-      }
-
-      return diffs;
-    })(diffingStream);
+    this.diffing = AsyncTools.toArray(diffingStream);
 
     return this.diffId;
   }
 
   async getNormalizedDiffs() {
-    const diffResults = await this.diffing;
+    // Q: Why not consume diff stream straight up? A: we don't have a way to fork streams yet
+    // allowing only a single consumer, and we need multiple (results themselves + urls)!
+    const diffResults = AsyncTools.from(await this.diffing);
 
-    let pointersByFingerprint: Map<String, string[]> = new Map();
-    let diffs: [any, string][] = [];
-    let results: [any, string[]][] = [];
+    const normalizedDiffs = Streams.DiffResults.normalize(diffResults);
+    const lastUniqueResults = Streams.DiffResults.lastUnique(normalizedDiffs);
 
-    for (let [diff, pointers, fingerprint] of diffResults) {
-      if (!fingerprint) results.push([diff, pointers]);
-
-      let existingPointers = pointersByFingerprint.get(fingerprint) || [];
-      if (existingPointers.length < 1) {
-        diffs.push([diff, fingerprint]);
-      }
-      pointersByFingerprint.set(fingerprint, existingPointers.concat(pointers));
-    }
-
-    for (let [diff, fingerprint] of diffs) {
-      let pointers = pointersByFingerprint.get(fingerprint);
-      if (!pointers) throw new Error('unreachable');
-      results.push([diff, pointers]);
-    }
-
-    return results;
+    return AsyncTools.toArray(lastUniqueResults);
   }
 
   async getUnrecognizedUrls() {
-    const diffResults = await this.diffing;
+    // Q: Why not consume diff stream straight up? A: we don't have a way to fork streams yet
+    // allowing only a single consumer, and we need multiple (results themselves + urls)!
+    const diffResults = AsyncTools.from(await this.diffing);
 
-    let countsByFingerprint: Map<String, number> = new Map();
-    let undocumentedUrls: Array<{
-      path: string;
-      method: string;
-      fingerprint: string;
-    }> = [];
+    const undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
+      diffResults
+    );
+    const lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
 
-    for (let [diff, _, fingerprint] of diffResults) {
-      let urlDiff = diff['UnmatchedRequestUrl'];
-      if (!urlDiff || !fingerprint) continue;
-
-      let existingCount = countsByFingerprint.get(fingerprint) || 0;
-      if (existingCount < 1) {
-        let path = urlDiff.interactionTrail.path.find(
-          (interactionComponent: any) =>
-            interactionComponent.Url && interactionComponent.Url.path
-        ).Url.path as string;
-        let method = urlDiff.interactionTrail.path.find(
-          (interactionComponent: any) =>
-            interactionComponent.Method && interactionComponent.Method.method
-        ).Method.method as string;
-
-        undocumentedUrls.push({ path, method, fingerprint });
-      }
-      countsByFingerprint.set(fingerprint, existingCount + 1);
-    }
-
-    return undocumentedUrls.map(({ path, method, fingerprint }) => {
-      let count = countsByFingerprint.get(fingerprint);
-      if (!count) throw new Error('unreachable');
-      return { path, method, count };
-    });
+    return AsyncTools.toArray(lastUnique);
   }
 }
 
@@ -192,7 +149,11 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const diffsJson = await this.exampleDiff.getNormalizedDiffs();
+    const diffsJson = (await this.exampleDiff.getNormalizedDiffs()).map(
+      ([diff, tags]) => {
+        return [diff, tags];
+      }
+    );
 
     const diffs = opticEngine.DiffWithPointersJsonDeserializer.fromJs(
       diffsJson
@@ -206,7 +167,12 @@ export class ExampleDiffService implements IDiffService {
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const urls = await this.exampleDiff.getUnrecognizedUrls();
+    const urls = (await this.exampleDiff.getUnrecognizedUrls()).map(
+      ({ fingerprint, ...rest }) => {
+        return rest;
+      }
+    );
+
     const result = UrlCounterHelper.fromJsonToSeq(urls, this.rfcState);
     return Promise.resolve({ result, raw: urls });
   }

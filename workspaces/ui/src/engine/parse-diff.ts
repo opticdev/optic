@@ -1,8 +1,3 @@
-import {
-  IDiff,
-  IDiffWithShapeDiff,
-  IShapeDiffResult,
-} from './interfaces/diffs';
 import jsonStringify from 'json-stable-stringify';
 import sha1 from 'node-sha1';
 import {
@@ -14,15 +9,23 @@ import {
   isBodyShapeDiff,
 } from './interfaces/interfaces';
 import invariant from 'invariant';
-import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
-import { IInteractionTrail } from './interfaces/interaction-trail';
-import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
-import { locationForTrails } from './interfaces/trail-parsers';
-import { IRequestSpecTrail } from './interfaces/request-spec-trail';
 import {
   IJsonTrail,
   normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
+import {
+  IDiff,
+  IDiffWithShapeDiff,
+  IShapeDiffResult,
+} from '@useoptic/cli-shared/build/diffs/diffs';
+import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
+import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
+import {
+  IShapeTrail,
+  normalizeShapeTrail,
+} from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 export class ParsedDiff {
   diffType: string;
@@ -92,10 +95,12 @@ export class ParsedDiff {
       method: location!.method,
       inRequest: DiffInRequest(this.diffType) && {
         contentType: location.contentType,
+        requestId: location.requestId,
       },
       inResponse: DiffInResponse(this.diffType) && {
         statusCode: location.statusCode!,
         contentType: location.contentType,
+        responseId: location.responseId,
       },
     };
   }

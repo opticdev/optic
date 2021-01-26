@@ -66,17 +66,11 @@ export default function Navbar(props) {
 
   const menuItems = useMemo(
     () => [
-      ...(!process.env.REACT_APP_DONT_SHOW_DIFF
-        ? [
-            {
-              name: 'Review Diff',
-              icon: <ChangeHistoryIcon className={classes.iconStyles} />,
-              link: process.env.REACT_APP_DIFF_REVIEW_PAGE
-                ? routerPaths.reviewRoot
-                : routerPaths.diffsRoot,
-            },
-          ]
-        : []),
+      {
+        name: 'Review Diff',
+        icon: <ChangeHistoryIcon className={classes.iconStyles} />,
+        link: routerPaths.reviewRoot
+      },
       {
         name: 'Documentation',
         icon: <DescriptionIcon className={classes.iconStyles} />,
@@ -116,6 +110,22 @@ export default function Navbar(props) {
             <IconButton className={classes.navButton}>{i.icon}</IconButton>
           </LightTooltip>
         ))}
+        <div style={{flex: 1}}/>
+        <div>
+          <LightTooltip
+            // key={i.link}
+            title={"Optic on Discord - ask for help, request features, contribute something :)"}
+            component={'a'}
+            target="_blank"
+            href={'https://discord.gg/t9hADkuYjP'}
+            placement="right"
+            onClick={() => {
+              // track(`Navigating to ${i.name}`, i)
+            }}
+          >
+            <IconButton className={classes.navButton}><img height={25} src={require('../../assets/discord.svg')}/></IconButton>
+          </LightTooltip>
+        </div>
       </div>
       {props.mini ? null : (
         <div className={classes.mainSection}>{props.children}</div>

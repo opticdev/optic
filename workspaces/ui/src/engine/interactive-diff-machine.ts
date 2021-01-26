@@ -3,22 +3,24 @@ import { assign, Machine, send, sendParent } from 'xstate';
 import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
-} from './interpretors/ignores/ignore-rule';
+} from './interpreter/ignores/ignore-rule';
 import {
   IDiffSuggestionPreview,
   IDiffDescription,
 } from './interfaces/interpretors';
-import { InteractiveSessionConfig } from './interfaces/session';
+import {
+  DiffSessionConfig,
+  InteractiveDiffSessionConfig,
+} from './interfaces/session';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { descriptionForDiffs } from './interpretors/diff-description-interpretors';
+import { descriptionForDiffs } from './interpreter/diff-description-interpreter';
 import {
   prepareNewRegionDiffSuggestionPreview,
   prepareShapeDiffSuggestionPreview,
-} from './interpretors/prepare-diff-previews';
-import { IShapeTrail } from './interfaces/shape-trail';
+} from './interpreter/prepare-diff-previews';
 
 interface DiffStateSchema {
   states: {
@@ -42,7 +44,8 @@ type DiffEvent =
   | { type: 'DISMISS_TYPE'; type_slug: string }
   | { type: 'STAGE' }
   | { type: 'UNSTAGE' }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+  | { type: 'APPROVE_FIRST_SUGGESTION' };
 
 // The context (extended state) of the machine
 export interface DiffContext<InterpretationContext> {
@@ -57,14 +60,14 @@ export interface DiffContext<InterpretationContext> {
 const createNewDiffMachine = <Context>(
   id: string,
   diff: ParsedDiff,
-  services: InteractiveSessionConfig,
+  services: InteractiveDiffSessionConfig,
   createInitialState: (id: string, diff: ParsedDiff) => DiffContext<Context>,
   listenToInitialRegions: boolean,
   listenToLearnedTrails: boolean,
   reloadPreview: (
     id: string,
     diff: ParsedDiff,
-    services: InteractiveSessionConfig,
+    services: DiffSessionConfig,
     context: DiffContext<Context>
   ) => Promise<IDiffSuggestionPreview>
 ) =>
@@ -150,7 +153,18 @@ const createNewDiffMachine = <Context>(
           unhandled: {
             on: {
               STAGE: {
+                actions: (ctx) => {
+                  console.log(
+                    'commands',
+                    ctx.preview.suggestions[ctx.selectedSuggestionIndex]
+                      .commands
+                  );
+                },
                 target: 'handled',
+              },
+              APPROVE_FIRST_SUGGESTION: {
+                target: 'handled',
+                cond: (ctx) => Boolean(ctx.preview.suggestions.length),
               },
             },
             invoke: {
@@ -187,7 +201,7 @@ const createNewDiffMachine = <Context>(
 export const createNewRegionMachine = (
   id: string,
   parsedDiff: ParsedDiff,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) =>
   createNewDiffMachine<ILearnedBodies>(
     id,
@@ -208,7 +222,7 @@ export const createNewRegionMachine = (
     async (
       id: string,
       diff: ParsedDiff,
-      services: InteractiveSessionConfig,
+      services: DiffSessionConfig,
       context: DiffContext<ILearnedBodies>
     ) => {
       return await prepareNewRegionDiffSuggestionPreview(
@@ -223,7 +237,7 @@ export const createNewRegionMachine = (
 export const createShapeDiffMachine = (
   id: string,
   parsedDiff: ParsedDiff,
-  services: InteractiveSessionConfig
+  services: InteractiveDiffSessionConfig
 ) =>
   createNewDiffMachine<IValueAffordanceSerializationWithCounter>(
     id,
@@ -241,7 +255,7 @@ export const createShapeDiffMachine = (
     async (
       id: string,
       diff: ParsedDiff,
-      services: InteractiveSessionConfig,
+      services: DiffSessionConfig,
       context: DiffContext<IValueAffordanceSerializationWithCounter>
     ) => {
       return await prepareShapeDiffSuggestionPreview(

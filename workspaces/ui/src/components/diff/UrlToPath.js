@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import DoneIcon from '@material-ui/icons/Done';
+import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
 import debounce from 'lodash.debounce';
 import Collapse from '@material-ui/core/Collapse';
@@ -40,6 +41,9 @@ const useStyles = makeStyles((theme) =>
     thick: {
       fontWeight: 600,
     },
+    paramLabel: {
+      textAlign: 'left',
+    },
   })
 );
 
@@ -52,11 +56,13 @@ function PathComponentItem(props) {
     return (
       <ButtonBase className={classes.component} onClick={onClick}>
         {item.isParameter ? (
-          <Typography className={classes.thick}>{`{${
-            item.name || '   '
-          }}`}</Typography>
+          <Typography
+            className={classNames(classes.thick, classes.paramLabel)}
+          >{`{${item.name || '   '}}`}</Typography>
         ) : (
-          <Typography className={classes.thin}>{item.name}</Typography>
+          <Typography className={classNames(classes.thin, classes.paramLabel)}>
+            {item.name}
+          </Typography>
         )}
       </ButtonBase>
     );
@@ -149,6 +155,7 @@ function UrlToPath(props) {
   );
   const [lastInteractedIndex, setLastInteractedIndex] = useState(null);
   const [collapseParams, setCollapseParams] = useState(false);
+  const [firstTimeMap, setFirstTime] = useState({});
 
   function setPathComponents(pathComponents) {
     setPathComponentsInternal(pathComponents);
@@ -161,8 +168,12 @@ function UrlToPath(props) {
 
   function setItemAt(index) {
     return function (newItem) {
-      setCollapseParams(false);
+
+      const firstTime = !Boolean(firstTimeMap[index])
+
+      setCollapseParams(firstTime ? newItem.name && newItem.isParameter : false)
       setLastInteractedIndex(index);
+      setFirstTime((value) => ({...value, [index]: true}))
 
       setPathComponents(
         pathComponents.map((item) => {
@@ -186,7 +197,7 @@ function UrlToPath(props) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         {pathComponents.flatMap((item) => [
           <ButtonBase key={`${item.index}-1`} disabled>
             <Typography
@@ -223,7 +234,6 @@ function UrlToPath(props) {
                 >
                   <TextField
                     onKeyUp={(e) => {
-                      console.log(e.keyCode);
                       if (e.keyCode === 13 && canFinish) finish();
                     }}
                     key={item.index}

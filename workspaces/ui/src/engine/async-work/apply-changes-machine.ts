@@ -1,4 +1,4 @@
-import { InteractiveSessionConfig } from '../interfaces/session';
+import { DiffSessionConfig } from '../interfaces/session';
 import { assign, Machine } from 'xstate';
 import { IAllChanges } from '../hooks/session-hook';
 import { spawn, Thread, Worker } from 'threads';
@@ -15,7 +15,8 @@ import flattenDeep from 'lodash.flattendeep';
 import Bottleneck from 'bottleneck';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IOasStats } from './oas-preview-machine';
-import { serializeCommands } from '../interpretors/spec-change-dsl';
+import { serializeCommands } from '../interpreter/spec-change-dsl';
+import { IDiffService } from '../../services/diff';
 
 export interface ApplyChangesStateSchema {
   states: {
@@ -57,9 +58,11 @@ export interface ApplyChangesContext {}
 
 export const newApplyChangesMachine = (
   patch: IAllChanges,
-  services: InteractiveSessionConfig,
+  services: DiffSessionConfig,
+  diffService: IDiffService,
   clientSessionId: string = 'default',
-  clientId: string = 'default'
+  clientId: string = 'default',
+  track: (event: string, props: any) => void = (event: string, props: any) => {}
 ) => {
   return Machine<
     ApplyChangesContext,
@@ -113,6 +116,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -121,6 +132,8 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'body-generating',
           src: (context, event) => async (callback, onReceive) => {
+            const timeStated = Date.now();
+
             const { endpointIds, commands } = context.newPaths;
 
             const mergedEndpointIds = [
@@ -152,13 +165,13 @@ export const newApplyChangesMachine = (
                   console.log(`learning started for ${pathId} ${method}`);
                   let promise;
                   batchHandler.doWork(async ({ rfcService, rfcId }) => {
-                    promise = services.diffService.learnInitial(
+                    promise = diffService.learnInitial(
                       rfcService,
                       rfcId,
                       pathId,
                       method,
                       services.rfcBaseState.domainIdGenerator
-                    );
+                    ).catch(() => null);
                   });
 
                   promise.finally(() => {
@@ -169,12 +182,20 @@ export const newApplyChangesMachine = (
                     });
                   });
 
-                  return await promise;
+                  return await promise
                 });
               }
             );
 
-            const allBodies: ILearnedBodies[] = await Promise.all(results);
+            const allBodies: ILearnedBodies[] = (
+              await Promise.all(results)
+            ).filter((i) => Boolean(i));
+
+            track('LEARNED_BODIES', {
+              endpoints: endpointIds,
+              elapsedTime: Date.now() - timeStated,
+            });
+
             return allBodies;
           },
           onDone: {
@@ -184,6 +205,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -221,6 +250,14 @@ export const newApplyChangesMachine = (
             }),
           },
           onError: {
+            actions: [
+              (context, event) => {
+                console.error(event);
+              },
+              assign({
+                error: (ctx, event) => event.data.message,
+              }),
+            ],
             target: 'failed',
           },
         },
@@ -229,6 +266,7 @@ export const newApplyChangesMachine = (
         invoke: {
           id: 'running-commands',
           src: async (context, event) => {
+            const timeStated = Date.now();
             const allCommandsToRun = [
               ...context.newPaths.commandsJS,
               ...prepareLearnedBodies(context.newBodiesLearned || []),
@@ -251,6 +289,12 @@ export const newApplyChangesMachine = (
             );
 
             await Thread.terminate(worker);
+
+            track('RUNNING_NEW_COMMANDS', {
+              commands: allCommandsToRun.length,
+              elapsedTime: Date.now() - timeStated,
+            });
+
             return result;
           },
           onDone: {
@@ -265,7 +309,7 @@ export const newApplyChangesMachine = (
                 console.error(event);
               },
               assign({
-                error: (ctx, event) => event.data.ln,
+                error: (ctx, event) => event.data.message,
               }),
             ],
             target: 'failed',
