@@ -119,7 +119,6 @@ optic_build_and_publish_locally() {
     set -o errexit
     optic_build_for_release
     cd "$OPTIC_SRC_DIR"
-    npm-cli-login -u testUser -p testPass -e test@example.com -r http://localhost:4873
     OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
   )
 }
@@ -152,7 +151,6 @@ optic_local_registry_start() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     cd docker/private-npm-registry
-    yarn global add verdaccio-memory npm-cli-login
     docker-compose up &
 
     cd "$OPTIC_SRC_DIR"
