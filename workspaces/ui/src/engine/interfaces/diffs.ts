@@ -3,9 +3,8 @@
 import { IShapeTrail } from './shape-trail';
 import { IInteractionTrail } from './interaction-trail';
 import { IRequestSpecTrail } from './request-spec-trail';
-//@ts-ignore
+import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 import keymirror from 'keymirror';
-import { IJsonTrail } from './json-trail';
 // Top-level Diffs
 
 export type IDiff =

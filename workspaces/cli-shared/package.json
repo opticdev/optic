@@ -29,7 +29,6 @@
     "colors": "^1.4.0",
     "execa": "^4.0.3",
     "fs-extra": "^9.0.0",
-    "keymirror": "^0.1.1",
     "lodash.throttle": "^4.1.1",
     "mockttp": "^1.0.3",
     "oboe": "^2.1.5",
@@ -47,11 +46,11 @@
   },
   "devDependencies": {
     "@types/lodash.throttle": "^4.1.6",
-    "@types/semver": "^7.3.4",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-fork": "^1.0.0",
     "@types/stream-json": "^1.5.1",
     "@types/whatwg-mimetype": "^2.1.0",
+    "@types/semver": "^7.3.4",
     "tap": "^14.11.0",
     "type-fest": "^0.20.2"
   },

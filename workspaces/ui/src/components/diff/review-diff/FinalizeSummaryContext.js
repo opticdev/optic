@@ -21,7 +21,6 @@ export function FinalizeSummaryContextStore(props) {
     setSummary: (newSummary) => {
       setSummary(newSummary);
     },
-    summary
   };
 
   return (

@@ -1,5 +1,6 @@
-storage: ../storage
-
+store:
+  memory:
+    limit: 1000
 packages:
   '@useoptic/*':
       access: $all
@@ -15,6 +16,6 @@ uplinks:
   npmjs:
     url: https://registry.npmjs.org/
 logs:
-  - {type: stdout, format: pretty-timestamped, level: debug}
+  - {type: stdout, format: pretty, level: trace}
 
-max_body_size: 1024mb
+max_body_size: 100

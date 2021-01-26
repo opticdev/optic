@@ -1,5 +1,6 @@
-import { assign, spawn, Machine } from 'xstate';
-import { ParsedDiff } from './parse-diff';
+import { assign, spawn, Machine, StateMachine, send } from 'xstate';
+import { BodyShapeDiff, ParsedDiff } from './parse-diff';
+import { IShapeTrail } from './interfaces/shape-trail';
 import { DiffSet } from './diff-set';
 import {
   createNewRegionMachine,
@@ -14,8 +15,7 @@ import {
   InteractiveDiffSessionConfig,
 } from './interfaces/session';
 import { IgnoreRule } from './interpreter/ignores/ignore-rule';
-import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
+import { IDiff } from './interfaces/diffs';
 
 export interface InteractiveEndpointSessionStateSchema {
   states: {

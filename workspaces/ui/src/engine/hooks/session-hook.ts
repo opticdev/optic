@@ -9,6 +9,8 @@ import {
   InteractiveDiffSessionConfig,
 } from '../interfaces/session';
 import { useMemo } from 'react';
+
+import { IDiff } from '../interfaces/diffs';
 import { ParsedDiff } from '../parse-diff';
 import { useEndpointDiffMachine } from './endpoint-hook';
 import { createEndpointDescriptor } from '../../utilities/EndpointUtilities';
@@ -18,8 +20,6 @@ import { IUnrecognizedUrl } from '../../services/diff';
 import { IToDocument } from '../interfaces/interfaces';
 import { InteractiveEndpointSessionContext } from '../interactive-endpoint';
 import { ISuggestion } from '../interfaces/interpretors';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
-import {setEquals} from "../set-ops";
 
 export function useDiffSessionMachine(
   diffId: string,
@@ -91,10 +91,9 @@ export function useDiffSessionMachine(
         total: number
       ) => {
         const existing = state.context.unrecognizedUrlsToDocument;
-        const newExpressions = !setEquals(new Set([...existing.urls.map(i => i.pathExpression)]), new Set([...toDocument.map(i => i.pathExpression)]))
-        const shouldUpdate = existing.handled !== handled || newExpressions
         if (
-          shouldUpdate
+          existing.handled !== handled ||
+          existing.urls.length !== toDocument.length
         ) {
           send({
             type: 'UPDATED_TO_DOCUMENT',

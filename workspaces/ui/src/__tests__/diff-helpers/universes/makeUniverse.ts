@@ -1,3 +1,7 @@
+import {
+  ExampleCaptureService,
+  ExampleDiffService,
+} from '../../../services/diff/ExampleDiffService';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import {
   DiffHelpers,
@@ -6,9 +10,20 @@ import {
   opticEngine,
   RfcCommandContext,
 } from '@useoptic/domain';
-import { universeFromEvents } from '@useoptic/domain-utilities';
+import {
+  cachingResolversAndRfcStateFromEventsAndAdditionalCommands,
+  universeFromEvents,
+} from '@useoptic/domain-utilities';
 import { createExampleSpecServiceFactory } from '../../../components/loaders/ApiLoader';
-import { ILoadInteractionResponse } from '../../../services/diff';
+import {
+  ICaptureService,
+  IDiffService,
+  ILoadInteractionResponse,
+} from '../../../services/diff';
+import {
+  DiffRfcBaseState,
+  makeDiffRfcBaseState,
+} from '../../../engine/interfaces/diff-rfc-base-state';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
 import { IHttpInteraction } from '@useoptic/domain-types';
 import {
@@ -16,12 +31,8 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { localInitialBodyLearner } from '../../../components/diff/review-diff/learn-api/browser-initial-body';
+import { IDiff } from '../../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../../engine/async-work/browser-trail-values';
-import {
-  DiffRfcBaseState,
-  makeDiffRfcBaseState,
-} from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
-import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export async function makeUniverse(
   json: any

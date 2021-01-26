@@ -15,8 +15,8 @@ import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
 } from './ignores/ignore-rule';
-import { IParsedLocation } from '../interfaces/interfaces';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { ICoreShapeKinds, IParsedLocation } from '../interfaces/interfaces';
+import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 
 export function initialTitleForNewRegions(
   diff: ParsedDiff,

@@ -15,9 +15,6 @@ export const Events = keymirror({
   StartedTaskWithLocalCli: null,
   ExitedTaskWithLocalCli: null,
 
-  //status
-  StatusRunLocalCLI: null,
-
   //diffs
   NewBodyDiffRendered: null,
   BodyDiffRendered: null,
