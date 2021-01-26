@@ -4,7 +4,7 @@ import {
   IValueAffordanceSerializationWithCounter,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IDiff } from '../interfaces/diffs';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 

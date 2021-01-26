@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/agent-cli",
-  "version": "9.0.5",
+  "version": "9.0.6@beta.0",
   "author": "@useoptic",
   "bin": {
     "optic-agent": "./bin/run"
@@ -15,7 +15,7 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
-    "@useoptic/cli-shared": "9.0.5",
+    "@useoptic/cli-shared": "9.0.6@beta.0",
     "dotenv": "^8.2.0",
     "jwt-decode": "^2.2.0",
     "tslib": "^1",

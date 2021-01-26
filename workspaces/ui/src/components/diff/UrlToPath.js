@@ -234,7 +234,6 @@ function UrlToPath(props) {
                 >
                   <TextField
                     onKeyUp={(e) => {
-                      console.log(e.keyCode);
                       if (e.keyCode === 13 && canFinish) finish();
                     }}
                     key={item.index}

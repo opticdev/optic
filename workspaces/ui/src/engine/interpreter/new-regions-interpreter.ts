@@ -5,15 +5,14 @@ import {
   ISuggestion,
   plain,
 } from '../interfaces/interpretors';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { JsonHelper, opticEngine } from '@useoptic/domain';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import {
   DiffTypes,
   IUnmatchedRequestBodyShape,
   IUnmatchedResponseBodyContentType,
-} from '../interfaces/diffs';
-import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
-import { JsonHelper, opticEngine } from '@useoptic/domain';
-import { serializeCommands } from './spec-change-dsl';
+} from '@useoptic/cli-shared/build/diffs/diffs';
 
 //only ever take 1 diff at a time
 export function newRegionInterpreters(
