@@ -17,9 +17,11 @@ jobs:
           if [ "$BRANCH" = "refs/heads/release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.useoptic.com" >> $GITHUB_ENV
+            echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
           elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
             echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
+            echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
           fi
 
       - name: Configure AWS Credentials
@@ -58,13 +60,8 @@ jobs:
       # which prevents the default bucket policy from applying to these objects
       - name: Upload to S3
         run: |
-          aws s3 cp ./demoRepo/workspaces/ui/build/index.html "s3://$BUCKET" \
-            --sse=AES256 \
-            --acl=public-read \
-            --metadata='{"Cache-Control":"no-store"}' \
-            --cache-control=no-store
-          aws s3 cp ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
-            --recursive \
-            --exclude=index.html \
+          aws s3 sync ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
+            --delete \
             --sse=AES256 \
             --acl=public-read
+          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DIST" --paths "/*"
