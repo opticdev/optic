@@ -1,0 +1,52 @@
+version: "3"
+
+tasks:
+  setup:
+    cmds:
+      - yarn install
+
+  workspaces:build:
+    deps: [setup]
+    cmds:
+      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+    sources:
+      - !workspaces/*/build/**/*
+    generates:
+      - workspaces/diff-engine-wasm/lib/**/*
+      - workspaces/diff-engine-wasm/engine/browser/**/*
+      - workspaces/diff-engine-wasm/engine/build/**/*
+      # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
+      - workspaces/*/build/**/*
+
+  diff-engine:build:
+    cmds:
+      - cargo build --workspace --all-features
+      # - cargo build --workspace --all-features --target x86_64-unknown-linux-gnu
+      - task: flush-disk
+
+  diff-engine:test:
+    - cargo tests
+
+  demo:build:
+    dir: workspaces/ui
+    env:
+      PUBLIC_URL: "https://demo.o3c.info"
+      CI: "false"
+    cmds:
+      - yarn build-demo
+
+  spec:build:
+    dir: workspaces/ui
+    env:
+      PUBLIC_URL: "https://apidocs.o3c.info"
+      CI: "false"
+    cmds:
+      - yarn build-spec
+
+  npm:publish:
+
+
+  flush-disk:
+    - sudo /usr/sbin/purge
+
+

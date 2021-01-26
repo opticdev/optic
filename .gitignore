@@ -10,3 +10,5 @@ node_modules
 
 /workspaces/diff-engine-wasm/engine/browser
 /workspaces/diff-engine-wasm/engine/build
+
+.task/
