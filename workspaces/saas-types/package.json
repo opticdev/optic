@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/saas-types",
   "description": "interfaces and types for Optic SaaS surface area",
-  "version": "9.0.5",
+  "version": "9.0.7-beta.0",
   "main": "build/index.js",
   "files": [
     "build"
