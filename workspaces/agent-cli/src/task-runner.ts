@@ -9,6 +9,8 @@ import {
 export class AgentCliTaskRunner implements IOpticTaskRunner {
   constructor(private persistenceManager: ICaptureSaver) {}
 
+  foundDiff: boolean = false
+
   async run(
     cli: Command,
     config: IApiCliConfig,

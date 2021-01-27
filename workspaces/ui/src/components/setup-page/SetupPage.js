@@ -23,7 +23,7 @@ import {
 } from '@material-ui/core';
 import { Code } from './setup-api/CodeBlock';
 import {
-  OpticBlue,
+  OpticBlue, primary,
   SubtleBlueBackground,
   UpdatedBlue,
   UpdatedBlueBackground,
@@ -35,6 +35,7 @@ import { DemoStartCommandSetup } from './setup-api/SetupType';
 import { DocDarkGrey, DocGrey } from '../docs/DocConstants';
 import { LightTooltip } from '../tooltips/LightTooltip';
 import { integrationDocsOptions } from './fetch-docs/IntegrationDocs';
+import {Link} from '../Router';
 
 export function SetupPage(props) {
   const classes = useStyles();
@@ -145,7 +146,12 @@ export function SetupPage(props) {
                     send({ type: 'USER_TOGGLED_MODE', mode })
                   }
                 />
-                <div style={{ marginTop: 20 }}>{cards}</div>
+                <div style={{ marginTop: 20 }}>{cards}
+
+                <a href="https://discord.gg/t9hADkuYjP" target="_blank" style={{color: primary}}>
+                <Typography variant="subtitle2" style={{marginTop: 15}}>Need Help? Join us on Discord</Typography>
+                </a>
+                </div>
               </div>
             </>
           )}
