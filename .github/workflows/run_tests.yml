@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
+name: Run Tests
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the develop branch
@@ -15,7 +13,7 @@ jobs:
   rust_binaries:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest, macos-11.0]
+        os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
