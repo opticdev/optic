@@ -1,0 +1,61 @@
+{
+  "mini": "Live Demo",
+  "headline": "This API Documents Itself",
+  "subtext": "Optic writes, verifies, and helps you update the API specification so you can focus on building great software.\n\nReady to try Optic on your API?",
+  "whatIsOptic": "A developer-friendly approach to",
+  "to": [
+    "Specifications",
+    "Documentation",
+    "Testing"
+  ],
+  "steps": [
+    {
+      "command": "api init",
+      "action": "Add Optic to your API Project",
+      "annimation": "",
+      "tag": "setup"
+    },
+    {
+      "command": "api check",
+      "action": "Verify that Optic can start your API locally",
+      "tag": "setup"
+    },
+    {
+      "command": "api start",
+      "tag": "development",
+      "action": "Replaces your start command and diffs traffic",
+      "graphic": "optic-diffs.svg"
+    }
+  ],
+  "reviewDemo": {
+    "heading": "**Review Diffs**, update your specification",
+    "description": "Optic makes it easy to keep your API specification accurate by detecting new behaviors and suggesting updates to your specification."
+  },
+  "expansion": "Once optic is..... PRs, Detect Breaking Changes, Following Styles",
+  "gitbot": {
+    "heading": "**Changelogs** in every Pull Request",
+    "description": "Optic makes API changes explicit during Code Review so your team understands how the API will change when the PR is merged.",
+    "benefits": [
+      {
+        "title": "🚦 Prevent Breaking Changes",
+        "subtext": "Discover breaking changes before they're merged. Request compatible changes in code review, or coordinate the breaking changes with consumers."
+      },
+      {
+        "title": "🔎 API First",
+        "subtext": "Adding explicit API changelogs in PRs facilitates discussion and leads to better API design. It's also a great way to make sure unintended API changes don't get deployed."
+      },
+      {
+        "title": "✅ Updated Docs",
+        "subtext": "No more doc drift. When you approve an API change Optic also updates the specification."
+      }
+    ]
+  },
+  "everywhere": {
+    "heading": "Optic ensures all API changes are **documented and reviewed**",
+    "description": "Imagine Git, but for your APIs. Optic Documents your existing APIs in minutes by observing traffic, and learning how each endpoint behaves. It then diffs your team's development and test traffic as they your work to catch API changes and ensure each is documented, reviewed and approved."
+  },
+  "example": {
+    "heading": "**DEMO:** GitHub's API in Optic",
+    "description": "Optic's UI is like a Git client, but for reviewing API diffs, finding API breaks/bugs early, and updating your specifications. In these two demos you can"
+  }
+}

@@ -1,0 +1,82 @@
+---
+title: Reviewing diffs
+---
+
+### API Changes as a First-Class Concern
+
+While you are busy writing code and working on new capabilities, Optic is constantly diffing your API's behavior to ensure any change in behavior endpoints get documented, reviewed and approved. Optic does the hard work of comparing requests/responses to the spec and noticing API changes large and small your eye may have missed.
+
+This has helped developers:
+- Catch unintended behavior changes before they break users. Sometimes 2-3 lines of code seem like a minor change but ends up breaking the contract of several endpoints.
+- Share new endpoints or proposed changes with the team. The earlier you can share documentation for what you've built, the sooner your team and your consumers can give feedback.
+
+:::tip Use `api run <task>` while you develop
+Remember to use the command aliases in your `optic.yml` to start your API and run its tests. They're easy to remember, and using them lets Optic observe/diff your traffic. You probably send hundreds of API requests for every Pull Request you open -- with Optic watching them, all that traffic become tests of your API's contract.
+:::
+
+### Review Diffs in the UI
+The Diff UI makes it easy to understand the diffs Optic has observed and update your specification when necessary. On the left you'll see a list of all the endpoints where Optic has observed a behavior diff.
+
+Optic displays each diff with a relevant example, so you can quickly understand what's changed:
+
+![alt](../../static/img/big-diff.png)
+
+The first thing you must decide is whether you intended to make a change to the API or if Optic caught a bug/regression.
+
+If this is indeed a change you had intended to make, document, and get reviewed by your team, you can use Optic to update your API specification by approving one of Optic's suggestions.
+
+You can "Approve" the suggestion to stage these spec changes -- when you finish handling all the diffs, Optic will update the spec for you.
+
+If Optic found a bug/regression in the API's behavior, you'll want to press "Mark as Incorrect". This will not change your API spec, and hides the diff. If the incorrect behavior is still present in future batches of traffic, Optic will reveal the diff again to make sure you don't forget to fix the behavior.
+
+
+### `api status`
+:::info in beta channel
+We're still testing the status command on the @beta channel
+`yarn global add @useoptic/cli@beta`
+:::
+
+
+Optic has been designed to fit into familiar Git workflows and to stay out of the way until it's needed. Just like you run `git status` to see what code you've changed since last commit, Optic lets you run `api status` to see if Optic has detected any diffs in your API's behavior:
+
+import {Paper} from '@material-ui/core';
+
+<Paper elevation={1}>
+
+![alt](../../static/img/status.svg)
+
+</Paper>
+
+When changes are observed, you can open the Optic UI by clicking the link, or by running `api status --review`.
+
+### A Real `api status` Story
+
+You work on an in-person conference platform, and your team has asked you to create a new endpoint which lets attendees search for nearby venues: `GET /venues/nearby/search`
+
+- You check out the latest code and create a new branch called `feature/nearby-search`.
+
+- Then you write code based on the example request / response shapes you team agreed upon and add a test to your suite which calls the new endpoint
+
+- When you run `api status` Optic detects this new undocumented endpoint and helps you add it to the spec in a few seconds.
+
+- **But wait** while writing the venue filter, you refactored a struct's fields from `lat` `long`, to the more specific `latitude` and `longitude`. Small change, but turns out one of the endpoints returned the result of that function, and the serialization began using the new names too.
+
+You never would have thought to check for a behavior change in that other endpoint, but Optic made it easy to find. Hopefully your team would have caught that issue in CI, staging or QA before it broke consumers, but maybe not.
+
+As developers, we need a simple way to treat API changes as the first-class concerns that they are. That means being conscious of our API's contract as we code, and catching things like that regression above as early as possible, when it's easy to fix, and before it's ruined another developer's day.
+
+
+### Pre-Commit Hook
+Since `api status` lists all the API diffs since your last Git commit, it's an excellent candidate for a pre-commit hook. Most of the time you would not expect the API to change, but when it does you want to make sure you see it before pushing/merging code upstream.
+
+When you run the status command with the `--pre-commit` flag, it exits `1` when there is a diff.
+
+If it suits your work style, you can add Optic as a hook:
+[How to Setup Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
+
+If you're using a `bash` interpreter, you can just run the command. If you're using a more complex scripting environment you may need to pipe the stdout to logs and throw when the process exits `1`.
+
+```shell
+#!/bin/bash
+api status --pre-commit
+```

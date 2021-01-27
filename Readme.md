@@ -4,7 +4,7 @@
   <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="100"></a>
   <br>
 
-<h2 align="center">Document and tests your APIs as you build them</h4>
+<h2 align="center">Optic documents and tests your APIs as you build it</h4>
 
 </h1>
 
@@ -24,8 +24,11 @@
 <br/>
 <p align="center">
   <a href="#how-it-works">How it Works</a> •
-  <a href="#key-features">Key Features</a> •
-  <a href="#documentation-httpsuseopticcomdocs">Documentation</a> •
+  <a href="#key-features">Install</a> •
+  <a href="#documentation-httpsuseopticcomdocs">Document APIs</a> •
+  <a href="#documentation-httpsuseopticcomdocs">Detect Changes</a> •
+  <a href="#documentation-httpsuseopticcomdocs">Optic GitBot</a> •
+  <a href="#license">Contributing</a>
   <a href="#license">License</a>
 </p>
 
@@ -35,7 +38,7 @@
 > Optic is like Git, but for your APIs
 - Optic documents your APIs as you build them by observing development traffic and learning your API's behavior
 - Optic detects API changes by diffing traffic against the current specification
-- Adds an accurate API changelog to every Pull Request
+- Optic Adds an accurate API changelog to every Pull Request
 
 ### Add Optic to your API
 > Similar to `git init`
@@ -47,15 +50,11 @@ yarn add global @useoptic/cli
 # Navigate to your API project directory
 api init
 ```
-
-![The api start command initializing](https://www.useoptic.com/static/init-9a9c43677e29e2b6f9f04bd7ce81ec26.svg)
-
-Setup aliases in `optic.yml` for the commands your team runs when building the API
+Setup aliases in for the commands your team runs when building the API in `optic.yml`
 
 ie `npm start` -> `api start`
 
 ie `newman run mycollection.json` -> `postman-tests`
-
 
 ``` yaml
 name: My API
@@ -68,31 +67,68 @@ tasks:
     usesTask: http://localhost:4000
 ```
 
-**How does Optic monitor local traffic?** Optic observes API and diffs API traffic in the background when you're building your API. Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs.
+**How does Optic monitor local traffic?** Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs. All of this processing is done locally, in the background, by a Rust binary built from the open source code in this repository.
 
+### Document your API using real traffic
 
-
-### Develop your API with Optic watching
+Once you add Optic to your API, hit it with some traffic, and document your first endpoints:
 
 ```bash
 api start
 [optic] Starting My API API on Port: 3005, with npm run server-start
 ```
 
+![The api documentation](website/static/img/document-your-api.png)
+
+- [Document your API with Optic](https://useoptic.com/docs/using/baseline)
+- [Video: Quinn Slack from Sourcegraph documenting GitHub's API in 10 minutes](https://www.youtube.com/watch?v=UQ4TYUvTrok&t=2s)
 
 
+### Use API Status to detect API Changes
+
+Keep using Optic as you develop your API. While Git diffs your, Optic will be sitting there, in the background, diffing your API. You can run `api status` to check for diffs:
+
+
+- [Learn more about detecting + reviewing API Diffs](https://useoptic.com/docs/using/reviewing-diffs)
+
+
+![The api start command initializing](website/static/img/status.svg)
+
+
+### Use the Optic UI to Review Diffs + Update your Specification
+When Optic detects an API diff, it helps you:
+- Document new endpoints in a few seconds
+- Update your API specification with a few clicks
+- Detect any unplanned changes, breaks and regressions, then fix them
+
+![The api start command initializing](website/static/img/big-diff.png)
+
+### An API Changelog in Every PR
+
+The Optic GitBot adds an API Changelog during Code Review, so your team understands how the API will change when each PR is merged.
+
+** 🚦 Prevent Breaking Changes**
+Discover breaking changes before they're merged. Request compatible changes in code review, or coordinate the breaking changes with consumers.
+
+** 🔎 API First**
+Adding explicit API changelogs in PRs facilitates discussion and leads to better API design. It's also a great way to make sure unintended API changes don't get deployed.
+
+**✅ Updated Docs**
+No more doc drift. When you approve an API change Optic also updates the specification.
+
+[Install & Set up the GitBot](/docs/apiops/pull-requests)  it's free!
+
+
+![changelog](website/static/img/gitbot-large.png)
 
 ## Key Features
-📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
+📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a changelog
 
-It’s kind of like Git, but instead of tracking files, Optic automatically diffs and tracks API endpoints. When new behavior is observed, Optic makes it easy to update the spec.
-
-⚙️ **Automated Testing** - Automate most of your contract testing. Optic uses live testing with spec coverage to make testing APIs easy.
+⚙️ **Automated Testing** - Automate most of your contract testing. Optic turns your existing tests and development traffic into contract tests, and measures your API coverage from various sources.
 
 👍 **Beautiful Docs** - Stripe-style documentation for every API managed by Optic.
 
 👋 **100% Open Source, Runs locally, data is only stored in your API Repo**
-
 
 ## Documentation [https://useoptic.com/docs](https://www.useoptic.com/docs)
 
@@ -100,8 +136,24 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 - Want to contribute? Check out the [Contribution Guidelines](Contributing.md).
 - To get set up working on the project, please review our [Developer Setup](Developer-setup.md) guide as well.
 
-## License
 
+## Resources
+- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](/blog/git-for-apis)**
+- Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
+- Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
+  ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
+
+- [Join Community](https://useoptic.com/docs/community)
+- [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
+
+**Principles:**
+- Version behavior, not just code. While Git versions your code, Optic versions the behavior of your APIs.
+- Make sure every API change is documented, reviewed and approved -- Optic diffs real traffic in your development environments to make sure no change goes unseen or undocumented
+- Developer-friendly -- writing and updating API specifications should be as easy as making Git commits
+
+Want to help us design the next features? [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
+
+## License
 MIT
 
 ## Contributors ✨
