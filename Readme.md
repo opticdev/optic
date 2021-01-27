@@ -2,12 +2,9 @@
 <h1 align="center">
   <br>
   <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="100"></a>
-  <br>
 
-<h2 align="center">Optic documents and tests your APIs as you build it</h4>
-
+<h2 align="center">Optic documents and tests your API as you build it</h4>
 </h1>
-
 <p align="center">
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365"><img src="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365" alt="Build Status" data-canonical-src="https://img.shields.io/github/workflow/status/opticdev/optic/Release" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963" alt="issues" data-canonical-src="https://img.shields.io/github/issues/opticdev/optic" style="max-width:100%;"></a>
@@ -19,12 +16,10 @@
 
 </p>
 
-
-<br/>
 <br/>
 <p align="center">
   <a href="#how-it-works">How it Works</a> •
-  <a href="#key-features">Install</a> •
+  <a href="#how-it-works">Install</a> •
   <a href="#documentation-httpsuseopticcomdocs">Document APIs</a> •
   <a href="#documentation-httpsuseopticcomdocs">Detect Changes</a> •
   <a href="#documentation-httpsuseopticcomdocs">Optic GitBot</a> •
@@ -40,7 +35,7 @@
 - Optic detects API changes by diffing traffic against the current specification
 - Optic Adds an accurate API changelog to every Pull Request
 
-### Add Optic to your API
+# Add Optic to your API
 > Similar to `git init`
 
 Install Optic and run `api init`
@@ -69,7 +64,7 @@ tasks:
 
 **How does Optic monitor local traffic?** Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs. All of this processing is done locally, in the background, by a Rust binary built from the open source code in this repository.
 
-### Document your API using real traffic
+# Document your API using real traffic
 
 Once you add Optic to your API, hit it with some traffic, and document your first endpoints:
 
@@ -84,7 +79,7 @@ api start
 - [Video: Quinn Slack from Sourcegraph documenting GitHub's API in 10 minutes](https://www.youtube.com/watch?v=UQ4TYUvTrok&t=2s)
 
 
-### Use API Status to detect API Changes
+# Use API Status to detect API Changes
 
 Keep using Optic as you develop your API. While Git diffs your, Optic will be sitting there, in the background, diffing your API. You can run `api status` to check for diffs:
 
@@ -95,7 +90,7 @@ Keep using Optic as you develop your API. While Git diffs your, Optic will be si
 ![The api start command initializing](website/static/img/status.svg)
 
 
-### Use the Optic UI to Review Diffs + Update your Specification
+# Use the Optic UI to Review Diffs + Update your Specification
 When Optic detects an API diff, it helps you:
 - Document new endpoints in a few seconds
 - Update your API specification with a few clicks
@@ -103,7 +98,7 @@ When Optic detects an API diff, it helps you:
 
 ![The api start command initializing](website/static/img/big-diff.png)
 
-### An API Changelog in Every PR
+# An API Changelog in Every PR
 
 The Optic GitBot adds an API Changelog during Code Review, so your team understands how the API will change when each PR is merged.
 
