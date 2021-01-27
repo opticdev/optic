@@ -13,7 +13,7 @@ jobs:
   rust_binaries:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest, macos-11.0]
+        os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
