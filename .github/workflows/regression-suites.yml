@@ -5,7 +5,7 @@ on:
     - cron: 11 11 * * * # 12:11AM CET, 3:11PM PT, 6:11PM ET
   pull_request:
     branches:
-      - develop
+      - release
 
 jobs:
 
