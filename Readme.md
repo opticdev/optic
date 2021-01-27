@@ -158,13 +158,8 @@ No more doc drift. When you approve an API change Optic also updates the specifi
 - Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
   ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
 
-- [Join Community](https://useoptic.com/docs/community)
-- [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
-
-**Principles:**
-- Version behavior, not just code. While Git versions your code, Optic versions the behavior of your APIs.
-- Make sure every API change is documented, reviewed and approved -- Optic diffs real traffic in your development environments to make sure no change goes unseen or undocumented
-- Developer-friendly -- writing and updating API specifications should be as easy as making Git commits
+- **[Join Community](https://useoptic.com/docs/community)**
+- **[Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)**
 
 Want to help us design the next features? [Book Maintainer Office Hours](https://calendly.com/opticlabs/maintainer-office-hours?month=2021-01)
 
