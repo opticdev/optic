@@ -3,15 +3,19 @@
   <br>
   <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="200"></a>
   <br>
-  Optic
-  <br>
+
+<h2 align="center">Optic documents and tests your APIs as you build them</h4>
+
+
+![Build Status](https://img.shields.io/github/workflow/status/opticdev/optic/Release)
+![issues](https://img.shields.io/github/issues/opticdev/optic)
+![rust](https://img.shields.io/badge/rust-v1.49+-blue.svg)
+![closedprs](https://img.shields.io/github/issues-pr-closed-raw/opticdev/optic)
+![currentversion](https://img.shields.io/npm/v/@useoptic/cli)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![stars](https://img.shields.io/github/stars/opticdev/optic?style=social)
+
 </h1>
-
-<h4 align="center">APIs that Document & Test Themselves</h4>
-
-<p align="center">
-
-</p>
 
 <p align="center">
     <a href="#how-it-works">How it Works</a> •
@@ -24,14 +28,16 @@
 # How it Works
 
 > Optic is like Git, but for your APIs
+- Optic documents your APIs as you build them by observing development traffic and learning your API's behavior
+- Optic detects API changes by diffing traffic against the current specification
+- Provides an accurate API changelog during Code Review
+by making your Pull Requests display both API and code changes
 
-### Add Optic to your Development Environment 
-
-Optic acts as a proxy, observing all API traffic during a session with your application. It's installed with the Yarn package manager, and initialized per API project you want to monitor.
-
+### Add Optic to your API
 > Similar to `git init`
 
-Add the Optic Proxy so Optic can learn how your API works. It only takes 5 minutes and will save you hours if you write OpenAPI manually today.
+Install Optic and run `api init`
+
 ```bash
 yarn add global @useoptic/cli
 # Navigate to your API project directory
@@ -40,47 +46,37 @@ api init
 
 ![The api start command initializing](https://www.useoptic.com/static/init-9a9c43677e29e2b6f9f04bd7ce81ec26.svg)
 
-This will open a local, guided initialization flow. Optic will walk you through setting up your project in the Optic Dashboard. Once setup is validated, you're ready to start your API with Optic and observe API traffic locally to build your API specification and documentation. As part of the initialization flow, Optic creates an `optic.yml` file for you with your configuration:
+Setup aliases in `optic.yml` for the commands your team runs when building the API
+
+`npm start` -> `api start`
+
+`newman run mycollection.json` -> `postman-tests`
+
 
 ``` yaml
-name: project
+name: My API
 tasks:
   start:
-    command: echo "your project start command goes here"
+    command: npm start
     inboundUrl: http://localhost:4000
+  postman-tests:
+    command: newman run mycollection.json
+    usesTask: http://localhost:4000
 ```
 
-For further information, please check out our [setup instructions](https://useoptic.com/docs/getting-started/).
+**How does Optic monitor local traffic?** Optic observes API and diffs API traffic in the background when you're building your API. Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs.
 
-### Use the Optic Proxy to Monitor your API's Behavior 
 
-Once set up, you can start observing traffic with the `api start` command. 
+
+### Develop your API with Optic watching
+
 
 ```bash
 api start
-[optic] Starting ToDo API on Port: 3005, with npm run server-start
+[optic] Starting My API API on Port: 3005, with npm run server-start
 ```
 
-Optic will start your application, and observe API requests run against it. Optic manages these observations in a capture session. When Optic observes traffic that it hasn't yet seen, or that has changed from previous observations, it will list it with examples of payloads in the Optic Dashboard for the capture session. As you make changes to your code, such as adding or updating API endpoints, Optic will establish new capture sessions for each build and report back on observed behavior.
 
-Our detailed [setup instructions](https://useoptic.com/docs/getting-started/) will get you started with additional context for several popular languages and frameworks.
-
-### Use Optic to Manage your API Specification 
-
-Optic organizes the API traffic it observes to allow you to manage expected behavior. It reports the shape of your payloads, or the types of data observed, for documentation. If the shapes change from what has been observed previously, Optic will report those changes. This helps identify that a change in behavior has been implemented properly, or catches unexpected behaviors before they get out into the wild.
-
-> Similar to `git diff`, `git add` and `git commit`
-
-Optic constantly diffs your API's actual behavior against its specification. Optic shows you the API diff and makes it easy to:
-- Add new API Endpoints to your specification 
-- Update the specification when it observes new behavior for an existing API Endpoint 
-- Catch bugs and unexpected API behavior early :) 
-
-As you commit the observed diffs, Optic builds documentation in OpenAPI format on the fly. You can see how your documentation looks, and how it changes, right in the Optic Dashboard as you work.
-
-### See it for Yourself
-
-The best way to see Optic in action is to get [set up](https://useoptic.com/docs/getting-started/) in your current API project. You can also try our [interactive demo](https://demo.useoptic.com) to get a highlight of Optic's workflow and capabilities.
 
 ## Key Features
 📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
@@ -100,7 +96,7 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 - Want to contribute? Check out the [Contribution Guidelines](Contributing.md).
 - To get set up working on the project, please review our [Developer Setup](Developer-setup.md) guide as well.
 
-## License 
+## License
 
 MIT
 
