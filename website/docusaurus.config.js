@@ -36,7 +36,7 @@ module.exports = {
           label: 'Community',
           position: 'left',
         },
-        {to: 'blog', label: 'Blog', position: 'left'},
+        { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/opticdev/optic',
           label: 'GitHub',
@@ -92,14 +92,13 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl:
-            'https://github.com/opticdev/optic/edit/master/website/',
+          editUrl: 'https://github.com/opticdev/optic/edit/develop/website/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/opticdev/optic/edit/master/website/blog/',
+            'https://github.com/opticdev/optic/edit/develop/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -110,5 +109,5 @@ module.exports = {
   stylesheets: [
     'https://fonts.googleapis.com/css?family=Inter:200,400,600,700',
     'https://fonts.googleapis.com/css?family=Ubuntu+Mono:200,400,600,700',
-  ]
+  ],
 };
