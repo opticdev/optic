@@ -3,6 +3,9 @@ name: Test Regression Scenarios
 on:
   schedule:
     - cron: 11 11 * * * # 12:11AM CET, 3:11PM PT, 6:11PM ET
+  push:
+    branches:
+      - release
 
 jobs:
 
