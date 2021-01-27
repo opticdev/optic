@@ -42,6 +42,12 @@ export class CaptureSaver implements ICaptureSaver {
     await fs.ensureDir(outputDirectory);
     const agentId = '';
     const agentGroupId = '';
+
+    const entries = fs.readdirSync(outputDirectory);
+    const captureFiles = entries.filter((x) => x.endsWith(captureFileSuffix));
+    //provide for continuation
+    this.batchCount = captureFiles.length || 0;
+
     this.batcher.on('batch', async (items: IHttpInteraction[]) => {
       const batchId = this.batchCount.toString();
       developerDebugLogger(

@@ -1,4 +1,3 @@
-import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from './shape-diff-dsl';
 import invariant from 'invariant';
 import { JsonHelper, opticEngine, OpticIds, toOption } from '@useoptic/domain';
@@ -7,6 +6,7 @@ import {
   ICoreShapeKinds,
 } from '../interfaces/interfaces';
 import { setDifference, setIntersection, setUnion } from '../set-ops';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
