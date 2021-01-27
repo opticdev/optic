@@ -1,14 +1,16 @@
 import { BodyShapeDiff, ParsedDiff } from './parse-diff';
 import groupby from 'lodash.groupby';
-import { IShapeTrail, normalizeShapeTrail } from './interfaces/shape-trail';
-import { diff } from 'react-ace';
-import { DiffRfcBaseState } from './interfaces/diff-rfc-base-state';
-import { isDiffForKnownEndpoint } from './interfaces/interfaces';
-import { DiffTypes } from './interfaces/diffs';
 import {
   Expectation,
   expectationsFromSpecOption,
 } from './interpreter/shape-diff-dsl';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { isDiffForKnownEndpoint } from './interfaces/interfaces';
+import { DiffTypes } from '@useoptic/cli-shared/build/diffs/diffs';
+import {
+  IShapeTrail,
+  normalizeShapeTrail,
+} from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 export class DiffSet {
   constructor(

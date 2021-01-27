@@ -1,10 +1,10 @@
 import { IHttpInteraction } from '@useoptic/domain-types';
-import { IDiff } from '../../engine/interfaces/diffs';
 import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 
 export interface ICaptureService {
   baseUrl: string;

@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "9.0.7-beta.0",
+  "version": "9.0.6@beta.0",
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "yarn run tsc -b --verbose",
@@ -16,11 +16,11 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "9.0.7-beta.0",
-    "@useoptic/cli-config": "9.0.7-beta.0",
-    "@useoptic/client-utilities": "9.0.7-beta.0",
-    "@useoptic/diff-engine": "9.0.7-beta.0",
-    "@useoptic/diff-engine-wasm": "9.0.7-beta.0",
+    "@useoptic/cli-client": "9.0.6@beta.0",
+    "@useoptic/cli-config": "9.0.6@beta.0",
+    "@useoptic/client-utilities": "9.0.6@beta.0",
+    "@useoptic/diff-engine": "9.0.6@beta.0",
+    "@useoptic/diff-engine-wasm": "9.0.6@beta.0",
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-types": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
@@ -29,6 +29,7 @@
     "colors": "^1.4.0",
     "execa": "^4.0.3",
     "fs-extra": "^9.0.0",
+    "keymirror": "^0.1.1",
     "lodash.throttle": "^4.1.1",
     "mockttp": "^1.0.3",
     "oboe": "^2.1.5",
@@ -46,11 +47,11 @@
   },
   "devDependencies": {
     "@types/lodash.throttle": "^4.1.6",
+    "@types/semver": "^7.3.4",
     "@types/stream-chain": "^2.0.0",
     "@types/stream-fork": "^1.0.0",
     "@types/stream-json": "^1.5.1",
     "@types/whatwg-mimetype": "^2.1.0",
-    "@types/semver": "^7.3.4",
     "tap": "^14.11.0",
     "type-fest": "^0.20.2"
   },
