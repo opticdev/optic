@@ -38,10 +38,14 @@
 ## Add Optic to your API
 > Similar to `git init`
 
-Install Optic and run `api init`
+Install Optic with npm or yarn"
 
 ```bash
 yarn add global @useoptic/cli
+npm install @useoptic/cli -g
+```
+Then run init command:
+```
 ## Navigate to your API project directory
 api init
 ```
@@ -65,6 +69,7 @@ tasks:
 **How does Optic monitor local traffic?** Whenever you start your API or run tests using Optic's CLI, it will observe your traffic and surface API diffs. All of this processing is done locally, in the background, by a Rust binary built from the open source code in this repository.
 
 ## Document your API using real traffic
+> Similar to `git add`
 
 Once you add Optic to your API, hit it with some traffic, and document your first endpoints.
 
@@ -85,6 +90,7 @@ api start
 
 
 ## Detect API Changes
+> Similar to `git status`
 
 You should keep using the Optic CLI to start your API and run its tests whenever you're developing new functionality. Optic strives to be completely transparent, and the aliases `api start` and `api run <task>` are easy to remember.
 
@@ -98,6 +104,9 @@ While Git diffs your, Optic will be sitting there, in the background, diffing yo
 
 
 ## Use the Optic UI to Review Diffs + Update your Specification
+
+> Similar to staging changes
+
 When Optic detects an API diff, it helps you:
 - Document new endpoints without writing a bunch of OpenAPI
 - Update your API specification with a few clicks
@@ -106,6 +115,7 @@ When Optic detects an API diff, it helps you:
 ![The api start command initializing](website/static/img/big-diff.png)
 
 ## An API Changelog in Every PR
+> Similar to GitHub's compare page, but for API changes
 
 The Optic GitBot adds an API Changelog during Code Review, so your team understands how the API will change when each PR is merged.
 
