@@ -210,7 +210,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Add Endpoints to Specification
+          Add Endpoints to your Specification. <span style={{fontWeight: 100}}>Click the parts of the path that are parameters</span>
         </Typography>
       )}
     </Toolbar>

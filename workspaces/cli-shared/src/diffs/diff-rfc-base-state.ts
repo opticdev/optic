@@ -1,4 +1,5 @@
 import { opticEngine, Queries } from '@useoptic/domain';
+import { universeFromEvents } from '@useoptic/domain-utilities';
 
 export interface DiffRfcBaseState {
   eventStore: any;
@@ -23,6 +24,23 @@ export function makeDiffRfcBaseState(
   rfcId: string,
   domainIdGenerator: any = opticEngine.com.useoptic.OpticIdsJsHelper().random
 ): DiffRfcBaseState {
+  const queries = Queries(eventStore, rfcService, rfcId);
+
+  return {
+    queries,
+    eventStore,
+    rfcService,
+    rfcId,
+    domainIdGenerator,
+    rfcState: rfcService.currentState(rfcId),
+  };
+}
+export function makeDiffRfcBaseStateFromEvents(
+  events: any[]
+): DiffRfcBaseState {
+  const { eventStore, rfcService, rfcId } = universeFromEvents(events);
+  const domainIdGenerator: any = opticEngine.com.useoptic.OpticIdsJsHelper()
+    .random;
   const queries = Queries(eventStore, rfcService, rfcId);
 
   return {

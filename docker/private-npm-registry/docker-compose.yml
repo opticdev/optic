@@ -5,3 +5,8 @@ services:
     container_name: verdaccio-local-registry
     ports:
       - "4873:4873"
+    volumes:
+      - "./conf:/verdaccio/conf"
+volumes:
+  verdaccio:
+    driver: local
