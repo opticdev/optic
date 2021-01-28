@@ -1,0 +1,22 @@
+name: Build with Task
+on:
+  push:
+    branches:
+      - taskfile
+jobs:
+  build_rust_binaries:
+    runs-on: macos-latest
+    steps:
+      - name: Install task
+        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/ # ;)
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Build binaries
+        run: task diff-engine:build
+      - name: Flush to disk
+        run: sudo /usr/sbin/purge
+        if: runner.os == 'macOS'
