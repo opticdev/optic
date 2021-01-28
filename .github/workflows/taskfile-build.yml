@@ -16,8 +16,12 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      - name: Build binaries
-        run: task diff-engine:build
+      - name: Build Windows
+        run: task diff-engine:build-windows
+      - name: Build Linux
+        run: task diff-engine:build-linux
+      - name: Build Mac OS
+        run: task diff-engine:build-macos
       - name: Flush to disk
         run: sudo /usr/sbin/purge
         if: runner.os == 'macOS'
