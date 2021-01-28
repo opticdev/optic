@@ -10,15 +10,15 @@ jobs:
         platform:
           - os: windows-latest
             task: diff-engine:build-windows
-          - os: ubuntu-latest
-            task: diff-engine:build-linux
-          - os: macos-latest
-            task: diff-engine:build-macos
+          # - os: ubuntu-latest
+          #   task: diff-engine:build-linux
+          # - os: macos-latest
+          #   task: diff-engine:build-macos
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
-      - name: Install task
-        run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/ # ;)
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@master
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
         with:
