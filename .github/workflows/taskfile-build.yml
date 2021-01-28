@@ -7,6 +7,7 @@ jobs:
   build_rust_binaries:
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install task
         run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/ # ;)
       - name: Install Rust toolchain
