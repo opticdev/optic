@@ -7,15 +7,14 @@ jobs:
   build_rust_binaries:
     strategy:
       matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
-        tasks:
-          - diff-engine:build-windows
-          - diff-engine:build-linux
-          - diff-engine:build-macos
-    runs-on: ${{ matrix.os }}
+        platform:
+          - - os: windows-latest
+            - task: diff-engine:build-windows
+          - - os: ubuntu-latest
+            - task: diff-engine:build-linux
+          - - os: macos-latest
+            - task: diff-engine:build-macos
+    runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install task
@@ -27,8 +26,8 @@ jobs:
           profile: minimal
           override: true
       - run: task diff-engine:add-targets
-      - name: Build ${{ matrix.os }}
-        run: task ${{ matrix.task }}
+      - name: Build ${{ matrix.platform.os }}
+        run: task ${{ matrix.platform.task }}
       - name: Flush to disk
         run: sudo /usr/sbin/purge
         if: runner.os == 'macOS'
