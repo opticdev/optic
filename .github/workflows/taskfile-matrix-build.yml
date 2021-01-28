@@ -8,8 +8,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          # - os: windows-latest
-          #   task: "diff-engine:build-windows"
+          - os: windows-latest
+            task: "diff-engine:build-windows"
           # - os: ubuntu-latest
           #   task: diff-engine:build-linux
           - os: macos-latest
