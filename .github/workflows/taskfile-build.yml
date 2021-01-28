@@ -2,7 +2,7 @@ name: Mac OS build host with Task
 on:
   push:
     branches:
-      - taskfile-blah
+      - taskfile
 jobs:
   build_rust_binaries:
     #runs-on: macos-11.0 # macos-latest doesnt have a new enough xcode to build arm
