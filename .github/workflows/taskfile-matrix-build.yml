@@ -8,12 +8,12 @@ jobs:
     strategy:
       matrix:
         platform:
-          - - os: windows-latest
-            - task: diff-engine:build-windows
-          - - os: ubuntu-latest
-            - task: diff-engine:build-linux
-          - - os: macos-latest
-            - task: diff-engine:build-macos
+          - os: windows-latest
+            task: diff-engine:build-windows
+          - os: ubuntu-latest
+            task: diff-engine:build-linux
+          - os: macos-latest
+            task: diff-engine:build-macos
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
