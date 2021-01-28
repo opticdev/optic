@@ -1,0 +1,62 @@
+---
+  title: Running API Tests
+---
+
+### Running tests through Optic
+
+```bash
+api run <test-suite-task>
+```
+
+Optic can test your API's behavior by using the existing traffic in your test suites as contract tests. While your tests are running, Optic observes the traffic and checks that the shapes of your requests and responses. Now your can focus on testing the functionality of your API, and leave tedious schema testing and `typeof === 'x` assertions to Optic. For every request your test suite emits, Optic is asserting hundreds of additional properties from your specification.
+
+:::info
+Since Optic monitors real HTTP requests, test traffic will have to actually hit the network bridge for Optic to see it. Tools like Postman and Poly will work out of the box, but depending on your API, and how your tests are written, you may need to flip some bits to make the requests send over the local network.
+
+The community maintains ["API[Stack|Framework] ❤ Optic"️](/docs/integrations/integrations#api-frameworks-%EF%B8%8F-optic) guides to help
+:::
+
+
+## Running Tests with Dependent Tasks
+You can set up as many test tasks as you'd like and use `api run <taskname>` to run them:
+
+```bash
+$ api run tests
+```
+
+1. Starts your API using another Optic task (usually `api start`)
+2. (await the server coming up) and run automated traffic against it
+3. Run the `command` in your test task
+4. When the tests finish, stops the API process
+
+````yaml
+tasks:
+  start:
+    command: node server.js --port $PORT
+    inboundUrl: http://localhost:3001
+  tests:
+    command: npm run tests
+    useTask: start
+````
+
+- `command` - the command that executes your tests. Your tests should target the `inboundUrl` where your API starts. If you want your tests to get the hostname from the environment, it will be provided as `$OPTIC_PROXY` (ie `http://localhost:3001`)
+
+- `useTask` - another Optic task that starts your API. This may be your `start` command, or if there's a special setup required for testing, we suggest the name `start-for-testing`.
+
+## API Coverage
+
+Coverage helps developers understand what they're testing, giving them more confidence that passing tests mean working software. Code coverage is relied on by most software engineering teams to give their tests power. Passing tests, paired with high code coverage, is a strong and trusted signal that your code is working as designed.
+
+:::info **What is API Coverage?**
+Code coverage reports on lines/files where code was executed, API coverage reports on the endpoints, body types, and status codes that were covered by traffic.
+:::
+
+Optic can report on API coverage for any of your test scripts, Postman collections, or even from using a webapp that talks to the API. Just run any task with the `--collect-coverage` flag, and like magic, when the task exits a coverage report is generated:
+
+import Paper from '@material-ui/core/Paper'
+
+<Paper elevation={2}>
+
+![alt](../../static/img/run-tests-with-coverage.svg)
+
+</Paper>

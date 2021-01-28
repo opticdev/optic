@@ -1,0 +1,80 @@
+---
+title: "Running CI/CD Tests through Optic with GitHub Actions"
+description: ""
+---
+
+Running Optic in your Continuous Integration (CI) pipeline assures that differences from documented behavior or undocumented routes in your tests can be caught before a pull request is merged. Optic lets your CI pipeline know that the intended behavior of your API is documented, and alerts you to unintended behavior before it gets to deployment. Optic runs can integrate with your pipeline, such as through GitHub Actions, to pass or fail checks and provide context in the pull request.
+
+## Running Tests in CI with Optic
+
+Before you can run your tests in CI, you'll want to make sure your tests are running normally locally. Even if you don't run tests every time, or if you run your tests elsewhere, there will be some setup required to get your tests running. We recommend [running your tests through Optic](/docs/get-started/testing). Not only will your tests run, they'll be observed by Optic and compared to your documentation. Then, you can use Optic in your CI pipeline to run these same observations throughout your integration and deployment journey.
+
+## GitHub Actions Integration
+
+As an example, let's look at using GitHub Actions as a CI tool. There are a few steps needed to run a project's tests through Optic:
+
+- Check out your project
+- Install Optic and any dependencies
+- Run your tests
+  - If they pass, assure the shell exits with exit code 0.
+  - If any tests fail, assure the shell exits with exit code 1.
+
+The following GitHub Action would accomplish this for your example project. It triggers when you open or push to a pull request in GitHub (not on every push), and will report the check status on the pull request. It will not prevent the pull request from being merged, it just reports the status of the check. When this is committed to the `.github/workflows` directory and pushed to GitHub, it will start running on the appropriate triggers. Since this is the only GitHub Action in this example, it can be added as `.github/workflows/main.yml` in the project repository and pushed to GitHub:
+
+``` yaml
+name: Optic CI
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Optic, json-server
+        run: npm install @useoptic/cli json-server
+
+      - name: Run tests
+        run: |
+          node_modules/.bin/api run use-task --collect-coverage | tee out.txt
+          if grep -q "No API Diff Observed" out.txt; then
+            echo "No Unexpected API behavior detected."
+            exit 0
+          else
+            echo "Unexpected API behavior or error in CI: please run Optic locally and check the dashboard, then review CI logs."
+            exit 1
+          fi
+```
+
+## Catching Undocumented Behavior
+
+Your repository is now set up to run your tests automatically through Optic on every pull request. Let's say you've added some new features to your project. This includes some new API endpoints. Your team likes the principles of test-driven development, and as part of your new work you've also written tests for the intended behavior. You've run the tests locally manually, and confirmed the behavior by hand, forgetting to run the tests through Optic. Your new features are working, but are currently undocumented. When you open a pull request for your new feature, the GitHub Action fires and runs the tests through Optic. The new routes (or diffs from existing documented behavior) are caught by Optic, which reports "Unexpected API Behavior". The process exits with exit code 1:
+
+![API changes will fail this test](/img/docs/cm-oci-test-fail.png)
+
+This bubbles up to your pull request, where the check has failed. Whoops! Now, anyone reviewing your pull request can see that the Optic check has failed. Even if the tests all pass, if there's any difference in behavior or undocumented routes, Optic will let you know. Your team lead is really nice, and helpfully points out that the deliverable isn't ready until it's documented.
+
+![Check failure reported in the pull request](/img/docs/cm-oci-check-fail.png)
+
+## Documenting the Behavior
+
+The good news is, [documenting an API](/docs/get-started/config) is quick with Optic. Run the tests through Optic to generate traffic, check the dashboard, and update what's missing. The new documentation is committed to the repository and pushed to your pull request. This time, all endpoints are documented and the test traffic doesn't differ from the documentation. Success!
+
+![Test passes](/img/docs/cm-oci-test-pass.gif)
+
+Your team lead reviews your pull request. They're pretty confident that the code looks right, and can back that up with the successful test runs. They also know that the documentation is up to date, and that not only have the tests passed but the traffic is compliant with the documented behavior. They can also pull the branch and [read the documentation](/docs/using/share-with-team) themselves if they want to dig deeper.
+
+![The successful test result is reported in the pull request](/img/docs/cm-oci-check-pass.png)
+
+## Putting it together with GitBot
+
+Your team lead has context that your work is done in accordance with the documented behavior. However, your team lead has 7 direct reports and a raft of weekly meetings to attend. They've also given everyone on their team several work items. Which ones were assigned to you, and of those, which one is completed in this pull request? Running tests works best with the [Optic GitBot](https://github.com/marketplace/optic-gitbot), which tells your team what behavior has changed as well. Together, you get the context of what behavior has changed and whether or not the code is behaving as documented:
+
+![Test report in a pull request alongside a GitBot change report](/img/docs/cm-oci-gitbot.png)
+
+## Adapting Optic to Run in Your Environment
+
+We'd be happy to add more examples based on your toolchain. We understand that we can't cover every environment, and are happy to chat with you more if you run into any issues. Please schedule some time to [chat with us](https://calendly.com/optic-onboarding/setup-help), or reach out to us via [GitHub Issues](https://github.com/opticdev/optic/issues/new?title=optic%20in%20production%3a) for more information.

@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -eu
+
+trap 'usage' ERR
+trap 'cleanup' EXIT
+
+# create a unique build directory so there's no monkey business
+BUILD_TIMESTAMP=$(date +%s)
+BUILD_PATH="/tmp/docs-build-${BUILD_TIMESTAMP}"
+SITE_NAME="marketing"
+S3_BUCKET="optic-${SITE_NAME}-website-${AWS_PROFILE}"
+DRY_RUN="${DRY_RUN:-true}"
+CLOUDFRONT_DIST=""
+
+function usage {
+    echo "AWS_PROFILE=(staging|production) DRY_RUN=(true|false) ./bin/deploy"
+}
+
+function set_cloudfront_dist_arn {
+    # gets all CloudFront Dist ARNs
+    for arn in $(aws cloudfront list-distributions | jq -r '.DistributionList.Items[].ARN')
+    do
+        # filter the CloudFront ARN with a `service=marketing-website` tag
+        if aws cloudfront list-tags-for-resource --resource $arn | jq -e '.Tags.Items[] | select(.Key=="service") | select(.Value=="marketing-website")' > /dev/null 2>&1
+        then
+          CLOUDFRONT_DIST="$arn"
+        fi
+    done
+
+    if [ -z "$CLOUDFRONT_DIST" ]
+    then
+        echo "No CloudFront Distribution found with a 'service=docs' tag"
+        exit 1
+    fi
+}
+
+# verify that any external dependecies are installed
+function dependencies {
+    if ! $(which jq > /dev/null 2>&1)
+    then
+        echo "You need jq installed, 'brew install jq'"
+        exit 1
+    fi
+}
+
+function aws_configuration {
+    if [[ ! "$AWS_PROFILE" =~ "staging" ]] && [[ ! "$AWS_PROFILE" =~ "production" ]]
+    then
+        echo 'AWS_PROFILE must be set to either "staging" or "production".'
+        exit 1
+    fi
+}
+
+function verify {
+    BRANCH=$(git branch --show-current)
+    echo "You are about to deploy the \"${BRANCH}\" branch to $AWS_PROFILE."
+
+    if [[ "$DRY_RUN" == "true" ]]
+    then
+        echo "DRY_RUN mode is enabled. Continuing will build the application, but will not push it to S3."
+    fi
+
+    read -n1 -er -p "Do you want to continue? [y/N] "
+
+    case "$REPLY" in
+        [yY])
+            echo
+            ;;
+
+        *)
+            echo -e "\nAborting..."
+            exit 1
+            ;;
+    esac
+}
+
+function build {
+    yarn build --out-dir "$BUILD_PATH"
+}
+
+function deploy {
+    S3_SYNC_CMD="aws s3 sync $BUILD_PATH/ s3://${S3_BUCKET}/ --delete --sse AES256"
+    S3_DRY_RUN="--dryrun"
+
+    if [[ "$DRY_RUN" == "true" ]]
+    then
+        eval "$S3_SYNC_CMD $S3_DRY_RUN"
+    else
+        eval "$S3_SYNC_CMD"
+        create_cloudfront_invalidation
+    fi
+    echo
+}
+
+function create_cloudfront_invalidation {
+    echo
+    echo -n "Creating a CloudFront invalidation for... "
+    set_cloudfront_dist_arn
+    echo "$CLOUDFRONT_DIST"
+    CLOUDFRONT_DIST_ID=$(echo "${CLOUDFRONT_DIST}" | cut -d/ -f2)
+    aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DIST_ID" --paths "/*"
+}
+
+function cleanup {
+    rm -rf "$BUILD_PATH"
+}
+
+function preflight {
+    dependencies
+    aws_configuration
+}
+
+function run {
+    echo "Deploy \"$SITE_NAME\" site"
+    echo
+    echo "DRY RUN: $DRY_RUN"
+    echo "Environment: $AWS_PROFILE"
+    echo "S3 Bucket: $S3_BUCKET"
+    echo
+
+    preflight
+    verify
+    build
+    deploy
+
+    echo "Done!"
+}
+
+#
+# entrypoint
+#
+run

@@ -1,0 +1,63 @@
+---
+title: Using Django with Optic
+sidebar_label: Django
+slug: /django
+---
+
+Optic is easy to use with Django, no special library or large code changes required.
+
+## `api start` Command
+
+Let's say we have a simple Django server that we usually develop with on localhost:3005.
+
+### Optic needs to know how to start our API
+
+Our optic.yml file would include our start command (such as `python manage.py runserver`).
+
+``` yaml
+name: Django API
+tasks:
+    command: python manage.py runserver
+    inboundUrl: https://localhost:3005
+```
+
+### Optic also needs the ability to control what port our API starts on
+
+Optic injects a `$PORT` environment variable for our application to listen on when `api start` is run. Wherever you start your API server, set the port on which it will bind with this environment variable:
+
+#### Before
+```
+... # other code
+def main():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+    try:
+        from django.core.management import execute_from_command_line
+... # other code
+```
+
+#### After
+```
+... # other code
+def main():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+    try:
+        from django.core.management import execute_from_command_line
+        # Add a configurable port option
+        from django.core.management.commands.runserver import Command as runserver
+        runserver.default_port = os.environ['PORT'] if 'PORT' in os.environ else 3005
+... # other code
+```
+
+## Verifying with `api check start`
+
+The setup tool will guide you through running checks to assure Optic is running successfully with your API project. You should see everything pass at this point. If you don't, it's most likely that you're not starting the API on the `$PORT` Optic provides. The Optic check will also report any other common issues it detects and give you steps and suggestions to resolve them.
+
+Should you need any more help, or want to chat about the process, please reach out to us. You can schedule a [quick chat with the maintainers](https://calendly.com/opticlabs/maintainer-office-hours) or [open an issue on GitHub](https://github.com/opticdev/optic/issues/new?title=API%20Init:%20).
+
+## Run your API through Optic
+
+At this point you should be ready to run `api start` and document your API with Optic! Optic will observe your API traffic locally, and report on the routes and traffic shape it sees in the Optic dashboard. The next step is to start [building your baseline specification](/docs/using/baseline)
+
+import {DocContributors} from '../../DocsContributors';
+
+<DocContributors githubUsernames={['acunniffe', 'LouManglass']} />
