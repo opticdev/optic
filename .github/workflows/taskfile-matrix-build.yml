@@ -9,9 +9,9 @@ jobs:
       matrix:
         platform:
           - os: windows-latest
-            task: "diff-engine:build-windows"
-          # - os: ubuntu-latest
-          #   task: diff-engine:build-linux
+            task: diff-engine:build-windows
+          - os: ubuntu-latest
+            task: diff-engine:build-linux
           - os: macos-latest
             task: diff-engine:build-macos
     runs-on: ${{ matrix.platform.os }}

@@ -20,8 +20,23 @@ tasks:
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: x86_64-unknown-linux-gnu-gcc
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: x86_64-linux-musl-gcc
     cmds:
-      - cargo build --release --workspace --target x86_64-unknown-linux-gnu
-      - cargo build --release --workspace --target x86_64-unknown-linux-musl
+      - |
+        if uname -a | grep -qv Darwin
+        then
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc \
+            cargo build --release --workspace --target x86_64-unknown-linux-gnu
+        else
+          cargo build --release --workspace --target x86_64-unknown-linux-gnu
+        fi
+      - |
+        if uname -a | grep -qv Darwin
+        then
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-linux-musl-gcc \
+            cargo build --release --workspace --target x86_64-unknown-linux-musl
+        else
+          cargo build --release --workspace --target x86_64-unknown-linux-musl
+        fi
+
 
   build-windows:
     deps:
