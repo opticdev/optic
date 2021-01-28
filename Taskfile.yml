@@ -50,6 +50,6 @@ tasks:
     cmds:
       - sudo /usr/sbin/purge
     status:
-      - uname -a | grep -q Darwin
+      - uname -a | grep -qv Darwin
 
 
