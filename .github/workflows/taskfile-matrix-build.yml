@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@master
+        with:
+          version: 3.x
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
         with:
