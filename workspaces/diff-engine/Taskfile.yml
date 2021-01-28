@@ -33,11 +33,12 @@ tasks:
     - cargo tests
 
   add-targets:
-    - rustup target add aarch64-apple-darwin
-    - rustup target add x86_64-apple-darwin
-    - rustup target add x86_64-unknown-linux-gnu  # glibc
-    - rustup target add x86_64-unknown-linux-musl # musl libc
-    - rustup target add x86_64-pc-windows-gnu
+    cmds:
+      - rustup target add aarch64-apple-darwin
+      - rustup target add x86_64-apple-darwin
+      - rustup target add x86_64-unknown-linux-gnu  # glibc
+      - rustup target add x86_64-unknown-linux-musl # musl libc
+      - rustup target add x86_64-pc-windows-gnu
 
   # Mac OS build host toolchain deps
   build-windows:macos-host-deps:

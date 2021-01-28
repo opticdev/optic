@@ -9,7 +9,7 @@ jobs:
       matrix:
         platform:
           - os: windows-latest
-            task: diff-engine:build-windows
+            task: "diff-engine:build-windows"
           # - os: ubuntu-latest
           #   task: diff-engine:build-linux
           # - os: macos-latest
