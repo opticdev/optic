@@ -5,7 +5,7 @@ on:
       - taskfile
 jobs:
   build_rust_binaries:
-    runs-on: macos-latest
+    runs-on: macos-11.0 # macos-latest doesnt have a new enough xcode to build arm
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install task
@@ -16,6 +16,7 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      - run: task diff-engine:add-targets
       - name: Build Windows
         run: task diff-engine:build-windows
       - name: Build Linux
