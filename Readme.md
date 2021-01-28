@@ -85,7 +85,7 @@ api start
 - [Video: Quinn Slack from Sourcegraph documenting GitHub's API in 10 minutes](https://www.youtube.com/watch?v=UQ4TYUvTrok&t=2s)
 
 
-![The api documentation](website/static/img/document-your-api.png)
+![The api documentation](https://github.com/opticdev/optic/raw/develop/website/static/img/document-your-api.png)
 
 
 ## Detect API Changes
@@ -99,7 +99,7 @@ While Git diffs your, Optic will be sitting there, in the background, diffing yo
 - [Learn more about detecting + reviewing API Diffs](https://useoptic.com/docs/using/reviewing-diffs)
 
 
-![The api start command initializing](website/static/img/status.svg)
+![The api start command initializing](https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg)
 
 
 ## Use the Optic UI to Review Diffs + Update your Specification
@@ -111,7 +111,7 @@ When Optic detects an API diff, it helps you:
 - Update your API specification with a few clicks
 - Detect any unplanned changes, breaks and regressions, then fix them
 
-![The api start command initializing](website/static/img/big-diff.png)
+![The api start command initializing](https://github.com/opticdev/optic/raw/develop/website/static/img/big-diff.png)
 
 ## An API Changelog in Every PR
 > Similar to GitHub's compare page, but for API changes
@@ -133,7 +133,7 @@ No more doc drift. When you approve an API change Optic also updates the specifi
 [Install & Set up the GitBot](/docs/apiops/pull-requests)  it's free!
 
 
-![changelog](website/static/img/gitbot-large.png)
+![changelog](https://github.com/opticdev/optic/raw/develop/website/static/img/gitbot-large.png)
 
 ## Key Features
 📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a changelog
