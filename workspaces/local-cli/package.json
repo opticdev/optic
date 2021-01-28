@@ -91,7 +91,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
-    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "prepack": "oclif-dev manifest && cp ../../Readme.md ReadMe.md",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "tsc -b --verbose",
