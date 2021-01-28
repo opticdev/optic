@@ -20,3 +20,6 @@ jobs:
       - name: Flush to disk
         run: sudo /usr/sbin/purge
         if: runner.os == 'macOS'
+
+      # dispays the binaries we built and their file sizes
+      - run: find ./target -perm +111 -type f | grep release/optic_diff | xargs du -shx
