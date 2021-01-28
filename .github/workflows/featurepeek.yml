@@ -3,7 +3,7 @@ name: Build and ping FeaturePeek
 on:
   push:
     branches:
-      - ! taskfile
+      - taskfile-blah
 jobs:
   build:
     runs-on: ubuntu-latest
