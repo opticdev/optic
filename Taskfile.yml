@@ -47,6 +47,9 @@ tasks:
       - yarn install
 
   flush-to-disk:
-    - sudo /usr/sbin/purge
+    cmds:
+      - sudo /usr/sbin/purge
+    status:
+      - uname -a | grep -q Darwin
 
 
