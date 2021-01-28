@@ -11,7 +11,7 @@ tasks:
 
   build-macos:
     - cargo build --release --workspace --target x86_64-apple-darwin
-    - cargo build --release --workspace --target aarch64-apple-darwin
+    #- cargo build --release --workspace --target aarch64-apple-darwin
 
   build-linux:
     deps:
