@@ -23,9 +23,11 @@ tasks:
       - |
         if uname -a | grep -q Darwin
         then
+          echo "Build host: mac"
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc \
             cargo build --release --workspace --target x86_64-unknown-linux-gnu
         else
+          echo "Build host: linux"
           cargo build --release --workspace --target x86_64-unknown-linux-gnu
         fi
       - |
