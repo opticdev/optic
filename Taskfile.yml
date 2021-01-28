@@ -46,7 +46,7 @@ tasks:
     cmds:
       - yarn install
 
-  flush-disk:
+  flush-to-disk:
     - sudo /usr/sbin/purge
 
 

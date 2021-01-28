@@ -29,11 +29,6 @@ jobs:
           profile: minimal
           override: true
       - run: task diff-engine:add-targets
-      - name: Build ${{ matrix.platform.os }}
-        run: task ${{ matrix.platform.task }}
-      - name: Flush to disk
-        run: sudo /usr/sbin/purge
-        if: runner.os == 'macOS'
-
-      # dispays the binaries we built and their file sizes
-      - run: find ./target -perm +111 -type f | grep release/optic_diff | xargs du -shx
+      - run: task ${{ matrix.platform.task }}
+      - run: task flush-to-disk
+      - run: task diff-engine:locate-binaries

@@ -69,3 +69,8 @@ tasks:
       - brew install filosottile/musl-cross/musl-cross
     status:
       - uname -a | grep -qv "Darwin"
+
+  locate-binaries:
+    desc: Searches for binaries in the ./target directory
+    cmds:
+      - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
