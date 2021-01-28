@@ -21,7 +21,7 @@ tasks:
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: x86_64-linux-musl-gcc
     cmds:
       - |
-        if uname -a | grep -qv Darwin
+        if uname -a | grep -q Darwin
         then
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc \
             cargo build --release --workspace --target x86_64-unknown-linux-gnu
@@ -29,7 +29,7 @@ tasks:
           cargo build --release --workspace --target x86_64-unknown-linux-gnu
         fi
       - |
-        if uname -a | grep -qv Darwin
+        if uname -a | grep -q Darwin
         then
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-linux-musl-gcc \
             cargo build --release --workspace --target x86_64-unknown-linux-musl
