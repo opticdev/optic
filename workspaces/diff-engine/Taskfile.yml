@@ -14,20 +14,20 @@ tasks:
     - cargo build --release --workspace --target aarch64-apple-darwin
 
   build-linux:
+    deps:
+      - build-linux:macos-host-deps
     env:
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: x86_64-unknown-linux-gnu-gcc
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: x86_64-linux-musl-gcc
     cmds:
-      # - xcode-select --install
-      - brew tap SergioBenitez/osxct
-      - brew install x86_64-unknown-linux-gnu
       - cargo build --release --workspace --target x86_64-unknown-linux-gnu
-      - brew install filosottile/musl-cross/musl-cross
       - cargo build --release --workspace --target x86_64-unknown-linux-musl
 
   build-windows:
-    - brew install mingw-w64
-    - cargo build --release --workspace --target x86_64-pc-windows-gnu
+    deps:
+      - build-windows:macos-host-deps
+    cmds:
+      - cargo build --release --workspace --target x86_64-pc-windows-gnu
 
   test:
     - cargo tests
@@ -38,3 +38,21 @@ tasks:
     - rustup target add x86_64-unknown-linux-gnu  # glibc
     - rustup target add x86_64-unknown-linux-musl # musl libc
     - rustup target add x86_64-pc-windows-gnu
+
+  # Mac OS build host toolchain deps
+  build-windows:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      - brew install mingw-w64
+    status:
+      - uname -a | grep -qv "Darwin"
+
+  build-linux:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      # - xcode-select --install
+      - brew tap SergioBenitez/osxct
+      - brew install x86_64-unknown-linux-gnu
+      - brew install filosottile/musl-cross/musl-cross
+    status:
+      - uname -a | grep -qv "Darwin"
