@@ -27,7 +27,7 @@ jobs:
           override: true
       - run: task diff-engine:add-targets
       - name: Build ${{ matrix.platform.os }}
-        run: task ${{ matrix.platform.task }}
+        run: task diff-engine:build-windows
       - name: Flush to disk
         run: sudo /usr/sbin/purge
         if: runner.os == 'macOS'
