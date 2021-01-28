@@ -1,13 +1,21 @@
-name: Mac OS build host with Task
+name: Matrix build with Task
 on:
   push:
     branches:
-      - ! taskfile
+      - taskfile
 jobs:
   build_rust_binaries:
-    #runs-on: macos-11.0 # macos-latest doesnt have a new enough xcode to build arm
-    # but macos-11.0 is queue hell
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+        tasks:
+          - diff-engine:build-windows
+          - diff-engine:build-linux
+          - diff-engine:build-macos
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install task
@@ -19,12 +27,8 @@ jobs:
           profile: minimal
           override: true
       - run: task diff-engine:add-targets
-      - name: Build Windows
-        run: task diff-engine:build-windows
-      - name: Build Linux
-        run: task diff-engine:build-linux
-      - name: Build Mac OS
-        run: task diff-engine:build-macos
+      - name: Build ${{ matrix.os }}
+        run: task ${{ matrix.task }}
       - name: Flush to disk
         run: sudo /usr/sbin/purge
         if: runner.os == 'macOS'
