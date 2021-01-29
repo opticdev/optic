@@ -1,23 +1,36 @@
 version: "3"
 
 vars:
-  BUILD_ARGS: --release --all-features --workspace
-
+  DEFAULT_BUILD_ARGS: --all-features --workspace
+  RELEASE_BUILD_ARGS: --all-features --workspace --release
 
 tasks:
+  vars:
+    BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
   build:
     deps:
       - add-targets
     cmds:
       - task: build-macos
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
       - task: build-windows
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
       - task: build-linux
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
 
   build-macos:
-    - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
-    #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
+      #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
 
   build-linux:
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
       - build-linux:macos-host-deps
     cmds:
@@ -39,6 +52,8 @@ tasks:
         fi
 
   build-windows:
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
       - build-windows:macos-host-deps
     cmds:
@@ -81,7 +96,8 @@ tasks:
   # ci-specific tasks to keep things brief in the gha workflow
   ci:build:
     cmds:
-      - task: add-targets
       - task: build
+        vars:
+          BUILD_ARGS: "{{.RELEASE_BUILD_ARGS}}"
       - task: :flush-to-disk
       - task: locate-binaries
