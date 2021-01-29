@@ -24,4 +24,5 @@ jobs:
       - run: task diff-engine:add-targets
       - run: task diff-engine:build
       - run: task flush-to-disk
+      - run: task diff-engine:test
       - run: task diff-engine:locate-binaries

@@ -42,7 +42,7 @@ tasks:
       - cargo build --release --workspace --target x86_64-pc-windows-gnu
 
   test:
-    - cargo tests
+    - cargo test
 
   add-targets:
     cmds:
