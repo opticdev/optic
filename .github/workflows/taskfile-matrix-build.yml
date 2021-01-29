@@ -2,7 +2,7 @@ name: Matrix build with Task
 on:
   push:
     branches:
-      - taskfile
+      - taskfile2
 jobs:
   build_rust_binaries:
     strategy:
