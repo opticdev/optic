@@ -41,7 +41,4 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      - run: task diff-engine:add-targets
-      - run: task diff-engine:build
-      - run: task flush-to-disk
-      - run: task diff-engine:locate-binaries
+      - run: task diff-engine:ci:build

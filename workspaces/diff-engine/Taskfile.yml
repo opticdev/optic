@@ -3,6 +3,7 @@ version: "3"
 vars:
   BUILD_ARGS: --release --all-features --workspace
 
+
 tasks:
   build:
     deps:
@@ -36,7 +37,6 @@ tasks:
         else
           cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
         fi
-
 
   build-windows:
     deps:
@@ -77,3 +77,12 @@ tasks:
     desc: Searches for binaries in the ./target directory
     cmds:
       - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
+
+
+  # ci-specific tasks to keep things brief in the gha workflow
+  ci:build:
+    cmds:
+      - task: add-targets
+      - task: build
+      - task: :flush-to-disk
+      - task: locate-binaries
