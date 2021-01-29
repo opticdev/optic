@@ -2,8 +2,9 @@ name: Deploy Demo
 on:
   push:
     branches:
-      - feature/demo
       - release
+  pull_request:
+    branches: [ 'develop' ]
 jobs:
   build-demo-and-push:
     runs-on: ubuntu-latest
@@ -18,7 +19,7 @@ jobs:
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.useoptic.com" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
-          elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
+          else
             echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
@@ -36,22 +37,13 @@ jobs:
       - name: Checkout Optic Repository
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
         with:
-            ref: feature/demo
-            path: demoRepo
             token: ${{ github.token }}
       - name: Install Dependencies and Build Optic
         run:  |
-          sudo apt-get update
-          sudo apt-get install apt-transport-https -y
-          echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo apt-key add
-          sudo apt-get update
-          sudo apt-get install sbt -y
-          source ./sourceme.sh && optic_build_for_release
-        working-directory: ./demoRepo
+          source ./sourceme.sh
+          optic_build_for_release
       - name: Build Demo Site
         run: yarn build-demo
-        working-directory: ./demoRepo
         env:
           PUBLIC_URL: ${{ env.SITE_URL }}
           CI: false # required since otherwise the warnings in react cause a fail to compile
@@ -60,8 +52,6 @@ jobs:
       # which prevents the default bucket policy from applying to these objects
       - name: Upload to S3
         run: |
-          aws s3 sync ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
-            --delete \
+          aws s3 sync workspaces/ui/build/ "s3://$BUCKET/" \
             --sse=AES256 \
             --acl=public-read
-          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DIST" --paths "/*"
