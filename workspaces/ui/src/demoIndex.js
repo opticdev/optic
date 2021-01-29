@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import DemoTopLevelRoutes from './entrypoints/demo-sessions';
+import { DemoTopLevelRoutes } from './entrypoints/demo-sessions';
 
 global.opticDebug = {};
 
