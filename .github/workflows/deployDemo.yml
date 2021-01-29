@@ -55,4 +55,3 @@ jobs:
           aws s3 sync workspaces/ui/build/ "s3://$BUCKET/" \
             --sse=AES256 \
             --acl=public-read
-          aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DIST" --paths "/*"
