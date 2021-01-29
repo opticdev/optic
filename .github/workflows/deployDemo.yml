@@ -4,8 +4,8 @@ on:
     branches:
       - feature/demo
       - release
-    pull_request:
-      branches: [ 'develop' ]
+  pull_request:
+    branches: [ 'develop' ]
 jobs:
   build-demo-and-push:
     runs-on: ubuntu-latest
