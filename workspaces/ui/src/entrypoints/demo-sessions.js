@@ -4,6 +4,7 @@ import {
   useRouteMatch,
   matchPath,
   Switch,
+  Redirect,
   Route,
 } from 'react-router-dom';
 import { ApiSpecServiceLoader } from '../components/loaders/ApiLoader';
@@ -13,10 +14,6 @@ import {
 } from '../contexts/MockDataContext';
 import { ApiRoutes } from '../routes';
 import { Provider as BaseUrlContext } from '../contexts/BaseUrlContext';
-import PrivateSessions from './private-sessions';
-import TestingSessions from './testing-sessions';
-import LocalCli from './localcli';
-import WelcomePage from '../components/support/WelcomePage';
 
 export default function DemoSessions(props) {
   const match = useRouteMatch();
@@ -41,6 +38,7 @@ export function DemoTopLevelRoutes() {
   return (
     <Switch>
       <Route strict path="/demos/:sessionId" component={DemoSessions} />
+      <Redirect to={'/demos/github/review/example-session'} />
     </Switch>
   );
 }
