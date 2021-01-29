@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - release
-      - bug/demo-ui-should-use-demo-index # todo: remove
   pull_request:
     branches: [ 'develop' ]
 jobs:
