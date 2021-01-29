@@ -25,7 +25,7 @@ jobs:
     #runs-on: macos-11.0 # macos-latest doesnt have a new enough xcode to build arm
     # but macos-11.0 is queue hell
     runs-on: macos-latest
-    needs: tests
+    needs: test
     steps:
       - uses: actions/checkout@5a4ac90 # v2.3.4
       - name: Install Task
