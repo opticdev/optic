@@ -4,6 +4,8 @@ on:
     branches:
       - feature/demo
       - release
+    pull_request:
+      branches: [ 'develop' ]
 jobs:
   build-demo-and-push:
     runs-on: ubuntu-latest
@@ -19,6 +21,10 @@ jobs:
             echo "SITE_URL=https://demo.useoptic.com" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
           elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
+            echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
+            echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
+            echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
+          elif [ "$BRANCH" = "refs/heads/develop" ]; then
             echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
