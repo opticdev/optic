@@ -1,5 +1,8 @@
 version: "3"
 
+vars:
+  BUILD_ARGS: --release --all-features --workspace
+
 tasks:
   build:
     deps:
@@ -10,8 +13,8 @@ tasks:
       - task: build-linux
 
   build-macos:
-    - cargo build --release --workspace --target x86_64-apple-darwin
-    #- cargo build --release --workspace --target aarch64-apple-darwin
+    - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
+    #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
 
   build-linux:
     deps:
@@ -21,17 +24,17 @@ tasks:
         if uname -a | grep -q Darwin
         then
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc \
-            cargo build --release --workspace --target x86_64-unknown-linux-gnu
+            cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-gnu
         else
-          cargo build --release --workspace --target x86_64-unknown-linux-gnu
+          cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-gnu
         fi
       - |
         if uname -a | grep -q Darwin
         then
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-linux-musl-gcc \
-            cargo build --release --workspace --target x86_64-unknown-linux-musl
+            cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
         else
-          cargo build --release --workspace --target x86_64-unknown-linux-musl
+          cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
         fi
 
 
@@ -39,7 +42,7 @@ tasks:
     deps:
       - build-windows:macos-host-deps
     cmds:
-      - cargo build --release --workspace --target x86_64-pc-windows-gnu
+      - cargo build {{.BUILD_ARGS}} --target x86_64-pc-windows-gnu
 
   test:
     - cargo test
