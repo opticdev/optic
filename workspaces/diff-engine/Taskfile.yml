@@ -78,7 +78,6 @@ tasks:
     cmds:
       - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
 
-
   # ci-specific tasks to keep things brief in the gha workflow
   ci:build:
     cmds:
