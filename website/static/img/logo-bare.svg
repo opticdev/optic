@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="134px" height="134px" viewBox="0 0 134 134" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <defs>
+        <linearGradient x1="50%" y1="-14.329275%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#F4F4F4" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="63" cy="63" r="63"></circle>
+        <filter x="-5.6%" y="-4.0%" width="111.1%" height="111.1%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-11.000000, -5.000000)">
+            <g id="Group" transform="translate(15.000000, 7.000000)">
+                <g id="Oval" fill-rule="nonzero">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                    <use fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                </g>
+                <path d="M86.428125,33.135795 C79.95204,28.161 71.82441,25.2 62.999685,25.2 C54.17496,25.2 46.04733,28.161 39.571245,33.135795 M68.446665,100.8 C76.263705,99.695925 83.320335,96.25014 88.871895,91.20195 C96.50907,84.25683 101.29707,74.27826 101.29707,63.190575 C101.29707,54.713925 98.498295,46.885545 93.767625,40.56507 M57.55302,100.8 C49.73598,99.695925 42.67935,96.25014 37.12779,91.20195 C29.490615,84.25683 24.702426,74.27826 24.702426,63.190575 C24.702426,54.713925 27.501075,46.885545 32.23206,40.56507" id="Shape" stroke="#343BE5" stroke-width="4.736844" stroke-linecap="round"></path>
+                <path d="M46.873575,83.43342 C51.33114,86.83731 56.925225,88.863075 62.999685,88.863075 C69.07383,88.863075 74.66823,86.83731 79.12548,83.43342 M59.250555,37.136925 C53.87004,37.892295 49.01274,40.25007 45.191475,43.704045 C39.934755,48.456135 36.63891,55.28313 36.63891,62.86959 C36.63891,68.669685 38.56545,74.025945 41.821605,78.350265 M66.7485,37.136925 C72.12933,37.892295 76.98663,40.25007 80.80758,43.704045 C86.0643,48.456135 89.360145,55.28313 89.360145,62.86959 C89.360145,68.669685 87.433605,74.025945 84.17745,78.350265" id="Shape" stroke="#343BE5" stroke-width="4.736844" stroke-linecap="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

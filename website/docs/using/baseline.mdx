@@ -1,0 +1,53 @@
+---
+title: Build your Baseline Specification
+sidebar_label: Document your API
+---
+
+:::info API Baselining
+When you run `api init` Optic begins tracking your API's evolution. Just like a new Git repo starts empty, the API spec Optic maintains is empty at first. The community has started calling this initial phase, where all the existing endpoints are added to the spec "Baselining".
+
+It's not uncommon for a team to baseline 200+ endpoints during their first day using Optic -- which can be equivalent to 15-20k lines of OpenAPI.
+:::
+
+
+
+### Traffic → Spec
+
+Optic learns your API specification by observing traffic in your development environments. This traffic can come from any source, you just want it to be representative of your API's behavior and cover the surface area.
+
+You don't have to worry too much about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. If it sees a `200` for an endpoint, and later sees a `400` for the same endpoint, it will help you add the new response -- same for fields, requests, entire endpoints and polymorphism in your API.
+
+- Run [`api start`](/docs/get-started/config) and exercise your endpoints using Curl or Postman
+- [Run your API Tests](/docs/get-started/testing) with Optic
+- Use a web/mobile consumer that exercises the API. Clicking through every page of your app usually results in good coverage.
+
+### Providing Paths
+After you have collected some traffic with Optic, it's time to document the endpoints they represent. Each endpoint is defined by its pattern and HTTP method: `GET /todos/{todoId}/status`.
+
+Defining your API's paths is one of the few tasks you have to do manually. The maintainers have deliberately chosen to avoid inference of your API's paths or trying to pick a human-friendly name to describe that endpoint's function.
+
+Using your knowledge of the API and the Optic UI, indicate which components of these URLs are parameters and which are constants:
+- `/todos/abcdef` -> `/todos/{todoId}`
+- `/flights/LAX/LGA -> `/flights/{origin}/{destination}`
+
+As you work through the new endpoints, you'll see the number of "Endpoints to Document" increment. When you're finished, click "Finalize", add a message ie "Baselining the API" and click "Apply".
+
+import {LoomVideo} from '../../src/components/LoomVideo';
+
+<LoomVideo url={"https://www.loom.com/embed/0d9209f6cf704ed99192f945e52d4bd4"} />
+
+### Naming Endpoints and adding Descriptions
+Optic takes responsibility for maintaining an accurate API specification, so you can focus on building great software, not writing specs.
+
+You can name your endpoints, and contribute additional descriptions to the specification using the Optic UI. Adding descriptions, helpful hints, and relevant context makes working with your API easier and pleasant. Today descriptions can be added to:
+
+- **Endpoints** *both a name and a description are allowed*
+- **Fields**
+- **Query/Header Parameters**
+- **Each Request Content Type**
+- **Each Response Status Code + Content Type**
+
+Even when you update your specification using Optic, the descriptions will continue to associate with the part of the API they describe.
+
+### Repeat for new Endpoints
+Once your API is baselined, you can continue using Optic to document new endpoints as they get built. New URLs Optic observes will produce diffs in the UI and encourage you to add the new endpoint to your specification. Just like you use `git add <file>` to include new source code in your PR, you can use Optic to document any new endpoints you create for a) review by your team and b) to share with your consumers.

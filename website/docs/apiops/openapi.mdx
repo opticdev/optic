@@ -1,0 +1,20 @@
+---
+title: "Export to OpenAPI"
+description: ""
+---
+
+Users trust Optic to keep their API spec up-to-date, then export OpenAPI to power their documentation sites, generate client code, mock an API -- or any of the dozens of use cases built by the API community.
+
+Just run:
+
+``` bash
+api generate:oas
+```
+
+This generates an OAS file and writes it to your `.optic` folder as `.optic/generated/openapi.json`. Optic will give you the full path to the file on the command line for your reference. You can then import this file into any tool that recognizes OAS format. By default, Optic generates a JSON file. A YAML file may be generated instead with the `--yaml` flag:
+
+``` bash
+api generate:oas --yaml
+```
+
+### Next: [Use scripts to respond to API changes](/docs/apiops/scripts)

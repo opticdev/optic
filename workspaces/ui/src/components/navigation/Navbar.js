@@ -110,6 +110,22 @@ export default function Navbar(props) {
             <IconButton className={classes.navButton}>{i.icon}</IconButton>
           </LightTooltip>
         ))}
+        <div style={{flex: 1}}/>
+        <div>
+          <LightTooltip
+            // key={i.link}
+            title={"Optic on Discord - ask for help, request features, contribute something :)"}
+            component={'a'}
+            target="_blank"
+            href={'https://discord.gg/t9hADkuYjP'}
+            placement="right"
+            onClick={() => {
+              // track(`Navigating to ${i.name}`, i)
+            }}
+          >
+            <IconButton className={classes.navButton}><img height={25} src={require('../../assets/discord.svg')}/></IconButton>
+          </LightTooltip>
+        </div>
       </div>
       {props.mini ? null : (
         <div className={classes.mainSection}>{props.children}</div>

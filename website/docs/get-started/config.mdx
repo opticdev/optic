@@ -1,0 +1,63 @@
+---
+title: Configure API Tasks
+---
+
+import {DemoStartCommandSetup} from '../../src/components/SetupType'
+
+
+Optic documents your APIs as you build them by observing development traffic and learning your API's behavior. The CLI is constantly diffing your API’s behavior against its specification; ensuring every change to the API gets detected, documented and code reviewed by your team.
+
+**How does Optic monitor local traffic?** Optic observes API and diffs API traffic in the background when you're building your API. All you have to do is start using API CLI to start your API + run your tests ie `api start` or `api run postman-tests`.
+
+<div style={{display: 'flex', flexDirection: 'row', marginBottom: 15}}>
+  <DemoStartCommandSetup />
+</div>
+
+```bash
+$ api start
+[optic] Optic is observing requests made to http://localhost:3005
+
+> tododemo@0.1.0 server-start /Desktop/optic-demo-project
+> babel-node server/server.js
+
+```
+
+### When you add Optic to your API:
+- Changes to tracked endpoints (ie a new field, or a changed type) are detected by Optic. With one click, Optic will help you update the specification.
+- Document new endpoints in seconds (just like "git add" source files).
+
+
+### Configure `api start` alias
+From your API project, run:
+```
+api init
+```
+> You can use the guided setup flow that `api init` opens, or follow along below.
+
+Task Aliases are configured in the `optic.yml` file:
+```yaml
+name: "My API"
+tasks:
+  start:
+     command: "node app.js"
+     inboundUrl: http://localhost:4000
+```
+
+import Paper from '@material-ui/core/Paper'
+
+The first task you should set up is `start`. When your run `api start` or `api run start` Optic will run the `command` to start your API on `inboundUrl`.
+
+For the start task:
+- `command` should start a long-running process, that binds to `localhost` on a specific `$PORT` (injected as an environment variable)
+- `inboundUrl` should be set to where you start your API today
+
+:::tip Make sure your API starts on $PORT
+Optic assumes your API can be started on a specific port, which Optic assigns. To do this, Optic provides $PORT as an environment variable. You'll either need to map this variable to a flag your API framework looks for, or modify your code to look for the $PORT variable when starting up.
+:::
+
+---
+
+**Next Steps**
+1. [Use Optic to write the initial API Specification](/docs/using/baseline)
+2. [Run your tests through Optic](docs/get-started/testing)
+3. [Share Optic with your Team](docs/using/share-with-team)

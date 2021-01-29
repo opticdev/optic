@@ -1,14 +1,5 @@
-import { DiffRfcBaseState } from '../interfaces/diff-rfc-base-state';
 import equals from 'lodash.isequal';
-import {
-  IListItemTrail,
-  INullableTrail,
-  IOneOfItemTrail,
-  IOneOfTrail,
-  IOptionalItemTrail,
-  IShapeTrail,
-  IUnknownTrail,
-} from '../interfaces/shape-trail';
+
 import {
   IJsonObjectKey,
   IJsonTrail,
@@ -25,6 +16,15 @@ import invariant from 'invariant';
 import { ICoreShapeKinds } from '../interfaces/interfaces';
 import { FieldContextSpecChange } from './spec-change-dsl';
 import { namer, namerForOneOf } from './quick-namer';
+import {
+  INullableTrail,
+  IOneOfItemTrail,
+  IOneOfTrail,
+  IOptionalItemTrail,
+  IShapeTrail,
+  IUnknownTrail,
+} from '@useoptic/cli-shared/build/diffs/shape-trail';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 
 /*
 Goal: Make the shape diff interpretation logic (the hard stuff) drop dead simple to read

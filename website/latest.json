@@ -1,0 +1,12 @@
+{
+  "featured1": {
+    "to": "/blog/git-for-api",
+    "date": "Dec 9 2020 07:59:16 GMT-0500",
+    "name": "Optic: the Git for APIs"
+  },
+  "featured2": {
+    "to": "/blog/optic-se-daily",
+    "date": "Thu Sep 8 2020 07:59:16 GMT-0500",
+    "name": "Optic on Software Engineering Daily"
+  }
+}

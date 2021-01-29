@@ -15,6 +15,7 @@ import path from 'path';
 import os from 'os';
 import { IUserCredentials } from '@useoptic/cli-config';
 import fs from 'fs-extra';
+import {getOrCreateAnonId} from "@useoptic/cli-config/build/opticrc/optic-rc";
 const packageJson = require('../package.json');
 
 const clientId = `local_cli_${packageJson.version}`;
@@ -22,10 +23,7 @@ const clientId = `local_cli_${packageJson.version}`;
 //event bus for tracking events
 export const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
   async (batchId: string) => {
-    const user = await getCredentials();
-    const decodedSub = niceTry(() => jwtDecode(user!.token).sub);
-    const clientAgent = decodedSub ? decodedSub : consistentAnonymousId;
-
+    const clientAgent = await getOrCreateAnonId()
     const clientContext: ClientContext = {
       clientAgent: clientAgent,
       clientId: clientId,
@@ -45,7 +43,7 @@ export function trackWithApiName(apiName: string) {
   return (events: TrackingEventBase<any>[]) => {
     analyticsEvents.emit(
       ...events.map((i) => {
-        return { ...i, context: { ...i.context, apiName } };
+        return { ...i, context: { ...i.context }, data: {...i.data, apiName} };
       })
     );
   };
@@ -60,8 +58,8 @@ const analytics = new Analytics(token);
 analyticsEvents.listen((event) => {
   if (inDevelopment) return;
   const properties = {
-    ...event.data,
     ...event.context,
+    ...event.data,
   };
   analytics.track({
     userId: event.context.clientAgent,

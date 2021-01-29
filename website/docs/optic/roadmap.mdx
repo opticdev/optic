@@ -1,0 +1,83 @@
+---
+title: Roadmap
+---
+
+import { TwitterTweetEmbed } from 'react-twitter-embed';
+import {Paper} from '@material-ui/core';
+
+## What is Optic?
+- Read our about our purpose, and Aidan + Dev's vision for the space **[Read: Git for APIs](/blog/git-for-apis)**
+- Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
+- API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
+](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
+
+## Let's talk principles
+
+APIs are everywhere, they've become the most important dependency, but the tools we have to manage them are nowhere near as mature as the tools we have for managing our code. Sane version control for code enabled developers to collaborate effectively on massive projects and is the core primitive behind continuous integration, DevOps and code review tools. We work every day with the community to make Optic as developer-friendly, useful and ubiquitous as Git.
+
+- **Version behavior**, not just code. While Git versions your code, Optic versions the behavior of your APIs.
+- **Make sure every API change is documented, reviewed and approved** -- Optic diffs real traffic in your development environments to make sure no change goes unseen or undocumented
+- **Developer-friendly** -- writing and updating API specifications should be as easy as making Git commits
+
+Fully realized, Optic is the standard toolchain for APIOps, powering your API Specs, contract testings, CI Checks (ie no breaking changed), and design-first workflows.
+
+### API Specs need history
+
+Optic is backed by its changelog spec, which is compatible with OpenAPI and eventually will support messaging protocols, GraphQL, and whatever we use for APIs a decade from now.
+
+[**Read about Changelog Spec**](/blog/changelog-specs-part1)  |  [**Try the Changelog Spec Demo**](https://opticdev.github.io/changelog-spec-demo/)
+
+<TwitterTweetEmbed
+  tweetId={'1291498676460822528'}
+/>
+
+#### Roadmap
+- [x] Support JSON + Text Bodies
+- [x] Port to Rust for improved performance and reliability
+- [x] Make Optic run anywhere Mac, Windows & Linux now supported
+
+**Spec Capabilities:**
+- [ in progress ] Support for versioning Query + Headers Parameter
+- [ in progress ] Support for built-in String Formats
+
+
+### Changelogs in Every PR
+In a world where API behavior is versioned alongside our code, every Pull Request contains both "Files Changed" and "APIs Changed"
+
+<Paper elevation={2} style={{maxWidth: 400, paddingTop: 6}}>
+
+![alt](/img/blog-content/change-tab.png)
+
+</Paper>
+
+<TwitterTweetEmbed
+  tweetId={'1311044564225077248'}
+/>
+
+#### Roadmap
+- [x] GitBot appends changelog as comment, updates on Sync
+- [x] GitHub Support
+
+**Bot Capabilities:**
+- [ ] Better visualization of API changes, think GitHub's 'compare' page
+- [ ] BitBucket support
+- [ ] GitLab support
+
+
+### Design First Workflows
+The maintainers and community are collaborating on early designs for Optic's design-first stories. You can read about **[Optic and Design First](/blog/git-for-apis#design-first-with-optic)** here.
+
+#### Roadmap
+- [x] Research feature
+- [ ] Release 2-3 variants for a public discussion
+- [ ] Shape the feature, commit to release timeline
+
+----
+
+## The Road Ahead
+
+Right now, we are laser-focussed on providing the most developer-friendly tool for API Change Management, the next several months will bring big improvements across the entire surface area of the project. In the future, we plan to expand Optic to event-driven APIs, GraphQL and whatever paradigm takes off next :)
+
+Sound cool? Want to contribute ideas, code or stories?
+
+### **[Get Involved](/docs/optic/get-involved)**

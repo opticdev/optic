@@ -9,11 +9,9 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounter,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
 import { Actual, Expectation } from '../shape-diff-dsl';
 import { fieldShapeDiffInterpretor } from './field';
 import { DiffSessionConfig } from '../../interfaces/session';
-import { shapeChangeInterpretor } from './shape-changed';
 import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { listItemShapeDiffInterpreter } from './list';
 import { rootShapeDiffInterpreter } from './root';
