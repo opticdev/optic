@@ -38,16 +38,13 @@ jobs:
       - name: Checkout Optic Repository
         uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
         with:
-            path: demoRepo
             token: ${{ github.token }}
       - name: Install Dependencies and Build Optic
         run:  |
           source ./sourceme.sh
           optic_build_for_release
-        working-directory: ./demoRepo
       - name: Build Demo Site
         run: yarn build-demo
-        working-directory: ./demoRepo
         env:
           PUBLIC_URL: ${{ env.SITE_URL }}
           CI: false # required since otherwise the warnings in react cause a fail to compile
@@ -56,7 +53,7 @@ jobs:
       # which prevents the default bucket policy from applying to these objects
       - name: Upload to S3
         run: |
-          aws s3 sync ./demoRepo/workspaces/ui/build/ "s3://$BUCKET/" \
+          aws s3 sync workspaces/ui/build/ "s3://$BUCKET/" \
             --delete \
             --sse=AES256 \
             --acl=public-read
