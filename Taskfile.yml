@@ -1,5 +1,8 @@
 version: "3"
 
+dotenv:
+  - .env
+
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
@@ -8,12 +11,15 @@ includes:
     dir: workspaces/ui
 
 tasks:
-  setup:
+  workspaces:setup:
+    env:
+      OPTIC_SKIP_PREBUILT_INSTALLS: "true"
     cmds:
       - yarn install
 
   workspaces:build:
-    deps: [setup]
+    desc: Build Yarn workspaces
+    deps: ["workspaces:setup"]
     cmds:
       - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
     sources:
@@ -24,6 +30,11 @@ tasks:
       - workspaces/diff-engine-wasm/engine/build/**/*
       # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
       - workspaces/*/build/**/*
+
+  workspaces:clean:
+    desc: Remove previous build artifacts
+    cmds:
+      - yarn wsrun --stages --report --fast-exit ws:clean
 
   spec:build:
     dir: workspaces/ui

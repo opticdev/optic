@@ -7,15 +7,13 @@ env:
 tasks:
   demo:build:
     desc: Build demo site
-    deps: [":setup"]
+    deps:
+      - :workspaces:clean
     env:
       PUBLIC_URL: "https://demo.o3c.info"
       CI: "false"
     cmds:
-      # TODO(nate): unpack this
-      - |
-        source ../../sourceme.sh
-        optic_build_for_release
+      - task: :workspaces:build
       - yarn build-demo
 
   demo:docker:build:
