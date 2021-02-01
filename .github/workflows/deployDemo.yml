@@ -5,7 +5,7 @@ on:
     branches:
       - release
   pull_request:
-    branches: [ 'develop' ]
+    branches: [develop]
 
 jobs:
   build-and-push:
