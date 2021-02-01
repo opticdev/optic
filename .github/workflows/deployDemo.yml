@@ -55,11 +55,11 @@ jobs:
           aws s3 sync workspaces/ui/build/ "s3://$BUCKET/" \
             --sse=AES256 \
             --acl=public-read \
-            --exclude=*.wasm
+            --exclude=*.wasm \
             --delete
           aws s3 sync workspaces/ui/build/ "s3://$BUCKET/" \
             --sse=AES256 \
             --acl=public-read \
             --include=*.wasm \
-            --content-type=application/wasm
+            --content-type=application/wasm \
             --delete
