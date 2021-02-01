@@ -1,21 +1,20 @@
-name: Deploy Demo
+name: Build and deploy demo
+
 on:
   push:
     branches:
       - release
   pull_request:
     branches: [ 'develop' ]
+
 jobs:
   build-demo-and-push:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Set branch name
-        run: echo "BRANCH=$GITHUB_REF" >> $GITHUB_ENV
-
+      - run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: Set contextual vars
         run: |
-          if [ "$BRANCH" = "refs/heads/release" ]; then
+          if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
             echo "SITE_URL=https://demo.useoptic.com" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
@@ -24,7 +23,6 @@ jobs:
             echo "SITE_URL=https://demo.o3c.info" >> $GITHUB_ENV
             echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
           fi
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@1417e62aeacec5e7fbe447bb7712d50847507342 # v1.5.4
         with:
