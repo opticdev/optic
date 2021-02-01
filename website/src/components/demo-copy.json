@@ -52,7 +52,7 @@
   },
   "everywhere": {
     "heading": "Optic ensures all API changes are **documented and reviewed**",
-    "description": "Imagine Git, but for your APIs. Optic Documents your existing APIs in minutes by observing traffic, and learning how each endpoint behaves. It then diffs your team's development and test traffic as they your work to catch API changes and ensure each change is documented and reviewed before getting deployed"
+    "description": "Imagine Git, but for your APIs. Optic Documents your existing APIs in minutes by observing traffic, and learning how each endpoint behaves. It then diffs your team's development and test traffic as they your work to catch API changes and ensure each change is documented and reviewed before getting deployed."
   },
   "example": {
     "heading": "**DEMO:** GitHub's API in Optic",

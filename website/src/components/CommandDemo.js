@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFeatureStyles } from './featureStyles';
 import Typography from '@material-ui/core/Typography';
 import TextLoop from 'react-text-loop';
@@ -124,6 +124,13 @@ export function DocumentGitHubExample() {
   const featuredStyles = useFeatureStyles();
   const classes = useStyles();
 
+  const [tab, setTab] = useState(0);
+
+  const demoUrl =
+    tab === 0
+      ? 'https://demo.useoptic.com/demos/github/review'
+      : 'https://demo.useoptic.com/demos/github-with-diffs/review';
+
   return (
     <>
       <Container
@@ -152,15 +159,17 @@ export function DocumentGitHubExample() {
             {copy.example.description}
           </Typography>
 
-          <Tabs value={0} color="secondary">
+          <Tabs
+            value={tab}
+            color="secondary"
+            onChange={(e, value) => setTab(value)}
+          >
             <Tab value={0} label="Document GitHub in 3 mins." />
             <Tab value={1} label="Review an API Diff Optic Found" />
           </Tabs>
         </Container>
       </Container>
-      <IFrameDemo2
-        url={'https://demo.o3c.info/demos/todo/diffs/example-session'}
-      />
+      <IFrameDemo2 url={demoUrl} />
     </>
   );
 }

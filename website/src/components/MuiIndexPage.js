@@ -28,7 +28,7 @@ export const SplashPage = () => {
       <DeveloperFriendly />
       <GitBotDemo />
 
-      {/*<DocumentGitHubExample />*/}
+      <DocumentGitHubExample />
 
       <Divider style={{ marginTop: 90, marginBottom: 90 }} />
 
