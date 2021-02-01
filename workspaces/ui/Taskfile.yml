@@ -32,6 +32,3 @@ tasks:
     cmds:
       - task: demo:docker:build
       - task: demo:docker:push
-      # - task: :announce-build
-      #   vars:
-      #     MESSAGE: "Did something"
