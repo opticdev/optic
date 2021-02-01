@@ -26,6 +26,12 @@ This command generates static content into the `build` directory and can be serv
 
 ## Deployment
 
+Refresh your AWS MFA code:
+```
+aws-mfa --profile parent
+```
+
+Deploying to staging:
 ```console
 # deploy with dry-run enabled
 AWS_PROFILE=staging bin/deploy

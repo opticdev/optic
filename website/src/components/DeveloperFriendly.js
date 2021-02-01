@@ -7,15 +7,18 @@ import { useStyles } from './CommandDemo';
 import Grid from '@material-ui/core/Grid';
 import { DemoStartCommandSetup } from './SetupType';
 import { Code } from './CodeBlock';
-import {primary} from './theme';
+import { primary } from './theme';
 
 const copy = {
-  "headline": "**Developer-Friendly** workflows",
-  "description": "Optic is a Git-like tool that uses development traffic to version the behavior of your APIs. Changes to existing endpoints produce diffs while new endpoints can be documented and added to your specification in seconds. Get the benefits of OpenAPI, without learning the spec or writing YAML.",
-  "alias": "Just install the API CLI and setup aliases for the commands you use most during development. Start using the aliases when you develop so Optic can observe/diff traffic.",
-  "status": "Use api status to review API diffs, and update the specification.",
-  "closing": "Optic adds an API changelog to every PR so proposed changes can be reviewed by your team, before getting deployed."
-}
+  headline: '**Developer-Friendly** workflows',
+  description:
+    'Optic is a Git-like tool that uses development traffic to version the behavior of your APIs. Changes to existing endpoints produce diffs while new endpoints can be documented and added to your specification in seconds. Get the benefits of OpenAPI, without learning the spec or writing YAML.',
+  alias:
+    'Just install the API CLI and setup aliases for the commands you use most during development. Start using the aliases when you develop so Optic can observe/diff traffic.',
+  status: 'Use api status to review API diffs, and update the specification.',
+  closing:
+    'Optic adds an API changelog to every PR so proposed changes can be reviewed by your team, before getting deployed.',
+};
 
 const langs = [
   'node-js-logo.svg',
@@ -67,7 +70,7 @@ export function DeveloperFriendly() {
             {langs.map((i) => {
               return (
                 <img
-                  src={'../../static/img/langs/' + i}
+                  src={'/img/langs/' + i}
                   height={17}
                   style={{ marginRight: 10, marginLeft: 4 }}
                 />
@@ -77,7 +80,7 @@ export function DeveloperFriendly() {
         </Typography>
         <Grid container>
           <Grid item xs={12} sm={12} md={6}>
-            <img src={'../../static/img/alias.png'} width="100%" />
+            <img src={'/img/alias.png'} width="100%" />
           </Grid>
           <Grid
             item
@@ -107,10 +110,7 @@ export function DeveloperFriendly() {
         </Grid>
         <Grid container>
           <Grid item xs={12} sm={12} md={6}>
-            <img
-              src={'../../static/img/api-status.png'}
-              width="100%"
-            />
+            <img src={'/img/api-status.png'} width="100%" />
           </Grid>
           <Grid
             item

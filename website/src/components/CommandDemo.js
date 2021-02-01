@@ -7,11 +7,11 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import IconGrid, { TextWithSubtext } from './IconGrid';
-import {Tab, Tabs} from '@material-ui/core';
-import {IFrameDemo2} from './iFrameDemo2';
+import { Tab, Tabs } from '@material-ui/core';
+import { IFrameDemo2 } from './iFrameDemo2';
 import Box from '@material-ui/core/Box';
 
-const copy = require('./demo-copy.json')
+const copy = require('./demo-copy.json');
 
 export const useStyles = makeStyles((theme) => ({
   command: {
@@ -64,7 +64,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   spacingRightLarge: {
     [theme.breakpoints.up('md')]: {
-     paddingRight: 20,
+      paddingRight: 20,
     },
     [theme.breakpoints.up('sm')]: {
       maxHeight: 350,
@@ -72,12 +72,12 @@ export const useStyles = makeStyles((theme) => ({
   },
   spacingTopLarge: {
     [theme.breakpoints.down('md')]: {
-      paddingTop: 80
+      paddingTop: 80,
     },
     [theme.breakpoints.up('sm')]: {
-      maxHeight: 350
+      maxHeight: 350,
     },
-  }
+  },
 }));
 
 export function GitBotDemo() {
@@ -105,7 +105,7 @@ export function GitBotDemo() {
 
         <Grid container>
           <Grid item xs={12} sm={12} md={7}>
-            <img src={'../../static/img/gitbot.png'} width="100%" />
+            <img src={'/img/gitbot.png'} width="100%" />
           </Grid>
           <Grid item xs={12} sm={12} md={5}>
             <div className={classes.gitBotBenefits}>
@@ -120,38 +120,47 @@ export function GitBotDemo() {
   );
 }
 
-
 export function DocumentGitHubExample() {
   const featuredStyles = useFeatureStyles();
   const classes = useStyles();
 
   return (
     <>
-    <Container maxWidth={false} className={classes.gitBotContainer} style={{marginBottom: 0}}>
-      <Container maxWidth="md">
-        <Typography
-          variant="h4"
-          className={featuredStyles.headline}
-          style={{
-            fontWeight: 300,
-            fontSize: 45,
-            textAlign: 'left',
-            fontFamily: 'Ubuntu Mono',
-          }}
-        >
-          <FormatCopy value={copy.example.heading} />
-        </Typography>
-        <Typography variant="subtitle2" className={featuredStyles.descriptions} style={{marginBottom: 10}}>
-          {copy.example.description}
-        </Typography>
+      <Container
+        maxWidth={false}
+        className={classes.gitBotContainer}
+        style={{ marginBottom: 0 }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h4"
+            className={featuredStyles.headline}
+            style={{
+              fontWeight: 300,
+              fontSize: 45,
+              textAlign: 'left',
+              fontFamily: 'Ubuntu Mono',
+            }}
+          >
+            <FormatCopy value={copy.example.heading} />
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={featuredStyles.descriptions}
+            style={{ marginBottom: 10 }}
+          >
+            {copy.example.description}
+          </Typography>
 
-        <Tabs value={0} color="secondary">
-          <Tab value={0} label="Document GitHub in 3 mins."/>
-          <Tab value={1} label="Review an API Diff Optic Found"/>
-        </Tabs>
+          <Tabs value={0} color="secondary">
+            <Tab value={0} label="Document GitHub in 3 mins." />
+            <Tab value={1} label="Review an API Diff Optic Found" />
+          </Tabs>
+        </Container>
       </Container>
-    </Container>
-    <IFrameDemo2 url={"https://demo.o3c.info/demos/todo/diffs/example-session"}/>
+      <IFrameDemo2
+        url={'https://demo.o3c.info/demos/todo/diffs/example-session'}
+      />
     </>
   );
 }
