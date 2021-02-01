@@ -2,13 +2,25 @@ version: "3"
 
 tasks:
   demo:build:
-    desc: Builds static demo site
+    desc: Build demo site
     cmds:
       - source ../../sourceme.sh && optic_build_for_release
       - yarn build-demo
 
-  demo:docker:
+  demo:docker:build:
     desc: Build and package demo site as a Docker container
     deps: ["demo:build"]
     cmds:
       - docker build . -f Dockerfile_demo -t some-dumb-image
+
+  # demo:docker:push:
+  #   - docker push blah
+
+  # demo:ci:
+  #   desc: CI workflow
+  #   cmds:
+  #     - task: demo:docker:build
+  #     - task: demo:docker:push
+  #     - task: :announce-build
+  #       vars:
+  #         MESSAGE: "Did something"
