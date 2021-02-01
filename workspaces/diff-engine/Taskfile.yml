@@ -5,9 +5,10 @@ vars:
   RELEASE_BUILD_ARGS: --all-features --workspace --release
 
 tasks:
-  vars:
-    BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
   build:
+    desc: Cross-compile diff-engine binaries for all target platforms
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
       - add-targets
     cmds:
@@ -22,6 +23,7 @@ tasks:
           BUILD_ARGS: "{{.BUILD_ARGS}}"
 
   build-macos:
+    desc: Build diff-engine binaries for Mac OS
     vars:
       BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     cmds:
@@ -29,6 +31,7 @@ tasks:
       #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
 
   build-linux:
+    desc: Build diff-engine binaries for Linux
     vars:
       BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
@@ -52,6 +55,7 @@ tasks:
         fi
 
   build-windows:
+    desc: Build diff-engine binaries for Windows
     vars:
       BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
@@ -89,12 +93,11 @@ tasks:
       - uname -a | grep -qv "Darwin"
 
   locate-binaries:
-    desc: Searches for binaries in the ./target directory
     cmds:
       - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
 
-  # ci-specific tasks to keep things brief in the gha workflow
   ci:build:
+    desc: The CI build workflow
     cmds:
       - task: build
         vars:
