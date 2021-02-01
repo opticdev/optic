@@ -25,14 +25,6 @@ tasks:
       # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
       - workspaces/*/build/**/*
 
-  demo:build:
-    dir: workspaces/ui
-    env:
-      PUBLIC_URL: "https://demo.o3c.info"
-      CI: "false"
-    cmds:
-      - yarn build-demo
-
   spec:build:
     dir: workspaces/ui
     env:
