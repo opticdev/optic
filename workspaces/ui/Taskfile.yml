@@ -7,8 +7,7 @@ env:
 tasks:
   demo:build:
     desc: Build demo site
-    deps:
-      - :workspaces:clean
+    deps: [":workspaces:setup"]
     env:
       PUBLIC_URL: "https://demo.o3c.info"
       CI: "false"
@@ -27,6 +26,8 @@ tasks:
 
   demo:ci:
     desc: CI workflow
+    deps: [":workspaces:setup"]
     cmds:
+      - task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
