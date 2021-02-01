@@ -3,6 +3,9 @@ version: "3"
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
+  ui:
+    taskfile: workspaces/ui/Taskfile.yml
+    dir: workspaces/ui
 
 tasks:
   setup:

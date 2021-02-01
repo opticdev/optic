@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  demo:build:
+    desc: Builds static demo site
+    cmds:
+      - source ../../sourceme.sh && optic_build_for_release
+      - yarn build-demo
+
+  demo:docker:
+    desc: Build and package demo site as a Docker container
+    deps: ["demo:build"]
+    cmds:
+      - docker build . -f Dockerfile_demo -t some-dumb-image

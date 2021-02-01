@@ -1,0 +1,4 @@
+FROM library/nginx:alpine
+COPY build/ /usr/share/nginx/html/
+COPY config/nginx/ /etc/nginx/
+EXPOSE 80
