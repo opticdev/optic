@@ -7,9 +7,6 @@ env:
 tasks:
   demo:build:
     desc: Build demo site
-    env:
-      PUBLIC_URL: "https://demo.o3c.info"
-      CI: "false"
     cmds:
       - task: :workspaces:build
       # required due to the way env inheritance winds up working. setting this in
