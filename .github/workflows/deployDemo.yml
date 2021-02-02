@@ -18,7 +18,7 @@ jobs:
       - run: |
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - run: |
-          echo "DEBUG ${GITHUB_REF} ${BRANCH}"
+          echo "DEBUG ${GITHUB_REF} ${BRANCH} ${GITHUB_HEAD_REF}"
           if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
             echo "PUBLIC_URL=https://demo.useoptic.com" >> $GITHUB_ENV
