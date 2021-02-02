@@ -42,11 +42,11 @@ Then run init command:
 ## Navigate to your API project directory
 api init
 ```
-Setup aliases in for the commands your team runs when building the API in `optic.yml`
+Set up aliases for the commands your team runs when building the API in `optic.yml`
 
 ie `npm start` -> `api start`
 
-ie `newman run mycollection.json` -> `postman-tests`
+ie `newman run mycollection.json` -> `api run postman-tests`
 
 ``` yaml
 name: My API
@@ -68,7 +68,7 @@ Once you add Optic to your API, hit it with some traffic, and document your firs
 
 You just have to provide Optic with your API paths, and it will document every status code, response body, and request body automatically based on its observations.
 
-You don't have to worry about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. If it sees a `200` for an endpoint, and later sees a `400` for the same endpoint, it will help you add the new response -- same for fields, requests, entire endpoints and instances of polymorphism in your API.
+You don't have to worry about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. For example, if Optic sees a `200` for an endpoint, and later sees a `400` for the same endpoint, it will help you add the new response. 
 
 ```bash
 api start
@@ -85,13 +85,9 @@ api start
 ## Detect API Changes
 > Similar to `git status`
 
-You should keep using the Optic CLI to start your API and run its tests whenever you're developing new functionality. Optic strives to be completely transparent, and the aliases `api start` and `api run <task>` are easy to remember.
-
-While Git diffs your, Optic will be sitting there, in the background, diffing your API. You can run `api status` to check if for diffs:
-
+While you develop your API and run tests locally, Optic diffs the traffic to find new endpoints, or changes to existing endpoints. These API diffs are listed when you run `api status`:
 
 - [Learn more about detecting + reviewing API Diffs](https://useoptic.com/docs/using/reviewing-diffs)
-
 
 ![The api start command initializing](https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg)
 
@@ -105,7 +101,7 @@ When Optic detects an API diff, it helps you:
 - Update your API specification with a few clicks
 - Detect any unplanned changes, breaks and regressions, then fix them
 
-![The api start command initializing](https://github.com/opticdev/optic/raw/develop/website/static/img/big-diff.png)
+![bigdiff](https://github.com/opticdev/optic/raw/develop/website/static/img/big-diff.png)
 
 ## An API Changelog in Every PR
 > Similar to GitHub's compare page, but for API changes
@@ -124,19 +120,11 @@ Adding explicit API changelogs in PRs facilitates discussion and leads to better
 
 No more doc drift. When you approve an API change Optic also updates the specification.
 
-[Install & Set up the GitBot](/docs/apiops/pull-requests)  it's free!
-
+[Install & Set up the GitBot](/docs/apiops/pull-requests)
 
 ![changelog](https://github.com/opticdev/optic/raw/develop/website/static/img/gitbot-large.png)
 
-## Key Features
-📝 **Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a changelog
-
-⚙️ **Automated Testing** - Automate most of your contract testing. Optic turns your existing tests and development traffic into contract tests, and measures your API coverage from various sources.
-
-👍 **Beautiful Docs** - Stripe-style documentation for every API managed by Optic.
-
-👋 **100% Open Source, Runs locally, data is only stored in your API Repo**
+---
 
 ## Documentation [https://useoptic.com/docs](https://www.useoptic.com/docs)
 
