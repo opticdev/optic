@@ -1,5 +1,10 @@
 
-<a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="100"></a>
+<img src="https://raw.githubusercontent.com/opticdev/optic/master/website/static/img/optic-svg.svg" alt="Optic">
+
+- Optic documents your APIs as you build them, by observing development traffic and learning your API's behavior
+- Optic detects API changes by diffing traffic against the current specification
+- Optic Adds an accurate API changelog to every Pull Request
+
 <h2>Optic documents and tests your APIs as you build them</h2>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365"><img src="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365" alt="Build Status" data-canonical-src="https://img.shields.io/github/workflow/status/opticdev/optic/Release" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963" alt="issues" data-canonical-src="https://img.shields.io/github/issues/opticdev/optic" style="max-width:100%;"></a>
@@ -19,10 +24,6 @@
   <a href="#contributors-">Contributing</a>
   <a href="#license">License</a>
 </p>
-
-- Optic documents your APIs as you build them, by observing development traffic and learning your API's behavior
-- Optic detects API changes by diffing traffic against the current specification
-- Optic Adds an accurate API changelog to every Pull Request
 
 ## Add Optic to your API
 > Similar to `git init`
@@ -64,7 +65,7 @@ Once you add Optic to your API, hit it with some traffic, and document your firs
 
 You just have to provide Optic with your API paths, and it will document every status code, response body, and request body automatically based on its observations.
 
-You don't have to worry about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. For example, if Optic sees a `200` for an endpoint, and later sees a `400` for the same endpoint, it will help you add the new response. 
+You don't have to worry about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. For example, if Optic sees a `200` for an endpoint, and later sees a `400` for the same endpoint, it will help you add the new response.
 
 ```bash
 api start
