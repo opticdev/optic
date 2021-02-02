@@ -120,7 +120,7 @@ Adding explicit API changelogs in PRs facilitates discussion and leads to better
 
 No more doc drift. When you approve an API change Optic also updates the specification.
 
-[Install & Set up the GitBot](/docs/apiops/pull-requests)
+[Install & Set up the GitBot](https://useoptic.com/docs/apiops/pull-requests)
 
 ![changelog](https://github.com/opticdev/optic/raw/develop/website/static/img/gitbot-large.png)
 
