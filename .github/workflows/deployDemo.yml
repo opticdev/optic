@@ -51,7 +51,7 @@ jobs:
       - run: task ui:demo:ci
       - uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
         with:
           args: >
             {{ GITHUB_ACTOR }}: Pushed ${DOCKER_REGISTRY}/${REPO}:${TAG}
