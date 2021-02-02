@@ -51,4 +51,9 @@ pub fn can_assemble_spec_events_from_serialized_chunks() {
       .collect::<Vec<_>>(),
     vec![false, true, true]
   );
+
+  assert_eq!(
+    spec_chunk_events.iter().all(|chunk| chunk.id.is_some()),
+    true
+  )
 }
