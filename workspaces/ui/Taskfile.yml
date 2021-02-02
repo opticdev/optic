@@ -7,13 +7,13 @@ env:
 tasks:
   demo:build:
     desc: Build demo site
-    deps: [":workspaces:setup"]
     env:
       PUBLIC_URL: "https://demo.o3c.info"
-      CI: "false"
+      CI: false
     cmds:
+      - echo "DEBUG: $CI"
       - task: :workspaces:build
-      - yarn build-demo
+      - CI=false yarn build-demo
 
   demo:docker:build:
     desc: Build and package demo site as a Docker container
@@ -28,6 +28,6 @@ tasks:
     desc: CI workflow
     deps: [":workspaces:setup"]
     cmds:
-      - task: :workspaces:clean
+      #- task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
