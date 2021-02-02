@@ -18,9 +18,9 @@ pub struct RootChunkEvent {
 
 #[derive(Debug)]
 pub struct BatchChunkEvent {
-  id: String,
-  name: String,
-  parent_id: String,
+  pub id: String,
+  pub name: String,
+  pub parent_id: String,
   events: Vec<SpecEvent>,
 }
 
@@ -58,6 +58,7 @@ impl Event for UnknownChunkEvent {
   }
 }
 
+// TODO: Implement this for an impl Iterator<Item=SpecEvent> rather than requiring a Vec
 impl From<(String, bool, Vec<SpecEvent>)> for SpecChunkEvent {
   fn from((name, is_root, events): (String, bool, Vec<SpecEvent>)) -> Self {
     if is_root {
