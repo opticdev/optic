@@ -175,8 +175,8 @@ export class BodyShapeDiff {
     )!;
 
     this.shapeDiffGroupingHash = sha1(
-      jsonStringify(normalizeShapeTrail(this.shapeTrail)),
-      jsonStringify(this.jsonTrail)
+      jsonStringify(normalizeShapeTrail(this.shapeTrail)) +
+        jsonStringify(this.jsonTrail)
     );
 
     this.isUnmatched = Boolean(shapeDiff['UnmatchedShape']);
