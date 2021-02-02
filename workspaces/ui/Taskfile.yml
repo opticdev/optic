@@ -10,7 +10,7 @@ tasks:
     cmds:
       - task: :workspaces:build
       # required due to the way env inheritance winds up working. setting this in
-      # the env block will _not_ stock, at in gha
+      # the env block on this task will not work.
       - CI=false yarn build-demo
 
   demo:docker:build:
@@ -18,15 +18,20 @@ tasks:
     deps: ["demo:build"]
     cmds:
       - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:$TAG
-      # TODO(nate): add a 'latest' tag when this is a develop build
 
   demo:docker:push:
     - docker push $DOCKER_REGISTRY/$REPO:$TAG
+    - |
+      if [[ "$TAG" =~ ^release-b ]]
+      then
+        docker tag $DOCKER_REGISTRY/$REPO:$TAG $DOCKER_REGISTRY/$REPO:latest
+        docker push $DOCKER_REGISTRY/$REPO:latest
+      fi
 
   demo:ci:
     desc: CI workflow
     deps: [":workspaces:setup"]
     cmds:
-      #- task: :workspaces:clean
+      - task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
