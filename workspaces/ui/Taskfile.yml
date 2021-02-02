@@ -11,9 +11,9 @@ tasks:
       PUBLIC_URL: "https://demo.o3c.info"
       CI: false
     cmds:
-      - echo "DEBUG: $CI"
+      - echo "DEBUG ${CI}"
       - task: :workspaces:build
-      - CI=false yarn build-demo
+      - yarn build-demo
 
   demo:docker:build:
     desc: Build and package demo site as a Docker container
