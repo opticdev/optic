@@ -16,7 +16,7 @@
   <a href="#document-your-api-using-real-traffic">Document APIs</a> •
   <a href="#detect-api-changes">Detect Changes</a> •
   <a href="#an-api-changelog-in-every-pr">Optic GitBot</a> •
-  <a href="#contributing">Contributing</a>
+  <a href="#contributors-">Contributing</a>
   <a href="#license">License</a>
 </p>
 
