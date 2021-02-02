@@ -21,6 +21,7 @@ tasks:
     deps: ["demo:build"]
     cmds:
       - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:$TAG
+      # TODO(nate): add a 'latest' tag when this is a develop build
 
   demo:docker:push:
     - docker push $DOCKER_REGISTRY/$REPO:$TAG
