@@ -32,7 +32,7 @@ import { DiffLoadingOverview } from '../DiffLoading';
 import { MethodRenderLarge } from '../PathAndMethod';
 
 export function LearnAPIPageInner(props) {
-  const { urls, undocumentedEndpoints } = props;
+  const { urls, undocumentedEndpoints, setAskFinish } = props;
   const { completed } = useCaptureContext();
 
   return (
@@ -44,6 +44,7 @@ export function LearnAPIPageInner(props) {
     >
       <EnhancedTable
         urls={urls}
+        setAskFinish={setAskFinish}
         undocumentedEndpoints={undocumentedEndpoints}
         key="url-table"
       />
@@ -173,7 +174,7 @@ function EnhancedTableHead(props) {
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, endpointsSelected } = props;
+  const { numSelected, endpointsSelected, setAskFinish } = props;
 
   return (
     <Toolbar
@@ -203,7 +204,12 @@ const EnhancedTableToolbar = (props) => {
         <div style={{ flex: 1 }} />
         {Boolean(numSelected > 0) && (
           <div style={{ display: 'flex' }}>
-            <Button variant="contained" color="primary" style={{ width: 230 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ width: 230 }}
+              onClick={() => setAskFinish(true)}
+            >
               Document ({numSelected + endpointsSelected}) endpoint
               {numSelected + endpointsSelected === 1 ? '' : 's'}
             </Button>
@@ -229,7 +235,7 @@ export default function EnhancedTable(props) {
     endpointsToDocument,
     toggleEndpointsToDocument,
   } = useContext(LearnAPIPageContext);
-  const { urls, undocumentedEndpoints } = props;
+  const { urls, undocumentedEndpoints, setAskFinish } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
@@ -259,6 +265,7 @@ export default function EnhancedTable(props) {
     <div className={classes.root}>
       <Paper className={classes.paper} elevation={0} square>
         <EnhancedTableToolbar
+          setAskFinish={setAskFinish}
           numSelected={checkedIds.length}
           endpointsSelected={endpointsToDocument.length}
         />
