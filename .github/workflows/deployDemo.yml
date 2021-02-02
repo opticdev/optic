@@ -53,5 +53,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
         with:
-          args: >
-            {{ GITHUB_ACTOR }}: Pushed ${DOCKER_REGISTRY}/${REPO}:${TAG}
+          args: "{{ GITHUB_ACTOR }}: `{{ REPO }}:{{ TAG }}` was pushed to our Docker registry."
