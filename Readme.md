@@ -20,11 +20,7 @@
   <a href="#license">License</a>
 </p>
 
-
-## How it Works
-
-> Optic is like Git, but for your APIs
-- Optic documents your APIs as you build them by observing development traffic and learning your API's behavior
+- Optic documents your APIs as you build them, by observing development traffic and learning your API's behavior
 - Optic detects API changes by diffing traffic against the current specification
 - Optic Adds an accurate API changelog to every Pull Request
 
