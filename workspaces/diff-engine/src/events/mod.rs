@@ -10,10 +10,12 @@ pub mod endpoint;
 pub mod http_interaction;
 pub mod rfc;
 pub mod shape;
+pub mod spec_chunk;
 
 pub use endpoint::EndpointEvent;
 pub use http_interaction::HttpInteraction;
 pub use shape::ShapeEvent;
+pub use spec_chunk::SpecChunkEvent;
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]

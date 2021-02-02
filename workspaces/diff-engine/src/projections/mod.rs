@@ -1,5 +1,6 @@
 pub mod endpoint;
 pub mod shape;
+pub mod spec_assembler;
 
 pub use endpoint::EndpointProjection;
 pub use shape::ShapeProjection;
