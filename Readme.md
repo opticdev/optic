@@ -1,9 +1,7 @@
 
-<h1 align="center">
-  <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="100"></a>
+<a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/workspaces/ui/public/optic-logo.svg" alt="Optic" width="100"></a>
 
 <h2 align="center">Optic documents and tests your APIs as you build them</h4>
-</h1>
 <p align="center">
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365"><img src="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365" alt="Build Status" data-canonical-src="https://img.shields.io/github/workflow/status/opticdev/optic/Release" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963" alt="issues" data-canonical-src="https://img.shields.io/github/issues/opticdev/optic" style="max-width:100%;"></a>
