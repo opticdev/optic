@@ -42,6 +42,7 @@ pub struct GitStateSet {
 pub struct BatchCommitStarted {
   batch_id: String,
   commit_message: String,
+  pub parent_id: Option<String>,
   event_context: Option<EventContext>,
 }
 

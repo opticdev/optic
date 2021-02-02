@@ -14,6 +14,7 @@ pub mod spec_chunk;
 
 pub use endpoint::EndpointEvent;
 pub use http_interaction::HttpInteraction;
+pub use rfc::RfcEvent;
 pub use shape::ShapeEvent;
 pub use spec_chunk::SpecChunkEvent;
 

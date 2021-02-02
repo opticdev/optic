@@ -42,5 +42,13 @@ pub fn can_assemble_spec_events_from_serialized_chunks() {
     SpecChunkEvent::from((file_name, is_root, events))
   }).collect();
 
-  assert!(spec_chunk_events.len() == 3);
+  dbg!(&spec_chunk_events);
+
+  assert_eq!(
+    spec_chunk_events
+      .iter()
+      .map(|chunk| chunk.parent_id.is_some())
+      .collect::<Vec<_>>(),
+    vec![false, true, true]
+  );
 }
