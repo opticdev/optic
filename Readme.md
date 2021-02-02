@@ -1,7 +1,7 @@
 
 <img src="https://raw.githubusercontent.com/opticdev/optic/develop/website/static/img/optic-svg.svg" alt="Optic">
 
-# Optic documents and tests your APIs as you build them
+# Optic uses real traffic to document and test your APIs
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365"><img src="https://camo.githubusercontent.com/44b771b178c0e6848c3064f8684f299080b20e72fbb2d2191ea42e1d099ef9cf/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f776f726b666c6f772f7374617475732f6f707469636465762f6f707469632f52656c65617365" alt="Build Status" data-canonical-src="https://img.shields.io/github/workflow/status/opticdev/optic/Release" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963"><img src="https://camo.githubusercontent.com/f66a8db5ca0ca0e9218434e4a00b1bb17e2c06310f6782a402181b78b45b862d/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6973737565732f6f707469636465762f6f70746963" alt="issues" data-canonical-src="https://img.shields.io/github/issues/opticdev/optic" style="max-width:100%;"></a>
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/cf6c3e2c15e5eaa40af4a89b6c54d5c38e7fda513826e0edf966064702e26e9d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f727573742d76312e34392b2d626c75652e737667"><img src="https://camo.githubusercontent.com/cf6c3e2c15e5eaa40af4a89b6c54d5c38e7fda513826e0edf966064702e26e9d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f727573742d76312e34392b2d626c75652e737667" alt="rust" data-canonical-src="https://img.shields.io/badge/rust-v1.49+-blue.svg" style="max-width:100%;"></a>
@@ -11,7 +11,7 @@
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c"><img src="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c" alt="stars" data-canonical-src="https://img.shields.io/github/stars/opticdev/optic?style=social" style="max-width:100%;"></a>
 <br/>
 
-- Optic documents your APIs as you build them, by observing development traffic and learning your API's behavior
+- Optic observes development traffic and learns your API's behavior
 - Optic detects API changes by diffing traffic against the current specification
 - Optic Adds an accurate API changelog to every Pull Request
 
@@ -86,7 +86,7 @@ While you develop your API and run tests locally, Optic diffs the traffic to fin
 
 - [Learn more about detecting + reviewing API Diffs](https://useoptic.com/docs/using/reviewing-diffs)
 
-![The api start command initializing](https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg)
+<img src="https://github.com/opticdev/optic/raw/develop/website/static/img/status.svg" alt="Optic" height="350">
 
 
 ## Use the Optic UI to Review Diffs + Update your Specification
