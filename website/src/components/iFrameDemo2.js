@@ -100,6 +100,38 @@ export function IFrameDemo2(props) {
   );
 }
 
+export function IFrameDemoNotCentered(props) {
+  const { url } = props;
+  const featuredStyles = useFeatureStyles();
+  const classes = useStyles();
+  const forcedUpperBound = 800;
+  const iframeWidth = 800 * 1.25;
+
+  console.log(iframeWidth);
+
+  return (
+    <Paper
+      className={classes.scaledIframe}
+      elevation={7}
+      style={{
+        marginLeft: 0,
+        width: '125%',
+        marginBottom: -150,
+      }}
+    >
+      <iframe
+        width={'100%'}
+        height={790}
+        src={url}
+        className={classes.innerIframe}
+      ></iframe>
+      <Typography variant="subtitle2" className={classes.hover}>
+        Hover to Start Interactive Demo
+      </Typography>
+    </Paper>
+  );
+}
+
 function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
   // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/

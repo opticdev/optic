@@ -1,9 +1,20 @@
 module.exports = {
   someSidebar: {
-    'Optic': ['optic/community', 'optic/get-involved', 'optic/roadmap'],
-    'Get Started': ['get-started/quickstart', 'get-started/config', 'get-started/testing'],
+    Optic: [
+      'optic/community',
+      'optic/demo',
+      'optic/get-involved',
+      'optic/roadmap',
+    ],
+    'Get Started': [
+      'get-started/quickstart',
+      'get-started/config',
+      'get-started/testing',
+    ],
     'Using Optic': [
-      'using/baseline', 'using/reviewing-diffs', 'using/share-with-team',
+      'using/baseline',
+      'using/reviewing-diffs',
+      'using/share-with-team',
     ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [
