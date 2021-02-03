@@ -57,14 +57,6 @@ export default class Status extends Command {
   async run() {
     const { flags } = this.parse(Status);
 
-    if (!process.env.GITFLOW_CAPTURE) {
-      return this.log(
-        fromOptic(
-          '"api status" is only available on beta channels. yarn global add @useoptic/cli@beta'
-        )
-      );
-    }
-
     const timeStated = Date.now();
 
     let diffFound = false;
