@@ -1,0 +1,160 @@
+---
+title: Live Demo
+slug: /demo
+hide_table_of_contents: true
+---
+
+This guide is designed to give you an overview of what it's like to use Optic -- without having to download the tool or set anything up locally.
+
+- Since Optic looks at API traffic, it's language agnostic and works the same with any REST API stack. [The community has written over a dozen stack-specific guides](/docs/integrations/integrations).
+- The Rust binaries that do all the heavy lifting are tested on Mac/Windows/Linux
+- Get the benefits of accurate OpenAPI specs without having to learn OpenAPI and write lots of YAML.
+
+### 1. Downloading the CLI
+
+`api` is Optic's open source CLI. It observes your API behavior locally, and processes all traffic on your machine using a really fast Rust binary.
+
+```bash
+yarn global add @useoptic/cli
+
+api -v
+@useoptic/cli/9.0.8 darwin-x64 node-v12.4.0
+```
+
+### 2. Running `api init`
+
+Next you add Optic to your API project. Just like `git init`, `api init` will add Optic to your project and start tracking the history of your API.
+
+```bash
+my-api aidan$ api init
+/Users/aidan/Desktop/my-api
+Is this your API's root directory? (yes/no): yes
+What is this API named?: My API
+[optic] Added Optic configuration to /Users/aidancunniffe/Desktop/mock-api/optic.yml
+Finish setting up your API start task here: http://localhost:34444/apis/1/setup
+```
+
+### 3. Configuring tasks in `optic.yml`
+When you start your API or run its tests with our CLI, Optic is able to observe your API's behavior and diff the traffic against your current specification. You tell Optic how to start your API and run various test suites in your `optic.yml` file. There's a wizard, and plenty of guides in the docs explaining how to set these up.
+
+Once you have these common commands for your team aliased, using Optic is really easy. You just replace `old command` with `api run <task>` -- we named it `api` because `api start` is really easy to remember.
+
+import {DemoStartCommandSetup} from '../../src/components/SetupType';
+
+<div style={{marginTop: 20, marginBottom: 20}}>
+<DemoStartCommandSetup />
+</div>
+
+```yaml
+name: My API
+tasks:
+  # The default task, invoke using `api start`
+  start:
+    command: cargo run
+    inboundUrl: http://localhost:4500
+  # A postman collection I use to test, invoke using `api run postman-tests`
+  postman-tests:
+    command: newman run collection.json
+    useTask: start
+  # My code tests, invoke using `api run test`
+  tests:
+      command: cargo test
+      useTask: start
+```
+
+### 4. Baselining your current API
+Just like a new Git repo is empty, a new Optic project has no endpoints documented, and no history for your API. Luckily Optic makes it really easy to document your API just by looking at its real behavior.
+
+**Let's do it**: Run all your tests, go crazy with `curl` stuff, use Postman, your webapp, whatever you can to exercise a bunch of the API surface area.
+
+:::info
+You don't have to worry about hitting every possible request/response your first go -- Optic isn't "one-shot", it builds your spec up incrementally as it makes more observations about your API's behavior. For example, if Optic sees a 200 for an endpoint, and later sees a 400 for the same endpoint, it will help you add the new response.
+:::
+
+After collecting traffic for a few minutes, you can jump into the UI and start documenting the traffic Optic saw. In this example, see GitHub's API, most users can document all these endpoints in 2-3 minutes:
+
+import {IFrameDemoNotCentered} from '../../src/components/iFrameDemo2';
+
+<IFrameDemoNotCentered url={'https://demo.useoptic.com/demos/github/review'} />
+
+### 4. Keep using Optic as you develop
+
+Optic is constantly monitoring your API's behavior and looking for unexpected diffs. 95% of the time your API isn't changing and Optic is invisible.
+
+You'll be glad it's there when:
+
+1) **You make intentional changes to the API**, ie adding a new field or adding a set of endpoints. Optic makes documenting these changes and sharing them with your team super easy -- esp compared to manually writing OpenAPI
+
+2) **A code change causes an unexpected API change/regression** -- sometimes changing one class property affects 30 endpoints, or you add some debug info to an API response that you forgot to remove. Optic catches these changes.
+
+
+Our `status` command checks your recent work for API Diffs:
+
+```bash
+api status
+```
+
+```
+my-api aidan$ apidev status
+   Diffs observed for existing endpoints
+      (use "api status --review" to review diffs in the UI)
+          GET   /repos/{orgOrUser}/{repoName}/deployments/{deploymentId}
+          GET   /repos/{orgOrUser}/{repoName}
+   Undocumented URLs observed
+      (use "api status --review" to start documenting them
+          GET   /repositories/opticdev/optic/check-runs/123
+```
+
+### 5. Review Diffs, update the spec
+
+When Optic detects changes in your API behavior, there's a nice UI to Review them.
+
+- If the changes are intended and ready to share with your team, Optic will help you patch your API spec with a few clicks
+- If the changes are unintended, Optic will show you the problem and help you fix the API
+
+Here's an example of a change in the GitHub API you can review with Optic:
+
+<IFrameDemoNotCentered url={'https://demo.useoptic.com/demos/github-with-diffs/review'} />
+
+
+---
+
+### 6. Use Optic with your team
+
+Optic was built to give teams a developer-friendly workflow for keeping an accurate API spec, and managing changes to their APIs.
+
+**You check in:**
+
+- the `optic.yml` file to share your `api run <task>` aliases with your teammates.
+- the `.optic` folder which contains a complete history of every API change since `api init`. You'll be able to come back months from now and play your API history forward / backwards, see which endpoints are most stable/changing, and plan future changes.
+
+**And install the Optic GitBot** -- it makes API changes explicit during Code Review, so your team understands how the API will change when the PR is merged.
+
+
+**🚦 Prevent Breaking Changes**
+
+Discover breaking changes before they're merged. Request compatible changes in code review, or coordinate the breaking changes with consumers.
+
+**🔎 API First**
+
+Adding explicit API changelogs in PRs facilitates discussion and leads to better API design. It's also a great way to make sure unintended API changes don't get deployed.
+
+**✅ Updated Docs**
+
+No more doc drift. When you approve an API change Optic also updates the specification.
+
+
+<img height={400} src="/img/gitbot-large.png" style={{marginBottom: 40}}/>
+
+
+---
+
+Look cool? Want to give it a try? **[Add Optic with your API](/docs/)**
+
+**Schedule a call with the maintainers if you want help setting up the advanced features**
+
+We're working on a lot of cool stuff over the next few months, if you want to help us design these capabilities and get early access, [schedule a meet the maintainers call](https://calendly.com/opticlabs/maintainer-office-hours)
+
+- Run your CI tests with Optic to add an automated gate on breaking changes
+- Use Optic's design-first mode.
+- Run Optic in staging + pre-prod environments

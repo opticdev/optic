@@ -12,6 +12,7 @@ module.exports = {
     googleAnalytics: {
       trackingID: 'G-Y7T04R4QF5',
     },
+    hideableSidebar: true,
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true,
