@@ -187,4 +187,40 @@ mod test {
       vec![false, true, true]
     );
   }
+
+  #[test]
+  pub fn constructs_valid_batch_chunks() {
+    let valid_batch_events = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"BatchCommitStarted": {"batchId": "batch-1", "parentId": "root", "commitMessage": "Add Request and Response for GET /todos" }},
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+      {"BatchCommitEnded": { "batchId": "batch-1" }}
+    ])).unwrap();
+
+    assert!(
+      BatchChunkEvent::try_from((String::from("valid_batch_events"), valid_batch_events)).is_ok()
+    );
+
+    let missing_batch_start = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+      {"BatchCommitEnded": { "batchId": "batch-1" }}
+    ])).unwrap();
+
+    assert!(
+      BatchChunkEvent::try_from((String::from("missing_batch_start"), missing_batch_start))
+        .is_err()
+    );
+
+    let missing_parent_id = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"BatchCommitStarted": {"batchId": "batch-1", "commitMessage": "Add Request and Response for GET /todos" }},
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+      {"BatchCommitEnded": { "batchId": "batch-1" }}
+    ])).unwrap();
+
+    assert!(
+      BatchChunkEvent::try_from((String::from("missing_parent_id"), missing_parent_id)).is_err()
+    );
+  }
 }
