@@ -1,3 +1,10 @@
 export function buildDemoUrl(path) {
-  return window.location.hostname.split('.').slice(1).join('.');
+  const hostname = window.location.hostname.split('.');
+  if (hostname.length <= 1) {
+    hostname.join('.');
+  } else {
+    hostname.slice(-2).join('.');
+  }
+
+  return `https://demo.${hostname}${path}`;
 }
