@@ -18,6 +18,7 @@ export function ReviewUndocumentedUrls(props) {
   return (
     <LearnAPIPageInner
       urls={urls}
+      setAskFinish={props.setAskFinish}
       undocumentedEndpoints={undocumentedEndpoints}
       onChange={(status) => {
         actions.updateToDocument(

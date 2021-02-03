@@ -32,7 +32,7 @@ import { DiffLoadingOverview } from '../DiffLoading';
 import { MethodRenderLarge } from '../PathAndMethod';
 
 export function LearnAPIPageInner(props) {
-  const { urls, undocumentedEndpoints } = props;
+  const { urls, undocumentedEndpoints, setAskFinish } = props;
   const { completed } = useCaptureContext();
 
   return (
@@ -44,6 +44,7 @@ export function LearnAPIPageInner(props) {
     >
       <EnhancedTable
         urls={urls}
+        setAskFinish={setAskFinish}
         undocumentedEndpoints={undocumentedEndpoints}
         key="url-table"
       />
@@ -173,7 +174,7 @@ function EnhancedTableHead(props) {
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, endpointsSelected } = props;
+  const { numSelected, endpointsSelected, setAskFinish } = props;
 
   return (
     <Toolbar
@@ -181,38 +182,40 @@ const EnhancedTableToolbar = (props) => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      {numSelected > 0 ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            className={classes.title}
-            color="inherit"
-            variant="body2"
-            component="div"
-          >
-            {numSelected + endpointsSelected} endpoints to document
-          </Typography>
-          <div style={{ flex: 1 }} />
-          {/*<div style={{ width: 200, display: 'flex' }}>*/}
-          {/*  <LearnAPIMenu />*/}
-          {/*</div>*/}
-        </div>
-      ) : (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
         <Typography
           className={classes.title}
           variant="body1"
           id="tableTitle"
           component="div"
         >
-          Add Endpoints to your Specification. <span style={{fontWeight: 100}}>Click the parts of the path that are parameters</span>
+          Add Endpoints to your Specification.{' '}
+          <span style={{ fontWeight: 100 }}>
+            Click the parts of the path that are parameters
+          </span>
         </Typography>
-      )}
+        <div style={{ flex: 1 }} />
+        {Boolean(numSelected > 0) && (
+          <div style={{ display: 'flex' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ width: 230 }}
+              onClick={() => setAskFinish(true)}
+            >
+              Document ({numSelected + endpointsSelected}) endpoint
+              {numSelected + endpointsSelected === 1 ? '' : 's'}
+            </Button>
+          </div>
+        )}
+      </div>
     </Toolbar>
   );
 };
@@ -232,7 +235,7 @@ export default function EnhancedTable(props) {
     endpointsToDocument,
     toggleEndpointsToDocument,
   } = useContext(LearnAPIPageContext);
-  const { urls, undocumentedEndpoints } = props;
+  const { urls, undocumentedEndpoints, setAskFinish } = props;
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
@@ -262,6 +265,7 @@ export default function EnhancedTable(props) {
     <div className={classes.root}>
       <Paper className={classes.paper} elevation={0} square>
         <EnhancedTableToolbar
+          setAskFinish={setAskFinish}
           numSelected={checkedIds.length}
           endpointsSelected={endpointsToDocument.length}
         />

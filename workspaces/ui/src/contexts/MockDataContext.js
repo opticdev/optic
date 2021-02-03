@@ -10,6 +10,7 @@ function createDebugSession({ exampleSessionCollection, sessionId }) {
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
+      console.log(`/${exampleSessionCollection}/${sessionId}.json`);
       // only fetch data once
       fetchedData = fetch(`/${exampleSessionCollection}/${sessionId}.json`, {
         headers: { accept: 'application/json' },
@@ -30,7 +31,6 @@ function createDebugSession({ exampleSessionCollection, sessionId }) {
   };
 }
 
-
 // Hooks
 // -----
 
@@ -42,7 +42,7 @@ export function useMockSession({ sessionId, exampleSessionCollection }) {
   return dashboardContext;
 }
 
-export function useMockData(deps, context=MockDataContext) {
+export function useMockData(deps, context = MockDataContext) {
   const debugSession = useContext(MockDataContext);
   // TODO: consider using useReducer here instead, lots of moving bits of state here
   const [data, setData] = useState(null);
@@ -65,8 +65,8 @@ export function useMockData(deps, context=MockDataContext) {
           return result;
         })
         .catch((err) => {
-          console.log("no data err")
-          console.log(err)
+          console.log('no data err');
+          console.log(err);
           setError(err);
         });
     }

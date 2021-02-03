@@ -1,5 +1,5 @@
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -10,24 +10,27 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useFeatureStyles } from './featureStyles';
 import Box from '@material-ui/core/Box';
-import {GitHubStats} from './GitHubStatsSlim';
+import { GitHubStats } from './GitHubStatsSlim';
 import useDocusaurusContext from '@docusaurus/core/lib/client/exports/useDocusaurusContext';
-import {Paper} from '@material-ui/core';
-import {Code} from './CodeBlock';
+import { Paper } from '@material-ui/core';
+import { Code } from './CodeBlock';
 import Link from '@docusaurus/core/lib/client/exports/Link';
 TimeAgo.addLocale(en);
 import ForumIcon from '@material-ui/icons/Forum';
 const timeAgo = new TimeAgo('en-US');
 
 const Headlines = {
-  "headline": "Optic documents your APIs\n as you develop them",
-  "subtext": "Updating API specifications should be as easy as making a Git commit.",
-  "subtext1": "API changelogs should be a part of every PRs, with breaking changes caught in CI.",
-  "siteDescription": "Open Source Tool that make API specifications as easy to use as Git.",
-  "featuredSlug": "/blog/git-for-apis",
-  "featured2Slug": "/blog/optic-se-daily",
-  "siteHeadline": "APIs that Document and Test Themselves"
-}
+  headline: 'Optic documents your APIs\n as you develop them',
+  subtext:
+    'Updating API specifications should be as easy as making a Git commit.',
+  subtext1:
+    'API changelogs should be a part of every PRs, with breaking changes caught in CI.',
+  siteDescription:
+    'Open Source Tool that make API specifications as easy to use as Git.',
+  featuredSlug: '/blog/git-for-apis',
+  featured2Slug: '/blog/optic-se-daily',
+  siteHeadline: 'APIs that Document and Test Themselves',
+};
 
 const useStyles = makeStyles({
   root: {
@@ -38,7 +41,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-start',
     overflow: 'hidden',
-    backgroundImage: `url('../../static/img/svg-bg.svg')`,
+    backgroundImage: `url('/svg-bg.svg')`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: '95% 34%',
     backgroundAttachment: 'local',
@@ -77,7 +80,10 @@ const useStyles = makeStyles({
     marginTop: 9,
   },
   download: {
-    marginBottom: 100, padding: 10, display: 'flex', flexDirection: 'column'
+    marginBottom: 100,
+    padding: 10,
+    display: 'flex',
+    flexDirection: 'column',
   },
   oss: {
     fontSize: 14,
@@ -93,7 +99,7 @@ const useStyles = makeStyles({
     justifyContent: 'flex-start',
     overflow: 'hidden',
     marginBottom: 10,
-  }
+  },
 });
 
 function HomePageHero(props) {
@@ -106,76 +112,127 @@ function HomePageHero(props) {
         <Container maxWidth="md" className={classes.copyContainer}>
           <Typography
             variant="h6"
-            style={{ fontSize: 35, textAlign: 'center', lineHeight: 1.5, fontWeight: 100, maxWidth: 'inherit' }}
+            style={{
+              fontSize: 35,
+              textAlign: 'center',
+              lineHeight: 1.5,
+              fontWeight: 100,
+              maxWidth: 'inherit',
+            }}
           >
-            Optic <span className={featuredClasses.highlightSpan}>documents your APIs</span> as you build them
+            Optic{' '}
+            <span className={featuredClasses.highlightSpan}>
+              documents your APIs
+            </span>{' '}
+            as you build them
           </Typography>
 
           <Typography
             variant="caption"
-            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20}}
+            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20 }}
           >
             by observing development traffic and learning your API's behavior
           </Typography>
 
           <Typography
             variant="h6"
-            style={{ fontSize: 35,  textAlign: 'center', lineHeight: 1.5, fontWeight: 100, maxWidth: 'inherit', marginTop: 40 }}
+            style={{
+              fontSize: 35,
+              textAlign: 'center',
+              lineHeight: 1.5,
+              fontWeight: 100,
+              maxWidth: 'inherit',
+              marginTop: 40,
+            }}
           >
-            <span className={featuredClasses.highlightSpan}>Detects API changes</span> before they go live
+            <span className={featuredClasses.highlightSpan}>
+              Detects API changes
+            </span>{' '}
+            before they go live
           </Typography>
 
           <Typography
             variant="caption"
-            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20}}
+            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20 }}
           >
             by diffing traffic against the current specification
           </Typography>
 
           <Typography
             variant="h6"
-            style={{ fontSize: 35, textAlign: 'center', lineHeight: 1.5, fontWeight: 100, maxWidth: 'inherit', marginTop: 40 }}
+            style={{
+              fontSize: 35,
+              textAlign: 'center',
+              lineHeight: 1.5,
+              fontWeight: 100,
+              maxWidth: 'inherit',
+              marginTop: 40,
+            }}
           >
-            Provides an accurate API changelog <span className={featuredClasses.highlightSpan}>during Code Review</span>
+            Provides an accurate API changelog{' '}
+            <span className={featuredClasses.highlightSpan}>
+              during Code Review
+            </span>
           </Typography>
 
           <Typography
             variant="caption"
-            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20}}
+            style={{ textAlign: 'center', color: '#bab6b6', fontSize: 20 }}
           >
             by making your Pull Requests display both API and code changes
           </Typography>
-
         </Container>
-          {/*<Typography*/}
-          {/*  color="primary"*/}
-          {/*  variant="subtitle2"*/}
-          {/*  className={featuredClasses.subtextLeft}*/}
-          {/*>*/}
-          {/*  Updating API specifications{' '}*/}
-          {/*  <span className={featuredClasses.highlightSpan}>*/}
-          {/*    should be as easy as making a Git commit.*/}
-          {/*  </span>*/}
-          {/*</Typography>*/}
-          {/*<Typography*/}
-          {/*  color="primary"*/}
-          {/*  variant="subtitle2"*/}
-          {/*  className={featuredClasses.subtextLeft}*/}
-          {/*>*/}
-          {/*  API changelogs should be a part of every PR,{' '}*/}
-          {/*  <span className={featuredClasses.highlightSpan}>*/}
-          {/*    with breaking changes caught in CI.*/}
-          {/*  </span>*/}
-          {/*</Typography>*/}
+        {/*<Typography*/}
+        {/*  color="primary"*/}
+        {/*  variant="subtitle2"*/}
+        {/*  className={featuredClasses.subtextLeft}*/}
+        {/*>*/}
+        {/*  Updating API specifications{' '}*/}
+        {/*  <span className={featuredClasses.highlightSpan}>*/}
+        {/*    should be as easy as making a Git commit.*/}
+        {/*  </span>*/}
+        {/*</Typography>*/}
+        {/*<Typography*/}
+        {/*  color="primary"*/}
+        {/*  variant="subtitle2"*/}
+        {/*  className={featuredClasses.subtextLeft}*/}
+        {/*>*/}
+        {/*  API changelogs should be a part of every PR,{' '}*/}
+        {/*  <span className={featuredClasses.highlightSpan}>*/}
+        {/*    with breaking changes caught in CI.*/}
+        {/*  </span>*/}
+        {/*</Typography>*/}
 
-       <Box style={{padding: 15, marginTop: 40, marginBottom: 120}}>
-         <Box alignItems="center" display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-           <Button endIcon={<ForumIcon/>} component={Link} to="/docs/community/" variant="outlined" color="primary"  style={{marginRight: 13}}>Join Community</Button>
-           <Button endIcon={<ChevronRightIcon/>} component={Link} to="/docs/" variant="outlined" color="primary">Get Started</Button>
-         </Box>
-        <GitHubStats  style={{marginTop: 60}}/>
-       </Box>
-
+        <Box style={{ padding: 15, marginTop: 40, marginBottom: 120 }}>
+          <Box
+            alignItems="center"
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Button
+              endIcon={<ForumIcon />}
+              component={Link}
+              to="/docs/community/"
+              variant="outlined"
+              color="primary"
+              style={{ marginRight: 13 }}
+            >
+              Join Community
+            </Button>
+            <Button
+              endIcon={<ChevronRightIcon />}
+              component={Link}
+              to="/docs/"
+              variant="outlined"
+              color="primary"
+            >
+              Get Started
+            </Button>
+          </Box>
+          <GitHubStats style={{ marginTop: 60 }} />
+        </Box>
       </Container>
 
       <Container maxWidth={'lg'} style={{ marginTop: -120, marginBottom: 110 }}>
@@ -189,37 +246,37 @@ function HomePageHero(props) {
   );
 }
 
-function ReleaseInfoCard( ) {
-  const [version, setVersion] = useState()
+function ReleaseInfoCard() {
+  const [version, setVersion] = useState();
   useEffect(() => {
     const result = fetch(
       `https://api.github.com/repos/opticdev/optic/releases`
     );
 
     result.then((results) => {
-      results.json().then(all => {
-        setVersion(all[0])
-      })
-    })
-  }, [])
+      results.json().then((all) => {
+        setVersion(all[0]);
+      });
+    });
+  }, []);
 
-  console.log(version)
+  console.log(version);
 
   return (
     <InfoCard
       mini={'Latest Release'}
       subtext={`Optic CLI ${version ? version.tag_name : 'v9.x.x'}`}
-      when={version ? timeAgo.format(new Date(version.created_at)): '1 day ago'}
-      link={version && version.html_url}
-      target="_blank"
-      linkText={'View on GitHub'}
+      when={
+        version ? timeAgo.format(new Date(version.created_at)) : '1 day ago'
+      }
+      link={'/docs'}
+      linkText={'Get Started'}
     />
   );
 }
 
 function AnnouncementCard({ posts }) {
-
-  const {featured1} = require('../../latest.json')
+  const { featured1 } = require('../../latest.json');
 
   return (
     <InfoCard
@@ -233,7 +290,7 @@ function AnnouncementCard({ posts }) {
 }
 
 function BlogCard({ posts }) {
-  const {featured2} = require('../../latest.json')
+  const { featured2 } = require('../../latest.json');
 
   return (
     <InfoCard

@@ -1,6 +1,9 @@
 
 name: Build and ping FeaturePeek
-on: push
+on:
+  push:
+    branches:
+      - taskfile-blah
 jobs:
   build:
     runs-on: ubuntu-latest

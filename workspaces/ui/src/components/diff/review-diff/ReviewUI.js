@@ -23,7 +23,10 @@ import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { debugDump } from '../../../utilities/debug-dump';
 import equals from 'lodash.isequal';
 import { DiffSummaryRegion } from './ReviewDiff';
-import {PathAndMethodMono, PathAndMethodOverflowFriendly} from './PathAndMethod';
+import {
+  PathAndMethodMono,
+  PathAndMethodOverflowFriendly,
+} from './PathAndMethod';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -65,7 +68,11 @@ export function ReviewUI() {
   };
 
   useEffect(() => {
-    if (handledAll.handled === handledAll.total && handledAll.total > 0 && !shouldShowUndocumented) {
+    if (
+      handledAll.handled === handledAll.total &&
+      handledAll.total > 0 &&
+      !shouldShowUndocumented
+    ) {
       setAskFinish(true);
     }
   }, [handledAll.handled, handledAll.total]);
@@ -128,7 +135,9 @@ export function ReviewUI() {
           <Divider />
         </Paper>
         <div className={classes.right}>
-          {shouldShowUndocumented && <ReviewUndocumentedUrls />}
+          {shouldShowUndocumented && (
+            <ReviewUndocumentedUrls setAskFinish={setAskFinish} />
+          )}
           {!shouldShowUndocumented && selected && (
             <ReviewEndpoint
               key={selected.pathId + selected.method}

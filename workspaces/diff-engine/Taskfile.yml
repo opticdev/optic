@@ -1,0 +1,106 @@
+version: "3"
+
+vars:
+  DEFAULT_BUILD_ARGS: --all-features --workspace
+  RELEASE_BUILD_ARGS: --all-features --workspace --release
+
+tasks:
+  build:
+    desc: Cross-compile diff-engine binaries for all target platforms
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - add-targets
+    cmds:
+      - task: build-macos
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-windows
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-linux
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+
+  build-macos:
+    desc: Build diff-engine binaries for Mac OS
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
+      #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
+
+  build-linux:
+    desc: Build diff-engine binaries for Linux
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - build-linux:macos-host-deps
+    cmds:
+      - |
+        if uname -a | grep -q Darwin
+        then
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-unknown-linux-gnu-gcc \
+            cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-gnu
+        else
+          cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-gnu
+        fi
+      - |
+        if uname -a | grep -q Darwin
+        then
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-linux-musl-gcc \
+            cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
+        else
+          cargo build {{.BUILD_ARGS}} --target x86_64-unknown-linux-musl
+        fi
+
+  build-windows:
+    desc: Build diff-engine binaries for Windows
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - build-windows:macos-host-deps
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target x86_64-pc-windows-gnu
+
+  test:
+    - cargo test
+
+  add-targets:
+    cmds:
+      - rustup target add aarch64-apple-darwin
+      - rustup target add x86_64-apple-darwin
+      - rustup target add x86_64-unknown-linux-gnu  # glibc
+      - rustup target add x86_64-unknown-linux-musl # musl libc
+      - rustup target add x86_64-pc-windows-gnu
+
+  # Mac OS build host toolchain deps
+  build-windows:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      - brew install mingw-w64
+    status:
+      - uname -a | grep -qv "Darwin"
+
+  build-linux:macos-host-deps:
+    desc: Install a Windows build toolchain on Mac OS hosts
+    cmds:
+      # - xcode-select --install
+      - brew tap SergioBenitez/osxct
+      - brew install x86_64-unknown-linux-gnu
+      - brew install filosottile/musl-cross/musl-cross
+    status:
+      - uname -a | grep -qv "Darwin"
+
+  locate-binaries:
+    cmds:
+      - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
+
+  ci:build:
+    desc: The CI build workflow
+    cmds:
+      - task: build
+        vars:
+          BUILD_ARGS: "{{.RELEASE_BUILD_ARGS}}"
+      - task: :flush-to-disk
+      - task: locate-binaries

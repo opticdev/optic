@@ -1,7 +1,7 @@
 use clap::{crate_version, App, Arg};
-use futures::future;
 use futures::try_join;
 use futures::SinkExt;
+use futures::{StreamExt, TryStreamExt};
 use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
@@ -14,9 +14,7 @@ use std::cmp;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
-use tokio::stream::StreamExt;
-use tokio::sync::{mpsc, Semaphore};
-use tokio::task::{JoinError, JoinHandle};
+use tokio::sync::mpsc;
 
 fn main() {
   let cli = App::new("Optic Diff engine")
@@ -86,7 +84,7 @@ fn main() {
   runtime.block_on(async {
     let stdin = stdin(); // TODO: deal with std in never having been attached
 
-    let mut interaction_lines = streams::http_interaction::json_lines(stdin);
+    let interaction_lines = streams::http_interaction::json_lines(stdin);
 
     let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
 
@@ -96,7 +94,6 @@ fn main() {
       core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
     ) * 4;
     eprintln!("using diff size {}", diff_queue_size);
-    let diff_scheduling_permits = Arc::new(Semaphore::new(diff_queue_size));
 
     let results_manager = tokio::spawn(async move {
       let stdout = stdout();
@@ -109,52 +106,35 @@ fn main() {
       }
     });
 
-    let mut diff_tasks: Vec<JoinHandle<()>> = Vec::with_capacity(diff_queue_size);
-
     tokio::pin!(results_manager);
 
     dbg!("waiting for next interaction");
 
-    loop {
-      let next_action = tokio::select! {
-        // scheduling a diff task upon new input
-        (next_interaction, diff_task_permit) = async {
-          let diff_permits = diff_scheduling_permits.clone();
-          //dbg!("waiting for permit");
-          let diff_task_permit = diff_permits.acquire_owned().await;
-          //dbg!("got permit");
-          
-          let next_interaction = interaction_lines.next().await;
-
-          (next_interaction, diff_task_permit)
-        } => {
-          if let None = next_interaction {
-            // end of input, stop looping
-            break;
-          } 
-
-          let interaction_json_result = next_interaction.unwrap();
-
-          //dbg!("got next interaction");
+    let diffing_interactions = async move {
+      let diff_results = interaction_lines
+        .map(Ok)
+        .try_for_each_concurrent(diff_queue_size, |interaction_json_result| {
           let projection = spec_projection.clone();
           let mut results_sender = results_sender.clone();
 
           let diff_task = tokio::spawn(async move {
-            let diff_comp =
-              tokio::task::spawn_blocking::<_, Option<(Vec<InteractionDiffResult>, Tags)>>(move || {
-                let interaction_json =
-                  interaction_json_result.expect("can read interaction json line from stdin");
-                let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-                  match serde_json::from_str(&interaction_json) {
-                    Ok(tagged_interaction) => tagged_interaction,
-                    Err(parse_error) => {
-                      eprintln!("could not parse interaction json: {}", parse_error);
-                      return None;
-                    }
-                  };
+            let diff_comp = tokio::task::spawn_blocking::<
+              _,
+              Option<(Vec<InteractionDiffResult>, Tags)>,
+            >(move || {
+              let interaction_json =
+                interaction_json_result.expect("can read interaction json line from stdin");
+              let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
+                match serde_json::from_str(&interaction_json) {
+                  Ok(tagged_interaction) => tagged_interaction,
+                  Err(parse_error) => {
+                    eprintln!("could not parse interaction json: {}", parse_error);
+                    return None;
+                  }
+                };
 
-                Some((diff_interaction(&projection, interaction), tags))
-              });
+              Some((diff_interaction(&projection, interaction), tags))
+            });
             //dbg!("waiting for results");
             let results = diff_comp
               .await
@@ -173,46 +153,19 @@ fn main() {
                 }
               }
             }
-
-            drop(diff_task_permit);
           });
 
-          // dbg!("Scheduling task", diff_tasks.len() + 1);
-          diff_tasks.push(diff_task);
+          diff_task
+        })
+        .await;
 
-          Ok::<_, JoinError>(())
-        },
+      dbg!("interactions stream closed");
 
-        // propagating errors / panics from the diff tasks
-        Some(res) = async {
-          if diff_tasks.is_empty() {
-            None
-          } else {
-            // dbg!("Waiting for a worker task to finish");
-            let (finished_diff_task_result, task_index, _) = future::select_all(&mut diff_tasks).await;
-            // dbg!("Task finished!", task_index);
-            diff_tasks.remove(task_index);
+      drop(results_sender);
+      diff_results
+    };
 
-            Some(finished_diff_task_result)
-          }
-        } => {
-          res
-        },
-
-        // propagating errors / panics from the results manager
-        Err(err) = &mut results_manager => {
-          Err(err)
-        }
-      };
-
-      // panic when scheduling, diff tasks 
-      next_action.expect("essential worker task panicked");
-    }
-
-    drop(results_sender);
-
-    let completing_diff_tasks = future::try_join_all(diff_tasks);
-    try_join!(completing_diff_tasks, results_manager).expect("essential worker task panicked");
+    try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
   })
 }
 
