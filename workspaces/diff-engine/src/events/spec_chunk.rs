@@ -95,31 +95,26 @@ impl TryFrom<(String, Vec<SpecEvent>)> for BatchChunkEvent {
   type Error = (&'static str, String, Vec<SpecEvent>); // TODO: replace with proper error type
 
   fn try_from((name, events): (String, Vec<SpecEvent>)) -> Result<Self, Self::Error> {
-    let first_event = events.iter().next();
+    let first_event = events
+      .iter()
+      .next()
+      .ok_or_else(|| ("Chunk does not have any events", name, events))?;
 
-    let batch_ids = first_event
-      .map(|first_event| match first_event {
-        SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => {
-          (Some(e.batch_id.clone()), e.parent_id.clone())
-        }
-        _ => (None, None),
-      })
-      .unwrap_or((None, None));
-
-    if let (Some(id), Some(parent_id)) = batch_ids {
-      Ok(Self {
-        id,
-        name,
-        parent_id,
-        events,
-      })
-    } else {
-      Err((
-        "Chunk does not start with a BatchCommitStarted with batchId and parentId",
-        name,
-        events,
-      ))
+    let (id, parent_id) = match first_event {
+      SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => match &e.parent_id {
+        Some(parent_id) => Ok((e.batch_id.clone(), parent_id.clone())),
+        _ => Err("BatchCommitStarted does not have a parent_id"),
+      },
+      _ => Err("Chunk does not start with a BatchCommitStarted event"),
     }
+    .or_else(|err| Err((err, name, events)))?;
+
+    Ok(Self {
+      id,
+      name,
+      parent_id,
+      events,
+    })
   }
 }
 
@@ -222,5 +217,31 @@ mod test {
     assert!(
       BatchChunkEvent::try_from((String::from("missing_parent_id"), missing_parent_id)).is_err()
     );
+
+    let missing_end_event = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"BatchCommitStarted": {"batchId": "batch-1", "parentId": "root", "commitMessage": "Add Request and Response for GET /todos" }},
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }}
+    ])).unwrap();
+
+    assert!(
+      BatchChunkEvent::try_from((String::from("missing_end_event"), missing_end_event)).is_err()
+    );
+
+    let out_of_order_end_event = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"BatchCommitStarted": {"batchId": "batch-1", "parentId": "root", "commitMessage": "Add Request and Response for GET /todos" }},
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+      {"BatchCommitEnded": { "batchId": "batch-2" }}
+    ])).unwrap();
+
+    let nested_batch_event = serde_json::from_value::<Vec<SpecEvent>>(json!([
+      {"BatchCommitStarted": {"batchId": "batch-1", "parentId": "root", "commitMessage": "Add Request and Response for GET /todos" }},
+      {"BatchCommitStarted": {"batchId": "batch-2", "parentId": "root", "commitMessage": "Nested batch" }},
+      {"RequestAdded": { "requestId": "request_1","pathId": "path_1","httpMethod": "GET" }},
+      {"ResponseAddedByPathAndMethod": { "responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200 }},
+      {"BatchCommitEnded": { "batchId": "batch-2" }},
+      {"BatchCommitEnded": { "batchId": "batch-1" }}
+    ])).unwrap();
   }
 }
