@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { Typography } from '@material-ui/core';
 import { useFeatureStyles } from './featureStyles';
+import { buildDemoUrl } from '../pick-demo-env';
 
 export const useStyles = makeStyles({
   container: {
@@ -89,7 +90,7 @@ export function IFrameDemo2(props) {
         <iframe
           width={'100%'}
           height={790}
-          src={url}
+          src={buildDemoUrl(url)}
           className={classes.innerIframe}
         ></iframe>
         <Typography variant="subtitle2" className={classes.hover}>
@@ -122,7 +123,7 @@ export function IFrameDemoNotCentered(props) {
       <iframe
         width={'100%'}
         height={790}
-        src={url}
+        src={buildDemoUrl(url)}
         className={classes.innerIframe}
       ></iframe>
       <Typography variant="subtitle2" className={classes.hover}>
