@@ -18,7 +18,7 @@ pub use rfc::RfcEvent;
 pub use shape::ShapeEvent;
 pub use spec_chunk::SpecChunkEvent;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct EventContext {
   client_id: String,
@@ -27,7 +27,7 @@ pub struct EventContext {
   created_at: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum SpecEvent {
   EndpointEvent(endpoint::EndpointEvent),

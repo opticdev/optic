@@ -10,7 +10,7 @@ pub type HttpMethod = String;
 pub type HttpStatusCode = u16;
 pub type HttpContentType = String;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapedBodyDescriptor {
   pub http_content_type: String,
@@ -18,7 +18,7 @@ pub struct ShapedBodyDescriptor {
   pub is_removed: bool,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapedRequestParameterShapeDescriptor {
   pub shape_id: ShapeId,
