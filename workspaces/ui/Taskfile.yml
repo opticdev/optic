@@ -9,8 +9,9 @@ tasks:
     desc: Build demo site
     cmds:
       - task: :workspaces:build
-      # required due to the way env inheritance winds up working. setting this in
-      # the env block on this task will not work.
+      # setting $CI directly on the build command is required due to the way env
+      # inheritance winds up working here. setting this in the env block on this
+      # task will not work.
       - CI=false yarn build-demo
 
   demo:docker:build:
