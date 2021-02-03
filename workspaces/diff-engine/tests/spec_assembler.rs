@@ -1,4 +1,4 @@
-use optic_diff_engine::{SpecChunkEvent, SpecEvent};
+use optic_diff_engine::{SpecAssemblerProjection, SpecChunkEvent, SpecEvent};
 use serde_json::json;
 
 #[test]
@@ -42,5 +42,9 @@ pub fn can_assemble_spec_events_from_serialized_chunks() {
     SpecChunkEvent::from((file_name, is_root, events))
   }).collect();
 
-  dbg!(&spec_chunk_events);
+  // dbg!(&spec_chunk_events);
+
+  let assembler_projection = SpecAssemblerProjection::from(spec_chunk_events);
+
+  dbg!(&assembler_projection);
 }

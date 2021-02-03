@@ -15,7 +15,9 @@ pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, SpecChunkEvent, SpecEvent};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
-pub use projections::{EndpointProjection, ShapeProjection, SpecProjection};
+pub use projections::{
+  EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
+};
 pub use protos::shapehash;
 pub use shapes::diff as diff_shape;
 pub use state::body::BodyDescriptor;

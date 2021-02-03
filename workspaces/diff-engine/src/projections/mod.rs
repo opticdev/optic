@@ -4,6 +4,7 @@ pub mod spec_events;
 
 pub use endpoint::EndpointProjection;
 pub use shape::ShapeProjection;
+pub use spec_events::SpecAssemblerProjection;
 
 use crate::events::SpecEvent;
 use cqrs_core::{Aggregate, AggregateEvent};

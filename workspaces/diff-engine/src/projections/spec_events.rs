@@ -57,3 +57,17 @@ impl AggregateEvent<SpecAssemblerProjection> for SpecChunkEvent {
     }
   }
 }
+
+impl<I> From<I> for SpecAssemblerProjection
+where
+  I: IntoIterator,
+  I::Item: AggregateEvent<Self>,
+{
+  fn from(events: I) -> Self {
+    let mut projection = SpecAssemblerProjection::default();
+    for event in events.into_iter() {
+      projection.apply(event);
+    }
+    projection
+  }
+}
