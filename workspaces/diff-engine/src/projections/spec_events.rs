@@ -122,7 +122,7 @@ pub enum SpecAssemblerError {
 impl fmt::Display for SpecAssemblerError {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let msg = match self {
-      RootChunkRequired => "Root chunk required to assemble events",
+      SpecAssemblerError::RootChunkRequired => "Root chunk required to assemble events",
     };
     write!(f, "SpecAssemblerError: {}", msg)
   }

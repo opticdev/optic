@@ -1,9 +1,10 @@
+use insta::assert_debug_snapshot;
 use optic_diff_engine::{SpecAssemblerProjection, SpecChunkEvent, SpecEvent};
 use serde_json::json;
 
 #[test]
 pub fn can_assemble_spec_events_from_serialized_chunks() {
-  let spec_chunk_events : Vec<SpecChunkEvent> = vec![
+  let raw_chunks = vec![
     (
       String::from("specification.json"),
       true,
@@ -36,15 +37,48 @@ pub fn can_assemble_spec_events_from_serialized_chunks() {
         {"BatchCommitEnded": { "batchId": "batch-1" }}
       ]),
     ),
-  ].into_iter().map(|(file_name, is_root, events_json)| {
-    let events : Vec<SpecEvent> = serde_json::from_value(events_json).expect("example events should be valid spec events");
+  ];
 
-    SpecChunkEvent::from((file_name, is_root, events))
-  }).collect();
+  let spec_chunk_events: Vec<SpecChunkEvent> = raw_chunks
+    .clone()
+    .into_iter()
+    .map(|(file_name, is_root, events_json)| {
+      let events: Vec<SpecEvent> =
+        serde_json::from_value(events_json).expect("example events should be valid spec events");
+
+      SpecChunkEvent::from((file_name, is_root, events))
+    })
+    .collect();
 
   // dbg!(&spec_chunk_events);
 
   let assembler_projection = SpecAssemblerProjection::from(spec_chunk_events);
 
-  dbg!(&assembler_projection);
+  // dbg!(&assembler_projection);
+
+  let assembled_events = assembler_projection
+    .into_events()
+    .expect("example chunks should assemble");
+
+  // dbg!(&assembled_events);
+
+  let expected_events = vec![
+    raw_chunks[0].clone(),
+    raw_chunks[2].clone(),
+    raw_chunks[1].clone(),
+  ]
+  .into_iter()
+  .flat_map(|(_filename, _is_root, events)| {
+    serde_json::from_value::<Vec<SpecEvent>>(events).unwrap()
+  })
+  .collect::<Vec<_>>();
+
+  // dbg!(&expected_events);
+
+  assert_eq!(assembled_events, expected_events);
+
+  assert_debug_snapshot!(
+    "can_assemble_spec_events_from_serialized_chunks__assembled_events",
+    assembled_events
+  );
 }
