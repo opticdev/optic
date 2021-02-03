@@ -1,6 +1,7 @@
 use super::{RfcEvent, SpecEvent};
 use cqrs_core::Event;
 use serde_json;
+use std::convert::TryFrom;
 
 #[derive(Debug)]
 pub enum SpecChunkEvent {
@@ -80,26 +81,44 @@ impl From<(String, bool, Vec<SpecEvent>)> for SpecChunkEvent {
         events,
       })
     } else {
-      let first_event = events.first();
-      let batch_ids = first_event
-        .map(|first_event| match first_event {
-          SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => {
-            (Some(e.batch_id.clone()), e.parent_id.clone())
-          }
-          _ => (None, None),
-        })
-        .unwrap_or((None, None));
-
-      if let (Some(id), Some(parent_id)) = batch_ids {
-        Self::Batch(BatchChunkEvent {
-          id,
-          name,
-          parent_id,
-          events,
-        })
-      } else {
-        Self::Unknown(UnknownChunkEvent { name, events })
+      match BatchChunkEvent::try_from((name, events)) {
+        Ok(batch_chunk) => Self::Batch(batch_chunk),
+        Err((msg, name, events)) => Self::Unknown(UnknownChunkEvent { name, events }),
       }
+    }
+  }
+}
+
+// TODO: Implement this for an impl Iterator<Item=SpecEvent> rather than requiring a Vec
+impl TryFrom<(String, Vec<SpecEvent>)> for BatchChunkEvent {
+  // Give ownership of name and events back when we fail
+  type Error = (&'static str, String, Vec<SpecEvent>); // TODO: replace with proper error type
+
+  fn try_from((name, events): (String, Vec<SpecEvent>)) -> Result<Self, Self::Error> {
+    let first_event = events.iter().next();
+
+    let batch_ids = first_event
+      .map(|first_event| match first_event {
+        SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => {
+          (Some(e.batch_id.clone()), e.parent_id.clone())
+        }
+        _ => (None, None),
+      })
+      .unwrap_or((None, None));
+
+    if let (Some(id), Some(parent_id)) = batch_ids {
+      Ok(Self {
+        id,
+        name,
+        parent_id,
+        events,
+      })
+    } else {
+      Err((
+        "Chunk does not start with a BatchCommitStarted with batchId and parentId",
+        name,
+        events,
+      ))
     }
   }
 }
