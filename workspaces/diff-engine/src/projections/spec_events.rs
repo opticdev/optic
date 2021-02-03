@@ -1,7 +1,12 @@
 use crate::events::spec_chunk::{BatchChunkEvent, RootChunkEvent};
 use crate::events::SpecChunkEvent;
+use crate::SpecEvent;
+use std::error::Error;
+use std::fmt;
 
+use clap::Format;
 use cqrs_core::{Aggregate, AggregateEvent};
+use futures::SinkExt;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -34,6 +39,40 @@ impl SpecAssemblerProjection {
       .or_insert_with(|| Vec::new());
 
     batch_chunks_for_parent.push(chunk);
+  }
+
+  // TODO: implement returning of an Iterator instead of Vec
+  pub fn into_events(self) -> Result<Vec<SpecEvent>, SpecAssemblerError> {
+    let root_chunk = self
+      .root_chunk
+      .ok_or_else(|| SpecAssemblerError::RootChunkRequired)?;
+
+    let mut current_chunk_id = root_chunk.id.clone();
+    let mut chunks = vec![SpecChunkEvent::Root(root_chunk)];
+    let mut chunks_by_parent_id = self.chunks_by_parent_id;
+
+    loop {
+      let children = chunks_by_parent_id.remove(&current_chunk_id);
+      if let None = children {
+        break;
+      }
+      let mut children = children.unwrap();
+
+      if children.len() != 1 {
+        // if there are multiple children to a parent
+        break; // TODO: decide whether for this projection we need to do anything more
+      }
+      let child_chunk = children.pop().unwrap();
+
+      current_chunk_id = child_chunk.id.clone();
+      chunks.push(SpecChunkEvent::Batch(child_chunk));
+    }
+
+    let events = chunks
+      .into_iter()
+      .flat_map(|chunk| chunk.into_events_iter());
+
+    Ok(events.collect())
   }
 }
 
@@ -71,3 +110,22 @@ where
     projection
   }
 }
+
+// SpecAssemblerError
+// ------------------
+
+#[derive(Debug)]
+pub enum SpecAssemblerError {
+  RootChunkRequired,
+}
+
+impl fmt::Display for SpecAssemblerError {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let msg = match self {
+      RootChunkRequired => "Root chunk required to assemble events",
+    };
+    write!(f, "SpecAssemblerError: {}", msg)
+  }
+}
+
+impl Error for SpecAssemblerError {}

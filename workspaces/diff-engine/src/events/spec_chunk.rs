@@ -11,9 +11,9 @@ pub enum SpecChunkEvent {
 
 #[derive(Debug)]
 pub struct RootChunkEvent {
-  id: String,
-  name: String,
-  events: Vec<SpecEvent>,
+  pub id: String,
+  pub name: String,
+  pub events: Vec<SpecEvent>,
 }
 
 #[derive(Debug)]
@@ -21,13 +21,25 @@ pub struct BatchChunkEvent {
   pub id: String,
   pub name: String,
   pub parent_id: String,
-  events: Vec<SpecEvent>,
+  pub events: Vec<SpecEvent>,
 }
 
 #[derive(Debug)]
 pub struct UnknownChunkEvent {
   name: String,
-  events: Vec<SpecEvent>,
+  pub events: Vec<SpecEvent>,
+}
+
+impl SpecChunkEvent {
+  pub fn into_events_iter(self) -> impl Iterator<Item = SpecEvent> {
+    let events = match self {
+      SpecChunkEvent::Root(chunk) => chunk.events,
+      SpecChunkEvent::Batch(chunk) => chunk.events,
+      SpecChunkEvent::Unknown(chunk) => chunk.events,
+    };
+
+    events.into_iter()
+  }
 }
 
 impl Event for SpecChunkEvent {
