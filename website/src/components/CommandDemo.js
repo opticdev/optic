@@ -126,7 +126,7 @@ export function DocumentGitHubExample() {
 
   const [tab, setTab] = useState(0);
 
-  const demoUrl =
+  const demoPath =
     tab === 0 ? '/demos/github/review' : '/demos/github-with-diffs/review';
 
   return (
@@ -167,7 +167,7 @@ export function DocumentGitHubExample() {
           </Tabs>
         </Container>
       </Container>
-      <IFrameDemo2 url={demoUrl} />
+      <IFrameDemo2 demoPath={demoPath} />
     </>
   );
 }

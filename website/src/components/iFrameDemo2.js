@@ -65,7 +65,7 @@ export const useStyles = makeStyles({
 });
 
 export function IFrameDemo2(props) {
-  const { url } = props;
+  const { demoPath } = props;
   const featuredStyles = useFeatureStyles();
   const classes = useStyles();
   const size = useWindowSize();
@@ -90,7 +90,7 @@ export function IFrameDemo2(props) {
         <iframe
           width={'100%'}
           height={790}
-          src={buildDemoUrl(url)}
+          src={buildDemoUrl(demoPath)}
           className={classes.innerIframe}
         ></iframe>
         <Typography variant="subtitle2" className={classes.hover}>
@@ -102,7 +102,7 @@ export function IFrameDemo2(props) {
 }
 
 export function IFrameDemoNotCentered(props) {
-  const { url } = props;
+  const { demoPath } = props;
   const featuredStyles = useFeatureStyles();
   const classes = useStyles();
   const forcedUpperBound = 800;
@@ -123,7 +123,7 @@ export function IFrameDemoNotCentered(props) {
       <iframe
         width={'100%'}
         height={790}
-        src={buildDemoUrl(url)}
+        src={buildDemoUrl(demoPath)}
         className={classes.innerIframe}
       ></iframe>
       <Typography variant="subtitle2" className={classes.hover}>
