@@ -71,16 +71,13 @@ fn main() {
 
   let spec_projection = Arc::new(SpecProjection::from(events));
 
-  let mut runtime_builder = tokio::runtime::Builder::new();
+  let mut runtime_builder = tokio::runtime::Builder::new_multi_thread();
   runtime_builder.enable_all();
-  runtime_builder.threaded_scheduler();
   if let Some(core_threads) = core_threads_count {
-    runtime_builder
-      .max_threads((core_threads as usize) * 2)
-      .core_threads(core_threads as usize);
+    runtime_builder.worker_threads(core_threads as usize);
   }
 
-  let mut runtime = runtime_builder.build().unwrap();
+  let runtime = runtime_builder.build().unwrap();
   runtime.block_on(async {
     let stdin = stdin(); // TODO: deal with std in never having been attached
 
@@ -115,7 +112,7 @@ fn main() {
         .map(Ok)
         .try_for_each_concurrent(diff_queue_size, |interaction_json_result| {
           let projection = spec_projection.clone();
-          let mut results_sender = results_sender.clone();
+          let results_sender = results_sender.clone();
 
           let diff_task = tokio::spawn(async move {
             let diff_comp = tokio::task::spawn_blocking::<

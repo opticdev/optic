@@ -1,6 +1,6 @@
 use optic_diff_engine::streams;
 use optic_diff_engine::HttpInteraction;
-use tokio::stream::StreamExt;
+use tokio_stream::StreamExt;
 
 // fn can_async_read_stream_of_newline_delimited_json() {
 //   let current_dir = std::env::current_dir().unwrap();
