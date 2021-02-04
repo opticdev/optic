@@ -110,10 +110,7 @@ impl TryFrom<(String, Vec<SpecEvent>)> for BatchChunkEvent {
 }
 
 fn parse_batch_chunk_events(events: &Vec<SpecEvent>) -> Result<(String, String), &'static str> {
-  let first_event = events
-    .iter()
-    .next()
-    .ok_or("Chunk does not have any events")?;
+  let first_event = events.first().ok_or("Chunk does not have any events")?;
 
   let batch_start_event = match first_event {
     SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => Ok(e),
@@ -138,6 +135,15 @@ fn parse_batch_chunk_events(events: &Vec<SpecEvent>) -> Result<(String, String),
   } else {
     Ok(())
   }?;
+
+  let intermediate_events = events.iter().skip(1).take(events.len() - 2); // skip the first, don't take the last
+  for event in intermediate_events {
+    if let SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) = event {
+      return Err("Chunk cannot include nested BatchCommitStarted events");
+    } else if let SpecEvent::RfcEvent(RfcEvent::BatchCommitEnded(e)) = event {
+      return Err("Chunk cannot include nested BatchCommitEnded events");
+    }
+  }
 
   Ok((batch_id, parent_id))
 }
@@ -217,9 +223,9 @@ mod test {
       {"BatchCommitEnded": { "batchId": "batch-1" }}
     ])).unwrap();
 
-    assert!(
-      BatchChunkEvent::try_from((String::from("valid_batch_events"), valid_batch_events)).is_ok()
-    );
+    let valid_batch_events_result =
+      BatchChunkEvent::try_from((String::from("valid_batch_events"), valid_batch_events));
+    assert!(valid_batch_events_result.is_ok());
 
     let empty_events = Vec::<SpecEvent>::new();
     let empty_events_result =
@@ -298,5 +304,13 @@ mod test {
       {"BatchCommitEnded": { "batchId": "batch-2" }},
       {"BatchCommitEnded": { "batchId": "batch-1" }}
     ])).unwrap();
+
+    let nested_batch_event_result =
+      BatchChunkEvent::try_from((String::from("nested_batch_event"), nested_batch_event));
+    assert!(nested_batch_event_result.is_err());
+    assert_debug_snapshot!(
+      "constructs_valid_batch_chunks__nested_batch_event",
+      nested_batch_event_result.unwrap_err().0
+    );
   }
 }
