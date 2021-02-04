@@ -58,4 +58,23 @@ tasks:
     status:
       - uname -a | grep -qv Darwin
 
+  docker:slack-notifier:
+    desc: Posts a message to Slack
+    summary: |
+      Posts a docker build announcement to Slack. To disable announcements
+      unset SLACK_WEBHOOK.
 
+      Expected env:
+        * REPO — the Docker image repository
+        * SLACK_WEBHOOK — a Slack webhook URL
+        * TAG — the Docker image tag
+        * USER — the user to direct the message at
+    vars:
+      MESSAGE: "{{.USER}}: `{{.REPO}}:{{.TAG}}` was pushed to our Docker registry."
+    env:
+      DATA: '{"text":"{{.MESSAGE}}"}'
+    cmds:
+      - echo $DATA
+      - 'curl -X POST -H "Content-type: application/json" --data "$DATA" $SLACK_WEBHOOK'
+    status:
+      - test -z $SLACK_WEBHOOK

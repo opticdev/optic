@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eu
+# replaces character that aren't valid om Docker image tags with hyphens
+echo $TAG | sed 's/\//-/g'
