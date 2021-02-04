@@ -35,6 +35,7 @@ tasks:
           docker tag $DOCKER_REGISTRY/$REPO:{{.TAG}} $DOCKER_REGISTRY/$REPO:latest
           docker push $DOCKER_REGISTRY/$REPO:latest
         fi
+      - task: :docker:slack-notifier
 
   demo:ci:
     desc: CI workflow
@@ -43,4 +44,3 @@ tasks:
       - task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
-      - task: :docker:slack-notifier
