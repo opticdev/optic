@@ -6,6 +6,7 @@ use tokio_util::codec::Encoder;
 
 pub mod diff;
 pub mod http_interaction;
+pub mod spec_chunks;
 
 pub struct JsonLineEncoder {}
 
