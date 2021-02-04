@@ -95,27 +95,35 @@ impl TryFrom<(String, Vec<SpecEvent>)> for BatchChunkEvent {
   type Error = (&'static str, String, Vec<SpecEvent>); // TODO: replace with proper error type
 
   fn try_from((name, events): (String, Vec<SpecEvent>)) -> Result<Self, Self::Error> {
-    let first_event = events
-      .iter()
-      .next()
-      .ok_or_else(|| ("Chunk does not have any events", name, events))?;
+    let batch_ids = parse_batch_chunk_events(&events);
 
-    let (id, parent_id) = match first_event {
-      SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => match &e.parent_id {
-        Some(parent_id) => Ok((e.batch_id.clone(), parent_id.clone())),
-        _ => Err("BatchCommitStarted does not have a parent_id"),
-      },
-      _ => Err("Chunk does not start with a BatchCommitStarted event"),
+    match batch_ids {
+      Ok((id, parent_id)) => Ok(Self {
+        id,
+        name,
+        parent_id,
+        events,
+      }),
+      Err(err) => Err((err, name, events)),
     }
-    .or_else(|err| Err((err, name, events)))?;
-
-    Ok(Self {
-      id,
-      name,
-      parent_id,
-      events,
-    })
   }
+}
+
+fn parse_batch_chunk_events(events: &Vec<SpecEvent>) -> Result<(String, String), &'static str> {
+  let first_event = events
+    .iter()
+    .next()
+    .ok_or("Chunk does not have any events")?;
+
+  let batch_ids = match first_event {
+    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => match &e.parent_id {
+      Some(parent_id) => Ok((e.batch_id.clone(), parent_id.clone())),
+      _ => Err("BatchCommitStarted does not have a parent_id"),
+    },
+    _ => Err("Chunk does not start with a BatchCommitStarted event"),
+  }?;
+
+  Ok(batch_ids)
 }
 
 #[cfg(test)]
