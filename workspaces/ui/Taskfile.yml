@@ -18,7 +18,7 @@ tasks:
     desc: Build and package demo site as a Docker container
     vars:
       TAG:
-        sh: echo $(../../bin/clean-docker-tag)
+        sh: echo $(../../bin/clean-docker-tag $TAG)
     cmds:
       - task: demo:build
       - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:{{.TAG}}
@@ -26,7 +26,7 @@ tasks:
   demo:docker:push:
     vars:
       TAG:
-        sh: echo $(../../bin/clean-docker-tag)
+        sh: echo $(../../bin/clean-docker-tag $TAG)
     cmds:
       - docker push $DOCKER_REGISTRY/$REPO:{{.TAG}}
       - |
