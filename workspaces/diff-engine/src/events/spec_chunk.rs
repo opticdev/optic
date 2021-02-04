@@ -115,15 +115,31 @@ fn parse_batch_chunk_events(events: &Vec<SpecEvent>) -> Result<(String, String),
     .next()
     .ok_or("Chunk does not have any events")?;
 
-  let batch_ids = match first_event {
-    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => match &e.parent_id {
-      Some(parent_id) => Ok((e.batch_id.clone(), parent_id.clone())),
-      _ => Err("BatchCommitStarted does not have a parent_id"),
-    },
+  let batch_start_event = match first_event {
+    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(e)) => Ok(e),
     _ => Err("Chunk does not start with a BatchCommitStarted event"),
   }?;
 
-  Ok(batch_ids)
+  let batch_id = batch_start_event.batch_id.clone();
+  let parent_id = match &batch_start_event.parent_id {
+    Some(parent_id) => Ok(parent_id.clone()),
+    _ => Err("BatchCommitStarted does not have a parent_id"),
+  }?;
+
+  let last_event = events.last().ok_or("Chunk does not have any events")?;
+
+  let batch_end_event = match last_event {
+    SpecEvent::RfcEvent(RfcEvent::BatchCommitEnded(e)) => Ok(e),
+    _ => Err("Chunk does not end in a BatchCommitEnded event"),
+  }?;
+
+  if batch_end_event.batch_id != batch_id {
+    Err("BatchCommitEnded event does not have matching parent_id")
+  } else {
+    Ok(())
+  }?;
+
+  Ok((batch_id, parent_id))
 }
 
 #[cfg(test)]

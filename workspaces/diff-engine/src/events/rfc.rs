@@ -49,7 +49,7 @@ pub struct BatchCommitStarted {
 #[derive(Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitEnded {
-  batch_id: String,
+  pub batch_id: String,
   event_context: Option<EventContext>,
 }
 
