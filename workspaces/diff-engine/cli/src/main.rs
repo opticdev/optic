@@ -67,9 +67,10 @@ fn main() {
   let runtime = runtime_builder.build().unwrap();
 
   if let Some(matches) = matches.subcommand_matches("assemble") {
-    println!("Spec assembly sub command");
-    return ();
+    eprintln!("assembling spec folder into spec");
+    runtime.block_on(assemble(spec_file_path));
   } else {
+    eprintln!("diffing interations against a spec");
     let diff_queue_size = cmp::min(
       num_cpus::get(),
       core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
@@ -178,8 +179,25 @@ fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) -> impl Future
   }
 }
 
-fn assemble(spec_folder_path: impl AsRef<Path>) -> impl Future<Output = ()> {
-  async {}
+async fn assemble(spec_folder_path: impl AsRef<Path>) {
+  let stdout = stdout();
+  let mut results_sink = streams::spec_events::into_json_lines(stdout);
+  let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_folder_path)
+    .await
+    .expect("should be able to find spec event chunks in a folder");
+
+  match streams::spec_events::from_spec_chunks(spec_chunk_events).await {
+    Ok(spec_events) => {
+      for spec_event in spec_events {
+        if let Err(_) = results_sink.send(spec_event).await {
+          panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
+        }
+      }
+    }
+    Err(err) => {
+      eprintln!("Could not assemble spec events: {}", err);
+    }
+  }
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]

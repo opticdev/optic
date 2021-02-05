@@ -4,7 +4,6 @@ use crate::SpecEvent;
 use std::error::Error;
 use std::fmt;
 
-use clap::Format;
 use cqrs_core::{Aggregate, AggregateEvent};
 use futures::SinkExt;
 use std::collections::HashMap;

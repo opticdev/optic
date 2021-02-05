@@ -11,10 +11,10 @@ use tokio_stream::wrappers::ReadDirStream;
 use tokio_stream::{StreamExt, StreamMap};
 
 // TODO: return a stream instead of a Vec
-pub async fn from_api_dir(path_str: String) -> Result<Vec<SpecChunkEvent>, SpecChunkLoaderError> {
-  let path = Path::new(&path_str);
-
-  let read_dir = fs::read_dir(&path).await?;
+pub async fn from_api_dir(
+  path: impl AsRef<Path>,
+) -> Result<Vec<SpecChunkEvent>, SpecChunkLoaderError> {
+  let read_dir = fs::read_dir(path).await?;
   let mut dir_entries = ReadDirStream::new(read_dir);
 
   let mut chunks = Vec::<SpecChunkEvent>::new();
