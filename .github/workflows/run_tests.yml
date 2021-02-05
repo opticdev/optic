@@ -5,6 +5,9 @@ name: Run Tests
 on:
   push:
     branches: [ 'develop' ]
+    paths-ignore:
+      - website/**
+      - .github/**
   pull_request:
     branches: [ 'develop' ]
 
