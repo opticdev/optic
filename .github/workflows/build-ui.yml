@@ -13,7 +13,7 @@ on:
     branches: [develop]
     paths-ignore:
       - website/**
-      # - .github/**
+      - .github/**
       - "**.md"
 
 jobs:
