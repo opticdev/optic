@@ -12578,10 +12578,10 @@ mock-stdin@^1.0.0:
   resolved "https://registry.yarnpkg.com/mock-stdin/-/mock-stdin-1.0.0.tgz#efcfaf4b18077e14541742fd758b9cae4e5365ea"
   integrity sha512-tukRdb9Beu27t6dN+XztSRHq9J0B/CoAOySGzHfn8UTfmqipA5yNT/sDUEyYdAV3Hpka6Wx6kOMxuObdOex60Q==
 
-mockttp@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/mockttp/-/mockttp-1.0.3.tgz#f8b4388816e60e136289a92ed3987580fe7601bf"
-  integrity sha512-pVRm4lSGGBY6+q3bGkPAz3JsrK/zMtRw7NMQzHuF2GaVt1ru4uLEBBLRNWplFsVuvDxI02dlbyHHYR2qpPZynA==
+mockttp@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-1.1.0.tgz#e37f1333926606a16a0acdc76a914314a493e29c"
+  integrity sha512-SuglRYryHsTMPy63KZugtDjHGg8bowPmKIxEIXxRsdZMuuvvTp2eki1ScO9PujiW33Mj+yQyjPVlYbZvlTU7nQ==
   dependencies:
     "@graphql-tools/schema" "^6.0.18"
     "@graphql-tools/utils" "^6.0.18"

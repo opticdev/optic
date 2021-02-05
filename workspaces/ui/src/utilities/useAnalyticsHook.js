@@ -41,11 +41,6 @@ export function useClientAgent() {
                 email: user && user.email,
               });
               window.analytics.identify(anonymousId);
-              window.Intercom('update', {
-                user_id: anonymousId,
-                id: user && user.sub,
-                email: user && user.email,
-              });
             }
             return anonymousId;
           }

@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "9.0.8",
+  "version": "9.0.9",
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "yarn run tsc -b --verbose",
@@ -16,11 +16,11 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "9.0.8",
-    "@useoptic/cli-config": "9.0.8",
-    "@useoptic/client-utilities": "9.0.8",
-    "@useoptic/diff-engine": "9.0.8",
-    "@useoptic/diff-engine-wasm": "9.0.8",
+    "@useoptic/cli-client": "9.0.9",
+    "@useoptic/cli-config": "9.0.9",
+    "@useoptic/client-utilities": "9.0.9",
+    "@useoptic/diff-engine": "9.0.9",
+    "@useoptic/diff-engine-wasm": "9.0.9",
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-types": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
@@ -31,7 +31,7 @@
     "fs-extra": "^9.0.0",
     "keymirror": "^0.1.1",
     "lodash.throttle": "^4.1.1",
-    "mockttp": "^1.0.3",
+    "mockttp": "^1.1.0",
     "oboe": "^2.1.5",
     "ora": "^4.0.4",
     "proper-lockfile": "^4.1.1",
