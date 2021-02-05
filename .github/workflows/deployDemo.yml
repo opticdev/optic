@@ -13,7 +13,7 @@ on:
     branches: [develop]
     paths-ignore:
       - website/**
-      - .github/**
+      # - .github/**
       - "**.md"
 
 jobs:
@@ -25,7 +25,18 @@ jobs:
         with:
           token: ${{ github.token }}
       - run: |
-          echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]
+          then
+            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          else
+            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
+
+          echo "branch debugging bits:"
+          echo "GITHUB_REF $GITHUB_REF"
+          echo "GITHUB_HEAD_REF $GITHUB_HEAD_REF"
+          echo "GITHUB_BASE_REF $GITHUB_BASE_REF"
+          echo "GITHUB_EVENT_NAME $GITHUB_EVENT_NAME"
       - run: |
           if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
