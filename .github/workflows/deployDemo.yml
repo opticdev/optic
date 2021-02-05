@@ -5,8 +5,16 @@ on:
     branches:
       - release
       - develop
+    paths-ignore:
+      - website/**
+      - .github/**
+      - "**.md"
   pull_request:
     branches: [develop]
+    paths-ignore:
+      - website/**
+      - .github/**
+      - "**.md"
 
 jobs:
   build-and-push:
