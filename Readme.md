@@ -11,10 +11,10 @@
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c"><img src="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c" alt="stars" data-canonical-src="https://img.shields.io/github/stars/opticdev/optic?style=social" style="max-width:100%;"></a>
 <br/>
 
-- Langaugue agnostic, works with any Rest API
+- Language agnostic, works with any Rest API
 - Optic observes development traffic and learns your API's behavior
 - Optic detects API changes by diffing traffic against the current specification
-- Optic Adds an accurate API changelog to every Pull Request
+- Optic adds an accurate API changelog to every Pull Request
 
 
 <p>
