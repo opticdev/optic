@@ -25,11 +25,12 @@ jobs:
         with:
           token: ${{ github.token }}
       - run: |
-          echo "GITHUB_REF $GITHUB_REF"
-          echo "GITHUB_HEAD_REF $GITHUB_HEAD_REF"
-          echo "GITHUB_BASE_REF $GITHUB_BASE_REF"
-          echo "GITHUB_EVENT_NAME $GITHUB_EVENT_NAME"
-          echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]
+          then
+            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          else
+            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
       - run: |
           if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
