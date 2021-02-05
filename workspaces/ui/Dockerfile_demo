@@ -1,5 +1,0 @@
-FROM library/nginx:alpine
-COPY build/ /usr/share/nginx/html/
-COPY config/nginx/demo.nginx.conf /etc/nginx/nginx.conf
-COPY config/nginx/mime.types /etc/nginx/
-EXPOSE 80

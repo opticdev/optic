@@ -1,40 +1,76 @@
 version: "3"
 
-env:
-  DOCKER_REGISTRY: 513974440343.dkr.ecr.us-east-1.amazonaws.com
-  REPO: '{{default "demo" (env "REPO")}}'
-
 tasks:
-  demo:build:
-    desc: Build demo site
+  clean:
+    desc: Removes UI's build directories
     cmds:
-      - task: :workspaces:build
-      # setting $CI directly on the build command is required due to the way env
-      # inheritance winds up working here. setting this in the env block on this
-      # task will not work.
-      - CI=false yarn build-demo
+      - rm -rf build build-demo build-apidocs
 
-  demo:docker:build:
-    desc: Build and package demo site as a Docker container
+  ci:
+    - task: demo:ci
+    - task: apidocs:ci
+
+  #
+  # docker namespace
+  #
+  docker:build:
+    desc: Package site as a Docker container
+    vars:
+      TAG:
+        sh: echo $(../../bin/clean-docker-tag {{.TAG}})
+    cmds:
+      - |
+        docker build . \
+          -t $DOCKER_REGISTRY/{{.REPO}}:{{.TAG}} \
+          --build-arg APP={{.REPO}}
+
+  docker:push:
     vars:
       TAG:
         sh: echo $(../../bin/clean-docker-tag $TAG)
     cmds:
-      - task: demo:build
-      - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:{{.TAG}}
+      - docker push $DOCKER_REGISTRY/{{.REPO}}:{{.TAG}}
+      - |
+        if [[ "{{.TAG}}" =~ ^release-b ]]
+        then
+          echo "tagging and pushing 'latest'"
+          docker tag $DOCKER_REGISTRY/{{.REPO}}:{{.TAG}} $DOCKER_REGISTRY/{{.REPO}}:latest
+          docker push $DOCKER_REGISTRY/{{.REPO}}:latest
+        fi
+
+  #
+  # demo namespace
+  #
+  demo:build:
+    desc: Build demo site
+    cmds:
+      - task: :workspaces:build
+      - >
+        BUILD_DIR=build-demo
+        CI=false
+        yarn build-demo
+    sources:
+      - src/**
+      - package.json
+      - '**.ts'
+      - scripts/*demo*
+    generates:
+      - build-demo/**
+
+  demo:docker:build:
+    - task: demo:build
+    - task: docker:build
+      vars:
+        REPO: demo
 
   demo:docker:push:
     vars:
       TAG:
         sh: echo $(../../bin/clean-docker-tag $TAG)
     cmds:
-      - docker push $DOCKER_REGISTRY/$REPO:{{.TAG}}
-      - |
-        if [[ "{{.TAG}}" =~ ^release-b ]]
-        then
-          docker tag $DOCKER_REGISTRY/$REPO:{{.TAG}} $DOCKER_REGISTRY/$REPO:latest
-          docker push $DOCKER_REGISTRY/$REPO:latest
-        fi
+      - task: docker:push
+        vars:
+          REPO: demo
       - task: :docker:slack-notifier
         vars:
           TAG: "{{.TAG}}"
@@ -46,3 +82,53 @@ tasks:
       - task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
+        vars:
+          REPO: demo
+
+  #
+  # apidocs namespace
+  #
+  apidocs:build:
+    desc: Build apidocs site
+    cmds:
+      - task: :workspaces:build
+      - >
+        BUILD_DIR=build-apidocs
+        CI=false
+        yarn build-spec
+
+    sources:
+      - src/**
+      - package.json
+      - '**.ts'
+      - scripts/*spec*
+    generates:
+      - build-apidocs/**
+
+  apidocs:docker:build:
+    - task: apidocs:build
+    - task: docker:build
+      vars:
+        REPO: apidocs
+
+  apidocs:docker:push:
+    vars:
+      TAG:
+        sh: echo $(../../bin/clean-docker-tag $TAG)
+    cmds:
+      - task: docker:push
+        vars:
+          REPO: apidocs
+      - task: :docker:slack-notifier
+        vars:
+          TAG: "{{.TAG}}"
+
+  apidocs:ci:
+    desc: CI workflow
+    deps: [":workspaces:setup"]
+    cmds:
+      - task: :workspaces:clean
+      - task: apidocs:docker:build
+      - task: apidocs:docker:push
+        vars:
+          REPO: apidocs
