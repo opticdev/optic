@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 pub use cqrs_core::{AggregateEvent, Event};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs;
 use std::io;
@@ -19,7 +19,7 @@ pub use rfc::RfcEvent;
 pub use shape::ShapeEvent;
 pub use spec_chunk::SpecChunkEvent;
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EventContext {
   client_id: String,
@@ -28,7 +28,7 @@ pub struct EventContext {
   created_at: String,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(untagged)]
 pub enum SpecEvent {
   EndpointEvent(endpoint::EndpointEvent),

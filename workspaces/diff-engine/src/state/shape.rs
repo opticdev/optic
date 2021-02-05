@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub type ShapeId = String;
 pub type ShapeIdRef<'a> = &'a str;
@@ -6,54 +6,54 @@ pub type FieldId = String;
 pub type ShapeParameterId = String;
 pub type ShapeParameterIdRef<'a> = &'a str;
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum FieldShapeDescriptor {
   FieldShapeFromShape(FieldShapeFromShape),
   FieldShapeFromParameter(FieldShapeFromParameter),
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldShapeFromShape {
   pub field_id: FieldId,
   pub shape_id: ShapeId,
 }
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldShapeFromParameter {
   pub field_id: FieldId,
   pub shape_parameter_id: ShapeParameterId,
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum ShapeParametersDescriptor {
   NoParameterList,
   StaticParameterList(StaticShapeParametersDescriptor),
   DynamicParameterList(DynamicShapeParametersDescriptor),
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticShapeParametersDescriptor {
   pub shape_parameter_ids: Vec<ShapeParameterId>,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DynamicShapeParametersDescriptor {
   pub shape_parameter_ids: Vec<ShapeParameterId>,
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum ParameterShapeDescriptor {
   ProviderInField(ProviderInField),
   ProviderInShape(ProviderInShape),
 }
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProviderInField {}
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProviderInShape {
   pub shape_id: ShapeId,
@@ -61,24 +61,24 @@ pub struct ProviderInShape {
   pub consuming_parameter_id: ShapeParameterId,
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub enum ProviderDescriptor {
   ParameterProvider(ParameterProvider),
   ShapeProvider(ShapeProvider),
   NoProvider(NoProvider),
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParameterProvider {}
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeProvider {
   pub shape_id: ShapeId,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct NoProvider {}
 ////////////////////////////////////////////////////////////////////////////////

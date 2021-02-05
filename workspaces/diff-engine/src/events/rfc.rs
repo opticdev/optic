@@ -1,10 +1,10 @@
 use super::EventContext;
 use cqrs_core::Event;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 // RFC Events
 // -----------
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 pub enum RfcEvent {
   ContributionAdded(ContributionAdded),
   APINamed(APINamed),
@@ -13,7 +13,7 @@ pub enum RfcEvent {
   BatchCommitEnded(BatchCommitEnded),
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ContributionAdded {
   id: String,
@@ -22,14 +22,14 @@ pub struct ContributionAdded {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct APINamed {
   name: String,
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GitStateSet {
   branch_name: String,
@@ -37,7 +37,7 @@ pub struct GitStateSet {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitStarted {
   pub batch_id: String,
@@ -46,7 +46,7 @@ pub struct BatchCommitStarted {
   event_context: Option<EventContext>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitEnded {
   pub batch_id: String,
