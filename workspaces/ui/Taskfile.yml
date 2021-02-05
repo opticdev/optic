@@ -36,6 +36,8 @@ tasks:
           docker push $DOCKER_REGISTRY/$REPO:latest
         fi
       - task: :docker:slack-notifier
+        vars:
+          TAG: "{{.TAG}}"
 
   demo:ci:
     desc: CI workflow
