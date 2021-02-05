@@ -48,9 +48,7 @@ jobs:
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "REPO=demo" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
       - run: task ui:demo:ci
-      - uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a # v2.1.0
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
-        with:
-          args: "{{ GITHUB_ACTOR }}: `{{ REPO }}:{{ TAG }}` was pushed to our Docker registry."

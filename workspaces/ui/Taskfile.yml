@@ -1,8 +1,8 @@
 version: "3"
 
 env:
-  REPO: demo
   DOCKER_REGISTRY: 513974440343.dkr.ecr.us-east-1.amazonaws.com
+  REPO: '{{default .Env.REPO "demo" }}'
 
 tasks:
   demo:build:
@@ -16,18 +16,28 @@ tasks:
 
   demo:docker:build:
     desc: Build and package demo site as a Docker container
-    deps: ["demo:build"]
+    vars:
+      TAG:
+        sh: echo $(../../bin/clean-docker-tag $TAG)
     cmds:
-      - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:$TAG
+      - task: demo:build
+      - docker build . -f Dockerfile_demo -t $DOCKER_REGISTRY/$REPO:{{.TAG}}
 
   demo:docker:push:
-    - docker push $DOCKER_REGISTRY/$REPO:$TAG
-    - |
-      if [[ "$TAG" =~ ^release-b ]]
-      then
-        docker tag $DOCKER_REGISTRY/$REPO:$TAG $DOCKER_REGISTRY/$REPO:latest
-        docker push $DOCKER_REGISTRY/$REPO:latest
-      fi
+    vars:
+      TAG:
+        sh: echo $(../../bin/clean-docker-tag $TAG)
+    cmds:
+      - docker push $DOCKER_REGISTRY/$REPO:{{.TAG}}
+      - |
+        if [[ "{{.TAG}}" =~ ^release-b ]]
+        then
+          docker tag $DOCKER_REGISTRY/$REPO:{{.TAG}} $DOCKER_REGISTRY/$REPO:latest
+          docker push $DOCKER_REGISTRY/$REPO:latest
+        fi
+      - task: :docker:slack-notifier
+        vars:
+          TAG: "{{.TAG}}"
 
   demo:ci:
     desc: CI workflow
