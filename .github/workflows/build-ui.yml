@@ -31,12 +31,6 @@ jobs:
           else
             echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
           fi
-
-          echo "branch debugging bits:"
-          echo "GITHUB_REF $GITHUB_REF"
-          echo "GITHUB_HEAD_REF $GITHUB_HEAD_REF"
-          echo "GITHUB_BASE_REF $GITHUB_BASE_REF"
-          echo "GITHUB_EVENT_NAME $GITHUB_EVENT_NAME"
       - run: |
           if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
