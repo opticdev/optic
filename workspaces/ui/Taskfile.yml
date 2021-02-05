@@ -74,6 +74,7 @@ tasks:
       - task: :docker:slack-notifier
         vars:
           TAG: "{{.TAG}}"
+          REPO: demo
 
   demo:ci:
     desc: CI workflow
@@ -122,6 +123,7 @@ tasks:
       - task: :docker:slack-notifier
         vars:
           TAG: "{{.TAG}}"
+          REPO: apidocs
 
   apidocs:ci:
     desc: CI workflow
