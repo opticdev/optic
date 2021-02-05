@@ -96,7 +96,7 @@ tasks:
       - >
         BUILD_DIR=build-apidocs
         CI=false
-        REACT_APP_API_URL=https://api.o3c.info
+        REACT_APP_API_URL=https://api.opticnerve.net
         yarn build-spec
     sources:
       - src/**
