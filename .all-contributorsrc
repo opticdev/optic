@@ -173,6 +173,15 @@
       "contributions": [
         "review"
       ]
+    },
+    {
+      "login": "pimterry",
+      "name": "Tim Perry",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1526883?v=4",
+      "profile": "https://tim.fyi/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7

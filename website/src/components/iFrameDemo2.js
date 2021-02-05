@@ -64,7 +64,7 @@ export const useStyles = makeStyles({
 });
 
 export function IFrameDemo2(props) {
-  const { url } = props;
+  const { demoPath } = props;
   const featuredStyles = useFeatureStyles();
   const classes = useStyles();
   const size = useWindowSize();
@@ -75,6 +75,7 @@ export function IFrameDemo2(props) {
     iframeWidth > forcedUpperBound ? forcedUpperBound : iframeWidth;
 
   const marginLeft = (size.width - actualWidth / 1.25) / 2;
+  const demoBaseUrl = useDemoBaseUrl();
 
   return (
     <Container maxWidth={false} className={classes.container}>
@@ -89,7 +90,7 @@ export function IFrameDemo2(props) {
         <iframe
           width={'100%'}
           height={790}
-          src={url}
+          src={demoBaseUrl + demoPath}
           className={classes.innerIframe}
         ></iframe>
         <Typography variant="subtitle2" className={classes.hover}>
@@ -97,6 +98,37 @@ export function IFrameDemo2(props) {
         </Typography>
       </Paper>
     </Container>
+  );
+}
+
+export function IFrameDemoNotCentered(props) {
+  const { demoPath } = props;
+  const featuredStyles = useFeatureStyles();
+  const classes = useStyles();
+  const forcedUpperBound = 800;
+  const iframeWidth = 800 * 1.25;
+
+  const demoBaseUrl = useDemoBaseUrl();
+  return (
+    <Paper
+      className={classes.scaledIframe}
+      elevation={7}
+      style={{
+        marginLeft: 0,
+        width: '125%',
+        marginBottom: -150,
+      }}
+    >
+      <iframe
+        width={'100%'}
+        height={790}
+        src={demoBaseUrl + demoPath}
+        className={classes.innerIframe}
+      ></iframe>
+      <Typography variant="subtitle2" className={classes.hover}>
+        Hover to Start Interactive Demo
+      </Typography>
+    </Paper>
   );
 }
 
@@ -129,4 +161,18 @@ function useWindowSize() {
   }, []); // Empty array ensures that effect is only run on mount
 
   return windowSize;
+}
+
+export function useDemoBaseUrl() {
+  const [hostname, setHostname] = useState('');
+  useEffect(() => {
+    const hostname = window.location.hostname.split('.');
+    if (hostname.length <= 1) {
+      setHostname(hostname.join('.'));
+    } else {
+      setHostname(hostname.slice(-2).join('.'));
+    }
+  }, []);
+
+  return `https://demo.${hostname}`;
 }

@@ -77,7 +77,7 @@ export function Quote(props) {
         }}
       >
         <div style={{ width: 65 }}>
-          <Avatar src={'../../static/img'+pic} />
+          <Avatar src={'/img' + pic} />
         </div>
 
         <div>

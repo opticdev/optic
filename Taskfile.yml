@@ -1,16 +1,25 @@
 version: "3"
 
+dotenv:
+  - .env
+
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
+  ui:
+    taskfile: workspaces/ui/Taskfile.yml
+    dir: workspaces/ui
 
 tasks:
-  setup:
+  workspaces:setup:
+    env:
+      OPTIC_SKIP_PREBUILT_INSTALLS: "true"
     cmds:
       - yarn install
 
   workspaces:build:
-    deps: [setup]
+    desc: Build Yarn workspaces
+    deps: ["workspaces:setup"]
     cmds:
       - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
     sources:
@@ -22,13 +31,10 @@ tasks:
       # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
       - workspaces/*/build/**/*
 
-  demo:build:
-    dir: workspaces/ui
-    env:
-      PUBLIC_URL: "https://demo.o3c.info"
-      CI: "false"
+  workspaces:clean:
+    desc: Remove previous build artifacts
     cmds:
-      - yarn build-demo
+      - yarn wsrun --stages --report --fast-exit ws:clean
 
   spec:build:
     dir: workspaces/ui
@@ -52,4 +58,23 @@ tasks:
     status:
       - uname -a | grep -qv Darwin
 
+  docker:slack-notifier:
+    desc: Posts a message to Slack
+    summary: |
+      Posts a docker build announcement to Slack. To disable announcements
+      unset SLACK_WEBHOOK.
 
+      Expected env:
+        * REPO — the Docker image repository
+        * SLACK_WEBHOOK — a Slack webhook URL
+        * TAG — the Docker image tag
+        * USER — the user to direct the message at
+    vars:
+      MESSAGE: "{{.USER}}: `{{.REPO}}:{{.TAG}}` was pushed to our Docker registry."
+    env:
+      DATA: '{"text":"{{.MESSAGE}}"}'
+    cmds:
+      - echo $DATA
+      - 'curl -X POST -H "Content-type: application/json" --data "$DATA" $SLACK_WEBHOOK'
+    status:
+      - test -z $SLACK_WEBHOOK

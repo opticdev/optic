@@ -11,6 +11,7 @@
 <a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c"><img src="https://camo.githubusercontent.com/80740ef555feafeb5b1d3da8a726bb549f12e2994c7077042a406d036de8500a/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f6f707469636465762f6f707469633f7374796c653d736f6369616c" alt="stars" data-canonical-src="https://img.shields.io/github/stars/opticdev/optic?style=social" style="max-width:100%;"></a>
 <br/>
 
+- Langaugue agnostic, works with any Rest API
 - Optic observes development traffic and learns your API's behavior
 - Optic detects API changes by diffing traffic against the current specification
 - Optic Adds an accurate API changelog to every Pull Request
@@ -24,6 +25,8 @@
   <a href="#contributors-">Contributing</a>
   <a href="#license">License</a>
 </p>
+
+## [Click here for a Live Demo](https://useoptic.com/docs/demo)
 
 ## Try Optic
 > Similar to `git init`
@@ -131,7 +134,7 @@ No more doc drift. When you approve an API change Optic also updates the specifi
 
 
 ## Resources
-- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](/blog/git-for-apis)**
+- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://useoptic.com/blog/git-for-apis)**
 - Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
 - Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
   ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
@@ -149,7 +152,7 @@ MIT
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -177,6 +180,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://viljami.io/"><img src="https://avatars3.githubusercontent.com/u/6105650?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Viljami Kuosmanen</b></sub></a><br /><a href="#ideas-anttiviljami" title="Ideas, Planning, & Feedback">🤔</a> <a href="#content-anttiviljami" title="Content">🖋</a></td>
     <td align="center"><a href="http://rcrowley.org/"><img src="https://avatars0.githubusercontent.com/u/11151?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Richard Crowley</b></sub></a><br /><a href="#research-rcrowley" title="Research">🔬</a> <a href="#ideas-rcrowley" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/danMateer"><img src="https://avatars2.githubusercontent.com/u/34169713?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dnmtr</b></sub></a><br /><a href="https://github.com/opticdev/Optic/pulls?q=is%3Apr+reviewed-by%3AdanMateer" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://tim.fyi/"><img src="https://avatars.githubusercontent.com/u/1526883?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tim Perry</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=pimterry" title="Code">💻</a></td>
   </tr>
 </table>
 

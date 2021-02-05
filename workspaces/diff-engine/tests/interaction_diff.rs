@@ -4,7 +4,8 @@ use optic_diff_engine::{diff_interaction, streams, HttpInteraction, SpecEvent, S
 use petgraph::dot::Dot;
 use serde_json::json;
 use tokio::io::{AsyncBufReadExt, BufReader};
-use tokio::stream::StreamExt;
+use tokio_stream::wrappers::LinesStream;
+use tokio_stream::StreamExt;
 
 #[tokio::main]
 #[test]
@@ -94,7 +95,7 @@ async fn can_yield_interactive_diff_result() {
   assert!(destination.len() > 0);
 
   let desitination_reader = BufReader::new(std::io::Cursor::new(&destination));
-  let mut written_lines = desitination_reader.lines();
+  let mut written_lines = LinesStream::new(desitination_reader.lines());
   let first_line = written_lines
     .next()
     .await
