@@ -27,7 +27,7 @@ pub struct BatchChunkEvent {
 
 #[derive(Debug)]
 pub struct UnknownChunkEvent {
-  name: String,
+  pub name: String,
   pub events: Vec<SpecEvent>,
 }
 
@@ -40,6 +40,22 @@ impl SpecChunkEvent {
     };
 
     events.into_iter()
+  }
+
+  pub fn name(&self) -> String {
+    match self {
+      SpecChunkEvent::Root(chunk) => chunk.name.clone(),
+      SpecChunkEvent::Batch(chunk) => chunk.name.clone(),
+      SpecChunkEvent::Unknown(chunk) => chunk.name.clone(),
+    }
+  }
+
+  pub fn len(&self) -> usize {
+    match self {
+      SpecChunkEvent::Root(chunk) => chunk.events.len(),
+      SpecChunkEvent::Batch(chunk) => chunk.events.len(),
+      SpecChunkEvent::Unknown(chunk) => chunk.events.len(),
+    }
   }
 }
 
