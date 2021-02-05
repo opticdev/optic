@@ -28,6 +28,7 @@ jobs:
           echo "GITHUB_REF $GITHUB_REF"
           echo "GITHUB_HEAD_REF $GITHUB_HEAD_REF"
           echo "GITHUB_BASE_REF $GITHUB_BASE_REF"
+          echo "GITHUB_EVENT_NAME $GITHUB_EVENT_NAME"
           echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
       - run: |
           if [ "$BRANCH" = "release" ]; then
