@@ -5,6 +5,7 @@ use serde::Deserialize;
 use serde_json;
 use std::fs;
 use std::io;
+use std::path::Path;
 
 pub mod endpoint;
 pub mod http_interaction;
@@ -46,7 +47,7 @@ impl Event for SpecEvent {
 }
 
 impl SpecEvent {
-  pub fn from_file(filename: &str) -> Result<Vec<SpecEvent>, EventLoadingError> {
+  pub fn from_file(filename: impl AsRef<Path>) -> Result<Vec<SpecEvent>, EventLoadingError> {
     let file_contents = fs::read_to_string(filename)?;
 
     let events: Vec<SpecEvent> = serde_json::from_str(&file_contents)?;

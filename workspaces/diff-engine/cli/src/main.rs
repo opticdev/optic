@@ -1,4 +1,4 @@
-use clap::{crate_version, App, Arg};
+use clap::{crate_version, App, Arg, SubCommand};
 use futures::try_join;
 use futures::SinkExt;
 use futures::{StreamExt, TryStreamExt};
@@ -11,6 +11,8 @@ use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecEvent;
 use optic_diff_engine::SpecProjection;
 use std::cmp;
+use std::future::Future;
+use std::path::Path;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
@@ -37,7 +39,8 @@ fn main() {
         .help(
           "Sets the amount of threads used. Defaults to amount of cores available to the system.",
         ),
-    );
+    )
+    .subcommand(SubCommand::with_name("assemble"));
 
   let matches = cli.get_matches();
 
@@ -55,6 +58,29 @@ fn main() {
     },
   };
 
+  let mut runtime_builder = tokio::runtime::Builder::new_multi_thread();
+  runtime_builder.enable_all();
+  if let Some(core_threads) = core_threads_count {
+    runtime_builder.worker_threads(core_threads as usize);
+  }
+
+  let runtime = runtime_builder.build().unwrap();
+
+  if let Some(matches) = matches.subcommand_matches("assemble") {
+    println!("Spec assembly sub command");
+    return ();
+  } else {
+    let diff_queue_size = cmp::min(
+      num_cpus::get(),
+      core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+    ) * 4;
+    eprintln!("using diff size {}", diff_queue_size);
+
+    runtime.block_on(diff(spec_file_path, diff_queue_size));
+  }
+}
+
+fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) -> impl Future<Output = ()> {
   let events = SpecEvent::from_file(spec_file_path)
     .map_err(|err| match err {
       errors::EventLoadingError::Io(err) => {
@@ -71,26 +97,12 @@ fn main() {
 
   let spec_projection = Arc::new(SpecProjection::from(events));
 
-  let mut runtime_builder = tokio::runtime::Builder::new_multi_thread();
-  runtime_builder.enable_all();
-  if let Some(core_threads) = core_threads_count {
-    runtime_builder.worker_threads(core_threads as usize);
-  }
-
-  let runtime = runtime_builder.build().unwrap();
-  runtime.block_on(async {
+  async move {
     let stdin = stdin(); // TODO: deal with std in never having been attached
 
     let interaction_lines = streams::http_interaction::json_lines(stdin);
 
     let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
-
-    // set amount of diff tasks queued to be proportional to the amount of threads we'll be using
-    let diff_queue_size = cmp::min(
-      num_cpus::get(),
-      core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-    ) * 4;
-    eprintln!("using diff size {}", diff_queue_size);
 
     let results_manager = tokio::spawn(async move {
       let stdout = stdout();
@@ -163,7 +175,11 @@ fn main() {
     };
 
     try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
-  })
+  }
+}
+
+fn assemble(spec_folder_path: impl AsRef<Path>) -> impl Future<Output = ()> {
+  async {}
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
