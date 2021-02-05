@@ -134,7 +134,7 @@ No more doc drift. When you approve an API change Optic also updates the specifi
 
 
 ## Resources
-- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](/blog/git-for-apis)**
+- Read our about Aidan + Dev's vision for the space **[Read: Git for APIs](https://useoptic.com/blog/git-for-apis)**
 - Listen to **[Optic on Software Engineering Daily](https://softwareengineeringdaily.com/2020/09/02/api-change-management-with-aidan-cunniffe/)**
 - Read API Evangelist on Optic **[Automatically Generate OpenAPI For Your APIs Just By Using Them
   ](https://apievangelist.com/2019/12/12/automatically-generate-openapi-for-your-apis-just-by-using-them/)**
