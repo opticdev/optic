@@ -10,6 +10,9 @@ on:
       - .github/**
   pull_request:
     branches: [develop]
+    paths-ignore:
+      - website/**
+      - .github/**
 
 jobs:
   build-and-push:
