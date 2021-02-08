@@ -11,8 +11,6 @@ use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecEvent;
 use optic_diff_engine::SpecProjection;
 use std::cmp;
-use std::future::Future;
-use std::path::Path;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWriteExt};
@@ -70,7 +68,6 @@ fn main() {
   } else {
     SpecPathType::FILE
   };
-  dbg!(&matches);
   let core_threads_count: Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16)
   {
     Ok(count) => Some(count),

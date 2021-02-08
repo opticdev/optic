@@ -88,7 +88,8 @@ impl AggregateEvent<SpecAssemblerProjection> for SpecChunkEvent {
       SpecChunkEvent::Unknown(chunk) => {
         dbg!(
           "ignored chunk in application to SpecAssemblerProjection",
-          chunk
+          chunk.name,
+          chunk.events.len()
         );
       }
     }
