@@ -5,7 +5,6 @@ use std::error::Error;
 use std::fmt;
 
 use cqrs_core::{Aggregate, AggregateEvent};
-use futures::SinkExt;
 use std::collections::HashMap;
 
 #[derive(Debug)]
