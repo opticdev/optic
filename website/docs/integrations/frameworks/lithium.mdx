@@ -1,23 +1,23 @@
 ---
-title: Using C++ with Optic
-sidebar_label: C++
-slug: /cpp
+title: Using Lithium with Optic
+sidebar_label: Lithium
+slug: /lithium
 ---
 
-Optic is easy to use with C++, no special library or large code changes required.
+Optic is easy to use with Lithium, no special library or large code changes required.
 
 ## `api start` Command
 
-Let's say we have a simple C++ server that we usually develop with on localhost:3005.
+Let's say we have a simple Lithium server that we usually develop with on localhost:3005.
 
 ### Optic needs to know how to start our API
 
- Our optic.yml file would include our start command (such as `./application`).
+ Our optic.yml file would include our start command (such as `li run ./main.cc`).
 
 ``` yaml
-name: C++ API
+name: Lithium API
 tasks:
-    command: ./application
+    command: li run ./main.cc
     inboundUrl: https://localhost:3005
 ```
 
@@ -27,23 +27,29 @@ Optic injects a `$PORT` environment variable for our application to listen on wh
 
 #### Before
 ```
-utility::string_t port = U("3005");
+int main() {
+  http_api my_api;
+              
+  ...
 
-utility::string_t address = U("http://127.0.0.1:");
-address.append(port);
-on_initialize(address);
+  http_serve(my_api, 3005);
+}
 ```
 
 #### After
 ```
-std::string portStr = "3005";
-if (getenv("PORT")) {
+int main() {
+  http_api my_api;
+  std::string portStr = "3005";
+  if (getenv("PORT")) {
     portStr =  getenv ("PORT");
-}
-utility::string_t port = U(portStr);
+  }
+  utility::string_t port = U(portStr);
+              
+  ...
 
-utility::string_t address = U("http://127.0.0.1:");
-address.append(port);
+  http_serve(my_api, port);
+}
 ```
 
 ## Verifying with `api check start`

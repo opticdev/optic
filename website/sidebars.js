@@ -25,7 +25,6 @@ module.exports = {
         items: [
           'integrations/frameworks/actix',
           'integrations/frameworks/c-sharp',
-          'integrations/frameworks/cpp',
           'integrations/frameworks/django',
           'integrations/frameworks/elixir',
           'integrations/frameworks/express',
@@ -34,6 +33,7 @@ module.exports = {
           'integrations/frameworks/gorilla',
           'integrations/frameworks/hapi',
           'integrations/frameworks/laravel',
+          'integrations/frameworks/lithium',
           'integrations/frameworks/pistache',
           'integrations/frameworks/puma',
           'integrations/frameworks/rocket-ignite',
