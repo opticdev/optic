@@ -12,7 +12,8 @@ import { fromOptic } from '@useoptic/cli-shared';
 import { generateOas } from './generate/oas';
 import { spawnProcess } from '../shared/spawn-process';
 export default class Scripts extends Command {
-  static description = 'Run one of the scripts in your optic.yml file';
+  static description =
+    'run one of the scripts in optic.yml with the current specification';
 
   static args = [
     {

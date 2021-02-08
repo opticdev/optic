@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli",
-  "description": "The Optic CLI",
+  "description": "API CLI from Optic. Document and test your APIs as you build them.",
   "version": "9.0.9",
   "author": "@useoptic",
   "bin": {

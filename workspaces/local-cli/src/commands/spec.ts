@@ -20,7 +20,7 @@ import {
 import { getUser } from '../shared/analytics';
 import { Config } from '../config';
 export default class Spec extends Command {
-  static description = 'Open your Optic API specification';
+  static description = 'open your current API specification';
 
   async run() {
     let paths: IPathMapping;
