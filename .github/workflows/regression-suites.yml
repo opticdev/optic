@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - release
+      - report-regression-suite-status-to-slack
 
 jobs:
 
