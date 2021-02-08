@@ -81,8 +81,9 @@ fn main() {
   }
 }
 
-fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) -> impl Future<Output = ()> {
-  let events = SpecEvent::from_file(spec_file_path)
+async fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) {
+  let events = streams::spec_events::from_file(spec_file_path)
+    .await
     .map_err(|err| match err {
       errors::EventLoadingError::Io(err) => {
         eprintln!("Could not read specification file: {}", err);
@@ -98,85 +99,83 @@ fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) -> impl Future
 
   let spec_projection = Arc::new(SpecProjection::from(events));
 
-  async move {
-    let stdin = stdin(); // TODO: deal with std in never having been attached
+  let stdin = stdin(); // TODO: deal with std in never having been attached
 
-    let interaction_lines = streams::http_interaction::json_lines(stdin);
+  let interaction_lines = streams::http_interaction::json_lines(stdin);
 
-    let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
+  let (results_sender, mut results_receiver) = mpsc::channel(32); // buffer 32 results
 
-    let results_manager = tokio::spawn(async move {
-      let stdout = stdout();
-      let mut results_sink = streams::diff::into_json_lines(stdout);
+  let results_manager = tokio::spawn(async move {
+    let stdout = stdout();
+    let mut results_sink = streams::diff::into_json_lines(stdout);
 
-      while let Some(result) = results_receiver.recv().await {
-        if let Err(_) = results_sink.send(result).await {
-          panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
-        }
+    while let Some(result) = results_receiver.recv().await {
+      if let Err(_) = results_sink.send(result).await {
+        panic!("could not write diff result to stdout"); // TODO: Find way to actually write error info
       }
-    });
+    }
+  });
 
-    tokio::pin!(results_manager);
+  tokio::pin!(results_manager);
 
-    dbg!("waiting for next interaction");
+  dbg!("waiting for next interaction");
 
-    let diffing_interactions = async move {
-      let diff_results = interaction_lines
-        .map(Ok)
-        .try_for_each_concurrent(diff_queue_size, |interaction_json_result| {
-          let projection = spec_projection.clone();
-          let results_sender = results_sender.clone();
+  let diffing_interactions = async move {
+    let diff_results = interaction_lines
+      .map(Ok)
+      .try_for_each_concurrent(diff_queue_size, |interaction_json_result| {
+        let projection = spec_projection.clone();
+        let results_sender = results_sender.clone();
 
-          let diff_task = tokio::spawn(async move {
-            let diff_comp = tokio::task::spawn_blocking::<
-              _,
-              Option<(Vec<InteractionDiffResult>, Tags)>,
-            >(move || {
-              let interaction_json =
-                interaction_json_result.expect("can read interaction json line from stdin");
-              let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-                match serde_json::from_str(&interaction_json) {
-                  Ok(tagged_interaction) => tagged_interaction,
-                  Err(parse_error) => {
-                    eprintln!("could not parse interaction json: {}", parse_error);
-                    return None;
-                  }
-                };
-
-              Some((diff_interaction(&projection, interaction), tags))
-            });
-            //dbg!("waiting for results");
-            let results = diff_comp
-              .await
-              .expect("diffing of interaction should be successful");
-            //dbg!("got results");
-
-            if let Some((results, tags)) = results {
-              for result in results {
-                //dbg!(&result);
-                if let Err(_) = results_sender
-                  .send(ResultContainer::from((result, &tags)))
-                  .await
-                {
-                  panic!("could not write diff result to results channel");
-                  // TODO: Find way to actually write error info
+        let diff_task = tokio::spawn(async move {
+          let diff_comp = tokio::task::spawn_blocking::<
+            _,
+            Option<(Vec<InteractionDiffResult>, Tags)>,
+          >(move || {
+            let interaction_json =
+              interaction_json_result.expect("can read interaction json line from stdin");
+            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
+              match serde_json::from_str(&interaction_json) {
+                Ok(tagged_interaction) => tagged_interaction,
+                Err(parse_error) => {
+                  eprintln!("could not parse interaction json: {}", parse_error);
+                  return None;
                 }
+              };
+
+            Some((diff_interaction(&projection, interaction), tags))
+          });
+          //dbg!("waiting for results");
+          let results = diff_comp
+            .await
+            .expect("diffing of interaction should be successful");
+          //dbg!("got results");
+
+          if let Some((results, tags)) = results {
+            for result in results {
+              //dbg!(&result);
+              if let Err(_) = results_sender
+                .send(ResultContainer::from((result, &tags)))
+                .await
+              {
+                panic!("could not write diff result to results channel");
+                // TODO: Find way to actually write error info
               }
             }
-          });
+          }
+        });
 
-          diff_task
-        })
-        .await;
+        diff_task
+      })
+      .await;
 
-      dbg!("interactions stream closed");
+    dbg!("interactions stream closed");
 
-      drop(results_sender);
-      diff_results
-    };
+    drop(results_sender);
+    diff_results
+  };
 
-    try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
-  }
+  try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
 async fn assemble(spec_folder_path: impl AsRef<Path>) {
