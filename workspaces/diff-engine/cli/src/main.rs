@@ -1,4 +1,4 @@
-use clap::{crate_version, App, Arg, SubCommand};
+use clap::{crate_version, App, Arg, ArgGroup, SubCommand};
 use futures::try_join;
 use futures::SinkExt;
 use futures::{StreamExt, TryStreamExt};
@@ -26,9 +26,27 @@ fn main() {
     .arg(
       Arg::with_name("specification")
         .required(true)
-        .value_name("spec-file-path")
-        .help("Sets the specification file that describes the API spec")
+        .value_name("SPEC_PATH")
+        .help("The path to the specification that describes the API spec")
         .takes_value(true),
+    )
+    .arg(
+      Arg::with_name("use-spec-file")
+        .short("f")
+        .takes_value(false)
+        .help("SPEC_PATH is expected to be a single file (default)"),
+    )
+    .arg(
+      Arg::with_name("use-spec-dir")
+        .short("d")
+        .takes_value(false)
+        .help("SPEC_PATH is expected to be a directory"),
+    )
+    .group(
+      ArgGroup::with_name("spec-type")
+        .args(&["use-spec-file", "use-spec-dir"])
+        .multiple(false)
+        .required(false),
     )
     .arg(
       Arg::with_name("core-threads")
@@ -44,9 +62,15 @@ fn main() {
 
   let matches = cli.get_matches();
 
-  let spec_file_path = matches
+  let spec_path = matches
     .value_of("specification")
-    .expect("spec-file-path should be required");
+    .expect("SPEC_PATH should be required");
+  let spec_path_type = if matches.is_present("use-spec-dir") {
+    SpecPathType::DIR
+  } else {
+    SpecPathType::FILE
+  };
+  dbg!(&matches);
   let core_threads_count: Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16)
   {
     Ok(count) => Some(count),
@@ -66,37 +90,50 @@ fn main() {
 
   let runtime = runtime_builder.build().unwrap();
 
-  if let Some(_matches) = matches.subcommand_matches("assemble") {
-    eprintln!("assembling spec folder into spec");
-    runtime.block_on(assemble(spec_file_path));
-  } else {
-    eprintln!("diffing interations against a spec");
-    let diff_queue_size = cmp::min(
-      num_cpus::get(),
-      core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-    ) * 4;
-    eprintln!("using diff size {}", diff_queue_size);
+  runtime.block_on(async {
+    let spec_events = match spec_path_type {
+      SpecPathType::FILE => streams::spec_events::from_file(&spec_path)
+        .await
+        .map_err(|err| match err {
+          errors::EventLoadingError::Io(err) => {
+            eprintln!("Could not read specification file: {}", err);
+            process::exit(1);
+          }
+          errors::EventLoadingError::Json(err) => {
+            eprintln!("Specification JSON file could not be parsed: {}", err);
+            process::exit(1);
+          }
+          _ => unreachable!("Specification file not currently serialized as any other but JSON"),
+        })
+        .unwrap(),
+      SpecPathType::DIR => {
+        let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_path)
+          .await
+          .expect("should be able to find spec event chunks in a folder");
 
-    runtime.block_on(diff(spec_file_path, diff_queue_size));
-  }
+        streams::spec_events::from_spec_chunks(spec_chunk_events)
+          .await
+          .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
+      }
+    };
+
+    if let Some(_matches) = matches.subcommand_matches("assemble") {
+      eprintln!("assembling spec folder into spec");
+      assemble(spec_events).await;
+    } else {
+      eprintln!("diffing interations against a spec");
+      let diff_queue_size = cmp::min(
+        num_cpus::get(),
+        core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+      ) * 4;
+      eprintln!("using diff size {}", diff_queue_size);
+
+      diff(spec_events, diff_queue_size).await;
+    }
+  });
 }
 
-async fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) {
-  let events = streams::spec_events::from_file(spec_file_path)
-    .await
-    .map_err(|err| match err {
-      errors::EventLoadingError::Io(err) => {
-        eprintln!("Could not read specification file: {}", err);
-        process::exit(1);
-      }
-      errors::EventLoadingError::Json(err) => {
-        eprintln!("Specification JSON file could not be parsed: {}", err);
-        process::exit(1);
-      }
-      _ => unreachable!("Specification file not currently serialized as any other but JSON"),
-    })
-    .unwrap();
-
+async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
   let spec_projection = Arc::new(SpecProjection::from(events));
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
@@ -178,42 +215,37 @@ async fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) {
   try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
-async fn assemble(spec_folder_path: impl AsRef<Path>) {
+async fn assemble(spec_events: Vec<SpecEvent>) {
   let stdout = stdout();
-  let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_folder_path)
+
+  let mut results_sink = streams::spec_events::into_json_array_items(stdout);
+  results_sink
+    .get_mut()
+    .write_u8(b'[')
     .await
-    .expect("should be able to find spec event chunks in a folder");
+    .expect("could not write array start to stdout");
 
-  match streams::spec_events::from_spec_chunks(spec_chunk_events).await {
-    Ok(spec_events) => {
-      let mut results_sink = streams::spec_events::into_json_array_items(stdout);
-      results_sink
-        .get_mut()
-        .write_u8(b'[')
-        .await
-        .expect("could not write array start to stdout");
-
-      for spec_event in spec_events {
-        if let Err(_) = results_sink.send(spec_event).await {
-          panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
-        }
-      }
-      results_sink
-        .get_mut()
-        .write_u8(b']')
-        .await
-        .expect("could not write array start to stdout");
-
-      results_sink
-        .get_mut()
-        .flush()
-        .await
-        .expect("could not flush stdout")
-    }
-    Err(err) => {
-      eprintln!("Could not assemble spec events: {}", err);
+  for spec_event in spec_events {
+    if let Err(_) = results_sink.send(spec_event).await {
+      panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
     }
   }
+  results_sink
+    .get_mut()
+    .write_u8(b']')
+    .await
+    .expect("could not write array start to stdout");
+
+  results_sink
+    .get_mut()
+    .flush()
+    .await
+    .expect("could not flush stdout")
+}
+
+enum SpecPathType {
+  FILE,
+  DIR,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
