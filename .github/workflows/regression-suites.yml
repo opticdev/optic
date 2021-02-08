@@ -6,6 +6,9 @@ on:
   pull_request:
     branches:
       - release
+  push:
+    paths:
+      - .github/tmp/regression-suites
 
 jobs:
 
