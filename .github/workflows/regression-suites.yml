@@ -10,6 +10,10 @@ on:
     branches:
       - report-regression-suite-status-to-slack
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
 
   local-cli-regression-:
