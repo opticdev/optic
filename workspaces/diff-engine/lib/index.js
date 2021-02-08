@@ -16,6 +16,51 @@ function spawn({ specPath }) {
   const output = new PassThrough();
   const error = new PassThrough();
 
+  const binPath = getBinPath();
+
+  const diffProcess = Execa(binPath, [specPath], {
+    input,
+    stdio: 'pipe',
+  });
+
+  if (!diffProcess.stdout || !diffProcess.stderr)
+    throw new Error('diff process should have stdout and stderr streams');
+
+  diffProcess.stdout.pipe(output);
+  diffProcess.stderr.pipe(error);
+
+  // get a clean result promise, so we stay in control of the exact API we're exposing
+  const result = diffProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      throw new DiffEngineError(childResult);
+    }
+  );
+  return { input, output, error, result };
+}
+
+function readSpec({ specDirPath }) {
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  const assembleProcess = Execa(binPath, [specDirPath, 'assemble'], {
+    stdio: ['ignore', 'pipe', 'inherit'],
+  });
+
+  assembleProcess.stdout.pipe(output);
+
+  // surface any errors in execution on the output stream
+  assembleProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+  return output;
+}
+
+function getBinPath() {
   const binaryName = Config.binaryName;
   const supportedPlatform = getSupportedPlatform();
 
@@ -46,28 +91,9 @@ function spawn({ specPath }) {
     );
   }
 
-  const binPath = binPaths[0];
-
-  const diffProcess = Execa(binPath, [specPath], {
-    input,
-    stdio: 'pipe',
-  });
-
-  if (!diffProcess.stdout || !diffProcess.stderr)
-    throw new Error('diff process should have stdout and stderr streams');
-
-  diffProcess.stdout.pipe(output);
-  diffProcess.stderr.pipe(error);
-
-  // get a clean result promise, so we stay in control of the exact API we're exposing
-  const result = diffProcess.then(
-    (childResult) => {},
-    (childResult) => {
-      throw new DiffEngineError(childResult);
-    }
-  );
-  return { input, output, error, result };
+  return binPaths[0];
 }
+
 function getSupportedPlatform() {
   return Config.supportedPlatforms.find(
     ({ arch, type }) => arch === OS.arch() && type === OS.type()
@@ -204,6 +230,7 @@ class DiffEngineError extends Error {
 }
 
 exports.spawn = spawn;
+exports.readSpec = readSpec;
 exports.install = install;
 exports.uninstall = uninstall;
 exports.DiffEngineError = DiffEngineError;
