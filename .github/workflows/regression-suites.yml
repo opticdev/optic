@@ -7,9 +7,6 @@ on:
     branches:
       - release
   workflow_dispatch:
-  push:
-    paths:
-      - .github/tmp/regression-suites
 
 jobs:
 
