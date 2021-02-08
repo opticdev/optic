@@ -66,7 +66,7 @@ fn main() {
 
   let runtime = runtime_builder.build().unwrap();
 
-  if let Some(matches) = matches.subcommand_matches("assemble") {
+  if let Some(_matches) = matches.subcommand_matches("assemble") {
     eprintln!("assembling spec folder into spec");
     runtime.block_on(assemble(spec_file_path));
   } else {
