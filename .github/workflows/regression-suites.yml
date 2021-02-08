@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - release
+  workflow_dispatch:
 
 jobs:
 
@@ -82,11 +83,22 @@ jobs:
         run: |
           source sourceme.sh
           optic_ci_standard_streams_regression ${{ matrix.interaction-count }} ${{ matrix.rust-diff-engine }}
-
-
       - name: 'display diff output'
         shell: bash
         run: |
           source sourceme.sh
           optic_ci_standard_streams_regression__on_failure
-        if: ${{ always() }}
+        if: always()
+      - run: |
+          echo "MESSAGE=${{ matrix.os }}: Regression suites passed." >> $GITHUB_ENV
+        shell: bash
+        if: success()
+      - run: |
+          echo "MESSAGE=${{ matrix.os }}: Regression suites failed. https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
+        shell: bash
+        if: failure()
+      - name: Report status
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        shell: bash
+        if: always()
