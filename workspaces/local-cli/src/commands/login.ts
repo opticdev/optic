@@ -18,6 +18,7 @@ import { trackUserEvent } from '../shared/analytics';
 export default class Login extends Command {
   static description = 'Login to Optic from the CLI';
 
+  static hidden = true;
   async run() {
     const { flags } = this.parse(Login);
     try {

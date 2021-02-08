@@ -5,7 +5,7 @@ import {
 } from '../shared/local-cli-task-runner';
 
 export default class Start extends Command {
-  static description = 'starts your API process behind an Optic proxy';
+  static description = 'alias for "api run start"';
 
   static flags = runCommandFlags;
 
