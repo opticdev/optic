@@ -91,9 +91,11 @@ jobs:
           source sourceme.sh
           optic_ci_standard_streams_regression__on_failure
         if: always()
-      - run: echo "MESSAGE=Regression suites passed." >> $GITHUB_ENV
+      - run: |
+          echo "MESSAGE=${{ matrix.os }}: Regression suites passed." >> $GITHUB_ENV
         if: success()
-      - run: echo "MESSAGE=Regression suites failed. http://https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
+      - run: |
+          echo "MESSAGE=${{ matrix.os }}: Regression suites failed. http://https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
         if: failure()
       - name: Report status
         run: |
