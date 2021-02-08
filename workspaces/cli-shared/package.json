@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-shared",
-  "version": "9.0.9",
+  "version": "9.0.10-beta.0",
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "yarn run tsc -b --verbose",
@@ -16,11 +16,11 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "@oclif/command": "^1.6.1",
-    "@useoptic/cli-client": "9.0.9",
-    "@useoptic/cli-config": "9.0.9",
-    "@useoptic/client-utilities": "9.0.9",
-    "@useoptic/diff-engine": "9.0.9",
-    "@useoptic/diff-engine-wasm": "9.0.9",
+    "@useoptic/cli-client": "9.0.10-beta.0",
+    "@useoptic/cli-config": "9.0.10-beta.0",
+    "@useoptic/client-utilities": "9.0.10-beta.0",
+    "@useoptic/diff-engine": "9.0.10-beta.0",
+    "@useoptic/diff-engine-wasm": "9.0.10-beta.0",
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-types": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
