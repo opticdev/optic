@@ -15,7 +15,7 @@ use std::future::Future;
 use std::path::Path;
 use std::process;
 use std::sync::Arc;
-use tokio::io::{stdin, stdout};
+use tokio::io::{stdin, stdout, AsyncWriteExt};
 use tokio::sync::mpsc;
 
 fn main() {
@@ -181,18 +181,35 @@ fn diff(spec_file_path: impl AsRef<Path>, diff_queue_size: usize) -> impl Future
 
 async fn assemble(spec_folder_path: impl AsRef<Path>) {
   let stdout = stdout();
-  let mut results_sink = streams::spec_events::into_json_lines(stdout);
   let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_folder_path)
     .await
     .expect("should be able to find spec event chunks in a folder");
 
   match streams::spec_events::from_spec_chunks(spec_chunk_events).await {
     Ok(spec_events) => {
+      let mut results_sink = streams::spec_events::into_json_array_items(stdout);
+      results_sink
+        .get_mut()
+        .write_u8(b'[')
+        .await
+        .expect("could not write array start to stdout");
+
       for spec_event in spec_events {
         if let Err(_) = results_sink.send(spec_event).await {
           panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
         }
       }
+      results_sink
+        .get_mut()
+        .write_u8(b']')
+        .await
+        .expect("could not write array start to stdout");
+
+      results_sink
+        .get_mut()
+        .flush()
+        .await
+        .expect("could not flush stdout")
     }
     Err(err) => {
       eprintln!("Could not assemble spec events: {}", err);

@@ -9,11 +9,26 @@ pub mod http_interaction;
 pub mod spec_chunks;
 pub mod spec_events;
 
-pub struct JsonLineEncoder {}
+pub struct JsonLineEncoder {
+  delimeter: u8,
+  first: bool,
+}
+
+impl Default for JsonLineEncoder {
+  fn default() -> Self {
+    Self {
+      delimeter: b'\n',
+      first: true,
+    }
+  }
+}
 
 impl JsonLineEncoder {
-  fn new() -> Self {
-    Self {}
+  fn new(delimeter: u8) -> Self {
+    Self {
+      delimeter,
+      first: true,
+    }
   }
 }
 
@@ -26,8 +41,12 @@ where
   fn encode(&mut self, item: T, buf: &mut BytesMut) -> Result<(), Self::Error> {
     let json = serde_json::to_string(&item)?;
     buf.reserve(json.len() + 1);
+    if self.first {
+      self.first = false;
+    } else {
+      buf.put_u8(self.delimeter);
+    }
     buf.put(json.as_bytes());
-    buf.put_u8(b'\n');
     Ok(())
   }
 }

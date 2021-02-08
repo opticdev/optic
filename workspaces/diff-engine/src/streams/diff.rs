@@ -12,6 +12,6 @@ where
   T: Serialize,
 {
   let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new();
+  let codec = JsonLineEncoder::new(b'\n');
   FramedWrite::new(writer, codec)
 }

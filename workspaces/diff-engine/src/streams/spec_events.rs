@@ -30,6 +30,15 @@ where
   S: AsyncWrite,
 {
   let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new();
+  let codec = JsonLineEncoder::new(b'\n');
+  FramedWrite::new(writer, codec)
+}
+
+pub fn into_json_array_items<S>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
+where
+  S: AsyncWrite,
+{
+  let writer = BufWriter::new(sink);
+  let codec = JsonLineEncoder::new(b',');
   FramedWrite::new(writer, codec)
 }
