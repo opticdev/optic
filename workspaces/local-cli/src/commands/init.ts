@@ -30,7 +30,7 @@ import { Client } from '@useoptic/cli-client';
 import openBrowser from 'react-dev-utils/openBrowser';
 
 export default class Init extends Command {
-  static description = 'Add Optic to your API';
+  static description = 'add Optic to your API';
 
   static flags = {
     inboundUrl: flags.string({}),

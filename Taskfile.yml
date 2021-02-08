@@ -3,6 +3,9 @@ version: "3"
 dotenv:
   - .env
 
+env:
+  DOCKER_REGISTRY: 513974440343.dkr.ecr.us-east-1.amazonaws.com
+
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml

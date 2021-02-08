@@ -1,4 +1,4 @@
-name: Deploy Optic Demo
+name: Build UI projects
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
       - "**.md"
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,12 @@ jobs:
         with:
           token: ${{ github.token }}
       - run: |
-          echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]
+          then
+            echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          else
+            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
       - run: |
           if [ "$BRANCH" = "release" ]; then
             echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
@@ -54,9 +59,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@060516122e7b4cc1cc3d4614a998adbb93d3fbf2 # v1.2.2
       - run: |
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
-          echo "REPO=demo" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
-      - run: task ui:demo:ci
+      - run: task ui:ci
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}

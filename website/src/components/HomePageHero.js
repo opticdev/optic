@@ -41,7 +41,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-start',
     overflow: 'hidden',
-    backgroundImage: `url('/svg-bg.svg')`,
+    backgroundImage: `url('/img/svg-bg.svg')`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: '95% 34%',
     backgroundAttachment: 'local',

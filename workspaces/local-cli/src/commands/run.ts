@@ -6,7 +6,7 @@ import {
 import { cleanupAndExit } from '@useoptic/cli-shared';
 
 export default class Run extends Command {
-  static description = 'Run a task from your optic.yml';
+  static description = 'run tasks from your optic.yml';
 
   static flags = runCommandFlags;
 

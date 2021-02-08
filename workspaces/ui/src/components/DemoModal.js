@@ -41,7 +41,7 @@ export const DemoModal = (props) => {
               autoFocus={false}
               type="submit"
               onClick={() => {
-                window.open('https://auth.useoptic.com/login');
+                window.open('https://useoptic.com/docs');
               }}
               color="secondary"
               endIcon={<NavigateNextIcon />}

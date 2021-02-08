@@ -4,7 +4,7 @@ import colors from 'colors';
 
 export default class Logout extends Command {
   static description = 'Logout from Optic';
-
+  static hidden = true;
   async run() {
     try {
       await deleteCredentials();

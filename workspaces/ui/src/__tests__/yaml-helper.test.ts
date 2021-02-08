@@ -3,7 +3,7 @@ import { rangesFromOpticYaml } from '../components/setup-page/yaml/YamlHelper';
 const opticyaml = `name: Todo API
 tasks:
   # The default task, invoke using \`api run start\`
-  # Learn how to set up and use Optic at https://app.useoptic.com
+  # Learn how to set up and use Optic at https://useoptic.com/docs/
   start:
     command: npm run server-start
     inboundUrl: http://localhost:3005
