@@ -10,10 +10,6 @@ on:
     branches:
       - report-regression-suite-status-to-slack
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
 
   local-cli-regression-:
@@ -97,11 +93,14 @@ jobs:
         if: always()
       - run: |
           echo "MESSAGE=${{ matrix.os }}: Regression suites passed." >> $GITHUB_ENV
+        shell: bash
         if: success()
       - run: |
-          echo "MESSAGE=${{ matrix.os }}: Regression suites failed. http://https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
+          echo "MESSAGE=${{ matrix.os }}: Regression suites failed. https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
+        shell: bash
         if: failure()
       - name: Report status
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        shell: bash
         if: always()
