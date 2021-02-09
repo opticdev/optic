@@ -66,7 +66,11 @@ fn main() {
   let spec_path_type = if matches.is_present("use-spec-dir") {
     SpecPathType::DIR
   } else {
-    SpecPathType::FILE
+    if let Some(_) = matches.subcommand_matches("assemble") {
+      SpecPathType::DIR
+    } else {
+      SpecPathType::FILE
+    }
   };
   let core_threads_count: Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16)
   {
