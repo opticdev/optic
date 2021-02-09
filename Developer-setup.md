@@ -57,6 +57,7 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
 - `cargo doc --document-private-items --open` will generate and open the Rust type and function documentation for the project
 - [Visual Studio Code](https://code.visualstudio.com/) provides the best Rust integration using the language [extension](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust) 
 - if you have `lldb` interactive [debugging](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) is straightforward to setup
+- for a repl [evcxr](https://github.com/google/evcxr) is easy to set up and use with `:dep optic_diff_engine = {path = "/your-full-path/optic/workspaces/diff-engine"}` then you can `use optic_diff_engine` and interact with package like you were working in a Rust file
 
 ## Troubleshooting and Additional Notes
 
