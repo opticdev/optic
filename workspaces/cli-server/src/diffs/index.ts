@@ -51,9 +51,10 @@ export interface DiffConfigObject {
   captureId: string;
   captureBaseDirectory: string;
   diffId: string;
-  events?: Array<{ [key: string]: any}>;
+  events?: Array<{ [key: string]: any }>;
   endpoints?: Array<{ pathId: string; method: string }>;
   specPath: string;
+  specDirPath: string;
 }
 
 export interface ProgressStream extends Readable {}
