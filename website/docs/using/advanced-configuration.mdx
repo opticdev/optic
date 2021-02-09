@@ -122,25 +122,25 @@ Dependencies can only go one level deep. Dependent tasks cannot define `inboundU
 
 ## Ignoring API Paths
 
-As you use Optic, you will probably find there are some paths you would like Optic to ignore. Examples include `OPTIONS` requests, `.html`, `.js`, `.css` files, or everything in your `/public` folder.
+As you use Optic, you will probably find there are some paths you would like Optic to ignore. These can be identified individually in the undocumented endpoint review page in the UI. For ignoring routes in bulk by some characteristic, you can directly edit the project's ignore rules. Examples include ignoring all `OPTIONS` requests, `.html`, `.js`, `.css` files, or everything in your `/public` folder. Many of these are provided by default, and can be removed if necessary.
 
-You can add ignore rules to your api.yml file:
+You can add ignore rules to your `.optic/ignore` file:
 
-```yaml
-name: Todo API
-tasks:
-  start:
-    command: npm run server-start
-    inboundUrl: 'http://localhost:3005'
-
-ignoreRequests:
-  - OPTIONS (.*)`
-  - GET /public/(.*)
+``` txt
+# Default Ignore Rules
+# Learn to configure your own at http://localhost:4000/docs/using/advanced-configuration#ignoring-api-paths
+OPTIONS *
+HEAD *
+GET (.*).htm
+GET (.*).html
+GET (.*).css
+GET (.*).js
+...
 ```
 
 Rules follow the following format: 
 
-``` yaml
+``` txt
 - METHOD(s) path
 ```
 
@@ -157,11 +157,10 @@ Rules follow the following format:
 
 ### Examples
 
-``` yaml
-ignoreRequests:
-  - OPTIONS (.*)               # Ignores all Options requests
-  - /public/(.*)               # Ignores all Requests to public/**
-  - GET (.*).js                # Ignores all GET requests to a resource ending in .js
-  - GET POST PUT /resource     #Ignores all GET, POST, PUT requests to /resource
+``` txt
+OPTIONS (.*)               # Ignores all Options requests
+/public/(.*)               # Ignores all Requests to public/**
+GET (.*).js                # Ignores all GET requests to a resource ending in .js
+GET POST PUT /resource     #Ignores all GET, POST, PUT requests to /resource
 ```
 
