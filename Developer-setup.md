@@ -51,6 +51,13 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
     - Make a small change to the string, such as "***Success!*** *No Optic project found in this directory.*"
 - Re-run the `apidev` command to verify the change is made (in this case, `apidev start`).
 
+## Validate Setup to contribute to Optic's diff engine
+
+- After installing cargo with [rustup](https://rustup.rs/) you should be able to get `cargo test` working from inside `workspaces/diff-engine`
+- `cargo doc --document-private-items --open` will generate and open the Rust type and function documentation for the project
+- [Visual Studio Code](https://code.visualstudio.com/) provides the best Rust integration using the language [extension](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust) 
+- if you have `lldb` interactive [debugging](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) is straightforward to setup
+
 ## Troubleshooting and Additional Notes
 
 ### Module not found: *Can't resolve '@useoptic/cli-client'* (or other @useoptic/<workspace>)
