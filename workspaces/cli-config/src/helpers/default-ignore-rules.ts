@@ -7,6 +7,7 @@ export const defaultIgnoreRules = [
   'GET (.*).css',
   'GET (.*).js',
   'GET (.*).woff',
+  'GET (.*).woff2',
   'GET (.*).png',
   'GET (.*).jpg',
   'GET (.*).jpeg',

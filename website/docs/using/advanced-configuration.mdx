@@ -1,0 +1,167 @@
+---
+title: Advanced Configurations in Optic
+sidebar_label: Advanced Configurations
+---
+
+:::info Optic setup
+`api init` and the setup process should [get you started](/docs/). The following topics cover advanced configuration to tweak your setup and take advantage of more features in Optic. If you run into difficulties during install, please [reach out to us](https://github.com/opticdev/optic/issues/new?title=Install%20Issue) with an issue so we can help you get situated. You don't have to resolve setup issues on your own!
+:::
+
+## Optic Command Wrapper task mode
+
+When you first setup Optic, a start task is added to your optic.yml file:
+
+``` yaml
+name: Todo API
+tasks:
+  start:
+    command: npm run server-start 
+    inboundUrl: 'http://localhost:3005' # alias: baseUrl
+```
+
+The task `start` in the above example is run using:
+
+``` bash
+api start
+```
+
+If your framework expects to take a parameter to define its port when starting, Optic provides the `PORT` environment variable to your process. You can pass that in the `command` parameter. If the `PORT` environment variable is already being used for some other reason in your environment and it causes conflicts with Optic's port assignment, you can use the alternative `OPTIC_API_PORT` if necessary:
+
+``` yaml
+name: Todo API
+tasks:
+  start:
+    command: npm run server-start --port $PORT
+    inboundUrl: 'http://localhost:3005' # alias: baseUrl
+```
+
+You may also want a quick way to run your API tests, a Postman collection, _etc._ through Optic. To make this simple, Optic lets you define as many custom tasks as you'd like:
+
+```yaml
+name: Todo API
+tasks:
+  start:
+    command: npm run server-start
+    inboundUrl: 'http://localhost:3005' # alias: baseUrl
+  test:
+    command: npm run testAPI
+    inboundUrl: 'http://localhost:3005' # alias: baseUrl
+```
+
+Each custom task can be run with:
+
+``` bash
+api run <task name>
+```
+
+## Transparent Proxy task mode
+
+For most local documentation, we recommend starting your API application directly with an [Optic task](/docs/), also known as Command Wrapper mode. This allows Optic to start your project and a new capture session to organize observed requests. Sometimes, this isn't feasible - such as when your API is always deployed in a Serverless architecture and cannot be run locally. In this case, the Optic Transparent Proxy mode will let you configure your downstream and upstream URLs.
+
+### Setting up the Local CLI in Transparent Proxy mode
+
+All configuration items for local capture live in the `optic.yml` file. Create a new task to use the Transparent Proxy mode:
+
+- Create a new task `start-proxy` at the same level of indent as `start` (the default task).
+- `inboundUrl` (alias `baseUrl`) is the URL configuration where the application we're observing should expect to live. When using Optic to observe traffic, Optic adopts this URL to intercept traffic and pass it along to the application under observation. That way, your clients or tests can still run exactly as they have in the past.
+- `targetUrl` tells us the target for the observed traffic, our application under observation. We'll need to run the application on this URL so that Optic can pass traffic along to the target application.
+- The `command` field is for process wrapping, and isn't necessary for the transparent proxy configuration. Leave that out.
+
+The tasks section of the `optic.yml` file will look something like this:
+
+```
+tasks:
+  start:
+    ...
+  start-proxy:
+    inboundUrl: http://localhost:<port>
+    targetUrl: http://<your application>:<port>
+
+```
+
+*Note:* if not specified the targetUrl will assume ports based on the protocol (80 for http, 443 for https). It may be optionally omitted in these cases. 
+
+Next, run:
+
+``` bash
+api check start-proxy
+```` 
+
+This will validate that the configuration is correct. Once the configuration check passes, you can [document your API](/docs/using/baseline) with:
+
+``` bash
+api run start-proxy
+``` 
+
+- The local dashboard will be available, with observed diffs.
+- The Optic CLI will listen on localhost at the port defined in `inboundUrl`.
+- Traffic sent to the Optic CLI will be forwarded to the defined `targetUrl` - assure that is already running, or if not, start it before sending any traffic.
+
+### Starting a new Capture Session in Transparent Poxy task mode
+
+When Optic is started in Transparent Proxy task mode, it is not watching the application lifecycle and does not currently capture rebuild events of the application under observation. To start fresh with a new capture session, stop the current Optic proxy and restart with `api run start-proxy`. This will create a new capture session in the Optic dashboard and allow you to observe traffic sent to the most recent build of the application under observation.
+
+### Dependent tasks
+
+A task can depend on another task. For example, say you need to start your API service with a task, then want to run test traffic against that service through Optic. First, define the task to start your API service with Optic. Then, define a new task with the `command` parameter to run your test script and the `useTask` parameter specifying your service start task. The example below runs a Newman test against the start-proxy task above:
+
+```
+tasks:
+  start:
+    ...
+  start-proxy:
+    inboundUrl: http://localhost:<port>
+    targetUrl: http://<your application>:<port>
+  run-tests:
+    useTask: start-proxy
+    command: newman run collection.json --environment environment.json
+
+```
+
+Dependencies can only go one level deep. Dependent tasks cannot define `inboundUrl`s or `targetUrl`s, as dependent tasks expect the API start command to start the Optic proxy and handle these configurations. The dependent task `command` will run after the API start command starts and the service is responsive. There's no need to add any `sleep` delays if the service itself takes time to warm up.
+
+## Ignoring API Paths
+
+As you use Optic, you will probably find there are some paths you would like Optic to ignore. Examples include `OPTIONS` requests, `.html`, `.js`, `.css` files, or everything in your `/public` folder.
+
+You can add ignore rules to your api.yml file:
+
+```yaml
+name: Todo API
+tasks:
+  start:
+    command: npm run server-start
+    inboundUrl: 'http://localhost:3005'
+
+ignoreRequests:
+  - OPTIONS (.*)`
+  - GET /public/(.*)
+```
+
+Rules follow the following format: 
+
+``` yaml
+- METHOD(s) path
+```
+
+1. The methods component can be:
+    - a single method `GET`
+    - multiple methods `GET POST PUT`
+    - omitted -> which is interpreted as `ALL`
+1. The path component follows the [path-to-regex](https://www.npmjs.com/package/path-to-regexp) format. The library has a lot of advanced features that you can use, but most use cases can probably be accomplished with the following patterns:
+    - Want to ignore an absolute path? Just write it ie `/users/profile`
+    - Want to ignore a file type? ie `(.*).png`  `(.*).js`
+    - Want to ignore a path and its children? `/public/(.*)`
+    - Need something more advanced? Try creating your pattern in the [path-to-regex-sandbox](http://forbeslindesay.github.io/express-route-tester/)
+1. Scalar values in YAML cannot start with a special character (`` [] {} > | * & ! % # ` @ , ``). If you need to start a value with `*`, wrap the value in double quotes.
+
+### Examples
+
+``` yaml
+ignoreRequests:
+  - OPTIONS (.*)               # Ignores all Options requests
+  - /public/(.*)               # Ignores all Requests to public/**
+  - GET (.*).js                # Ignores all GET requests to a resource ending in .js
+  - GET POST PUT /resource     #Ignores all GET, POST, PUT requests to /resource
+```
+

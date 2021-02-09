@@ -15,6 +15,7 @@ module.exports = {
       'using/baseline',
       'using/reviewing-diffs',
       'using/share-with-team',
+      'using/advanced-configuration',
     ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [
