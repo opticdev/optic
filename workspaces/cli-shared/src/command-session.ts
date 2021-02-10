@@ -1,7 +1,9 @@
-import { ChildProcess, spawn, SpawnOptions } from 'child_process';
+import { ChildProcess, SpawnOptions } from 'child_process';
 import { EventEmitter } from 'events';
 import treeKill from 'tree-kill';
 import { developerDebugLogger } from './index';
+//@ts-ignore
+import { spawn } from 'cross-spawn';
 
 export interface ICommandSessionConfig {
   command: string;
@@ -31,7 +33,8 @@ class CommandSession {
     this.events.once('stopped', (e) => {
       this.isRunning = false;
     });
-    this.child.on('exit', (code, signal) => {
+    // @ts-ignore
+    this.child.on('exit', (code: number, signal) => {
       developerDebugLogger(
         `command process exited with code ${code} and signal ${signal}`
       );
