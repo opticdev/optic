@@ -267,6 +267,11 @@ export async function createExampleSpecServiceFactory(data) {
       eventEmitter.emit('events-updated');
       return Promise.resolve();
     },
+    saveBatchCommit: (serializedEvents) => {
+      events = JSON.stringify([...JSON.parse(events), ...serializedEvents]);
+      eventEmitter.emit('events-updated');
+      return Promise.resolve();
+    },
     listExamples: (requestId) => {
       return Promise.resolve({ examples: examples[requestId] || [] });
     },

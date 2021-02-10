@@ -13,7 +13,7 @@ function handleCommands(
   clientSessionId: string,
   clientId: string,
   commitMessage: string
-): any[] {
+): { newEvents: any[]; updatedEvents: any[] } {
   const {
     universeFromEventsAndAdditionalCommands,
   } = require('@useoptic/domain-utilities');
@@ -33,18 +33,23 @@ function handleCommands(
     batchId
   );
 
+  const parsedEvents = JSON.parse(eventString);
+
   const {
     rfcId,
     eventStore,
-  } = universeFromEventsAndAdditionalCommands(
-    JSON.parse(eventString),
-    commandContext,
-    [
-      StartBatchCommit(batchId, commitMessage),
-      ...inputCommands,
-      EndBatchCommit(batchId),
-    ]
-  );
+  } = universeFromEventsAndAdditionalCommands(parsedEvents, commandContext, [
+    StartBatchCommit(batchId, commitMessage),
+    ...inputCommands,
+    EndBatchCommit(batchId),
+  ]);
 
-  return JSON.parse(eventStore.serializeEvents(rfcId));
+  const parsedNewEvents = JSON.parse(eventStore.serializeEvents(rfcId));
+
+  const onlyNewEvents = parsedNewEvents.slice(parsedEvents.length);
+
+  return {
+    newEvents: onlyNewEvents,
+    updatedEvents: parsedNewEvents,
+  };
 }

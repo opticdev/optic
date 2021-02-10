@@ -29,6 +29,7 @@ export interface ISpecService {
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
   saveEventsArray(serializedEvents: any[]): Promise<void>;
+  saveBatchCommit(serializedEvents: any[]): Promise<void>;
 
   listCaptures(): Promise<ListCapturesResponse>;
 
@@ -92,6 +93,16 @@ export class Client implements ISpecService {
   saveEventsArray(serializedEvents: any[]): Promise<void> {
     return JsonHttpClient.putJsonString(
       `${this.baseUrl}/specs/${this.specId}/events`,
+      JSON.stringify(serializedEvents)
+    ).then((x) => {
+      this.eventEmitter.emit('events-updated');
+      return x;
+    });
+  }
+
+  saveBatchCommit(serializedEvents: any[]): Promise<void> {
+    return JsonHttpClient.postJsonString(
+      `${this.baseUrl}/specs/${this.specId}/events/batch-commits`,
       JSON.stringify(serializedEvents)
     ).then((x) => {
       this.eventEmitter.emit('events-updated');

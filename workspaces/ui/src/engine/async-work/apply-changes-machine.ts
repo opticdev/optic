@@ -48,6 +48,7 @@ export interface ApplyChangesContext {
   newBodiesProgressLastLearned: string;
   newBodiesLearned: ILearnedBodies[] | undefined;
   approvedSuggestionsCommands: any[];
+  newEvents: any[];
   updatedEvents: any[];
   oasStats: IOasStats | undefined;
   error: string;
@@ -77,6 +78,7 @@ export const newApplyChangesMachine = (
       newBodiesProgressLastLearned: '',
       newBodiesLearned: undefined,
       approvedSuggestionsCommands: [],
+      newEvents: [],
       updatedEvents: [],
       oasStats: undefined,
       error: '',
@@ -165,13 +167,15 @@ export const newApplyChangesMachine = (
                   console.log(`learning started for ${pathId} ${method}`);
                   let promise;
                   batchHandler.doWork(async ({ rfcService, rfcId }) => {
-                    promise = diffService.learnInitial(
-                      rfcService,
-                      rfcId,
-                      pathId,
-                      method,
-                      services.rfcBaseState.domainIdGenerator
-                    ).catch(() => null);
+                    promise = diffService
+                      .learnInitial(
+                        rfcService,
+                        rfcId,
+                        pathId,
+                        method,
+                        services.rfcBaseState.domainIdGenerator
+                      )
+                      .catch(() => null);
                   });
 
                   promise.finally(() => {
@@ -182,7 +186,7 @@ export const newApplyChangesMachine = (
                     });
                   });
 
-                  return await promise
+                  return await promise;
                 });
               }
             );
@@ -300,7 +304,8 @@ export const newApplyChangesMachine = (
           onDone: {
             target: 'completed',
             actions: assign({
-              updatedEvents: (context, event) => event.data,
+              newEvents: (context, event) => event.data.newEvents,
+              updatedEvents: (context, event) => event.data.updatedEvents,
             }),
           },
           onError: {
