@@ -19,7 +19,7 @@ export async function spawnProcess(
   const child = spawn(command, taskOptions);
 
   return await new Promise((resolve) => {
-    child.on('exit', (code) => {
+    child.on('exit', (code: number) => {
       resolve(code === 0);
     });
   });
