@@ -8,6 +8,7 @@ import { DeveloperFriendly } from './DeveloperFriendly';
 import Divider from '@material-ui/core/Divider';
 import { CTATryOptic } from './CTA';
 import { Download } from './Download';
+import Container from '@material-ui/core/Container';
 
 export const MuiThemeProvider = ({ children }) => {
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
