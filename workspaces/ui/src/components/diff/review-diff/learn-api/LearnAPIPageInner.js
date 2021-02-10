@@ -460,7 +460,15 @@ function UndocumentedRow(props) {
                 onClick={(e) => e.stopPropagation()}
               >
                 Mark this path and method as ignored?{' '}
-                <Button color="secondary" onClick={() => setIgnore(row)}>
+                <Button
+                  color="secondary"
+                  onClick={() => {
+                    setIgnore(row);
+                    if (isItemSelected) {
+                      toggleRow(row);
+                    }
+                  }}
+                >
                   Confirm
                 </Button>
               </Box>
