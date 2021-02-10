@@ -25,6 +25,7 @@ import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file
 import { SessionsManager } from '../sessions';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import { readSpec } from '@useoptic/diff-engine';
+import slugify from 'slugify';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -240,6 +241,34 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.sendStatus(204);
     }
   );
+
+  if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
+    router.post(
+      '/events/batch-commits',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const payloadEvents = req.body;
+        const firstEvent = payloadEvents && payloadEvents[0];
+        const batchStartEvent = firstEvent && firstEvent.BatchCommitStarted;
+        const { parentId, batchId } = batchStartEvent || {};
+        if (!batchId || !parentId) {
+          return res.sendStatus(400);
+        }
+
+        // TODO: reconsider using user input as a filename (probably no longer an issue once client
+        // just sends commands instead of events)
+        let fileName = `${slugify(batchId, { strict: true })}.json`; // living dangerously, but less so because of slugify.
+
+        // TODO: consider actually walking the events and only writing up until BatchCommitEnded
+        await fs.writeFile(
+          path.join(req.optic.paths.specDirPath, fileName),
+          prepareEvents(payloadEvents)
+        );
+
+        return res.sendStatus(201);
+      }
+    );
+  }
 
   // example requests router
   router.post(
