@@ -30,7 +30,7 @@ where
   S: AsyncWrite,
 {
   let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b'\n');
+  let codec = JsonLineEncoder::new(b"\n");
   FramedWrite::new(writer, codec)
 }
 
@@ -39,6 +39,6 @@ where
   S: AsyncWrite,
 {
   let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b',');
+  let codec = JsonLineEncoder::new(b",\n");
   FramedWrite::new(writer, codec)
 }
