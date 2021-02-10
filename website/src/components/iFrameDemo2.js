@@ -87,12 +87,15 @@ export function IFrameDemo2(props) {
           width: actualWidth,
         }}
       >
-        <iframe
-          width={'100%'}
-          height={790}
-          src={demoBaseUrl + demoPath}
-          className={classes.innerIframe}
-        ></iframe>
+        {demoBaseUrl && (
+          <iframe
+            key={demoBaseUrl}
+            width={'100%'}
+            height={790}
+            src={demoBaseUrl + demoPath}
+            className={classes.innerIframe}
+          />
+        )}
         <Typography variant="subtitle2" className={classes.hover}>
           Hover to Start Interactive Demo
         </Typography>
@@ -109,6 +112,7 @@ export function IFrameDemoNotCentered(props) {
   const iframeWidth = 800 * 1.25;
 
   const demoBaseUrl = useDemoBaseUrl();
+  console.log('demo base url ', demoBaseUrl);
   return (
     <Paper
       className={classes.scaledIframe}
@@ -163,16 +167,25 @@ function useWindowSize() {
   return windowSize;
 }
 
+function getHostname() {
+  return window && window.location.hostname;
+}
+
 export function useDemoBaseUrl() {
-  const [hostname, setHostname] = useState('');
+  const [hostname, setHostname] = useState(null);
+
   useEffect(() => {
-    const hostname = window.location.hostname.split('.');
+    const hostname = getHostname().split('.');
     if (hostname.length <= 1) {
       setHostname(hostname.join('.'));
     } else {
       setHostname(hostname.slice(-2).join('.'));
     }
-  }, []);
+  });
 
-  return `https://demo.${hostname}`;
+  if (hostname) {
+    return `https://demo.${hostname}`;
+  } else {
+    return false;
+  }
 }
