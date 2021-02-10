@@ -17,10 +17,10 @@ use tokio::io::{stdin, stdout, AsyncWriteExt};
 use tokio::sync::mpsc;
 
 fn main() {
-  let cli = App::new("Optic Diff engine")
+  let cli = App::new("Optic Engine CLI")
     .version(crate_version!())
     .author("Optic Labs Corporation")
-    .about("Detects differences between API spec and captured interactions")
+    .about("A command-line interface into the core Optic domain logic")
     .arg(
       Arg::with_name("specification")
         .required(true)
@@ -56,7 +56,14 @@ fn main() {
           "Sets the amount of threads used. Defaults to amount of cores available to the system.",
         ),
     )
-    .subcommand(SubCommand::with_name("assemble"));
+    .subcommand(
+      SubCommand::with_name("assemble")
+        .about("Assembles a directory of API spec files into a single events stream"),
+    )
+    .subcommand(
+      SubCommand::with_name("diff")
+        .about("Detects differences between API spec and captured interactions (default)"),
+    );
 
   let matches = cli.get_matches();
 
