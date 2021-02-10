@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/ui",
-  "version": "9.0.10",
+  "version": "9.0.11-beta.0",
   "files": [
     "build",
     "index.js",
@@ -15,10 +15,10 @@
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.46",
-    "@useoptic/cli-shared": "9.0.10",
-    "@useoptic/cli-client": "9.0.10",
-    "@useoptic/analytics": "9.0.10",
-    "@useoptic/diff-engine-wasm": "9.0.10",
+    "@useoptic/cli-shared": "9.0.11-beta.0",
+    "@useoptic/cli-client": "9.0.11-beta.0",
+    "@useoptic/analytics": "9.0.11-beta.0",
+    "@useoptic/diff-engine-wasm": "9.0.11-beta.0",
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
     "bottleneck": "^2.19.5",
