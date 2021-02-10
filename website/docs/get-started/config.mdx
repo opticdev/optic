@@ -53,6 +53,8 @@ For the start task:
 
 :::tip Make sure your API starts on $PORT
 Optic assumes your API can be started on a specific port, which Optic assigns. To do this, Optic provides $PORT as an environment variable. You'll either need to map this variable to a flag your API framework looks for, or modify your code to look for the $PORT variable when starting up.
+
+If you're using optic from within a non-bash environment (such as PowerShell), $PORT may need to be replaced with %PORT%
 :::
 
 ---
