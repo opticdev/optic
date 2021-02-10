@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { runManagedScriptByName } from '@useoptic/cli-scripts';
+import { isEnvTrue } from '@useoptic/cli-shared';
 import {
   getDiffOutputPaths,
   IDiffProjectionEmitterConfig,
@@ -8,6 +9,7 @@ import { ChildProcess } from 'child_process';
 import fs from 'fs-extra';
 import { readApiConfig } from '@useoptic/cli-config';
 import { Streams, AsyncTools } from '@useoptic/diff-engine-wasm';
+import { readSpec } from '@useoptic/diff-engine';
 
 import {
   Diff,
@@ -23,6 +25,8 @@ import { streamArray } from 'stream-json/streamers/StreamArray';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { parser as jsonParser } from 'stream-json';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
+import { deepStrictEqual } from 'assert';
+import { clean } from 'semver';
 
 export class OnDemandDiff implements Diff {
   public readonly events: EventEmitter = new EventEmitter();
@@ -56,10 +60,39 @@ export class OnDemandDiff implements Diff {
     const outputPaths = this.paths();
     await fs.ensureDir(outputPaths.base);
 
+    function copySpec(): Promise<void> {
+      return isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)
+        ? new Promise((resolve, reject) => {
+            const dest = fs.createWriteStream(outputPaths.events);
+            const spec = readSpec({ specDirPath: config.specDirPath });
+
+            function onFinish() {
+              cleanup();
+              resolve();
+            }
+            function onError(err: Error) {
+              cleanup();
+              reject(err);
+            }
+            function cleanup() {
+              dest.removeListener('finish', onFinish);
+              dest.removeListener('error', onError);
+              spec.removeListener('error', onError);
+            }
+
+            dest.once('finish', onFinish);
+            dest.once('error', onError);
+            spec.once('error', onError);
+
+            spec.pipe(dest);
+          })
+        : fs.copy(config.specPath, outputPaths.events);
+    }
+
     await Promise.all([
       config.events
         ? fs.writeJson(outputPaths.events, config.events)
-        : fs.copy(config.specPath, outputPaths.events),
+        : copySpec(),
       fs.writeJson(outputPaths.ignoreRequests, ignoreRules.allRules || []),
       fs.writeJson(outputPaths.filters, config.endpoints || []),
       fs.writeJson(outputPaths.additionalCommands, []),

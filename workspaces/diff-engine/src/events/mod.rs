@@ -1,21 +1,25 @@
 #![allow(dead_code)]
 
 pub use cqrs_core::{AggregateEvent, Event};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs;
 use std::io;
+use std::path::Path;
 
 pub mod endpoint;
 pub mod http_interaction;
 pub mod rfc;
 pub mod shape;
+pub mod spec_chunk;
 
 pub use endpoint::EndpointEvent;
 pub use http_interaction::HttpInteraction;
+pub use rfc::RfcEvent;
 pub use shape::ShapeEvent;
+pub use spec_chunk::SpecChunkEvent;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EventContext {
   client_id: String,
@@ -24,7 +28,7 @@ pub struct EventContext {
   created_at: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Serialize)]
 #[serde(untagged)]
 pub enum SpecEvent {
   EndpointEvent(endpoint::EndpointEvent),
@@ -43,7 +47,7 @@ impl Event for SpecEvent {
 }
 
 impl SpecEvent {
-  pub fn from_file(filename: &str) -> Result<Vec<SpecEvent>, EventLoadingError> {
+  pub fn from_file(filename: impl AsRef<Path>) -> Result<Vec<SpecEvent>, EventLoadingError> {
     let file_contents = fs::read_to_string(filename)?;
 
     let events: Vec<SpecEvent> = serde_json::from_str(&file_contents)?;

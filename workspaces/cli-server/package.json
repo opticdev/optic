@@ -21,6 +21,7 @@
     "@useoptic/cli-config": "9.0.10",
     "@useoptic/cli-scripts": "9.0.10",
     "@useoptic/cli-shared": "9.0.10",
+    "@useoptic/diff-engine": "9.0.10",
     "@useoptic/diff-engine-wasm": "9.0.10",
     "@useoptic/ui": "9.0.10",
     "analytics-node": "^3.4.0-beta.2",
