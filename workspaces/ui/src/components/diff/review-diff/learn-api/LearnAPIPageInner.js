@@ -30,6 +30,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import { DiffLoadingOverview } from '../DiffLoading';
 import { MethodRenderLarge } from '../PathAndMethod';
+import { Link } from '@material-ui/core';
 
 export function LearnAPIPageInner(props) {
   const { urls, undocumentedEndpoints, setAskFinish } = props;
@@ -456,10 +457,22 @@ function UndocumentedRow(props) {
               <Box
                 display="flex"
                 flexDirection="row"
-                alignItems="center"
+                alignItems="flex-start"
                 onClick={(e) => e.stopPropagation()}
               >
-                Mark this path and method as ignored?{' '}
+                <div style={{ paddingRight: 35 }}>
+                  Mark this path and method as ignored?
+                  <div>
+                    <Link
+                      href="http://useoptic.com/docs/using/advanced-configuration#ignoring-api-paths"
+                      color="primary"
+                      target="_blank"
+                      component="a"
+                    >
+                      Learn about adding advanced ignore rules here
+                    </Link>
+                  </div>
+                </div>
                 <Button
                   color="secondary"
                   onClick={() => {
@@ -475,7 +488,7 @@ function UndocumentedRow(props) {
             }
             interactive
           >
-            <IconButton size="small">
+            <IconButton size="small" onClick={(e) => e.stopPropagation()}>
               <RemoveCircleIcon
                 fontSizeAdjust="small"
                 style={{ width: '.8rem', height: '.8rem' }}
