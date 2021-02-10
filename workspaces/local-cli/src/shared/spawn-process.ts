@@ -1,4 +1,6 @@
-import { spawn, SpawnOptions } from 'child_process';
+import { SpawnOptions } from 'child_process';
+// @ts-ignore
+import { spawn } from 'cross-spawn';
 
 export async function spawnProcess(
   command: string,
