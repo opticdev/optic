@@ -7,6 +7,7 @@ export const defaultIgnoreRules = [
   'GET (.*).css',
   'GET (.*).js',
   'GET (.*).woff',
+  'GET (.*).woff2',
   'GET (.*).png',
   'GET (.*).jpg',
   'GET (.*).jpeg',
@@ -16,6 +17,6 @@ export const defaultIgnoreRules = [
 
 export const defaultIgnoreFile = `
 # Default Ignore Rules
-# Learn to configure your own at https://useoptic.com/docs
+# Learn to configure your own at http://localhost:4000/docs/using/advanced-configuration#ignoring-api-paths
 ${defaultIgnoreRules.join('\n')}
 `.trim();
