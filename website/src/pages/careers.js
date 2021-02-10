@@ -1,17 +1,15 @@
 import React from 'react';
-import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Container from '@material-ui/core/Container';
 import { MuiThemeProvider } from '../components/MuiIndexPage';
 import { MarkdownRender } from '../components/Markdown';
 import Typography from '@material-ui/core/Typography';
-import Helmet from 'react-helmet';
+import Button from '@material-ui/core/Button';
 const markdown = `
 # Join Optic's Team
 
-> We're on a mission to 10x developers and their teams by building great developer tools that make collaboration and bringing software to market easy. Today the mandate is simple: **make API's developer friendly**
+> We're on a mission to 10x developers and their teams withs great developer tools that make collaboration and bringing software to market easy. Today the mandate is simple: **make API's developer friendly**. It's the first act of a very exciting story.
 
 Optic's open source tools are watching the world's APIs, learning how they behave, and unlocking new workflows that help developers and their teams collaborate better.
 
@@ -92,11 +90,8 @@ function Careers() {
   const { siteConfig = {} } = context;
   return (
     <Layout title={`Join the Team`}>
-      <Helmet>
-        <script src="https://boards.greenhouse.io/embed/job_board/js?for=optic"></script>
-      </Helmet>
       <main
-        style={{ backgroundColor: '#fafbfc !important', paddingBottom: 900 }}
+        style={{ backgroundColor: '#fafbfc !important', paddingBottom: 360 }}
       >
         <MuiThemeProvider>
           <Container maxWidth="md" fullWidth style={{ marginTop: 50 }}>
@@ -110,13 +105,19 @@ function Careers() {
               with intention:
             </Typography>
             <MarkdownRender source={markdown} />
-            <div style={{ backgroundColor: '#e2e2e2', margin: 40 }}>
-              <div id="grnhse_app"></div>
-            </div>
             <MarkdownRender
               source={valuesAndBenefits}
               style={{ marginTop: 30 }}
             />
+
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              href="https://boards.greenhouse.io/optic/jobs/4001427004"
+            >
+              View Open Positions
+            </Button>
           </Container>
         </MuiThemeProvider>
       </main>

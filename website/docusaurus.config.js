@@ -85,6 +85,10 @@ module.exports = {
               to: 'blog',
             },
             {
+              label: 'Careers',
+              href: '/careers',
+            },
+            {
               label: 'GitHub',
               href: 'https://github.com/opticdev/optic',
             },
