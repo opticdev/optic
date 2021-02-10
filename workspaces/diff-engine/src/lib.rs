@@ -1,12 +1,12 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
-mod events;
-mod interactions;
-mod projections;
-mod protos;
-mod queries;
-mod shapes;
-mod state;
+pub mod events;
+pub mod interactions;
+pub mod projections;
+pub mod protos;
+pub mod queries;
+pub mod shapes;
+pub mod state;
 
 #[cfg(feature = "streams")]
 pub mod streams;

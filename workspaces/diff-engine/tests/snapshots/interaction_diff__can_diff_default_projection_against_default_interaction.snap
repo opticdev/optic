@@ -1,0 +1,44 @@
+---
+source: workspaces/diff-engine/tests/interaction_diff.rs
+expression: results
+---
+[
+    UnmatchedRequestBodyContentType(
+        UnmatchedRequestBodyContentType {
+            interaction_trail: InteractionTrail {
+                path: [
+                    Url {
+                        path: "",
+                    },
+                    Method {
+                        method: "",
+                    },
+                ],
+            },
+            requests_trail: SpecPath(
+                SpecPath {
+                    path_id: "root",
+                },
+            ),
+        },
+    ),
+    UnmatchedResponseBodyContentType(
+        UnmatchedResponseBodyContentType {
+            interaction_trail: InteractionTrail {
+                path: [
+                    Method {
+                        method: "",
+                    },
+                    ResponseStatusCode {
+                        status_code: 0,
+                    },
+                ],
+            },
+            requests_trail: SpecPath(
+                SpecPath {
+                    path_id: "root",
+                },
+            ),
+        },
+    ),
+]

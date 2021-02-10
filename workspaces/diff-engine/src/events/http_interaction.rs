@@ -12,7 +12,7 @@ use std::iter::FromIterator;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct HttpInteraction {
   pub uuid: String,
   pub request: Request,
@@ -26,7 +26,7 @@ pub struct HttpInteractionTag {
   value: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct Request {
   pub host: String,
   pub method: String,
@@ -36,7 +36,7 @@ pub struct Request {
   pub body: Body,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
   pub status_code: u16,
@@ -45,7 +45,7 @@ pub struct Response {
   pub body: Body,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Body {
   pub content_type: Option<String>,
@@ -53,7 +53,7 @@ pub struct Body {
   pub value: ArbitraryData,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
   shape_hash_v1_base64: Option<String>,

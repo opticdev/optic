@@ -7,6 +7,12 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio_stream::wrappers::LinesStream;
 use tokio_stream::StreamExt;
 
+#[test]
+fn can_diff_default_projection_against_default_interaction() {
+  let results = diff_interaction(&Default::default(), Default::default());
+  assert_debug_snapshot!(results);
+}
+
 #[tokio::main]
 #[test]
 async fn can_yield_interactive_diff_result() {
