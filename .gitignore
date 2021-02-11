@@ -5,10 +5,8 @@ node_modules
 .task/
 *.swp
 .DS_Store
-
-#Added by cargo
-
+optic-snapshots/
+output/
 /target
-
 /workspaces/diff-engine-wasm/engine/browser
 /workspaces/diff-engine-wasm/engine/build
