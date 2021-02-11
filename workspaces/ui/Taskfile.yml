@@ -23,7 +23,6 @@ tasks:
     - task: ci:setup
     - task: ci:build
 
-
   #
   # docker namespace
   #
