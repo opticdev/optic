@@ -7,8 +7,9 @@ tasks:
       - rm -rf build build-demo build-apidocs
 
   ci:
-    - task: demo:ci
-    - task: apidocs:ci
+    deps:
+      - task: demo:ci
+      - task: apidocs:ci
 
   #
   # docker namespace
