@@ -6,10 +6,21 @@ tasks:
     cmds:
       - rm -rf build build-demo build-apidocs
 
-  ci:
+  #
+  # ci namespace
+  #
+  ci:setup:
+    - task: :workspaces:build
+
+  ci:build:
     deps:
       - task: demo:ci
       - task: apidocs:ci
+
+  ci:
+    - task: ci:setup
+    - task: ci:build
+
 
   #
   # docker namespace
@@ -45,7 +56,6 @@ tasks:
   demo:build:
     desc: Build demo site
     cmds:
-      - task: :workspaces:build
       - >
         BUILD_DIR=build-demo
         CI=false
@@ -79,7 +89,6 @@ tasks:
 
   demo:ci:
     desc: CI workflow
-    deps: [":workspaces:setup"]
     cmds:
       - task: demo:docker:build
       - task: demo:docker:push
@@ -127,7 +136,6 @@ tasks:
 
   apidocs:ci:
     desc: CI workflow
-    deps: [":workspaces:setup"]
     cmds:
       - task: apidocs:docker:build
       - task: apidocs:docker:push
