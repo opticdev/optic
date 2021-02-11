@@ -261,37 +261,35 @@ impl ShapeProjection {
 
   pub fn with_field_shape(&mut self, shape_descriptor: FieldShapeDescriptor) {
     let field_shape = match shape_descriptor {
-      FieldShapeDescriptor::FieldShapeFromShape(field_shape) => {
-        field_shape
-      }
+      FieldShapeDescriptor::FieldShapeFromShape(field_shape) => field_shape,
       _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
     };
     let field_node_index = *self
-        .get_field_node_index(&field_shape.field_id)
-        .expect("expected field to exist");
+      .get_field_node_index(&field_shape.field_id)
+      .expect("expected field to exist");
     let field_node_weight = self
-        .graph
-        .node_weight(field_node_index)
-        .expect("expected field to exist");
+      .graph
+      .node_weight(field_node_index)
+      .expect("expected field to exist");
     let existing_field_shape_edge_index = self
-        .graph
-        .edges_directed(field_node_index, petgraph::Direction::Incoming)
-        .find(|edge| match edge.weight() {
-          Edge::BelongsTo => true,
-          _ => false,
-        })
-        .expect("expected field to have a target shape via a BelongsTo edge")
-        .id();
+      .graph
+      .edges_directed(field_node_index, petgraph::Direction::Incoming)
+      .find(|edge| match edge.weight() {
+        Edge::BelongsTo => true,
+        _ => false,
+      })
+      .expect("expected field to have a target shape via a BelongsTo edge")
+      .id();
 
     self.graph.remove_edge(existing_field_shape_edge_index);
 
     let target_shape_node_index = *self
-        .get_shape_node_index(&field_shape.shape_id)
-        .expect("expected shape_id for field value to have a corresponding node");
+      .get_shape_node_index(&field_shape.shape_id)
+      .expect("expected shape_id for field value to have a corresponding node");
 
     self
-        .graph
-        .add_edge(target_shape_node_index, field_node_index, Edge::BelongsTo);
+      .graph
+      .add_edge(target_shape_node_index, field_node_index, Edge::BelongsTo);
   }
 
   pub fn with_field(
