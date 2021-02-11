@@ -9,6 +9,7 @@ on:
       - website/**
       - .github/**
       - "**.md"
+  workflow_dispatch:
 
 jobs:
   build:
