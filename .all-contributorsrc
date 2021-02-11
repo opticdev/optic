@@ -5,7 +5,8 @@
   "repoHost": "https://github.com",
   "files": [
     "Readme.md",
-    "Contributors.md"
+    "Contributors.md",
+    "website/docs/optic/community.mdx"
   ],
   "imageSize": 100,
   "commit": true,
@@ -188,6 +189,24 @@
       "name": "jordaniza",
       "avatar_url": "https://avatars.githubusercontent.com/u/45881807?v=4",
       "profile": "https://github.com/jordaniza",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "svanderbleek",
+      "name": "Sandy Vanderbleek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/491969?v=4",
+      "profile": "https://github.com/svanderbleek",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "autarch",
+      "name": "Dave Rolsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50729?v=4",
+      "profile": "http://blog.urth.org/",
       "contributions": [
         "doc"
       ]
