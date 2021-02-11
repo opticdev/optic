@@ -9,16 +9,9 @@ on:
       - website/**
       - .github/**
       - "**.md"
-  pull_request:
-    branches: [develop]
-    paths-ignore:
-      - website/**
-      #- .github/**
-      - "**.md"
 
 jobs:
   build:
-    if: github.repository == 'opticdev/optic'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
