@@ -1,5 +1,7 @@
 version: "3"
 
+output: prefix
+
 tasks:
   clean:
     desc: Removes UI's build directories
