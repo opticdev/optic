@@ -5,6 +5,10 @@ Object {
   "context": Object {
     "clientAgent": "",
     "clientId": "",
+    "platform": "",
+    "arch": "",
+    "release": "",
+    "apiName": "",
     "clientSessionInstanceId": "",
     "clientTimestamp": "",
   },
