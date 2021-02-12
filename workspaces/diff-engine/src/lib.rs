@@ -1,5 +1,6 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+mod commands;
 mod events;
 mod interactions;
 mod projections;
