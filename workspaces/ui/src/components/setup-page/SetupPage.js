@@ -277,7 +277,7 @@ function PortAssumption(props) {
 
   const LookFor = (
     <span style={{ fontWeight: 600 }}>
-      look for the <Code>$PORT</Code> variable when starting up
+      look for the <Code>$PORT</Code> variable when starting up (<Code>%PORT%</Code> on Windows)
       <LightTooltip
         interactive
         title={
