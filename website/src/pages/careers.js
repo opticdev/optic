@@ -6,6 +6,7 @@ import { MuiThemeProvider } from '../components/MuiIndexPage';
 import { MarkdownRender } from '../components/Markdown';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import SEO from '../components/SEO';
 const markdown = `
 # Join Optic's Team
 
@@ -15,7 +16,7 @@ Optic's open source tools are watching the world's APIs, learning how they behav
 
 Today we're building the Git / GitLab for APIs — open source tools that automatically document, test and track the evolution of the APIs we all depend on daily.
 
-We're backed by Boldstart, YCombinator and the founders of many of the dev tools you use daily.
+We're backed by **Boldstart**, **YCombinator** and the **founders of the developer tools you use daily**.
 
 ## The team we are building
 
@@ -37,6 +38,7 @@ At Optic you will:
 - Work asynchronously, in collaboration with your peers, towards a common goal
 
 
+At Optic we strongly believe that the most diverse and inclusive teams build the world’s best products! As an equal opportunity employer, we do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.
 
 ## Benefits
 
@@ -90,6 +92,11 @@ function Careers() {
   const { siteConfig = {} } = context;
   return (
     <Layout title={`Join the Team`}>
+      <SEO
+        title={"Join Optic's Team"}
+        image={'/img/optic.png'}
+        description="Come build the future of API tooling"
+      />
       <main
         style={{ backgroundColor: '#fafbfc !important', paddingBottom: 360 }}
       >
