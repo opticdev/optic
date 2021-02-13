@@ -1,0 +1,41 @@
+---
+source: workspaces/diff-engine/tests/changelog_projections.rs
+expression: query.added(setup_all_time())
+---
+[
+    Endpoint {
+        path: "/api/f1/:season",
+        method: "GET",
+        added: 2020-04-08T09:23:41.636Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/:round/results",
+        method: "GET",
+        added: 2020-04-08T09:27:14.006Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/:round/drivers",
+        method: "GET",
+        added: 2020-04-08T09:25:53.873Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/:round",
+        method: "GET",
+        added: 2020-04-08T09:28:13.358Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/drivers/:driverId",
+        method: "GET",
+        added: 2020-04-08T09:29:18.906Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/:round/constructors",
+        method: "GET",
+        added: 2020-04-08T09:24:36.530Z,
+    },
+    Endpoint {
+        path: "/following/drivers",
+        method: "POST",
+        added: 2020-04-29T13:38:09.666Z,
+    },
+]

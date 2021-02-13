@@ -28,6 +28,7 @@ serde_json = "1.0.57"
 tokio = { version = "~1.1.1", features = ["full"], optional = true } 
 tokio-util = { version = "0.6.3", features = ["codec"], optional = true }
 tokio-stream = { version= "0.1.2", features = ["fs", "io-util"], optional = true }
+chrono = "0.4.19"
 
 [dev-dependencies]
 insta = "0.16.1"

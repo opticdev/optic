@@ -1,0 +1,7 @@
+---
+source: workspaces/diff-engine/tests/changelog-projections.rs
+expression: changelog_projection
+---
+ChangelogProjection {
+    endpoints: [],
+}

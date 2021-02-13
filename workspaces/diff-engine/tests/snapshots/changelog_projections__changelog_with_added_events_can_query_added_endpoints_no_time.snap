@@ -1,0 +1,5 @@
+---
+source: workspaces/diff-engine/tests/changelog_projections.rs
+expression: query.added(setup_no_time())
+---
+[]

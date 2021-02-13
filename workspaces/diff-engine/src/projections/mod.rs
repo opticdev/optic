@@ -2,11 +2,13 @@ pub mod conflicts;
 pub mod endpoint;
 pub mod shape;
 pub mod spec_events;
+pub mod changelog;
 
 pub use conflicts::ConflictsProjection;
 pub use endpoint::EndpointProjection;
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
+pub use changelog::{ChangelogProjection};
 
 use crate::events::SpecEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
