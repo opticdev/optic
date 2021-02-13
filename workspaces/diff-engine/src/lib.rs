@@ -16,8 +16,10 @@ pub use events::{HttpInteraction, SpecChunkEvent, SpecEvent};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
 pub use projections::{
-  EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
+  EndpointProjection, ShapeProjection, SpecAssemblerProjection, 
+  SpecProjection, ChangelogProjection,
 };
+pub use queries::changelog::ChangelogQuery;
 pub use protos::shapehash;
 pub use shapes::diff as diff_shape;
 pub use state::body::BodyDescriptor;
