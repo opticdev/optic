@@ -18,7 +18,7 @@ optic_export_env() {
   fi
 
   VARS_TO_EXPORT=$(grep -v '^#' "$ENV_FILE")
-  VARS_WITHOUT_WHITESPACE=$(echo $VARS_TO_EXPORT | sed s/\n// | sed s/\ //)
+  VARS_WITHOUT_WHITESPACE=$(echo $VARS_TO_EXPORT | sed s/\ //)
   if [ "$VARS_WITHOUT_WHITESPACE" = "" ]
   then
     echo "'$ENV_FILE' is empty. You might want to put some variables there"
