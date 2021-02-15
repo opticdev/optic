@@ -63,7 +63,7 @@ pub struct RenamePathComponent {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct RemovePathComponent {
-  path_id: PathComponentId,
+  pub path_id: PathComponentId,
 }
 
 // Path parameters

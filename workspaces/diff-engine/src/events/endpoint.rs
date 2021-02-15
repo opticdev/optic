@@ -2,6 +2,7 @@ use super::EventContext;
 use cqrs_core::Event;
 use serde::{Deserialize, Serialize};
 
+use crate::commands::endpoint as endpoint_commands;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
@@ -399,5 +400,40 @@ impl Event for ResponseBodyUnset {
 impl Event for ResponseRemoved {
   fn event_type(&self) -> &'static str {
     "ResponseRemoved"
+  }
+}
+
+impl From<PathComponentAdded> for EndpointEvent {
+  fn from(event: PathComponentAdded) -> Self {
+    Self::PathComponentAdded(event)
+  }
+}
+
+impl From<PathComponentRemoved> for EndpointEvent {
+  fn from(event: PathComponentRemoved) -> Self {
+    Self::PathComponentRemoved(event)
+  }
+}
+
+// Conversion from commands
+// ------------------------
+
+impl From<endpoint_commands::AddPathComponent> for PathComponentAdded {
+  fn from(command: endpoint_commands::AddPathComponent) -> Self {
+    Self {
+      path_id: command.path_id,
+      parent_path_id: command.parent_path_id,
+      name: command.name,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::RemovePathComponent> for PathComponentRemoved {
+  fn from(command: endpoint_commands::RemovePathComponent) -> Self {
+    Self {
+      path_id: command.path_id,
+      event_context: None,
+    }
   }
 }

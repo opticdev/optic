@@ -339,7 +339,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
   fn execute_on(self, projection: &EndpointProjection) -> Result<Self::Events, Self::Error> {
     let validation = CommandValidationQueries::from((projection, &self));
 
-    match &self {
+    let event = match self {
       EndpointCommand::AddPathComponent(command) => {
         validation.require(
           validation.path_component_id_exists(&command.parent_path_id),
@@ -349,25 +349,30 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           !validation.path_component_id_exists(&command.path_id),
           "path id must be assignable to add path component",
         )?;
-        let event = endpoint_events::PathComponentAdded {
-          path_id: command.path_id.clone(),
-          parent_path_id: command.parent_path_id.clone(),
-          name: command.name.clone(),
-          event_context: None,
-        };
 
-        Ok(vec![EndpointEvent::PathComponentAdded(event)])
+        EndpointEvent::from(endpoint_events::PathComponentAdded::from(command))
+      }
+
+      EndpointCommand::RemovePathComponent(command) => {
+        validation.require(
+          !validation.path_component_is_root(&command.path_id),
+          "path id must not be root to remove path component",
+        )?;
+
+        EndpointEvent::from(endpoint_events::PathComponentRemoved::from(command))
       }
 
       _ => Err(SpecCommandError::Unimplemented(
         SpecCommand::EndpointCommand(self),
-      )),
-    }
+      ))?,
+    };
+
+    Ok(vec![event])
   }
 }
 
 struct CommandValidationQueries<'a> {
-  endpoint_command: &'a EndpointCommand,
+  command_description: String,
   endpoint_projection: &'a EndpointProjection,
 }
 
@@ -378,7 +383,7 @@ impl<'a> CommandValidationQueries<'a> {
     } else {
       Err(SpecCommandError::Validation(format!(
         "Command failed validation: {}, {:?}",
-        msg, self.endpoint_command
+        msg, self.command_description
       )))
     }
   }
@@ -389,14 +394,18 @@ impl<'a> CommandValidationQueries<'a> {
       .get_path_component_node_index(path_component_id)
       .is_some()
   }
+
+  pub fn path_component_is_root(&self, path_component_id: &PathComponentId) -> bool {
+    path_component_id == ROOT_PATH_ID
+  }
 }
 
-impl<'a> From<(&'a EndpointProjection, &'a EndpointCommand)> for CommandValidationQueries<'a> {
+impl<'a> From<(&'a EndpointProjection, &EndpointCommand)> for CommandValidationQueries<'a> {
   fn from(
-    (endpoint_projection, endpoint_command): (&'a EndpointProjection, &'a EndpointCommand),
+    (endpoint_projection, endpoint_command): (&'a EndpointProjection, &EndpointCommand),
   ) -> Self {
     Self {
-      endpoint_command,
+      command_description: format!("{:?}", endpoint_command),
       endpoint_projection,
     }
   }
