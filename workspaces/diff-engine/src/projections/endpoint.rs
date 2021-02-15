@@ -286,6 +286,23 @@ impl Aggregate for EndpointProjection {
   }
 }
 
+impl<I> From<I> for EndpointProjection
+where
+  I: IntoIterator,
+  I::Item: AggregateEvent<Self>,
+{
+  fn from(events: I) -> Self {
+    let mut projection = EndpointProjection::default();
+    for event in events.into_iter() {
+      projection.apply(event);
+    }
+    projection
+  }
+}
+
+// Events
+// ------
+
 impl AggregateEvent<EndpointProjection> for EndpointEvent {
   fn apply_to(self, aggregate: &mut EndpointProjection) {
     match self {
@@ -408,5 +425,38 @@ impl<'a> From<(&'a EndpointProjection, &EndpointCommand)> for CommandValidationQ
       command_description: format!("{:?}", endpoint_command),
       endpoint_projection,
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use serde_json::json;
+
+  #[test]
+  pub fn can_apply_events_from_endpoint_commands() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut initial_projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathComponent": {"pathId": "path_2", "parentPathId": "path_1", "name": "completed"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = initial_projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+
+    for event in new_events {
+      initial_projection.apply(event);
+    }
+
+    assert!(initial_projection
+      .get_path_component_node_index(&String::from("path_2"))
+      .is_some())
   }
 }
