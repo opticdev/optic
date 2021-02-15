@@ -23,7 +23,7 @@ optic_export_env() {
   then
     echo "'$ENV_FILE' is empty. You might want to put some variables there"
   else
-    export $VARS_TO_EXPORT
+    export "$VARS_TO_EXPORT"
   fi
 }
 
