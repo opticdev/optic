@@ -10,20 +10,14 @@ alias cidev="$OPTIC_SRC_DIR/workspaces/ci-cli/bin/run"
 alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
 
 optic_export_env() {
-  ENV_FILE=$1
-  if [ ! -f "$ENV_FILE" ]
-  then
-    echo "could not find env file '$ENV_FILE'"
-    exit 1
-  fi
+  set -u
 
-  VARS_TO_EXPORT=$(grep -v '^#' "$ENV_FILE")
-  VARS_WITHOUT_WHITESPACE=$(echo $VARS_TO_EXPORT | sed s/\ //)
-  if [ "$VARS_WITHOUT_WHITESPACE" = "" ]
+  ENV_FILE=$1
+  if [ -f "$ENV_FILE" ]
   then
-    echo "'$ENV_FILE' is empty. You might want to put some variables there"
+    export "$(grep -v '^#' $ENV_FILE | xargs)"
   else
-    export $VARS_TO_EXPORT
+    echo "Could not find env file '$ENV_FILE'."
   fi
 }
 
