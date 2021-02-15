@@ -15,7 +15,7 @@ optic_export_env() {
   ENV_FILE=$1
   if [ -f "$ENV_FILE" ]
   then
-    export "$(grep -v '^#' $ENV_FILE | xargs)"
+    export "$(grep -v '^#' $ENV_FILE)"
   else
     echo "Could not find env file '$ENV_FILE'."
   fi
