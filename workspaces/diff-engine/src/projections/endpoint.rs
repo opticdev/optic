@@ -1,7 +1,9 @@
+use crate::commands::{EndpointCommand, SpecCommand, SpecCommandError};
+use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
-use cqrs_core::{Aggregate, AggregateEvent, Event};
-use petgraph::graph::Graph;
+use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
+use petgraph::graph::{Graph, NodeIndex};
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
@@ -248,6 +250,13 @@ impl EndpointProjection {
       .node_id_to_index
       .insert(response_id, response_node_index);
   }
+
+  pub fn get_path_component_node_index(
+    &self,
+    path_component_id: &PathComponentId,
+  ) -> Option<&NodeIndex> {
+    self.node_id_to_index.get(path_component_id)
+  }
 }
 
 impl Default for EndpointProjection {
@@ -318,6 +327,77 @@ impl AggregateEvent<EndpointProjection> for SpecEvent {
   fn apply_to(self, aggregate: &mut EndpointProjection) {
     if let SpecEvent::EndpointEvent(event) = self {
       event.apply_to(aggregate);
+    }
+  }
+}
+
+impl AggregateCommand<EndpointProjection> for EndpointCommand {
+  type Error = SpecCommandError;
+  type Event = EndpointEvent;
+  type Events = Vec<EndpointEvent>;
+
+  fn execute_on(self, projection: &EndpointProjection) -> Result<Self::Events, Self::Error> {
+    let validation = CommandValidationQueries::from((projection, &self));
+
+    match &self {
+      EndpointCommand::AddPathComponent(command) => {
+        validation.require(
+          validation.path_component_id_exists(&command.parent_path_id),
+          "parent path component must exist to add path component",
+        )?;
+        validation.require(
+          !validation.path_component_id_exists(&command.path_id),
+          "path id must be assignable to add path component",
+        )?;
+        let event = endpoint_events::PathComponentAdded {
+          path_id: command.path_id.clone(),
+          parent_path_id: command.parent_path_id.clone(),
+          name: command.name.clone(),
+          event_context: None,
+        };
+
+        Ok(vec![EndpointEvent::PathComponentAdded(event)])
+      }
+
+      _ => Err(SpecCommandError::Unimplemented(
+        SpecCommand::EndpointCommand(self),
+      )),
+    }
+  }
+}
+
+struct CommandValidationQueries<'a> {
+  endpoint_command: &'a EndpointCommand,
+  endpoint_projection: &'a EndpointProjection,
+}
+
+impl<'a> CommandValidationQueries<'a> {
+  fn require(&self, condition: bool, msg: &'static str) -> Result<(), SpecCommandError> {
+    if condition {
+      Ok(())
+    } else {
+      Err(SpecCommandError::Validation(format!(
+        "Command failed validation: {}, {:?}",
+        msg, self.endpoint_command
+      )))
+    }
+  }
+
+  pub fn path_component_id_exists(&self, path_component_id: &PathComponentId) -> bool {
+    self
+      .endpoint_projection
+      .get_path_component_node_index(path_component_id)
+      .is_some()
+  }
+}
+
+impl<'a> From<(&'a EndpointProjection, &'a EndpointCommand)> for CommandValidationQueries<'a> {
+  fn from(
+    (endpoint_projection, endpoint_command): (&'a EndpointProjection, &'a EndpointCommand),
+  ) -> Self {
+    Self {
+      endpoint_command,
+      endpoint_projection,
     }
   }
 }

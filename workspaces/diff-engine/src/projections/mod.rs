@@ -8,8 +8,10 @@ pub use endpoint::EndpointProjection;
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
+use crate::commands::{SpecCommand, SpecCommandError};
 use crate::events::SpecEvent;
-use cqrs_core::{Aggregate, AggregateEvent};
+use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
+use std::error::Error;
 
 #[derive(Debug)]
 pub struct SpecProjection {
@@ -47,6 +49,9 @@ impl Aggregate for SpecProjection {
   }
 }
 
+// Events
+// ------
+
 impl AggregateEvent<SpecProjection> for SpecEvent {
   fn apply_to(self, projection: &mut SpecProjection) {
     match self {
@@ -74,5 +79,18 @@ where
       projection.apply(event);
     }
     projection
+  }
+}
+
+// Commands
+// --------
+
+impl AggregateCommand<SpecProjection> for SpecCommand {
+  type Error = SpecCommandError;
+  type Event = SpecEvent;
+  type Events = Vec<SpecEvent>;
+
+  fn execute_on(self, projection: &SpecProjection) -> Result<Self::Events, Self::Error> {
+    Ok(vec![])
   }
 }

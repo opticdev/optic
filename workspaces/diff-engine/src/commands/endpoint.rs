@@ -48,9 +48,9 @@ pub enum EndpointCommand {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct AddPathComponent {
-  path_id: PathComponentId,
-  parent_path_id: PathComponentId,
-  name: String,
+  pub path_id: PathComponentId,
+  pub parent_path_id: PathComponentId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug)]
