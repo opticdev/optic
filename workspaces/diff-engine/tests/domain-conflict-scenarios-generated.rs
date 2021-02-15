@@ -2,12 +2,11 @@
 use insta::assert_debug_snapshot;
 use optic_diff_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
-use serde_json::json;
 
 #[test]
 pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d() {
-  let spec_file_path = "/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/events-9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d.json";
-  let interactions_file_path="/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/interactions.json";
+  let spec_file_path =  "tests/fixtures/domain-conflict-scenarios/events-9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d.json";
+  let interactions_file_path = "tests/fixtures/domain-conflict-scenarios/interactions.json";
   let events = SpecEvent::from_file(spec_file_path).expect("should be able to deserialize events");
   let spec_projection = SpecProjection::from(events);
   assert_debug_snapshot!(
@@ -26,15 +25,16 @@ pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d
     .expect("expected interactions file to be readable");
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
-    let label = format!("scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__interaction_{}__diffs" , interaction.uuid.clone());
+    let label = format!("scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__interaction_{}__diffs", interaction.uuid.clone());
     let diffs = diff_interaction(&spec_projection, interaction);
     assert_debug_snapshot!(label, diffs);
   }
 }
+
 #[test]
 pub fn scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c() {
-  let spec_file_path = "/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/events-20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c.json";
-  let interactions_file_path="/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/interactions.json";
+  let spec_file_path = "tests/fixtures/domain-conflict-scenarios/events-20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c.json";
+  let interactions_file_path = "tests/fixtures/domain-conflict-scenarios/interactions.json";
   let events = SpecEvent::from_file(spec_file_path).expect("should be able to deserialize events");
   let spec_projection = SpecProjection::from(events);
   assert_debug_snapshot!(
@@ -53,15 +53,16 @@ pub fn scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c
     .expect("expected interactions file to be readable");
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
-    let label = format!("scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c__interaction_{}__diffs" , interaction.uuid.clone());
+    let label = format!("scenario_20e9bda8afc0279258c5ac2c01b82c437aa1976e1eba23cb92096f7434d9316c__interaction_{}__diffs", interaction.uuid.clone());
     let diffs = diff_interaction(&spec_projection, interaction);
     assert_debug_snapshot!(label, diffs);
   }
 }
+
 #[test]
 pub fn scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229() {
-  let spec_file_path = "/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/events-af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229.json";
-  let interactions_file_path="/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/interactions.json";
+  let spec_file_path = "tests/fixtures/domain-conflict-scenarios/events-af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229.json";
+  let interactions_file_path = "tests/fixtures/domain-conflict-scenarios/interactions.json";
   let events = SpecEvent::from_file(spec_file_path).expect("should be able to deserialize events");
   let spec_projection = SpecProjection::from(events);
   assert_debug_snapshot!(
@@ -80,15 +81,16 @@ pub fn scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229
     .expect("expected interactions file to be readable");
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
-    let label = format!("scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229__interaction_{}__diffs" , interaction.uuid.clone());
+    let label = format!("scenario_af20bd1d8e76cf9db0416175232b9b0276447f7148f3261f2d14b006aa7a0229__interaction_{}__diffs", interaction.uuid.clone());
     let diffs = diff_interaction(&spec_projection, interaction);
     assert_debug_snapshot!(label, diffs);
   }
 }
+
 #[test]
 pub fn scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9() {
-  let spec_file_path = "/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/events-1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9.json";
-  let interactions_file_path="/Users/dev/work/optic/workspaces/diff-engine/tests/fixtures/domain-conflict-scenarios/interactions.json";
+  let spec_file_path = "tests/fixtures/domain-conflict-scenarios/events-1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9.json";
+  let interactions_file_path = "tests/fixtures/domain-conflict-scenarios/interactions.json";
   let events = SpecEvent::from_file(spec_file_path).expect("should be able to deserialize events");
   let spec_projection = SpecProjection::from(events);
   assert_debug_snapshot!(
@@ -107,7 +109,7 @@ pub fn scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9
     .expect("expected interactions file to be readable");
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();
   for interaction in interactions {
-    let label = format!("scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9__interaction_{}__diffs" , interaction.uuid.clone());
+    let label = format!("scenario_1f2c157783b46f9555f537046a7cb37cdde95466bd1af429b0f95f171a2bb4f9__interaction_{}__diffs", interaction.uuid.clone());
     let diffs = diff_interaction(&spec_projection, interaction);
     assert_debug_snapshot!(label, diffs);
   }
