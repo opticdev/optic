@@ -541,14 +541,11 @@ fn can_handle_base_shape_changes() {
     &shape_id,
   );
   let fingerprints = results
-      .iter()
-      .map(|result| result.fingerprint())
-      .collect::<Vec<_>>();
+    .iter()
+    .map(|result| result.fingerprint())
+    .collect::<Vec<_>>();
 
   assert_debug_snapshot!("can_handle_base_shape_changes__results", results);
   assert_eq!(results.len(), 0);
-  assert_debug_snapshot!(
-    "can_handle_base_shape_changes__fingerprints",
-    fingerprints
-  );
+  assert_debug_snapshot!("can_handle_base_shape_changes__fingerprints", fingerprints);
 }

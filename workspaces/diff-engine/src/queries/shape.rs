@@ -261,12 +261,12 @@ impl<'a> ShapeQueries<'a> {
       },
       ShapeKind::UnknownKind => ResolvedTrail {
         shape_id: parent.shape_id.clone(),
-        core_shape_kind: &ShapeKind::UnknownKind
+        core_shape_kind: &ShapeKind::UnknownKind,
       },
       x => {
         //dbg!(x);
         unimplemented!("need to support more shapekinds")
-      },
+      }
     }
   }
 
