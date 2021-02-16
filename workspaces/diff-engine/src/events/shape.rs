@@ -5,8 +5,8 @@ use crate::state::shape::{
 use cqrs_core::Event;
 use serde::{Deserialize, Serialize};
 
-pub type ShapeId = String;
-pub type ShapeParameterId = String;
+type ShapeId = String;
+type ShapeParameterId = String;
 type FieldId = String;
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
