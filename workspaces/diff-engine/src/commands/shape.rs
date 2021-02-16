@@ -4,7 +4,7 @@ use crate::state::shape::{
 };
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub enum ShapeCommand {
   AddShape(AddShape),
   SetBaseShape(SetBaseShape),
@@ -24,7 +24,7 @@ pub enum ShapeCommand {
   SetFieldShape(SetFieldShape),
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddShape {
   shape_id: ShapeId,
@@ -32,21 +32,21 @@ pub struct AddShape {
   name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetBaseShape {
   shape_id: ShapeId,
   base_shape_id: ShapeId,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RenameShape {
   shape_id: ShapeId,
   name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveShape {
   shape_id: ShapeId,
@@ -55,7 +55,7 @@ pub struct RemoveShape {
 // Shape parameters
 // ----------------
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddShapeParameter {
   shape_parameter_id: ShapeParameterId,
@@ -63,20 +63,20 @@ pub struct AddShapeParameter {
   name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveShapeParameter {
   shape_parameter_id: ShapeParameterId,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RenameShapeParameter {
   shape_parameter_id: ShapeParameterId,
   name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetParameterShape {
   shape_descriptor: ParameterShapeDescriptor,
@@ -85,7 +85,7 @@ pub struct SetParameterShape {
 // Fields
 // ------
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddField {
   field_id: FieldId,
@@ -94,20 +94,20 @@ pub struct AddField {
   shape_descriptor: FieldShapeDescriptor,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RenameField {
   field_id: FieldId,
   name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoveField {
   field_id: FieldId,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetFieldShape {
   shape_descriptor: FieldShapeDescriptor,
