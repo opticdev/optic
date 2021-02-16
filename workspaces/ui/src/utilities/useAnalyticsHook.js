@@ -5,7 +5,6 @@ import niceTry from 'nice-try';
 import { Client } from '@useoptic/cli-client';
 import packageJson from '../../package.json';
 import { wildcardEvent } from '@useoptic/analytics/lib/events/wildcard';
-import os from 'os';
 
 const clientId = `local_cli_${packageJson.version}`;
 
@@ -73,9 +72,6 @@ export function AnalyticsContextStore({ children, specService }) {
       const clientContext = {
         clientAgent: clientAgent,
         clientId: clientId,
-        //platform: os.platform(),
-        //arch: os.arch(),
-        //release: os.release(),
         clientSessionInstanceId: batchId,
         clientTimestamp: new Date().toISOString(),
         apiName,
