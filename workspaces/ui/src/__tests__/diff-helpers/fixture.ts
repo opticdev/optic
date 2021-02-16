@@ -30,6 +30,7 @@ import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
+  rawEvents: any;
   rawSamples: any;
   diffs: DiffSet;
   loadInteraction: (pointer: string) => Promise<ILoadInteractionResponse>;
@@ -52,6 +53,7 @@ export async function loadsDiffsFromUniverse(
   const universePromise = makeUniverse(universe_raw);
   const {
     rawDiffs,
+    rawEvents,
     rfcBaseState,
     loadInteraction,
     specService,
@@ -71,6 +73,7 @@ export async function loadsDiffsFromUniverse(
 
   return {
     diffs,
+    rawEvents,
     rfcBaseState,
     loadInteraction,
     learnInitial,

@@ -4,6 +4,7 @@ exports[`accurate spec trail for all diffs 1`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
   },
   "inResponse": false,
   "method": "GET",
@@ -16,6 +17,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
     "statusCode": 200,
   },
   "method": "GET",
@@ -27,6 +29,7 @@ exports[`accurate spec trail for all diffs 3`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "GET",
@@ -39,6 +42,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "GET",
@@ -50,6 +54,7 @@ exports[`accurate spec trail for all diffs 5`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "GET",
@@ -62,6 +67,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "GET",
@@ -73,6 +79,7 @@ exports[`accurate spec trail for all diffs 7`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_3kjV3YMXdP",
   },
   "inResponse": false,
   "method": "GET",
@@ -85,6 +92,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_dE2gzm1TWj",
     "statusCode": 200,
   },
   "method": "GET",
@@ -96,6 +104,7 @@ exports[`accurate spec trail for all diffs 9`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
   },
   "inResponse": false,
   "method": "GET",
@@ -108,6 +117,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
     "statusCode": 200,
   },
   "method": "GET",
@@ -119,6 +129,7 @@ exports[`accurate spec trail for all diffs 11`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "PATCH",
@@ -131,6 +142,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "PATCH",
@@ -142,6 +154,7 @@ exports[`accurate spec trail for all diffs 13`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "PATCH",
@@ -154,6 +167,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "PATCH",
@@ -165,6 +179,7 @@ exports[`accurate spec trail for all diffs 15`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "PATCH",
@@ -177,6 +192,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "PATCH",
@@ -188,6 +204,7 @@ exports[`accurate spec trail for all diffs 17`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
   },
   "inResponse": false,
   "method": "GET",
@@ -200,6 +217,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
     "statusCode": 200,
   },
   "method": "GET",
@@ -211,6 +229,7 @@ exports[`accurate spec trail for all diffs 19`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "POST",
@@ -223,6 +242,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "POST",
@@ -234,6 +254,7 @@ exports[`accurate spec trail for all diffs 21`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
   },
   "inResponse": false,
   "method": "GET",
@@ -246,6 +267,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
     "statusCode": 200,
   },
   "method": "GET",
@@ -257,6 +279,7 @@ exports[`accurate spec trail for all diffs 23`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "PATCH",
@@ -269,6 +292,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "PATCH",
@@ -280,6 +304,7 @@ exports[`accurate spec trail for all diffs 25`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_gwQEFrHpO0",
   },
   "inResponse": false,
   "method": "GET",
@@ -292,6 +317,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_Zv48g7lL5e",
     "statusCode": 200,
   },
   "method": "GET",
@@ -303,6 +329,7 @@ exports[`accurate spec trail for all diffs 27`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": undefined,
   },
   "inResponse": false,
   "method": "GET",
@@ -315,6 +342,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": undefined,
     "statusCode": 200,
   },
   "method": "GET",
@@ -326,6 +354,7 @@ exports[`accurate spec trail for all diffs 29`] = `
 Object {
   "inRequest": Object {
     "contentType": "application/json",
+    "requestId": "request_SqY61Qc9Mi",
   },
   "inResponse": false,
   "method": "GET",
@@ -338,6 +367,7 @@ Object {
   "inRequest": false,
   "inResponse": Object {
     "contentType": "application/json",
+    "responseId": "response_RkkvxIt2RG",
     "statusCode": 200,
   },
   "method": "GET",
