@@ -1,5 +1,0 @@
----
-source: workspaces/diff-engine/tests/changelog-projections.rs
-expression: "changelog_query.changed(Utc::now())"
----
-[]

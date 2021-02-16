@@ -4,11 +4,6 @@ expression: query.added(setup_some_time())
 ---
 [
     Endpoint {
-        path: "/following/drivers",
-        method: "POST",
-        added: 2020-04-29T13:38:09.666Z,
-    },
-    Endpoint {
         path: "/api/f1/:season/:round",
         method: "GET",
         added: 2020-04-08T09:28:13.358Z,
@@ -17,5 +12,10 @@ expression: query.added(setup_some_time())
         path: "/api/f1/:season/drivers/:driverId",
         method: "GET",
         added: 2020-04-08T09:29:18.906Z,
+    },
+    Endpoint {
+        path: "/following/drivers",
+        method: "POST",
+        added: 2020-04-29T13:38:09.666Z,
     },
 ]

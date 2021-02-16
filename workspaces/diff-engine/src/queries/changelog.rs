@@ -7,8 +7,11 @@ pub struct ChangelogQuery {
 
 impl ChangelogQuery {
   pub fn added(self, since: DateTime<Utc>) -> Vec<Endpoint> {
-    self.changelog.endpoints.values()
+    let mut endpoints = self.changelog.endpoints.values()
       .filter(|e| e.added >= since)
-      .cloned().collect()
+      .cloned()
+      .collect::<Vec<Endpoint>>();
+    endpoints.sort_by(|a, b| a.added.cmp(&b.added));
+    endpoints
   }
 }

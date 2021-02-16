@@ -1,5 +1,4 @@
-use crate::events::{SpecEvent, ShapeEvent, EndpointEvent, EventContext};
-use crate::events::shape::{ShapeId, ShapeParameterId};
+use crate::events::{SpecEvent, EndpointEvent, EventContext};
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::state::endpoint::PathComponentId;
 use cqrs_core::{Aggregate, AggregateEvent};

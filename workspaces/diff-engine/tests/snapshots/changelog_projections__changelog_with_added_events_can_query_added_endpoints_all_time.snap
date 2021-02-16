@@ -9,14 +9,19 @@ expression: query.added(setup_all_time())
         added: 2020-04-08T09:23:41.636Z,
     },
     Endpoint {
-        path: "/api/f1/:season/:round/results",
+        path: "/api/f1/:season/:round/constructors",
         method: "GET",
-        added: 2020-04-08T09:27:14.006Z,
+        added: 2020-04-08T09:24:36.530Z,
     },
     Endpoint {
         path: "/api/f1/:season/:round/drivers",
         method: "GET",
         added: 2020-04-08T09:25:53.873Z,
+    },
+    Endpoint {
+        path: "/api/f1/:season/:round/results",
+        method: "GET",
+        added: 2020-04-08T09:27:14.006Z,
     },
     Endpoint {
         path: "/api/f1/:season/:round",
@@ -27,11 +32,6 @@ expression: query.added(setup_all_time())
         path: "/api/f1/:season/drivers/:driverId",
         method: "GET",
         added: 2020-04-08T09:29:18.906Z,
-    },
-    Endpoint {
-        path: "/api/f1/:season/:round/constructors",
-        method: "GET",
-        added: 2020-04-08T09:24:36.530Z,
     },
     Endpoint {
         path: "/following/drivers",
