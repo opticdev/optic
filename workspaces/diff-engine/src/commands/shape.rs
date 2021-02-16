@@ -1,7 +1,11 @@
+use super::{EndpointCommand, SpecCommand, SpecCommandError};
+use crate::events::ShapeEvent;
+use crate::projections::ShapeProjection;
 use crate::state::shape::{
   FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ShapeId, ShapeParameterId,
   ShapeParametersDescriptor,
 };
+use cqrs_core::AggregateCommand;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -111,4 +115,79 @@ pub struct RemoveField {
 #[serde(rename_all = "camelCase")]
 pub struct SetFieldShape {
   shape_descriptor: FieldShapeDescriptor,
+}
+
+// Command handling
+// ----------------
+
+impl AggregateCommand<ShapeProjection> for EndpointCommand {
+  type Error = SpecCommandError;
+  type Event = ShapeEvent;
+  type Events = Vec<ShapeEvent>;
+
+  fn execute_on(self, projection: &ShapeProjection) -> Result<Self::Events, Self::Error> {
+    let validation = CommandValidationQueries::from((projection, &self));
+
+    let events = match self {
+      _ => Err(SpecCommandError::Unimplemented(
+        SpecCommand::EndpointCommand(self),
+      ))?,
+    };
+
+    Ok(events)
+  }
+}
+
+impl AggregateCommand<ShapeProjection> for ShapeCommand {
+  type Error = SpecCommandError;
+  type Event = ShapeEvent;
+  type Events = Vec<ShapeEvent>;
+
+  fn execute_on(self, projection: &ShapeProjection) -> Result<Self::Events, Self::Error> {
+    let validation = CommandValidationQueries::from((projection, &self));
+
+    let events = match self {
+      _ => Err(SpecCommandError::Unimplemented(SpecCommand::ShapeCommand(
+        self,
+      )))?,
+    };
+
+    Ok(events)
+  }
+}
+
+struct CommandValidationQueries<'a> {
+  command_description: String,
+  shape_projection: &'a ShapeProjection,
+}
+
+impl<'a> CommandValidationQueries<'a> {
+  fn require(&self, condition: bool, msg: &'static str) -> Result<(), SpecCommandError> {
+    if condition {
+      Ok(())
+    } else {
+      Err(SpecCommandError::Validation(format!(
+        "Command failed validation: {}, {:?}",
+        msg, self.command_description
+      )))
+    }
+  }
+}
+
+impl<'a> From<(&'a ShapeProjection, &EndpointCommand)> for CommandValidationQueries<'a> {
+  fn from((shape_projection, endpoint_command): (&'a ShapeProjection, &EndpointCommand)) -> Self {
+    Self {
+      command_description: format!("{:?}", endpoint_command),
+      shape_projection,
+    }
+  }
+}
+
+impl<'a> From<(&'a ShapeProjection, &ShapeCommand)> for CommandValidationQueries<'a> {
+  fn from((shape_projection, shape_command): (&'a ShapeProjection, &ShapeCommand)) -> Self {
+    Self {
+      command_description: format!("{:?}", shape_command),
+      shape_projection,
+    }
+  }
 }

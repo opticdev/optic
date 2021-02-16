@@ -8,7 +8,6 @@ pub use endpoint::EndpointProjection;
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
-use crate::commands::{SpecCommand, SpecCommandError};
 use crate::events::SpecEvent;
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
 use std::error::Error;
@@ -79,18 +78,5 @@ where
       projection.apply(event);
     }
     projection
-  }
-}
-
-// Commands
-// --------
-
-impl AggregateCommand<SpecProjection> for SpecCommand {
-  type Error = SpecCommandError;
-  type Event = SpecEvent;
-  type Events = Vec<SpecEvent>;
-
-  fn execute_on(self, projection: &SpecProjection) -> Result<Self::Events, Self::Error> {
-    Ok(vec![])
   }
 }
