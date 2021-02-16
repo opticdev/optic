@@ -5,6 +5,10 @@ const { ApiCreated } = require('../src/events/onboarding');
 const getContext: (batchId: string) => Promise<ClientContext> = async () => {
   return {
     clientId: 'testing',
+    platform: 'furby',
+    arch: 'mips',
+    release: '1998',
+    apiName: 'testing',
     clientSessionInstanceId: 'testing',
     clientTimestamp: 'testing',
     clientAgent: 'testing',
