@@ -110,7 +110,6 @@ impl ConflictsProjection {
     path_name: String,
   ) {
     // build absolute path pattern inductively
-    dbg!(&parent_path_id);
     let parent_node_index = self
       .domain_id_to_index
       .get(&parent_path_id)
@@ -152,7 +151,6 @@ impl ConflictsProjection {
     path_name: String,
   ) {
     // build absolute path pattern inductively
-    dbg!(&parent_path_id);
     let parent_node_index = self
       .domain_id_to_index
       .get(&parent_path_id)
