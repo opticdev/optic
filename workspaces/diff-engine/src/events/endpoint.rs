@@ -1,5 +1,6 @@
 use super::EventContext;
 use cqrs_core::Event;
+use endpoint_commands::RemovePathParameter;
 use serde::{Deserialize, Serialize};
 
 use crate::commands::endpoint as endpoint_commands;
@@ -409,9 +410,39 @@ impl From<PathComponentAdded> for EndpointEvent {
   }
 }
 
+impl From<PathComponentRenamed> for EndpointEvent {
+  fn from(event: PathComponentRenamed) -> Self {
+    Self::PathComponentRenamed(event)
+  }
+}
+
 impl From<PathComponentRemoved> for EndpointEvent {
   fn from(event: PathComponentRemoved) -> Self {
     Self::PathComponentRemoved(event)
+  }
+}
+
+impl From<PathParameterAdded> for EndpointEvent {
+  fn from(event: PathParameterAdded) -> Self {
+    Self::PathParameterAdded(event)
+  }
+}
+
+impl From<PathParameterShapeSet> for EndpointEvent {
+  fn from(event: PathParameterShapeSet) -> Self {
+    Self::PathParameterShapeSet(event)
+  }
+}
+
+impl From<PathParameterRenamed> for EndpointEvent {
+  fn from(event: PathParameterRenamed) -> Self {
+    Self::PathParameterRenamed(event)
+  }
+}
+
+impl From<PathParameterRemoved> for EndpointEvent {
+  fn from(event: PathParameterRemoved) -> Self {
+    Self::PathParameterRemoved(event)
   }
 }
 
@@ -429,10 +460,61 @@ impl From<endpoint_commands::AddPathComponent> for PathComponentAdded {
   }
 }
 
+impl From<endpoint_commands::RenamePathComponent> for PathComponentRenamed {
+  fn from(command: endpoint_commands::RenamePathComponent) -> Self {
+    Self {
+      path_id: command.path_id,
+      name: command.name,
+      event_context: None,
+    }
+  }
+}
+
 impl From<endpoint_commands::RemovePathComponent> for PathComponentRemoved {
   fn from(command: endpoint_commands::RemovePathComponent) -> Self {
     Self {
       path_id: command.path_id,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::AddPathParameter> for PathParameterAdded {
+  fn from(command: endpoint_commands::AddPathParameter) -> Self {
+    Self {
+      path_id: command.path_id,
+      parent_path_id: command.parent_path_id,
+      name: command.name,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::SetPathParameterShape> for PathParameterShapeSet {
+  fn from(command: endpoint_commands::SetPathParameterShape) -> Self {
+    Self {
+      path_id: command.path_id,
+      shape_descriptor: command.shaped_request_parameter_shape_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::RenamePathParameter> for PathParameterRenamed {
+  fn from(command: endpoint_commands::RenamePathParameter) -> Self {
+    Self {
+      path_id: command.path_id,
+      name: command.name,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::RemovePathParameter> for PathParameterRemoved {
+  fn from(command: endpoint_commands::RemovePathParameter) -> Self {
+    Self {
+      path_id: command.path_id,
+      name: String::from(""), // TODO verify if this is okay, since command has no name
       event_context: None,
     }
   }

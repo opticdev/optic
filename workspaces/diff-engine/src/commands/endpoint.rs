@@ -1,3 +1,4 @@
+use super::CommandContext;
 use serde::Deserialize;
 
 use crate::state::endpoint::{
@@ -56,8 +57,8 @@ pub struct AddPathComponent {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct RenamePathComponent {
-  path_id: PathComponentId,
-  name: String,
+  pub path_id: PathComponentId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -72,29 +73,29 @@ pub struct RemovePathComponent {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct AddPathParameter {
-  path_id: PathComponentId,
-  parent_path_id: PathComponentId,
-  name: String,
+  pub path_id: PathComponentId,
+  pub parent_path_id: PathComponentId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SetPathParameterShape {
-  path_id: PathComponentId,
-  shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor,
+  pub path_id: PathComponentId,
+  pub shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct RenamePathParameter {
-  path_id: PathComponentId,
-  name: String,
+  pub path_id: PathComponentId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct RemovePathParameter {
-  path_id: PathComponentId,
+  pub path_id: PathComponentId,
 }
 
 // Requests

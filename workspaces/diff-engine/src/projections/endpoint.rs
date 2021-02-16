@@ -1,4 +1,4 @@
-use crate::commands::{EndpointCommand, SpecCommand, SpecCommandError};
+use crate::commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError};
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
@@ -356,7 +356,9 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
   fn execute_on(self, projection: &EndpointProjection) -> Result<Self::Events, Self::Error> {
     let validation = CommandValidationQueries::from((projection, &self));
 
-    let event = match self {
+    let events = match self {
+      // Path components
+      // ---------------
       EndpointCommand::AddPathComponent(command) => {
         validation.require(
           validation.path_component_id_exists(&command.parent_path_id),
@@ -367,7 +369,25 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id must be assignable to add path component",
         )?;
 
-        EndpointEvent::from(endpoint_events::PathComponentAdded::from(command))
+        vec![EndpointEvent::from(
+          endpoint_events::PathComponentAdded::from(command),
+        )]
+      }
+
+      EndpointCommand::RenamePathComponent(command) => {
+        validation.require(
+          !validation.path_component_is_root(&command.path_id),
+          "path id can not be root to rename path component",
+        )?;
+
+        validation.require(
+          validation.path_component_id_exists(&command.path_id),
+          "path component must exist to rename path component",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::PathComponentRenamed::from(command),
+        )]
       }
 
       EndpointCommand::RemovePathComponent(command) => {
@@ -375,8 +395,84 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           !validation.path_component_is_root(&command.path_id),
           "path id must not be root to remove path component",
         )?;
+        validation.require(
+          !validation.path_component_id_exists(&command.path_id),
+          "path component must exist to remove path component",
+        )?;
 
-        EndpointEvent::from(endpoint_events::PathComponentRemoved::from(command))
+        vec![EndpointEvent::from(
+          endpoint_events::PathComponentRemoved::from(command),
+        )]
+      }
+
+      // Path parameters
+      // ---------------
+      EndpointCommand::AddPathParameter(command) => {
+        validation.require(
+          !validation.path_component_id_exists(&command.parent_path_id),
+          "parent path component must exist to add path parameter",
+        )?;
+        validation.require(
+          !validation.path_component_id_exists(&command.path_id),
+          "path id must be assignable to add path parameter",
+        )?;
+
+        // TODO: implement the adding of shape events as well. Probably best done
+        // from the SpecCommand handler, which can run this handler and then the
+        // shape handler separately. Using a custom command, perhaps?
+
+        vec![EndpointEvent::from(
+          endpoint_events::PathParameterAdded::from(command),
+        )]
+      }
+
+      EndpointCommand::SetPathParameterShape(command) => {
+        validation.require(
+          !validation.path_component_is_root(&command.path_id),
+          "path id can not be root to set path parameter shape",
+        )?;
+        validation.require(
+          validation.path_component_id_exists(&command.path_id),
+          "path component must exist to set path parameter shape",
+        )?;
+
+        // TODO: figure out how we can verify the shape id exists. Probably best done
+        // from the SpecCommand hanlder, which can access both projections. Perhaps by
+        // running the ShapeCommand handler first, in which we verify?
+
+        vec![EndpointEvent::from(
+          endpoint_events::PathParameterShapeSet::from(command),
+        )]
+      }
+
+      EndpointCommand::RenamePathParameter(command) => {
+        validation.require(
+          !validation.path_component_is_root(&command.path_id),
+          "path id can not be root to rename path parameter",
+        )?;
+        validation.require(
+          !validation.path_component_id_exists(&command.path_id),
+          "path component must exist to rename path parameter",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::PathParameterRenamed::from(command),
+        )]
+      }
+
+      EndpointCommand::RemovePathParameter(command) => {
+        validation.require(
+          !validation.path_component_is_root(&command.path_id),
+          "path id must not be root to remove path parameter",
+        )?;
+        validation.require(
+          !validation.path_component_id_exists(&command.path_id),
+          "path component must exist to remove path parameter",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::PathParameterRemoved::from(command),
+        )]
       }
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -384,7 +480,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
       ))?,
     };
 
-    Ok(vec![event])
+    Ok(events)
   }
 }
 
