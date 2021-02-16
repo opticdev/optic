@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import pathToRegexp from 'path-to-regexp';
-import { pathComponentsToString } from '../../v2/AddUrlModal';
 import { useServices } from '../../../../contexts/SpecServiceContext';
 
 export const LearnAPIPageContext = React.createContext({});
@@ -13,6 +12,7 @@ export function LearnAPIStore({
 }) {
   const { specService } = useServices();
   const [toDocument, setToDocument] = useState([]);
+
   const [endpointsToDocument, setEndpointsToDocument] = useState([]);
   const [ignoredIds, setIgnoredIds] = useState([]);
   const [basepath, setBasepath] = useState('');
@@ -154,4 +154,77 @@ export function LearnAPIStore({
       {children}
     </LearnAPIPageContext.Provider>
   );
+}
+
+function completePathMatcherRegex(pathComponents) {
+  const pathString = pathComponentsToString(pathComponents);
+  const regex = pathToRegexp(pathString, [], { start: true, end: true });
+  return regex;
+}
+
+function pathReducer(acc, item) {
+  if (
+    acc.find(
+      (i) =>
+        i.method === item.sample.request.method &&
+        i.url === item.sample.request.url
+    )
+  ) {
+    return acc;
+  } else {
+    return acc.concat({
+      method: item.sample.request.method,
+      url: item.sample.request.url,
+      pathId: item.pathId,
+      requestId: item.requestId,
+      sample: item.sample,
+    });
+  }
+}
+
+export function pathComponentsToString(pathComponents) {
+  if (pathComponents.length === 0) {
+    return '/';
+  }
+  const s =
+    '/' +
+    pathComponents
+      .map(({ name, isParameter }) => {
+        if (isParameter) {
+          const stripped = name
+            .replace('{', '')
+            .replace('}', '')
+            .replace(':', '');
+          return `:${stripped}`;
+        } else {
+          return name;
+        }
+      })
+      .join('/');
+  return s;
+}
+
+export function cleanupPathComponentName(name) {
+  return name.replace(/[{}:]/gi, '');
+}
+
+export function trimTrailingEmptyPath(components) {
+  if (components.length > 0) {
+    if (components[components.length - 1].name === '') {
+      return components.slice(0, -1);
+    }
+  }
+  return components;
+}
+
+export function pathStringToPathComponents(pathString) {
+  const components = pathString.split('/').map((name) => {
+    const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{';
+    return { name, isParameter };
+  });
+  const [root, ...rest] = components;
+  if (root.name === '') {
+    return trimTrailingEmptyPath(rest);
+  }
+  return trimTrailingEmptyPath(components);
 }

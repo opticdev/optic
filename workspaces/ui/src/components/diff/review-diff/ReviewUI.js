@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from '@material-ui/core/Box';
-import { PathAndMethodMono } from '../v2/PathAndMethod';
 import { DocDarkGrey, DocGrey } from '../../docs/DocConstants';
 import { useDiffSession } from './ReviewDiffSession';
 import { ReviewEndpoint } from './ReviewEndpoint';
@@ -24,6 +23,10 @@ import { useCaptureContext } from '../../../contexts/CaptureContext';
 import { debugDump } from '../../../utilities/debug-dump';
 import equals from 'lodash.isequal';
 import { DiffSummaryRegion } from './ReviewDiff';
+import {
+  PathAndMethodMono,
+  PathAndMethodOverflowFriendly,
+} from './PathAndMethod';
 export function ReviewUI() {
   const classes = useStyles();
   const { queries, actions } = useDiffSession();
@@ -65,7 +68,11 @@ export function ReviewUI() {
   };
 
   useEffect(() => {
-    if (handledAll.handled === handledAll.total && handledAll.total > 0) {
+    if (
+      handledAll.handled === handledAll.total &&
+      handledAll.total > 0 &&
+      !shouldShowUndocumented
+    ) {
       setAskFinish(true);
     }
   }, [handledAll.handled, handledAll.total]);
@@ -128,7 +135,9 @@ export function ReviewUI() {
           <Divider />
         </Paper>
         <div className={classes.right}>
-          {shouldShowUndocumented && <ReviewUndocumentedUrls />}
+          {shouldShowUndocumented && (
+            <ReviewUndocumentedUrls setAskFinish={setAskFinish} />
+          )}
           {!shouldShowUndocumented && selected && (
             <ReviewEndpoint
               key={selected.pathId + selected.method}
@@ -207,7 +216,7 @@ export function EndpointDetailCard(props) {
     >
       <div className={classes.listInner}>
         <div className={classes.endpointDescriptor}>
-          <PathAndMethodMono path={fullPath} method={httpMethod} />
+          <PathAndMethodOverflowFriendly path={fullPath} method={httpMethod} />
           <Typography variant="caption" className={classes.name}>
             {endpointPurpose || (
               <span style={{ color: DocDarkGrey }}>Unnamed Endpoint</span>
@@ -397,7 +406,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 350,
     maxWidth: 420,
     background: theme.palette.grey[100],
-    overflow: 'scroll',
+    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 900,
@@ -413,6 +422,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: '#d2d2d2',
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
   },
   listInner: {
     padding: 9,
@@ -446,6 +456,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     flex: 1,
     overflow: 'scroll',
+    overflowX: 'hidden',
     paddingTop: 0,
   },
   rightAction: {

@@ -134,6 +134,7 @@ export async function verifyTask(
       passedAll = results.passedAll;
 
       await trackUserEvent(
+        config.name,
         ApiCheckCompleted.withProps({
           passed: passedAll,
           mode: mode,
@@ -159,6 +160,7 @@ export async function verifyTask(
       const results = await verifyManual(foundTask!, startConfig!);
       passedAll = results.passedAll;
       await trackUserEvent(
+        config.name,
         ApiCheckCompleted.withProps({
           passed: passedAll,
           mode: mode,
@@ -191,7 +193,7 @@ export async function verifyTask(
           '\n' +
             fromOptic(
               colors.red.bold(
-                `Some checks failed. Steps to fix can be found here: useoptic.com/docs/check-fail`
+                `Some checks failed. Review the documentation here: https://useoptic.com/docs/get-started/config`
               )
             )
         );

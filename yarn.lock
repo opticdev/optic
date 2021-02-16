@@ -3604,23 +3604,23 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@useoptic/domain-types@10.0.52":
-  version "10.0.52"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.52.tgz#eec51820095f097eb56ae7277432a3a112e1cc45"
-  integrity sha512-0JFvcofY4i3kWTf4jElnDMNl3eVGAv+aqpAFdVdBxHOmMLX6efltdnclPHeI+EBV9aMzH03Y3tAOCirPD8AC5A==
+"@useoptic/domain-types@10.0.64":
+  version "10.0.64"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-types/-/domain-types-10.0.64.tgz#7ac7cb747e0d4452152ac98adb1410bdebc2f2b5"
+  integrity sha512-p8ZN/bszMQxpzsNdGovYKwsZACDTJvarzICJgHBPoPcaMI3XT/Ce3u4L6P70qahSqXO7jUzbkXPbPRsR5ov1mQ==
 
-"@useoptic/domain-utilities@10.0.52":
-  version "10.0.52"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.52.tgz#b6a89cac0750374bbeabb75c7fabfd00e0c1a0a2"
-  integrity sha512-qs03xdipDZdHKg1aw40oQfUCLlcrmmuh5liHTB1OYA1VHd4Ocot8oTU4m9bRGDtiEMQSkwhuB4HHLiiu4xrnWw==
+"@useoptic/domain-utilities@10.0.64":
+  version "10.0.64"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain-utilities/-/domain-utilities-10.0.64.tgz#a71f8b6bf0d047845b418633ad71b8b1d1f18a0c"
+  integrity sha512-nzOLFEVxbrX+RwoD/6d1JH4rJfzDq9RvfQuP+YwA7g8mXhp+ldAOJCqrLPBE4T18s+LfW6e922taV2XS6rogEw==
   dependencies:
-    "@useoptic/domain" "10.0.52"
-    "@useoptic/domain-types" "10.0.52"
+    "@useoptic/domain" "10.0.64"
+    "@useoptic/domain-types" "10.0.64"
 
-"@useoptic/domain@10.0.52":
-  version "10.0.52"
-  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.52.tgz#8371875d9ae43b53c65c8dc54b7a9bf553228604"
-  integrity sha512-cHi5WH/ntQ6/wyWegdvxUb0BS/slHRgv5Uqf5BKKf+LSD1/tdoNKoYDYfOqShbTTPZMxsaCcE850h3b6/fpxnw==
+"@useoptic/domain@10.0.64":
+  version "10.0.64"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-10.0.64.tgz#7e69ff54d17421da2a079208ea1b10d70c3151eb"
+  integrity sha512-ahJIz4O/ncS9IBRFIfOX4V3fL1pl7kuR/yt1wgMyEkBo2+o2RM2Ohx4vK31QmrY5+ae86IBzoVOEeM3fgQLfww==
 
 "@wasm-tool/wasm-pack-plugin@^1.3.1":
   version "1.3.1"
@@ -4077,10 +4077,10 @@ ajv@^6.1.0, ajv@^6.10.2, ajv@^6.12.2, ajv@^6.5.5, ajv@^6.9.1:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-all-contributors-cli@^6.14.0:
-  version "6.16.1"
-  resolved "https://registry.yarnpkg.com/all-contributors-cli/-/all-contributors-cli-6.16.1.tgz#a08ff137df63a22a6f6bf20a8df3fdf79b1b6ca8"
-  integrity sha512-8Hu4vHwW8VF28EBmgCpyfleOG8jCU0RB5sEFMuHzIKy8lUidV2Qo/1GfQ1b78ekB4mYMgdMvfDJd5IKtfzUeGg==
+all-contributors-cli@^6.19.0:
+  version "6.19.0"
+  resolved "https://registry.yarnpkg.com/all-contributors-cli/-/all-contributors-cli-6.19.0.tgz#7e4550973afede2476b62bd159fee6d72a1ad802"
+  integrity sha512-QJN4iLeTeYpTZJES8XFTzQ+itA1qSyBbxLapJLtwrnY+kipyRhCX49fS/s/qftQQym9XLATMZUpUeEeJSox1sw==
   dependencies:
     "@babel/runtime" "^7.7.6"
     async "^3.0.1"
@@ -4089,8 +4089,8 @@ all-contributors-cli@^6.14.0:
     inquirer "^7.0.4"
     json-fixer "^1.5.1"
     lodash "^4.11.2"
+    node-fetch "^2.6.0"
     pify "^5.0.0"
-    request "^2.72.0"
     yargs "^15.0.1"
 
 alphanum-sort@^1.0.0:
@@ -8811,6 +8811,15 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
+git-rev-sync@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/git-rev-sync/-/git-rev-sync-3.0.1.tgz#a393a97f2e4b2a0cc41e512b48065e64f4d8ca3a"
+  integrity sha512-8xZzUwzukIuU3sasgYt3RELc3Ny7o+tbtvitnnU4a4j3djyZNpJ5JmqVX+K7Xv3gE/i7ln3hGdBfZ00T5WWoow==
+  dependencies:
+    escape-string-regexp "1.0.5"
+    graceful-fs "4.1.15"
+    shelljs "0.8.4"
+
 github-slugger@^1.2.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/github-slugger/-/github-slugger-1.3.0.tgz#9bd0a95c5efdfc46005e82a906ef8e2a059124c9"
@@ -8988,6 +8997,11 @@ good-listener@^1.2.2:
   integrity sha1-1TswzfkxPf+33JoNR3CWqm0UXFA=
   dependencies:
     delegate "^3.1.2"
+
+graceful-fs@4.1.15:
+  version "4.1.15"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
+  integrity sha512-6uHUhOPEBgQ24HM+r6b/QwWfZq+yiFcipKFrOFiBEnWdy5sdzYoi+pJeQaPI5qOLRFqWmAXUPQNsielzdLoecA==
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.2, graceful-fs@^4.2.4:
   version "4.2.4"
@@ -12564,10 +12578,10 @@ mock-stdin@^1.0.0:
   resolved "https://registry.yarnpkg.com/mock-stdin/-/mock-stdin-1.0.0.tgz#efcfaf4b18077e14541742fd758b9cae4e5365ea"
   integrity sha512-tukRdb9Beu27t6dN+XztSRHq9J0B/CoAOySGzHfn8UTfmqipA5yNT/sDUEyYdAV3Hpka6Wx6kOMxuObdOex60Q==
 
-mockttp@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/mockttp/-/mockttp-1.0.3.tgz#f8b4388816e60e136289a92ed3987580fe7601bf"
-  integrity sha512-pVRm4lSGGBY6+q3bGkPAz3JsrK/zMtRw7NMQzHuF2GaVt1ru4uLEBBLRNWplFsVuvDxI02dlbyHHYR2qpPZynA==
+mockttp@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mockttp/-/mockttp-1.1.0.tgz#e37f1333926606a16a0acdc76a914314a493e29c"
+  integrity sha512-SuglRYryHsTMPy63KZugtDjHGg8bowPmKIxEIXxRsdZMuuvvTp2eki1ScO9PujiW33Mj+yQyjPVlYbZvlTU7nQ==
   dependencies:
     "@graphql-tools/schema" "^6.0.18"
     "@graphql-tools/utils" "^6.0.18"
@@ -13371,6 +13385,13 @@ package-hash@^3.0.0:
     hasha "^3.0.0"
     lodash.flattendeep "^4.4.0"
     release-zalgo "^1.0.0"
+
+pad-left@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/pad-left/-/pad-left-2.1.0.tgz#16e6a3b2d44a8e138cb0838cc7cb403a4fc9e994"
+  integrity sha1-FuajstRKjhOMsIOMx8tAOk/J6ZQ=
+  dependencies:
+    repeat-string "^1.5.4"
 
 pako@~1.0.5:
   version "1.0.11"
@@ -15567,7 +15588,7 @@ request-promise-native@^1.0.5, request-promise-native@^1.0.8:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.72.0, request@^2.87.0, request@^2.88.2:
+request@^2.87.0, request@^2.88.2:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
@@ -16121,7 +16142,7 @@ shell-quote@1.7.2:
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
 
-shelljs@^0.8.3:
+shelljs@0.8.4, shelljs@^0.8.3:
   version "0.8.4"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.4.tgz#de7684feeb767f8716b326078a8a00875890e3c2"
   integrity sha512-7gk3UZ9kOfPLIAbslLzyWeGiEqx9e3rxwZM0KE6EL8GlGwjym9Mrlx5/p33bWTu9YG6vcS4MBxYZDHYr5lr8BQ==

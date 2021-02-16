@@ -52,7 +52,8 @@ export class Session {
       resolvedPaths.configPath,
       resolvedPaths.opticIgnorePath,
       resolvedPaths.capturesPath,
-      resolvedPaths.specStorePath
+      resolvedPaths.specStorePath,
+      resolvedPaths.specDirPath
     );
   }
 
@@ -98,7 +99,8 @@ class SessionDiffs {
     readonly configPath: string,
     readonly opticIgnorePath: string,
     readonly capturesPath: string,
-    readonly specPath: string
+    readonly specPath: string,
+    readonly specDirPath: string
   ) {}
 
   async startDiff(
@@ -116,6 +118,7 @@ class SessionDiffs {
       events,
       endpoints,
       specPath: this.specPath,
+      specDirPath: this.specDirPath,
     });
     this.activeDiffsByCaptureId.set(captureId, newDiff);
     this.diffsById.set(diffId, newDiff);

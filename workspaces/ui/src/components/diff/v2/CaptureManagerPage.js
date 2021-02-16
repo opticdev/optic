@@ -71,7 +71,6 @@ import TypeModal from '../../shared/JsonTextarea';
 import Fade from '@material-ui/core/Fade';
 import { DiffLoadingOverview } from './LoadingNextDiff';
 import { DiffStats } from './Stats';
-import { trackUserEvent, track } from '../../../Analytics';
 import qs from 'qs';
 
 const {
@@ -231,13 +230,13 @@ function CaptureChooserComponent(props) {
   }, [query.tab]);
 
   useEffect(() => {
-    trackUserEvent(
-      UserChangedCaptureOverviewTab.withProps({
-        currentTab: tab,
-        diffCount: realEndpointDiffCount,
-        undocumentedUrlCount: urlsSplit.total,
-      })
-    );
+    // trackUserEvent(
+    //   UserChangedCaptureOverviewTab.withProps({
+    //     currentTab: tab,
+    //     diffCount: realEndpointDiffCount,
+    //     undocumentedUrlCount: urlsSplit.total,
+    //   })
+    // );
   }, [tab, realEndpointDiffCount, urlsSplit.total]);
 
   useEffect(() => {

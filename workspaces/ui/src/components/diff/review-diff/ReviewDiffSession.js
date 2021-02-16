@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useCaptureContext } from '../../../contexts/CaptureContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { sendMessageToEndpoint } from '../../../engine/diff-session';
-import { makeDiffRfcBaseState } from '../../../engine/interfaces/diff-rfc-base-state';
 import { ReviewUI } from './ReviewUI';
 import { useDiffSessionMachine } from '../../../engine/hooks/session-hook';
 import { RfcContext } from '../../../contexts/RfcContext';
-import { LoadingReviewPage } from './LoadingPage';
+import { ErrorLoadingReviewPage, LoadingReviewPage } from './LoadingPage';
 import Page from '../../Page';
+import { useAnalyticsHook } from '../../../utilities/useAnalyticsHook';
+import {makeDiffRfcBaseState} from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 
 export const DiffSessionContext = React.createContext(null);
 
@@ -60,6 +61,7 @@ export function LoadingDiffPage() {
 export function DiffSessionMachineStore(props) {
   const { children, services, diffId, baseDiffReviewPath } = props;
   const { captureService, diffService, rfcBaseState } = services;
+  const track = useAnalyticsHook();
 
   const { value, context, actions, queries } = useDiffSessionMachine(diffId, {
     captureService,
@@ -68,10 +70,24 @@ export function DiffSessionMachineStore(props) {
     loadInteraction: captureService.loadInteraction.bind(captureService),
   });
 
-  const { completed, rawDiffs, unrecognizedUrlsRaw } = useCaptureContext();
-  //
+  const {
+    completed,
+    rawDiffs,
+    unrecognizedUrlsRaw,
+    didFail,
+  } = useCaptureContext();
+
+  const [statedTime] = useState(Date.now());
+
   useEffect(() => {
-    if (completed) actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
+    if (completed) {
+      actions.signalDiffCompleted(rawDiffs, unrecognizedUrlsRaw);
+      track('DIFF_COMPLETED', {
+        elapsedTime: Date.now() - statedTime,
+        diffsCount: rawDiffs.length,
+        unrecognizedUrlsRaw: unrecognizedUrlsRaw.length,
+      });
+    }
   }, [completed]);
 
   useEffect(() => {
@@ -101,6 +117,10 @@ export function DiffSessionMachineStore(props) {
       return captureService.loadInteraction(interactionPointer);
     },
   };
+
+  if (didFail) {
+    return <ErrorLoadingReviewPage />;
+  }
 
   return (
     <DiffSessionContext.Provider value={reactContext}>

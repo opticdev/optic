@@ -30,7 +30,7 @@ import { Client } from '@useoptic/cli-client';
 import openBrowser from 'react-dev-utils/openBrowser';
 
 export default class Init extends Command {
-  static description = 'Add Optic to your API';
+  static description = 'add Optic to your API';
 
   static flags = {
     inboundUrl: flags.string({}),
@@ -51,7 +51,9 @@ export default class Init extends Command {
           `This directory already has an ${colors.bold('optic.yml')} file.\r\n`
         ),
         colors.yellow(
-          `You can see the current documentation for this project with ${colors.bold('api spec')}.`
+          `You can see the current documentation for this project with ${colors.bold(
+            'api spec'
+          )}.`
         )
       );
     }
@@ -113,6 +115,7 @@ export default class Init extends Command {
     await startInitFlow();
 
     await trackUserEvent(
+      name,
       ApiInitializedInProject.withProps({
         cwd: cwd,
         source:

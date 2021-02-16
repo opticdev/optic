@@ -10,8 +10,6 @@ import {
   plain,
 } from '../../interfaces/interpretors';
 import { ICoreShapeKinds } from '../../interfaces/interfaces';
-import { DiffRfcBaseState } from '../../interfaces/diff-rfc-base-state';
-import { IObjectFieldTrail, IShapeTrail } from '../../interfaces/shape-trail';
 import flatten from 'lodash.flatten';
 import {
   IJsonObjectKey,
@@ -26,6 +24,8 @@ import { addNewFieldCommands, IShapeChange } from '../spec-change-dsl';
 import { setDifference, setEquals } from '../../set-ops';
 import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
 import { targetKindSuggestion } from '../target-shape-kind';
+import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 
 const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
 
@@ -241,7 +241,8 @@ class FieldShapeInterpretationHelper {
         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
       });
     });
-    return sortBy(previews, (i) => !i.invalid);
+
+    return orderTabs(false, previews);
   }
 
   private wrapFieldShapeWithOptional(
@@ -356,10 +357,27 @@ class FieldShapeInterpretationHelper {
 
     return {
       suggestions: suggestOptionalFirst ? suggestions.reverse() : suggestions,
-      previewTabs: tabs,
+      previewTabs: orderTabs(true, tabs),
     };
   }
 }
 
 const targetFinalNotNullable = (target: Set<ICoreShapeKinds>) =>
   !(target.has(ICoreShapeKinds.NullableKind) && target.size === 1);
+
+function orderTabs(newField: boolean, tabs: IInteractionPreviewTab[]) {
+  const ordering = {
+    missing: 10,
+  };
+
+  return tabs.sort((a, b) => {
+    const aI = ordering[a.title] || 0;
+    const bI = ordering[b.title] || 0;
+
+    if (aI > bI) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+}

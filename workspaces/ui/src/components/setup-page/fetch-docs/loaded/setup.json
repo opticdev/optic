@@ -1,17 +1,17 @@
 {
     "cpp": {
-        "pretty_name": "C++",
-        "project_url": "https://isocpp.org/",
+        "pretty_name": "Lithium",
+        "project_url": "https://matt-42.github.io/lithium/",
         "frameworks": {
             "cpprestsdk": {
-                "pretty_name": "C++ REST SDK",
-                "project_url": "https://microsoft.github.io/cpprestsdk/index.html",
+                "pretty_name": "Lithium",
+                "project_url": "https://matt-42.github.io/lithium/",
                 "code_change": true,
                 "language": "cpp",
-                "preamble": "Modify your `Http::Endpoint` address to check for a custom port set by environment variable when it is provided:",
-                "start_command": "./application",
-                "before": "utility::string_t port = U(\"5000\");\n\nutility::string_t address = U(\"http://127.0.0.1:\");\naddress.append(port);\non_initialize(address);\n",
-                "after": "std::string portStr = \"5000\";\nif (getenv(\"PORT\")) {\n    portStr =  getenv (\"PORT\");\n}\nutility::string_t port = U(portStr);\n\nutility::string_t address = U(\"http://127.0.0.1:\");\naddress.append(port);\n"
+                "preamble": "Modify your `http_serve` port parameter to check for a custom port set by environment variable when it is provided:",
+                "start_command": "li run ./main.cc",
+                "before": "int main() {\n  http_api my_api;\n\n  ... \n\n  http_serve(my_api, 3005);\n}",
+                "after": "int main() {\n  http_api my_api;\n  std::string portStr = \"3005\";\nif (getenv(\"PORT\")) { \n    portStr =  getenv (\"PORT\");\n  }\n  utility::string_t port = U(portStr);\n  ... \n\n  http_serve(my_api, 3005);\n}"
             },
             "pistacheio": {
                 "pretty_name": "Pistache",

@@ -14,6 +14,7 @@ import invariant from 'invariant';
 import {
   ICoreShapeInnerParameterNames,
   ICoreShapeKinds,
+  IParsedLocation,
 } from '../../interfaces/interfaces';
 import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
 import { setDifference, setEquals, setUnion } from '../../set-ops';
@@ -38,15 +39,21 @@ export function rootShapeDiffInterpreter(
   const isUnmatched = shapeDiff.isUnmatched;
   const isUnspecified = shapeDiff.isUnspecified;
 
+  const location = shapeDiff.location;
+
   const suggestions = [];
 
   if (isUnmatched) {
     const withUnion = targetKindSuggestion(true, expected, actual);
     const withoutUnion = targetKindSuggestion(false, expected, actual);
-    suggestions.push(suggestionFor(withUnion, expected, actual, services));
-    if (!setEquals(withoutUnion.targetFinal, withoutUnion.targetFinal)) {
-      suggestions.push(suggestionFor(withoutUnion, expected, actual, services));
+    if (!setEquals(withUnion.targetFinal, withoutUnion.targetFinal)) {
+      suggestions.push(
+        suggestionFor(withoutUnion, expected, actual, location, services)
+      );
     }
+    suggestions.push(
+      suggestionFor(withUnion, expected, actual, location, services)
+    );
   }
 
   invariant(
@@ -90,6 +97,7 @@ function suggestionFor(
   },
   expected: Expectation,
   actual: Actual,
+  location: IParsedLocation,
   services: DiffSessionConfig
 ): ISuggestion {
   const ids = services.rfcBaseState.domainIdGenerator;
@@ -181,7 +189,6 @@ function suggestionFor(
     SetParameterShape,
     ProviderInShape,
     ShapeProvider,
-    SetBaseShape,
   } = opticEngine.com.useoptic.contexts.shapes.Commands;
 
   const isWrappedInNullable = expected
@@ -201,17 +208,17 @@ function suggestionFor(
           ICoreShapeInnerParameterNames.NullableInner
         )
       ),
-      SetBaseShape(expected.rootShapeId(), wrapperShapeId)
+      resetBaseShape(location, wrapperShapeId)
     );
   } else {
     if (expected.rootShapeId() !== innerShape.innerRootShapeId) {
-      commands.push(
-        SetBaseShape(expected.rootShapeId(), innerShape.innerRootShapeId)
-      );
+      commands.push(resetBaseShape(location, innerShape.innerRootShapeId));
     }
   }
 
   const sharedCopy: ICopy[] = isWrappedInNullable ? [code('Nullable')] : [];
+
+  console.log('commands here', serializeCommands(commands));
 
   return {
     action: {
@@ -229,4 +236,24 @@ function suggestionFor(
     commands: serializeCommands(commands),
     changeType: IChangeType.Changed,
   };
+}
+
+function resetBaseShape(location: IParsedLocation, newShapeId: string) {
+  const {
+    SetResponseBodyShape,
+    SetRequestBodyShape,
+    ShapedBodyDescriptor,
+  } = opticEngine.com.useoptic.contexts.requests.Commands;
+
+  if (location.inRequest) {
+    return SetRequestBodyShape(
+      location.inRequest.requestId,
+      ShapedBodyDescriptor(location.inRequest.contentType, newShapeId, false)
+    );
+  } else if (location.inResponse) {
+    return SetResponseBodyShape(
+      location.inResponse.responseId,
+      ShapedBodyDescriptor(location.inResponse.contentType, newShapeId, false)
+    );
+  }
 }

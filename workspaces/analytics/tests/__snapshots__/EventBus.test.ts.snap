@@ -5,6 +5,10 @@ Object {
   "context": Object {
     "clientAgent": "testing",
     "clientId": "testing",
+    "platform": "furby",
+    "arch": "mips",
+    "release": "1998",
+    "apiName": "testing",
     "clientSessionInstanceId": "testing",
     "clientTimestamp": "testing",
   },

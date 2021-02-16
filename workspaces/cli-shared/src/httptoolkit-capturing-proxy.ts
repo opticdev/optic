@@ -3,7 +3,6 @@ import path from 'path';
 import os from 'os';
 import * as mockttp from 'mockttp';
 import fs from 'fs-extra';
-import { CallbackResponseResult } from 'mockttp/dist/rules/handlers';
 import { CompletedRequest, MockRuleData } from 'mockttp';
 import mime from 'whatwg-mimetype';
 import {
@@ -17,6 +16,7 @@ import { developerDebugLogger } from './index';
 import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
 import util from 'util';
+import { CallbackResponseResult } from 'mockttp/dist/rules/requests/request-handlers';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string;
@@ -106,6 +106,17 @@ export class HttpToolkitCapturingProxy {
           },
         }),
       });
+
+      const websocketRule = {
+        matchers: [new mockttp.matchers.WildcardMatcher()],
+        handler: new mockttp.webSocketHandlers.PassThroughWebSocketHandler({
+          forwarding: {
+            targetHost: config.proxyTarget,
+          },
+        }),
+      };
+
+      await proxy.addWebSocketRules(websocketRule);
     } else {
       rules.push({
         matchers: [new mockttp.matchers.WildcardMatcher()],

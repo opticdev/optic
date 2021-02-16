@@ -26,7 +26,7 @@ export default function TopLevelRoutes() {
         component={DemoSessions}
       />
       <Route strict path="/apis/:apiId" component={LocalCli} />
-      
+
       <Route strict path={'/'} component={WelcomePage} />
     </Switch>
   );

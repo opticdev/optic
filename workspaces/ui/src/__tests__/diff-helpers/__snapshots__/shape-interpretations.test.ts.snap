@@ -19,6 +19,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -823,6 +824,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -1779,6 +1781,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -2919,6 +2922,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -4059,6 +4063,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -5097,6 +5102,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -6144,6 +6150,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -8376,6 +8383,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -9538,6 +9546,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -9680,6 +9689,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "shape_7",
               },
             },
           },
@@ -10174,6 +10198,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "shape_7",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -10202,6 +10242,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -12634,6 +12675,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -13704,6 +13746,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -14590,6 +14633,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -15145,6 +15189,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -16057,6 +16102,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -16974,6 +17020,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18144,6 +18191,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18288,6 +18336,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_4",
+                  },
+                },
+                "shapeId": "shape_13",
               },
             },
           },
@@ -18688,6 +18751,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -18716,6 +18795,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -18860,6 +18940,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_4",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_4",
+                  },
+                },
+                "shapeId": "shape_13",
               },
             },
           },
@@ -19260,6 +19355,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_4",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -19288,6 +19399,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -19410,6 +19522,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "shape_13",
               },
             },
           },
@@ -19816,6 +19943,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "shape_13",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -19844,6 +19987,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_KBRwJqndED",
         "statusCode": 200,
       },
       "method": "GET",
@@ -20007,6 +20151,71 @@ Object {
       ],
       "ignoreRule": Object {
         "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
+        "examplesOfCoreShapeKinds": "$object",
+      },
+      "interactionPointers": Array [
+        "id",
+      ],
+      "invalid": false,
+      "jsonTrailsByInteractions": Object {
+        "id": Array [
+          Object {
+            "path": Array [
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "MRData",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "RaceTable",
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Races",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Results",
+                },
+              },
+              Object {
+                "JsonArrayItem": Object {
+                  "index": 0,
+                },
+              },
+              Object {
+                "JsonObjectKey": Object {
+                  "key": "Time",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      "title": "object",
+    },
+    Object {
+      "allowsExpand": true,
+      "assertion": Array [
+        Object {
+          "style": 0,
+          "text": "expected required",
+        },
+        Object {
+          "style": 1,
+          "text": "Object",
+        },
+      ],
+      "ignoreRule": Object {
+        "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
         "examplesOfCoreShapeKinds": "$optional",
       },
       "interactionPointers": Array [
@@ -20096,71 +20305,6 @@ Object {
         ],
       },
       "title": "missing",
-    },
-    Object {
-      "allowsExpand": true,
-      "assertion": Array [
-        Object {
-          "style": 0,
-          "text": "expected required",
-        },
-        Object {
-          "style": 1,
-          "text": "Object",
-        },
-      ],
-      "ignoreRule": Object {
-        "diffHash": "40bd51d6397cdfd9ff4029ec48224229d28cf040",
-        "examplesOfCoreShapeKinds": "$object",
-      },
-      "interactionPointers": Array [
-        "id",
-      ],
-      "invalid": false,
-      "jsonTrailsByInteractions": Object {
-        "id": Array [
-          Object {
-            "path": Array [
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "MRData",
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "RaceTable",
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Races",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 0,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Results",
-                },
-              },
-              Object {
-                "JsonArrayItem": Object {
-                  "index": 0,
-                },
-              },
-              Object {
-                "JsonObjectKey": Object {
-                  "key": "Time",
-                },
-              },
-            ],
-          },
-        ],
-      },
-      "title": "object",
     },
   ],
 }
@@ -23954,6 +24098,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -24076,6 +24221,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_2",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_2",
+                  },
+                },
+                "shapeId": "baseline-shape_5",
               },
             },
           },
@@ -24529,6 +24689,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_2",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -24557,6 +24733,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -24724,6 +24901,21 @@ Object {
                   },
                 },
                 "shapeId": "incrementing-id-shape_3",
+              },
+            },
+          },
+        },
+        Object {
+          "SetParameterShape": Object {
+            "shapeDescriptor": Object {
+              "ProviderInShape": Object {
+                "consumingParameterId": "$listItem",
+                "providerDescriptor": Object {
+                  "ShapeProvider": Object {
+                    "shapeId": "incrementing-id-shape_3",
+                  },
+                },
+                "shapeId": "baseline-shape_5",
               },
             },
           },
@@ -25263,6 +25455,22 @@ Array [
       },
     },
     Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "incrementing-id-shape_3",
+              },
+            },
+            "shapeId": "baseline-shape_5",
+          },
+        },
+      },
+    },
+    Object {
       "BatchCommitEnded": Object {
         "batchId": "batchId",
         "eventContext": null,
@@ -25291,6 +25499,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "response_1",
         "statusCode": 200,
       },
       "method": "GET",
@@ -25314,6 +25523,70 @@ Object {
   "for": "shape",
   "overrideTitle": undefined,
   "suggestions": Array [
+    Object {
+      "action": Object {
+        "activeTense": Array [
+          Object {
+            "style": 0,
+            "text": "make root shape",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+        "pastTense": Array [
+          Object {
+            "style": 0,
+            "text": "Marked root shape a",
+          },
+          Object {
+            "style": 1,
+            "text": "Object",
+          },
+        ],
+      },
+      "changeType": 1,
+      "commands": Array [
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$object",
+            "name": "",
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "AddShape": Object {
+            "baseShapeId": "$string",
+            "name": "",
+            "shapeId": "incrementing-id-shape_1",
+          },
+        },
+        Object {
+          "AddField": Object {
+            "fieldId": "incrementing-id-field_1",
+            "name": "foo",
+            "shapeDescriptor": Object {
+              "FieldShapeFromShape": Object {
+                "fieldId": "incrementing-id-field_1",
+                "shapeId": "incrementing-id-shape_1",
+              },
+            },
+            "shapeId": "incrementing-id-shape_2",
+          },
+        },
+        Object {
+          "SetResponseBodyShape": Object {
+            "bodyDescriptor": Object {
+              "httpContentType": "application/json",
+              "isRemoved": false,
+              "shapeId": "incrementing-id-shape_2",
+            },
+            "responseId": "response_1",
+          },
+        },
+      ],
+    },
     Object {
       "action": Object {
         "activeTense": Array [
@@ -25367,40 +25640,40 @@ Object {
           "AddShape": Object {
             "baseShapeId": "$object",
             "name": "",
-            "shapeId": "incrementing-id-shape_2",
+            "shapeId": "incrementing-id-shape_4",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$string",
             "name": "",
-            "shapeId": "incrementing-id-shape_1",
+            "shapeId": "incrementing-id-shape_3",
           },
         },
         Object {
           "AddField": Object {
-            "fieldId": "incrementing-id-field_1",
+            "fieldId": "incrementing-id-field_2",
             "name": "foo",
             "shapeDescriptor": Object {
               "FieldShapeFromShape": Object {
-                "fieldId": "incrementing-id-field_1",
-                "shapeId": "incrementing-id-shape_1",
+                "fieldId": "incrementing-id-field_2",
+                "shapeId": "incrementing-id-shape_3",
               },
             },
-            "shapeId": "incrementing-id-shape_2",
+            "shapeId": "incrementing-id-shape_4",
           },
         },
         Object {
           "AddShape": Object {
             "baseShapeId": "$oneOf",
             "name": "",
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
           },
         },
         Object {
           "AddShapeParameter": Object {
             "name": "",
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
             "shapeParameterId": "incrementing-id-shape-parameter_1",
           },
         },
@@ -25414,7 +25687,7 @@ Object {
                     "shapeId": "shape_3",
                   },
                 },
-                "shapeId": "incrementing-id-shape_3",
+                "shapeId": "incrementing-id-shape_5",
               },
             },
           },
@@ -25422,7 +25695,7 @@ Object {
         Object {
           "AddShapeParameter": Object {
             "name": "",
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
             "shapeParameterId": "incrementing-id-shape-parameter_2",
           },
         },
@@ -25433,18 +25706,22 @@ Object {
                 "consumingParameterId": "incrementing-id-shape-parameter_2",
                 "providerDescriptor": Object {
                   "ShapeProvider": Object {
-                    "shapeId": "incrementing-id-shape_2",
+                    "shapeId": "incrementing-id-shape_4",
                   },
                 },
-                "shapeId": "incrementing-id-shape_3",
+                "shapeId": "incrementing-id-shape_5",
               },
             },
           },
         },
         Object {
-          "SetBaseShape": Object {
-            "baseShapeId": "incrementing-id-shape_3",
-            "shapeId": "shape_3",
+          "SetResponseBodyShape": Object {
+            "bodyDescriptor": Object {
+              "httpContentType": "application/json",
+              "isRemoved": false,
+              "shapeId": "incrementing-id-shape_5",
+            },
+            "responseId": "response_1",
           },
         },
       ],
@@ -25646,6 +25923,183 @@ Array [
       },
     },
     Object {
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "incrementing-id-shape_2",
+        },
+        "eventContext": null,
+        "responseId": "response_1",
+      },
+    },
+    Object {
+      "BatchCommitEnded": Object {
+        "batchId": "batchId",
+        "eventContext": null,
+      },
+    },
+  ],
+  Array [
+    Object {
+      "PathComponentAdded": Object {
+        "eventContext": null,
+        "name": "events",
+        "parentPathId": "root",
+        "pathId": "path_1",
+      },
+    },
+    Object {
+      "RequestParameterAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "name": "queryString",
+        "parameterId": "request-parameter_1",
+        "parameterLocation": "query",
+        "pathId": "path_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "shape_4",
+      },
+    },
+    Object {
+      "RequestParameterShapeSet": Object {
+        "eventContext": null,
+        "parameterDescriptor": Object {
+          "isRemoved": false,
+          "shapeId": "shape_4",
+        },
+        "parameterId": "request-parameter_1",
+      },
+    },
+    Object {
+      "RequestAdded": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "pathId": "path_1",
+        "requestId": "request_1",
+      },
+    },
+    Object {
+      "ResponseAddedByPathAndMethod": Object {
+        "eventContext": null,
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "pathId": "path_1",
+        "responseId": "response_1",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$unknown",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "shape_2",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$list",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "shape_3",
+      },
+    },
+    Object {
+      "ShapeParameterShapeSet": Object {
+        "eventContext": null,
+        "shapeDescriptor": Object {
+          "ProviderInShape": Object {
+            "consumingParameterId": "$listItem",
+            "providerDescriptor": Object {
+              "ShapeProvider": Object {
+                "shapeId": "shape_2",
+              },
+            },
+            "shapeId": "shape_3",
+          },
+        },
+      },
+    },
+    Object {
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "shape_3",
+        },
+        "eventContext": null,
+        "responseId": "response_1",
+      },
+    },
+    Object {
+      "BatchCommitStarted": Object {
+        "batchId": "batchId",
+        "commitMessage": "commitMessage",
+        "eventContext": null,
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$object",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_4",
+      },
+    },
+    Object {
+      "ShapeAdded": Object {
+        "baseShapeId": "$string",
+        "eventContext": null,
+        "name": "",
+        "parameters": Object {
+          "DynamicParameterList": Object {
+            "shapeParameterIds": Array [],
+          },
+        },
+        "shapeId": "incrementing-id-shape_3",
+      },
+    },
+    Object {
+      "FieldAdded": Object {
+        "eventContext": null,
+        "fieldId": "incrementing-id-field_2",
+        "name": "foo",
+        "shapeDescriptor": Object {
+          "FieldShapeFromShape": Object {
+            "fieldId": "incrementing-id-field_2",
+            "shapeId": "incrementing-id-shape_3",
+          },
+        },
+        "shapeId": "incrementing-id-shape_4",
+      },
+    },
+    Object {
       "ShapeAdded": Object {
         "baseShapeId": "$oneOf",
         "eventContext": null,
@@ -25655,7 +26109,7 @@ Array [
             "shapeParameterIds": Array [],
           },
         },
-        "shapeId": "incrementing-id-shape_3",
+        "shapeId": "incrementing-id-shape_5",
       },
     },
     Object {
@@ -25668,10 +26122,10 @@ Array [
             "providerDescriptor": Object {
               "NoProvider": Object {},
             },
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
           },
         },
-        "shapeId": "incrementing-id-shape_3",
+        "shapeId": "incrementing-id-shape_5",
         "shapeParameterId": "incrementing-id-shape-parameter_1",
       },
     },
@@ -25686,7 +26140,7 @@ Array [
                 "shapeId": "shape_3",
               },
             },
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
           },
         },
       },
@@ -25701,10 +26155,10 @@ Array [
             "providerDescriptor": Object {
               "NoProvider": Object {},
             },
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
           },
         },
-        "shapeId": "incrementing-id-shape_3",
+        "shapeId": "incrementing-id-shape_5",
         "shapeParameterId": "incrementing-id-shape-parameter_2",
       },
     },
@@ -25716,19 +26170,23 @@ Array [
             "consumingParameterId": "incrementing-id-shape-parameter_2",
             "providerDescriptor": Object {
               "ShapeProvider": Object {
-                "shapeId": "incrementing-id-shape_2",
+                "shapeId": "incrementing-id-shape_4",
               },
             },
-            "shapeId": "incrementing-id-shape_3",
+            "shapeId": "incrementing-id-shape_5",
           },
         },
       },
     },
     Object {
-      "BaseShapeSet": Object {
-        "baseShapeId": "incrementing-id-shape_3",
+      "ResponseBodySet": Object {
+        "bodyDescriptor": Object {
+          "httpContentType": "application/json",
+          "isRemoved": false,
+          "shapeId": "incrementing-id-shape_5",
+        },
         "eventContext": null,
-        "shapeId": "shape_3",
+        "responseId": "response_1",
       },
     },
     Object {
@@ -25760,6 +26218,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": "baseline-response_1",
         "statusCode": 200,
       },
       "method": "GET",

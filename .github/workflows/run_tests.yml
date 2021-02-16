@@ -1,0 +1,78 @@
+name: Run Tests
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  push:
+    branches: [ 'develop' ]
+    paths-ignore:
+      - website/**
+      - .github/**
+      - "**.md"
+  pull_request:
+    branches: [ 'develop' ]
+    paths-ignore:
+      - website/**
+      - .github/**
+      - "**.md"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  rust_binaries:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: 'Set CARGO_HOME and RUSTUP_HOME'
+        run: |
+          echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
+          echo "CARGO_HOME=$HOME/.cargo" >> $GITHUB_ENV
+      - name: 'Checkout source'
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+      - name: 'Cache cargo registry'
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/commits/v2
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/registry
+            ${{ env.CARGO_HOME }}/git
+            target
+          key: "${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}-v4"
+      - name: 'Rust toolchain'
+        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: 'Build'
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
+        with:
+          command: build
+          args: --workspace --all-features
+      - name: 'Test'
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
+        with:
+          command: test
+      - name: 'Flush Cargo cache to disk on macOS'
+        if: runner.os == 'macOS'
+        run: sudo /usr/sbin/purge
+
+  # This workflow contains a single job called "build"
+  node_packages:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: "checkout source"
+      uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+    - name: "set up node.js"
+      uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # v1.4.4
+      with:
+        node-version: "12.x"
+    - name: "install dependencies"
+      run: yarn install
+    - name: "build workspaces"
+      run: yarn wsrun --stages --report --fast-exit --exclude-missing ws:build

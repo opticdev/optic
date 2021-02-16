@@ -8,10 +8,23 @@ alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_DEVELOPMENT=yes OPTIC_UI_H
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias cidev="$OPTIC_SRC_DIR/workspaces/ci-cli/bin/run"
 alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
+
+optic_export_env() {
+  set -u
+
+  ENV_FILE=$1
+  if [ -f "$ENV_FILE" ]
+  then
+    export "$(grep -v '^#' $ENV_FILE)"
+  else
+    echo "Could not find env file '$ENV_FILE'."
+  fi
+}
+
 optic_workspace_clean() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:clean
   )
@@ -19,7 +32,7 @@ optic_workspace_clean() {
 optic_workspace_build() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
   )
@@ -27,7 +40,7 @@ optic_workspace_build() {
 optic_workspace_binaries_build() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit --exclude-missing ws:build-binaries
   )
@@ -42,7 +55,7 @@ optic_watch() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     optic_workspace_clean
     yarn run watch --filter=workspace-scripts/watch-filter.js "source sourceme.sh && optic_workspace_build_with_notification"
   )
@@ -119,7 +132,6 @@ optic_build_and_publish_locally() {
     set -o errexit
     optic_build_for_release
     cd "$OPTIC_SRC_DIR"
-    npm-cli-login -u testUser -p testPass -e test@example.com -r http://localhost:4873
     OPTIC_PUBLISH_SCOPE=private node ./workspaces/scripts/publish.js
   )
 }
@@ -152,7 +164,6 @@ optic_local_registry_start() {
     set -o errexit
     cd "$OPTIC_SRC_DIR"
     cd docker/private-npm-registry
-    yarn global add verdaccio-memory npm-cli-login
     docker-compose up &
 
     cd "$OPTIC_SRC_DIR"
@@ -295,70 +306,5 @@ optic_ci_e2e() {
 
     cat "$OUTPUT_DIR/conversion.log"
     cat "$OUTPUT_DIR/comparison.log"
-  )
-}
-
-optic_ci_standard_streams_regression() {
-  (
-    set -o errexit
-    set -x
-    set -v
-
-    API_PROJECT_DIR=./optic-snapshots
-    mkdir -p "$API_PROJECT_DIR"
-
-    NUM_INTERACTIONS=$1
-    export OPTIC_RUST_DIFF_ENGINE=$2
-
-    OUTPUT_DIR="output/$NUM_INTERACTIONS"
-    mkdir -p "$OUTPUT_DIR"
-
-    optic_example_input_to_capture_with_repetition "$NUM_INTERACTIONS"
-
-    cd "$API_PROJECT_DIR"
-    rm -rfv .optic/captures/ccc/diffs/*
-    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" daemon:stop
-    DEBUG=optic* "$OPTIC_SRC_DIR/workspaces/local-cli/bin/run" spec
-    cd "$OPTIC_SRC_DIR"
-    node ./workspaces/snapshot-tests/build/e2e/index.js "$OUTPUT_DIR" "$API_PROJECT_DIR" "$NUM_INTERACTIONS"
-    cat $OUTPUT_DIR/*
-
-    cd "$API_PROJECT_DIR"
-    ls -lah .optic/captures/ccc/diffs/*
-  )
-}
-
-optic_ci_standard_streams_regression__on_failure() {
-  (
-    set -o errexit
-    set -x
-    set -v
-
-    API_PROJECT_DIR=./optic-snapshots
-    cd "$API_PROJECT_DIR"
-    ls -lah .optic/captures/ccc/diffs/*
-    cat .optic/captures/ccc/diffs/**/diff-engine-output.log
-  )
-}
-
-optic_example_input_to_capture_with_repetition() {
-  (
-
-    set -o errexit
-    set -x
-    set -v
-
-    NUM_INTERACTIONS=$1
-
-    cd "$OPTIC_SRC_DIR"
-    CAPTURE_ID=ccc
-    API_PROJECT_DIR=./optic-snapshots
-    INPUT_EVENTS_FILE=./workspaces/snapshot-tests/inputs/events/todo/v0.json
-    INPUT_INTERACTIONS_FILE=./workspaces/snapshot-tests/inputs/interactions/todo/get-todos.json
-
-    API_PROJECT_DIR=./optic-snapshots
-    mkdir -p "$API_PROJECT_DIR"
-
-    node ./workspaces/cli-shared/build/captures/avro/file-system/replicated-interactions-capture-saver.js "$INPUT_EVENTS_FILE" "$INPUT_INTERACTIONS_FILE" "$API_PROJECT_DIR" "$CAPTURE_ID" "$NUM_INTERACTIONS"
   )
 }

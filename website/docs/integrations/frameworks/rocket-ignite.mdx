@@ -1,0 +1,36 @@
+---
+title: Using Rocket Ignite with Optic
+sidebar_label: Rocket Ignite
+slug: /rocket-ignite
+---
+
+Optic is easy to use with Rocket Ignite, no special library or large code changes required.
+
+## `api start` Command
+
+Let's say we have a simple Rocket Ignite server that we usually develop with on localhost:3005.
+
+### Optic needs to know how to start our API and control the port it starts on
+
+Our optic.yml file would include our start command (such as `export ROCKET_PORT=$PORT ; cargo run`). The start command in this case also sets the port to which the application binds. Optic injects a `$PORT` environment variable for our application to listen on when `api start` is run. Rocket Ignite checks for the `ROCKET_PORT` environment variable for the port on which the server will bind. No code changes should be required.
+
+``` yaml
+name: Rocket Ignite API
+tasks:
+    command: export ROCKET_PORT=$PORT ; cargo run
+    inboundUrl: https://localhost:3005
+```
+
+## Verifying with `api check start`
+
+The setup tool will guide you through running checks to assure Optic is running successfully with your API project. You should see everything pass at this point. If you don't, it's most likely that you're not starting the API on the `$PORT` Optic provides. The Optic check will also report any other common issues it detects and give you steps and suggestions to resolve them.
+
+Should you need any more help, or want to chat about the process, please reach out to us. You can schedule a [quick chat with the maintainers](https://calendly.com/opticlabs/maintainer-office-hours) or [open an issue on GitHub](https://github.com/opticdev/optic/issues/new?title=API%20Init:%20).
+
+## Run your API through Optic
+
+At this point you should be ready to run `api start` and document your API with Optic! Optic will observe your API traffic locally, and report on the routes and traffic shape it sees in the Optic dashboard. The next step is to start [building your baseline specification](/docs/using/baseline)
+
+import {DocContributors} from '../../DocsContributors';
+
+<DocContributors githubUsernames={['acunniffe', 'LouManglass']} />

@@ -17,9 +17,9 @@ class Client {
     }
   }
 
-  postTrackingEvents(events: TrackingEventBase<any>[]) {
+  postTrackingEvents(apiName: string, events: TrackingEventBase<any>[]) {
     const url = `${this.baseUrl}/tracking/events`;
-    return JsonHttpClient.postJson(url, { events });
+    return JsonHttpClient.postJson(url, { apiName, events });
   }
 
   findSession(

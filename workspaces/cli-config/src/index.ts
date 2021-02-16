@@ -238,6 +238,7 @@ export interface IPathMapping {
   cwd: string;
   basePath: string;
   specStorePath: string;
+  specDirPath: string;
   configPath: string;
   gitignorePath: string;
   opticIgnorePath: string;
@@ -264,8 +265,9 @@ export function pathsFromCwd(cwd: string): IPathMapping {
   const capturesPath = path.join(basePath, 'captures');
   const gitignorePath = path.join(basePath, '.gitignore');
   const opticIgnorePath = path.join(basePath, 'ignore');
-  const specStorePath = path.join(basePath, 'api', 'specification.json');
-  const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
+  const specDirPath = path.join(basePath, 'api');
+  const specStorePath = path.join(specDirPath, 'specification.json');
+  const exampleRequestsPath = path.join(specDirPath, 'example-requests');
   const testingConfigPath = path.join(basePath, 'testing.json');
   return {
     cwd,
@@ -274,6 +276,7 @@ export function pathsFromCwd(cwd: string): IPathMapping {
     capturesPath,
     gitignorePath,
     opticIgnorePath,
+    specDirPath,
     specStorePath,
     exampleRequestsPath,
     testingConfigPath,
