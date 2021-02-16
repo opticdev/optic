@@ -129,6 +129,15 @@ impl AggregateCommand<ShapeProjection> for EndpointCommand {
     let validation = CommandValidationQueries::from((projection, &self));
 
     let events = match self {
+      EndpointCommand::SetPathParameterShape(command) => {
+        validation.require(
+          validation.shape_id_exists(&command.shaped_request_parameter_shape_descriptor.shape_id),
+          "shape must exist to set the path parameter shape",
+        )?;
+
+        vec![] // validation only
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         SpecCommand::EndpointCommand(self),
       ))?,
@@ -171,6 +180,13 @@ impl<'a> CommandValidationQueries<'a> {
         msg, self.command_description
       )))
     }
+  }
+
+  fn shape_id_exists(&self, shape_id: &ShapeId) -> bool {
+    self
+      .shape_projection
+      .get_shape_node_index(shape_id)
+      .is_some()
   }
 }
 
