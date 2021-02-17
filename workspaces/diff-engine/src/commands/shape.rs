@@ -139,6 +139,7 @@ impl AggregateCommand<ShapeProjection> for EndpointCommand {
       }
 
       _ => Err(SpecCommandError::Unimplemented(
+        "endpoint command not implemented for shape projection",
         SpecCommand::EndpointCommand(self),
       ))?,
     };
@@ -156,9 +157,10 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
     let validation = CommandValidationQueries::from((projection, &self));
 
     let events = match self {
-      _ => Err(SpecCommandError::Unimplemented(SpecCommand::ShapeCommand(
-        self,
-      )))?,
+      _ => Err(SpecCommandError::Unimplemented(
+        "shape command not implemented for shape projection",
+        SpecCommand::ShapeCommand(self),
+      ))?,
     };
 
     Ok(events)

@@ -27,7 +27,7 @@ pub enum SpecCommand {
 pub enum SpecCommandError {
   Other(&'static str),
   Validation(String),
-  Unimplemented(SpecCommand),
+  Unimplemented(&'static str, SpecCommand),
 }
 
 impl std::fmt::Display for SpecCommandError {
@@ -100,7 +100,10 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         .map(|endpoint_event| SpecEvent::EndpointEvent(endpoint_event))
         .collect::<Vec<_>>(),
 
-      _ => Err(SpecCommandError::Unimplemented(self))?,
+      _ => Err(SpecCommandError::Unimplemented(
+        "spec command not implemented for spec projection",
+        self,
+      ))?,
     };
     Ok(events)
   }

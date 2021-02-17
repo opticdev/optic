@@ -364,6 +364,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
       }
 
       _ => Err(SpecCommandError::Unimplemented(
+        "endpoint command not implemented for endpoint projection",
         SpecCommand::EndpointCommand(self),
       ))?,
     };
