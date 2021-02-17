@@ -1,4 +1,5 @@
 use super::{EndpointCommand, SpecCommand, SpecCommandError};
+use crate::events::shape as shape_events;
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
@@ -157,6 +158,19 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
     let validation = CommandValidationQueries::from((projection, &self));
 
     let events = match self {
+      ShapeCommand::AddShape(command) => {
+        validation.require(
+          !validation.shape_id_exists(&command.shape_id),
+          "shape id must be assignable to add shape",
+        )?;
+        validation.require(
+          validation.base_shape_id_exists(&command.base_shape_id),
+          "base shape id must exist to add shape",
+        )?;
+
+        vec![ShapeEvent::from(shape_events::ShapeAdded::from(command))]
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         "shape command not implemented for shape projection",
         SpecCommand::ShapeCommand(self),
@@ -190,6 +204,13 @@ impl<'a> CommandValidationQueries<'a> {
       .get_shape_node_index(shape_id)
       .is_some()
   }
+
+  fn base_shape_id_exists(&self, shape_id: &ShapeId) -> bool {
+    self
+      .shape_projection
+      .get_core_shape_node_index(shape_id)
+      .is_some()
+  }
 }
 
 impl<'a> From<(&'a ShapeProjection, &EndpointCommand)> for CommandValidationQueries<'a> {
@@ -207,5 +228,55 @@ impl<'a> From<(&'a ShapeProjection, &ShapeCommand)> for CommandValidationQueries
       command_description: format!("{:?}", shape_command),
       shape_projection,
     }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use cqrs_core::Aggregate;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  pub fn can_handle_add_shape_command() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"",}}
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"AddShape":{"shapeId":"string_shape_2","baseShapeId":"$string","name":"test-name",}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+
+    let unassignable_shape_id: ShapeCommand = serde_json::from_value(json!(
+      {"AddShape":{"shapeId":"string_shape_1","baseShapeId":"$string","name":"test-name",}}
+    ))
+    .unwrap();
+    let unassignable_shape_id_result = projection.execute(unassignable_shape_id);
+    assert!(unassignable_shape_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_path_parameter_shape_command__unassignable_shape_id_result",
+      unassignable_shape_id_result.unwrap_err()
+    );
+
+    let invalid_base_shape_id: ShapeCommand = serde_json::from_value(json!(
+      {"AddShape":{"shapeId":"string_shape_2","baseShapeId":"string_shape_1","name":"test-name",}}
+    ))
+    .unwrap();
+    let invalid_base_shape_id_result = projection.execute(invalid_base_shape_id);
+    assert!(invalid_base_shape_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_path_parameter_shape_command__invalid_base_shape_id_result",
+      invalid_base_shape_id_result.unwrap_err()
+    );
   }
 }

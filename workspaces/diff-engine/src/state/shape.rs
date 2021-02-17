@@ -32,6 +32,14 @@ pub enum ShapeParametersDescriptor {
   DynamicParameterList(DynamicShapeParametersDescriptor),
 }
 
+impl ShapeParametersDescriptor {
+  pub fn empty_dynamic() -> Self {
+    ShapeParametersDescriptor::DynamicParameterList(DynamicShapeParametersDescriptor {
+      shape_parameter_ids: vec![],
+    })
+  }
+}
+
 #[derive(Debug, Deserialize, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticShapeParametersDescriptor {

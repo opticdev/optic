@@ -1,4 +1,5 @@
 use super::EventContext;
+use crate::commands::shape as shape_commands;
 use crate::state::shape::{
   FieldShapeDescriptor, ParameterShapeDescriptor, ShapeParametersDescriptor,
 };
@@ -212,5 +213,26 @@ impl Event for FieldRenamed {
 impl Event for FieldRemoved {
   fn event_type(&self) -> &'static str {
     "FieldRemoved"
+  }
+}
+
+impl From<ShapeAdded> for ShapeEvent {
+  fn from(event: ShapeAdded) -> Self {
+    Self::ShapeAdded(event)
+  }
+}
+
+// Conversions from commands
+// -------------------------
+
+impl From<shape_commands::AddShape> for ShapeAdded {
+  fn from(command: shape_commands::AddShape) -> Self {
+    Self {
+      shape_id: command.shape_id,
+      base_shape_id: command.base_shape_id,
+      name: command.name,
+      parameters: ShapeParametersDescriptor::empty_dynamic(),
+      event_context: None,
+    }
   }
 }
