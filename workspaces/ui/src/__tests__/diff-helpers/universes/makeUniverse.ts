@@ -28,6 +28,7 @@ export async function makeUniverse(
 ): Promise<{
   specService: any;
   rawDiffs: any[];
+  rawEvents: any[];
   captureId: string;
   rfcBaseState: DiffRfcBaseState;
   jsonUniverse: any;
@@ -103,6 +104,7 @@ export async function makeUniverse(
 
   return {
     rawDiffs: diffs,
+    rawEvents: events,
     rfcBaseState,
     jsonUniverse: json,
     captureId,
