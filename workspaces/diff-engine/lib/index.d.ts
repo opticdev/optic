@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import { Duplex } from 'stream';
+import { Duplex, Readable } from 'stream';
 
 export function spawn({
   specPath: string,
@@ -10,6 +10,8 @@ export function spawn({
   error: Duplex;
   result: Promise<void>;
 };
+
+export function readSpec({ specDirPath: string }): Readable;
 
 export interface DiffEngineError extends Error {
   // The numeric exit code of the diff engine process that was run.

@@ -29,11 +29,13 @@ export function trackWithSentry({
   const hostPlatform = process.platform;
   const hostCpuCount = Os.cpus().length.toString();
   const hostMemorySize = Os.totalmem().toString();
+  const hostRelease = Os.release();
 
   Sentry.setTags({
     nodeVersion,
     hostArch,
     hostPlatform,
+    hostRelease,
     hostCpuCount,
     hostMemorySize,
   });

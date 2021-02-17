@@ -9,12 +9,7 @@ on:
       - website/**
       - .github/**
       - "**.md"
-  pull_request:
-    branches: [develop]
-    paths-ignore:
-      - website/**
-      - .github/**
-      - "**.md"
+  workflow_dispatch:
 
 jobs:
   build:

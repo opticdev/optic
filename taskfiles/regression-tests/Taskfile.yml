@@ -1,0 +1,62 @@
+version: "3"
+
+tasks:
+  clean:
+    - rm -rf output optic-snapshots
+
+  test:
+    desc: Run standard streams regression tests
+    deps: [clean]
+    vars:
+      API_PROJECT_DIR: '{{default "optic-snapshots" .API_PROJECT_DIR}}'
+      NUM_INTERACTIONS: '{{default 1 .NUM_INTERACTIONS}}'
+      OUTPUT_DIR: '{{default "output" .OUTPUT_DIR}}'
+      OPTIC_RUST_DIFF_ENGINE: '{{default "true" .OPTIC_RUST_DIFF_ENGINE}}'
+    env:
+      OPTIC_RUST_DIFF_ENGINE: '{{.OPTIC_RUST_DIFF_ENGINE}}'
+      DEBUG: optic*
+    cmds:
+      - >
+        mkdir -p
+        {{.API_PROJECT_DIR}}
+        {{.OUTPUT_DIR}}/{{.NUM_INTERACTIONS}}
+      - task: example-inputs
+        vars:
+          API_PROJECT_DIR: "{{.API_PROJECT_DIR}}"
+          NUM_INTERACTIONS: "{{.NUM_INTERACTIONS}}"
+      - rm -rfv {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/*
+      - cd {{.API_PROJECT_DIR}} && node ../workspaces/local-cli/bin/run daemon:stop
+      - cd {{.API_PROJECT_DIR}} && node ../workspaces/local-cli/bin/run spec
+      - >
+        node
+        workspaces/snapshot-tests/build/e2e/index.js
+        {{.OUTPUT_DIR}}/{{.NUM_INTERACTIONS}}
+        {{.API_PROJECT_DIR}}
+        {{.NUM_INTERACTIONS}}
+      - cat {{.OUTPUT_DIR}}/{{.NUM_INTERACTIONS}}/*
+      - ls -lah {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/*
+      - cat {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/**/diff-engine-output.log
+
+  on-failure:
+    vars:
+      API_PROJECT_DIR: '{{default "optic-snapshots" .API_PROJECT_DIR}}'
+    cmds:
+      - ls -lah {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/*
+      - cat {{.API_PROJECT_DIR}}/.optic/captures/ccc/diffs/**/diff-engine-output.log
+
+  example-inputs:
+    vars:
+      API_PROJECT_DIR: "{{.API_PROJECT_DIR}}"
+      CAPTURE_ID: ccc
+      INPUT_EVENTS_FILE: workspaces/snapshot-tests/inputs/events/todo/v0.json
+      INPUT_INTERACTIONS_FILE: workspaces/snapshot-tests/inputs/interactions/todo/get-todos.json
+      NUM_INTERACTIONS: "{{.NUM_INTERACTIONS}}"
+    cmds:
+      - >
+        node
+        workspaces/cli-shared/build/captures/avro/file-system/replicated-interactions-capture-saver.js
+        {{.INPUT_EVENTS_FILE}}
+        {{.INPUT_INTERACTIONS_FILE}}
+        {{.API_PROJECT_DIR}}
+        {{.CAPTURE_ID}}
+        {{.NUM_INTERACTIONS}}

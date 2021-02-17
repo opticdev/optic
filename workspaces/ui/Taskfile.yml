@@ -80,7 +80,6 @@ tasks:
     desc: CI workflow
     deps: [":workspaces:setup"]
     cmds:
-      - task: :workspaces:clean
       - task: demo:docker:build
       - task: demo:docker:push
         vars:
@@ -129,7 +128,6 @@ tasks:
     desc: CI workflow
     deps: [":workspaces:setup"]
     cmds:
-      - task: :workspaces:clean
       - task: apidocs:docker:build
       - task: apidocs:docker:push
         vars:

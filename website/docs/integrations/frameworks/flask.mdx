@@ -20,6 +20,12 @@ tasks:
     command: flask run --port=$PORT
     inboundUrl: https://localhost:3005
 ```
+Suppose your flask application typically runs on port 3005 (as above). Running `api start` will fire up:
+
+* Your main application on a port assigned to it by optic in the `$PORT` variable
+* The optic proxy listening to requests specified on the url provided by the `inboundUrl` parameter in the YAML above
+
+*Make sure these are different ports* - your requests should still be sent to the `inboundUrl`, but now optic will capture them and look for diffs.
 
 ## Verifying with `api check start`
 

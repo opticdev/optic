@@ -6,87 +6,88 @@ on:
   pull_request:
     branches:
       - release
+  workflow_dispatch:
 
 jobs:
-
-  local-cli-regression-:
+  local-cli-regression:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
-        interaction-count: [ 10000 ]
-        rust-diff-engine: ["true"]
-    runs-on: ${{ matrix.os }}
+        platform:
+          - os: windows-latest
+            task: diff-engine:build-windows
+          - os: macos-latest
+            task: diff-engine:build-macos
+          - os: ubuntu-latest
+            task: diff-engine:build-linux
+        interaction-count: [10000]
+        rust-diff-engine: [true]
+    runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+      - name: Checkout source
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@c46424eee26de4078d34105d3de3cc4992202b1e # v2.1.4
         with:
           node-version: 12
-
-      - name: 'Set CARGO_HOME and RUSTUP_HOME'
+      - name: Restore cached node_modules
+        id: workspace-node-modules
+        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6 # v2.1.4
+        with:
+          path: node_modules
+          key: workspace-node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}-v1
+      - name: Set Rust env vars
         run: |
           echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
           echo "CARGO_HOME=$HOME/.cargo" >> $GITHUB_ENV
-
-      - name: 'Checkout source'
-        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
-      - name: restore cached node_modules
-        id: workspace-node-modules
-        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # v2.1.2
-        with:
-          path: |
-            node_modules/
-          key: workspace-node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}-v1
-      - name: 'Install test dependencies'
+      - name: Install test dependencies
         shell: bash
-        run: |
-          set -x
-          set -v
-          source sourceme.sh
-          optic_build_for_release
-      - name: 'display yarn error log'
+        run: task workspaces:build:ci
+      - name: Display yarn error log
         shell: bash
         run: cat yarn-error.log
-        if: ${{ failure() }}
-
-      - name: 'restore cached cargo registry'
-        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/commits/v2
+        if: failure()
+      - name: Restore cached cargo registry
+        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6 # v2.1.4
         with:
           path: |
             ${{ env.CARGO_HOME }}/registry
             ${{ env.CARGO_HOME }}/git
             target
           key: "${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}-v4"
-      - name: 'Rust toolchain'
-        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # https://github.com/actions-rs/toolchain/commits/v1
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
         with:
           toolchain: stable
           profile: minimal
           override: true
-      # @TODO: build and use the release binary as opposed to the debug binary
-      - name: 'Build'
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
-        with:
-          command: build
-          args: --workspace --all-features
-      - name: 'Test'
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # https://github.com/actions-rs/cargo/commits/v1
-        with:
-          command: test
-      - name: 'Flush Cargo cache to disk on macOS'
-        if: runner.os == 'macOS'
-        run: sudo /usr/sbin/purge
-
-      - name: 'run scenario'
+      - name: Prepare diff-engine
+        env:
+          BUILD_ARGS: --all-features --workspace --release
+        run: task diff-engine:add-targets ${{ matrix.platform.task }} diff-engine:test
+      - name: Run scenario
         shell: bash
         timeout-minutes: 2
-        run: |
-          source sourceme.sh
-          optic_ci_standard_streams_regression ${{ matrix.interaction-count }} ${{ matrix.rust-diff-engine }}
-
-
-      - name: 'display diff output'
+        env:
+          NUM_INTERACTIONS: ${{ matrix.interaction-count }}
+        run: task regression:test
+      - name: Scenario failure output
+        run: task regression:on-failure
+        if: failure()
+      - run: |
+          echo "MESSAGE=${{ matrix.platform.os }}: Regression suites passed." >> $GITHUB_ENV
         shell: bash
+        if: success()
+      - run: |
+          echo "MESSAGE=${{ matrix.platform.os }}: Regression suites failed. https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
+        shell: bash
+        if: failure()
+      - name: Report status
         run: |
-          source sourceme.sh
-          optic_ci_standard_streams_regression__on_failure
-        if: ${{ always() }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        shell: bash
+        if: always()

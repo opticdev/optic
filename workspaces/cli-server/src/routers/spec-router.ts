@@ -17,12 +17,14 @@ import {
   developerDebugLogger,
   FileSystemAvroCaptureLoader,
   ICaptureLoader,
+  isEnvTrue,
 } from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
+import { readSpec } from '@useoptic/diff-engine';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -218,8 +220,13 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   // events router
   router.get('/events', async (req, res) => {
     try {
-      const events = await fs.readJson(req.optic.paths.specStorePath);
-      res.json(events);
+      if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
+        const events = readSpec({ specDirPath: req.optic.paths.specDirPath });
+        events.pipe(res).type('application/json');
+      } else {
+        const events = await fs.readJson(req.optic.paths.specStorePath);
+        res.json(events);
+      }
     } catch (e) {
       res.json([]);
     }

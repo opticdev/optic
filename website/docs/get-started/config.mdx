@@ -55,6 +55,12 @@ For the start task:
 Optic assumes your API can be started on a specific port, which Optic assigns. To do this, Optic provides $PORT as an environment variable. You'll either need to map this variable to a flag your API framework looks for, or modify your code to look for the $PORT variable when starting up.
 :::
 
+:::tip on Windows, optic.yml commands are interpreted by the Command shell
+By default, Node uses the built-in Command shell on Windows when asked to start a child process. This interprets commands differently from bash. Tools like [cross-env](https://www.npmjs.com/package/cross-env) help manage this for cross-platform projects. On Windows only projects, you can target Command shells directly. Here's a few Windows tips:
+- To expand an environment variable such as `PORT`, use `%PORT%` instead of `$PORT`
+- When invoking a program or script, use Command shell format (for example, `./application` on Linux/MacOS would be `application` on Windows.)
+:::
+
 ---
 
 **Next Steps**

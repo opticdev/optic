@@ -1,0 +1,10 @@
+{
+  "name": "diff-engine",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "fs-extra": "^9.1.0",
+    "typescript": "^4.1.3"
+  }
+}

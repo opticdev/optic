@@ -15,6 +15,9 @@ on:
     branches:
       - release
       - develop
+    paths-ignore:
+      - website/**
+      - .github/**
 
 jobs:
   release_logic:
