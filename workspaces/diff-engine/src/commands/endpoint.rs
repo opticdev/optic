@@ -328,10 +328,6 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path component must exist to set path parameter shape",
         )?;
 
-        // TODO: figure out how we can verify the shape id exists. Probably best done
-        // from the SpecCommand hanlder, which can access both projections. Perhaps by
-        // running the ShapeCommand handler first, in which we verify?
-
         vec![EndpointEvent::from(
           endpoint_events::PathParameterShapeSet::from(command),
         )]

@@ -66,7 +66,10 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
           .endpoint()
           .execute(EndpointCommand::SetPathParameterShape(command.clone()))?;
 
-        vec![]
+        endpoint_events
+          .into_iter()
+          .map(|endpoint_event| SpecEvent::EndpointEvent(endpoint_event))
+          .collect::<Vec<_>>()
       }
 
       // endpoint commands that can be purely handled by the endpoint projection
@@ -108,6 +111,7 @@ mod test {
     let new_events = projection
       .execute(valid_command)
       .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
 
     let setting_root_path: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"root","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
