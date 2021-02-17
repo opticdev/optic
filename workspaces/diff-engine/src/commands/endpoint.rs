@@ -9,6 +9,7 @@ use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
 };
+use crate::state::shape::ShapeId;
 use cqrs_core::AggregateCommand;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -46,6 +47,18 @@ pub enum EndpointCommand {
   RenameHeaderParameter(RenameHeaderParameter),
   UnsetHeaderParameterShape(UnsetHeaderParameterShape),
   RemoveHeaderParameter(RemoveHeaderParameter),
+}
+
+impl EndpointCommand {
+  pub fn set_path_parameter_shape(path_id: PathComponentId, shape_id: ShapeId) -> EndpointCommand {
+    EndpointCommand::SetPathParameterShape(SetPathParameterShape {
+      path_id,
+      shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor {
+        shape_id,
+        is_removed: false,
+      },
+    })
+  }
 }
 
 // Path components
@@ -301,7 +314,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
       // ---------------
       EndpointCommand::AddPathParameter(command) => {
         validation.require(
-          !validation.path_component_id_exists(&command.parent_path_id),
+          validation.path_component_id_exists(&command.parent_path_id),
           "parent path component must exist to add path parameter",
         )?;
         validation.require(

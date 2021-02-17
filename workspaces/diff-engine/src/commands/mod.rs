@@ -7,9 +7,11 @@ pub mod shape;
 
 pub use endpoint::EndpointCommand;
 pub use rfc::RfcCommand;
+use shape::AddShape;
 pub use shape::ShapeCommand;
 
-use crate::events::{EndpointEvent, SpecEvent};
+use crate::events::shape as shape_events;
+use crate::events::{EndpointEvent, ShapeEvent, SpecEvent};
 use crate::projections::SpecProjection;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -72,10 +74,25 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
           _ => unreachable!(), // we already found the event of the pattern above or have panicked instead
         };
 
-        // TODO: issue command to add new default shape for parameter
-        // TOOD: issue command to set request parameter shape to newly added shape
-        todo!();
-        vec![]
+        let shape_added_event = ShapeEvent::from(ShapeCommand::add_shape(
+          String::from("$string"),
+          String::from(""),
+        ));
+
+        let shape_id = match &shape_added_event {
+          ShapeEvent::ShapeAdded(event) => event.shape_id.clone(),
+          _ => unreachable!(),
+        };
+
+        let path_parameter_shape_set_event = EndpointEvent::from(
+          EndpointCommand::set_path_parameter_shape(path_parameter_added.path_id.clone(), shape_id),
+        );
+
+        vec![
+          SpecEvent::from(path_parameter_added_event),
+          SpecEvent::from(shape_added_event),
+          SpecEvent::from(path_parameter_shape_set_event),
+        ]
       }
 
       SpecCommand::EndpointCommand(EndpointCommand::SetPathParameterShape(command)) => {
@@ -88,7 +105,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
 
         endpoint_events
           .into_iter()
-          .map(|endpoint_event| SpecEvent::EndpointEvent(endpoint_event))
+          .map(|endpoint_event| SpecEvent::from(endpoint_event))
           .collect::<Vec<_>>()
       }
 
@@ -97,7 +114,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         .endpoint()
         .execute(endpoint_command)?
         .into_iter()
-        .map(|endpoint_event| SpecEvent::EndpointEvent(endpoint_event))
+        .map(|endpoint_event| SpecEvent::from(endpoint_event))
         .collect::<Vec<_>>(),
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -116,6 +133,54 @@ mod test {
   use serde_json::json;
 
   #[test]
+  pub fn can_handle_add_path_parameter_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = SpecProjection::from(initial_events);
+
+    let valid_command: SpecCommand = serde_json::from_value(json!(
+      {"AddPathParameter": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 3);
+    // TODO: figure out how insta redactions patterns work so we can assert a snapshot here
+    // despite the generated uuid's (documentation is sparse :/)
+
+    let unexisting_parent: SpecCommand = serde_json::from_value(json!(
+      {"AddPathParameter": {"pathId": "path_2","parentPathId": "not-a-path","name": "todoId"}}
+    ))
+    .unwrap();
+    let unexisting_parent_result = projection.execute(unexisting_parent);
+    assert!(unexisting_parent_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_parameter_command__unexisting_parent_result",
+      unexisting_parent_result.unwrap_err()
+    );
+
+    let unassignable_path_id: SpecCommand = serde_json::from_value(json!(
+      {"AddPathParameter": {"pathId": "path_1","parentPathId": "path_1","name": "todoId"}}
+    ))
+    .unwrap();
+    let unassignable_path_id_result = projection.execute(unassignable_path_id);
+    assert!(unassignable_path_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_parameter_command__unassignable_path_id_result",
+      unassignable_path_id_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
   pub fn can_handle_set_path_parameter_shape_command() {
     let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
@@ -124,7 +189,7 @@ mod test {
     ]))
     .expect("initial events should be valid spec events");
 
-    let projection = SpecProjection::from(initial_events);
+    let mut projection = SpecProjection::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
@@ -165,5 +230,9 @@ mod test {
       "can_handle_set_path_parameter_shape_command__unexisting_shape_result",
       unexisting_shape_result.unwrap_err()
     );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
   }
 }

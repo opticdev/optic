@@ -4,6 +4,7 @@ use endpoint_commands::RemovePathParameter;
 use serde::{Deserialize, Serialize};
 
 use crate::commands::endpoint as endpoint_commands;
+use crate::commands::EndpointCommand;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
@@ -448,6 +449,38 @@ impl From<PathParameterRemoved> for EndpointEvent {
 
 // Conversion from commands
 // ------------------------
+
+impl From<EndpointCommand> for EndpointEvent {
+  fn from(endpoint_command: EndpointCommand) -> Self {
+    match endpoint_command {
+      EndpointCommand::AddPathComponent(command) => {
+        EndpointEvent::from(PathComponentAdded::from(command))
+      }
+      EndpointCommand::RenamePathComponent(command) => {
+        EndpointEvent::from(PathComponentRenamed::from(command))
+      }
+      EndpointCommand::RemovePathComponent(command) => {
+        EndpointEvent::from(PathComponentRemoved::from(command))
+      }
+      EndpointCommand::AddPathParameter(command) => {
+        EndpointEvent::from(PathParameterAdded::from(command))
+      }
+      EndpointCommand::SetPathParameterShape(command) => {
+        EndpointEvent::from(PathParameterShapeSet::from(command))
+      }
+      EndpointCommand::RenamePathParameter(command) => {
+        EndpointEvent::from(PathParameterRenamed::from(command))
+      }
+      EndpointCommand::RemovePathParameter(command) => {
+        EndpointEvent::from(PathParameterRemoved::from(command))
+      }
+      _ => unimplemented!(
+        "conversion from endpoint command to endpoint event not implemented for variant: {:?}",
+        endpoint_command
+      ),
+    }
+  }
+}
 
 impl From<endpoint_commands::AddPathComponent> for PathComponentAdded {
   fn from(command: endpoint_commands::AddPathComponent) -> Self {

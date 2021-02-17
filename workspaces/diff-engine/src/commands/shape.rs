@@ -8,6 +8,7 @@ use crate::state::shape::{
 };
 use cqrs_core::AggregateCommand;
 use serde::Deserialize;
+use uuid::Uuid;
 
 #[derive(Deserialize, Debug, Clone)]
 pub enum ShapeCommand {
@@ -29,12 +30,28 @@ pub enum ShapeCommand {
   SetFieldShape(SetFieldShape),
 }
 
+impl ShapeCommand {
+  pub fn add_shape(base_shape_id: ShapeId, name: String) -> Self {
+    Self::AddShape(AddShape::new(base_shape_id, name))
+  }
+}
+
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddShape {
   pub shape_id: ShapeId,
   pub base_shape_id: ShapeId,
   pub name: String,
+}
+
+impl AddShape {
+  pub fn new(base_shape_id: ShapeId, name: String) -> Self {
+    AddShape {
+      shape_id: Uuid::new_v4().to_hyphenated().to_string(),
+      base_shape_id,
+      name,
+    }
+  }
 }
 
 #[derive(Deserialize, Debug, Clone)]

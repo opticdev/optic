@@ -5,6 +5,7 @@ use crate::state::shape::{
 };
 use cqrs_core::Event;
 use serde::{Deserialize, Serialize};
+use shape_commands::ShapeCommand;
 
 type ShapeId = String;
 type ShapeParameterId = String;
@@ -224,6 +225,18 @@ impl From<ShapeAdded> for ShapeEvent {
 
 // Conversions from commands
 // -------------------------
+
+impl From<ShapeCommand> for ShapeEvent {
+  fn from(shape_command: ShapeCommand) -> Self {
+    match shape_command {
+      ShapeCommand::AddShape(command) => ShapeEvent::from(ShapeAdded::from(command)),
+      _ => unimplemented!(
+        "conversion from shape command to shape event not implemented for variant: {:?}",
+        shape_command
+      ),
+    }
+  }
+}
 
 impl From<shape_commands::AddShape> for ShapeAdded {
   fn from(command: shape_commands::AddShape) -> Self {
