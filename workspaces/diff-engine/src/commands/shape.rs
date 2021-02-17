@@ -31,9 +31,9 @@ pub enum ShapeCommand {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddShape {
-  shape_id: ShapeId,
-  base_shape_id: ShapeId,
-  name: String,
+  pub shape_id: ShapeId,
+  pub base_shape_id: ShapeId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]

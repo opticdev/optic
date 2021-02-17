@@ -1,15 +1,16 @@
+use cqrs_core::{Aggregate, AggregateCommand};
 pub use serde::Deserialize;
 
 pub mod endpoint;
 pub mod rfc;
 pub mod shape;
 
-use crate::events::SpecEvent;
-use crate::projections::SpecProjection;
-use cqrs_core::{Aggregate, AggregateCommand};
 pub use endpoint::EndpointCommand;
 pub use rfc::RfcCommand;
 pub use shape::ShapeCommand;
+
+use crate::events::{EndpointEvent, SpecEvent};
+use crate::projections::SpecProjection;
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(untagged)]
@@ -58,6 +59,25 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
 
   fn execute_on(self, spec_projection: &SpecProjection) -> Result<Self::Events, Self::Error> {
     let events = match self {
+      SpecCommand::EndpointCommand(EndpointCommand::AddPathParameter(command)) => {
+        let path_parameter_added_event = spec_projection
+          .endpoint()
+          .execute(EndpointCommand::AddPathParameter(command))?
+          .into_iter()
+          .find(|event| matches!(event, EndpointEvent::PathParameterAdded(_)))
+          .expect("endpoint command handler should have failed if event wasnt produced");
+
+        let path_parameter_added = match &path_parameter_added_event {
+          EndpointEvent::PathParameterAdded(descriptor) => descriptor,
+          _ => unreachable!(), // we already found the event of the pattern above or have panicked instead
+        };
+
+        // TODO: issue command to add new default shape for parameter
+        // TOOD: issue command to set request parameter shape to newly added shape
+        todo!();
+        vec![]
+      }
+
       SpecCommand::EndpointCommand(EndpointCommand::SetPathParameterShape(command)) => {
         spec_projection
           .shape()
