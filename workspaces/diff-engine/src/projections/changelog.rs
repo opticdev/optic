@@ -95,9 +95,11 @@ impl ChangelogProjection {
       let error = format!("parent {} must be seen before child {}", &parent, &id);
       let parent_name = self.paths.get(&parent).expect(&error);
       if param {
-        self.paths.insert(id, format!("{}/:{}", parent_name, name));
+        let id_name = format!("{}/:{}", parent_name, name);
+        self.paths.insert(id, id_name);
       } else {
-        self.paths.insert(id, format!("{}/{}", parent_name, name));
+        let id_name = format!("{}/{}", parent_name, name);
+        self.paths.insert(id, id_name);
       }
     }
   }
