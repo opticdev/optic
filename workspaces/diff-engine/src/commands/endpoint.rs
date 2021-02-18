@@ -301,7 +301,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id must not be root to remove path component",
         )?;
         validation.require(
-          !validation.path_component_id_exists(&command.path_id),
+          validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path component",
         )?;
 
@@ -502,30 +502,150 @@ mod test {
   use serde_json::json;
 
   #[test]
-  pub fn can_apply_events_from_endpoint_commands() {
+  pub fn can_handle_add_path_component_command() {
     let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
     ]))
     .expect("initial events should be valid spec events");
 
-    let mut initial_projection = EndpointProjection::from(initial_events);
+    let mut projection = EndpointProjection::from(initial_events);
 
     let command: EndpointCommand = serde_json::from_value(json!(
       { "AddPathComponent": {"pathId": "path_2", "parentPathId": "path_1", "name": "completed"}}
     ))
     .expect("commands should be valid endpoint events");
 
-    let new_events = initial_projection
+    let new_events = projection
       .execute(command)
       .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_path_component__new_events", new_events);
+
+    let unassignable_path: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathComponent": {"pathId": "path_1", "parentPathId": "root", "name": "completed"}}
+    ))
+    .unwrap();
+    let unassignable_path_result = projection.execute(unassignable_path);
+    assert!(unassignable_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_component__unassignable_path_result",
+      unassignable_path_result.unwrap_err()
+    );
+
+    let unexisting_parent: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathComponent": {"pathId": "path_2", "parentPathId": "not-a-path", "name": "completed"}}
+    ))
+    .unwrap();
+    let unexisting_parent_result = projection.execute(unexisting_parent);
+    assert!(unexisting_parent_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_component__unexisting_parent_result",
+      unexisting_parent_result.unwrap_err()
+    );
 
     for event in new_events {
-      initial_projection.apply(event);
+      projection.apply(event);
     }
+  }
 
-    assert!(initial_projection
-      .get_path_component_node_index(&String::from("path_2"))
-      .is_some())
+  #[test]
+  pub fn can_handle_rename_path_component_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathComponent": {"pathId": "path_1", "name": "tasks"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_rename_path_component_command__new_events",
+      new_events
+    );
+
+    let renaming_root: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathComponent": {"pathId": "root", "name": "tasks"}}
+    ))
+    .unwrap();
+    let renaming_root_result = projection.execute(renaming_root);
+    assert!(renaming_root_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_rename_path_component_command__renaming_root_result",
+      renaming_root_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathComponent": {"pathId": "not-a-path", "name": "tasks"}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_rename_path_component_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event);
+    }
+  }
+
+  #[test]
+  pub fn can_handle_remove_path_component_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathComponent": {"pathId": "path_1"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_remove_path_component_command__new_events",
+      new_events
+    );
+
+    let removing_root: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathComponent": {"pathId": "root"}}
+    ))
+    .unwrap();
+    let removing_root_result = projection.execute(removing_root);
+    assert!(removing_root_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_component_command__removing_root_result",
+      removing_root_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathComponent": {"pathId": "not-a-path-id"}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_component_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event);
+    }
   }
 
   #[test]
