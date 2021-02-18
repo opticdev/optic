@@ -280,7 +280,7 @@ mod test {
     ]))
     .expect("initial events should be valid shape events");
 
-    let projection = ShapeProjection::from(initial_events);
+    let mut projection = ShapeProjection::from(initial_events);
 
     let valid_command: ShapeCommand = serde_json::from_value(json!(
       {"AddShape":{"shapeId":"string_shape_2","baseShapeId":"$string","name":"test-name",}}
@@ -291,6 +291,7 @@ mod test {
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_shape_command__new_events", new_events);
 
     let unassignable_shape_id: ShapeCommand = serde_json::from_value(json!(
       {"AddShape":{"shapeId":"string_shape_1","baseShapeId":"$string","name":"test-name",}}
@@ -299,7 +300,7 @@ mod test {
     let unassignable_shape_id_result = projection.execute(unassignable_shape_id);
     assert!(unassignable_shape_id_result.is_err());
     assert_debug_snapshot!(
-      "can_handle_set_path_parameter_shape_command__unassignable_shape_id_result",
+      "can_handle_add_shape_command__unassignable_shape_id_result",
       unassignable_shape_id_result.unwrap_err()
     );
 
@@ -310,8 +311,12 @@ mod test {
     let invalid_base_shape_id_result = projection.execute(invalid_base_shape_id);
     assert!(invalid_base_shape_id_result.is_err());
     assert_debug_snapshot!(
-      "can_handle_set_path_parameter_shape_command__invalid_base_shape_id_result",
+      "can_handle_add_shape_command__invalid_base_shape_id_result",
       invalid_base_shape_id_result.unwrap_err()
     );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
   }
 }
