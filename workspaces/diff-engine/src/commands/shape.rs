@@ -165,6 +165,15 @@ impl AggregateCommand<ShapeProjection> for EndpointCommand {
         vec![] // validation only
       }
 
+      EndpointCommand::SetResponseBodyShape(command) => {
+        validation.require(
+          validation.shape_id_exists(&command.body_descriptor.shape_id),
+          "shape must exist to set the request body shape",
+        )?;
+
+        vec![] // validation only
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         "endpoint command not implemented for shape projection",
         SpecCommand::EndpointCommand(self),

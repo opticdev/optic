@@ -196,8 +196,8 @@ pub struct SetResponseStatusCode {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetResponseBodyShape {
-  response_id: ResponseId,
-  body_descriptor: ShapedBodyDescriptor,
+  pub response_id: ResponseId,
+  pub body_descriptor: ShapedBodyDescriptor,
 }
 
 //@GOTCHA @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple responses
@@ -416,6 +416,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         vec![EndpointEvent::from(
           endpoint_events::ResponseAddedByPathAndMethod::from(command),
         )]
+      }
+
+      EndpointCommand::SetResponseBodyShape(command) => {
+        validation.require(
+          validation.response_exists(&command.response_id),
+          "response must exist to set response body shape",
+        )?;
+
+        vec![EndpointEvent::from(endpoint_events::ResponseBodySet::from(
+          command,
+        ))]
       }
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -650,6 +661,47 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_add_response_by_path_and_method_command__unexisting_path_result",
       unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_response_body_shape_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "POST"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"SetResponseBodyShape": {"responseId": "response_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_set_response_body_shape_command__new_events",
+      new_events
+    );
+
+    let unexisting_response: EndpointCommand = serde_json::from_value(json!(
+      {"SetResponseBodyShape": {"responseId": "not-a-response", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .unwrap();
+    let unexisting_response_result = projection.execute(unexisting_response);
+    assert!(unexisting_response_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_response_body_shape_command__unexisting_response_result",
+      unexisting_response_result.unwrap_err()
     );
 
     for event in new_events {
