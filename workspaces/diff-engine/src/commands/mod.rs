@@ -145,6 +145,13 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         .map(|endpoint_event| SpecEvent::from(endpoint_event))
         .collect::<Vec<_>>(),
 
+      SpecCommand::ShapeCommand(shape_command) => spec_projection
+        .shape()
+        .execute(shape_command)?
+        .into_iter()
+        .map(|shape_event| SpecEvent::from(shape_event))
+        .collect::<Vec<_>>(),
+
       _ => Err(SpecCommandError::Unimplemented(
         "spec command not implemented for spec projection",
         self,
