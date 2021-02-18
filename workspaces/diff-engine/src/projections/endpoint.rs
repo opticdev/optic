@@ -255,7 +255,23 @@ impl EndpointProjection {
     &self,
     path_component_id: &PathComponentId,
   ) -> Option<&NodeIndex> {
-    self.node_id_to_index.get(path_component_id)
+    let node_index = self.node_id_to_index.get(path_component_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::PathComponent(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
+  pub fn get_request_node_index(&self, request_id: &RequestId) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(request_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::Request(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
   }
 }
 

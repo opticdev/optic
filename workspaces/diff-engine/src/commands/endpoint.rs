@@ -122,9 +122,9 @@ pub struct RemovePathParameter {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddRequest {
-  request_id: RequestId,
-  path_id: PathComponentId,
-  http_method: String,
+  pub request_id: RequestId,
+  pub path_id: PathComponentId,
+  pub http_method: String,
 }
 
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command's ability to change the content type anymore, or enforce uniqueness of content types across multiple requests
@@ -322,10 +322,6 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id must be assignable to add path parameter",
         )?;
 
-        // TODO: implement the adding of shape events as well. Probably best done
-        // from the SpecCommand handler, which can run this handler and then the
-        // shape handler separately. Using a custom command, perhaps?
-
         vec![EndpointEvent::from(
           endpoint_events::PathParameterAdded::from(command),
         )]
@@ -376,6 +372,24 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         )]
       }
 
+      // Requests
+      // --------
+      EndpointCommand::AddRequest(command) => {
+        validation.require(
+          !validation.request_exists(&command.request_id),
+          "request id must be assignable to add request",
+        )?;
+        validation.require(
+          validation.path_component_id_exists(&command.path_id),
+          "path component must exist to add request",
+        )?;
+        // TODO: consider validating request doesn't exist yet
+        // TODO: consider whether we need to port query param events as well
+        vec![EndpointEvent::from(endpoint_events::RequestAdded::from(
+          command,
+        ))]
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         "endpoint command not implemented for endpoint projection",
         SpecCommand::EndpointCommand(self),
@@ -413,6 +427,13 @@ impl<'a> CommandValidationQueries<'a> {
   pub fn path_component_is_root(&self, path_component_id: &PathComponentId) -> bool {
     path_component_id == ROOT_PATH_ID
   }
+
+  pub fn request_exists(&self, request_id: &RequestId) -> bool {
+    self
+      .endpoint_projection
+      .get_request_node_index(request_id)
+      .is_some()
+  }
 }
 
 impl<'a> From<(&'a EndpointProjection, &EndpointCommand)> for CommandValidationQueries<'a> {
@@ -431,6 +452,7 @@ mod test {
   use super::*;
   use crate::events::SpecEvent;
   use cqrs_core::Aggregate;
+  use insta::assert_debug_snapshot;
   use serde_json::json;
 
   #[test]
@@ -458,5 +480,53 @@ mod test {
     assert!(initial_projection
       .get_path_component_node_index(&String::from("path_2"))
       .is_some())
+  }
+
+  #[test]
+  pub fn can_handle_add_request_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "GET"}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"AddRequest": {"requestId": "request_2", "pathId": "path_1", "httpMethod": "POST"}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_request_command__new_events", new_events);
+
+    let unassignable_request: EndpointCommand = serde_json::from_value(json!(
+      {"AddRequest": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "POST"}}
+    ))
+    .unwrap();
+    let unassignable_request_result = projection.execute(unassignable_request);
+    assert!(unassignable_request_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_request_command__unassignable_request_result",
+      unassignable_request_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      {"AddRequest": {"requestId": "request_2", "pathId": "not-a-path", "httpMethod": "POST"}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_request_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
   }
 }

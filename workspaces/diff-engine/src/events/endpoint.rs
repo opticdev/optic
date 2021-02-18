@@ -3,12 +3,12 @@ use cqrs_core::Event;
 use endpoint_commands::RemovePathParameter;
 use serde::{Deserialize, Serialize};
 
-use crate::commands::endpoint as endpoint_commands;
 use crate::commands::EndpointCommand;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
 };
+use crate::{commands::endpoint as endpoint_commands, streams::http_interaction};
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 pub enum EndpointEvent {
@@ -447,6 +447,12 @@ impl From<PathParameterRemoved> for EndpointEvent {
   }
 }
 
+impl From<RequestAdded> for EndpointEvent {
+  fn from(event: RequestAdded) -> Self {
+    Self::RequestAdded(event)
+  }
+}
+
 // Conversion from commands
 // ------------------------
 
@@ -474,6 +480,7 @@ impl From<EndpointCommand> for EndpointEvent {
       EndpointCommand::RemovePathParameter(command) => {
         EndpointEvent::from(PathParameterRemoved::from(command))
       }
+      EndpointCommand::AddRequest(command) => EndpointEvent::from(RequestAdded::from(command)),
       _ => unimplemented!(
         "conversion from endpoint command to endpoint event not implemented for variant: {:?}",
         endpoint_command
@@ -548,6 +555,17 @@ impl From<endpoint_commands::RemovePathParameter> for PathParameterRemoved {
     Self {
       path_id: command.path_id,
       name: String::from(""), // TODO verify if this is okay, since command has no name
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::AddRequest> for RequestAdded {
+  fn from(command: endpoint_commands::AddRequest) -> Self {
+    Self {
+      http_method: command.http_method,
+      path_id: command.path_id,
+      request_id: command.request_id,
       event_context: None,
     }
   }
