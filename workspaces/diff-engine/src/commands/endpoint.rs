@@ -139,8 +139,8 @@ pub struct SetRequestContentType {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetRequestBodyShape {
-  request_id: RequestId,
-  body_descriptor: ShapedBodyDescriptor,
+  pub request_id: RequestId,
+  pub body_descriptor: ShapedBodyDescriptor,
 }
 
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
@@ -390,6 +390,17 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         ))]
       }
 
+      EndpointCommand::SetRequestBodyShape(command) => {
+        validation.require(
+          validation.request_exists(&command.request_id),
+          "request must exist to set request body shape",
+        )?;
+
+        vec![EndpointEvent::from(endpoint_events::RequestBodySet::from(
+          command,
+        ))]
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         "endpoint command not implemented for endpoint projection",
         SpecCommand::EndpointCommand(self),
@@ -523,6 +534,46 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_add_request_command__unexisting_path_result",
       unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_request_body_shape_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "POST"}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"SetRequestBodyShape": {"requestId": "request_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_set_request_body_shape_command__new_events",
+      new_events
+    );
+
+    let unexisting_request: EndpointCommand = serde_json::from_value(json!(
+      {"SetRequestBodyShape": {"requestId": "not-a-request", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "shape_1", "isRemoved": false }}}
+    ))
+    .unwrap();
+    let unexisting_request_result = projection.execute(unexisting_request);
+    assert!(unexisting_request_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_request_body_shape_command__unexisting_request_result",
+      unexisting_request_result.unwrap_err()
     );
 
     for event in new_events {
