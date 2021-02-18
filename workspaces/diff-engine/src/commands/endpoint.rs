@@ -348,7 +348,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id can not be root to rename path parameter",
         )?;
         validation.require(
-          !validation.path_component_id_exists(&command.path_id),
+          validation.path_component_id_exists(&command.path_id),
           "path component must exist to rename path parameter",
         )?;
 
@@ -363,7 +363,7 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
           "path id must not be root to remove path parameter",
         )?;
         validation.require(
-          !validation.path_component_id_exists(&command.path_id),
+          validation.path_component_id_exists(&command.path_id),
           "path component must exist to remove path parameter",
         )?;
 
@@ -640,6 +640,205 @@ mod test {
     assert!(unexisting_path_result.is_err());
     assert_debug_snapshot!(
       "can_handle_remove_path_component_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event);
+    }
+  }
+
+  #[test]
+  pub fn can_handle_add_path_parameter_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathParameter": {"pathId": "path_2", "parentPathId": "path_1", "name": "todoId"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_path_parameter__new_events", new_events);
+
+    let unassignable_path: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathParameter": {"pathId": "path_1", "parentPathId": "path_1", "name": "todoId"}}
+    ))
+    .unwrap();
+    let unassignable_path_result = projection.execute(unassignable_path);
+    assert!(unassignable_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_parameter__unassignable_path_result",
+      unassignable_path_result.unwrap_err()
+    );
+
+    let unexisting_parent: EndpointCommand = serde_json::from_value(json!(
+      { "AddPathParameter": {"pathId": "path_2", "parentPathId": "not-a-path", "name": "completed"}}
+    ))
+    .unwrap();
+    let unexisting_parent_result = projection.execute(unexisting_parent);
+    assert!(unexisting_parent_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_path_parameter__unexisting_parent_result",
+      unexisting_parent_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event);
+    }
+  }
+
+  #[test]
+  pub fn can_handle_rename_path_parameter_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"PathParameterAdded": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathParameter": {"pathId": "path_1", "name": "taskId"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_rename_path_parameter_command__new_events",
+      new_events
+    );
+
+    let renaming_root: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathParameter": {"pathId": "root", "name": "taskId"}}
+    ))
+    .unwrap();
+    let renaming_root_result = projection.execute(renaming_root);
+    assert!(renaming_root_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_rename_path_parameter_command__renaming_root_result",
+      renaming_root_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      { "RenamePathParameter": {"pathId": "not-a-path", "name": "taskId"}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_rename_path_parameter_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event);
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_path_parameter_shape_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"PathParameterAdded": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}},
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"",}}
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_set_path_parameter_shape_command__new_events",
+      new_events
+    );
+
+    let setting_root_path: EndpointCommand = serde_json::from_value(json!(
+      {"SetPathParameterShape":{"pathId":"root","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
+    )).unwrap();
+    let setting_root_path_result = projection.execute(setting_root_path);
+    assert!(setting_root_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_path_parameter_shape_command__setting_root_path_result",
+      setting_root_path_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      {"SetPathParameterShape":{"pathId":"not-a-path","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
+    )).unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_path_parameter_shape_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_remove_path_parameter_command() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"PathParameterAdded": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let command: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathParameter": {"pathId": "path_1"}}
+    ))
+    .expect("commands should be valid endpoint events");
+
+    let new_events = projection
+      .execute(command)
+      .expect("new command should be applicable to initial projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_remove_path_parameter_command__new_events",
+      new_events
+    );
+
+    let removing_root: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathParameter": {"pathId": "root"}}
+    ))
+    .unwrap();
+    let removing_root_result = projection.execute(removing_root);
+    assert!(removing_root_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_parameter_command__removing_root_result",
+      removing_root_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      { "RemovePathParameter": {"pathId": "not-a-path-id"}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_remove_path_parameter_command__unexisting_path_result",
       unexisting_path_result.unwrap_err()
     );
 
