@@ -1,7 +1,10 @@
-use crate::commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError};
 use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
+use crate::{
+  commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
+  events::http_interaction::Response,
+};
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
 use std::collections::HashMap;
@@ -268,6 +271,16 @@ impl EndpointProjection {
     let node_index = self.node_id_to_index.get(request_id)?;
     let node = self.graph.node_weight(*node_index)?;
     if let &Node::Request(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
+  pub fn get_response_node_index(&self, response_id: &ResponseId) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(response_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::Response(_, _) = node {
       Some(node_index)
     } else {
       None

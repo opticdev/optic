@@ -459,6 +459,12 @@ impl From<RequestBodySet> for EndpointEvent {
   }
 }
 
+impl From<ResponseAddedByPathAndMethod> for EndpointEvent {
+  fn from(event: ResponseAddedByPathAndMethod) -> Self {
+    Self::ResponseAddedByPathAndMethod(event)
+  }
+}
+
 // Conversion from commands
 // ------------------------
 
@@ -489,6 +495,9 @@ impl From<EndpointCommand> for EndpointEvent {
       EndpointCommand::AddRequest(command) => EndpointEvent::from(RequestAdded::from(command)),
       EndpointCommand::SetRequestBodyShape(command) => {
         EndpointEvent::from(RequestBodySet::from(command))
+      }
+      EndpointCommand::AddResponseByPathAndMethod(command) => {
+        EndpointEvent::from(ResponseAddedByPathAndMethod::from(command))
       }
       _ => unimplemented!(
         "conversion from endpoint command to endpoint event not implemented for variant: {:?}",
@@ -585,6 +594,18 @@ impl From<endpoint_commands::SetRequestBodyShape> for RequestBodySet {
     Self {
       request_id: command.request_id,
       body_descriptor: command.body_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<endpoint_commands::AddResponseByPathAndMethod> for ResponseAddedByPathAndMethod {
+  fn from(command: endpoint_commands::AddResponseByPathAndMethod) -> Self {
+    Self {
+      http_method: command.http_method,
+      http_status_code: command.http_status_code,
+      path_id: command.path_id,
+      response_id: command.response_id,
       event_context: None,
     }
   }

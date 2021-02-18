@@ -170,10 +170,10 @@ pub struct AddResponse {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddResponseByPathAndMethod {
-  response_id: ResponseId,
-  path_id: PathComponentId,
-  http_method: String,
-  http_status_code: u16,
+  pub response_id: ResponseId,
+  pub path_id: PathComponentId,
+  pub http_method: String,
+  pub http_status_code: u16,
 }
 
 //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
@@ -401,6 +401,23 @@ impl AggregateCommand<EndpointProjection> for EndpointCommand {
         ))]
       }
 
+      // Responses
+      // ---------
+      EndpointCommand::AddResponseByPathAndMethod(command) => {
+        validation.require(
+          !validation.response_exists(&command.response_id),
+          "response id must be assignable to add response by path and method",
+        )?;
+        validation.require(
+          validation.path_component_id_exists(&command.path_id),
+          "path component must exist to add response by path and method",
+        )?;
+
+        vec![EndpointEvent::from(
+          endpoint_events::ResponseAddedByPathAndMethod::from(command),
+        )]
+      }
+
       _ => Err(SpecCommandError::Unimplemented(
         "endpoint command not implemented for endpoint projection",
         SpecCommand::EndpointCommand(self),
@@ -443,6 +460,13 @@ impl<'a> CommandValidationQueries<'a> {
     self
       .endpoint_projection
       .get_request_node_index(request_id)
+      .is_some()
+  }
+
+  pub fn response_exists(&self, response_id: &ResponseId) -> bool {
+    self
+      .endpoint_projection
+      .get_response_node_index(response_id)
       .is_some()
   }
 }
@@ -574,6 +598,58 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_set_request_body_shape_command__unexisting_request_result",
       unexisting_request_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_add_response_by_path_and_method_command() {
+    let initial_events: Vec<EndpointEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+      {"RequestAdded": {"requestId": "request_1", "pathId": "path_1", "httpMethod": "GET"}},
+      {"ResponseAddedByPathAndMethod": {"responseId": "response_1", "pathId": "path_1", "httpMethod": "GET", "httpStatusCode": 200}}
+    ]))
+    .expect("initial events should be valid endpoint events");
+
+    let mut projection = EndpointProjection::from(initial_events);
+
+    let valid_command: EndpointCommand = serde_json::from_value(json!(
+      {"AddResponseByPathAndMethod": {"responseId": "response_2", "pathId": "path_1", "httpMethod": "POST", "httpStatusCode": 201}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_add_response_by_path_and_method_command__new_events",
+      new_events
+    );
+
+    let unassignable_response: EndpointCommand = serde_json::from_value(json!(
+      {"AddResponseByPathAndMethod": {"responseId": "response_1", "pathId": "path_1", "httpMethod": "POST", "httpStatusCode": 201}}
+    ))
+    .unwrap();
+    let unassignable_response_result = projection.execute(unassignable_response);
+    assert!(unassignable_response_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_response_by_path_and_method_command__unassignable_response_result",
+      unassignable_response_result.unwrap_err()
+    );
+
+    let unexisting_path: EndpointCommand = serde_json::from_value(json!(
+      {"AddResponseByPathAndMethod": {"responseId": "response_2", "pathId": "not-a-path", "httpMethod": "POST", "httpStatusCode": 201}}
+    ))
+    .unwrap();
+    let unexisting_path_result = projection.execute(unexisting_path);
+    assert!(unexisting_path_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_response_by_path_and_method_command__unexisting_path_result",
+      unexisting_path_result.unwrap_err()
     );
 
     for event in new_events {
