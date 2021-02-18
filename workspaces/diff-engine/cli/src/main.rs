@@ -10,11 +10,13 @@ use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecEvent;
 use optic_diff_engine::SpecProjection;
+use optic_diff_engine::{ChangelogProjection, ChangelogQuery};
 use std::cmp;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWriteExt};
 use tokio::sync::mpsc;
+use chrono::{DateTime, Utc};
 
 fn main() {
   let cli = App::new("Optic Engine CLI")
@@ -63,6 +65,12 @@ fn main() {
     .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
+    ).subcommand(
+      SubCommand::with_name("changes")
+        .about("Lists changes in API spec since date")
+        .arg(
+          Arg::from_usage("-s, --since=[DateTime<Utc>] 'changes since time'")
+        )
     );
 
   let matches = cli.get_matches();
@@ -125,18 +133,30 @@ fn main() {
       }
     };
 
-    if let Some(_matches) = matches.subcommand_matches("assemble") {
-      eprintln!("assembling spec folder into spec");
-      assemble(spec_events).await;
-    } else {
-      eprintln!("diffing interations against a spec");
-      let diff_queue_size = cmp::min(
-        num_cpus::get(),
-        core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-      ) * 4;
-      eprintln!("using diff size {}", diff_queue_size);
+    match matches.subcommand() {
+      ("assemble", _) => {
+        eprintln!("assembling spec folder into spec");
+        assemble(spec_events).await;
+      },
+      ("diff", _) => {
+        eprintln!("diffing interations against a spec");
+        let diff_queue_size = cmp::min(
+          num_cpus::get(),
+          core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+        ) * 4;
+        eprintln!("using diff size {}", diff_queue_size);
 
-      diff(spec_events, diff_queue_size).await;
+        diff(spec_events, diff_queue_size).await;
+      },
+      ("changes", Some(subcommand)) => {
+        let since_or = subcommand.value_of("since").unwrap_or("1970-01-01 00:00:00 UTC");
+        let since = since_or.parse::<DateTime<Utc>>().expect("arg parse as datetime");
+        eprintln!("listing changed endpoints since {}", since);
+        let changes = ChangelogProjection::from(spec_events);
+        let query = ChangelogQuery{changelog: changes};
+        println!("{:#?}", query.added(since))
+      },
+      _ => {},
     }
   });
 }
