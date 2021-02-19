@@ -40,7 +40,7 @@ jobs:
           echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
           while read line; do
             echo "$line" >> $GITHUB_ENV
-          done < ${{ ${{ github.event.inputs.flags_file }}
+          done < ${{ github.event.inputs.flags_file }}
       - name: Build NPM packages for S3
         env:
           DRY_RUN: "false"
