@@ -76,6 +76,12 @@ pub enum ProviderDescriptor {
   NoProvider(NoProvider),
 }
 
+impl Default for ProviderDescriptor {
+  fn default() -> Self {
+    ProviderDescriptor::NoProvider(NoProvider {})
+  }
+}
+
 #[derive(Debug, Deserialize, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ParameterProvider {}

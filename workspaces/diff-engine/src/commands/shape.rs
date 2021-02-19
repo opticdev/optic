@@ -80,9 +80,9 @@ pub struct RemoveShape {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddShapeParameter {
-  shape_parameter_id: ShapeParameterId,
-  shape_id: ShapeId,
-  name: String,
+  pub shape_parameter_id: ShapeParameterId,
+  pub shape_id: ShapeId,
+  pub name: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -280,6 +280,23 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
           vec![ShapeEvent::from(shape_events::FieldShapeSet::from(command))]
         }
       },
+
+      // Parameters
+      // ----------
+      ShapeCommand::AddShapeParameter(command) => {
+        validation.require(
+          validation.shape_id_exists(&command.shape_id),
+          "shape must exist to add shape parameter",
+        )?;
+        validation.require(
+          !validation.shape_parameter_id_exists(&command.shape_parameter_id),
+          "shape parameter id must be assignable to add shape parameter",
+        )?;
+
+        vec![ShapeEvent::from(shape_events::ShapeParameterAdded::from(
+          command,
+        ))]
+      }
 
       _ => Err(SpecCommandError::Unimplemented(
         "shape command not implemented for shape projection",
@@ -586,6 +603,55 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_set_field_shape_command__unexisting_field_shape_result",
       unexisting_field_shape_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_add_shape_parameter() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"one_off_shape_1","baseShapeId":"$oneOf","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"ShapeParameterAdded": {"shapeParameterId": "shape_parameter_1", "shapeId": "one_off_shape_1","name": "","shapeDescriptor": {"ProviderInShape": {"shapeId": "one_off_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "shape_parameter_1"}}}},
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let mut projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"AddShapeParameter": {"shapeParameterId": "shape_parameter_2", "shapeId": "one_off_shape_1","name": "","shapeDescriptor": {"ProviderInShape": {"shapeId": "one_off_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "shape_parameter_2"}}}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_shape_parameter__new_events", new_events);
+
+    let unassignable_shape_parameter_id: ShapeCommand = serde_json::from_value(json!(
+      {"AddShapeParameter": {"shapeParameterId": "shape_parameter_1", "shapeId": "one_off_shape_1","name": "","shapeDescriptor": {"ProviderInShape": {"shapeId": "one_off_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "shape_parameter_1"}}}}
+    ))
+    .unwrap();
+    let unassignable_shape_parameter_id_result =
+      projection.execute(unassignable_shape_parameter_id);
+    assert!(unassignable_shape_parameter_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_shape_parameter__unassignable_shape_parameter_id_result",
+      unassignable_shape_parameter_id_result.unwrap_err()
+    );
+
+    let unexisting_shape_id: ShapeCommand = serde_json::from_value(json!(
+      {"AddShapeParameter": {"shapeParameterId": "shape_parameter_2", "shapeId": "not-a-shape","name": "","shapeDescriptor": {"ProviderInShape": {"shapeId": "one_off_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "shape_parameter_2"}}}}
+    ))
+    .unwrap();
+    let unexisting_shape_id_result = projection.execute(unexisting_shape_id);
+    assert!(unexisting_shape_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_shape_parameter__unexisting_shape_id_result",
+      unexisting_shape_id_result.unwrap_err()
     );
 
     for event in new_events {

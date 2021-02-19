@@ -1,7 +1,10 @@
 use super::EventContext;
-use crate::commands::shape as shape_commands;
 use crate::state::shape::{
   FieldShapeDescriptor, ParameterShapeDescriptor, ShapeParametersDescriptor,
+};
+use crate::{
+  commands::shape as shape_commands,
+  state::shape::{NoProvider, ProviderDescriptor, ProviderInShape},
 };
 use cqrs_core::Event;
 use serde::{Deserialize, Serialize};
@@ -241,6 +244,12 @@ impl From<FieldShapeSet> for ShapeEvent {
   }
 }
 
+impl From<ShapeParameterAdded> for ShapeEvent {
+  fn from(event: ShapeParameterAdded) -> Self {
+    Self::ShapeParameterAdded(event)
+  }
+}
+
 // Conversions from commands
 // -------------------------
 
@@ -250,6 +259,9 @@ impl From<ShapeCommand> for ShapeEvent {
       ShapeCommand::AddShape(command) => ShapeEvent::from(ShapeAdded::from(command)),
       ShapeCommand::SetBaseShape(command) => ShapeEvent::from(BaseShapeSet::from(command)),
       ShapeCommand::AddField(command) => ShapeEvent::from(FieldAdded::from(command)),
+      ShapeCommand::AddShapeParameter(command) => {
+        ShapeEvent::from(ShapeParameterAdded::from(command))
+      }
       _ => unimplemented!(
         "conversion from shape command to shape event not implemented for variant: {:?}",
         shape_command
@@ -296,6 +308,22 @@ impl From<shape_commands::SetFieldShape> for FieldShapeSet {
   fn from(command: shape_commands::SetFieldShape) -> Self {
     Self {
       shape_descriptor: command.shape_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<shape_commands::AddShapeParameter> for ShapeParameterAdded {
+  fn from(command: shape_commands::AddShapeParameter) -> Self {
+    Self {
+      shape_id: command.shape_id.clone(),
+      shape_parameter_id: command.shape_parameter_id.clone(),
+      name: command.name,
+      shape_descriptor: ParameterShapeDescriptor::ProviderInShape(ProviderInShape {
+        shape_id: command.shape_id,
+        provider_descriptor: ProviderDescriptor::default(),
+        consuming_parameter_id: command.shape_parameter_id,
+      }),
       event_context: None,
     }
   }
