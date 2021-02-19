@@ -1,8 +1,5 @@
 name: Release side channel packages to S3
 
-env:
-  ANNOUNCE: "false"
-
 on:
   workflow_dispatch:
 
