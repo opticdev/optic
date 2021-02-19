@@ -132,4 +132,4 @@ tasks:
           --data '{"text":"${MESSAGE}"}'
           $SLACK_WEBHOOK_URL
     status:
-      - "[ $SKIP_ANNOUNCE = 'true' ]"
+      - '[ "{{.SKIP_ANNOUNCE}}" = "true" ]'
