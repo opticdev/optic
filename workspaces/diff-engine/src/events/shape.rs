@@ -229,6 +229,12 @@ impl From<BaseShapeSet> for ShapeEvent {
   }
 }
 
+impl From<FieldAdded> for ShapeEvent {
+  fn from(event: FieldAdded) -> Self {
+    Self::FieldAdded(event)
+  }
+}
+
 // Conversions from commands
 // -------------------------
 
@@ -237,6 +243,7 @@ impl From<ShapeCommand> for ShapeEvent {
     match shape_command {
       ShapeCommand::AddShape(command) => ShapeEvent::from(ShapeAdded::from(command)),
       ShapeCommand::SetBaseShape(command) => ShapeEvent::from(BaseShapeSet::from(command)),
+      ShapeCommand::AddField(command) => ShapeEvent::from(FieldAdded::from(command)),
       _ => unimplemented!(
         "conversion from shape command to shape event not implemented for variant: {:?}",
         shape_command
@@ -262,6 +269,18 @@ impl From<shape_commands::SetBaseShape> for BaseShapeSet {
     Self {
       shape_id: command.shape_id,
       base_shape_id: command.base_shape_id,
+      event_context: None,
+    }
+  }
+}
+
+impl From<shape_commands::AddField> for FieldAdded {
+  fn from(command: shape_commands::AddField) -> Self {
+    Self {
+      field_id: command.field_id,
+      shape_id: command.shape_id,
+      name: command.name,
+      shape_descriptor: command.shape_descriptor,
       event_context: None,
     }
   }

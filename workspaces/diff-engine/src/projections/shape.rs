@@ -441,6 +441,15 @@ impl ShapeProjection {
       None
     }
   }
+
+  pub fn get_core_shape_kinds(
+    &self,
+    node_index: &NodeIndex,
+  ) -> Option<impl Iterator<Item = &ShapeKind>> {
+    let core_shape_nodes = self.get_core_shape_nodes(node_index)?;
+
+    Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.1.kind))
+  }
 }
 
 // struct Example {

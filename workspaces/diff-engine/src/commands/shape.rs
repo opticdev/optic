@@ -3,7 +3,7 @@ use crate::events::shape as shape_events;
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
-  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ShapeId, ShapeParameterId,
+  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ShapeId, ShapeKind, ShapeParameterId,
   ShapeParametersDescriptor,
 };
 use cqrs_core::AggregateCommand;
@@ -110,10 +110,10 @@ pub struct SetParameterShape {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddField {
-  field_id: FieldId,
-  shape_id: ShapeId,
-  name: String,
-  shape_descriptor: FieldShapeDescriptor,
+  pub field_id: FieldId,
+  pub shape_id: ShapeId,
+  pub name: String,
+  pub shape_descriptor: FieldShapeDescriptor,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -193,6 +193,8 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
     let validation = CommandValidationQueries::from((projection, &self));
 
     let events = match self {
+      // Shapes
+      // ------
       ShapeCommand::AddShape(command) => {
         validation.require(
           !validation.shape_id_exists(&command.shape_id),
@@ -221,6 +223,41 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
         )?;
 
         vec![ShapeEvent::from(shape_events::BaseShapeSet::from(command))]
+      }
+
+      // Fields
+      // ------
+      ShapeCommand::AddField(command) => {
+        validation.require(
+          !validation.field_id_exists(&command.field_id),
+          "field id must be assignable to add field",
+        )?;
+        validation.require(
+          validation.shape_id_exists(&command.shape_id),
+          "shape must exist to add field",
+        )?;
+        validation.require(
+          validation.shape_can_have_fields(&command.shape_id),
+          "shape must support fields to add field",
+        )?;
+
+        let events = match &command.shape_descriptor {
+          FieldShapeDescriptor::FieldShapeFromParameter(descriptor) => {
+            Err(SpecCommandError::Unimplemented(
+              "FieldShapeFromParameter shape descriptor not implemented for add field command",
+              SpecCommand::ShapeCommand(ShapeCommand::AddField(command)),
+            ))?
+          }
+          FieldShapeDescriptor::FieldShapeFromShape(descriptor) => {
+            validation.require(
+              validation.shape_id_exists(&descriptor.shape_id),
+              "shape of shape descriptor must exist to add field",
+            )?;
+            vec![ShapeEvent::from(shape_events::FieldAdded::from(command))]
+          }
+        };
+
+        events
       }
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -262,6 +299,34 @@ impl<'a> CommandValidationQueries<'a> {
       .shape_projection
       .get_core_shape_node_index(shape_id)
       .is_some()
+  }
+
+  fn shape_parameter_id_exists(&self, shape_param_id: &ShapeParameterId) -> bool {
+    self
+      .shape_projection
+      .get_shape_parameter_node_index(shape_param_id)
+      .is_some()
+  }
+
+  fn field_id_exists(&self, field_id: &FieldId) -> bool {
+    self
+      .shape_projection
+      .get_field_node_index(field_id)
+      .is_some()
+  }
+
+  fn shape_can_have_fields(&self, shape_id: &ShapeId) -> bool {
+    let shape_node_index = self.shape_projection.get_shape_node_index(shape_id);
+
+    if let None = shape_node_index {
+      false
+    } else {
+      self
+        .shape_projection
+        .get_core_shape_kinds(shape_node_index.unwrap())
+        .expect("shape node exists as we just resolved it, so we get iterator")
+        .any(|shape_kind| matches!(shape_kind, ShapeKind::ObjectKind))
+    }
   }
 }
 
@@ -378,6 +443,78 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_set_base_shape_command__non_base_shape_result",
       non_base_shape_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_add_field_command() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"shape_2","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"shape_3","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId": "field_1", "shapeId": "shape_1", "name": "likesCount", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_2", "fieldId": "field_1"}}}}
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let mut projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"AddField":{"fieldId": "field_2", "shapeId": "shape_1", "name": "username", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_3", "fieldId": "field_2"}}}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_add_field_command__new_events", new_events);
+
+    let unexisting_object_shape: ShapeCommand = serde_json::from_value(json!(
+      {"AddField":{"fieldId": "field_2", "shapeId": "not-a-shape", "name": "username", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_3", "fieldId": "field_2"}}}}
+    ))
+    .unwrap();
+    let unexisting_object_shape_result = projection.execute(unexisting_object_shape);
+    assert!(unexisting_object_shape_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_field_command__unexisting_object_shape_result",
+      unexisting_object_shape_result.unwrap_err()
+    );
+
+    let unassignable_field: ShapeCommand = serde_json::from_value(json!(
+      {"AddField":{"fieldId": "field_1", "shapeId": "shape_1", "name": "username", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_3", "fieldId": "field_2"}}}}
+    ))
+    .unwrap();
+    let unassignable_field_result = projection.execute(unassignable_field);
+    assert!(unassignable_field_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_field_command__unassignable_field_result",
+      unassignable_field_result.unwrap_err()
+    );
+
+    let non_object_shape: ShapeCommand = serde_json::from_value(json!(
+      {"AddField":{"fieldId": "field_2", "shapeId": "shape_2", "name": "username", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_3", "fieldId": "field_2"}}}}
+    ))
+    .unwrap();
+    let non_object_shape_result = projection.execute(non_object_shape);
+    assert!(non_object_shape_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_field_command__non_object_shape_result",
+      non_object_shape_result.unwrap_err()
+    );
+
+    let unexisting_field_shape: ShapeCommand = serde_json::from_value(json!(
+      {"AddField":{"fieldId": "field_2", "shapeId": "shape_1", "name": "username", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "not-a-shape", "fieldId": "field_2"}}}}
+    ))
+    .unwrap();
+    let unexisting_field_shape_result = projection.execute(unexisting_field_shape);
+    assert!(unexisting_field_shape_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_add_field_command__unexisting_field_shape_result",
+      unexisting_field_shape_result.unwrap_err()
     );
 
     for event in new_events {
