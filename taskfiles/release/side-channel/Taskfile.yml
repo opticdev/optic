@@ -1,0 +1,119 @@
+version: 3
+
+vars:
+  DRY_RUN: '{{default "true" .DRY_RUN}}'
+  TIMESTAMP: $(date +%s)
+
+tasks:
+  run:
+    desc: Build a side-channel release for @useoptic/cli and publish it to s3
+    vars:
+      # get the local-cli version and strip anything after a hyphen, "0.0.0-blah" to "0.0.0"
+      BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
+      VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
+      VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
+      TMP_DIR: /tmp/{{.TIMESTAMP}}
+      BUCKET: '{{default "optic-side-channel-staging" .SIDE_CHANNEL_BUCKET}}'
+    deps:
+      - :workspaces:build
+      - :verdaccio:up
+    cmds:
+      - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
+      - task: publish-local
+        vars:
+          BUCKET: "{{.BUCKET}}"
+          VERSION: "{{.VERSION}}"
+      - task: save-packages-to-disk
+        vars:
+          PACKAGES:
+            sh: node workspaces/scripts/list-workspace-packages.js | sed "s/,/ /g"
+          VERSION: "{{.VERSION}}"
+          TMP_DIR: "{{.TMP_DIR}}"
+      - task: test
+        vars:
+          TMP_DIR: "{{.TMP_DIR}}"
+      - task: upload-to-s3
+        vars:
+          BUCKET: "{{.BUCKET}}"
+          VERSION: "{{.VERSION}}"
+          TGZ_DIR: "{{.TMP_DIR}}"
+      - task: :release:announce
+        vars:
+          MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
+
+  upload-to-s3:
+    cmds:
+      - |
+        if [ "{{.DRY_RUN}}" = "true" ]
+        then
+          aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --dryrun
+        else
+          aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
+        fi
+
+  bump-version:
+    env:
+      S3_HTTPS_URL: "{{.S3_HTTPS_URL}}"
+      VERSION: "{{.VERSION}}"
+    cmds:
+      - node workspaces/scripts/use-s3-dependencies.js
+
+  # quick validation that the version URLs look like we expect
+  test:
+    desc: Run tests
+    vars:
+      TMP_DIR: '{{default "/tmp/test" .TMP_DIR}}'
+    cmds:
+      - |
+        mkdir -p /tmp/test/extracted
+        original_file=$(find {{.TMP_DIR}} -type f -name cli-9*.tgz)
+        file="/tmp/test/test-copy.tgz"
+        cp $original_file $file
+
+        msg="The S3 HTTPS URL looks sane"
+        gzip -d ${file}
+        tar -xf $(echo $file | sed "s/\.tgz/\.tar/") -C /tmp/test/extracted/
+        if egrep -q optic-side-channel /tmp/test/extracted/package/package.json
+        then
+          # S3 URL, https://$BUCKET.s3.amazonaws.com/$VERSION/$PKG-$VERSION.tgz
+          egrep -q \
+            "https://optic-side-channel-(staging|production)\.s3\.amazonaws\.com\/\d+\.\d+\.\d+-alpha\.\w+\/\w+-\d+\.\d+\.\d+-alpha\.\w+.tgz" \
+            /tmp/test/extracted/package/package.json \
+            && echo -e "✔\t${msg}" || echo -e "🆇\t${msg}"
+        else
+          echo "There doesn't appear to be an S3 URL in the package.json"
+          exit 1
+        fi
+        rm -rf /tmp/test
+
+  save-packages-to-disk:
+    vars:
+      NPM_REGISTRY: '{{default "http://0.0.0.0:4873" .NPM_REGISTRY}}'
+    cmds:
+      - |
+        for pkg in {{.PACKAGES}}
+        do
+          url="{{.NPM_REGISTRY}}/@useoptic%2f${pkg}/-/${pkg}-{{.VERSION}}.tgz"
+          wget -nv $url -P {{.TMP_DIR}}
+        done
+
+  publish-local:
+    desc: Publish NPM packages to Verdaccio
+    env:
+      OPTIC_PUBLISH_SCOPE: private
+    cmds:
+      - task: bump-version
+        vars:
+          S3_HTTPS_URL: https://{{.BUCKET}}.s3.amazonaws.com
+          VERSION: "{{.VERSION}}"
+      - node workspaces/scripts/publish.js
+      - task: reset-working-tree
+
+  # reset working tree because package.json's and README.md's were updated with `yarn bump`
+  reset-working-tree:
+    - |
+      if uname -a | grep -q Darwin
+      then
+        files=$(find -E workspaces/ -depth 2 -type f -regex ".*(package.json|README.md)")
+        echo $files | xargs git checkout
+      fi

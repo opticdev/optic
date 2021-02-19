@@ -16,6 +16,8 @@ includes:
     taskfile: taskfiles/regression-tests/Taskfile.yml
   release:
     taskfile: taskfiles/release/Taskfile.yml
+  release:side-channel:
+    taskfile: taskfiles/release/side-channel/Taskfile.yml
   verdaccio:
     taskfile: docker/private-npm-registry/Taskfile.yml
     dir: docker/private-npm-registry

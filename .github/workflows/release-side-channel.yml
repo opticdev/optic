@@ -44,4 +44,4 @@ jobs:
           DRY_RUN: "false"
           SKIP_ANNOUNCE: "false"
           SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}"
-        run: task release:side-channel
+        run: task release:side-channel:run
