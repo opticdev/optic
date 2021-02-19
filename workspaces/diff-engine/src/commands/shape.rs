@@ -132,7 +132,7 @@ pub struct RemoveField {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetFieldShape {
-  shape_descriptor: FieldShapeDescriptor,
+  pub shape_descriptor: FieldShapeDescriptor,
 }
 
 // Command handling
@@ -259,6 +259,27 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
 
         events
       }
+
+      ShapeCommand::SetFieldShape(command) => match &command.shape_descriptor {
+        FieldShapeDescriptor::FieldShapeFromParameter(descriptor) => {
+          Err(SpecCommandError::Unimplemented(
+            "FieldShapeFromParameter shape descriptor not implemented for set field shape",
+            SpecCommand::ShapeCommand(ShapeCommand::SetFieldShape(command)),
+          ))?
+        }
+        FieldShapeDescriptor::FieldShapeFromShape(descriptor) => {
+          validation.require(
+            validation.field_id_exists(&descriptor.field_id),
+            "field of shape descriptor must exist to set field shape",
+          )?;
+          validation.require(
+            validation.shape_id_exists(&descriptor.shape_id),
+            "shape of shape descriptor must exist to set field shape",
+          )?;
+
+          vec![ShapeEvent::from(shape_events::FieldShapeSet::from(command))]
+        }
+      },
 
       _ => Err(SpecCommandError::Unimplemented(
         "shape command not implemented for shape projection",
@@ -514,6 +535,56 @@ mod test {
     assert!(unexisting_field_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_add_field_command__unexisting_field_shape_result",
+      unexisting_field_shape_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_field_shape_command() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"shape_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"shape_2","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"ShapeAdded":{"shapeId":"shape_3","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":""}},
+      {"FieldAdded":{"fieldId": "field_1", "shapeId": "shape_1", "name": "likesCount", "shapeDescriptor":{ "FieldShapeFromShape": { "shapeId": "shape_2", "fieldId": "field_1"}}}}
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let mut projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"SetFieldShape":{"shapeDescriptor":{ "FieldShapeFromShape":{ "shapeId": "shape_3", "fieldId": "field_1"}}}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_set_field_shape_command__new_events", new_events);
+
+    let unexisting_field: ShapeCommand = serde_json::from_value(json!(
+      {"SetFieldShape":{"shapeDescriptor":{ "FieldShapeFromShape":{ "shapeId": "shape_3", "fieldId": "not-a-field"}}}}
+    ))
+    .unwrap();
+    let unexisting_field_result = projection.execute(unexisting_field);
+    assert!(unexisting_field_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_field_shape_command__unexisting_field_result",
+      unexisting_field_result.unwrap_err()
+    );
+
+    let unexisting_field_shape: ShapeCommand = serde_json::from_value(json!(
+      {"SetFieldShape":{"shapeDescriptor":{ "FieldShapeFromShape":{ "shapeId": "not-a-shape", "fieldId": "field_1"}}}}
+    ))
+    .unwrap();
+    let unexisting_field_shape_result = projection.execute(unexisting_field_shape);
+    assert!(unexisting_field_shape_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_field_shape_command__unexisting_field_shape_result",
       unexisting_field_shape_result.unwrap_err()
     );
 

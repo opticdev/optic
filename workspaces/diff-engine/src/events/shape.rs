@@ -235,6 +235,12 @@ impl From<FieldAdded> for ShapeEvent {
   }
 }
 
+impl From<FieldShapeSet> for ShapeEvent {
+  fn from(event: FieldShapeSet) -> Self {
+    Self::FieldShapeSet(event)
+  }
+}
+
 // Conversions from commands
 // -------------------------
 
@@ -280,6 +286,15 @@ impl From<shape_commands::AddField> for FieldAdded {
       field_id: command.field_id,
       shape_id: command.shape_id,
       name: command.name,
+      shape_descriptor: command.shape_descriptor,
+      event_context: None,
+    }
+  }
+}
+
+impl From<shape_commands::SetFieldShape> for FieldShapeSet {
+  fn from(command: shape_commands::SetFieldShape) -> Self {
+    Self {
       shape_descriptor: command.shape_descriptor,
       event_context: None,
     }
