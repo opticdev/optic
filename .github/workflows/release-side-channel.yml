@@ -2,6 +2,11 @@ name: Release side channel packages to S3
 
 on:
   workflow_dispatch:
+    inputs:
+      flags_file:
+        description: The .env file to load during the build
+        required: false
+        default: .env.beta
 
 jobs:
   run:
@@ -33,6 +38,9 @@ jobs:
         run: |
           echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
+          while read line; do
+            echo "$line" >> $GITHUB_ENV
+          done < ${{ ${{ github.event.inputs.flags_file }}
       - name: Build NPM packages for S3
         env:
           DRY_RUN: "false"
