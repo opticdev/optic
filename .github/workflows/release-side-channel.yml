@@ -1,0 +1,45 @@
+name: Release side channel packages to S3
+
+env:
+  ANNOUNCE: "false"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release-tasks
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
+      - name: Configure Node
+        uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+        with:
+          node-version: 14
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache node_modules
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}"${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}-vendor-v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Set env
+        run: |
+          echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
+      - name: Build NPM packages for S3
+        env:
+          DRY_RUN: "false"
+        run: task release:side-channel
