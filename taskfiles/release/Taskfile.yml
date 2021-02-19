@@ -3,7 +3,6 @@ version: 3
 vars:
   DRY_RUN: '{{default "true" .DRY_RUN}}'
   TIMESTAMP: $(date +%s)
-  OPTIC_PACKAGES: $(node workspaces/scripts/list-workspace-packages.js)
 
 tasks:
   side-channel:
@@ -29,7 +28,7 @@ tasks:
       - task: save-packages-to-disk
         vars:
           PACKAGES:
-            sh: echo "{{.OPTIC_PACKAGES}}" | sed "s/,/ /g"
+            sh: node workspaces/scripts/list-workspace-packages.js | sed "s/,/ /g"
           VERSION: "{{.VERSION}}"
           TMP_DIR: "{{.TMP_DIR}}"
       - task: side-channel:test
