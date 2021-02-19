@@ -10,13 +10,9 @@ const notifier = updateNotifier({
   updateCheckInterval: 1000 * 60 * 60 * 24
 });
 
-//console.log(notifier.fetchInfo());
-  
-//const notifier = updateNotifier();
 if (notifier.update) {
   notifier.notify();
 }
-
 
 const envPath =
   process.env.OPTIC_DEBUG_ENV_FILE || path.join(__dirname, '..', '.env');
