@@ -29,9 +29,6 @@ tasks:
             sh: node workspaces/scripts/list-workspace-packages.js | sed "s/,/ /g"
           VERSION: "{{.VERSION}}"
           TMP_DIR: "{{.TMP_DIR}}"
-      - task: test
-        vars:
-          TMP_DIR: "{{.TMP_DIR}}"
       - task: upload-to-s3
         vars:
           BUCKET: "{{.BUCKET}}"
@@ -57,33 +54,6 @@ tasks:
       VERSION: "{{.VERSION}}"
     cmds:
       - node workspaces/scripts/use-s3-dependencies.js
-
-  # quick validation that the version URLs look like we expect
-  test:
-    vars:
-      TMP_DIR: '{{default "/tmp/test" .TMP_DIR}}'
-    cmds:
-      - |
-        mkdir -p /tmp/test/extracted
-        original_file=$(find {{.TMP_DIR}} -type f -name cli-9*.tgz)
-        file="/tmp/test/test-copy.tgz"
-        cp $original_file $file
-
-        msg="The S3 HTTPS URL looks sane"
-        gzip -d ${file}
-        tar -xf $(echo $file | sed "s/\.tgz/\.tar/") -C /tmp/test/extracted/
-        if egrep -q optic-side-channel /tmp/test/extracted/package/package.json
-        then
-          # S3 URL, https://$BUCKET.s3.amazonaws.com/$VERSION/$PKG-$VERSION.tgz
-          egrep -q \
-            "https://optic-side-channel-(staging|production)\.s3\.amazonaws\.com\/\d+\.\d+\.\d+-alpha\.\w+\/\w+-\d+\.\d+\.\d+-alpha\.\w+.tgz" \
-            /tmp/test/extracted/package/package.json \
-            && echo -e "✔\t${msg}" || echo -e "🆇\t${msg}"
-        else
-          echo "There doesn't appear to be an S3 URL in the package.json"
-          exit 1
-        fi
-        rm -rf /tmp/test
 
   save-packages-to-disk:
     vars:
