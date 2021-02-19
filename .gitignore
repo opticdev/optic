@@ -10,3 +10,4 @@ output/
 /target
 /workspaces/diff-engine-wasm/engine/browser
 /workspaces/diff-engine-wasm/engine/build
+*.log
