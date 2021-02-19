@@ -42,4 +42,5 @@ jobs:
       - name: Build NPM packages for S3
         env:
           DRY_RUN: "false"
+          SKIP_ANNOUNCE: "false"
         run: task release:side-channel
