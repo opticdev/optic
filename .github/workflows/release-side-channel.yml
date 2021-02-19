@@ -5,9 +5,6 @@ env:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - release-tasks
 
 jobs:
   run:
