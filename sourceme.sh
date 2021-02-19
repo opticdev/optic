@@ -8,10 +8,23 @@ alias apidev="OPTIC_DAEMON_ENABLE_DEBUGGING=yes OPTIC_DEVELOPMENT=yes OPTIC_UI_H
 alias apistage="OPTIC_DAEMON_ENABLE_DEBUGGING=yes $OPTIC_SRC_DIR/workspaces/local-cli/bin/run"
 alias cidev="$OPTIC_SRC_DIR/workspaces/ci-cli/bin/run"
 alias agentdev="$OPTIC_SRC_DIR/workspaces/agent-cli/bin/run"
+
+optic_export_env() {
+  set -u
+
+  ENV_FILE=$1
+  if [ -f "$ENV_FILE" ]
+  then
+    export "$(grep -v '^#' $ENV_FILE)"
+  else
+    echo "Could not find env file '$ENV_FILE'."
+  fi
+}
+
 optic_workspace_clean() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit ws:clean
   )
@@ -19,7 +32,7 @@ optic_workspace_clean() {
 optic_workspace_build() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
   )
@@ -27,7 +40,7 @@ optic_workspace_build() {
 optic_workspace_binaries_build() {
   (
     set -o errexit
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     cd "$OPTIC_SRC_DIR"
     yarn wsrun --stages --report --fast-exit --exclude-missing ws:build-binaries
   )
@@ -42,7 +55,7 @@ optic_watch() {
   (
     set -o errexit
     cd "$OPTIC_SRC_DIR"
-    export $(grep -v '^#' $OPTIC_DEBUG_ENV_FILE | xargs) # export all in .env file
+    optic_export_env "$OPTIC_DEBUG_ENV_FILE"
     optic_workspace_clean
     yarn run watch --filter=workspace-scripts/watch-filter.js "source sourceme.sh && optic_workspace_build_with_notification"
   )

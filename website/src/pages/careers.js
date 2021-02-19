@@ -58,7 +58,7 @@ People are at their most creative and fulfilled when they have agency and undert
 
 #### Practice Good Craftsmanship
 
-As toolmakers, we have the privilege of measuring our impact by seeing the results of the products we help create. Do your best work and make sure you are proud of the part of Optic for which you have been given responsibility.
+As toolmakers, we have the privilege of measuring our impact by seeing the results of the products we help create. Do your best work and make sure you are proud of the parts of Optic for which you have taken responsibility.
 
 #### Be a Good Human
 
@@ -94,7 +94,7 @@ function Careers() {
     <Layout title={`Join the Team`}>
       <SEO
         title={"Join Optic's Team"}
-        image={'/img/optic.png'}
+        image={'https://useoptic.com/img/optic.png'}
         description="Come build the future of API tooling"
       />
       <main

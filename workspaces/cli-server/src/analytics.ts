@@ -19,6 +19,9 @@ import {getOrCreateAnonId} from "@useoptic/cli-config/build/opticrc/optic-rc";
 const packageJson = require('../package.json');
 
 const clientId = `local_cli_${packageJson.version}`;
+const platform = os.platform();
+const arch = os.arch();
+const release = os.release();
 
 //event bus for tracking events
 export const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
@@ -27,6 +30,9 @@ export const analyticsEvents: AnalyticsEventBus = newAnalyticsEventBus(
     const clientContext: ClientContext = {
       clientAgent: clientAgent,
       clientId: clientId,
+      platform: platform,
+      arch: arch,
+      release: release,
       clientSessionInstanceId: batchId,
       clientTimestamp: new Date().toISOString(),
       apiName: '',

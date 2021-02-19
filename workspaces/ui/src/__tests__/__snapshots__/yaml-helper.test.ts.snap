@@ -6,16 +6,16 @@ Object {
   "task": Object {
     "command": Object {
       "endLine": 5,
-      "endPosition": 181,
+      "endPosition": 183,
       "startLine": 5,
-      "startPosition": 161,
+      "startPosition": 163,
       "value": "npm run server-start",
     },
     "inboundUrl": Object {
       "endLine": 6,
-      "endPosition": 219,
+      "endPosition": 221,
       "startLine": 6,
-      "startPosition": 198,
+      "startPosition": 200,
       "value": "http://localhost:3005",
     },
     "name": "start",
@@ -23,8 +23,8 @@ Object {
     "useTask": undefined,
   },
   "taskRange": Object {
-    "endPosition": 219,
-    "startPosition": 141,
+    "endPosition": 221,
+    "startPosition": 143,
   },
 }
 `;
@@ -35,9 +35,9 @@ Object {
   "task": Object {
     "command": Object {
       "endLine": 14,
-      "endPosition": 373,
+      "endPosition": 375,
       "startLine": 14,
-      "startPosition": 357,
+      "startPosition": 359,
       "value": "mocha test2.js",
     },
     "inboundUrl": undefined,
@@ -45,15 +45,15 @@ Object {
     "targetUrl": undefined,
     "useTask": Object {
       "endLine": 15,
-      "endPosition": 392,
+      "endPosition": 394,
       "startLine": 15,
-      "startPosition": 387,
+      "startPosition": 389,
       "value": "start",
     },
   },
   "taskRange": Object {
-    "endPosition": 392,
-    "startPosition": 333,
+    "endPosition": 394,
+    "startPosition": 335,
   },
 }
 `;

@@ -14,6 +14,7 @@ Object {
     "location": Object {
       "inRequest": Object {
         "contentType": "application/json",
+        "requestId": undefined,
       },
       "inResponse": false,
       "method": "GET",
@@ -224,6 +225,7 @@ Object {
         "diffHash": "48b9c0094ee8694e07f49d37a48c28650cb82029",
         "newBodyInRequest": Object {
           "contentType": "application/json",
+          "requestId": undefined,
         },
         "newBodyInResponse": false,
       },
@@ -253,6 +255,7 @@ Object {
       "inRequest": false,
       "inResponse": Object {
         "contentType": "application/json",
+        "responseId": undefined,
         "statusCode": 200,
       },
       "method": "GET",
@@ -485,6 +488,7 @@ Object {
         "newBodyInRequest": false,
         "newBodyInResponse": Object {
           "contentType": "application/json",
+          "responseId": undefined,
           "statusCode": 200,
         },
       },
