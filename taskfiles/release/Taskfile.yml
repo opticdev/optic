@@ -124,12 +124,9 @@ tasks:
   announce:
     vars:
       SKIP_ANNOUNCE: '{{default "true" .SKIP_ANNOUNCE}}'
-    env:
       MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
     cmds:
-      - >
-        curl -X POST -H 'Content-type: application/json'
-          --data '{"text":"${MESSAGE}"}'
-          $SLACK_WEBHOOK_URL
+      - |
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"{{.MESSAGE}}"}' $SLACK_WEBHOOK_URL
     status:
       - '[ "{{.SKIP_ANNOUNCE}}" = "true" ]'
