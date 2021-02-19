@@ -3,8 +3,7 @@ version: 3
 vars:
   DRY_RUN: '{{default "true" .DRY_RUN}}'
   TIMESTAMP: $(date +%s)
-  # we need to modify all packages touched by `yarn bump`
-  OPTIC_PACKAGES: cli,analytics,cli-client,cli-config,cli-scripts,cli-server,cli-shared,client-utilities,diff-engine,diff-engine-wasm,ui
+  OPTIC_PACKAGES: $(node workspaces/scripts/list-workspace-packages.js)
 
 tasks:
   side-channel:
@@ -25,6 +24,7 @@ tasks:
       - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
       - task: publish-local
         vars:
+          BUCKET: "{{.BUCKET}}"
           VERSION: "{{.VERSION}}"
       - task: save-packages-to-disk
         vars:
@@ -32,16 +32,9 @@ tasks:
             sh: echo "{{.OPTIC_PACKAGES}}" | sed "s/,/ /g"
           VERSION: "{{.VERSION}}"
           TMP_DIR: "{{.TMP_DIR}}"
-      - task: rewrite-package-json
-        vars:
-          BUCKET: "{{.BUCKET}}"
-          PACKAGES:
-            sh: echo "{{.OPTIC_PACKAGES}}" | sed "s/,/ /g"
-          VERSION: "{{.VERSION}}"
-          TMP_DIR: "{{.TMP_DIR}}"
-      - task: side-channel:test
-        vars:
-          TMP_DIR: "{{.TMP_DIR}}"
+      # - task: side-channel:test
+      #   vars:
+      #     TMP_DIR: "{{.TMP_DIR}}"
       # - task: upload-to-s3
       #   vars:
       #     BUCKET: "{{.BUCKET}}"
@@ -52,83 +45,6 @@ tasks:
       #     BUCKET: "{{.BUCKET}}"
       #     VERSION: "{{.VERSION}}"
       # - rm $TMP_DIR
-
-  # extracts each package from OPTIC_PACKAGES and looks for dependencies that are also listed in OPTIC_PACKAGES.
-  # if there is a dependency, we rewrite the version to the https path indicating where the package will be located in S3.
-  rewrite-package-json:
-    vars:
-      PACKAGE_TMP: /tmp/side-channel
-      PACKAGE_JSON: package/package.json # the location of the package.json inside the archive
-      S3_HTTPS_URL: https://{{.BUCKET}}.s3.amazonaws.com
-    cmds:
-      - rm -rf {{.PACKAGE_TMP}}
-      - |
-        for pkg in {{.PACKAGES}}
-        do
-          pkg_tmp="{{.PACKAGE_TMP}}/${pkg}"
-          mkdir -p $pkg_tmp
-
-          pkg_json=package/package.json
-
-          # extract package.json from the archive
-          tar -xf {{.TMP_DIR}}/${pkg}-{{.VERSION}}.tgz -C $pkg_tmp $pkg_json
-
-          for dep in {{.PACKAGES}}
-          do
-            if jq -e ".dependencies.\"@useoptic/${dep}\"" $pkg_tmp/$pkg_json >/dev/null
-            then
-              dep_url="{{.S3_HTTPS_URL}}/{{.VERSION}}/${dep}-{{.VERSION}}.tgz"
-
-              # if $dep is a dependency for $pkg, change the version string to an S3 HTTPS URL.
-              jq ".dependencies.\"@useoptic/${dep}\" = \"$dep_url\"" $pkg_tmp/$pkg_json > $pkg_tmp/${pkg_json}.tmp
-              mv $pkg_tmp/${pkg_json}.tmp $pkg_tmp/$pkg_json
-            fi
-          done
-        done
-      - task: add-package-json-to-archive
-        vars:
-          PACKAGES: "{{.PACKAGES}}"
-          PACKAGE_TMP: "{{.PACKAGE_TMP}}"
-          PACKAGE_JSON: "{{.PACKAGE_JSON}}"
-          TMP_DIR: "{{.TMP_DIR}}"
-          VERSION: "{{.VERSION}}"
-
-  add-package-json-to-archive:
-    cmds:
-      - |
-        for pkg in {{.PACKAGES}}
-        do
-          # decompress and extract
-          gzip -d {{.TMP_DIR}}/${pkg}-{{.VERSION}}.tgz
-          tar \
-            -C {{.TMP_DIR}} \
-            -xf \
-            {{.TMP_DIR}}/${pkg}-{{.VERSION}}.tar
-
-          # copy the modified package.json into place
-          cp {{.PACKAGE_TMP}}/$pkg/{{.PACKAGE_JSON}} {{.TMP_DIR}}/package/
-
-          # build a new archive
-
-          # we need to know the depth or number of directories contained in TMP_DIR
-          # so we can correctly strip leading path entries. the top-level directory
-          # in the tarball should be package.
-          # transform "/tmp/test" to "tmp test" and returns the word count
-          count=$(echo "{{.TMP_DIR}}" | sed 's/\///' | sed 's/\// /g' | wc -w)
-          # add 1 because that seems to be necessary
-          count=$(expr $count + 1)
-
-          tar \
-            --strip-components=$count \
-            --numeric-owner \
-            -czf \
-            {{.TMP_DIR}}/${pkg}-{{.VERSION}}.tgz \
-            {{.TMP_DIR}}/package
-
-          # clean up temp files for next run
-          rm -rf {{.TMP_DIR}}/package
-        done
-      - rm -f {{.TMP_DIR}}/*.tar
 
   upload-to-s3:
     cmds:
@@ -156,9 +72,19 @@ tasks:
     env:
       OPTIC_PUBLISH_SCOPE: private
     cmds:
-      - yarn bump {{.VERSION}}
+      - task: bump-version
+        vars:
+          S3_HTTPS_URL: https://{{.BUCKET}}.s3.amazonaws.com
+          VERSION: "{{.VERSION}}"
       - node workspaces/scripts/publish.js
       - task: reset-working-tree
+
+  bump-version:
+    env:
+      S3_HTTPS_URL: "{{.S3_HTTPS_URL}}"
+      VERSION: "{{.VERSION}}"
+    cmds:
+      - node workspaces/scripts/use-s3-dependencies.js
 
   # reset working tree because package.json's and README.md's were updated with `yarn bump`
   reset-working-tree:
@@ -179,54 +105,35 @@ tasks:
       TMP_DIR: '{{default "/tmp/test" .TMP_DIR}}'
     cmds:
       - |
-        set -e
+        echo Tests
+        mkdir -p /tmp/test/extracted
+        original_file=$(find {{.TMP_DIR}} -type f -name cli-9*.tgz)
+        file="/tmp/test/test-copy.tgz"
+        cp $original_file $file
 
-        echo -e "Tests"
-        for file in $(find {{.TMP_DIR}} -type f -name *.tgz)
-        do
-          echo "$file:"
-          msg="package.json was not appended to the tarball"
-          [ $(tar -tvf $file | grep package/package.json | wc -l) -eq 1 ] \
-            && echo -e "\t✔\t${msg}" || echo -e "\t🆇\t${msg}"
+        msg="The version string is sane"
+        gzip -d ${file}
+        tar -xf $(echo $file | sed "s/\.tgz/\.tar/") -C /tmp/test/extracted/
+        if egrep -q optic-side-channel /tmp/test/extracted/package/package.json
+        then
+          # S3 URL, https://$BUCKET.s3.amazonaws.com/$VERSION/$PKG-$VERSION.tgz
+          egrep -q \
+            "https://optic-side-channel-(staging|production)\.s3\.amazonaws\.com\/\d+\.\d+\.\d+-alpha\.\w+\/\w+-\d+\.\d+\.\d+-alpha\.\w+.tgz" \
+            /tmp/test/extracted/package/package.json \
+            && echo -e "✔\t${msg}" || echo -e "🆇\t${msg}"
+        else
+          echo "There doesn't appear to be an S3 URL in the package.json"
+          exit 1
+        fi
+        rm -rf /tmp/test/extracted $(echo $file | sed "s/\.tgz/\.tar/")
 
-          msg="The user and group forfiles with in the tarball are numeric"
-          u=$(tar -tvf $file | tail -n 1 | awk '{print $3}')
-          g=$(tar -tvf $file | tail -n 1 | awk '{print $4}')
-          $(echo $u | egrep -q '[0-9]+') \
-            && $(echo $g | egrep -q '[0-9]+') \
-            && echo -e "\t✔\t${msg}" || echo -e "\t🆇\t${msg}"
-
-          # msg="The version string is sane"
-          # gzip -d $file
-          # mkdir -p /tmp/test/extracted/
-          # tar -xf $(echo $file | sed "s/\.tgz/\.tar/") -C /tmp/test/extracted/
-          # if egrep -q optic-side-channel /tmp/test/extracted/package/package.json
-          # then
-          #   # S3 URL, https://$BUCKET.s3.amazonaws.com/$VERSION/$PKG-$VERSION.tgz
-          #   egrep -q \
-          #     "https://optic-side-channel-(staging|production)\.s3\.amazonaws\.com\/\d+.\d+.\d+-alpha\..+\/" \
-          #     /tmp/test/extracted/package/package.json \
-          #     && echo -e "\t✔\t${msg}" || echo -e "\t🆇\t${msg}"
-          # fi
-          # rm -rf /tmp/test/extracted
-
-          msg="'package' is the top directory within the tarball"
-          file=$(find {{.TMP_DIR}} -type f -name *.tgz | head -n1)
-          # get the last file in the tar, filter just the file column
-          tar -tvf $file | head -n1 | awk '{print $9}' | egrep -q "^package/" \
-            && echo -e "\t✔\t${msg}" || echo -e "\t🆇\t${msg}"
-          echo "DEBUG:"
-          tar -tvf $file
-        done
-        # TODO(nate): exit 1 if anything failed
-
-  announce:
-    env:
-      MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
-    cmds:
-      - >
-        curl -X POST -H 'Content-type: application/json'
-          --data '{"text":"${MESSAGE}"}'
-          $SLACK_WEBHOOK_URL
-    preconditions:
-      - "[ $ANNOUNCE = 'true' ]"
+  # announce:
+  #   env:
+  #     MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
+  #   cmds:
+  #     - >
+  #       curl -X POST -H 'Content-type: application/json'
+  #         --data '{"text":"${MESSAGE}"}'
+  #         $SLACK_WEBHOOK_URL
+  #   preconditions:
+  #     - "[ $ANNOUNCE = 'true' ]"
