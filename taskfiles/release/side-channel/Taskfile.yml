@@ -60,7 +60,6 @@ tasks:
 
   # quick validation that the version URLs look like we expect
   test:
-    desc: Run tests
     vars:
       TMP_DIR: '{{default "/tmp/test" .TMP_DIR}}'
     cmds:
@@ -98,7 +97,6 @@ tasks:
         done
 
   publish-local:
-    desc: Publish NPM packages to Verdaccio
     env:
       OPTIC_PUBLISH_SCOPE: private
     cmds:
