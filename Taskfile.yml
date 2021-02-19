@@ -33,7 +33,16 @@ tasks:
     desc: Build Yarn workspaces
     deps: ["workspaces:setup"]
     cmds:
-      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+      - |
+        if [ -n "$FLAGS_FILE" ]
+        then
+          while read line
+          do
+            export "$line"
+          done < $FLAGS_FILE
+        fi
+        yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+
     sources:
       - !workspaces/*/build/**/*
     generates:

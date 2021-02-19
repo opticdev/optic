@@ -14,8 +14,11 @@ tasks:
       VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
       TMP_DIR: /tmp/{{.TIMESTAMP}}
       BUCKET: '{{default "optic-side-channel-staging" .SIDE_CHANNEL_BUCKET}}'
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
     deps:
-      - :workspaces:build
+      - task: :workspaces:build
+        env:
+          FLAGS_FILE: '{{.FLAGS_FILE}}'
       - :verdaccio:up
     cmds:
       - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
