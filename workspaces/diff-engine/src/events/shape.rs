@@ -250,6 +250,12 @@ impl From<ShapeParameterAdded> for ShapeEvent {
   }
 }
 
+impl From<ShapeParameterShapeSet> for ShapeEvent {
+  fn from(event: ShapeParameterShapeSet) -> Self {
+    Self::ShapeParameterShapeSet(event)
+  }
+}
+
 // Conversions from commands
 // -------------------------
 
@@ -261,6 +267,9 @@ impl From<ShapeCommand> for ShapeEvent {
       ShapeCommand::AddField(command) => ShapeEvent::from(FieldAdded::from(command)),
       ShapeCommand::AddShapeParameter(command) => {
         ShapeEvent::from(ShapeParameterAdded::from(command))
+      }
+      ShapeCommand::SetParameterShape(command) => {
+        ShapeEvent::from(ShapeParameterShapeSet::from(command))
       }
       _ => unimplemented!(
         "conversion from shape command to shape event not implemented for variant: {:?}",
@@ -324,6 +333,15 @@ impl From<shape_commands::AddShapeParameter> for ShapeParameterAdded {
         provider_descriptor: ProviderDescriptor::default(),
         consuming_parameter_id: command.shape_parameter_id,
       }),
+      event_context: None,
+    }
+  }
+}
+
+impl From<shape_commands::SetParameterShape> for ShapeParameterShapeSet {
+  fn from(command: shape_commands::SetParameterShape) -> Self {
+    Self {
+      shape_descriptor: command.shape_descriptor,
       event_context: None,
     }
   }

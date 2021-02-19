@@ -3,8 +3,8 @@ use crate::events::shape as shape_events;
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
-  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ShapeId, ShapeKind, ShapeParameterId,
-  ShapeParametersDescriptor,
+  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeKind,
+  ShapeParameterId, ShapeParametersDescriptor,
 };
 use cqrs_core::AggregateCommand;
 use serde::Deserialize;
@@ -101,7 +101,7 @@ pub struct RenameShapeParameter {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SetParameterShape {
-  shape_descriptor: ParameterShapeDescriptor,
+  pub shape_descriptor: ParameterShapeDescriptor,
 }
 
 // Fields
@@ -297,6 +297,42 @@ impl AggregateCommand<ShapeProjection> for ShapeCommand {
           command,
         ))]
       }
+
+      ShapeCommand::SetParameterShape(command) => match &command.shape_descriptor {
+        ParameterShapeDescriptor::ProviderInShape(descriptor) => {
+          validation.require(
+            validation.shape_id_exists(&descriptor.shape_id),
+            "shape must exist to set parameter shape",
+          )?;
+          validation.require(
+            validation.shape_parameter_id_exists(&descriptor.consuming_parameter_id),
+            "consuming parameter must exist to set shape parameter shape",
+          )?;
+
+          match &descriptor.provider_descriptor {
+            ProviderDescriptor::NoProvider(_) | ProviderDescriptor::ParameterProvider(_) => {
+              Err(SpecCommandError::Unimplemented(
+                "only ShapeProvider provider descriptor is implemented for set shape parameter shape",
+                SpecCommand::ShapeCommand(ShapeCommand::SetParameterShape(command)),
+              ))?
+            }
+            ProviderDescriptor::ShapeProvider(provider) => {
+              validation.require(
+                validation.shape_id_exists(&provider.shape_id),
+                "provided shape must exist to set shape parameter shape",
+              )?;
+              
+              vec![ShapeEvent::from(shape_events::ShapeParameterShapeSet::from(command))]
+            }
+          }
+        }
+        ParameterShapeDescriptor::ProviderInField(provider) => {
+          Err(SpecCommandError::Unimplemented(
+            "ProviderInFIeld shape descriptor not implemented for set parameter shape",
+            SpecCommand::ShapeCommand(ShapeCommand::SetParameterShape(command)),
+          ))?
+        }
+      },
 
       _ => Err(SpecCommandError::Unimplemented(
         "shape command not implemented for shape projection",
@@ -652,6 +688,79 @@ mod test {
     assert_debug_snapshot!(
       "can_handle_add_shape_parameter__unexisting_shape_id_result",
       unexisting_shape_id_result.unwrap_err()
+    );
+
+    for event in new_events {
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+    }
+  }
+
+  #[test]
+  pub fn can_handle_set_parameter_shape_command() {
+    let initial_events: Vec<ShapeEvent> = serde_json::from_value(json!([
+      {"ShapeAdded":{"shapeId":"nullable_shape_1","baseShapeId":"$nullable","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+      {"ShapeAdded":{"shapeId":"string_shape_1","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"" }},
+    ]))
+    .expect("initial events should be valid shape events");
+
+    let mut projection = ShapeProjection::from(initial_events);
+
+    let valid_command: ShapeCommand = serde_json::from_value(json!(
+      {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": { "shapeId": "string_shape_1" }},"consumingParameterId": "$nullableInner"}}}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = projection
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!("can_handle_set_parameter_shape_command__new_events", new_events);
+
+    let unexisting_shape_parameter_id: ShapeCommand = serde_json::from_value(json!(
+      {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": { "shapeId": "string_shape_1" }},"consumingParameterId": "not-a-shape-parameter-id"}}}}
+    ))
+    .unwrap();
+    let unexisting_shape_parameter_id_result =
+      projection.execute(unexisting_shape_parameter_id);
+    assert!(unexisting_shape_parameter_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_parameter_shape_command__unexisting_shape_parameter_id_result",
+      unexisting_shape_parameter_id_result.unwrap_err()
+    );
+
+    let unexisting_shape_id: ShapeCommand = serde_json::from_value(json!(
+      {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "not-a-shape-id","providerDescriptor": {"ShapeProvider": { "shapeId": "string_shape_1" }},"consumingParameterId": "$nullableInner"}}}}
+    ))
+    .unwrap();
+    let unexisting_shape_id_result =
+      projection.execute(unexisting_shape_id);
+    assert!(unexisting_shape_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_parameter_shape_command__unexisting_shape_id_result",
+      unexisting_shape_id_result.unwrap_err()
+    );
+
+    let unexisting_provided_shape_id: ShapeCommand = serde_json::from_value(json!(
+      {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"ShapeProvider": { "shapeId": "not-a-shape-id" }},"consumingParameterId": "$nullableInner"}}}}
+    ))
+    .unwrap();
+    let unexisting_provided_shape_id_result =
+      projection.execute(unexisting_provided_shape_id);
+    assert!(unexisting_provided_shape_id_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_parameter_shape_command__unexisting_provided_shape_id_result",
+      unexisting_provided_shape_id_result.unwrap_err()
+    );
+    let no_shape_provider: ShapeCommand = serde_json::from_value(json!(
+      {"SetParameterShape": {"shapeDescriptor": {"ProviderInShape": {"shapeId": "nullable_shape_1","providerDescriptor": {"NoProvider": {}},"consumingParameterId": "$nullableInner"}}}}
+    ))
+    .unwrap();
+    let no_shape_provider_result =
+      projection.execute(no_shape_provider);
+    assert!(no_shape_provider_result.is_err());
+    assert_debug_snapshot!(
+      "can_handle_set_parameter_shape_command__no_shape_provider_result",
+      no_shape_provider_result.unwrap_err()
     );
 
     for event in new_events {
