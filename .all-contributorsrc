@@ -210,6 +210,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "batisteo",
+      "name": "Baptiste Darthenay",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2727048?v=4",
+      "profile": "https://baptiste.darthenay.fr/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
