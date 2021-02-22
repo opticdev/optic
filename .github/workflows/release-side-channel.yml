@@ -7,8 +7,6 @@ on:
         description: The .env file to load during the build
         required: false
         default: .env.sidechannel
-  push:
-    branches: ["add-env-selection-to-side-channel"]
 
 jobs:
   npm_packages:
