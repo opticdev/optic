@@ -1,4 +1,3 @@
-const { install } = require('../lib');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -8,6 +7,8 @@ const envPath =
 dotenv.config({
   path: envPath,
 });
+
+const { install } = require('../lib');
 
 if (process.env.OPTIC_SKIP_PREBUILT_INSTALLS === 'true') {
   console.log(

@@ -34,12 +34,16 @@ tasks:
     deps: ["workspaces:setup"]
     cmds:
       - |
-        if [ -n "$FLAGS_FILE" ]
-        then
-          while read line
-          do
-            export "$line"
-          done < $FLAGS_FILE
+        if [[ -r $FLAGS_FILE ]]; then
+          echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
+          cp $FLAGS_FILE .env
+          cp $FLAGS_FILE workspaces/agent-cli/.env
+          cp $FLAGS_FILE workspaces/ci-cli/.env
+          cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/cli-server/.env
+          cp $FLAGS_FILE workspaces/cli-scripts/.env
+          cp $FLAGS_FILE workspaces/diff-engine/.env
+          cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi
         yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
 
