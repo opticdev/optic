@@ -44,6 +44,7 @@
     "slugify": "^1.4.0",
     "strip-ansi": "^6.0.0",
     "tslib": "^1",
+    "update-notifier": "^5.0.1",
     "url-join": "^4.0.1",
     "uuid": "^8.0.0",
     "which": "^2.0.2"
