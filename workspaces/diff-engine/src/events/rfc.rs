@@ -41,7 +41,7 @@ pub struct GitStateSet {
 #[serde(rename_all = "camelCase")]
 pub struct BatchCommitStarted {
   pub batch_id: String,
-  commit_message: String,
+  pub commit_message: String,
   pub parent_id: Option<String>,
   event_context: Option<EventContext>,
 }
