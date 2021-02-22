@@ -40,6 +40,9 @@ tasks:
       - task: :release:announce
         vars:
           MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
+      - task: outputs
+        vars:
+          VERSION: "{{.VERSION}}"
 
   upload-to-s3:
     cmds:
@@ -50,6 +53,12 @@ tasks:
         else
           aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
         fi
+
+  # write values to share outside task
+  outputs:
+    cmds:
+      - mkdir -p /tmp/outputs
+      - echo "{{.VERSION}}" > /tmp/outputs/release-version.txt
 
   bump-version:
     env:

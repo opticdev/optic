@@ -47,6 +47,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
         run: task release:side-channel:run
+      - uses: actions/upload-artifact@v2
+        with:
+          name: side-channel-release-verion
+          path: /tmp/outputs/release-version.txt
 
   rust_binaries:
     strategy:
