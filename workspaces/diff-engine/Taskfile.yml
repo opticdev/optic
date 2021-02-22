@@ -26,9 +26,27 @@ tasks:
     desc: Build diff-engine binaries for Mac OS
     vars:
       BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    deps:
+      - task: build-macos-x86-64
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+      - task: build-macos-aarch64
+        vars:
+          BUILD_ARGS: "{{.BUILD_ARGS}}"
+
+  build-macos-x86-64:
+    desc: Build diff-engine binaries for Mac OS x86-64
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     cmds:
       - cargo build {{.BUILD_ARGS}} --target x86_64-apple-darwin
-      #- cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
+
+  build-macos-aarch64:
+    desc: Build diff-engine binaries for Mac OS aarch64
+    vars:
+      BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
+    cmds:
+      - cargo build {{.BUILD_ARGS}} --target aarch64-apple-darwin
 
   build-linux:
     desc: Build diff-engine binaries for Linux
