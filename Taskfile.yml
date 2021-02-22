@@ -31,6 +31,8 @@ tasks:
 
   workspaces:build:
     desc: Build Yarn workspaces
+    vars:
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
     deps: ["workspaces:setup"]
     cmds:
       - |
