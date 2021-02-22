@@ -36,7 +36,7 @@ tasks:
     deps: ["workspaces:setup"]
     cmds:
       - |
-        if [[ -r $FLAGS_FILE ]]; then
+        if [[ -n "$FLAGS_FILE" ]]; then
           echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
           cp $FLAGS_FILE .env
           cp $FLAGS_FILE workspaces/agent-cli/.env
@@ -55,7 +55,7 @@ tasks:
       - workspaces/diff-engine-wasm/lib/**/*
       - workspaces/diff-engine-wasm/engine/browser/**/*
       - workspaces/diff-engine-wasm/engine/build/**/*
-      # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
+      - workspace/diff-engine-wasm/engine/target/**/*
       - workspaces/*/build/**/*
 
   workspaces:build:ci:
