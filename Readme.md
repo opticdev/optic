@@ -34,7 +34,7 @@
 Install Optic with npm or yarn"
 
 ```bash
-yarn add global @useoptic/cli
+yarn global add @useoptic/cli
 npm install @useoptic/cli -g
 ```
 Then run init command:
