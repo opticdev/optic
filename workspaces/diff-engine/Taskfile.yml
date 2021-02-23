@@ -101,6 +101,7 @@ tasks:
     status:
       - uname -a | grep -qv "Darwin"
 
+  # Debian build host toolchain deps
   build-windows:debian-host-deps:
     cmds:
       - sudo apt-get -y install gcc-mingw-w64
