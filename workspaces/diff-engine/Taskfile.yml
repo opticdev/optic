@@ -112,7 +112,13 @@ tasks:
 
   locate-binaries:
     cmds:
-      - find ./target -perm 755 -type f | grep release/optic_diff | xargs ls -lh
+      - |
+        if uname -a | grep Darwin
+        then
+          find ./target -type f -perm +111 -print | grep release/optic_diff | xargs ls -lh
+        else
+          find ./target -executable -print -type f | grep release/optic_diff | xargs ls -lh
+        fi
 
   ci:build:
     desc: The CI build workflow

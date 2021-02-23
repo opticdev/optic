@@ -81,6 +81,7 @@ jobs:
             diff-engine:add-targets
             ${{ matrix.platform.task }}
             flush-to-disk
+            diff-engine:locate-binaries
 
   announce:
     runs-on: ubuntu-latest
