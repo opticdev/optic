@@ -51,6 +51,7 @@ jobs:
           path: /tmp/outputs/release-version.txt
 
   rust_binaries:
+    needs: [npm_packages]
     strategy:
       matrix:
         platform:
