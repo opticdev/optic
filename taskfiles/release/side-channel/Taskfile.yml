@@ -54,9 +54,10 @@ tasks:
           aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
         fi
 
-  upload-diff-engine-to-s3:
+  # locates any previously built diff-engine binaries and adds them to an
+  # archive in ./build/dist/
+  produce-diff-engine-tarballs:
     vars:
-      BUCKET: '{{default "optic-side-channel-staging" .BUCKET}}'
       VERSION: '{{.VERSION}}'
     # ➜ aws s3 ls s3://optic-packages/dists/optic_diff/v9.0.11/
     # 2021-02-17 10:47:14    1918033 optic_diff-v9.0.11-linux.tar.gz
@@ -65,7 +66,7 @@ tasks:
     # 2021-02-17 10:47:15     869189 optic_diff-v9.0.11-win64.tar.gz
     cmds:
       # kind of a hack job. but it mimics the existing tags we're appending to the binary tarballs
-      # in the main release flow. the resulting tarballs will be in ./buid/dist
+      # in the main release flow.
       - |
         for binary in $(task diff-engine:locate-binaries)
         do

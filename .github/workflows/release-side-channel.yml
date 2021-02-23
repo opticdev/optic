@@ -74,15 +74,24 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      - name: Download version artifact
+        uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a # https://github.com/actions/download-artifact/releases/tag/v2
+        with:
+          name: side-channel-release-verion
+          path: .
+      - name: Set version env
+        run: echo "VERSION=$(cat release-version.txt)" >> $GITHUB_ENV
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release
+          BUCKET: optic-side-channel-production
         run: |
           task \
             diff-engine:add-targets \
             ${{ matrix.platform.task }} \
             flush-to-disk \
-            diff-engine:locate-binaries
+            diff-engine:locate-binaries \
+            release:side-channel:produce-diff-engine-tarballs
 
   announce:
     runs-on: ubuntu-latest
