@@ -118,7 +118,7 @@ tasks:
   locate-binaries:
     cmds:
       - |
-        if uname -a | grep Darwin
+        if uname -a | grep -q Darwin
         then
           find ./target -type f -perm +111 -print | grep release/optic_diff
         else

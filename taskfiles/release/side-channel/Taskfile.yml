@@ -54,6 +54,41 @@ tasks:
           aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
         fi
 
+  upload-diff-engine-to-s3:
+    vars:
+      BUCKET: '{{default "optic-side-channel-staging" .BUCKET}}'
+      VERSION: '{{.VERSION}}'
+    # ➜ aws s3 ls s3://optic-packages/dists/optic_diff/v9.0.11/
+    # 2021-02-17 10:47:14    1918033 optic_diff-v9.0.11-linux.tar.gz
+    # 2021-02-17 10:47:15     997647 optic_diff-v9.0.11-macos-aarch64.tar.gz
+    # 2021-02-17 10:47:14     997932 optic_diff-v9.0.11-macos.tar.gz
+    # 2021-02-17 10:47:15     869189 optic_diff-v9.0.11-win64.tar.gz
+    cmds:
+      # kind of a hack job. but it mimics the existing tags we're appending to the binary tarballs
+      # in the main release flow. the resulting tarballs will be in ./buid/dist
+      - |
+        for binary in $(task diff-engine:locate-binaries)
+        do
+          if [[ $binary =~ "x86_64-apple" ]]; then
+            tag="macos"
+          elif [[ $binary =~ "aarch64-apple" ]]; then
+            tag="macos-aarch64"
+          elif [[ $binary =~ "windows" ]]; then
+            tag="win64"
+          elif [[ $binary =~ "linux" ]]; then
+            tag="linux"
+          else
+            echo "Could not identify the arch for file: $binary"
+            exit 1
+          fi
+          filename="optic_diff-v{{.VERSION}}-$tag"
+          chmod +x $binary
+          mkdir -p build/$filename build/dist
+          cp $binary build/$filename/
+          tar -C build -czvf build/dist/${filename}.tar.gz $filename
+        done
+      - ls -lh build/dist
+
   # write values to share outside task
   outputs:
     cmds:
