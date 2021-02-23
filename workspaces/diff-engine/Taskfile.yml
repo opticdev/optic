@@ -128,9 +128,9 @@ tasks:
       - |
         if uname -a | grep Darwin
         then
-          find ./target -type f -perm +111 -print | grep release/optic_diff | xargs ls -lh
+          find ./target -type f -perm +111 -print | grep release/optic_diff
         else
-          find ./target -executable -print -type f | grep release/optic_diff | xargs ls -lh
+          find ./target -executable -print -type f | grep release/optic_diff
         fi
 
   ci:build:
