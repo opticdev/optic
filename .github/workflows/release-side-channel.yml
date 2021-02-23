@@ -82,6 +82,7 @@ jobs:
             ${{ matrix.platform.task }} \
             flush-to-disk \
             diff-engine:locate-binaries
+        shell: bash
 
   announce:
     runs-on: ubuntu-latest
