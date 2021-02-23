@@ -6,6 +6,7 @@ pub mod spec_events;
 
 pub use conflicts::ConflictsProjection;
 pub use endpoint::EndpointProjection;
+pub use history::HistoryProjection;
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
