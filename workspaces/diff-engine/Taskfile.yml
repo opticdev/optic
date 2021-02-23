@@ -78,6 +78,7 @@ tasks:
       BUILD_ARGS: "{{default .DEFAULT_BUILD_ARGS .BUILD_ARGS}}"
     deps:
       - build-windows:macos-host-deps
+      - build-windows:debian-host-deps
     cmds:
       - cargo build {{.BUILD_ARGS}} --target x86_64-pc-windows-gnu
 
@@ -99,6 +100,18 @@ tasks:
       - brew install mingw-w64
     status:
       - uname -a | grep -qv "Darwin"
+
+  build-windows:debian-host-deps:
+    cmds:
+      - apt-get -y install gcc-mingw-w64
+    status:
+      - uname -a | grep -qv "GNU/Linux"
+      - |
+        if [ -f /etc/os-release ]
+        then
+          cat /etc/os-release | grep -qv "ID_LIKE=debian"
+        fi
+
 
   build-linux:macos-host-deps:
     desc: Install a Windows build toolchain on Mac OS hosts

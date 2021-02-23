@@ -54,7 +54,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - os: windows-latest
+          - os: ubuntu-latest
             task: diff-engine:build-windows
           - os: ubuntu-latest
             task: diff-engine:build-linux
