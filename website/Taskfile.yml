@@ -21,10 +21,10 @@ tasks:
       - to environment AWS_PROFILE, default is {{.AWS_PROFILE}}
       - when DRY_RUN is false, default is {{.DRY_RUN}}
     cmds:
-      - AWS_PROFILE={{.AWS_PROFILE}} DRY_RUN={{.DRY_RUN}} bin/deploy
+      - bin/deploy
     deps:
       - check-credentials
-    vars:
+    env:
       AWS_PROFILE: '{{default "staging" .AWS_PROFILE}}'
       DRY_RUN: '{{default "true" .DRY_RUN}}'
 
