@@ -1,0 +1,61 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  check-credentials:
+    cmds:
+      - aws-mfa --profile parent
+    silent: true
+
+  deploy:
+    desc: Deploys the web site (see --summary for detailed usage)
+    summary: |
+      Deploys the web site. Depends on having your AWS profiles set up properly with aws-mfa. This task deploys:
+
+      - to environment AWS_PROFILE, default is {{.AWS_PROFILE}}
+      - when DRY_RUN is false, default is {{.DRY_RUN}}
+    cmds:
+      - AWS_PROFILE={{.AWS_PROFILE}} DRY_RUN={{.DRY_RUN}} bin/deploy
+    deps:
+      - check-credentials
+    vars:
+      AWS_PROFILE: '{{default "staging" .AWS_PROFILE}}'
+      DRY_RUN: '{{default "true" .DRY_RUN}}'
+
+  deploy:staging:
+    desc: Dry run of a deploy to staging
+    cmds: 
+      - task: deploy
+        vars:
+          AWS_PROFILE: staging
+          DRY_RUN: true
+
+  deploy:staging:doit:
+    desc: Deploy to staging
+    cmds: 
+      - task: deploy
+        vars:
+          AWS_PROFILE: staging
+          DRY_RUN: false  
+
+  deploy:prod:
+    desc: Dry run of a deploy to production
+    cmds: 
+      - task: deploy
+        vars:
+          AWS_PROFILE: production
+          DRY_RUN: true
+
+  deploy:prod:doit:
+    desc: Deploy to production
+    cmds: 
+      - task: deploy
+        vars:
+          AWS_PROFILE: production
+          DRY_RUN: false  

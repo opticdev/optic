@@ -1,6 +1,7 @@
 ---
-title: "Running Optic in your CircleCI CI/CD environment"
-description: ""
+title: Running Optic in your CircleCI CI/CD environment
+sidebar_label: circleCI
+slug: /circleci
 ---
 
 Running Optic in your CircleCI environment assures that differences from documented behavior or undocumented routes in your tests can be caught before a pull request is merged. Optic lets your CI pipeline know that the intended behavior of your API is documented, and alerts you to unintended behavior before it gets to deployment. If you don't use CircleCI, [let us know your CI tool](https://github.com/opticdev/optic/issues/new?title=FR:%20Support%20for%20CI%20tool) and we'll be happy to help.
@@ -19,7 +20,9 @@ There's a few tasks required to integrate your tests with Optic into CircleCI:
   - If they pass, assure the shell exits with exit code 0.
   - If any tests fail, assure the shell exits with exit code 1.
 
-The following CircleCI config file accomplishes this for your example project. Note, that this is only a configuration file. It defines the actions CircleCI will take. CircleCI must be integrated with your central repository, such as GitHub, before it will take any actions. The exit statements determine the status of the check: a 0 passes, anything else (such as a 1) fails the check. When this is committed to the `.circleci/config.yml` directory and pushed to your central repository that's integrated with CircleCI, the `optic-ci` job will run on the appropriate triggers. The configuration also includes the `node/test` job, as this is a node project. It's not necessary, though it provides a nice extra check that your project can build and basic tests pass on their own (if present).
+The following CircleCI config file accomplishes this for your example project. Note, that this is only a configuration file. It defines the actions CircleCI will take. CircleCI must be integrated with your central repository, such as GitHub, before it will take any actions. The --exit-on-diff flag will result in an exit code of 0 (normal) when no diffs are detected between the test traffic and the specification. On any difference in behavior, the program will exit with exit code 1, signaling a failure to CircleCI. 
+
+When this is committed to the `.circleci/config.yml` directory and pushed to your central repository that's integrated with CircleCI, the `optic-ci` job will run on the appropriate triggers. The configuration also includes the `node/test` job, as this is a node project. It's not necessary, though it provides a nice extra check that your project can build and basic tests pass on their own (if present).
 
 ``` yaml
 version: 2.1
@@ -42,18 +45,10 @@ commands:
     steps:
     - checkout
     - run:
+        name: Run Optic CI
         command: |-
           npm install @useoptic/cli
-          node_modules/.bin/api run test-cci --collect-coverage | tee out.txt
-          if grep -q "No API Diff Observed" out.txt; then
-            echo "No Unexpected API behavior detected."
-            exit 0
-          else
-            echo "Unexpected API behavior or error in CI: please run Optic locally and check the dashboard, then review CI logs."
-            exit 1
-          fi
-        name: Run Optic CI
-
+          npx api run test-cci --collect-coverage --exit-on-diff
 ```
 
 ## Catching Undocumented Behavior
