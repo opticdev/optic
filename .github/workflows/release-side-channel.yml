@@ -76,11 +76,11 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      - run: >
-          task
-            diff-engine:add-targets
-            ${{ matrix.platform.task }}
-            flush-to-disk
+      - run: |
+          task \
+            diff-engine:add-targets \
+            ${{ matrix.platform.task }} \
+            flush-to-disk \
             diff-engine:locate-binaries
 
   announce:
