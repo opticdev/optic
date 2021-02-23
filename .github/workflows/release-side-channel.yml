@@ -83,7 +83,17 @@ jobs:
             ${{ matrix.platform.task }} \
             flush-to-disk \
             diff-engine:locate-binaries
-        shell: bash
+      - name: Locate binaries
+        id: locate_binaries
+        run: |
+          binaries="$(task diff-engine:locate-binaries --silent)"
+          echo "::set-output name=binaries::$binaries"
+      - name: Upload binaries as artifacts
+        uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # https://github.com/actions/upload-artifact/releases/tag/v2
+        with:
+          name: ${{ matrix.platform.os }}-host
+          path: |
+            ${{ steps.locate_binaries.outputs.binaries }}
 
   announce:
     runs-on: ubuntu-latest
