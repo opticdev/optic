@@ -103,7 +103,7 @@ tasks:
 
   build-windows:debian-host-deps:
     cmds:
-      - apt-get -y install gcc-mingw-w64
+      - sudo apt-get -y install gcc-mingw-w64
     status:
       - uname -a | grep -qv "GNU/Linux"
       - |
