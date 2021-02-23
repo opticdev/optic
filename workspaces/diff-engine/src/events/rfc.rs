@@ -1,6 +1,9 @@
 use super::EventContext;
+use crate::commands::rfc as rfc_commands;
+use crate::commands::RfcCommand;
 use cqrs_core::Event;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 // RFC Events
 // -----------
@@ -92,5 +95,37 @@ impl Event for BatchCommitStarted {
 impl Event for BatchCommitEnded {
   fn event_type(&self) -> &'static str {
     "BatchCommitEnded"
+  }
+}
+
+impl From<BatchCommitStarted> for RfcEvent {
+  fn from(event: BatchCommitStarted) -> Self {
+    Self::BatchCommitStarted(event)
+  }
+}
+
+// Conversion from commands
+// ------------------------
+
+impl From<RfcCommand> for RfcEvent {
+  fn from(rfc_command: RfcCommand) -> Self {
+    match rfc_command {
+      RfcCommand::StartBatchCommit(command) => RfcEvent::from(BatchCommitStarted::from(command)),
+      _ => unimplemented!(
+        "conversion from rfc command to rfc event not implemented for variant: {:?}",
+        rfc_command
+      ),
+    }
+  }
+}
+
+impl From<rfc_commands::StartBatchCommit> for BatchCommitStarted {
+  fn from(command: rfc_commands::StartBatchCommit) -> Self {
+    Self {
+      batch_id: command.batch_id,
+      parent_id: Some(command.parent_id),
+      commit_message: command.commit_message,
+      event_context: None,
+    }
   }
 }

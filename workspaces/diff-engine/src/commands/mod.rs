@@ -10,9 +10,11 @@ pub use rfc::RfcCommand;
 use shape::AddShape;
 pub use shape::ShapeCommand;
 
+use crate::events::rfc as rfc_events;
 use crate::events::shape as shape_events;
-use crate::events::{EndpointEvent, ShapeEvent, SpecEvent};
+use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
 use crate::projections::SpecProjection;
+use crate::queries::history::HistoryQueries;
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(untagged)]
@@ -135,6 +137,23 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
           .into_iter()
           .map(|endpoint_event| SpecEvent::from(endpoint_event))
           .collect::<Vec<_>>()
+      }
+
+      SpecCommand::RfcCommand(RfcCommand::AppendBatch(command)) => {
+        let parent_batch_id = {
+          let history_queries = HistoryQueries::from(spec_projection.history());
+          history_queries.resolve_latest_batch_commit_id()
+        };
+
+        let start_event = RfcEvent::from(RfcCommand::start_batch_commit(
+          parent_batch_id,
+          command.commit_message.clone(),
+        ));
+        todo!("construct end event and concat with spec events");
+
+        let events = Vec::with_capacity(command.events.len() + 2);
+
+        vec![]
       }
 
       // endpoint commands that can be purely handled by the endpoint projection

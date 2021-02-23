@@ -17,6 +17,7 @@ use std::error::Error;
 #[derive(Debug)]
 pub struct SpecProjection {
   endpoint: endpoint::EndpointProjection,
+  history: history::HistoryProjection,
   shape: shape::ShapeProjection,
   conflicts: conflicts::ConflictsProjection,
 }
@@ -25,6 +26,7 @@ impl Default for SpecProjection {
   fn default() -> Self {
     Self {
       endpoint: EndpointProjection::default(),
+      history: HistoryProjection::default(),
       shape: ShapeProjection::default(),
       conflicts: ConflictsProjection::default(),
     }
@@ -34,6 +36,10 @@ impl Default for SpecProjection {
 impl SpecProjection {
   pub fn endpoint(&self) -> &EndpointProjection {
     &self.endpoint
+  }
+
+  pub fn history(&self) -> &HistoryProjection {
+    &self.history
   }
 
   pub fn shape(&self) -> &ShapeProjection {
@@ -64,7 +70,7 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
         projection.shape.apply(event.clone());
         projection.conflicts.apply(event);
       }
-      _ => {}
+      SpecEvent::RfcEvent(event) => projection.history.apply(event),
     }
   }
 }
