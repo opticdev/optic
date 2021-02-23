@@ -76,7 +76,10 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      - run: |
+      - name: Build
+        env:
+          BUILD_ARGS: --all-features --workspace --release
+        run: |
           task \
             diff-engine:add-targets \
             ${{ matrix.platform.task }} \
