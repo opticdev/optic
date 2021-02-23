@@ -126,6 +126,7 @@ tasks:
 
   locate-binaries:
     cmds:
+      - pwd && find ./target
       - |
         if uname -a | grep Darwin
         then
