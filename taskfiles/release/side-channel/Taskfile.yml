@@ -103,7 +103,7 @@ tasks:
     vars:
       DRY_RUN: '{{default "true" .DRY_RUN}}'
       VERSION: '{{default "NO-VERSION" .VERSION}}'
-      BUCKET: '{{default "NO-BUCKET" .BUCKET'
+      BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
     cmds:
       - |
         [ "{{.DRY_RUN}}" = "false" ] && dryrun="--dryrun"
