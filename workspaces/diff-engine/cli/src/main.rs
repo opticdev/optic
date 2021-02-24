@@ -6,11 +6,12 @@ use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
-use optic_diff_engine::HistoryQueries;
+use optic_diff_engine::Aggregate;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
-use optic_diff_engine::SpecEvent;
 use optic_diff_engine::SpecProjection;
+use optic_diff_engine::{RfcCommand, SpecCommand};
+use optic_diff_engine::{RfcEvent, SpecEvent};
 use std::cmp;
 use std::process;
 use std::sync::Arc;
@@ -259,19 +260,34 @@ async fn commit(spec_events: Vec<SpecEvent>) {
 
   let event_lines = streams::http_interaction::json_lines(stdin);
 
-  let applying_events = async move {
-    let parent_batch_id = {
-      let history_queries = HistoryQueries::from(spec_projection.history());
-      history_queries.resolve_latest_batch_commit_id()
-    };
+  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
+    "TODO: hook this up with input",
+  )));
 
+  let start_event = spec_projection
+    .execute(append_batch)
+    .expect("should be able to append new batch commit to spec")
+    .remove(0);
+  let batch_id = match &start_event {
+    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(event)) => Some(event.batch_id.clone()),
+    _ => None,
+  }
+  .expect("BatchCommitStarted with batch id to have been created");
+
+  spec_projection.apply(start_event.clone());
+
+  let applying_events = async move {
     // TODO:
-    // - figure out parent batch commit id
-    // - Start new batch commit
     // - handle commands and apply events one by one
-    // - end batch commit
     // - save events to new spec change file
   };
+
+  let end_event = spec_projection
+    .execute(SpecCommand::from(RfcCommand::end_batch_commit(batch_id)))
+    .expect("should be able to append new batch commit to spec")
+    .remove(0);
+
+  spec_projection.apply(end_event.clone());
 }
 
 enum SpecPathType {

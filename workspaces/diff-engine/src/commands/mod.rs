@@ -24,6 +24,24 @@ pub enum SpecCommand {
   ShapeCommand(ShapeCommand),
 }
 
+impl From<EndpointCommand> for SpecCommand {
+  fn from(endpoint_command: EndpointCommand) -> Self {
+    Self::EndpointCommand(endpoint_command)
+  }
+}
+
+impl From<RfcCommand> for SpecCommand {
+  fn from(rfc_command: RfcCommand) -> Self {
+    Self::RfcCommand(rfc_command)
+  }
+}
+
+impl From<ShapeCommand> for SpecCommand {
+  fn from(shape_command: ShapeCommand) -> Self {
+    Self::ShapeCommand(shape_command)
+  }
+}
+
 // Errors
 // ------
 

@@ -13,9 +13,11 @@ pub enum RfcCommand {
   SetAPIName(SetAPIName),
   SetGitState(SetGitState),
   MarkSetupStageComplete(MarkSetupStageComplete),
-  StartBatchCommit(StartBatchCommit),
-  EndBatchCommit(EndBatchCommit),
 
+  #[serde(skip)]
+  StartBatchCommit(StartBatchCommit),
+  #[serde(skip)]
+  EndBatchCommit(EndBatchCommit),
   #[serde(skip)]
   AppendBatch(AppendBatch),
 }

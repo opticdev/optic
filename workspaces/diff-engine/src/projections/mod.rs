@@ -10,7 +10,7 @@ pub use history::{CommitId, HistoryProjection};
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
-use crate::events::SpecEvent;
+use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
 use std::error::Error;
 
@@ -94,5 +94,25 @@ where
       projection.apply(event);
     }
     projection
+  }
+}
+
+// Convient application of spec event variants
+// -------------------------------------------
+impl AggregateEvent<SpecProjection> for ShapeEvent {
+  fn apply_to(self, projection: &mut SpecProjection) {
+    projection.apply(SpecEvent::ShapeEvent(self))
+  }
+}
+
+impl AggregateEvent<SpecProjection> for RfcEvent {
+  fn apply_to(self, projection: &mut SpecProjection) {
+    projection.apply(SpecEvent::RfcEvent(self))
+  }
+}
+
+impl AggregateEvent<SpecProjection> for EndpointEvent {
+  fn apply_to(self, projection: &mut SpecProjection) {
+    projection.apply(SpecEvent::EndpointEvent(self))
   }
 }
