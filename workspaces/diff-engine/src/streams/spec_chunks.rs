@@ -1,14 +1,16 @@
-use super::spec_events;
+use super::{spec_events, JsonLineEncoder, JsonLineEncoderError};
 use crate::{
   events::{spec_chunk, SpecChunkEvent},
   SpecAssemblerProjection, SpecEvent,
 };
 use fs::{read_dir, read_to_string};
-use std::ffi::OsString;
+use futures::{sink::Sink, SinkExt};
 use std::path::Path;
+use std::{convert::TryFrom, ffi::OsString, path::PathBuf};
 use tokio::{fs, io};
 use tokio_stream::wrappers::ReadDirStream;
 use tokio_stream::{StreamExt, StreamMap};
+use tokio_util::codec::FramedWrite;
 
 // TODO: return a stream instead of a Vec
 pub async fn from_api_dir(
@@ -50,6 +52,49 @@ pub async fn from_api_dir(
   Ok(chunks)
 }
 
+pub async fn to_api_dir(
+  chunk_events: impl Iterator<Item = SpecChunkEvent>,
+  path: impl AsRef<Path>,
+) -> Result<usize, SpecChunkWriterError> {
+  let mut count = 0;
+  for chunk_event in chunk_events {
+    let batch_chunk = match chunk_event {
+      SpecChunkEvent::Batch(batch_chunk) => batch_chunk,
+      SpecChunkEvent::Root(_) => Err(SpecChunkWriterError::UnsupportedKind(
+        "writing of root chunk events not supported",
+      ))?,
+      SpecChunkEvent::Unknown(_) => Err(SpecChunkWriterError::UnsupportedKind(
+        "writing of unknown chunk events not supported",
+      ))?,
+    };
+
+    let name = batch_chunk.name;
+    let events = batch_chunk.events;
+
+    let file_path = path.as_ref().with_file_name(format!("{}.json", name));
+    let file = fs::File::create(file_path).await?;
+
+    let mut sink = into_json_lines(file);
+
+    for event in events {
+      sink.send(event).await?;
+    }
+
+    count += 1;
+  }
+
+  Ok(count)
+}
+
+pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent, Error = JsonLineEncoderError>
+where
+  S: io::AsyncWrite,
+{
+  let writer = io::BufWriter::new(sink);
+  let codec = JsonLineEncoder::default();
+  FramedWrite::new(writer, codec)
+}
+
 #[derive(Debug)]
 pub enum SpecChunkLoaderError {
   Io(io::Error),
@@ -59,6 +104,29 @@ pub enum SpecChunkLoaderError {
 impl From<io::Error> for SpecChunkLoaderError {
   fn from(err: io::Error) -> SpecChunkLoaderError {
     SpecChunkLoaderError::Io(err)
+  }
+}
+
+#[derive(Debug)]
+pub enum SpecChunkWriterError {
+  Io(std::io::Error),
+  JsonEncoding(serde_json::Error),
+  UnsupportedKind(&'static str),
+  Other(&'static str),
+}
+
+impl From<io::Error> for SpecChunkWriterError {
+  fn from(err: io::Error) -> SpecChunkWriterError {
+    SpecChunkWriterError::Io(err)
+  }
+}
+
+impl From<JsonLineEncoderError> for SpecChunkWriterError {
+  fn from(err: JsonLineEncoderError) -> SpecChunkWriterError {
+    match err {
+      JsonLineEncoderError::Io(io_err) => SpecChunkWriterError::Io(io_err),
+      JsonLineEncoderError::Json(json_err) => SpecChunkWriterError::JsonEncoding(json_err),
+    }
   }
 }
 
