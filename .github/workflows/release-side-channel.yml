@@ -105,6 +105,7 @@ jobs:
       - npm_packages
       - rust_binaries
     steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # no tag
         with:
