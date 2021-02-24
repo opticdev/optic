@@ -105,6 +105,11 @@ jobs:
       - npm_packages
       - rust_binaries
     steps:
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # no tag
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/download-artifact@4a7a711286f30c025902c28b541c10e147a9b843 # v2.0.8
         with:
           name: side-channel-announce
