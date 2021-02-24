@@ -116,4 +116,4 @@ jobs:
           name: side-channel-announce
           path: .
       - run: echo "MESSAGE=$(cat announce.txt)" >> $GITHUB_ENV
-      - run: task :release:announce
+      - run: task release:announce
