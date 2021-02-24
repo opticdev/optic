@@ -49,6 +49,7 @@ jobs:
         with:
           name: side-channel-announce
           path: /tmp/side-channel-outputs/announce.txt
+          if-no-files-found: error
 
   rust_binaries:
     strategy:
