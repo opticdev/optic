@@ -44,7 +44,7 @@ jobs:
           SKIP_ANNOUNCE: "false"
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
-        run: task release:side-channel:run
+        run: task release:side-channel:npm_packages
       - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
         with:
           name: side-channel-release-verion
@@ -80,7 +80,7 @@ jobs:
         with:
           name: side-channel-release-verion
           path: .
-      - name: Set version env
+      - name: Set version env var
         run: echo "VERSION=$(cat release-version.txt)" >> $GITHUB_ENV
       - name: Build
         env:
@@ -92,7 +92,12 @@ jobs:
             ${{ matrix.platform.task }} \
             flush-to-disk \
             diff-engine:locate-binaries \
-            release:side-channel:produce-diff-engine-tarballs
+            diff-engine:package-tarballs
+      - name: Publish
+        env:
+          DRY_RUN: true
+          BUCKET: optic-side-channel-production
+        run: task release:side-channel:diff-engine
 
   announce:
     runs-on: ubuntu-latest

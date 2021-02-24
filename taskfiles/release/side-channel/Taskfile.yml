@@ -5,7 +5,7 @@ vars:
   TIMESTAMP: $(date +%s)
 
 tasks:
-  run:
+  npm_packages:
     desc: Build a side-channel release for @useoptic/cli and publish it to s3
     vars:
       # get the local-cli version and strip anything after a hyphen, "0.0.0-blah" to "0.0.0"
@@ -54,43 +54,7 @@ tasks:
           aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
         fi
 
-  # locates any previously built diff-engine binaries and adds them to an
-  # archive in ./build/dist/
-  produce-diff-engine-tarballs:
-    vars:
-      VERSION: '{{.VERSION}}'
-    # ➜ aws s3 ls s3://optic-packages/dists/optic_diff/v9.0.11/
-    # 2021-02-17 10:47:14    1918033 optic_diff-v9.0.11-linux.tar.gz
-    # 2021-02-17 10:47:15     997647 optic_diff-v9.0.11-macos-aarch64.tar.gz
-    # 2021-02-17 10:47:14     997932 optic_diff-v9.0.11-macos.tar.gz
-    # 2021-02-17 10:47:15     869189 optic_diff-v9.0.11-win64.tar.gz
-    cmds:
-      # kind of a hack job. but it mimics the existing tags we're appending to the binary tarballs
-      # in the main release flow.
-      - |
-        for binary in $(task diff-engine:locate-binaries)
-        do
-          if [[ $binary =~ "x86_64-apple" ]]; then
-            tag="macos"
-          elif [[ $binary =~ "aarch64-apple" ]]; then
-            tag="macos-aarch64"
-          elif [[ $binary =~ "windows" ]]; then
-            tag="win64"
-          elif [[ $binary =~ "linux" ]]; then
-            tag="linux"
-          else
-            echo "Could not identify the arch for file: $binary"
-            exit 1
-          fi
-          filename="optic_diff-v{{.VERSION}}-$tag"
-          chmod +x $binary
-          mkdir -p build/$filename build/dist
-          cp $binary build/$filename/
-          tar -C build -czvf build/dist/${filename}.tar.gz $filename
-        done
-      - ls -lh build/dist
-
-  # write values to share outside task
+  # we write this value to disk so we can upload it as a GHA Artifact and use it in other jobs
   outputs:
     cmds:
       - mkdir -p /tmp/outputs
@@ -133,3 +97,17 @@ tasks:
         files=$(find -E workspaces/ -depth 2 -type f -regex ".*(package.json|README.md)")
         echo $files | xargs git checkout
       fi
+
+  diff-engine:
+    desc: Publish the diff-engine tarballs in `build/dist` to S3
+    vars:
+      DRY_RUN: '{{default "true" .DRY_RUN}}'
+      VERSION: '{{default "NO-VERSION" .VERSION}}'
+      BUCKET: '{{default "NO-BUCKET" .BUCKET'
+    cmds:
+      - |
+        [ "{{.DRY_RUN}}" = "false" ] && dryrun="--dryrun"
+        aws s3 sync $dryrun \
+          build/dist/ s3://{{.BUCKET}}/dists/optic_diff/{{.VERSION}}/ \
+          --sse AES256 \
+          --include *.tar.gz
