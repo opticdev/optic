@@ -258,12 +258,13 @@ async fn commit(spec_events: Vec<SpecEvent>) {
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
 
-  let event_lines = streams::http_interaction::json_lines(stdin);
+  let input_commands = streams::spec_events::from_json_lines(stdin);
 
   let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
     "TODO: hook this up with input",
   )));
 
+  // Start event
   let start_event = spec_projection
     .execute(append_batch)
     .expect("should be able to append new batch commit to spec")
@@ -276,12 +277,30 @@ async fn commit(spec_events: Vec<SpecEvent>) {
 
   spec_projection.apply(start_event.clone());
 
-  let applying_events = async move {
-    // TODO:
-    // - handle commands and apply events one by one
-    // - save events to new spec change file
-  };
+  // input events
+  let input_events: Vec<SpecEvent> = input_commands
+    .map(|command_json_result| -> Vec<SpecEvent> {
+      // TODO: provide more useful error messages, like forwarding command validation errors
+      let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
+      let command: SpecCommand =
+        serde_json::from_str(&command_json).expect("could not parse command");
+      let events = spec_projection
+        .execute(command)
+        .expect("could not execute command");
 
+      for event in &events {
+        spec_projection.apply(event.clone());
+      }
+
+      events
+    })
+    .collect::<Vec<_>>()
+    .await
+    .into_iter()
+    .flatten()
+    .collect();
+
+  // end events
   let end_event = spec_projection
     .execute(SpecCommand::from(RfcCommand::end_batch_commit(batch_id)))
     .expect("should be able to append new batch commit to spec")

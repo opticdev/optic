@@ -4,8 +4,9 @@ use crate::projections::{SpecAssemblerError, SpecAssemblerProjection};
 use futures::sink::Sink;
 use serde::Serialize;
 use std::path::Path;
-use tokio::io::{AsyncWrite, BufWriter};
+use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, BufReader, BufWriter, Lines};
 use tokio::{fs::read_to_string, io::AsyncReadExt};
+use tokio_stream::wrappers::LinesStream;
 use tokio_util::codec::FramedWrite;
 
 // TODO: return a stream instead of a Vec
@@ -23,6 +24,15 @@ pub async fn from_spec_chunks(
   let spec_assembler = SpecAssemblerProjection::from(chunks);
 
   spec_assembler.into_events()
+}
+
+pub fn from_json_lines<R>(source: R) -> LinesStream<BufReader<R>>
+where
+  R: AsyncRead,
+{
+  // 10 megabytes of capacity, to deal with unbound nature of request and response bodies
+  let reader = BufReader::with_capacity(10 * 1024 * 1024, source);
+  LinesStream::new(reader.lines())
 }
 
 pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent>
