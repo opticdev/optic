@@ -8,6 +8,9 @@ on:
         required: false
         default: .env.sidechannel
 
+env:
+  DRY_RUN: false
+
 jobs:
   npm_packages:
     runs-on: ubuntu-latest
@@ -40,7 +43,6 @@ jobs:
           echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
       - name: Build NPM packages for S3
         env:
-          DRY_RUN: "false"
           SKIP_ANNOUNCE: "false"
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
@@ -95,7 +97,6 @@ jobs:
       - run: task diff-engine:locate-binaries
       - name: Publish
         env:
-          DRY_RUN: true
           BUCKET: optic-side-channel-production
         run: task release:side-channel:diff-engine
 
