@@ -75,6 +75,12 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       - name: Download version artifact
         uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a # https://github.com/actions/download-artifact/releases/tag/v2
         with:
