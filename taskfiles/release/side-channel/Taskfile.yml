@@ -103,6 +103,6 @@ tasks:
       - |
         [ "{{.DRY_RUN}}" = "false" ] && dryrun="--dryrun" || dryrun=""
         aws s3 sync $dryrun \
-          build/dist/ s3://{{.BUCKET}}/dists/optic_diff/{{.VERSION}}/ \
+          build/dist/ s3://{{.BUCKET}}/dists/optic_diff/v{{.VERSION}}/ \
           --sse AES256 \
           --include *.tar.gz
