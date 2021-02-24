@@ -82,7 +82,6 @@ jobs:
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release
-          BUCKET: optic-side-channel-production
         run: |
           task \
             diff-engine:add-targets \
