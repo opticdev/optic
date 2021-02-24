@@ -45,6 +45,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
         run: task release:side-channel:npm_packages
+      - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
+        with:
+          name: side-channel-announce
+          path: /tmp/side-channel-outputs/announce.txt
 
   rust_binaries:
     strategy:
@@ -101,5 +105,9 @@ jobs:
       - npm_packages
       - rust_binaries
     steps:
-      - run: echo "All builds complete"
-
+      - uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a
+        with:
+          name: side-channel-announce
+          path: .
+      - run: echo "MESSAGE=${cat announce.txt}" >> $GITHUB_ENV
+      - run: task :release:announce

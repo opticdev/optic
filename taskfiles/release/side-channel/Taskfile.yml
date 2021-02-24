@@ -39,9 +39,9 @@ tasks:
           BUCKET: "{{.BUCKET}}"
           VERSION: "{{.VERSION}}"
           TGZ_DIR: "{{.TMP_DIR}}"
-      - task: :release:announce
-        vars:
-          MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
+      - |
+        mkdir -p /tmp/side-channel-outputs
+        echo "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz" > /tmp/side-channel-outputs/announce.txt
 
   upload-to-s3:
     cmds:
