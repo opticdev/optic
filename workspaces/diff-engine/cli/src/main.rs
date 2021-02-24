@@ -13,6 +13,7 @@ use optic_diff_engine::SpecProjection;
 use optic_diff_engine::{RfcCommand, SpecCommand};
 use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
 use std::cmp;
+use std::path::Path;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWriteExt};
@@ -63,6 +64,10 @@ fn main() {
         .about("Assembles a directory of API spec files into a single events stream"),
     )
     .subcommand(
+      SubCommand::with_name("commit")
+        .about("Commits results of commands received over stdin as a new batch commit"),
+    )
+    .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
     );
@@ -72,15 +77,17 @@ fn main() {
   let spec_path = matches
     .value_of("specification")
     .expect("SPEC_PATH should be required");
-  let spec_path_type = if matches.is_present("use-spec-dir") {
-    SpecPathType::DIR
-  } else {
-    if let Some(_) = matches.subcommand_matches("assemble") {
-      SpecPathType::DIR
-    } else {
-      SpecPathType::FILE
+  let spec_path_type = match matches.subcommand_name() {
+    Some("assemble") | Some("commit") => SpecPathType::DIR,
+    _ => {
+      if matches.is_present("use-spec-dir") {
+        SpecPathType::DIR
+      } else {
+        SpecPathType::FILE
+      }
     }
   };
+
   let core_threads_count: Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16)
   {
     Ok(count) => Some(count),
@@ -127,19 +134,25 @@ fn main() {
       }
     };
 
-    if let Some(_matches) = matches.subcommand_matches("assemble") {
-      eprintln!("assembling spec folder into spec");
-      assemble(spec_events).await;
-    } else {
-      eprintln!("diffing interations against a spec");
-      let diff_queue_size = cmp::min(
-        num_cpus::get(),
-        core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-      ) * 4;
-      eprintln!("using diff size {}", diff_queue_size);
+    match matches.subcommand_name() {
+      Some("assemble") => {
+        eprintln!("assembling spec folder into spec");
+        assemble(spec_events).await;
+      }
+      Some("commit") => {
+        commit(spec_events, &spec_path).await;
+      }
+      _ => {
+        eprintln!("diffing interations against a spec");
+        let diff_queue_size = cmp::min(
+          num_cpus::get(),
+          core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+        ) * 4;
+        eprintln!("using diff size {}", diff_queue_size);
 
-      diff(spec_events, diff_queue_size).await;
-    }
+        diff(spec_events, diff_queue_size).await;
+      }
+    };
   });
 }
 
@@ -253,7 +266,7 @@ async fn assemble(spec_events: Vec<SpecEvent>) {
     .expect("could not flush stdout")
 }
 
-async fn commit(spec_events: Vec<SpecEvent>) {
+async fn commit(spec_events: Vec<SpecEvent>, spec_dir_path: impl AsRef<Path>) {
   let mut spec_projection = SpecProjection::from(spec_events);
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
@@ -314,8 +327,16 @@ async fn commit(spec_events: Vec<SpecEvent>) {
   new_events.append(&mut input_events);
   new_events.push(end_event);
 
-  let chunk_events = SpecChunkEvent::batch_from_events(batch_id, new_events)
+  let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
     .expect("valid batch chunk should have been created");
+
+  // dbg!(&spec_chunk_event);
+
+  streams::spec_chunks::to_api_dir(std::iter::once(spec_chunk_event), spec_dir_path)
+    .await
+    .unwrap_or_else(|err| {
+      panic!("could not write new spec batch chunk to api dir: {:?}", err);
+    });
 }
 
 enum SpecPathType {
