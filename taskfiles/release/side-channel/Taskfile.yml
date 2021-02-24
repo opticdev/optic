@@ -101,7 +101,7 @@ tasks:
       BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
     cmds:
       - |
-        [ "{{.DRY_RUN}}" = "false" ] && dryrun="--dryrun" || dryrun=""
+        [ "{{.DRY_RUN}}" = "false" ] && dryrun="" || dryrun="--dryrun"
         aws s3 sync $dryrun \
           build/dist/ s3://{{.BUCKET}}/dists/optic_diff/v{{.VERSION}}/ \
           --sse AES256 \
