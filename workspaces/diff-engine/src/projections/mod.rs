@@ -6,7 +6,7 @@ pub mod spec_events;
 
 pub use conflicts::ConflictsProjection;
 pub use endpoint::EndpointProjection;
-pub use history::HistoryProjection;
+pub use history::{CommitId, HistoryProjection};
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
@@ -71,6 +71,14 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
         projection.conflicts.apply(event);
       }
       SpecEvent::RfcEvent(event) => projection.history.apply(event),
+    }
+  }
+}
+
+impl AggregateEvent<HistoryProjection> for SpecEvent {
+  fn apply_to(self, projection: &mut HistoryProjection) {
+    if let SpecEvent::RfcEvent(event) = self {
+      event.apply_to(projection);
     }
   }
 }

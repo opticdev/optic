@@ -6,6 +6,7 @@ use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
+use optic_diff_engine::HistoryQueries;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecEvent;
@@ -249,6 +250,28 @@ async fn assemble(spec_events: Vec<SpecEvent>) {
     .flush()
     .await
     .expect("could not flush stdout")
+}
+
+async fn commit(spec_events: Vec<SpecEvent>) {
+  let mut spec_projection = SpecProjection::from(spec_events);
+
+  let stdin = stdin(); // TODO: deal with std in never having been attached
+
+  let event_lines = streams::http_interaction::json_lines(stdin);
+
+  let applying_events = async move {
+    let parent_batch_id = {
+      let history_queries = HistoryQueries::from(spec_projection.history());
+      history_queries.resolve_latest_batch_commit_id()
+    };
+
+    // TODO:
+    // - figure out parent batch commit id
+    // - Start new batch commit
+    // - handle commands and apply events one by one
+    // - end batch commit
+    // - save events to new spec change file
+  };
 }
 
 enum SpecPathType {

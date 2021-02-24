@@ -104,6 +104,12 @@ impl From<BatchCommitStarted> for RfcEvent {
   }
 }
 
+impl From<BatchCommitEnded> for RfcEvent {
+  fn from(event: BatchCommitEnded) -> Self {
+    Self::BatchCommitEnded(event)
+  }
+}
+
 // Conversion from commands
 // ------------------------
 
@@ -111,6 +117,7 @@ impl From<RfcCommand> for RfcEvent {
   fn from(rfc_command: RfcCommand) -> Self {
     match rfc_command {
       RfcCommand::StartBatchCommit(command) => RfcEvent::from(BatchCommitStarted::from(command)),
+      RfcCommand::EndBatchCommit(command) => RfcEvent::from(BatchCommitEnded::from(command)),
       _ => unimplemented!(
         "conversion from rfc command to rfc event not implemented for variant: {:?}",
         rfc_command
@@ -125,6 +132,15 @@ impl From<rfc_commands::StartBatchCommit> for BatchCommitStarted {
       batch_id: command.batch_id,
       parent_id: Some(command.parent_id),
       commit_message: command.commit_message,
+      event_context: None,
+    }
+  }
+}
+
+impl From<rfc_commands::EndBatchCommit> for BatchCommitEnded {
+  fn from(command: rfc_commands::EndBatchCommit) -> Self {
+    Self {
+      batch_id: command.batch_id,
       event_context: None,
     }
   }

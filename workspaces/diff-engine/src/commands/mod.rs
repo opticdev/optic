@@ -139,23 +139,6 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
           .collect::<Vec<_>>()
       }
 
-      SpecCommand::RfcCommand(RfcCommand::AppendBatch(command)) => {
-        let parent_batch_id = {
-          let history_queries = HistoryQueries::from(spec_projection.history());
-          history_queries.resolve_latest_batch_commit_id()
-        };
-
-        let start_event = RfcEvent::from(RfcCommand::start_batch_commit(
-          parent_batch_id,
-          command.commit_message.clone(),
-        ));
-        todo!("construct end event and concat with spec events");
-
-        let events = Vec::with_capacity(command.events.len() + 2);
-
-        vec![]
-      }
-
       // endpoint commands that can be purely handled by the endpoint projection
       SpecCommand::EndpointCommand(endpoint_command) => spec_projection
         .endpoint()
@@ -164,17 +147,19 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         .map(|endpoint_event| SpecEvent::from(endpoint_event))
         .collect::<Vec<_>>(),
 
+      SpecCommand::RfcCommand(rfc_command) => spec_projection
+        .history()
+        .execute(rfc_command)?
+        .into_iter()
+        .map(|rfc_event| SpecEvent::from(rfc_event))
+        .collect::<Vec<_>>(),
+
       SpecCommand::ShapeCommand(shape_command) => spec_projection
         .shape()
         .execute(shape_command)?
         .into_iter()
         .map(|shape_event| SpecEvent::from(shape_event))
         .collect::<Vec<_>>(),
-
-      _ => Err(SpecCommandError::Unimplemented(
-        "spec command not implemented for spec projection",
-        self,
-      ))?,
     };
     Ok(events)
   }

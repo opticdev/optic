@@ -19,12 +19,12 @@ pub enum Node {
 }
 
 #[derive(Debug)]
-pub struct BatchCommitNode(CommitId, BatchCommitNodeDescriptor);
+pub struct BatchCommitNode(CommitId, BatchCommitDescriptor);
 
 #[derive(Debug)]
-pub struct BatchCommitNodeDescriptor {
+pub struct BatchCommitDescriptor {
   commit_message: String,
-  is_complete: bool,
+  pub is_complete: bool,
 }
 
 #[derive(Debug)]
@@ -40,8 +40,19 @@ pub struct HistoryProjection {
 
 impl Default for HistoryProjection {
   fn default() -> Self {
-    let graph = Graph::new();
-    let node_id_to_index = HashMap::new();
+    let mut graph = Graph::new();
+    let mut node_id_to_index = HashMap::new();
+
+    let root_commit_id = CommitId::from(ROOT_COMMIT_ID);
+    let root_node = Node::BatchCommit(BatchCommitNode(
+      root_commit_id.clone(),
+      BatchCommitDescriptor {
+        commit_message: String::from("Initial commit"),
+        is_complete: false,
+      },
+    ));
+    let root_node_index = graph.add_node(root_node);
+    node_id_to_index.insert(root_commit_id, root_node_index);
 
     HistoryProjection {
       graph,
@@ -63,7 +74,7 @@ impl HistoryProjection {
     if let Some(parent_batch_id) = parent_batch_id {
       let node = Node::BatchCommit(BatchCommitNode(
         batch_id.clone(),
-        BatchCommitNodeDescriptor {
+        BatchCommitDescriptor {
           commit_message,
           is_complete: false,
         },
@@ -83,20 +94,6 @@ impl HistoryProjection {
       if parent_batch_id == ROOT_COMMIT_ID {
         self.with_batch_commit_end(CommitId::from(ROOT_COMMIT_ID));
       }
-    } else if let None = self.get_batch_commit_node_index(&CommitId::from(ROOT_COMMIT_ID)) {
-      // ensure root node exists if we see a batch commit without parent Id
-      let root_commit_id = CommitId::from(ROOT_COMMIT_ID);
-      let root_node = Node::BatchCommit(BatchCommitNode(
-        root_commit_id.clone(),
-        BatchCommitNodeDescriptor {
-          commit_message: String::from("Initial commit"),
-          is_complete: false,
-        },
-      ));
-      let root_node_index = self.graph.add_node(root_node);
-      self
-        .node_id_to_index
-        .insert(root_commit_id, root_node_index);
     }
   }
 
@@ -124,12 +121,32 @@ impl HistoryProjection {
   }
 
   #[allow(irrefutable_let_patterns)]
+  pub fn get_batch_commit_node(&self, batch_id: &CommitId) -> Option<&Node> {
+    let node_index = self.node_id_to_index.get(batch_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::BatchCommit(_) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  #[allow(irrefutable_let_patterns)]
   pub fn get_commit_id(&self, node_index: &NodeIndex) -> Option<&CommitId> {
     let node = self.graph.node_weight(*node_index)?;
     if let &Node::BatchCommit(BatchCommitNode(commit_id, _)) = &node {
       Some(commit_id)
     } else {
       None
+    }
+  }
+
+  #[allow(unreachable_patterns)]
+  pub fn get_batch_commit_descriptor(&self, batch_id: &CommitId) -> Option<&BatchCommitDescriptor> {
+    let node = self.get_batch_commit_node(batch_id)?;
+    match node {
+      Node::BatchCommit(BatchCommitNode(_, descriptor)) => Some(descriptor),
+      _ => None,
     }
   }
 
