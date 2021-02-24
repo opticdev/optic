@@ -98,15 +98,15 @@ impl HistoryProjection {
   }
 
   fn with_batch_commit_end(&mut self, batch_id: CommitId) {
-    let commit_node_index = *self
-      .get_batch_commit_node_index(&batch_id)
-      .expect("expected batch commit to have a corresponding node");
+    let commit_node_index_option = self.get_batch_commit_node_index(&batch_id);
+    if let Some(commit_node_index) = commit_node_index_option {
+      let commit_node_index = *commit_node_index;
+      let commit_node_descriptor = match self.graph.node_weight_mut(commit_node_index).unwrap() {
+        Node::BatchCommit(node_descriptor) => &mut node_descriptor.1,
+      };
 
-    let commit_node_descriptor = match self.graph.node_weight_mut(commit_node_index).unwrap() {
-      Node::BatchCommit(node_descriptor) => &mut node_descriptor.1,
-    };
-
-    commit_node_descriptor.is_complete = true;
+      commit_node_descriptor.is_complete = true;
+    }
   }
 
   #[allow(irrefutable_let_patterns)]
