@@ -76,6 +76,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Set env
+        run: |
+          echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release
@@ -100,9 +103,4 @@ jobs:
       - rust_binaries
     steps:
       - run: echo "All builds complete"
-      - uses: actions/download-artifact@v2
-        with:
-          name: side-channel-release-verion
-      - run: |
-          echo "Version: $(cat /tmp/outputs/release-version.txt)"
 
