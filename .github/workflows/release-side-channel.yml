@@ -45,13 +45,8 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
         run: task release:side-channel:npm_packages
-      - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
-        with:
-          name: side-channel-release-verion
-          path: /tmp/outputs/release-version.txt
 
   rust_binaries:
-    needs: [npm_packages]
     strategy:
       matrix:
         platform:
@@ -81,13 +76,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Download version artifact
-        uses: actions/download-artifact@c3f5d00c8784369c43779f3d2611769594a61f7a # https://github.com/actions/download-artifact/releases/tag/v2
-        with:
-          name: side-channel-release-verion
-          path: .
-      - name: Set version env var
-        run: echo "VERSION=$(cat release-version.txt)" >> $GITHUB_ENV
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release

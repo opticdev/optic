@@ -9,6 +9,8 @@ tasks:
     desc: Build a side-channel release for @useoptic/cli and publish it to s3
     vars:
       # get the local-cli version and strip anything after a hyphen, "0.0.0-blah" to "0.0.0"
+      # note that the diff-engine task also computes the version with the same method and its
+      # important they stay in sync
       BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
       VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
       VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
@@ -40,9 +42,6 @@ tasks:
       - task: :release:announce
         vars:
           MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
-      - task: outputs
-        vars:
-          VERSION: "{{.VERSION}}"
 
   upload-to-s3:
     cmds:
@@ -53,12 +52,6 @@ tasks:
         else
           aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
         fi
-
-  # we write this value to disk so we can upload it as a GHA Artifact and use it in other jobs
-  outputs:
-    cmds:
-      - mkdir -p /tmp/outputs
-      - echo "{{.VERSION}}" > /tmp/outputs/release-version.txt
 
   bump-version:
     env:
@@ -102,7 +95,9 @@ tasks:
     desc: Publish the diff-engine tarballs in `build/dist` to S3
     vars:
       DRY_RUN: '{{default "true" .DRY_RUN}}'
-      VERSION: '{{default "NO-VERSION" .VERSION}}'
+      BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
+      VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
+      VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
       BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
     cmds:
       - |
