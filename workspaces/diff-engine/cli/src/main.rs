@@ -11,7 +11,7 @@ use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecProjection;
 use optic_diff_engine::{RfcCommand, SpecCommand};
-use optic_diff_engine::{RfcEvent, SpecEvent};
+use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
 use std::cmp;
 use std::process;
 use std::sync::Arc;
@@ -278,7 +278,7 @@ async fn commit(spec_events: Vec<SpecEvent>) {
   spec_projection.apply(start_event.clone());
 
   // input events
-  let input_events: Vec<SpecEvent> = input_commands
+  let mut input_events: Vec<SpecEvent> = input_commands
     .map(|command_json_result| -> Vec<SpecEvent> {
       // TODO: provide more useful error messages, like forwarding command validation errors
       let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
@@ -302,11 +302,20 @@ async fn commit(spec_events: Vec<SpecEvent>) {
 
   // end events
   let end_event = spec_projection
-    .execute(SpecCommand::from(RfcCommand::end_batch_commit(batch_id)))
+    .execute(SpecCommand::from(RfcCommand::end_batch_commit(
+      batch_id.clone(),
+    )))
     .expect("should be able to append new batch commit to spec")
     .remove(0);
-
   spec_projection.apply(end_event.clone());
+
+  let mut new_events = Vec::with_capacity(input_events.len() + 2);
+  new_events.push(start_event);
+  new_events.append(&mut input_events);
+  new_events.push(end_event);
+
+  let chunk_events = SpecChunkEvent::batch_from_events(batch_id, new_events)
+    .expect("valid batch chunk should have been created");
 }
 
 enum SpecPathType {
