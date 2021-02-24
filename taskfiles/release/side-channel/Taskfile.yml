@@ -100,6 +100,9 @@ tasks:
       VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
       BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
     cmds:
+      - task: :diff-engine:package-tarballs
+        vars:
+          VERSION: "{{.VERSION}}"
       - |
         [ "{{.DRY_RUN}}" = "false" ] && dryrun="" || dryrun="--dryrun"
         aws s3 sync $dryrun \

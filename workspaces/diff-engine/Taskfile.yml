@@ -143,7 +143,7 @@ tasks:
         drwxr-xr-x  0 nate   staff       0 Feb 23 15:14 optic_diff-v0.0.0-alpha.b00-macos/
         -rwxr-xr-x  0 nate   staff 12298919 Feb 23 15:14 optic_diff-v0.0.0-alpha.b00-macos/optic_diff
     vars:
-      VERSION: '{{.VERSION}}'
+      VERSION: '{{default "NO_VERSION" .VERSION}}'
     cmds:
       # kind of a hack job. but it mimics the existing tags we're appending to the binary tarballs
       # in the main release flow.
