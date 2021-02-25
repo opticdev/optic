@@ -7,6 +7,7 @@ use fs::{read_dir, read_to_string};
 use futures::{sink::Sink, SinkExt};
 use std::path::Path;
 use std::{convert::TryFrom, ffi::OsString, path::PathBuf};
+use tokio::io::AsyncWriteExt;
 use tokio::{fs, io};
 use tokio_stream::wrappers::ReadDirStream;
 use tokio_stream::{StreamExt, StreamMap};
@@ -74,25 +75,34 @@ pub async fn to_api_dir(
     let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;
 
-    let mut sink = into_json_lines(file);
+    let mut sink = spec_events::into_json_array_items(file);
+
+    sink
+      .get_mut()
+      .write_u8(b'[')
+      .await
+      .expect("could not write array start to file");
 
     for event in events {
       sink.send(event).await?;
     }
 
+    eprintln!("writing end of array");
+
+    sink
+      .get_mut()
+      .write_u8(b']')
+      .await
+      .expect("could not write array end to file");
+
+    sink.get_mut().flush().await?;
+
+    eprintln!("writing end of array");
+
     count += 1;
   }
 
   Ok(count)
-}
-
-pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent, Error = JsonLineEncoderError>
-where
-  S: io::AsyncWrite,
-{
-  let writer = io::BufWriter::new(sink);
-  let codec = JsonLineEncoder::default();
-  FramedWrite::new(writer, codec)
 }
 
 #[derive(Debug)]
