@@ -87,8 +87,6 @@ pub async fn to_api_dir(
       sink.send(event).await?;
     }
 
-    eprintln!("writing end of array");
-
     sink
       .get_mut()
       .write_u8(b']')
@@ -96,8 +94,6 @@ pub async fn to_api_dir(
       .expect("could not write array end to file");
 
     sink.get_mut().flush().await?;
-
-    eprintln!("writing end of array");
 
     count += 1;
   }
