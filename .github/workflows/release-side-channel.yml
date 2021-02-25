@@ -58,9 +58,7 @@ jobs:
           - os: ubuntu-latest
             task: diff-engine:build-windows diff-engine:build-linux
           - os: macos-latest
-            task: diff-engine:build-macos-x86-64
-          - os: macos-11.0
-            task: diff-engine:build-macos-aarch64
+            task: diff-engine:build-macos
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
@@ -84,6 +82,11 @@ jobs:
       - name: Set env
         run: |
           echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          if uname -a | grep -q Darwin
+            sudo xcode-select -s /Applications/Xcode_12.4.app
+            echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
+            echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
+          fi
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release
