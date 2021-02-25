@@ -283,6 +283,10 @@ export async function createExampleSpecServiceFactory(data) {
           process.env.REACT_APP_TESTING_DASHBOARD === true,
       };
     },
+    processCommands(commands, commitMessage) {
+      console.log('make wasm to me');
+      return Promise.resolve();
+    },
   };
 
   return { specService };

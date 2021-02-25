@@ -74,7 +74,19 @@ export function AskFinished(props) {
   const isComplete = state.matches('completed');
   useEffect(() => {
     async function saveEvents() {
-      const { updatedEvents } = state.context;
+      const {
+        updatedEvents,
+        approvedSuggestionsCommands,
+        commitMessage,
+      } = state.context;
+
+      console.log('all commands', approvedSuggestionsCommands);
+      console.log('commit-message', commitMessage);
+      await specService.processCommands(
+        approvedSuggestionsCommands,
+        commitMessage
+      );
+
       setSummary({
         // oasStats: state.context.oasStats,
         newEndpoints: patch.added.length,
