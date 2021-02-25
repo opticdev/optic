@@ -65,7 +65,15 @@ fn main() {
     )
     .subcommand(
       SubCommand::with_name("commit")
-        .about("Commits results of commands received over stdin as a new batch commit"),
+        .about("Commits results of commands received over stdin as a new batch commit")
+        .arg(
+          Arg::with_name("commit-message")
+            .short("m")
+            .required(true)
+            .value_name("COMMIT_MESSAGE")
+            .takes_value(true)
+            .help("The commit message describing the commands as a whole"),
+        ),
     )
     .subcommand(
       SubCommand::with_name("diff")
@@ -134,13 +142,16 @@ fn main() {
       }
     };
 
-    match matches.subcommand_name() {
-      Some("assemble") => {
+    match matches.subcommand() {
+      ("assemble", Some(_)) => {
         eprintln!("assembling spec folder into spec");
         assemble(spec_events).await;
       }
-      Some("commit") => {
-        commit(spec_events, &spec_path).await;
+      ("commit", Some(subcommand_matches)) => {
+        let commit_message = subcommand_matches
+          .value_of("commit-message")
+          .expect("commit-message is required");
+        commit(spec_events, &spec_path, commit_message).await;
       }
       _ => {
         eprintln!("diffing interations against a spec");
@@ -266,7 +277,11 @@ async fn assemble(spec_events: Vec<SpecEvent>) {
     .expect("could not flush stdout")
 }
 
-async fn commit(spec_events: Vec<SpecEvent>, spec_dir_path: impl AsRef<Path>) {
+async fn commit(
+  spec_events: Vec<SpecEvent>,
+  spec_dir_path: impl AsRef<Path>,
+  commit_message: &str,
+) {
   let mut spec_projection = SpecProjection::from(spec_events);
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
@@ -274,7 +289,7 @@ async fn commit(spec_events: Vec<SpecEvent>, spec_dir_path: impl AsRef<Path>) {
   let input_commands = streams::spec_events::from_json_lines(stdin);
 
   let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
-    "TODO: hook this up with input",
+    commit_message,
   )));
 
   // Start event
