@@ -31,16 +31,31 @@ tasks:
 
   workspaces:build:
     desc: Build Yarn workspaces
+    vars:
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
     deps: ["workspaces:setup"]
     cmds:
-      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+      - |
+        if [[ -n "$FLAGS_FILE" ]]; then
+          echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
+          cp $FLAGS_FILE .env
+          cp $FLAGS_FILE workspaces/agent-cli/.env
+          cp $FLAGS_FILE workspaces/ci-cli/.env
+          cp $FLAGS_FILE workspaces/local-cli/.env
+          cp $FLAGS_FILE workspaces/cli-server/.env
+          cp $FLAGS_FILE workspaces/cli-scripts/.env
+          cp $FLAGS_FILE workspaces/diff-engine/.env
+          cp $FLAGS_FILE workspaces/ui/.env.production.local
+        fi
+        yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
+
     sources:
       - !workspaces/*/build/**/*
     generates:
       - workspaces/diff-engine-wasm/lib/**/*
       - workspaces/diff-engine-wasm/engine/browser/**/*
       - workspaces/diff-engine-wasm/engine/build/**/*
-      # - workspace/diff-engine-wasm/engine/target/**/* # do we need this?
+      - workspace/diff-engine-wasm/engine/target/**/*
       - workspaces/*/build/**/*
 
   workspaces:build:ci:

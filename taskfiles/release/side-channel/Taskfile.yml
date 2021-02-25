@@ -5,17 +5,22 @@ vars:
   TIMESTAMP: $(date +%s)
 
 tasks:
-  run:
+  npm_packages:
     desc: Build a side-channel release for @useoptic/cli and publish it to s3
     vars:
       # get the local-cli version and strip anything after a hyphen, "0.0.0-blah" to "0.0.0"
+      # note that the diff-engine task also computes the version with the same method and its
+      # important they stay in sync
       BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
       VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
       VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
       TMP_DIR: /tmp/{{.TIMESTAMP}}
       BUCKET: '{{default "optic-side-channel-staging" .SIDE_CHANNEL_BUCKET}}'
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
     deps:
-      - :workspaces:build
+      - task: :workspaces:build
+        env:
+          FLAGS_FILE: '{{.FLAGS_FILE}}'
       - :verdaccio:up
     cmds:
       - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
@@ -34,9 +39,9 @@ tasks:
           BUCKET: "{{.BUCKET}}"
           VERSION: "{{.VERSION}}"
           TGZ_DIR: "{{.TMP_DIR}}"
-      - task: :release:announce
-        vars:
-          MESSAGE: "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz"
+      - |
+        mkdir -p /tmp/side-channel-outputs
+        echo "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz" > /tmp/side-channel-outputs/announce.txt
 
   upload-to-s3:
     cmds:
@@ -85,3 +90,22 @@ tasks:
         files=$(find -E workspaces/ -depth 2 -type f -regex ".*(package.json|README.md)")
         echo $files | xargs git checkout
       fi
+
+  diff-engine:
+    desc: Publish the diff-engine tarballs in `build/dist` to S3
+    vars:
+      DRY_RUN: '{{default "true" .DRY_RUN}}'
+      BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
+      VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
+      VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
+      BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
+    cmds:
+      - task: :diff-engine:package-tarballs
+        vars:
+          VERSION: "{{.VERSION}}"
+      - |
+        [ "{{.DRY_RUN}}" = "false" ] && dryrun="" || dryrun="--dryrun"
+        aws s3 sync $dryrun \
+          build/dist/ s3://{{.BUCKET}}/dists/optic_diff/v{{.VERSION}}/ \
+          --sse AES256 \
+          --include *.tar.gz
