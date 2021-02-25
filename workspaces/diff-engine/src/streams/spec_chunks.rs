@@ -71,7 +71,7 @@ pub async fn to_api_dir(
     let name = batch_chunk.name;
     let events = batch_chunk.events;
 
-    let file_path = path.as_ref().with_file_name(format!("{}.json", name));
+    let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;
 
     let mut sink = into_json_lines(file);
