@@ -83,6 +83,7 @@ jobs:
         run: |
           echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           if uname -a | grep -q Darwin
+          then
             sudo xcode-select -s /Applications/Xcode_12.4.app
             echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
