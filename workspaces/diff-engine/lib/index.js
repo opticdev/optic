@@ -1,5 +1,5 @@
 const Execa = require('execa');
-const { PassThrough } = require('stream');
+const { PassThrough, Readable } = require('stream');
 const Fs = require('fs');
 const Path = require('path');
 const OS = require('os');
@@ -7,6 +7,9 @@ const Rimraf = require('rimraf');
 const Bent = require('bent');
 const Tar = require('tar');
 
+const {
+  Streams: { Commands },
+} = require('@useoptic/diff-engine-wasm');
 const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
@@ -66,7 +69,7 @@ function commit(commands, { commitMessage, specDirPath }) {
   if (typeof commitMessage !== 'string')
     new Error('commitMessage must be a string to commit commands');
 
-  const input = Readable.from(commands);
+  const input = Readable.from(Commands.intoJSONL(commands));
   const output = new PassThrough();
 
   const binPath = getBinPath();

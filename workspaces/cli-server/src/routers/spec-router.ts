@@ -220,23 +220,19 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
     router.post(
-      '/commmands/batches',
+      '/commands/batches',
       bodyParser.json({ limit: '100mb' }),
       async (req, res) => {
         const payload = req.body;
         if (!payload || typeof payload.commitMessage !== 'string') {
-          res
-            .json({
-              message: 'commit message required to append batch of commands',
-            })
-            .status(400);
+          return res.status(400).json({
+            message: 'commit message required to append batch of commands',
+          });
         }
-        if (!payload || Array.isArray(payload.commands)) {
-          res
-            .json({
-              message: 'commands array required to append batch of commands',
-            })
-            .status(400);
+        if (!payload || !Array.isArray(payload.commands)) {
+          return res.status(400).json({
+            message: 'commands array required to append batch of commands',
+          });
         }
 
         const commands = AT.from(payload.commands);
