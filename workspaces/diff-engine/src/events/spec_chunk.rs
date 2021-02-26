@@ -43,6 +43,16 @@ pub struct UnknownChunkEvent {
 }
 
 impl SpecChunkEvent {
+  pub fn events(&self) -> &Vec<SpecEvent> {
+    let events = match self {
+      SpecChunkEvent::Root(chunk) => &chunk.events,
+      SpecChunkEvent::Batch(chunk) => &chunk.events,
+      SpecChunkEvent::Unknown(chunk) => &chunk.events,
+    };
+
+    events
+  }
+
   pub fn into_events_iter(self) -> impl Iterator<Item = SpecEvent> {
     let events = match self {
       SpecChunkEvent::Root(chunk) => chunk.events,

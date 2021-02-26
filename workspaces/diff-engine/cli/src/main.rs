@@ -145,7 +145,7 @@ fn main() {
     match matches.subcommand() {
       ("assemble", Some(_)) => {
         eprintln!("assembling spec folder into spec");
-        assemble(spec_events).await;
+        assemble(&spec_events).await;
       }
       ("commit", Some(subcommand_matches)) => {
         let commit_message = subcommand_matches
@@ -249,7 +249,7 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
   try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
-async fn assemble(spec_events: Vec<SpecEvent>) {
+async fn assemble(spec_events: &Vec<SpecEvent>) {
   let stdout = stdout();
 
   let mut results_sink = streams::spec_events::into_json_array_items(stdout);
@@ -345,13 +345,13 @@ async fn commit(
   let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
     .expect("valid batch chunk should have been created");
 
-  // dbg!(&spec_chunk_event);
-
-  streams::spec_chunks::to_api_dir(std::iter::once(spec_chunk_event), spec_dir_path)
+  streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
     .await
     .unwrap_or_else(|err| {
       panic!("could not write new spec batch chunk to api dir: {:?}", err);
     });
+
+  assemble(spec_chunk_event.events()).await
 }
 
 enum SpecPathType {

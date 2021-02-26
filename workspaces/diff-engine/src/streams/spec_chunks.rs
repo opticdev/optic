@@ -54,7 +54,7 @@ pub async fn from_api_dir(
 }
 
 pub async fn to_api_dir(
-  chunk_events: impl Iterator<Item = SpecChunkEvent>,
+  chunk_events: impl Iterator<Item = &SpecChunkEvent>,
   path: impl AsRef<Path>,
 ) -> Result<usize, SpecChunkWriterError> {
   let mut count = 0;
@@ -69,8 +69,8 @@ pub async fn to_api_dir(
       ))?,
     };
 
-    let name = batch_chunk.name;
-    let events = batch_chunk.events;
+    let name = batch_chunk.name.clone();
+    let events = &batch_chunk.events;
 
     let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;
