@@ -108,11 +108,12 @@ There are other paths to test, and our goal is to have everything work as expect
 ### Commit specification changes to the project
 
 - [ ] Terminate the Optic session with `ctrl+c`.
-- [ ] run `git status`: Expect the `.optic` folder to show up with changes.
-- [ ] Navigate to the Optic files directory with `cd .optic` and run `git status --untracked-files .`: Expect
-	- [ ] `.gitignore`, `ignore`, `api/specification.json` are present.
-	- [ ] No other files should be reported by git status (such as captures).
-- [ ] `git add . ../optic.yml` the Optic files to git staging.
+- [ ] Run `git status --untracked-files .`: Expect:
+	- [ ] `.gitignore`, `ignore`, `api/specification.json` are present under the `.optic` folder.
+	- [ ] `optic.yml` is present at the project root.
+	- [ ] No other .optic files should be reported by git status (such as `captures`).
+	- *Note* Any API project files modified by tests (such as test databases) may show up. You can ignore these for test purposes.
+- [ ] `git add .optic optic.yml` the Optic files to git staging.
 - [ ] Test complete, `git reset` will unstage all changes.
 
 ## Additional usability testing
@@ -159,13 +160,13 @@ Scripts allow for users to export an OpenAPI specification to another system. Fo
 - [ ] Set up a Script definition in `optic.yml`. Under dependencies, it should check for both a program that exists and one that doesn't. It should perform a trivial task under `install`, and `command` should either also be trivial or dump out the specification file that is generated for verification. Example:
 
 	```
-	scripts:
-	  test-scripts:
-	    command: cat .optic/generated/specification.json
-	    dependsOn:
-	      - "true"
-	      - notaprog
-	    install: echo "Installing pre-requisites..."
+scripts:
+  test-script:
+    command: cat .optic/generated/openapi.json
+    dependsOn:
+      - "true"
+      - notaprog
+    install: echo "Installing pre-requisites..."
 	```
 - [ ] Run `api scripts test-script`: Expect failure for missing dependency, and instructions to re-run with `--install` flag.
 - [ ] Run `api scripts test-script --install`: Expect
