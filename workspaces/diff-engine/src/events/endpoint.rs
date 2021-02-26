@@ -3,12 +3,12 @@ use cqrs_core::Event;
 use endpoint_commands::RemovePathParameter;
 use serde::{Deserialize, Serialize};
 
+use crate::commands::endpoint as endpoint_commands;
 use crate::commands::EndpointCommand;
 use crate::state::endpoint::{
   PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor,
   ShapedRequestParameterShapeDescriptor,
 };
-use crate::{commands::endpoint as endpoint_commands, streams::http_interaction};
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 pub enum EndpointEvent {
