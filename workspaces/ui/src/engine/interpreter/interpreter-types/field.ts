@@ -57,13 +57,10 @@ export function fieldShapeDiffInterpretor(
     if (actual.wasMissing() && expected.aRequiredField()) {
       present.askMakeOptional();
       present.askRemoveField();
-    }
-
-    if (observedShapeDidNotMatch) {
+    } else if (observedShapeDidNotMatch) {
       present.addAdditionalCoreShapeKinds(unexpectedShapesObserved);
     }
   }
-
   // we've already check if isField() is true, so this is always add field
   if (isUnspecified) {
     present.askAddField(actual.fieldKey()!);
@@ -105,10 +102,7 @@ class FieldShapeInterpretationHelper {
     }
     ///////////////////////////////////////////////////////////////
 
-    if (
-      this.additionalCoreShapeKinds.length > 0 &&
-      !this.actual.wasMissing() /* when missing, change shape commands are gets included in the optional/required commands  */
-    ) {
+    if (this.additionalCoreShapeKinds.length > 0) {
       if (this.expected.isOptionalField()) {
         const {
           shapeChange,
