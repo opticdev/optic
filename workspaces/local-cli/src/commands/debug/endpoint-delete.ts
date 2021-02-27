@@ -1,13 +1,6 @@
 import { Command } from '@oclif/command';
-import { CaptureInteractionIterator } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
-import OS from 'os';
-import cli from 'cli-ux';
-import path from 'path';
+import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import fs from 'fs-extra';
-import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
-import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
-const pJson = require('../../../package.json');
 
 export default class EndpointDelete extends Command {
   static description = 'delete an endpoint (the dirty WIP way).';
