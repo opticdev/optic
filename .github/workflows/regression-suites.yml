@@ -44,10 +44,8 @@ jobs:
           echo "RUSTUP_HOME=$HOME/.rustup" >> $GITHUB_ENV
           echo "CARGO_HOME=$HOME/.cargo" >> $GITHUB_ENV
       - name: Install test dependencies
-        shell: bash
         run: task workspaces:build:ci
       - name: Display yarn error log
-        shell: bash
         run: cat yarn-error.log
         if: failure()
       - name: Restore cached cargo registry
@@ -77,7 +75,6 @@ jobs:
           BUILD_ARGS: --all-features --workspace --release
         run: task diff-engine:add-targets ${{ matrix.platform.task }} diff-engine:test
       - name: Run scenario
-        shell: bash
         timeout-minutes: 2
         env:
           NUM_INTERACTIONS: ${{ matrix.interaction-count }}
@@ -87,14 +84,11 @@ jobs:
         if: failure()
       - run: |
           echo "MESSAGE=${{ matrix.platform.os }}: Regression suites passed." >> $GITHUB_ENV
-        shell: bash
         if: success()
       - run: |
           echo "MESSAGE=${{ matrix.platform.os }}: Regression suites failed. https://github.com/opticdev/optic/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_ENV
-        shell: bash
         if: failure()
       - name: Report status
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ env.MESSAGE }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        shell: bash
         if: always()
