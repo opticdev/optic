@@ -64,7 +64,7 @@ jobs:
           profile: minimal
           override: true
       - name: Set MacOS cross-compilation env
-        run:
+        run: |
           if uname -a | grep -q Darwin
           then
             sudo xcode-select -s /Applications/Xcode_12.4.app
