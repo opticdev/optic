@@ -15,10 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          - os: windows-latest
+            task: diff-engine:build-windows
           - os: macos-latest
             task: diff-engine:build-macos
           - os: ubuntu-latest
-            task: diff-engine:build-linux diff-engine:build-windows
+            task: diff-engine:build-linux
         interaction-count: [10000]
         rust-diff-engine: [true]
     runs-on: ${{ matrix.platform.os }}
