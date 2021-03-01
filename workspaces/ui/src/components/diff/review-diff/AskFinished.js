@@ -93,7 +93,6 @@ export function AskFinished(props) {
         newEndpointsKnownPaths: patch.endpointsToDocument.length,
         endpointsWithChanges: endpointsWithChanges.length,
       });
-      await specService.saveEventsArray(updatedEvents);
       history.push(`${baseUrl}/documentation`);
     }
     if (isComplete) {

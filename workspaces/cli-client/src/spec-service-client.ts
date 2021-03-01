@@ -133,7 +133,16 @@ export class Client implements ISpecService {
     };
   }
 
-  processCommands(commands: any[], commitMessage: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async processCommands(commands: any[], commitMessage: string): Promise<void> {
+    const newEvents = await JsonHttpClient.postJsonString(
+      `${this.baseUrl}/specs/${this.specId}/commands/batches`,
+      JSON.stringify({
+        commands,
+        commitMessage,
+      })
+    );
+
+    this.eventEmitter.emit('events-appended', newEvents);
+    return newEvents;
   }
 }
