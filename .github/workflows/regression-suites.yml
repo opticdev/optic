@@ -74,6 +74,7 @@ jobs:
             echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
           fi
+        shell: bash
       - name: Prepare diff-engine
         env:
           BUILD_ARGS: --all-features --workspace --release
