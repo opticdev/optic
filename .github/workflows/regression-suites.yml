@@ -1,8 +1,9 @@
+---
 name: Test Regression Scenarios
 
 on:
   schedule:
-    - cron: 11 11 * * * # 12:11AM CET, 3:11PM PT, 6:11PM ET
+    - cron: 11 11 * * *  # 12:11AM CET, 3:11PM PT, 6:11PM ET
   pull_request:
     branches:
       - release
@@ -23,18 +24,18 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f  # v2.3.4
       - name: Install Task
-        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97  # they dont give us any tags :\
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-node@c46424eee26de4078d34105d3de3cc4992202b1e # v2.1.4
+      - uses: actions/setup-node@c46424eee26de4078d34105d3de3cc4992202b1e  # v2.1.4
         with:
           node-version: 12
       - name: Restore cached node_modules
         id: workspace-node-modules
-        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6 # v2.1.4
+        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6  # v2.1.4
         with:
           path: node_modules
           key: workspace-node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}-v1
@@ -50,7 +51,7 @@ jobs:
         run: cat yarn-error.log
         if: failure()
       - name: Restore cached cargo registry
-        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6 # v2.1.4
+        uses: actions/cache@26968a09c0ea4f3e233fdddbafd1166051a095f6  # v2.1.4
         with:
           path: |
             ${{ env.CARGO_HOME }}/registry
@@ -58,7 +59,7 @@ jobs:
             target
           key: "${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}-v4"
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af  # v1.0.7
         with:
           toolchain: stable
           profile: minimal
