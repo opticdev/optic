@@ -14,12 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - os: windows-latest
-            task: diff-engine:build-windows
           - os: macos-latest
             task: diff-engine:build-macos
           - os: ubuntu-latest
-            task: diff-engine:build-linux
+            task: diff-engine:build-linux diff-engine:build-windows
         interaction-count: [10000]
         rust-diff-engine: [true]
     runs-on: ${{ matrix.platform.os }}
@@ -65,6 +63,14 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      - name: Set MacOS cross-compilation env
+        run:
+          if uname -a | grep -q Darwin
+          then
+            sudo xcode-select -s /Applications/Xcode_12.4.app
+            echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
+            echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
+          fi
       - name: Prepare diff-engine
         env:
           BUILD_ARGS: --all-features --workspace --release
