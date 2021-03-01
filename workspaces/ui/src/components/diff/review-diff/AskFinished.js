@@ -80,12 +80,14 @@ export function AskFinished(props) {
         commitMessage,
       } = state.context;
 
-      console.log('all commands', approvedSuggestionsCommands);
-      console.log('commit-message', commitMessage);
-      await specService.processCommands(
-        approvedSuggestionsCommands,
-        commitMessage
-      );
+      if (process.env.REACT_APP_OPTIC_ASSEMBLED_SPEC_EVENTS === 'true') {
+        await specService.processCommands(
+          approvedSuggestionsCommands,
+          commitMessage
+        );
+      } else {
+        await specService.saveEventsArray(updatedEvents);
+      }
 
       setSummary({
         // oasStats: state.context.oasStats,
@@ -93,6 +95,7 @@ export function AskFinished(props) {
         newEndpointsKnownPaths: patch.endpointsToDocument.length,
         endpointsWithChanges: endpointsWithChanges.length,
       });
+
       history.push(`${baseUrl}/documentation`);
     }
     if (isComplete) {
