@@ -74,14 +74,28 @@ export function AskFinished(props) {
   const isComplete = state.matches('completed');
   useEffect(() => {
     async function saveEvents() {
-      const { updatedEvents } = state.context;
+      const {
+        updatedEvents,
+        approvedSuggestionsCommands,
+        commitMessage,
+      } = state.context;
+
+      if (process.env.REACT_APP_OPTIC_ASSEMBLED_SPEC_EVENTS === 'true') {
+        await specService.processCommands(
+          approvedSuggestionsCommands,
+          commitMessage
+        );
+      } else {
+        await specService.saveEventsArray(updatedEvents);
+      }
+
       setSummary({
         // oasStats: state.context.oasStats,
         newEndpoints: patch.added.length,
         newEndpointsKnownPaths: patch.endpointsToDocument.length,
         endpointsWithChanges: endpointsWithChanges.length,
       });
-      await specService.saveEventsArray(updatedEvents);
+
       history.push(`${baseUrl}/documentation`);
     }
     if (isComplete) {

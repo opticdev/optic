@@ -1,7 +1,12 @@
+use crate::events::endpoint as endpoint_events;
 use crate::events::{EndpointEvent, SpecEvent};
 use crate::state::endpoint::*;
-use cqrs_core::{Aggregate, AggregateEvent, Event};
-use petgraph::graph::Graph;
+use crate::{
+  commands::{endpoint, EndpointCommand, SpecCommand, SpecCommandError},
+  events::http_interaction::Response,
+};
+use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, Event};
+use petgraph::graph::{Graph, NodeIndex};
 use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
@@ -248,6 +253,39 @@ impl EndpointProjection {
       .node_id_to_index
       .insert(response_id, response_node_index);
   }
+
+  pub fn get_path_component_node_index(
+    &self,
+    path_component_id: &PathComponentId,
+  ) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(path_component_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::PathComponent(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
+  pub fn get_request_node_index(&self, request_id: &RequestId) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(request_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::Request(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
+
+  pub fn get_response_node_index(&self, response_id: &ResponseId) -> Option<&NodeIndex> {
+    let node_index = self.node_id_to_index.get(response_id)?;
+    let node = self.graph.node_weight(*node_index)?;
+    if let &Node::Response(_, _) = node {
+      Some(node_index)
+    } else {
+      None
+    }
+  }
 }
 
 impl Default for EndpointProjection {
@@ -276,6 +314,23 @@ impl Aggregate for EndpointProjection {
     "endpoint_projection"
   }
 }
+
+impl<I> From<I> for EndpointProjection
+where
+  I: IntoIterator,
+  I::Item: AggregateEvent<Self>,
+{
+  fn from(events: I) -> Self {
+    let mut projection = EndpointProjection::default();
+    for event in events.into_iter() {
+      projection.apply(event);
+    }
+    projection
+  }
+}
+
+// Events
+// ------
 
 impl AggregateEvent<EndpointProjection> for EndpointEvent {
   fn apply_to(self, aggregate: &mut EndpointProjection) {

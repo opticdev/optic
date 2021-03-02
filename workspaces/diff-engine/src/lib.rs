@@ -1,5 +1,6 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+mod commands;
 mod events;
 mod interactions;
 mod projections;
@@ -11,8 +12,9 @@ mod state;
 #[cfg(feature = "streams")]
 pub mod streams;
 
+pub use commands::{RfcCommand, SpecCommand};
 pub use cqrs_core::Aggregate;
-pub use events::{HttpInteraction, SpecChunkEvent, SpecEvent};
+pub use events::{HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
 pub use projections::{
