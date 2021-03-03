@@ -6,7 +6,13 @@ import { cli } from 'cli-ux';
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
-import { fromOptic } from '@useoptic/cli-shared';
+import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
+import { lockFilePath } from '../../shared/paths';
+import { Config } from '../../config';
+import { Client, SpecServiceClient } from '@useoptic/cli-client';
+import { getUser } from '../../shared/analytics';
+import { EventEmitter } from 'events';
+import { ensureDaemonStarted } from '@useoptic/cli-server';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.1 spec';
@@ -22,6 +28,7 @@ export default class GenerateOas extends Command {
       flags.yaml || (!flags.json && !flags.yaml) /* make this default */,
       flags.json
     );
+    process.exit(0);
   }
 }
 
@@ -33,8 +40,26 @@ export async function generateOas(
     const paths = await getPathsRelativeToConfig();
     const { specStorePath } = paths;
     try {
-      const eventsBuffer = await fs.readFile(specStorePath);
-      const eventsString = eventsBuffer.toString();
+      const daemonState = await ensureDaemonStarted(
+        lockFilePath,
+        Config.apiBaseUrl
+      );
+
+      const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
+      developerDebugLogger(`api base url: ${apiBaseUrl}`);
+      const cliClient = new Client(apiBaseUrl);
+      cliClient.setIdentity(await getUser());
+      const cliSession = await cliClient.findSession(paths.cwd, null, null);
+      developerDebugLogger({ cliSession });
+
+      const eventEmitter = new EventEmitter();
+      const specService = new SpecServiceClient(
+        cliSession.session.id,
+        eventEmitter,
+        apiBaseUrl
+      );
+
+      const eventsString = await specService.listEvents();
       cli.action.start('Generating OAS file');
       const parsedOas = OasProjectionHelper.fromEventString(eventsString);
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
