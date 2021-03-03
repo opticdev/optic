@@ -16,7 +16,7 @@ use std::cmp;
 use std::path::Path;
 use std::process;
 use std::sync::Arc;
-use tokio::io::{stdin, stdout, AsyncWriteExt};
+use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
 
 fn main() {
@@ -159,7 +159,7 @@ fn main() {
         let append_to_root = subcommand_matches.is_present("append-to-root");
 
         if append_to_root
-          && spec_chunks
+          && !spec_chunks
             .iter()
             .all(|chunk| matches!(chunk, SpecChunkEvent::Root(_)))
         {
@@ -276,29 +276,9 @@ async fn assemble(spec_chunks: Vec<SpecChunkEvent>) {
 
   let stdout = stdout();
 
-  let mut results_sink = streams::spec_events::into_json_array_items(stdout);
-  results_sink
-    .get_mut()
-    .write_u8(b'[')
+  streams::spec_events::write_to_json_array(stdout, &spec_events)
     .await
-    .expect("could not write array start to stdout");
-
-  for spec_event in spec_events {
-    if let Err(_) = results_sink.send(spec_event).await {
-      panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
-    }
-  }
-  results_sink
-    .get_mut()
-    .write_u8(b']')
-    .await
-    .expect("could not write array start to stdout");
-
-  results_sink
-    .get_mut()
-    .flush()
-    .await
-    .expect("could not flush stdout")
+    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err));
 }
 
 async fn commit(
@@ -376,7 +356,9 @@ async fn commit(
       panic!("could not write new spec batch chunk to api dir: {:?}", err);
     });
 
-  assemble(vec![spec_chunk_event]).await
+  streams::spec_events::write_to_json_array(stdout(), spec_chunk_event.events())
+    .await
+    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err))
 }
 
 enum SpecPathType {

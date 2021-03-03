@@ -82,6 +82,7 @@ pub async fn to_api_dir(
     let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;
 
+    // TODO: use spec_events::write_to_json_array instead of doing this manually
     let mut sink = spec_events::into_json_array_items(file);
 
     sink
