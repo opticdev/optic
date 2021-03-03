@@ -24,7 +24,8 @@ import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/bu
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
-import { readSpec } from '@useoptic/diff-engine';
+import * as DiffEngine from '@useoptic/diff-engine';
+import { AsyncTools as AT } from '@useoptic/diff-engine-wasm';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -217,11 +218,41 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
 
+  if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
+    router.post(
+      '/commands/batches',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const payload = req.body;
+        if (!payload || typeof payload.commitMessage !== 'string') {
+          return res.status(400).json({
+            message: 'commit message required to append batch of commands',
+          });
+        }
+        if (!payload || !Array.isArray(payload.commands)) {
+          return res.status(400).json({
+            message: 'commands array required to append batch of commands',
+          });
+        }
+
+        const commands = AT.from(payload.commands);
+        const events = DiffEngine.commit(commands, {
+          specDirPath: req.optic.paths.specDirPath,
+          commitMessage: payload.commitMessage,
+        });
+
+        events.pipe(res).type('application/json');
+      }
+    );
+  }
+
   // events router
   router.get('/events', async (req, res) => {
     try {
       if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-        const events = readSpec({ specDirPath: req.optic.paths.specDirPath });
+        const events = DiffEngine.readSpec({
+          specDirPath: req.optic.paths.specDirPath,
+        });
         events.pipe(res).type('application/json');
       } else {
         const events = await fs.readJson(req.optic.paths.specStorePath);

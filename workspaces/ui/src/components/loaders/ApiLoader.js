@@ -29,6 +29,23 @@ export function ApiSpecServiceLoader(props) {
     }
   }, [specService]);
 
+  useEffect(() => {
+    if (specService) {
+      function onEventAppended(newEvents) {
+        setEvents([...events, ...newEvents]);
+      }
+
+      specService.eventEmitter.on('events-appended', onEventAppended);
+
+      return function cleanup() {
+        specService.eventEmitter.removeListener(
+          'events-appended',
+          onEventAppended
+        );
+      };
+    }
+  }, [specService]);
+
   const captureServiceFactory = useCaptureServiceFactory(loadingExampleDiff);
   const diffServiceFactory = useDiffServiceFactory(loadingExampleDiff);
 
@@ -282,6 +299,10 @@ export async function createExampleSpecServiceFactory(data) {
           process.env.REACT_APP_TESTING_DASHBOARD === 'true' ||
           process.env.REACT_APP_TESTING_DASHBOARD === true,
       };
+    },
+    processCommands(commands, commitMessage) {
+      console.log('make wasm to me');
+      return Promise.resolve();
     },
   };
 

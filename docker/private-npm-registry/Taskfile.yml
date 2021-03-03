@@ -1,0 +1,22 @@
+version: 3
+
+tasks:
+  up:
+    desc: Start Verdaccio
+    cmds:
+      - docker-compose up -d
+
+  up-fg:
+    desc: Start Verdaccio in the foreground, backgrounded
+    cmds:
+      - docker-compose up &
+
+  down:
+    desc: Stop Verdaccio
+    cmds:
+      - docker-compose down
+
+  logs:
+    desc: Follow logs from Verdaccio
+    cmds:
+      - docker-compose logs -f

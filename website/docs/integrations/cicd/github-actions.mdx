@@ -1,6 +1,7 @@
 ---
-title: "Running CI/CD Tests through Optic with GitHub Actions"
-description: ""
+title: Running CI/CD Tests through Optic with GitHub Action
+sidebar_label: GitHub Actions
+slug: /github-actions
 ---
 
 Running Optic in your Continuous Integration (CI) pipeline assures that differences from documented behavior or undocumented routes in your tests can be caught before a pull request is merged. Optic lets your CI pipeline know that the intended behavior of your API is documented, and alerts you to unintended behavior before it gets to deployment. Optic runs can integrate with your pipeline, such as through GitHub Actions, to pass or fail checks and provide context in the pull request.
@@ -15,38 +16,31 @@ As an example, let's look at using GitHub Actions as a CI tool. There are a few 
 
 - Check out your project
 - Install Optic and any dependencies
-- Run your tests
+- Run your tests and signal success to GitHub:
   - If they pass, assure the shell exits with exit code 0.
   - If any tests fail, assure the shell exits with exit code 1.
 
-The following GitHub Action would accomplish this for your example project. It triggers when you open or push to a pull request in GitHub (not on every push), and will report the check status on the pull request. It will not prevent the pull request from being merged, it just reports the status of the check. When this is committed to the `.github/workflows` directory and pushed to GitHub, it will start running on the appropriate triggers. Since this is the only GitHub Action in this example, it can be added as `.github/workflows/main.yml` in the project repository and pushed to GitHub:
+The following GitHub Action would accomplish this for your example project. It triggers when you open or push to a pull request in GitHub (not on every push), and will report the check status on the pull request. It will not prevent the pull request from being merged, it just reports the status of the check. When this is committed to the `.github/workflows` directory and pushed to GitHub, it will start running on the appropriate triggers. The `--exit-on-diff` flag assures that if the tests behave according to the specification, the program will exit with exit code 0. If there are any differences in behavior from the specification, it will exit with exit code 1. Since this is the only GitHub Action in this example, it can be added as `.github/workflows/main.yml` in the project repository and pushed to GitHub:
 
 ``` yaml
 name: Optic CI
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  build:
+  check-spec:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4 (or choose the latest version)
 
-      - name: Install Optic, json-server
-        run: npm install @useoptic/cli json-server
+      - name: Install Optic # Or add to your development/build dependencies in your package management
+        run: npm install @useoptic/cli
 
       - name: Run tests
-        run: |
-          node_modules/.bin/api run use-task --collect-coverage | tee out.txt
-          if grep -q "No API Diff Observed" out.txt; then
-            echo "No Unexpected API behavior detected."
-            exit 0
-          else
-            echo "Unexpected API behavior or error in CI: please run Optic locally and check the dashboard, then review CI logs."
-            exit 1
-          fi
+        run: npx api run run-tests --collect-coverage --exit-on-diff
 ```
 
 ## Catching Undocumented Behavior

@@ -13,7 +13,9 @@ module.exports = {
   localBuildPath: Path.join(__dirname, '..', '..', '..', 'target', 'debug'),
   prebuilt: {
     installPath: Path.join(__dirname, '..', 'binaries'),
-    baseUrl: 'https://optic-packages.s3.amazonaws.com/dists/optic_diff',
+    baseUrl:
+      process.env.OPTIC__PREBUILT_BINARIES__BASE_URL ||
+      'https://optic-packages.s3.amazonaws.com/dists/optic_diff',
   },
 
   supportedPlatforms: [

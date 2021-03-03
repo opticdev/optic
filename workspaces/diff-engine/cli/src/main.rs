@@ -6,11 +6,14 @@ use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
+use optic_diff_engine::Aggregate;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
-use optic_diff_engine::SpecEvent;
 use optic_diff_engine::SpecProjection;
+use optic_diff_engine::{RfcCommand, SpecCommand};
+use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
 use std::cmp;
+use std::path::Path;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWriteExt};
@@ -61,6 +64,18 @@ fn main() {
         .about("Assembles a directory of API spec files into a single events stream"),
     )
     .subcommand(
+      SubCommand::with_name("commit")
+        .about("Commits results of commands received over stdin as a new batch commit")
+        .arg(
+          Arg::with_name("commit-message")
+            .short("m")
+            .required(true)
+            .value_name("COMMIT_MESSAGE")
+            .takes_value(true)
+            .help("The commit message describing the commands as a whole"),
+        ),
+    )
+    .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
     );
@@ -70,15 +85,17 @@ fn main() {
   let spec_path = matches
     .value_of("specification")
     .expect("SPEC_PATH should be required");
-  let spec_path_type = if matches.is_present("use-spec-dir") {
-    SpecPathType::DIR
-  } else {
-    if let Some(_) = matches.subcommand_matches("assemble") {
-      SpecPathType::DIR
-    } else {
-      SpecPathType::FILE
+  let spec_path_type = match matches.subcommand_name() {
+    Some("assemble") | Some("commit") => SpecPathType::DIR,
+    _ => {
+      if matches.is_present("use-spec-dir") {
+        SpecPathType::DIR
+      } else {
+        SpecPathType::FILE
+      }
     }
   };
+
   let core_threads_count: Option<u16> = match clap::value_t!(matches.value_of("core-threads"), u16)
   {
     Ok(count) => Some(count),
@@ -125,19 +142,28 @@ fn main() {
       }
     };
 
-    if let Some(_matches) = matches.subcommand_matches("assemble") {
-      eprintln!("assembling spec folder into spec");
-      assemble(spec_events).await;
-    } else {
-      eprintln!("diffing interations against a spec");
-      let diff_queue_size = cmp::min(
-        num_cpus::get(),
-        core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-      ) * 4;
-      eprintln!("using diff size {}", diff_queue_size);
+    match matches.subcommand() {
+      ("assemble", Some(_)) => {
+        eprintln!("assembling spec folder into spec");
+        assemble(&spec_events).await;
+      }
+      ("commit", Some(subcommand_matches)) => {
+        let commit_message = subcommand_matches
+          .value_of("commit-message")
+          .expect("commit-message is required");
+        commit(spec_events, &spec_path, commit_message).await;
+      }
+      _ => {
+        eprintln!("diffing interations against a spec");
+        let diff_queue_size = cmp::min(
+          num_cpus::get(),
+          core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+        ) * 4;
+        eprintln!("using diff size {}", diff_queue_size);
 
-      diff(spec_events, diff_queue_size).await;
-    }
+        diff(spec_events, diff_queue_size).await;
+      }
+    };
   });
 }
 
@@ -223,7 +249,7 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
   try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
-async fn assemble(spec_events: Vec<SpecEvent>) {
+async fn assemble(spec_events: &Vec<SpecEvent>) {
   let stdout = stdout();
 
   let mut results_sink = streams::spec_events::into_json_array_items(stdout);
@@ -249,6 +275,83 @@ async fn assemble(spec_events: Vec<SpecEvent>) {
     .flush()
     .await
     .expect("could not flush stdout")
+}
+
+async fn commit(
+  spec_events: Vec<SpecEvent>,
+  spec_dir_path: impl AsRef<Path>,
+  commit_message: &str,
+) {
+  let mut spec_projection = SpecProjection::from(spec_events);
+
+  let stdin = stdin(); // TODO: deal with std in never having been attached
+
+  let input_commands = streams::spec_events::from_json_lines(stdin);
+
+  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
+    commit_message,
+  )));
+
+  // Start event
+  let start_event = spec_projection
+    .execute(append_batch)
+    .expect("should be able to append new batch commit to spec")
+    .remove(0);
+  let batch_id = match &start_event {
+    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(event)) => Some(event.batch_id.clone()),
+    _ => None,
+  }
+  .expect("BatchCommitStarted with batch id to have been created");
+
+  spec_projection.apply(start_event.clone());
+
+  // input events
+  let mut input_events: Vec<SpecEvent> = input_commands
+    .map(|command_json_result| -> Vec<SpecEvent> {
+      // TODO: provide more useful error messages, like forwarding command validation errors
+      let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
+      let command: SpecCommand =
+        serde_json::from_str(&command_json).expect("could not parse command");
+      let events = spec_projection
+        .execute(command)
+        .expect("could not execute command");
+
+      for event in &events {
+        spec_projection.apply(event.clone());
+      }
+
+      events
+    })
+    .collect::<Vec<_>>()
+    .await
+    .into_iter()
+    .flatten()
+    .collect();
+
+  // end events
+  let end_event = spec_projection
+    .execute(SpecCommand::from(RfcCommand::end_batch_commit(
+      batch_id.clone(),
+    )))
+    .expect("should be able to append new batch commit to spec")
+    .remove(0);
+  spec_projection.apply(end_event.clone());
+
+  let mut new_events = Vec::with_capacity(input_events.len() + 2);
+  new_events.push(start_event);
+  new_events.append(&mut input_events);
+  new_events.push(end_event);
+
+  let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
+    .expect("valid batch chunk should have been created");
+
+  streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
+    .await
+    .unwrap_or_else(|err| {
+      panic!("could not write new spec batch chunk to api dir: {:?}", err);
+    });
+
+  assemble(spec_chunk_event.events()).await
 }
 
 enum SpecPathType {

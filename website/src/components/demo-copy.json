@@ -56,6 +56,6 @@
   },
   "example": {
     "heading": "**DEMO:** GitHub's API in Optic",
-    "description": "Optic's UI is like a Git client, but for reviewing API diffs, finding API breaks/bugs early, and updating your specifications. In these two demos you can"
+    "description": "Optic's UI is like a Git client, but for reviewing API diffs, finding API breaks/bugs early, and updating your specifications. In these two demos you can explore what it's like to use Optic with GitHub's API."
   }
 }

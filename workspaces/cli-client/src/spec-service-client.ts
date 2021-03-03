@@ -29,6 +29,7 @@ export interface ISpecService {
 
   saveEvents(eventStore: IEventStore, rfcId: RfcId): Promise<void>;
   saveEventsArray(serializedEvents: any[]): Promise<void>;
+  processCommands(commands: any[], commitMessage: string): Promise<void>;
 
   listCaptures(): Promise<ListCapturesResponse>;
 
@@ -130,5 +131,18 @@ export class Client implements ISpecService {
     return {
       TESTING_DASHBOARD: response.status >= 200 && response.status <= 299,
     };
+  }
+
+  async processCommands(commands: any[], commitMessage: string): Promise<void> {
+    const newEvents = await JsonHttpClient.postJsonString(
+      `${this.baseUrl}/specs/${this.specId}/commands/batches`,
+      JSON.stringify({
+        commands,
+        commitMessage,
+      })
+    );
+
+    this.eventEmitter.emit('events-appended', newEvents);
+    return newEvents;
   }
 }

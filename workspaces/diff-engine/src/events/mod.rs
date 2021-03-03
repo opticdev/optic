@@ -56,6 +56,24 @@ impl SpecEvent {
   }
 }
 
+impl From<EndpointEvent> for SpecEvent {
+  fn from(endpoint_event: EndpointEvent) -> Self {
+    Self::EndpointEvent(endpoint_event)
+  }
+}
+
+impl From<RfcEvent> for SpecEvent {
+  fn from(rfc_event: RfcEvent) -> Self {
+    Self::RfcEvent(rfc_event)
+  }
+}
+
+impl From<ShapeEvent> for SpecEvent {
+  fn from(shape_event: ShapeEvent) -> Self {
+    Self::ShapeEvent(shape_event)
+  }
+}
+
 #[derive(Debug)]
 pub enum EventLoadingError {
   Avro(avro_rs::Error),

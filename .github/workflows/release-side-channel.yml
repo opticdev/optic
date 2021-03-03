@@ -1,0 +1,124 @@
+name: Release side channel packages to S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      flags_file:
+        description: The .env file to load during the build
+        required: false
+        default: .env.sidechannel
+
+env:
+  DRY_RUN: false
+
+jobs:
+  npm_packages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
+      - name: Configure Node
+        uses: actions/setup-node@56899e050abffc08c2b3b61f3ec6a79a9dc3223d # https://github.com/actions/setup-node/releases/tag/v1.4.4
+        with:
+          node-version: 14
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache node_modules
+        uses: actions/cache@d1255ad9362389eac595a9ae406b8e8cb3331f16 # https://github.com/actions/cache/releases/tag/v2.1.2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}"${{ runner.os }}-npm-${{ hashFiles('**/yarn.lock') }}-vendor-v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Set env
+        run: |
+          echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
+      - name: Build NPM packages for S3
+        env:
+          FLAGS_FILE: ${{ github.event.inputs.flags_file }}
+        run: task release:side-channel:npm_packages
+      - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
+        with:
+          name: side-channel-announce
+          path: /tmp/side-channel-outputs/announce.txt
+          if-no-files-found: error
+
+  rust_binaries:
+    strategy:
+      matrix:
+        platform:
+          - os: ubuntu-latest
+            task: diff-engine:build-windows diff-engine:build-linux
+          - os: macos-latest
+            task: diff-engine:build-macos
+    runs-on: ${{ matrix.platform.os }}
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # no tag
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@32d908adfb55576ba0c59f3c557058e80b5194c3 # https://github.com/aws-actions/configure-aws-credentials/releases/tag/v1.5.3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Set env
+        run: |
+          echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+          if uname -a | grep -q Darwin
+          then
+            sudo xcode-select -s /Applications/Xcode_12.4.app
+            echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
+            echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
+          fi
+      - name: Build
+        env:
+          BUILD_ARGS: --all-features --workspace --release
+        run: |
+          task \
+            diff-engine:add-targets \
+            ${{ matrix.platform.task }} \
+            flush-to-disk
+      - run: task diff-engine:locate-binaries
+      - name: Publish
+        env:
+          BUCKET: optic-side-channel-production
+        run: task release:side-channel:diff-engine
+
+  announce:
+    runs-on: ubuntu-latest
+    needs:
+      - npm_packages
+    steps:
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+      - name: Install Task
+        uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # no tag
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@4a7a711286f30c025902c28b541c10e147a9b843 # v2.0.8
+        with:
+          name: side-channel-announce
+          path: .
+      - run: echo "MESSAGE=$(cat announce.txt)" >> $GITHUB_ENV
+      - env:
+          SKIP_ANNOUNCE: "false"
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: task release:announce

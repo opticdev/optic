@@ -1,5 +1,5 @@
 const Execa = require('execa');
-const { PassThrough } = require('stream');
+const { PassThrough, Readable } = require('stream');
 const Fs = require('fs');
 const Path = require('path');
 const OS = require('os');
@@ -7,6 +7,9 @@ const Rimraf = require('rimraf');
 const Bent = require('bent');
 const Tar = require('tar');
 
+const {
+  Streams: { Commands },
+} = require('@useoptic/diff-engine-wasm');
 const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
@@ -57,6 +60,42 @@ function readSpec({ specDirPath }) {
       output.emit('error', new DiffEngineError(childResult));
     }
   );
+  return output;
+}
+
+function commit(commands, { commitMessage, specDirPath }) {
+  if (typeof commands[Symbol.asyncIterator] !== 'function')
+    new Error('commandStream must be AsyncIterator to commit commands');
+  if (typeof commitMessage !== 'string')
+    new Error('commitMessage must be a string to commit commands');
+
+  const input = Readable.from(Commands.intoJSONL(commands));
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  // Execa requires escaping of spaces for arguments, but nothing else
+  let messageArgument = commitMessage.replaceAll(/(\s)/g, '\\$1');
+
+  const commitProcess = Execa(
+    binPath,
+    [specDirPath, 'commit', '-m', messageArgument],
+    {
+      stdio: ['pipe', 'pipe', 'inherit'],
+    }
+  );
+
+  input.pipe(commitProcess.stdin);
+  commitProcess.stdout.pipe(output);
+
+  // get a clean result promise, so we stay in control of the exact API we're exposing
+  commitProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+
   return output;
 }
 
@@ -231,6 +270,7 @@ class DiffEngineError extends Error {
 
 exports.spawn = spawn;
 exports.readSpec = readSpec;
+exports.commit = commit;
 exports.install = install;
 exports.uninstall = uninstall;
 exports.DiffEngineError = DiffEngineError;

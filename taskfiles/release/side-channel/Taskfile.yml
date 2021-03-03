@@ -1,0 +1,111 @@
+version: 3
+
+vars:
+  DRY_RUN: '{{default "true" .DRY_RUN}}'
+  TIMESTAMP: $(date +%s)
+
+tasks:
+  npm_packages:
+    desc: Build a side-channel release for @useoptic/cli and publish it to s3
+    vars:
+      # get the local-cli version and strip anything after a hyphen, "0.0.0-blah" to "0.0.0"
+      # note that the diff-engine task also computes the version with the same method and its
+      # important they stay in sync
+      BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
+      VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
+      VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
+      TMP_DIR: /tmp/{{.TIMESTAMP}}
+      BUCKET: '{{default "optic-side-channel-staging" .SIDE_CHANNEL_BUCKET}}'
+      FLAGS_FILE: '{{.FLAGS_FILE}}'
+    deps:
+      - task: :workspaces:build
+        env:
+          FLAGS_FILE: '{{.FLAGS_FILE}}'
+      - :verdaccio:up
+    cmds:
+      - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
+      - task: publish-local
+        vars:
+          BUCKET: "{{.BUCKET}}"
+          VERSION: "{{.VERSION}}"
+      - task: save-packages-to-disk
+        vars:
+          PACKAGES:
+            sh: node workspaces/scripts/list-workspace-packages.js | sed "s/,/ /g"
+          VERSION: "{{.VERSION}}"
+          TMP_DIR: "{{.TMP_DIR}}"
+      - task: upload-to-s3
+        vars:
+          BUCKET: "{{.BUCKET}}"
+          VERSION: "{{.VERSION}}"
+          TGZ_DIR: "{{.TMP_DIR}}"
+      - |
+        mkdir -p /tmp/side-channel-outputs
+        echo "New CLI build: https://{{.BUCKET}}.s3.amazonaws.com/{{.VERSION}}/cli-{{.VERSION}}.tgz" > /tmp/side-channel-outputs/announce.txt
+
+  upload-to-s3:
+    cmds:
+      - |
+        if [ "{{.DRY_RUN}}" = "true" ]
+        then
+          aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --dryrun
+        else
+          aws s3 sync {{.TGZ_DIR}} s3://{{.BUCKET}}/{{.VERSION}}/ --include=*.tgz --delete --sse=AES256
+        fi
+
+  bump-version:
+    env:
+      S3_HTTPS_URL: "{{.S3_HTTPS_URL}}"
+      VERSION: "{{.VERSION}}"
+    cmds:
+      - node workspaces/scripts/use-s3-dependencies.js
+
+  save-packages-to-disk:
+    vars:
+      NPM_REGISTRY: '{{default "http://0.0.0.0:4873" .NPM_REGISTRY}}'
+    cmds:
+      - |
+        for pkg in {{.PACKAGES}}
+        do
+          url="{{.NPM_REGISTRY}}/@useoptic%2f${pkg}/-/${pkg}-{{.VERSION}}.tgz"
+          wget -nv $url -P {{.TMP_DIR}}
+        done
+
+  publish-local:
+    env:
+      OPTIC_PUBLISH_SCOPE: private
+    cmds:
+      - task: bump-version
+        vars:
+          S3_HTTPS_URL: https://{{.BUCKET}}.s3.amazonaws.com
+          VERSION: "{{.VERSION}}"
+      - node workspaces/scripts/publish.js
+      - task: reset-working-tree
+
+  # reset working tree because package.json's and README.md's were updated with `yarn bump`
+  reset-working-tree:
+    - |
+      if uname -a | grep -q Darwin
+      then
+        files=$(find -E workspaces/ -depth 2 -type f -regex ".*(package.json|README.md)")
+        echo $files | xargs git checkout
+      fi
+
+  diff-engine:
+    desc: Publish the diff-engine tarballs in `build/dist` to S3
+    vars:
+      DRY_RUN: '{{default "true" .DRY_RUN}}'
+      BASE_VERSION: $(cat workspaces/local-cli/package.json | jq -r .version | awk -F'-' '{print $1}')
+      VERSION_TAG: "{{default .TIMESTAMP .VERSION_TAG}}"
+      VERSION: "{{.BASE_VERSION}}-alpha.{{.VERSION_TAG}}" # https://www.youtube.com/watch?v=Ct6BUPvE2sM
+      BUCKET: '{{default "NO-BUCKET" .BUCKET}}'
+    cmds:
+      - task: :diff-engine:package-tarballs
+        vars:
+          VERSION: "{{.VERSION}}"
+      - |
+        [ "{{.DRY_RUN}}" = "false" ] && dryrun="" || dryrun="--dryrun"
+        aws s3 sync $dryrun \
+          build/dist/ s3://{{.BUCKET}}/dists/optic_diff/v{{.VERSION}}/ \
+          --sse AES256 \
+          --include *.tar.gz
