@@ -74,7 +74,6 @@ pub async fn to_api_dir(
       ))?,
     };
 
-    // let name = batch_chunk.name.clone();
     let events = chunk_event.events();
 
     let file_path = path.as_ref().join(format!("{}.json", name));
@@ -85,7 +84,7 @@ pub async fn to_api_dir(
 
     sink
       .get_mut()
-      .write_u8(b'[')
+      .write_all(b"[\n")
       .await
       .expect("could not write array start to file");
 
@@ -95,7 +94,7 @@ pub async fn to_api_dir(
 
     sink
       .get_mut()
-      .write_u8(b']')
+      .write_all(b"\n]")
       .await
       .expect("could not write array end to file");
 
