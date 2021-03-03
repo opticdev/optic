@@ -66,18 +66,16 @@ pub async fn to_api_dir(
 ) -> Result<usize, SpecChunkWriterError> {
   let mut count = 0;
   for chunk_event in chunk_events {
-    let batch_chunk = match chunk_event {
-      SpecChunkEvent::Batch(batch_chunk) => batch_chunk,
-      SpecChunkEvent::Root(_) => Err(SpecChunkWriterError::UnsupportedKind(
-        "writing of root chunk events not supported",
-      ))?,
+    let name = match chunk_event {
+      SpecChunkEvent::Batch(batch_chunk) => batch_chunk.name.clone(),
+      SpecChunkEvent::Root(_) => String::from("specification"),
       SpecChunkEvent::Unknown(_) => Err(SpecChunkWriterError::UnsupportedKind(
         "writing of unknown chunk events not supported",
       ))?,
     };
 
-    let name = batch_chunk.name.clone();
-    let events = &batch_chunk.events;
+    // let name = batch_chunk.name.clone();
+    let events = chunk_event.events();
 
     let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;

@@ -287,7 +287,7 @@ async fn commit(
   commit_message: &str,
   append_to_root: bool,
 ) {
-  let mut spec_projection = SpecProjection::from(spec_events);
+  let mut spec_projection = SpecProjection::from(spec_events.clone());
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
 
@@ -347,8 +347,14 @@ async fn commit(
   new_events.append(&mut input_events);
   new_events.push(end_event);
 
-  let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
-    .expect("valid batch chunk should have been created");
+  let spec_chunk_event = if append_to_root {
+    let mut all_events = spec_events;
+    all_events.append(&mut new_events);
+    SpecChunkEvent::root_from_events(all_events)
+  } else {
+    SpecChunkEvent::batch_from_events(batch_id, new_events)
+      .expect("valid batch chunk should have been created")
+  };
 
   streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
     .await

@@ -3,21 +3,21 @@ use cqrs_core::Event;
 use serde_json;
 use std::convert::TryFrom;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum SpecChunkEvent {
   Root(RootChunkEvent),
   Batch(BatchChunkEvent),
   Unknown(UnknownChunkEvent),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RootChunkEvent {
   pub id: String,
   pub name: String,
   pub events: Vec<SpecEvent>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BatchChunkEvent {
   pub id: String,
   pub name: String,
@@ -25,7 +25,7 @@ pub struct BatchChunkEvent {
   pub events: Vec<SpecEvent>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UnknownChunkEvent {
   pub name: String,
   pub events: Vec<SpecEvent>,
