@@ -10,17 +10,6 @@ pub enum SpecChunkEvent {
   Unknown(UnknownChunkEvent),
 }
 
-impl SpecChunkEvent {
-  pub fn batch_from_events(
-    batch_id: String,
-    events: Vec<SpecEvent>,
-  ) -> Result<SpecChunkEvent, &'static str> {
-    let batch = BatchChunkEvent::try_from((batch_id, events)).map_err(|(msg, _, _)| msg)?;
-
-    Ok(SpecChunkEvent::Batch(batch))
-  }
-}
-
 #[derive(Debug)]
 pub struct RootChunkEvent {
   pub id: String,
@@ -43,6 +32,19 @@ pub struct UnknownChunkEvent {
 }
 
 impl SpecChunkEvent {
+  pub fn batch_from_events(
+    batch_id: String,
+    events: Vec<SpecEvent>,
+  ) -> Result<SpecChunkEvent, &'static str> {
+    let batch = BatchChunkEvent::try_from((batch_id, events)).map_err(|(msg, _, _)| msg)?;
+
+    Ok(SpecChunkEvent::Batch(batch))
+  }
+
+  pub fn root_from_events(events: Vec<SpecEvent>) -> SpecChunkEvent {
+    SpecChunkEvent::from((String::from("root"), true, events))
+  }
+
   pub fn events(&self) -> &Vec<SpecEvent> {
     let events = match self {
       SpecChunkEvent::Root(chunk) => &chunk.events,

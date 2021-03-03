@@ -1,10 +1,9 @@
 use super::{spec_events, JsonLineEncoder, JsonLineEncoderError};
-use crate::{
-  events::{spec_chunk, SpecChunkEvent},
-  SpecAssemblerProjection, SpecEvent,
-};
+use crate::events::{EventLoadingError, SpecChunkEvent};
+use crate::{SpecAssemblerProjection, SpecEvent};
 use fs::{read_dir, read_to_string};
 use futures::{sink::Sink, SinkExt};
+use serde_json;
 use std::path::Path;
 use std::{convert::TryFrom, ffi::OsString, path::PathBuf};
 use tokio::io::AsyncWriteExt;
@@ -51,6 +50,14 @@ pub async fn from_api_dir(
   }
 
   Ok(chunks)
+}
+
+pub async fn from_root_api_file(
+  path: impl AsRef<Path>,
+) -> Result<Vec<SpecChunkEvent>, SpecChunkLoaderError> {
+  let spec_events = spec_events::from_file(path).await?;
+
+  Ok(vec![SpecChunkEvent::root_from_events(spec_events)])
 }
 
 pub async fn to_api_dir(
@@ -104,12 +111,23 @@ pub async fn to_api_dir(
 #[derive(Debug)]
 pub enum SpecChunkLoaderError {
   Io(io::Error),
+  Json(serde_json::Error),
   Other(&'static str),
 }
 
 impl From<io::Error> for SpecChunkLoaderError {
   fn from(err: io::Error) -> SpecChunkLoaderError {
     SpecChunkLoaderError::Io(err)
+  }
+}
+
+impl From<EventLoadingError> for SpecChunkLoaderError {
+  fn from(err: EventLoadingError) -> Self {
+    match err {
+      EventLoadingError::Io(err) => SpecChunkLoaderError::Io(err),
+      EventLoadingError::Json(err) => SpecChunkLoaderError::Json(err),
+      EventLoadingError::Avro(err) => SpecChunkLoaderError::Other("unsupported encoding used"),
+    }
   }
 }
 
