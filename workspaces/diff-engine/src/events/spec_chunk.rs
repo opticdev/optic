@@ -110,6 +110,20 @@ impl Event for UnknownChunkEvent {
   }
 }
 
+impl RootChunkEvent {
+  pub fn last_batch_id(&self) -> &String {
+    self
+      .events
+      .iter()
+      .rev()
+      .find_map(|event| match event {
+        SpecEvent::RfcEvent(RfcEvent::BatchCommitEnded(e)) => Some(&e.batch_id),
+        _ => None,
+      })
+      .unwrap_or_else(|| &self.id)
+  }
+}
+
 // TODO: Implement this for an impl Iterator<Item=SpecEvent> rather than requiring a Vec
 impl From<(String, bool, Vec<SpecEvent>)> for SpecChunkEvent {
   fn from((name, is_root, events): (String, bool, Vec<SpecEvent>)) -> Self {
