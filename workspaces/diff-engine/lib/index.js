@@ -182,7 +182,7 @@ async function install(options) {
   );
   if (downloadStream.statusCode === 404) {
     throw new Error(
-      `Pre-built binary ${Config.binaryName}-${platform.name}@${Config.version} was not published`
+      `Pre-built binary ${Config.binaryName}-${platform.name}@${Config.version} was not published to: ${Config.prebuilt.baseUrl}/v${Config.version}/${archiveName}.tar.gz`
     );
   }
 
