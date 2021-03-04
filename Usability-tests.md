@@ -159,7 +159,7 @@ Scripts allow for users to export an OpenAPI specification to another system. Fo
 
 - [ ] Set up a Script definition in `optic.yml`. Under dependencies, it should check for both a program that exists and one that doesn't. It should perform a trivial task under `install`, and `command` should either also be trivial or dump out the specification file that is generated for verification. Example:
 
-	```
+```
 scripts:
   test-script:
     command: cat .optic/generated/openapi.json
@@ -167,7 +167,8 @@ scripts:
       - "true"
       - notaprog
     install: echo "Installing pre-requisites..."
-	```
+```
+
 - [ ] Run `api scripts test-script`: Expect failure for missing dependency, and instructions to re-run with `--install` flag.
 - [ ] Run `api scripts test-script --install`: Expect
 	- [ ] The missing dependency is detected and reported.
