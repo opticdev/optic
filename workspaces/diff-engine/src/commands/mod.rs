@@ -1,4 +1,6 @@
-use cqrs_core::{Aggregate, AggregateCommand};
+use std::process::Command;
+
+use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
 pub use serde::Deserialize;
 
 pub mod endpoint;
@@ -81,9 +83,20 @@ impl CommandContext {
   }
 }
 
+impl Default for CommandContext {
+  fn default() -> Self {
+    Self {
+      client_id: String::from("anonymous"),
+      client_session_id: String::from("unknown-session"),
+      client_command_batch_id: String::from("unknown-batch"),
+    }
+  }
+}
+
 // Command handling
 // ----------------
 
+#[derive(Debug, Default)]
 pub struct SpecCommandHandler {
   command_context: CommandContext,
   spec_projection: SpecProjection,
@@ -95,6 +108,44 @@ impl SpecCommandHandler {
       command_context,
       spec_projection,
     }
+  }
+
+  pub fn with_command_context(&mut self, command_context: CommandContext) {
+    self.command_context = command_context
+  }
+}
+
+impl Aggregate for SpecCommandHandler {
+  fn aggregate_type() -> &'static str {
+    "spec-command-handler"
+  }
+}
+
+impl AggregateEvent<SpecCommandHandler> for SpecEvent {
+  fn apply_to(self, command_handler: &mut SpecCommandHandler) {
+    command_handler.spec_projection.apply(self)
+  }
+}
+
+impl<I> From<I> for SpecCommandHandler
+where
+  I: IntoIterator,
+  I::Item: AggregateEvent<SpecProjection>,
+{
+  fn from(events: I) -> Self {
+    let spec_projection = SpecProjection::from(events);
+    Self::new(CommandContext::default(), spec_projection)
+  }
+}
+
+impl AggregateCommand<SpecCommandHandler> for SpecCommand {
+  type Error = SpecCommandError;
+  type Event = SpecEvent;
+  type Events = Vec<SpecEvent>;
+
+  fn execute_on(self, command_handler: &SpecCommandHandler) -> Result<Self::Events, Self::Error> {
+    let events = command_handler.spec_projection.execute(self)?;
+    Ok(events)
   }
 }
 
@@ -220,14 +271,14 @@ mod test {
     ]))
     .expect("initial events should be valid spec events");
 
-    let mut projection = SpecProjection::from(initial_events);
+    let mut command_handler = SpecCommandHandler::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"AddPathParameter": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = projection
+    let new_events = command_handler
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 3);
@@ -238,7 +289,7 @@ mod test {
       {"AddPathParameter": {"pathId": "path_2","parentPathId": "not-a-path","name": "todoId"}}
     ))
     .unwrap();
-    let unexisting_parent_result = projection.execute(unexisting_parent);
+    let unexisting_parent_result = command_handler.execute(unexisting_parent);
     assert!(unexisting_parent_result.is_err());
     assert_debug_snapshot!(
       "can_handle_add_path_parameter_command__unexisting_parent_result",
@@ -249,7 +300,7 @@ mod test {
       {"AddPathParameter": {"pathId": "path_1","parentPathId": "path_1","name": "todoId"}}
     ))
     .unwrap();
-    let unassignable_path_id_result = projection.execute(unassignable_path_id);
+    let unassignable_path_id_result = command_handler.execute(unassignable_path_id);
     assert!(unassignable_path_id_result.is_err());
     assert_debug_snapshot!(
       "can_handle_add_path_parameter_command__unassignable_path_id_result",
@@ -257,7 +308,7 @@ mod test {
     );
 
     for event in new_events {
-      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -270,14 +321,14 @@ mod test {
     ]))
     .expect("initial events should be valid spec events");
 
-    let mut projection = SpecProjection::from(initial_events);
+    let mut command_handler = SpecCommandHandler::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = projection
+    let new_events = command_handler
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -285,7 +336,7 @@ mod test {
     let setting_root_path: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"root","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     )).unwrap();
-    let setting_root_path_result = projection.execute(setting_root_path);
+    let setting_root_path_result = command_handler.execute(setting_root_path);
     assert!(setting_root_path_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__setting_root_path_result",
@@ -295,7 +346,7 @@ mod test {
     let unexisting_path: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"not-a-path","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     )).unwrap();
-    let unexisting_path_result = projection.execute(unexisting_path);
+    let unexisting_path_result = command_handler.execute(unexisting_path);
     assert!(unexisting_path_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__unexisting_path_result",
@@ -305,7 +356,7 @@ mod test {
     let unexisting_shape: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"not_a_shape_id","isRemoved":false}}}
     )).unwrap();
-    let unexisting_shape_result = projection.execute(unexisting_shape);
+    let unexisting_shape_result = command_handler.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__unexisting_shape_result",
@@ -313,7 +364,7 @@ mod test {
     );
 
     for event in new_events {
-      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -326,14 +377,14 @@ mod test {
     ]))
     .expect("initial events should be valid endpoint events");
 
-    let mut projection = SpecProjection::from(initial_events);
+    let mut command_handler = SpecCommandHandler::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetRequestBodyShape": {"requestId": "request_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "string_shape_1", "isRemoved": false }}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = projection
+    let new_events = command_handler
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -346,7 +397,7 @@ mod test {
       {"SetRequestBodyShape": {"requestId": "request_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "not-a-shape-id", "isRemoved": false }}}
     ))
     .unwrap();
-    let unexisting_shape_result = projection.execute(unexisting_shape);
+    let unexisting_shape_result = command_handler.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_request_body_shape_command__unexisting_shape_result",
@@ -354,7 +405,7 @@ mod test {
     );
 
     for event in new_events {
-      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -368,14 +419,14 @@ mod test {
     ]))
     .expect("initial events should be valid endpoint events");
 
-    let mut projection = SpecProjection::from(initial_events);
+    let mut command_handler = SpecCommandHandler::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetResponseBodyShape": {"responseId": "response_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "string_shape_1", "isRemoved": false }}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = projection
+    let new_events = command_handler
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -388,7 +439,7 @@ mod test {
       {"SetResponseBodyShape": {"responseId": "response_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "not-a-shape-id", "isRemoved": false }}}
     ))
     .unwrap();
-    let unexisting_shape_result = projection.execute(unexisting_shape);
+    let unexisting_shape_result = command_handler.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_response_body_shape_command__unexisting_shape_result",
@@ -396,7 +447,7 @@ mod test {
     );
 
     for event in new_events {
-      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 }

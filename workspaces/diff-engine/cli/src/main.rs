@@ -7,10 +7,11 @@ use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
 use optic_diff_engine::Aggregate;
+use optic_diff_engine::CommandContext;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecProjection;
-use optic_diff_engine::{RfcCommand, SpecCommand};
+use optic_diff_engine::{RfcCommand, SpecCommand, SpecCommandHandler};
 use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
 use std::cmp;
 use std::path::Path;
@@ -318,25 +319,32 @@ async fn commit(
   client_id: &str,
   client_session_id: &str,
 ) {
-  let mut spec_projection = SpecProjection::from(spec_events.clone());
+  let mut spec_command_handler = SpecCommandHandler::from(spec_events.clone());
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
 
   let input_commands = streams::spec_events::from_json_lines(stdin);
 
   let batch_id = Uuid::new_v4().to_hyphenated().to_string();
+  let batch_command_context = CommandContext::new(
+    batch_id.clone(),
+    String::from(client_id),
+    String::from(client_session_id),
+  );
+  spec_command_handler.with_command_context(batch_command_context);
+
   let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(
     batch_id.clone(),
     String::from(commit_message),
   ));
 
   // Start event
-  let start_event = spec_projection
+  let start_event = spec_command_handler
     .execute(append_batch)
     .expect("should be able to append new batch commit to spec")
     .remove(0);
 
-  spec_projection.apply(start_event.clone());
+  spec_command_handler.apply(start_event.clone());
 
   // input events
   let mut input_events: Vec<SpecEvent> = input_commands
@@ -345,12 +353,12 @@ async fn commit(
       let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
       let command: SpecCommand =
         serde_json::from_str(&command_json).expect("could not parse command");
-      let events = spec_projection
+      let events = spec_command_handler
         .execute(command)
         .expect("could not execute command");
 
       for event in &events {
-        spec_projection.apply(event.clone());
+        spec_command_handler.apply(event.clone());
       }
 
       events
@@ -362,13 +370,13 @@ async fn commit(
     .collect();
 
   // end events
-  let end_event = spec_projection
+  let end_event = spec_command_handler
     .execute(SpecCommand::from(RfcCommand::end_batch_commit(
       batch_id.clone(),
     )))
     .expect("should be able to append new batch commit to spec")
     .remove(0);
-  spec_projection.apply(end_event.clone());
+  spec_command_handler.apply(end_event.clone());
 
   let mut new_events = Vec::with_capacity(input_events.len() + 2);
   new_events.push(start_event);
