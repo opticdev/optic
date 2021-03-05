@@ -15,7 +15,9 @@ pub use shape::ShapeCommand;
 
 use crate::events::rfc as rfc_events;
 use crate::events::shape as shape_events;
-use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
+use crate::events::{
+  EndpointEvent, EventContext, RfcEvent, ShapeEvent, SpecEvent, WithEventContext,
+};
 use crate::projections::SpecProjection;
 use crate::queries::history::HistoryQueries;
 
@@ -66,7 +68,7 @@ impl std::error::Error for SpecCommandError {}
 // CommandContext
 // --------------
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CommandContext {
   pub client_id: String,
@@ -102,8 +104,8 @@ impl Default for CommandContext {
   }
 }
 
-// Command handling
-// ----------------
+// SpecCommandHandler
+// ------------------
 
 #[derive(Debug, Default)]
 pub struct SpecCommandHandler {
@@ -147,13 +149,20 @@ where
   }
 }
 
+// Command handling
+// ----------------
+
 impl AggregateCommand<SpecCommandHandler> for SpecCommand {
   type Error = SpecCommandError;
   type Event = SpecEvent;
   type Events = Vec<SpecEvent>;
 
   fn execute_on(self, command_handler: &SpecCommandHandler) -> Result<Self::Events, Self::Error> {
-    let events = command_handler.spec_projection.execute(self)?;
+    let mut events = command_handler.spec_projection.execute(self)?;
+    let event_context = EventContext::from(command_handler.command_context.clone());
+    for event in &mut events {
+      event.with_event_context(event_context.clone());
+    }
     Ok(events)
   }
 }
