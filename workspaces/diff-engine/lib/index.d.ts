@@ -17,6 +17,8 @@ export interface CommitOptions {
   specDirPath: String;
   commitMessage: String;
   appendToRoot?: boolean;
+  clientSessionId: String;
+  clientId: String;
 }
 
 export function commit<T>(commands: AsyncIterable<T>, CommitOptions): Readable;

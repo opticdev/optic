@@ -82,6 +82,22 @@ fn main() {
             .help(
               "Append new batch commit to the root spec file, instead of a new spec change file",
             ),
+        )
+        .arg(
+          Arg::with_name("client-session-id")
+            .long("client-session-id")
+            .required(true)
+            .value_name("CLIENT_SESSION_ID")
+            .takes_value(true)
+            .help("The session id of the client requesting the commands to be committed"),
+        )
+        .arg(
+          Arg::with_name("client-id")
+            .long("client-id")
+            .required(true)
+            .value_name("CLIENT_ID")
+            .takes_value(true)
+            .help("Unique id of the client the commands to be committed"),
         ),
     )
     .subcommand(
@@ -167,11 +183,21 @@ fn main() {
           process::exit(1);
         }
 
+        let client_session_id = subcommand_matches
+          .value_of("client-session-id")
+          .expect("client-session-id is required");
+
+        let client_id = subcommand_matches
+          .value_of("client-id")
+          .expect("client-id is required");
+
         commit(
           events_from_chunks(spec_chunks).await,
           &spec_path,
           commit_message,
           append_to_root,
+          client_id,
+          client_session_id,
         )
         .await;
       }
@@ -286,6 +312,8 @@ async fn commit(
   spec_dir_path: impl AsRef<Path>,
   commit_message: &str,
   append_to_root: bool,
+  client_id: &str,
+  client_session_id: &str,
 ) {
   let mut spec_projection = SpecProjection::from(spec_events.clone());
 

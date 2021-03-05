@@ -71,8 +71,32 @@ pub struct CommandContext {
   pub client_command_batch_id: String,
 }
 
+impl CommandContext {
+  pub fn new(batch_id: String, client_id: String, client_session_id: String) -> Self {
+    Self {
+      client_id,
+      client_command_batch_id: batch_id,
+      client_session_id,
+    }
+  }
+}
+
 // Command handling
 // ----------------
+
+pub struct SpecCommandHandler {
+  command_context: CommandContext,
+  spec_projection: SpecProjection,
+}
+
+impl SpecCommandHandler {
+  pub fn new(command_context: CommandContext, spec_projection: SpecProjection) -> Self {
+    Self {
+      command_context,
+      spec_projection,
+    }
+  }
+}
 
 impl AggregateCommand<SpecProjection> for SpecCommand {
   type Error = SpecCommandError;

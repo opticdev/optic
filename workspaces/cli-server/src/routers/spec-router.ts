@@ -23,6 +23,7 @@ import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
+import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
 import { AsyncTools as AT } from '@useoptic/diff-engine-wasm';
@@ -239,6 +240,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         const events = DiffEngine.commit(commands, {
           specDirPath: req.optic.paths.specDirPath,
           commitMessage: payload.commitMessage,
+          clientSessionId: payload.clientSessionId || 'unknown-session',
+          clientId: await getOrCreateAnonId(),
           appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
         });
 
