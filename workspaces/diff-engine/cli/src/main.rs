@@ -1,3 +1,4 @@
+use chrono::Utc;
 use clap::{crate_version, App, Arg, ArgGroup, SubCommand};
 use futures::try_join;
 use futures::SinkExt;
@@ -330,6 +331,7 @@ async fn commit(
     batch_id.clone(),
     String::from(client_id),
     String::from(client_session_id),
+    Utc::now(),
   );
   spec_command_handler.with_command_context(batch_command_context);
 

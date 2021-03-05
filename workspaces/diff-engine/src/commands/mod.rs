@@ -1,3 +1,4 @@
+use chrono::{DateTime, TimeZone, Utc};
 use std::process::Command;
 
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
@@ -71,14 +72,21 @@ pub struct CommandContext {
   pub client_id: String,
   pub client_session_id: String,
   pub client_command_batch_id: String,
+  pub created_at: DateTime<Utc>,
 }
 
 impl CommandContext {
-  pub fn new(batch_id: String, client_id: String, client_session_id: String) -> Self {
+  pub fn new(
+    batch_id: String,
+    client_id: String,
+    client_session_id: String,
+    created_at: DateTime<impl TimeZone>,
+  ) -> Self {
     Self {
       client_id,
       client_command_batch_id: batch_id,
       client_session_id,
+      created_at: created_at.with_timezone(&Utc),
     }
   }
 }
@@ -89,6 +97,7 @@ impl Default for CommandContext {
       client_id: String::from("anonymous"),
       client_session_id: String::from("unknown-session"),
       client_command_batch_id: String::from("unknown-batch"),
+      created_at: Utc.timestamp(0, 0),
     }
   }
 }

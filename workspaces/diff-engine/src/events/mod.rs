@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use chrono::{DateTime, Local, TimeZone};
 pub use cqrs_core::{AggregateEvent, Event};
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -19,14 +20,7 @@ pub use rfc::RfcEvent;
 pub use shape::ShapeEvent;
 pub use spec_chunk::SpecChunkEvent;
 
-#[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct EventContext {
-  client_id: String,
-  client_session_id: String,
-  client_command_batch_id: String,
-  created_at: String,
-}
+use crate::CommandContext;
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(untagged)]
@@ -110,6 +104,32 @@ impl From<serde_json::Error> for EventLoadingError {
 impl From<avro_rs::Error> for EventLoadingError {
   fn from(err: avro_rs::Error) -> EventLoadingError {
     EventLoadingError::Avro(err)
+  }
+}
+
+// EventContext
+// ------------
+
+#[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct EventContext {
+  client_id: String,
+  client_session_id: String,
+  client_command_batch_id: String,
+  created_at: String,
+}
+
+impl From<CommandContext> for EventContext {
+  fn from(command_context: CommandContext) -> Self {
+    Self {
+      client_id: command_context.client_id,
+      client_session_id: command_context.client_session_id,
+      client_command_batch_id: command_context.client_command_batch_id,
+      created_at: command_context
+        .created_at
+        .with_timezone(&Local)
+        .to_rfc3339(),
+    }
   }
 }
 
