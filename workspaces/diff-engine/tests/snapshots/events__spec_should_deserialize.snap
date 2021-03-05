@@ -96,7 +96,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "3960ebac-7dba-4118-97df-3af91005dc61",
                 commit_message: "\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json; charset=utf-8 Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -105,6 +104,7 @@ expression: events
                         created_at: "2020-04-08T09:23:41.635Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -1530,7 +1530,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "ea4f73a7-f2a7-424f-b0c4-4ace0e3e66fc",
                 commit_message: "Changes:\n- Added 200 Response with application/json; charset=utf-8 Body\n- Added Request with No Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -1539,6 +1538,7 @@ expression: events
                         created_at: "2020-04-08T09:24:36.528Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -2477,7 +2477,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "f72fab34-b954-4c15-be56-e018e9f63250",
                 commit_message: "Changes:\n- Added 200 Response with application/json; charset=utf-8 Body\n- Added Request with No Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -2486,6 +2485,7 @@ expression: events
                         created_at: "2020-04-08T09:25:53.872Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -3604,7 +3604,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "3fa7944b-a739-4f54-82a0-35d4e14e1ae3",
                 commit_message: "Changes:\n- Added 200 Response with application/json; charset=utf-8 Body\n- Added Request with No Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -3613,6 +3612,7 @@ expression: events
                         created_at: "2020-04-08T09:27:14.004Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -6583,7 +6583,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "e7fdf216-9413-452d-90c6-98c1864f72e5",
                 commit_message: "Changes:\n- Added 200 Response with application/json; charset=utf-8 Body\n- Added Request with No Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -6592,6 +6591,7 @@ expression: events
                         created_at: "2020-04-08T09:28:13.353Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -7702,7 +7702,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "e70ce0f3-ad70-4df1-b071-a963267e0b56",
                 commit_message: "Changes:\n- Added 200 Response with application/json; charset=utf-8 Body\n- Added Request with No Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -7711,6 +7710,7 @@ expression: events
                         created_at: "2020-04-08T09:29:18.903Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -8846,7 +8846,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "9a66ce6d-75ac-4b65-901c-08d7129e2b51",
                 commit_message: "\n\nChanges:\n- Added Request with application/json Body\n- Added 201 Response with application/json Body",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -8855,6 +8854,7 @@ expression: events
                         created_at: "2020-04-29T13:38:09.662Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -9239,7 +9239,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "2c11ed2c-d28a-4711-ad6d-dae57a072d81",
                 commit_message: "\n\nChanges:\n- Added \'400\' Response with \'application/json\' Content-Type ",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -9248,6 +9247,7 @@ expression: events
                         created_at: "2020-07-21T13:31:54.993Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -9466,7 +9466,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "ef3911d5-a55e-4542-bcd5-df906451df39",
                 commit_message: "\n\nChanges:\n- Added \'200\' Response with \'application/json\' Content-Type ",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -9475,6 +9474,7 @@ expression: events
                         created_at: "2020-07-21T13:32:34.468Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
@@ -10460,7 +10460,6 @@ expression: events
             BatchCommitStarted {
                 batch_id: "84008f7c-c965-469d-a71e-e4f61fe8939a",
                 commit_message: "\n\nChanges:\n- Added \'200\' Response with \'application/json\' Content-Type ",
-                parent_id: None,
                 event_context: Some(
                     EventContext {
                         client_id: "anonymous",
@@ -10469,6 +10468,7 @@ expression: events
                         created_at: "2020-07-22T12:07:08.462Z",
                     },
                 ),
+                parent_id: None,
             },
         ),
     ),
