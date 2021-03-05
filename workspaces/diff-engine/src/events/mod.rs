@@ -46,6 +46,16 @@ impl Event for SpecEvent {
   }
 }
 
+impl WithEventContext for SpecEvent {
+  fn with_event_context(&mut self, event_context: EventContext) {
+    match self {
+      SpecEvent::EndpointEvent(evt) => evt.with_event_context(event_context),
+      SpecEvent::RfcEvent(evt) => evt.with_event_context(event_context),
+      SpecEvent::ShapeEvent(evt) => evt.with_event_context(event_context),
+    };
+  }
+}
+
 impl SpecEvent {
   pub fn from_file(filename: impl AsRef<Path>) -> Result<Vec<SpecEvent>, EventLoadingError> {
     let file_contents = fs::read_to_string(filename)?;
@@ -101,4 +111,8 @@ impl From<avro_rs::Error> for EventLoadingError {
   fn from(err: avro_rs::Error) -> EventLoadingError {
     EventLoadingError::Avro(err)
   }
+}
+
+pub trait WithEventContext {
+  fn with_event_context(&mut self, event_context: EventContext);
 }

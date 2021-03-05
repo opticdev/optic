@@ -1,4 +1,4 @@
-use super::EventContext;
+use super::{EventContext, WithEventContext};
 use crate::commands::rfc as rfc_commands;
 use crate::commands::RfcCommand;
 use cqrs_core::Event;
@@ -67,6 +67,18 @@ impl Event for RfcEvent {
       RfcEvent::BatchCommitStarted(evt) => evt.event_type(),
       RfcEvent::BatchCommitEnded(evt) => evt.event_type(),
     }
+  }
+}
+
+impl WithEventContext for RfcEvent {
+  fn with_event_context(&mut self, event_context: EventContext) {
+    match self {
+      RfcEvent::ContributionAdded(evt) => evt.event_context.replace(event_context),
+      RfcEvent::APINamed(evt) => evt.event_context.replace(event_context),
+      RfcEvent::GitStateSet(evt) => evt.event_context.replace(event_context),
+      RfcEvent::BatchCommitStarted(evt) => evt.event_context.replace(event_context),
+      RfcEvent::BatchCommitEnded(evt) => evt.event_context.replace(event_context),
+    };
   }
 }
 
