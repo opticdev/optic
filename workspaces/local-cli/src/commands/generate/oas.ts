@@ -6,13 +6,8 @@ import { cli } from 'cli-ux';
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
-import { developerDebugLogger, fromOptic } from '@useoptic/cli-shared';
-import { lockFilePath } from '../../shared/paths';
-import { Config } from '../../config';
-import { Client, SpecServiceClient } from '@useoptic/cli-client';
-import { getUser } from '../../shared/analytics';
-import { EventEmitter } from 'events';
-import { ensureDaemonStarted } from '@useoptic/cli-server';
+import { fromOptic } from '@useoptic/cli-shared';
+import * as DiffEngine from '@useoptic/diff-engine';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.1 spec';
@@ -28,7 +23,6 @@ export default class GenerateOas extends Command {
       flags.yaml || (!flags.json && !flags.yaml) /* make this default */,
       flags.json
     );
-    process.exit(0);
   }
 }
 
@@ -38,30 +32,15 @@ export async function generateOas(
 ): Promise<{ json: string | undefined; yaml: string | undefined } | undefined> {
   try {
     const paths = await getPathsRelativeToConfig();
-    const { specStorePath } = paths;
+    const { specDirPath } = paths;
     try {
-      const daemonState = await ensureDaemonStarted(
-        lockFilePath,
-        Config.apiBaseUrl
+      const events = await getStream(
+        DiffEngine.readSpec({
+          specDirPath,
+        })
       );
 
-      const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-      developerDebugLogger(`api base url: ${apiBaseUrl}`);
-      const cliClient = new Client(apiBaseUrl);
-      cliClient.setIdentity(await getUser());
-      const cliSession = await cliClient.findSession(paths.cwd, null, null);
-      developerDebugLogger({ cliSession });
-
-      const eventEmitter = new EventEmitter();
-      const specService = new SpecServiceClient(
-        cliSession.session.id,
-        eventEmitter,
-        apiBaseUrl
-      );
-
-      const eventsString = await specService.listEvents();
-      cli.action.start('Generating OAS file');
-      const parsedOas = OasProjectionHelper.fromEventString(eventsString);
+      const parsedOas = OasProjectionHelper.fromEventString(events);
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
       cli.action.stop(
@@ -110,4 +89,12 @@ export async function emit(
     json: jsonPath,
     yaml: yamlPath,
   };
+}
+
+function getStream(stream: any) {
+  return new Promise((resolve) => {
+    const chunks: any = [];
+    stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString()));
+  });
 }
