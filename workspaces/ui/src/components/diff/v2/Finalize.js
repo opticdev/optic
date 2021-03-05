@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { useHistory } from 'react-router-dom';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';

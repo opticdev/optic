@@ -2,7 +2,7 @@
   "name": "@useoptic/client-utilities",
   "version": "9.0.13",
   "scripts": {
-    "ws:build": "yarn run tsc -b --verbose",
+    "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
     "ws:test": "echo client-utilities"
   },
@@ -16,7 +16,6 @@
   "dependencies": {
     "cross-fetch": "^3.0.4"
   },
-  "devDependencies": {},
   "files": [
     "/build"
   ]

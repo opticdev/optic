@@ -2,11 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Page from '../Page';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMachine } from '@xstate/react';
-import classnames from 'classnames';
 import { newSetupAndCheckMachine } from './setup-and-check-machine';
 import { useServices } from '../../contexts/SpecServiceContext';
 import { ShowCurrentOpticYml } from './yaml/UpdateOpticYml';
-import Grid from '@material-ui/core/Grid';
 import { HelperCard } from './HelperCard';
 import { FrameworkHelper } from './FrameworkHelper';
 import { useLatestEvent, useUserTracking } from './setup-api/useUserTracking';
@@ -28,14 +26,11 @@ import {
   UpdatedBlue,
   UpdatedBlueBackground,
 } from '../../theme';
-import { defaultCommandInit } from '@useoptic/cli-config/build/helpers/initial-task';
 import { CheckPassed } from './CheckPassed';
 import { MarkdownRender } from './fetch-docs/BuildMD';
 import { DemoStartCommandSetup } from './setup-api/SetupType';
-import { DocDarkGrey, DocGrey } from '../docs/DocConstants';
 import { LightTooltip } from '../tooltips/LightTooltip';
 import { integrationDocsOptions } from './fetch-docs/IntegrationDocs';
-import {Link} from '../Router';
 
 export function SetupPage(props) {
   const classes = useStyles();

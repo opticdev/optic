@@ -8,7 +8,7 @@ import {
 import { GenericContextFactory } from './GenericContextFactory.js';
 import debounce from 'lodash.debounce';
 import { useSnackbar } from 'notistack';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { CommandContext } from './CommandContext';
 import { InitialRfcCommandsContext } from './InitialRfcCommandsContext';
 import { useContext, useEffect, useState } from 'react';

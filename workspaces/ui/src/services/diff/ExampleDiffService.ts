@@ -21,7 +21,7 @@ import {
   ScalaJSHelpers,
   UrlCounterHelper,
 } from '@useoptic/domain/build';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import { getOrUndefined, opticEngine } from '@useoptic/domain';
 import {
   ILearnedBodies,

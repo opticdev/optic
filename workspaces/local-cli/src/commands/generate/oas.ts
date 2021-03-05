@@ -72,6 +72,7 @@ export async function emit(
   await fs.ensureDir(outputPath);
   if (shouldOutputYaml) {
     const outputFile = path.join(outputPath, 'openapi.yaml');
+    //@ts-ignore
     await fs.writeFile(outputFile, yaml.safeDump(parsedOas, { indent: 1 }));
     yamlPath = outputFile;
   }

@@ -3,7 +3,7 @@
   "version": "9.0.13",
   "scripts": {
     "ws:test": "jest",
-    "ws:build": "yarn run tsc -b --verbose",
+    "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build/*"
   },
   "repository": {
@@ -17,16 +17,16 @@
     "debug": "^4.1.1",
     "find-up": "^4.1.0",
     "get-port": "^5.1.0",
-    "jsesc": "^3.0.2",
+    "human-readable-ids": "^1.0.4",
     "js-yaml": "^3.13.1",
+    "jsesc": "^3.0.2",
     "nice-try": "^2.1.0",
-    "path-to-regexp": "^3.0.0",
-    "human-readable-ids": "^1.0.4"
+    "path-to-regexp": "^3.0.0"
   },
   "devDependencies": {
     "@types/find-up": "^4.0.0",
-    "@types/js-yaml": "^3.12.1",
     "@types/jest": "^26.0.9",
+    "@types/js-yaml": "^3.12.1",
     "jest": "^26.4.0",
     "ts-jest": "^26.2.0"
   },

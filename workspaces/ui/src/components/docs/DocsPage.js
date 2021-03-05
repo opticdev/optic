@@ -5,7 +5,6 @@ import Page, { usePageTitle } from '../Page';
 import { Link, Route, Switch, useParams, Redirect } from 'react-router-dom';
 import { RfcContext } from '../../contexts/RfcContext';
 import { DiffPreviewer, getOrUndefined, toOption } from '@useoptic/domain';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button } from '@material-ui/core';
 import {
   EndpointsContext,
@@ -21,9 +20,6 @@ import ContentTabs, { RequestTabsContextStore } from './ContentTabs';
 import { ShapeExpandedStore } from '../diff/review-diff/shape-viewers/ShapeRenderContext';
 import { ShapeOnlyViewer } from '../diff/review-diff/shape-viewers/ShapeOnlyShapeRows';
 import Paper from '@material-ui/core/Paper';
-import EmptyState from '../support/EmptyState';
-import { AddOpticLink, DocumentingYourApi } from '../support/Links';
-import { UpdateContribution } from '@useoptic/analytics/lib/events/diffs';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 import { BreadcumbX, ShapeBox } from '../diff/review-diff/BreadcrumbX';
 import {

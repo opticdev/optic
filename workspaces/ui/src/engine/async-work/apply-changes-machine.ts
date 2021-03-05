@@ -8,7 +8,7 @@ import {
   OpticIds,
   RequestsCommands,
 } from '@useoptic/domain';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import { resolvePath } from '../../components/utilities/PathUtilities';
 import { batchCommandHandler } from '../../components/utilities/BatchCommandHandler';
 import flattenDeep from 'lodash.flattendeep';

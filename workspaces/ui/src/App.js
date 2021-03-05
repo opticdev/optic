@@ -2,10 +2,9 @@ import React, { useCallback, useEffect } from 'react';
 import './App.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { appTheme } from './theme';
-import { BrowserRouter, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { JavascriptErrorDetectedInFrontend } from '@useoptic/analytics/lib/events/errors';
 import * as SupportLinks from './components/support/Links';
 
 class App extends React.Component {
