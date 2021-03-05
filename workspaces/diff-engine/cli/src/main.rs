@@ -87,17 +87,19 @@ fn main() {
         .arg(
           Arg::with_name("client-session-id")
             .long("client-session-id")
-            .required(true)
+            .required(false)
             .value_name("CLIENT_SESSION_ID")
             .takes_value(true)
+            .default_value("unknown-session")
             .help("The session id of the client requesting the commands to be committed"),
         )
         .arg(
           Arg::with_name("client-id")
             .long("client-id")
-            .required(true)
+            .required(false)
             .value_name("CLIENT_ID")
             .takes_value(true)
+            .default_value("anonymous")
             .help("Unique id of the client the commands to be committed"),
         ),
     )
