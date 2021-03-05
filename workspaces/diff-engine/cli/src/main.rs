@@ -18,6 +18,7 @@ use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
+use uuid::Uuid;
 
 fn main() {
   let cli = App::new("Optic Engine CLI")
@@ -321,20 +322,17 @@ async fn commit(
 
   let input_commands = streams::spec_events::from_json_lines(stdin);
 
-  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
-    commit_message,
-  )));
+  let batch_id = Uuid::new_v4().to_hyphenated().to_string();
+  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(
+    batch_id.clone(),
+    String::from(commit_message),
+  ));
 
   // Start event
   let start_event = spec_projection
     .execute(append_batch)
     .expect("should be able to append new batch commit to spec")
     .remove(0);
-  let batch_id = match &start_event {
-    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(event)) => Some(event.batch_id.clone()),
-    _ => None,
-  }
-  .expect("BatchCommitStarted with batch id to have been created");
 
   spec_projection.apply(start_event.clone());
 

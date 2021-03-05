@@ -16,3 +16,4 @@ serde_json = "1.0.57"
 # all of tokio for now, until we figure out what we need exactly
 tokio = { version = "~1.1.1", features = ["full"] } 
 tokio-util = { version = "0.6.3", features = ["codec"] }
+uuid = { version = "0.8.2", features = ["v4"] }

@@ -5,7 +5,6 @@ use crate::projections::{CommitId, HistoryProjection};
 use crate::queries::history::HistoryQueries;
 use cqrs_core::AggregateCommand;
 use serde::Deserialize;
-use uuid::Uuid;
 
 #[derive(Deserialize, Debug, Clone)]
 pub enum RfcCommand {
@@ -23,13 +22,14 @@ pub enum RfcCommand {
 }
 
 impl RfcCommand {
-  pub fn append_batch_commit(commit_message: String) -> Self {
-    Self::AppendBatch(AppendBatch { commit_message })
+  pub fn append_batch_commit(batch_id: String, commit_message: String) -> Self {
+    Self::AppendBatch(AppendBatch {
+      batch_id,
+      commit_message,
+    })
   }
 
-  pub fn start_batch_commit(parent_id: String, commit_message: String) -> Self {
-    let batch_id = Uuid::new_v4().to_hyphenated().to_string();
-
+  pub fn start_batch_commit(batch_id: String, parent_id: String, commit_message: String) -> Self {
     Self::StartBatchCommit(StartBatchCommit {
       batch_id,
       parent_id,
@@ -85,6 +85,7 @@ pub struct EndBatchCommit {
 
 #[derive(Debug, Clone)]
 pub struct AppendBatch {
+  pub batch_id: String,
   pub commit_message: String,
 }
 
@@ -107,6 +108,7 @@ impl AggregateCommand<HistoryProjection> for RfcCommand {
         };
 
         vec![RfcEvent::from(RfcCommand::start_batch_commit(
+          command.batch_id.clone(),
           parent_batch_id,
           command.commit_message.clone(),
         ))]
@@ -195,7 +197,8 @@ mod test {
 
     let mut projection = HistoryProjection::from(initial_events);
 
-    let command: RfcCommand = RfcCommand::append_batch_commit(String::from("second commit"));
+    let command: RfcCommand =
+      RfcCommand::append_batch_commit(String::from("test-batch-1"), String::from("second commit"));
 
     let new_events = projection
       .execute(command)
