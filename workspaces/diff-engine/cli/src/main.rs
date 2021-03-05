@@ -16,7 +16,7 @@ use std::cmp;
 use std::path::Path;
 use std::process;
 use std::sync::Arc;
-use tokio::io::{stdin, stdout, AsyncWriteExt};
+use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
 
 fn main() {
@@ -73,6 +73,15 @@ fn main() {
             .value_name("COMMIT_MESSAGE")
             .takes_value(true)
             .help("The commit message describing the commands as a whole"),
+        )
+        .arg(
+          Arg::with_name("append-to-root")
+            .long("append-to-root")
+            .required(false)
+            .takes_value(false)
+            .help(
+              "Append new batch commit to the root spec file, instead of a new spec change file",
+            ),
         ),
     )
     .subcommand(
@@ -116,42 +125,55 @@ fn main() {
   let runtime = runtime_builder.build().unwrap();
 
   runtime.block_on(async {
-    let spec_events = match spec_path_type {
-      SpecPathType::FILE => streams::spec_events::from_file(&spec_path)
+    let spec_chunks = match spec_path_type {
+      SpecPathType::FILE => streams::spec_chunks::from_root_api_file(&spec_path)
         .await
         .map_err(|err| match err {
-          errors::EventLoadingError::Io(err) => {
+          errors::SpecChunkLoaderError::Io(err) => {
             eprintln!("Could not read specification file: {}", err);
             process::exit(1);
           }
-          errors::EventLoadingError::Json(err) => {
+          errors::SpecChunkLoaderError::Json(err) => {
             eprintln!("Specification JSON file could not be parsed: {}", err);
             process::exit(1);
           }
           _ => unreachable!("Specification file not currently serialized as any other but JSON"),
         })
         .unwrap(),
-      SpecPathType::DIR => {
-        let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_path)
-          .await
-          .expect("should be able to find spec event chunks in a folder");
 
-        streams::spec_events::from_spec_chunks(spec_chunk_events)
-          .await
-          .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
-      }
+      SpecPathType::DIR => streams::spec_chunks::from_api_dir(&spec_path)
+        .await
+        .expect("should be able to find spec event chunks in a folder"),
     };
 
     match matches.subcommand() {
       ("assemble", Some(_)) => {
         eprintln!("assembling spec folder into spec");
-        assemble(&spec_events).await;
+        assemble(spec_chunks).await;
       }
       ("commit", Some(subcommand_matches)) => {
         let commit_message = subcommand_matches
           .value_of("commit-message")
           .expect("commit-message is required");
-        commit(spec_events, &spec_path, commit_message).await;
+
+        let append_to_root = subcommand_matches.is_present("append-to-root");
+
+        if append_to_root
+          && !spec_chunks
+            .iter()
+            .all(|chunk| matches!(chunk, SpecChunkEvent::Root(_)))
+        {
+          eprintln!("Commits cannot be appended to the root when non-root chunks exist");
+          process::exit(1);
+        }
+
+        commit(
+          events_from_chunks(spec_chunks).await,
+          &spec_path,
+          commit_message,
+          append_to_root,
+        )
+        .await;
       }
       _ => {
         eprintln!("diffing interations against a spec");
@@ -161,7 +183,7 @@ fn main() {
         ) * 4;
         eprintln!("using diff size {}", diff_queue_size);
 
-        diff(spec_events, diff_queue_size).await;
+        diff(events_from_chunks(spec_chunks).await, diff_queue_size).await;
       }
     };
   });
@@ -249,40 +271,23 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
   try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
-async fn assemble(spec_events: &Vec<SpecEvent>) {
+async fn assemble(spec_chunks: Vec<SpecChunkEvent>) {
+  let spec_events = events_from_chunks(spec_chunks).await;
+
   let stdout = stdout();
 
-  let mut results_sink = streams::spec_events::into_json_array_items(stdout);
-  results_sink
-    .get_mut()
-    .write_u8(b'[')
+  streams::spec_events::write_to_json_array(stdout, &spec_events)
     .await
-    .expect("could not write array start to stdout");
-
-  for spec_event in spec_events {
-    if let Err(_) = results_sink.send(spec_event).await {
-      panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
-    }
-  }
-  results_sink
-    .get_mut()
-    .write_u8(b']')
-    .await
-    .expect("could not write array start to stdout");
-
-  results_sink
-    .get_mut()
-    .flush()
-    .await
-    .expect("could not flush stdout")
+    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err));
 }
 
 async fn commit(
   spec_events: Vec<SpecEvent>,
   spec_dir_path: impl AsRef<Path>,
   commit_message: &str,
+  append_to_root: bool,
 ) {
-  let mut spec_projection = SpecProjection::from(spec_events);
+  let mut spec_projection = SpecProjection::from(spec_events.clone());
 
   let stdin = stdin(); // TODO: deal with std in never having been attached
 
@@ -342,8 +347,14 @@ async fn commit(
   new_events.append(&mut input_events);
   new_events.push(end_event);
 
-  let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
-    .expect("valid batch chunk should have been created");
+  let spec_chunk_event = if append_to_root {
+    let mut all_events = spec_events;
+    all_events.append(&mut new_events);
+    SpecChunkEvent::root_from_events(all_events)
+  } else {
+    SpecChunkEvent::batch_from_events(batch_id, new_events)
+      .expect("valid batch chunk should have been created")
+  };
 
   streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
     .await
@@ -351,7 +362,9 @@ async fn commit(
       panic!("could not write new spec batch chunk to api dir: {:?}", err);
     });
 
-  assemble(spec_chunk_event.events()).await
+  streams::spec_events::write_to_json_array(stdout(), spec_chunk_event.events())
+    .await
+    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err))
 }
 
 enum SpecPathType {
@@ -370,6 +383,12 @@ impl From<(InteractionDiffResult, &Tags)> for ResultContainer<InteractionDiffRes
     let fingerprint = result.fingerprint();
     Self(result, tags.clone(), fingerprint)
   }
+}
+
+async fn events_from_chunks(chunks: Vec<SpecChunkEvent>) -> Vec<SpecEvent> {
+  streams::spec_events::from_spec_chunks(chunks)
+    .await
+    .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
 }
 
 #[cfg(test)]

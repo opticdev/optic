@@ -188,7 +188,7 @@ mod test {
   pub fn can_handle_append_batch_command() {
     let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
-      {"BatchCommitStarted": {"batchId": "batch_1","parentId": "root", "commitMessage": "initial commit"}},
+      {"BatchCommitStarted": {"batchId": "batch_1", "commitMessage": "initial commit"}},
       {"BatchCommitEnded": {"batchId": "batch_1" }}
     ]))
     .expect("initial events should be valid spec events");

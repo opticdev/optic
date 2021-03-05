@@ -27,6 +27,7 @@ impl SpecAssemblerProjection {
     if self.root_chunk.is_some() {
       panic!("SpecAssemblerProjection cannot handle applying more than a single root chunk");
     }
+
     self.root_chunk = Some(chunk);
   }
 
@@ -45,7 +46,7 @@ impl SpecAssemblerProjection {
       .root_chunk
       .ok_or_else(|| SpecAssemblerError::RootChunkRequired)?;
 
-    let mut current_chunk_id = root_chunk.id.clone();
+    let mut current_chunk_id = root_chunk.last_batch_id().clone();
     let mut chunks = vec![SpecChunkEvent::Root(root_chunk)];
     let mut chunks_by_parent_id = self.chunks_by_parent_id;
 
