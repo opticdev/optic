@@ -1,0 +1,20 @@
+{
+  "name": "@useoptic/ui-lib",
+  "version": "9.0.13",
+  "scripts": {
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build/*",
+    "ws:test": "echo ui-lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/ui-lib"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "/build",
+    "/.env"
+  ]
+}
