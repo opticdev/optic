@@ -148,7 +148,7 @@ fn main() {
 
     match matches.subcommand() {
       ("assemble", Some(_)) => {
-        eprintln!("assembling spec folder into spec");
+        // eprintln!("assembling spec folder into spec");
         assemble(spec_chunks).await;
       }
       ("commit", Some(subcommand_matches)) => {

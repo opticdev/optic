@@ -7,6 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
+import * as DiffEngine from '@useoptic/diff-engine';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.1 spec';
@@ -31,18 +32,22 @@ export async function generateOas(
 ): Promise<{ json: string | undefined; yaml: string | undefined } | undefined> {
   try {
     const paths = await getPathsRelativeToConfig();
-    const { specStorePath } = paths;
+    const { specDirPath } = paths;
     try {
-      const eventsBuffer = await fs.readFile(specStorePath);
-      const eventsString = eventsBuffer.toString();
-      cli.action.start('Generating OAS file');
-      const parsedOas = OasProjectionHelper.fromEventString(eventsString);
+      const events = await getStream(
+        DiffEngine.readSpec({
+          specDirPath,
+        })
+      );
+
+      const parsedOas = OasProjectionHelper.fromEventString(events);
+
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
-      cli.action.stop(
+      console.log(
         '\n' +
           fromOptic(
-            `Generated OAS file${filePaths.length > 1 && 's'} \n` +
+            `Generated OAS file${filePaths.length > 1 && 's'}` +
               filePaths.join('\n')
           )
       );
@@ -85,4 +90,12 @@ export async function emit(
     json: jsonPath,
     yaml: yamlPath,
   };
+}
+
+async function getStream(stream: any) {
+  const chunks: Buffer[] = [];
+  for await (let chunk of stream) {
+    chunks.push(chunk); // should already be a Buffer
+  }
+  return Buffer.concat(chunks).toString();
 }
