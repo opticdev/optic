@@ -41,12 +41,13 @@ export async function generateOas(
       );
 
       const parsedOas = OasProjectionHelper.fromEventString(events);
+
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
-      cli.action.stop(
+      console.log(
         '\n' +
           fromOptic(
-            `Generated OAS file${filePaths.length > 1 && 's'} \n` +
+            `Generated OAS file${filePaths.length > 1 && 's'}` +
               filePaths.join('\n')
           )
       );
@@ -91,10 +92,10 @@ export async function emit(
   };
 }
 
-function getStream(stream: any) {
-  return new Promise((resolve) => {
-    const chunks: any = [];
-    stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString()));
-  });
+async function getStream(stream: any) {
+  const chunks: Buffer[] = [];
+  for await (let chunk of stream) {
+    chunks.push(chunk); // should already be a Buffer
+  }
+  return Buffer.concat(chunks).toString();
 }
