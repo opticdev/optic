@@ -279,6 +279,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
 #[cfg(test)]
 mod test {
   use super::*;
+  use chrono::Local;
   use insta::assert_debug_snapshot;
   use serde_json::json;
 
@@ -289,14 +290,14 @@ mod test {
     ]))
     .expect("initial events should be valid spec events");
 
-    let mut command_handler = SpecCommandHandler::from(initial_events);
+    let mut projection = SpecProjection::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"AddPathParameter": {"pathId": "path_2","parentPathId": "path_1","name": "todoId"}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = command_handler
+    let new_events = projection
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 3);
@@ -307,7 +308,7 @@ mod test {
       {"AddPathParameter": {"pathId": "path_2","parentPathId": "not-a-path","name": "todoId"}}
     ))
     .unwrap();
-    let unexisting_parent_result = command_handler.execute(unexisting_parent);
+    let unexisting_parent_result = projection.execute(unexisting_parent);
     assert!(unexisting_parent_result.is_err());
     assert_debug_snapshot!(
       "can_handle_add_path_parameter_command__unexisting_parent_result",
@@ -318,7 +319,7 @@ mod test {
       {"AddPathParameter": {"pathId": "path_1","parentPathId": "path_1","name": "todoId"}}
     ))
     .unwrap();
-    let unassignable_path_id_result = command_handler.execute(unassignable_path_id);
+    let unassignable_path_id_result = projection.execute(unassignable_path_id);
     assert!(unassignable_path_id_result.is_err());
     assert_debug_snapshot!(
       "can_handle_add_path_parameter_command__unassignable_path_id_result",
@@ -326,7 +327,7 @@ mod test {
     );
 
     for event in new_events {
-      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -339,14 +340,14 @@ mod test {
     ]))
     .expect("initial events should be valid spec events");
 
-    let mut command_handler = SpecCommandHandler::from(initial_events);
+    let mut projection = SpecProjection::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = command_handler
+    let new_events = projection
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -354,7 +355,7 @@ mod test {
     let setting_root_path: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"root","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     )).unwrap();
-    let setting_root_path_result = command_handler.execute(setting_root_path);
+    let setting_root_path_result = projection.execute(setting_root_path);
     assert!(setting_root_path_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__setting_root_path_result",
@@ -364,7 +365,7 @@ mod test {
     let unexisting_path: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"not-a-path","shapedRequestParameterShapeDescriptor":{"shapeId":"string_shape_1","isRemoved":false}}}
     )).unwrap();
-    let unexisting_path_result = command_handler.execute(unexisting_path);
+    let unexisting_path_result = projection.execute(unexisting_path);
     assert!(unexisting_path_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__unexisting_path_result",
@@ -374,7 +375,7 @@ mod test {
     let unexisting_shape: SpecCommand = serde_json::from_value(json!(
       {"SetPathParameterShape":{"pathId":"path_2","shapedRequestParameterShapeDescriptor":{"shapeId":"not_a_shape_id","isRemoved":false}}}
     )).unwrap();
-    let unexisting_shape_result = command_handler.execute(unexisting_shape);
+    let unexisting_shape_result = projection.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_path_parameter_shape_command__unexisting_shape_result",
@@ -382,7 +383,7 @@ mod test {
     );
 
     for event in new_events {
-      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -395,14 +396,14 @@ mod test {
     ]))
     .expect("initial events should be valid endpoint events");
 
-    let mut command_handler = SpecCommandHandler::from(initial_events);
+    let mut projection = SpecProjection::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetRequestBodyShape": {"requestId": "request_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "string_shape_1", "isRemoved": false }}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = command_handler
+    let new_events = projection
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -415,7 +416,7 @@ mod test {
       {"SetRequestBodyShape": {"requestId": "request_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "not-a-shape-id", "isRemoved": false }}}
     ))
     .unwrap();
-    let unexisting_shape_result = command_handler.execute(unexisting_shape);
+    let unexisting_shape_result = projection.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_request_body_shape_command__unexisting_shape_result",
@@ -423,7 +424,7 @@ mod test {
     );
 
     for event in new_events {
-      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
   }
 
@@ -437,14 +438,14 @@ mod test {
     ]))
     .expect("initial events should be valid endpoint events");
 
-    let mut command_handler = SpecCommandHandler::from(initial_events);
+    let mut projection = SpecProjection::from(initial_events);
 
     let valid_command: SpecCommand = serde_json::from_value(json!(
       {"SetResponseBodyShape": {"responseId": "response_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "string_shape_1", "isRemoved": false }}}
     ))
     .expect("example command should be a valid command");
 
-    let new_events = command_handler
+    let new_events = projection
       .execute(valid_command)
       .expect("valid command should yield new events");
     assert_eq!(new_events.len(), 1);
@@ -457,7 +458,7 @@ mod test {
       {"SetResponseBodyShape": {"responseId": "response_1", "bodyDescriptor": { "httpContentType": "application/json", "shapeId": "not-a-shape-id", "isRemoved": false }}}
     ))
     .unwrap();
-    let unexisting_shape_result = command_handler.execute(unexisting_shape);
+    let unexisting_shape_result = projection.execute(unexisting_shape);
     assert!(unexisting_shape_result.is_err());
     assert_debug_snapshot!(
       "can_handle_set_response_body_shape_command__unexisting_shape_result",
@@ -465,7 +466,67 @@ mod test {
     );
 
     for event in new_events {
-      command_handler.apply(event); // verify this doesn't panic goes a long way to verifying the events
+      projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
+  }
+
+  #[test]
+  pub fn spec_handler_provides_event_context_from_capture_context() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut command_handler = SpecCommandHandler::from(initial_events);
+
+    let command_context = CommandContext::new(
+      String::from("test-batch-1"),
+      String::from("test-client-id"),
+      String::from("test-client-session-id"),
+      Utc.timestamp(0, 0),
+    );
+
+    command_handler.with_command_context(command_context.clone());
+
+    let valid_command: SpecCommand = serde_json::from_value(json!(
+      {"AddPathComponent": {"pathId": "path_2","parentPathId": "path_1","name": "completed"}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = command_handler
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+
+    let new_event = match new_events.get(0) {
+      Some(SpecEvent::EndpointEvent(EndpointEvent::PathComponentAdded(event))) => event,
+      _ => unreachable!(
+        "PathComponentAdded event should have been generated from AddPathComponent command"
+      ),
+    };
+
+    assert!(new_event.event_context.is_some());
+    let event_context = new_event.event_context.clone().unwrap();
+
+    assert_eq!(event_context.client_id, command_context.client_id);
+    assert_eq!(
+      event_context.client_session_id,
+      command_context.client_session_id
+    );
+    assert_eq!(
+      event_context.client_command_batch_id,
+      command_context.client_command_batch_id
+    );
+    assert_eq!(
+      event_context.created_at,
+      command_context
+        .created_at
+        .with_timezone(&Local)
+        .to_rfc3339()
+    );
+
+    assert_debug_snapshot!(
+      "spec_handler_provides_event_context_from_capture_context",
+      &new_event
+    );
   }
 }
