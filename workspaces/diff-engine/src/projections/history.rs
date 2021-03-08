@@ -68,33 +68,35 @@ impl HistoryProjection {
     parent_batch_id: Option<CommitId>,
     commit_message: String,
   ) {
-    // TODO: refactor how we determine what the root commit is and how it gets created,
-    // perhaps by wrapping the events from specification.json in batch commit, the first
-    // of which has "root" an id. That's best done in the SpecChunk logic.
-    if let Some(parent_batch_id) = parent_batch_id {
-      let node = Node::BatchCommit(BatchCommitNode(
-        batch_id.clone(),
-        BatchCommitDescriptor {
-          commit_message,
-          is_complete: false,
-        },
-      ));
-      let node_index = self.graph.add_node(node);
-      self.node_id_to_index.insert(batch_id.clone(), node_index);
-
-      let parent_node_index = *self
-        .node_id_to_index
-        .get(&parent_batch_id)
-        .expect("expected parent commit to have a corresponding node");
-
+    let parent_batch_id = parent_batch_id.unwrap_or_else(|| {
       self
-        .graph
-        .add_edge(parent_node_index, node_index, Edge::IsParentOf);
+        .get_commit_id(&self.find_last_batch_commit_index().unwrap())
+        .unwrap()
+        .clone()
+    });
 
-      if parent_batch_id == ROOT_COMMIT_ID {
-        self.with_batch_commit_end(CommitId::from(ROOT_COMMIT_ID));
-      }
+    if parent_batch_id == ROOT_COMMIT_ID {
+      self.with_batch_commit_end(CommitId::from(ROOT_COMMIT_ID));
     }
+
+    let node = Node::BatchCommit(BatchCommitNode(
+      batch_id.clone(),
+      BatchCommitDescriptor {
+        commit_message,
+        is_complete: false,
+      },
+    ));
+    let node_index = self.graph.add_node(node);
+    self.node_id_to_index.insert(batch_id.clone(), node_index);
+
+    let parent_node_index = *self
+      .node_id_to_index
+      .get(&parent_batch_id)
+      .expect("expected parent commit to have a corresponding node");
+
+    self
+      .graph
+      .add_edge(parent_node_index, node_index, Edge::IsParentOf);
   }
 
   fn with_batch_commit_end(&mut self, batch_id: CommitId) {
@@ -189,7 +191,7 @@ impl HistoryProjection {
     });
 
     // @GOTCHA: this assumes there's the commit graph is a commit log, with no branches
-    let mut leaf_node_index = None;
+    let mut leaf_node_index = Some(root_node_index);
     visit::depth_first_search(&self.graph, Some(root_node_index), |event| {
       if let visit::DfsEvent::TreeEdge(parent_node_index, child_node_index) = event {
         leaf_node_index.replace(child_node_index);

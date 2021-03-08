@@ -239,6 +239,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         const events = DiffEngine.commit(commands, {
           specDirPath: req.optic.paths.specDirPath,
           commitMessage: payload.commitMessage,
+          appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
         });
 
         events.pipe(res).type('application/json');

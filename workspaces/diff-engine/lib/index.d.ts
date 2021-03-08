@@ -13,10 +13,13 @@ export function spawn({
 
 export function readSpec({ specDirPath: string }): Readable;
 
-export function commit<T>(
-  commands: AsyncIterable<T>,
-  { specDirPath: String, commitMessage: String }
-): Readable;
+export interface CommitOptions {
+  specDirPath: String;
+  commitMessage: String;
+  appendToRoot?: boolean;
+}
+
+export function commit<T>(commands: AsyncIterable<T>, CommitOptions): Readable;
 
 export interface DiffEngineError extends Error {
   // The numeric exit code of the diff engine process that was run.

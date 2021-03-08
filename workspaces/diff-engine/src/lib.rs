@@ -26,4 +26,7 @@ pub use state::body::BodyDescriptor;
 
 pub mod errors {
   pub use super::events::EventLoadingError;
+
+  #[cfg(feature = "streams")]
+  pub use super::streams::spec_chunks::{SpecChunkLoaderError, SpecChunkWriterError};
 }

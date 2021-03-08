@@ -63,7 +63,7 @@ function readSpec({ specDirPath }) {
   return output;
 }
 
-function commit(commands, { commitMessage, specDirPath }) {
+function commit(commands, { commitMessage, specDirPath, appendToRoot }) {
   if (typeof commands[Symbol.asyncIterator] !== 'function')
     new Error('commandStream must be AsyncIterator to commit commands');
   if (typeof commitMessage !== 'string')
@@ -79,7 +79,13 @@ function commit(commands, { commitMessage, specDirPath }) {
 
   const commitProcess = Execa(
     binPath,
-    [specDirPath, 'commit', '-m', messageArgument],
+    [
+      specDirPath,
+      'commit',
+      '-m',
+      messageArgument,
+      ...(appendToRoot ? ['--append-to-root'] : []),
+    ],
     {
       stdio: ['pipe', 'pipe', 'inherit'],
     }
@@ -182,7 +188,7 @@ async function install(options) {
   );
   if (downloadStream.statusCode === 404) {
     throw new Error(
-      `Pre-built binary ${Config.binaryName}-${platform.name}@${Config.version} was not published`
+      `Pre-built binary ${Config.binaryName}-${platform.name}@${Config.version} was not published to: ${Config.prebuilt.baseUrl}/v${Config.version}/${archiveName}.tar.gz`
     );
   }
 
