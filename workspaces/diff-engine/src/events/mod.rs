@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-use chrono::{DateTime, Local, TimeZone};
+use chrono::{DateTime, Local, TimeZone, Utc};
 pub use cqrs_core::{AggregateEvent, Event};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 use serde_json;
 use std::fs;
 use std::io;
@@ -116,7 +116,21 @@ pub struct EventContext {
   pub client_id: String,
   pub client_session_id: String,
   pub client_command_batch_id: String,
+
+  #[serde(serialize_with = "created_at_to_local_timezone")]
   pub created_at: String,
+}
+
+fn created_at_to_local_timezone<S>(created_at: &String, serializer: S) -> Result<S::Ok, S::Error>
+where
+  S: Serializer,
+{
+  if let Ok(parsed_date) = DateTime::parse_from_rfc3339(created_at) {
+    let local = parsed_date.with_timezone(&Local);
+    serializer.serialize_str(&local.to_rfc3339())
+  } else {
+    serializer.serialize_str(&created_at)
+  }
 }
 
 impl From<CommandContext> for EventContext {
@@ -125,10 +139,7 @@ impl From<CommandContext> for EventContext {
       client_id: command_context.client_id,
       client_session_id: command_context.client_session_id,
       client_command_batch_id: command_context.client_command_batch_id,
-      created_at: command_context
-        .created_at
-        .with_timezone(&Local)
-        .to_rfc3339(),
+      created_at: command_context.created_at.to_rfc3339(),
     }
   }
 }

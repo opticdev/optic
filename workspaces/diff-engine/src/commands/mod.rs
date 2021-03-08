@@ -518,10 +518,7 @@ mod test {
     );
     assert_eq!(
       event_context.created_at,
-      command_context
-        .created_at
-        .with_timezone(&Local)
-        .to_rfc3339()
+      command_context.created_at.to_rfc3339()
     );
 
     assert_debug_snapshot!(
