@@ -1,5 +1,5 @@
 // DO NOT EDIT! This file was generated via workspace-scripts/diff-engine/generate-tests
-use insta::assert_debug_snapshot;
+use insta::{assert_debug_snapshot, assert_json_snapshot};
 use optic_diff_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
 
@@ -20,6 +20,14 @@ pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d
   assert_debug_snapshot!(
     "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__conflicts_graph",
     Dot::with_config(&spec_projection.conflicts().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__spectacle_endpoints_graph",
+    Dot::with_config(&spec_projection.spectacle_endpoints().graph, &[])
+  );
+  assert_json_snapshot!(
+    "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__spectacle_endpoints_json",
+    &spec_projection.spectacle_endpoints_serializable()
   );
   let interactions_string = std::fs::read_to_string(interactions_file_path)
     .expect("expected interactions file to be readable");

@@ -28,6 +28,13 @@ tasks:
       OPTIC_SKIP_PREBUILT_INSTALLS: "true"
     cmds:
       - yarn install
+    generates:
+      - .yarn/**/*
+      - yarn.lock
+    sources:
+      - workspaces/*/package.json
+      - package.json
+      - yarn.lock
 
   workspaces:build:
     desc: Build Yarn workspaces

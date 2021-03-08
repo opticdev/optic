@@ -1,0 +1,285 @@
+---
+source: workspaces/diff-engine/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.spectacle_endpoints_serializable()"
+---
+{
+  "nodes": [
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/",
+        "pathId": "root"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/posts",
+        "pathId": "path_9Wdr4kyshW"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/comments",
+        "pathId": "path_8paa69fCfC"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/profile",
+        "pathId": "path_osi3pD8diw"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_w0KmJ5kZIe"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_iQd5ISIZH9"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_E9IzHThmZv"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_CEJzcYN3NN"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_ata4rM8zB1"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_UlLNexyAzZ"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_AJISCmgnoU"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_HZFYN85Iui"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_MiVhGwZrMY"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/posts",
+        "pathId": "path_rmPGKep5SW"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/profile",
+        "pathId": "path_CmA4ZrhSXc"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_lUXaqigODI"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_zEjgh3n6Uq"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_GsyFkrJzlL"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_ncEWlZU2g3"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_pan3yNmeiQ"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_ApnstcbWQx"
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      1,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      5,
+      1,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      6,
+      5,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      7,
+      2,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      8,
+      2,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      9,
+      8,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      10,
+      3,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      11,
+      3,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      12,
+      11,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      15,
+      13,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      16,
+      13,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      17,
+      16,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      18,
+      14,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      19,
+      14,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      20,
+      19,
+      {
+        "type": "IsChildOf"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "root",
+    "1": "path_9Wdr4kyshW",
+    "10": "request_AJISCmgnoU",
+    "11": "response_HZFYN85Iui",
+    "13": "path_rmPGKep5SW",
+    "14": "path_CmA4ZrhSXc",
+    "15": "request_lUXaqigODI",
+    "16": "response_zEjgh3n6Uq",
+    "18": "request_ncEWlZU2g3",
+    "19": "response_pan3yNmeiQ",
+    "2": "path_8paa69fCfC",
+    "3": "path_osi3pD8diw",
+    "4": "request_w0KmJ5kZIe",
+    "5": "response_iQd5ISIZH9",
+    "7": "request_CEJzcYN3NN",
+    "8": "response_ata4rM8zB1"
+  }
+}

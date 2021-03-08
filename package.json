@@ -26,6 +26,8 @@
     "workspaces/saas-types",
     "workspaces/diff-engine",
     "workspaces/diff-engine-wasm",
+    "workspaces/graph-lib",
+    "workspaces/spectacle",
     "workspaces/cli-config",
     "workspaces/cli-shared",
     "workspaces/client-utilities",

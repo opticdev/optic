@@ -75,8 +75,9 @@ impl AggregateEvent<ConflictsProjection> for EndpointEvent {
         //@TODO: projection.with_response_body_content_type(...)
       }
       _ => eprintln!(
-        "Ignoring applying event of type '{}' for ConflictsProjection",
-        self.event_type()
+        "Ignoring applying event of type '{}' for '{}'",
+        self.event_type(),
+        ConflictsProjection::aggregate_type()
       ),
     }
   }
