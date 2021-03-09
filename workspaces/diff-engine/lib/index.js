@@ -87,10 +87,8 @@ function commit(
 
   const binPath = getBinPath();
 
-  // Execa requires escaping of spaces for arguments, but nothing else
-  let messageArgument = commitMessage.replaceAll(/(\s)/g, '\\$1');
-
-  const optionalArgs = Object.entries({
+  const args = Object.entries({
+    '-m': commitMessage,
     '--append-to-root': appendToRoot,
     '--client-id': clientId,
     '--client-session-id': clientSessionId,
@@ -100,13 +98,9 @@ function commit(
       typeof value === 'string' ? [key, value] : [key]
     );
 
-  const commitProcess = Execa(
-    binPath,
-    [specDirPath, 'commit', '-m', messageArgument, ...optionalArgs],
-    {
-      stdio: ['pipe', 'pipe', 'inherit'],
-    }
-  );
+  const commitProcess = Execa(binPath, [specDirPath, 'commit', ...args], {
+    stdio: ['pipe', 'pipe', 'inherit'],
+  });
 
   input.pipe(commitProcess.stdin);
   commitProcess.stdout.pipe(output);
