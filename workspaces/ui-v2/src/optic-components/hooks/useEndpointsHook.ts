@@ -1,6 +1,8 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 
-export function useEndpoints(renderChangesSince?: string): IEndpoint[] {
+export function useEndpoints(
+  renderChangesSince?: string
+): { endpoints: IEndpoint[]; loading?: boolean } {
   //@TODO
 
   const { data } = useSpectacleQuery({
@@ -28,7 +30,7 @@ export function useEndpoints(renderChangesSince?: string): IEndpoint[] {
   });
 
   if (data) {
-    return data.request.map((request: any) => {
+    const endpoints = data.request.map((request: any) => {
       return {
         pathId: request.pathId,
         method: request.method,
@@ -37,9 +39,12 @@ export function useEndpoints(renderChangesSince?: string): IEndpoint[] {
         pathParameters: [],
       } as IEndpoint;
     });
+    return {
+      endpoints,
+    };
+  } else {
+    return { endpoints: [], loading: true };
   }
-
-  return [];
 }
 
 export interface IEndpoint {

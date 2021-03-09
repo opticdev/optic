@@ -28,7 +28,13 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
           <ContributionGroup rootShape={[tempExample]} />
         </>
       }
-      right={<BodyRender location="application/json" shape={tempExample} />}
+      right={
+        <BodyRender
+          location="application/json"
+          shape={tempExample}
+          style={{ marginTop: 35 }}
+        />
+      }
     />
   );
 }

@@ -24,6 +24,7 @@ import { CodeBlock } from '../documentation/BodyRender';
 import { SubtleBlueBackground } from '../theme';
 import { TwoColumnBody } from '../documentation/RenderBody';
 import { getEndpointId } from '../utilities/endpoint-utilities';
+import { Loading } from '../navigation/Loading';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -56,13 +57,17 @@ export function DocsPageAccessoryNavigation(props: any) {
 }
 
 function DocumentationRootPage(props: any) {
-  const endpoints = useEndpoints();
+  const { endpoints, loading } = useEndpoints();
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
@@ -106,7 +111,7 @@ function DocumentationRootPage(props: any) {
 }
 
 function EndpointRootPage(props: any) {
-  const endpoints = useEndpoints();
+  const { endpoints, loading } = useEndpoints();
 
   const { match } = props;
   const { pathId, method } = match.params;
@@ -117,6 +122,10 @@ function EndpointRootPage(props: any) {
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
     [pathId, method, endpoints]
   );
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;

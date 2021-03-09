@@ -9,6 +9,7 @@ import { ChoiceTabs } from '../shapes/OneOfTabs';
 export type BodyRenderProps = {
   shape: IShapeRenderer;
   location: string;
+  style: any;
 };
 
 export function BodyRender(props: BodyRenderProps) {
@@ -18,13 +19,12 @@ export function BodyRender(props: BodyRenderProps) {
 
   useEffect(() => {
     if (contentRef && contentRef.current) {
-
       contentRef.current.scrollTop = 0;
     }
   }, [showExample]);
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.wrapper} style={props.style}>
       <div className={classes.header}>
         <div>{props.location}</div>
         <div style={{ flex: 1 }} />
@@ -33,7 +33,7 @@ export function BodyRender(props: BodyRenderProps) {
           setValue={setValue}
           choices={[
             { label: 'example', id: 'example' },
-            { label: 'shape', id: 'shape' }
+            { label: 'shape', id: 'shape' },
           ]}
         />
       </div>
@@ -67,11 +67,11 @@ export function CodeBlock({ header, children, headerText }: CodeBlockProps) {
 const useStyles = makeStyles((theme) => ({
   wrapper: {
     overflow: 'hidden',
-    backgroundColor: '#f8fafc'
+    backgroundColor: '#f8fafc',
   },
   headerRegion: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   content: {
     paddingTop: 8,
@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     borderRight: '1px solid #e4e8ed',
     borderBottom: '1px solid #e4e8ed',
     borderBottomRightRadius: 4,
-    borderBottomLeftRadius: 4
+    borderBottomLeftRadius: 4,
   },
   header: {
     backgroundColor: '#e4e8ed',
@@ -99,6 +99,6 @@ const useStyles = makeStyles((theme) => ({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: 'hidden',
-    borderBottom: '1px solid #e2e2e2'
-  }
+    borderBottom: '1px solid #e2e2e2',
+  },
 }));

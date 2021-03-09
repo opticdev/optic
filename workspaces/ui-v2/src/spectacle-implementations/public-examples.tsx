@@ -5,6 +5,7 @@ import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
+import { Loading } from '../optic-components/navigation/Loading';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -29,25 +30,21 @@ export default function PublicExamples() {
   };
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
-    return <div>loading...</div>;
+    return <Loading />;
   }
   if (error) {
     return <div>error :(</div>;
   }
 
-  if (data) {
-    return (
-      <SpectacleStore spectacle={data}>
-        <BaseUrlProvider value={{ url: match.url }}>
-          <Switch>
-            <DocumentationPages />
-          </Switch>
-        </BaseUrlProvider>
-      </SpectacleStore>
-    );
-  }
-
-  return <div></div>;
+  return (
+    <SpectacleStore spectacle={data!}>
+      <BaseUrlProvider value={{ url: match.url }}>
+        <Switch>
+          <DocumentationPages />
+        </Switch>
+      </BaseUrlProvider>
+    </SpectacleStore>
+  );
 }
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<{
