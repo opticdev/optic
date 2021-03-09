@@ -2,9 +2,7 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import padLeft from 'pad-left';
 import { methodColorsDark } from '../theme';
-import {
-  ListItem,
-} from '@material-ui/core';
+import { ListItem } from '@material-ui/core';
 import { EndpointNameMiniContribution } from './Contributions';
 export type EndpointNameProps = {
   method: string;
@@ -25,10 +23,7 @@ export function EndpointName({
   const color = methodColorsDark[method.toUpperCase()];
   return (
     <div className={classes.wrapper}>
-      <div
-        className={classes.method}
-        style={{ color, fontSize }}
-      >
+      <div className={classes.method} style={{ color, fontSize }}>
         {paddedMethod.toUpperCase()}
       </div>
       <div className={classes.fullPath} style={{ fontSize }}>
@@ -51,8 +46,6 @@ export function EndpointRow({
   endpointId,
   onClick,
 }: EndpointRowProps) {
-  const classes = useStyles();
-
   return (
     <ListItem
       button

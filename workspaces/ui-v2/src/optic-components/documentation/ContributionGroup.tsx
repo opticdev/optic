@@ -3,15 +3,12 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import { DepthStore } from '../shapes/DepthContext';
 import { FieldOrParameterContribution } from './Contributions';
-import { useContributionEditing } from '../hooks/edit/Contributions';
 
 type ContributionGroupProps = { rootShape: IShapeRenderer[] };
 
 export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
   const classes = useStyles();
   const contributions = createFlatList(rootShape);
-
-  const { lookupContribution } = useContributionEditing();
 
   return (
     <DepthStore depth={0}>
