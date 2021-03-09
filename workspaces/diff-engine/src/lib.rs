@@ -7,6 +7,7 @@ mod projections;
 mod protos;
 mod queries;
 mod shapes;
+mod spec;
 mod state;
 
 #[cfg(feature = "streams")]

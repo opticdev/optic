@@ -351,6 +351,7 @@ dependencies = [
  "optic_diff_engine",
  "serde",
  "serde_json",
+ "uuid",
  "wasm-bindgen",
  "wasm-logger",
 ]
