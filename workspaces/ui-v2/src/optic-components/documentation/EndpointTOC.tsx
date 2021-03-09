@@ -1,11 +1,8 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { CodeBlock } from './BodyRender';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
 import {
-  OpticBlueReadable,
-  SubtleBlueBackground,
   SubtleGreyBackground,
 } from '../theme';
 import { IRequestBody, IResponseBody } from '../hooks/useEndpointBodyHook';

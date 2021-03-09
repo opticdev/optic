@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Route } from 'react-router-dom';
 import { TopNavigation } from './TopNavigation';

@@ -19,13 +19,16 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   const { query } = useContext(SpectacleContext) as Spectacle;
   const [result, setResult] = useState({ loading: true });
 
+  const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
       const result = await query(input);
+      console.log('abc', result);
       setResult(result);
     }
     task();
-  }, [JSON.stringify(input)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stringInput, query]);
 
   return result;
 }

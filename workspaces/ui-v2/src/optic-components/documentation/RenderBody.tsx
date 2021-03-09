@@ -1,10 +1,6 @@
-import * as React from 'react'; import { useEffect, useRef, useState } from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
-import { Paper, Typography } from '@material-ui/core';
+import * as React from 'react';
+import { Typography } from '@material-ui/core';
 import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
-import { RenderRootShape, ShapeRowBase } from '../shapes/ShapeRowBase';
-import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
-import { ChoiceTabs } from '../shapes/OneOfTabs';
 import { TwoColumn } from './TwoColumn';
 import { BodyRender } from './BodyRender';
 import { ContributionGroup } from './ContributionGroup';
@@ -16,8 +12,6 @@ export type TwoColumnBodyProps = {
 };
 
 export function TwoColumnBody(props: TwoColumnBodyProps) {
-  const classes = useStyles();
-
   return (
     <TwoColumn
       style={{ marginTop: 50 }}
@@ -38,8 +32,6 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
     />
   );
 }
-
-const useStyles = makeStyles((theme) => ({}));
 
 ///delete me
 const tempExample: IShapeRenderer = {

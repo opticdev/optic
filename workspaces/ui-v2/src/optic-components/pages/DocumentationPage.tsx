@@ -8,7 +8,7 @@ import {
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../hooks/useEndpointsHook';
-import { Divider, List, Typography } from '@material-ui/core';
+import { List, Typography } from '@material-ui/core';
 import { EndpointName, EndpointRow } from '../documentation/EndpointName';
 import { ContributionEditingStore } from '../hooks/edit/Contributions';
 import { EditContributionsButton } from '../hooks/edit/EditContributionsButton';
@@ -24,7 +24,6 @@ import { CodeBlock } from '../documentation/BodyRender';
 import { SubtleBlueBackground } from '../theme';
 import { TwoColumnBody } from '../documentation/RenderBody';
 import { getEndpointId } from '../utilities/endpoint-utilities';
-import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -116,14 +115,14 @@ function EndpointRootPage(props: any) {
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method]
+    [pathId, method, endpoints]
   );
 
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
-
   const endpointId = getEndpointId({ method, pathId });
+
   return (
     <FullWidth style={{ paddingBottom: 400 }}>
       <EndpointNameContribution

@@ -53,9 +53,8 @@ export const RenderField = ({
   required,
   changelog,
 }: IFieldRenderer) => {
-  const classes = useStyles();
   const sharedClasses = useSharedStyles();
-  const { Indent, depth } = useDepth();
+  const { depth } = useDepth();
 
   return (
     <>
@@ -191,20 +190,19 @@ export function OneOfRender({
   shapes: IShapeRenderer[];
   parentShapeId: string;
 }) {
-  const { showExamples, getChoice } = useShapeRenderContext();
-  const { depth } = useDepth();
+  const { getChoice } = useShapeRenderContext();
   if (shapes.length === 1) {
     throw new Error('This is not a one of');
   }
 
   const choices = shapes.map((i) => ({
     label: i.jsonType.toString().toLowerCase(),
-    id: i.shapeId
+    id: i.shapeId,
   }));
 
   const tabProps = {
     choices,
-    parentShapeId
+    parentShapeId,
   };
 
   const chosenShapeToRender = choices.find((i) => i.id === getChoice(tabProps));
@@ -216,10 +214,7 @@ export function OneOfRender({
     throw new Error(`expected to find the chosen shape`);
   }
   return (
-    <RenderRootShape
-      right={[<OneOfTabs {...tabProps} />]}
-      shape={shape}
-    />
+    <RenderRootShape right={[<OneOfTabs {...tabProps} />]} shape={shape} />
   );
 }
 

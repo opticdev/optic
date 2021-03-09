@@ -6,6 +6,7 @@ type Query {
   request: [HttpRequest]
 }
 type HttpBody {
+  id: String
   contentType: String
   rootShapeId: String
 }

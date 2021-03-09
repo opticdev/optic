@@ -95,6 +95,9 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
     },
     HttpBody: {
+      id: (parent: any) => {
+        return Promise.resolve(parent.result.data.requestId);
+      },
       contentType: (parent: any) => {
         return Promise.resolve(parent.result.data.httpContentType);
       },

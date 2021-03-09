@@ -1,6 +1,5 @@
 import { ToggleButton } from '@material-ui/lab';
 import { Typography } from '@material-ui/core';
-import CheckIcon from '@material-ui/icons/Check';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';

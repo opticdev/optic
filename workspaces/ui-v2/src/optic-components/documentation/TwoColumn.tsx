@@ -1,10 +1,5 @@
-import * as React from 'react'; import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { Paper } from '@material-ui/core';
-import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
-import { RenderRootShape, ShapeRowBase } from '../shapes/ShapeRowBase';
-import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
-import { ChoiceTabs } from '../shapes/OneOfTabs';
 
 export type TwoColumnProps = {
   left: any;

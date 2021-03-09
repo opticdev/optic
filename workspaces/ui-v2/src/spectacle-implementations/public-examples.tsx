@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
 
-export default function () {
+export default function PublicExamples() {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
@@ -74,7 +74,7 @@ export function useInMemorySpectacle(
     }
 
     task();
-  }, []);
+  }, [loadDependencies]);
 
   return {
     loading: !spectacle,

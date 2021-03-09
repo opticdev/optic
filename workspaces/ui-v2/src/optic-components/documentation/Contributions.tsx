@@ -1,16 +1,12 @@
 import * as React from 'react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { Paper, TextField, Typography } from '@material-ui/core';
+import { TextField, Typography } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
 import { useDebounce } from '../hooks/useDebounceHook';
 import { useContributionEditing } from '../hooks/edit/Contributions';
-import {
-  OpticBlueLightened,
-  OpticBlueReadable,
-  UpdatedBlueBackground,
-} from '../theme';
+import { OpticBlueReadable } from '../theme';
 
 export type FieldOrParameterContributionProps = {
   shapes: IShapeRenderer[];
@@ -41,6 +37,7 @@ export function FieldOrParameterContribution({
     if (debouncedDescription) {
       stagePendingContribution(id, contributionKey, debouncedDescription);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedDescription]);
 
   return (
@@ -96,6 +93,7 @@ export function EndpointNameContribution({
     if (debouncedChanges && stagedValue !== value) {
       stagePendingContribution(id, contributionKey, debouncedChanges);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedChanges]);
 
   const isEmpty = !Boolean(stagedValue.trim());
@@ -159,6 +157,7 @@ export function EndpointNameMiniContribution({
     if (debouncedChanges && stagedValue !== value) {
       stagePendingContribution(id, contributionKey, debouncedChanges);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedChanges]);
 
   const isEmpty = !Boolean(stagedValue.trim());

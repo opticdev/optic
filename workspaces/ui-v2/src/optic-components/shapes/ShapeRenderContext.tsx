@@ -40,7 +40,7 @@ export const ShapeRenderStore = ({
   );
 };
 
-type ShapeRenderContext = {
+type IShapeRenderContext = {
   showExamples: boolean;
   getChoice: (branch: OneOfTabsProps) => string;
   updateChoice: (parentShapeId: string, branchId: string) => void;
@@ -48,6 +48,6 @@ type ShapeRenderContext = {
 
 export function useShapeRenderContext() {
   // @ts-ignore
-  const value: ShapeRenderContext = useContext(ShapeRenderContext);
+  const value: IShapeRenderContext = useContext(ShapeRenderContext);
   return value;
 }

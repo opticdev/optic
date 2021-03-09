@@ -1,13 +1,10 @@
-import * as React from 'react'; import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import padLeft from 'pad-left';
 import { methodColorsDark } from '../theme';
 import {
   ListItem,
-  ListItemSecondaryAction,
-  Typography,
 } from '@material-ui/core';
-import { useContributionEditing } from '../hooks/edit/Contributions';
 import { EndpointNameMiniContribution } from './Contributions';
 export type EndpointNameProps = {
   method: string;

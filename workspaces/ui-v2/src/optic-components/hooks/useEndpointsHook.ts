@@ -3,7 +3,7 @@ import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-pro
 export function useEndpoints(renderChangesSince?: string): IEndpoint[] {
   //@TODO
 
-  const { loading, error, data } = useSpectacleQuery({
+  const { data } = useSpectacleQuery({
     query: `{
     request {
       id

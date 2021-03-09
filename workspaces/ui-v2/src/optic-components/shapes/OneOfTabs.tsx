@@ -1,6 +1,6 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { useSharedStyles, IndentSpaces } from './SharedStyles';
+import { useSharedStyles } from './SharedStyles';
 import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
 
@@ -20,7 +20,7 @@ export function OneOfTabs(oneOfTabsProps: OneOfTabsProps) {
       {oneOfTabsProps.choices.map((i) => (
         <Choice
           {...i}
-          active={current == i.id}
+          active={current === i.id}
           setActive={() => {
             updateChoice(oneOfTabsProps.parentShapeId, i.id);
           }}

@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
 import { useDebounce } from '../hooks/useDebounceHook';
 import { useContributionEditing } from '../hooks/edit/Contributions';
-import {
-  OpticBlueReadable,
-} from '../theme';
+import { OpticBlueReadable } from '../theme';
 import ReactMarkdown from 'react-markdown';
 
 export type MarkdownBodyContributionProps = {
@@ -25,7 +23,6 @@ export function MarkdownBodyContribution({
     lookupContribution,
     isEditing,
     stagePendingContribution,
-    setEditing,
   } = useContributionEditing();
 
   const value = lookupContribution(id, contributionKey);
@@ -39,6 +36,7 @@ export function MarkdownBodyContribution({
     if (debouncedChanges && stagedValue !== value) {
       stagePendingContribution(id, contributionKey, debouncedChanges);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedChanges]);
 
   const inner = isEditing ? (

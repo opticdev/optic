@@ -1,10 +1,7 @@
 import makeStyles from '@material-ui/styles/makeStyles';
 import {
-  AddedGreen,
   AddedGreenBackground,
-  ChangedYellow,
   ChangedYellowBackground,
-  RemovedRed,
   RemovedRedBackground,
 } from '../theme';
 
