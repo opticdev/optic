@@ -23,12 +23,11 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   useEffect(() => {
     async function task() {
       const result = await query(input);
-      console.log('abc', result);
       setResult(result);
     }
     task();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stringInput, query]);
+  }, [stringInput]);
 
   return result;
 }

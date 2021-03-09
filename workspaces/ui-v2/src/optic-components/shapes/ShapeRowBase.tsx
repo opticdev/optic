@@ -140,8 +140,8 @@ export const RenderFieldRowValues = ({
     if (shape.asObject) {
       return (
         <>
-          {shape.asObject.fields.map((i) => (
-            <Indent>
+          {shape.asObject.fields.map((i, index) => (
+            <Indent key={index}>
               <RenderField {...i} key={i.fieldId} />
             </Indent>
           ))}

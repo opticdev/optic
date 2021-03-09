@@ -39,8 +39,9 @@ export function ChoiceTabs(props: ChoiceTabsProps) {
   const classes = useStyles();
   return (
     <div className={classes.tabs}>
-      {props.choices.map((i) => (
+      {props.choices.map((i, index) => (
         <Choice
+          key={index}
           {...i}
           active={props.value === i.id}
           setActive={() => props.setValue(i.id)}

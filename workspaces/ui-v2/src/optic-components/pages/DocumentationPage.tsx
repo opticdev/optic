@@ -173,14 +173,16 @@ function EndpointRootPage(props: any) {
         }
       />
 
-      {bodies.requests.map((i) => (
+      {bodies.requests.map((i, index) => (
         <TwoColumnBody
+          key={index}
           bodyId={i.requestId}
           location={'Request Body Parameters'}
         />
       ))}
-      {bodies.responses.map((i) => (
+      {bodies.responses.map((i, index) => (
         <TwoColumnBody
+          key={index}
           bodyId={i.responseId}
           location={`${i.statusCode} Response`}
         />

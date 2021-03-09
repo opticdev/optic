@@ -2,9 +2,7 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
-import {
-  SubtleGreyBackground,
-} from '../theme';
+import { SubtleGreyBackground } from '../theme';
 import { IRequestBody, IResponseBody } from '../hooks/useEndpointBodyHook';
 
 export type EndpointTOCProps = {
@@ -35,9 +33,10 @@ export function EndpointTOC(props: EndpointTOCProps) {
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
-      {props.requests.map((i) => {
+      {props.requests.map((i, index) => {
         return (
           <EndpointTOCRow
+            key={index}
             label={'Request Body'}
             anchorLink={''}
             detail={
@@ -49,13 +48,14 @@ export function EndpointTOC(props: EndpointTOCProps) {
         );
       })}
 
-      {props.responses.map((i) => {
+      {props.responses.map((i, index) => {
         return (
           <EndpointTOCRow
             label={`${getReasonPhrase(i.statusCode)} - ${
               i.statusCode
             } Response`}
             anchorLink={''}
+            key={index}
             detail={
               <>
                 consumes <Code value="application/json" />

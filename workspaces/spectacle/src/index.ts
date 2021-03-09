@@ -55,9 +55,6 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   const resolvers = {
     Query: {
       request: (parent: any, args: any, context: any, info: any) => {
-        console.log({
-          parent,
-        });
         return Promise.resolve(
           context.queries.listNodesByType(NodeType.Request).results
         );

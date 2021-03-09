@@ -34,6 +34,7 @@ export default function PublicExamples() {
   if (error) {
     return <div>error :(</div>;
   }
+
   if (data) {
     return (
       <SpectacleStore spectacle={data}>
@@ -74,7 +75,7 @@ export function useInMemorySpectacle(
     }
 
     task();
-  }, [loadDependencies]);
+  }, []);
 
   return {
     loading: !spectacle,
