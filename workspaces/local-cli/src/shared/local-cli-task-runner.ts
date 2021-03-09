@@ -61,11 +61,16 @@ export const runCommandFlags = {
     default: false,
     required: false,
   }),
+  'transparent-proxy': flags.boolean({
+    default: false,
+    required: false,
+  }),
 };
 interface LocalCliTaskFlags {
   'collect-coverage'?: boolean;
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
+  'transparent-proxy'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -97,6 +102,7 @@ export async function LocalTaskSessionWrapper(
     shouldCollectCoverage: flags['collect-coverage'] !== false,
     shouldCollectDiffs: flags['collect-diffs'] !== false,
     shouldExitOnDiff: flags['exit-on-diff'] !== false,
+    shouldTransparentProxy: flags['transparent-proxy'] !== false,
   });
   const session = new CliTaskSession(runner);
 
@@ -151,6 +157,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       shouldCollectCoverage: boolean;
       shouldCollectDiffs: boolean;
       shouldExitOnDiff: boolean;
+      shouldTransparentProxy: boolean;
     }
   ) {}
 
@@ -240,6 +247,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
     process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
+    process.env.OPTIC_ENABLE_TRANSPARENT_PROXY = this.options.shouldTransparentProxy ? 'yes' : `no`;
 
     const testCommand = commandToRunWhenStarted
       ? async () => {
