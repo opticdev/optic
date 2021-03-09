@@ -4,7 +4,7 @@ import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUr
 import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
 
-export default function() {
+export default function PublicExamples() {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
@@ -44,7 +44,7 @@ export type InMemorySpectacleDependenciesLoader = () => Promise<{ events: any[],
 export type AsyncStatus<T> = { loading: boolean, error?: Error, data?: T }
 
 export interface Spectacle {
-  query: any
+  query: any,
 }
 
 export function useInMemorySpectacle(loadDependencies: InMemorySpectacleDependenciesLoader): AsyncStatus<Spectacle> {
@@ -58,7 +58,7 @@ export function useInMemorySpectacle(loadDependencies: InMemorySpectacleDependen
     }
 
     task()
-  }, []);
+  }, [loadDependencies]);
 
   return {
     loading: !spectacle,

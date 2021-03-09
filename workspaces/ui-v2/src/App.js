@@ -39,7 +39,7 @@ function AppError(props) {
   const onClickRefresh = useCallback((e) => {
     e.preventDefault();
     window && window.location && window.location.reload(true);
-  });
+  }, []);
 
   useEffect(() => {
     // trackUserEvent(
@@ -87,9 +87,9 @@ function AppError(props) {
             </ul>
           </li>
           <li>
-            <a href="#" onClick={onClickRefresh}>
+            <button onClick={onClickRefresh}>
               Refresh the page
-            </a>{' '}
+            </button>{' '}
             in your browser.
           </li>
           <li>
