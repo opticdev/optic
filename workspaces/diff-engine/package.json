@@ -6,7 +6,7 @@
     "preuninstall": "node scripts/uninstall",
     "test": "cd tests && tap ./lib",
     "ws:build-binaries": "scripts/build-binaries.sh",
-    "ws:clean": "rm -rf build && rm -rf target",
+    "ws:clean": "rm -rf build target",
     "ws:test": "scripts/test.sh"
   },
   "repository": {

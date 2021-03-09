@@ -22,7 +22,8 @@
     "fs-extra": "^9.0.0"
   },
   "devDependencies": {
-    "@types/eventsource": "^1.1.4"
+    "@types/eventsource": "^1.1.4",
+    "@types/fs-extra": "^9.0.8"
   },
   "files": [
     "/build",

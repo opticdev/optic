@@ -1,6 +1,0 @@
-# Note: this config is only loaded when running `cargo <command>` from **the workspace root**,
-# e.g. when the prebuilt binaries get compiled during the release workflow.
-
-[target.x86_64-pc-windows-msvc]
-# prevent Visual C++ Redistributable from having to be installed
-rustflags = ["-Ctarget-feature=+crt-static"]

@@ -3367,6 +3367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/joi@npm:^14.3.4":
+  version: 14.3.4
+  resolution: "@types/joi@npm:14.3.4"
+  checksum: bea51931b08e8ddc6b7612eb0d4a5d19b02157dea69ac6d7080789848218cb05a8f44a7e0ffb95f75b90f3feeb8314a5eed0f1ddd3369a5e6bbe4d7b4bfad0f1
+  languageName: node
+  linkType: hard
+
 "@types/js-yaml@npm:^3.12.1":
   version: 3.12.6
   resolution: "@types/js-yaml@npm:3.12.6"
@@ -4109,10 +4116,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/analytics@workspace:workspaces/analytics"
   dependencies:
-    "@hapi/joi": ^17.1.1
     "@types/jest": ^26.0.9
+    "@types/joi": ^14.3.4
     "@types/node": ^14.14.31
+    "@types/uuid": ^8.3.0
     jest: ^26.4.0
+    joi: ^17.4.0
     joi-extract-type: ^15.0.8
     keymirror: ^0.1.1
     ts-jest: ^26.2.0
@@ -4356,6 +4365,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/client-utilities@workspace:workspaces/client-utilities"
   dependencies:
+    "@types/node": ^14.14.33
     cross-fetch: ^3.0.4
   languageName: unknown
   linkType: soft
@@ -4431,6 +4441,7 @@ __metadata:
   resolution: "@useoptic/snapshot-tests@workspace:workspaces/snapshot-tests"
   dependencies:
     "@types/eventsource": ^1.1.4
+    "@types/fs-extra": ^9.0.8
     "@useoptic/cli-shared": 9.0.13
     "@useoptic/client-utilities": 9.0.13
     "@useoptic/domain": 10.0.64
@@ -13416,7 +13427,7 @@ fsevents@~2.1.1:
   languageName: node
   linkType: hard
 
-"joi@npm:^17.3.0":
+"joi@npm:^17.3.0, joi@npm:^17.4.0":
   version: 17.4.0
   resolution: "joi@npm:17.4.0"
   dependencies:
