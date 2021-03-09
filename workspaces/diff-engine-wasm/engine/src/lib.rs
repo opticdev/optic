@@ -1,8 +1,11 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
-use optic_diff_engine::{HttpInteraction, InteractionDiffResult, SpecEvent, SpecProjection};
+use optic_diff_engine::{
+  HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
+};
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -59,4 +62,19 @@ impl From<InteractionDiffResult> for ResultContainer<InteractionDiffResult> {
     let fingerprint = result.fingerprint();
     Self(result, fingerprint)
   }
+}
+
+// Commit batch
+// ------------
+
+#[wasm_bindgen]
+pub fn append_batch(
+  spec: &mut WasmSpecProjection,
+  commands: String,
+  command_message: String,
+) -> Result<String, JsValue> {
+  let commands: Vec<SpecCommand> = serde_json::from_str(&commands).unwrap();
+  let batch_id = Uuid::new_v4().to_hyphenated().to_string();
+
+  Ok(String::from("Okay!"))
 }

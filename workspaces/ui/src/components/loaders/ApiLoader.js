@@ -228,6 +228,7 @@ function useDiffServiceFactory(loadingExampleDiff) {
 export const captureId = 'example-session';
 export async function createExampleSpecServiceFactory(data) {
   let events = JSON.stringify(data.events);
+  let DiffEngine = await import('@useoptic/diff-engine-wasm/engine/browser');
 
   const examples = data.examples || {};
   const eventEmitter = new EventEmitter();
@@ -301,7 +302,8 @@ export async function createExampleSpecServiceFactory(data) {
       };
     },
     processCommands(commands, commitMessage) {
-      console.log('make wasm to me');
+      let spec = DiffEngine.spec_from_events(events);
+      DiffEngine.append_batch(spec, JSON.stringify(commands), commitMessage);
       return Promise.resolve();
     },
   };
