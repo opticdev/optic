@@ -1,4 +1,5 @@
 import { makeSpectacle } from './index';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 const _events = [
   {
@@ -1183,12 +1184,14 @@ const _events = [
   }
 ]
 async function main() {
-  const spectacle = makeSpectacle({
+  const spectacle = makeSpectacle(DiffEngine, {
     specEvents: _events
   })
   const result = await spectacle({
     query: `{ 
     request {
+      id
+      pathId
       absolutePathPattern
       method
       body {
@@ -1196,6 +1199,7 @@ async function main() {
         rootShapeId
       }
       response {
+        id
         statusCode
         body {
           contentType
@@ -1211,3 +1215,8 @@ async function main() {
 }
 
 main()
+/*
+@TODO: add ids
+@TODO: inline changelog since()
+@TODO: add support for contributions
+ */

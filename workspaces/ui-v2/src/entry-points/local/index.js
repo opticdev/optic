@@ -1,12 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import '../../index.css';
+import App from '../../App';
+import reportWebVitals from '../../reportWebVitals';
+import TopLevelRoutes from './TopLevelRoutes';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App topLevelRoutes={TopLevelRoutes}/>
   </React.StrictMode>,
   document.getElementById('root')
 );

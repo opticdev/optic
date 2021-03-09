@@ -1,4 +1,3 @@
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -8,11 +7,11 @@ export interface IOpticContext {
   specEvents: any[];
 }
 
-export function makeSpectacle(opticContext: IOpticContext) {
-  const spec = DiffEngine.spec_from_events(
+export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
+  const spec = opticEngine.spec_from_events(
     JSON.stringify(opticContext.specEvents)
   );
-  const serializedGraph = JSON.parse(DiffEngine.get_endpoints_projection(spec));
+  const serializedGraph = JSON.parse(opticEngine.get_endpoints_projection(spec));
   const {
     nodes, edges, nodeIndexToId
   } = serializedGraph;
@@ -52,6 +51,12 @@ export function makeSpectacle(opticContext: IOpticContext) {
       }
     },
     HttpRequest: {
+      id: (parent: any) => {
+        return Promise.resolve(parent.result.data.requestId);
+      },
+      pathId: (parent: any) => {
+        return Promise.resolve(parent.path().result.data.pathId);
+      },
       absolutePathPattern: (parent: any) => {
         return Promise.resolve(parent.path().result.data.absolutePathPattern);
       },
@@ -66,6 +71,9 @@ export function makeSpectacle(opticContext: IOpticContext) {
       }
     },
     HttpResponse: {
+      id: (parent: any) => {
+        return Promise.resolve(parent.result.data.responseId);
+      },
       statusCode: (parent: any) => {
         return Promise.resolve(parent.result.data.httpStatusCode);
       },

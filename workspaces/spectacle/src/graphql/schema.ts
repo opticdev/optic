@@ -10,18 +10,21 @@ type HttpBody {
   rootShapeId: String
 }
 type HttpRequest {
+  id: ID
   pathComponents: [PathComponent]
   absolutePathPattern: String
+  pathId: ID
   method: String
   body: [HttpBody]
   response: [HttpResponse]
 }
 type PathComponent {
-  opticId: ID
+  id: ID
   name: String
   isParameterized: Boolean
 }
 type HttpResponse {
+  id: ID
   statusCode: Int
   body: [HttpBody]
 }`;
