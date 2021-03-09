@@ -4,7 +4,7 @@
   "scripts": {
     "test": "cd test && tap tests",
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
+    "ws:clean": "rm -rf build",
     "ws:test": "yarn run test"
   },
   "repository": {

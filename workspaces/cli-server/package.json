@@ -3,7 +3,7 @@
   "version": "9.0.13",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
+    "ws:clean": "rm -rf build",
     "ws:test": "echo cli-server"
   },
   "repository": {

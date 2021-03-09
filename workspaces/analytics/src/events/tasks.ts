@@ -1,7 +1,6 @@
 import { DescribeEvent, RegisteredEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 
 // Sent whenever an API is created
@@ -10,6 +9,7 @@ const StartedTaskWithLocalCliSchema = Joi.object({
   cwd: Joi.string().required(),
   inputs: Joi.object().unknown(true),
 });
+// @ts-ignore
 type StartedTaskWithLocalCliProperties = Joi.extractType<
   typeof StartedTaskWithLocalCliSchema
 >;
@@ -26,6 +26,7 @@ const ExitedTaskWithLocalCliSchema = Joi.object({
   interactionCount: Joi.number().required(),
   inputs: Joi.object().unknown(true),
 });
+// @ts-ignore
 type ExitedTaskWithLocalCliProperties = Joi.extractType<
   typeof ExitedTaskWithLocalCliSchema
 >;

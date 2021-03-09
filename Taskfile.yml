@@ -76,7 +76,7 @@ tasks:
   workspaces:clean:
     desc: Remove previous build artifacts
     cmds:
-      - yarn wsrun --stages --report --fast-exit ws:clean
+      - yarn wsrun --stages --report --fast-exit --exclude-missing ws:clean
 
   spec:build:
     dir: workspaces/ui

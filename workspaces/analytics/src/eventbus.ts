@@ -5,7 +5,6 @@ import {
   ClientContext,
   TrackingEventBase,
 } from './interfaces/TrackingEventBase';
-import exp from 'constants';
 
 export function newAnalyticsEventBus(
   getContext: (batchId: string) => Promise<ClientContext>
