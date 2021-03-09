@@ -22,10 +22,10 @@
     "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
   },
   "workspaces": [
-    "workspaces/analytics",
-    "workspaces/saas-types",
     "workspaces/diff-engine",
     "workspaces/diff-engine-wasm",
+    "workspaces/analytics",
+    "workspaces/saas-types",
     "workspaces/graph-lib",
     "workspaces/spectacle",
     "workspaces/cli-config",
