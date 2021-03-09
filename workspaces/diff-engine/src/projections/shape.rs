@@ -6,9 +6,11 @@ use crate::state::shape::{
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
+use serde::Serialize;
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type", content = "data")]
 pub enum Node {
   CoreShape(CoreShapeNode),
   Shape(ShapeNode),
@@ -16,16 +18,32 @@ pub enum Node {
   ShapeParameter(ShapeParameterNode),
 }
 
-#[derive(Debug)]
-pub struct ShapeNode(pub ShapeId, pub ShapeNodeDescriptor);
-#[derive(Debug)]
-pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
-#[derive(Debug)]
-pub struct FieldNode(pub FieldId, pub FieldNodeDescriptor);
-#[derive(Debug)]
-pub struct ShapeParameterNode(pub ShapeParameterId, pub ShapeParameterNodeDescriptor);
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShapeNode {
+  pub shape_id: ShapeId,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CoreShapeNode {
+  pub shape_id: ShapeId,
+  pub descriptor: CoreShapeNodeDescriptor,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FieldNode {
+  pub field_id: FieldId,
+  pub descriptor: FieldNodeDescriptor,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShapeParameterNode {
+  pub parameter_id: ShapeParameterId,
+  pub descriptor: ShapeParameterNodeDescriptor,
+}
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type", content = "data")]
 pub enum Edge {
   BelongsTo,
   IsDescendantOf,
@@ -34,28 +52,29 @@ pub enum Edge {
   HasBinding(ShapeParameterBinding),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ShapeParameterBinding {
   pub shape_id: ShapeId,
 }
 
 pub type NodeId = String;
 
-#[derive(Debug)]
-pub struct ShapeNodeDescriptor {}
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CoreShapeNodeDescriptor {
   pub kind: ShapeKind,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ShapeParameterNodeDescriptor {}
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FieldNodeDescriptor {
   pub name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ShapeProjection {
   pub graph: Graph<Node, Edge>,
   pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
@@ -74,7 +93,6 @@ impl Default for ShapeProjection {
     add_core_shape_to_projection(&mut projection, ShapeKind::NumberKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::BooleanKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::ListKind);
-    //@TODO: incomplete
     add_core_shape_to_projection(&mut projection, ShapeKind::ObjectKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::NullableKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::UnknownKind);
@@ -86,21 +104,21 @@ impl Default for ShapeProjection {
 
 fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_kind: ShapeKind) {
   let descriptor = shape_kind.get_descriptor();
-  let shape_node = Node::CoreShape(CoreShapeNode(
-    ShapeId::from(descriptor.base_shape_id),
-    CoreShapeNodeDescriptor {
+  let shape_node = Node::CoreShape(CoreShapeNode {
+    shape_id: ShapeId::from(descriptor.base_shape_id),
+    descriptor: CoreShapeNodeDescriptor {
       kind: shape_kind.clone(),
     },
-  ));
+  });
   let shape_node_index = shape_projection.graph.add_node(shape_node);
   shape_projection
     .node_id_to_index
     .insert(String::from(descriptor.base_shape_id), shape_node_index);
   if let Some(shape_parameter_descriptor) = shape_kind.get_parameter_descriptor() {
-    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
-      String::from(shape_parameter_descriptor.shape_parameter_id),
-      ShapeParameterNodeDescriptor {},
-    ));
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode {
+      parameter_id: String::from(shape_parameter_descriptor.shape_parameter_id),
+      descriptor: ShapeParameterNodeDescriptor {},
+    });
     let shape_parameter_node_index = shape_projection.graph.add_node(shape_parameter_node);
     shape_projection.node_id_to_index.insert(
       String::from(shape_parameter_descriptor.shape_parameter_id),
@@ -117,10 +135,10 @@ fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_ki
 impl ShapeProjection {
   pub fn with_shape_parameter(&mut self, shape_parameter_id: ShapeParameterId, shape_id: ShapeId) {
     let shape_node_index = *self.get_shape_node_index(&shape_id).unwrap();
-    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
-      shape_parameter_id.clone(),
-      ShapeParameterNodeDescriptor {},
-    ));
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode {
+      parameter_id: shape_parameter_id.clone(),
+      descriptor: ShapeParameterNodeDescriptor {},
+    });
     let shape_parameter_node_index = self.graph.add_node(shape_parameter_node);
     self
       .node_id_to_index
@@ -139,7 +157,9 @@ impl ShapeProjection {
     parameters: ShapeParametersDescriptor,
     name: String,
   ) {
-    let shape_node = Node::Shape(ShapeNode(shape_id.clone(), ShapeNodeDescriptor {}));
+    let shape_node = Node::Shape(ShapeNode {
+      shape_id: shape_id.clone(),
+    });
     let shape_node_index = self.graph.add_node(shape_node);
     self.node_id_to_index.insert(shape_id, shape_node_index);
 
@@ -317,7 +337,10 @@ impl ShapeProjection {
       _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
     };
 
-    let field_node = Node::Field(FieldNode(field_id.clone(), FieldNodeDescriptor { name }));
+    let field_node = Node::Field(FieldNode {
+      field_id: field_id.clone(),
+      descriptor: FieldNodeDescriptor { name },
+    });
     let field_node_index = self.graph.add_node(field_node);
     self
       .node_id_to_index
@@ -385,8 +408,8 @@ impl ShapeProjection {
       .edges_directed(*parent_node_index, petgraph::Direction::Incoming);
     let child_edge = edges.find(|edge| match edge.weight() {
       Edge::IsDescendantOf => match self.graph.node_weight(edge.source()) {
-        Some(Node::Shape(ShapeNode(neighbour_id, _)))
-        | Some(Node::CoreShape(CoreShapeNode(neighbour_id, _))) => *child_id == *neighbour_id,
+        Some(Node::Shape(neighbor)) => *child_id == neighbor.shape_id,
+        Some(Node::CoreShape(neighbor)) => *child_id == neighbor.shape_id,
         _ => false,
       },
       _ => false,
@@ -448,7 +471,7 @@ impl ShapeProjection {
   ) -> Option<impl Iterator<Item = &ShapeKind>> {
     let core_shape_nodes = self.get_core_shape_nodes(node_index)?;
 
-    Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.1.kind))
+    Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.descriptor.kind))
   }
 }
 
