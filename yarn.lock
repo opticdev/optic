@@ -3454,7 +3454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/long@npm:^4.0.0, @types/long@npm:^4.0.1":
+"@types/long@npm:^4.0.0":
   version: 4.0.1
   resolution: "@types/long@npm:4.0.1"
   checksum: ed2a125330dbf2b425b2e58b1e1151a37106ceeec973f9f191fba0bda83ed00fae6d858254022e8b6e7165fec5f0c3872b7cb5f425c753383fed54699fb63b38
@@ -4490,7 +4490,6 @@ __metadata:
     "@types/lodash.debounce": ^4.0.6
     "@types/lodash.groupby": ^4.6.6
     "@types/lodash.sortby": ^4.7.6
-    "@types/long": ^4.0.1
     "@types/node": ^14.14.32
     "@types/pad-left": ^2.1.0
     "@types/react": ^17.0.3
