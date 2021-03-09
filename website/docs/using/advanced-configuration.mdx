@@ -101,7 +101,27 @@ api run start-proxy
 
 When Optic is started in Proxy task mode, it is not watching the application lifecycle and does not currently capture rebuild events of the application under observation. To start fresh with a new capture session, stop the current Optic proxy and restart with `api run start-proxy`. This will create a new capture session in the Optic dashboard and allow you to observe traffic sent to the most recent build of the application under observation.
 
-### Dependent tasks
+### Transparent Proxy mode
+
+Optic forwards all requests sent to the localhost `inboundUrl` to the `targetUrl` by default. This is not a one-size-fits-all solution. For example, if you are testing a UI and it makes requests to a CDN for assets, the default behavior will not work. Optic can run in **Transparent Proxy** mode that allows you to forward all requests transparently. To enable this mode, invoke a proxy task with:
+
+```
+api run --transparent-proxy start-proxy
+```
+
+You will need to set up your app to use Optic explicitly as a proxy. All traffic will flow through the Optic proxy, and can be filtered in the dashboard for relevant API traffic. The following `optic.yml` sets up a proxy task and a dependent task (see below) to start the Chrome browser with proxy settings. In this case, `api run --transparent-proxy ui-proxy` would start up the `start` proxy definition, and open a new Chrome browser (on MacOS) with the appropriate flags to proxy traffic through Optic:
+
+```
+tasks:
+  start:
+    targetUrl: https://api.example.com
+    inboundUrl: https://localhost:4000
+  ui-proxy:
+    useTask: start
+    command: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --ignore-certificate-errors --proxy-server="https://localhost:4000" --user-data-dir="/tmp/optic" https://api.example.com/api/docs
+```
+
+## Dependent tasks
 
 A task can depend on another task. For example, say you need to start your API service with a task, then want to run test traffic against that service through Optic. First, define the task to start your API service with Optic. Then, define a new task with the `command` parameter to run your test script and the `useTask` parameter specifying your service start task. The example below runs a Newman test against the start-proxy task above:
 
