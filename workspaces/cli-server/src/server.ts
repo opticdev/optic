@@ -15,7 +15,7 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
-import { basePath } from '@useoptic/ui';
+import { basePath } from '@useoptic/ui-v2';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEvents, trackWithApiName } from './analytics';

@@ -1,6 +1,21 @@
 {
   "name": "@useoptic/ui-v2",
   "version": "9.0.13",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/ui-v2"
+  },
+  "files": [
+    "build",
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js"
+  },
   "dependencies": {
     "@babel/core": "7.12.3",
     "@material-ui/core": "^4.11.3",
@@ -87,11 +102,6 @@
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"
-  },
-  "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [

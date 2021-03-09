@@ -14,9 +14,9 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "9.0.13",
-    "@useoptic/cli-config": "9.0.13",
-    "@useoptic/client-utilities": "9.0.13",
+    "@useoptic/analytics": "workspace:workspaces/analytics",
+    "@useoptic/cli-config": "workspace:workspaces/cli-config",
+    "@useoptic/client-utilities": "workspace:workspaces/client-utilities",
     "bottleneck": "^2.19.5",
     "cross-fetch": "^3.0.4"
   },

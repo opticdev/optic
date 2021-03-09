@@ -12,8 +12,8 @@
     "directory": "workspaces/snapshot-tests"
   },
   "dependencies": {
-    "@useoptic/cli-shared": "9.0.13",
-    "@useoptic/client-utilities": "9.0.13",
+    "@useoptic/cli-shared": "workspace:workspaces/cli-shared",
+    "@useoptic/client-utilities": "workspace:workspaces/client-utilities",
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-types": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
