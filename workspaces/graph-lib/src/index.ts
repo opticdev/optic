@@ -8,39 +8,44 @@ export enum NodeType {
 }
 
 export type Node = {
-  id: NodeId
-} & ({
-  type: NodeType.Path,
-  data: PathNode
-} | {
-  type: NodeType.Request
-  data: RequestNode
-} | {
-  type: NodeType.Response,
-  data: ResponseNode
-} | {
-  type: NodeType.Body,
-  data: BodyNode
-})
+  id: NodeId;
+} & (
+  | {
+      type: NodeType.Path;
+      data: PathNode;
+    }
+  | {
+      type: NodeType.Request;
+      data: RequestNode;
+    }
+  | {
+      type: NodeType.Response;
+      data: ResponseNode;
+    }
+  | {
+      type: NodeType.Body;
+      data: BodyNode;
+    }
+);
 
 export type PathNode = {
-  absolutePathPattern: string
-  pathId: string
-}
+  absolutePathPattern: string;
+  pathId: string;
+};
 export type RequestNode = {
-  requestId: string
-  httpMethod: string
-}
+  requestId: string;
+  httpMethod: string;
+};
 export type ResponseNode = {
-  responseId: string
-  httpMethod: string
-  httpStatusCode: number
-}
+  responseId: string;
+  httpMethod: string;
+  httpStatusCode: number;
+};
 
 export type BodyNode = {
-  httpContentType: string
-  rootShapeId: string
-}
+  httpContentType: string;
+  rootShapeId: string;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface GraphCommandHandler {
@@ -48,7 +53,6 @@ export interface GraphCommandHandler {
 
   addEdge(edge: any, sourceNodeId: NodeId, targetNodeId: NodeId): void;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -75,7 +79,9 @@ export class GraphIndexer implements GraphCommandHandler {
 
   addNode(node: Node) {
     if (this.nodesById.has(node.id)) {
-      throw new Error(`could not add a node with an id that already exists in the graph`);
+      throw new Error(
+        `could not add a node with an id that already exists in the graph`
+      );
     }
     this.unsafeAddNode(node);
   }
@@ -91,11 +97,13 @@ export class GraphIndexer implements GraphCommandHandler {
       throw new Error(`expected ${targetNodeId} to exist`);
     }
 
-    const outboundNeighbors = this.outboundNeighbors.get(sourceNodeId) || new Map();
+    const outboundNeighbors =
+      this.outboundNeighbors.get(sourceNodeId) || new Map();
     mapAppend(outboundNeighbors, targetNode.type, targetNode);
     this.outboundNeighbors.set(sourceNodeId, outboundNeighbors);
 
-    const inboundNeighbors = this.inboundNeighbors.get(targetNodeId) || new Map();
+    const inboundNeighbors =
+      this.inboundNeighbors.get(targetNodeId) || new Map();
     mapAppend(inboundNeighbors, sourceNode.type, sourceNode);
     this.inboundNeighbors.set(targetNodeId, inboundNeighbors);
   }
@@ -104,7 +112,6 @@ export class GraphIndexer implements GraphCommandHandler {
     this.nodesById.set(node.id, node);
     mapAppend(this.nodesByType, node.type, node);
   }
-
 }
 
 // this should be generic so we can do wrap<T> and know what type to expect?
@@ -113,11 +120,13 @@ export interface NodeWrapper {
 }
 
 export class RequestNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   path(): PathNodeWrapper {
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Path);
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Path
+    );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Request to have a parent Path`);
     }
@@ -125,17 +134,21 @@ export class RequestNodeWrapper implements NodeWrapper {
   }
 
   bodies(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Body);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Body
+    );
   }
 }
 
 export class ResponseNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   path(): PathNodeWrapper {
-    debugger
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Path);
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Path
+    );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Response to have a parent Path`);
     }
@@ -143,33 +156,37 @@ export class ResponseNodeWrapper implements NodeWrapper {
   }
 
   bodies(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Body);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Body
+    );
   }
 }
 
 export class PathNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   requests(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Request);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Request
+    );
   }
 
   responses(): NodeListWrapper {
-    debugger
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Response);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Response
+    );
   }
 }
-
 
 export interface NodeListWrapper {
-  results: NodeWrapper[]
+  results: NodeWrapper[];
 }
 
-
 export class GraphQueries {
-  constructor(private index: GraphIndexer) {
-  }
+  constructor(private index: GraphIndexer) {}
 
   findById(id: NodeId): NodeWrapper | null {
     const node = this.index.nodesById.get(id);
@@ -194,8 +211,10 @@ export class GraphQueries {
   }
 
   //@TODO add singular find* variant
-  listOutgoingNeighborsByType(id: NodeId, outgoingNeighborType: NodeType): NodeListWrapper {
-    debugger
+  listOutgoingNeighborsByType(
+    id: NodeId,
+    outgoingNeighborType: NodeType
+  ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(outgoingNeighborType, []);
@@ -220,7 +239,7 @@ export class GraphQueries {
   wrapList(type: NodeType, nodes: Node[]): NodeListWrapper {
     //@TODO add list helpers (map, etc.)
     return {
-      results: nodes.map(node => this.wrap(node))
+      results: nodes.map((node) => this.wrap(node)),
     };
   }
 }

@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
-import { useDebounce } from '../hooks/useDebounceHook.js';
+import { useDebounce } from '../hooks/useDebounceHook';
 import { useContributionEditing } from '../hooks/edit/Contributions';
 import {
   OpticBlueReadable,

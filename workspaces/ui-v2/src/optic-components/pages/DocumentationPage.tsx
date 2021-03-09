@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { NavigationRoute } from '../navigation/NavigationRoute';
-import { useDocumentationPageLink, useEndpointPageLink } from '../navigation/Routes';
+import {
+  useDocumentationPageLink,
+  useEndpointPageLink,
+} from '../navigation/Routes';
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../hooks/useEndpointsHook';
@@ -21,10 +24,12 @@ import { CodeBlock } from '../documentation/BodyRender';
 import { SubtleBlueBackground } from '../theme';
 import { TwoColumnBody } from '../documentation/RenderBody';
 import { getEndpointId } from '../utilities/endpoint-utilities';
+import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
+
   return (
     <ContributionEditingStore>
       <>
@@ -78,14 +83,17 @@ function DocumentationRootPage(props: any) {
                     key={index}
                     onClick={() =>
                       history.push(
-                        endpointPageLink.linkTo(endpoint.pathId, endpoint.method)
+                        endpointPageLink.linkTo(
+                          endpoint.pathId,
+                          endpoint.method
+                        )
                       )
                     }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}
                     endpointId={getEndpointId({
                       method: endpoint.method,
-                      pathId: endpoint.pathId
+                      pathId: endpoint.pathId,
                     })}
                   />
                 );
@@ -154,7 +162,7 @@ function EndpointRootPage(props: any) {
               style={{
                 marginTop: 10,
                 backgroundColor: SubtleBlueBackground,
-                borderTop: '1px solid #e2e2e2'
+                borderTop: '1px solid #e2e2e2',
               }}
             >
               <EndpointTOC

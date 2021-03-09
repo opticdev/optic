@@ -1,20 +1,32 @@
 import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { GraphIndexer, GraphQueries, NodeType, Node, RequestNodeWrapper } from '@useoptic/graph-lib';
+import {
+  GraphIndexer,
+  GraphQueries,
+  NodeType,
+  Node,
+  RequestNodeWrapper,
+} from '@useoptic/graph-lib';
 
 export interface IOpticContext {
   specEvents: any[];
+}
+
+export interface SpectacleInput {
+  operationName?: string;
+  query: string;
+  variables: any;
 }
 
 export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   const spec = opticEngine.spec_from_events(
     JSON.stringify(opticContext.specEvents)
   );
-  const serializedGraph = JSON.parse(opticEngine.get_endpoints_projection(spec));
-  const {
-    nodes, edges, nodeIndexToId
-  } = serializedGraph;
+  const serializedGraph = JSON.parse(
+    opticEngine.get_endpoints_projection(spec)
+  );
+  const { nodes, edges, nodeIndexToId } = serializedGraph;
 
   const indexer = new GraphIndexer();
 
@@ -31,7 +43,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id
+      id,
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -40,15 +52,16 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   });
   const queries = new GraphQueries(indexer);
 
-
   const resolvers = {
     Query: {
       request: (parent: any, args: any, context: any, info: any) => {
         console.log({
-          parent
+          parent,
         });
-        return Promise.resolve(context.queries.listNodesByType(NodeType.Request).results);
-      }
+        return Promise.resolve(
+          context.queries.listNodesByType(NodeType.Request).results
+        );
+      },
     },
     HttpRequest: {
       id: (parent: any) => {
@@ -68,7 +81,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       response: (parent: RequestNodeWrapper) => {
         return Promise.resolve(parent.path().responses().results);
-      }
+      },
     },
     HttpResponse: {
       id: (parent: any) => {
@@ -79,7 +92,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       body: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
-      }
+      },
     },
     HttpBody: {
       contentType: (parent: any) => {
@@ -87,20 +100,16 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       rootShapeId: (parent: any) => {
         return Promise.resolve(parent.result.data.rootShapeId);
-      }
-    }
+      },
+    },
   };
 
   const executableSchema = makeExecutableSchema({
     typeDefs: schema,
-    resolvers
+    resolvers,
   });
 
-  return function(input: {
-    operationName?: string;
-    query: string;
-    variables: any;
-  }) {
+  return function (input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,
@@ -108,8 +117,8 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       operationName: input.operationName,
       contextValue: {
         opticContext,
-        queries
-      }
+        queries,
+      },
     });
   };
 }
