@@ -5,8 +5,6 @@ export function useEndpointBody(
   method: string,
   renderChangesSince?: string
 ): { requests: IRequestBody[]; responses: IResponseBody[] } {
-  //@TODO
-
   const { data, error } = useSpectacleQuery({
     query: `{
     requests {
@@ -36,7 +34,6 @@ export function useEndpointBody(
   if (!data) {
     return { requests: [], responses: [] };
   } else {
-    debugger
     const request = data.requests.find(
       (i: any) => i.pathId === pathId && i.method === method
     );

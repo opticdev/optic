@@ -23,6 +23,11 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   useEffect(() => {
     async function task() {
       const result = await query(input);
+      if (result.errors) {
+        console.error(result.errors);
+        debugger;
+        result.error = new Error(result.errors)
+      }
       setResult(result);
     }
     task();
