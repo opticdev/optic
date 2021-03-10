@@ -5,32 +5,24 @@ export function useEndpoints(
 ): { endpoints: IEndpoint[]; loading?: boolean } {
   //@TODO
 
-  const { data } = useSpectacleQuery({
+  const { data, error } = useSpectacleQuery({
     query: `{
-    request {
+    requests {
       id
       pathId
       absolutePathPattern
       method
-      body {
-        contentType
-        rootShapeId
-      }
-      response {
-        id
-        statusCode
-        body {
-          contentType
-          rootShapeId
-        }
-      }
     }
     }`,
     variables: {},
   });
+  if (error) {
+    console.error(error);
+    debugger
+  }
 
   if (data) {
-    const endpoints = data.request.map((request: any) => {
+    const requests = data.requests.map((request: any) => {
       return {
         pathId: request.pathId,
         method: request.method,
@@ -40,7 +32,7 @@ export function useEndpoints(
       } as IEndpoint;
     });
     return {
-      endpoints,
+      endpoints: requests,
     };
   } else {
     return { endpoints: [], loading: true };

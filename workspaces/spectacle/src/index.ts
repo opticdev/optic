@@ -81,7 +81,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
 
   const resolvers = {
     Query: {
-      request: (parent: any, args: any, context: any, info: any) => {
+      requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.Request).results);
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
@@ -102,10 +102,10 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       method: (parent: any) => {
         return Promise.resolve(parent.result.data.httpMethod);
       },
-      body: (parent: any) => {
+      bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
       },
-      response: (parent: endpoints.RequestNodeWrapper) => {
+      responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().responses().results);
       },
     },
@@ -116,7 +116,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       statusCode: (parent: any) => {
         return Promise.resolve(parent.result.data.httpStatusCode);
       },
-      body: (parent: any) => {
+      bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
       },
     },

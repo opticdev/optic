@@ -7,22 +7,20 @@ export function useEndpointBody(
 ): { requests: IRequestBody[]; responses: IResponseBody[] } {
   //@TODO
 
-  const { data } = useSpectacleQuery({
+  const { data, error } = useSpectacleQuery({
     query: `{
-    request {
+    requests {
       id
       pathId
-      absolutePathPattern
       method
-      body {
-        id
+      bodies {
         contentType
         rootShapeId
       }
-      response {
+      responses {
         id
         statusCode
-        body {
+        bodies {
           contentType
           rootShapeId
         }
@@ -31,38 +29,41 @@ export function useEndpointBody(
     }`,
     variables: {}
   });
-
+  if (error) {
+    console.error(error);
+    debugger
+  }
   if (!data) {
     return { requests: [], responses: [] };
   } else {
-    const request = data.request.find(
+    debugger
+    const request = data.requests.find(
       (i: any) => i.pathId === pathId && i.method === method
     );
-    if (request) {
-      const requests: IRequestBody[] = request.body
-        .map((body: any) => {
+    if (!request) {
+      return { requests: [], responses: [] };
+    }
+    const requests: IRequestBody[] = request.bodies
+      .map((body: any) => {
+        return {
+          requestId: request.id,
+          contentType: body.contentType,
+          rootShapeId: body.rootShapeId
+        };
+      });
+    const responses: IResponseBody[] = request.responses
+      .flatMap((response: any) => {
+        return response.bodies.map((body: any) => {
           return {
-            requestId: request.id,
+            statusCode: response.statusCode,
+            responseId: response.id,
             contentType: body.contentType,
             rootShapeId: body.rootShapeId
           };
         });
-      const responses: IResponseBody[] = request.response
-        .flatMap((response: any) => {
-          return response.body.map((body: any) => {
-            return {
-              statusCode: response.statusCode,
-              responseId: response.responseId,
-              contentType: body.contentType,
-              rootShapeId: body.rootShapeId
-            };
-          });
-        });
-      //
-      return { requests, responses };
-    } else {
-      return { requests: [], responses: [] };
-    }
+      });
+
+    return { requests, responses };
   }
 }
 

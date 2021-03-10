@@ -3,7 +3,7 @@ schema {
   query: Query
 }
 type Query {
-  request: [HttpRequest]
+  requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
 }
 type HttpBody {
@@ -16,8 +16,8 @@ type HttpRequest {
   absolutePathPattern: String
   pathId: ID
   method: String
-  body: [HttpBody]
-  response: [HttpResponse]
+  bodies: [HttpBody]
+  responses: [HttpResponse]
 }
 type PathComponent {
   id: ID
@@ -27,7 +27,7 @@ type PathComponent {
 type HttpResponse {
   id: ID
   statusCode: Int
-  body: [HttpBody]
+  bodies: [HttpBody]
 }
 type ObjectFieldMetadata {
   key: String

@@ -1189,19 +1189,19 @@ async function main() {
   })
   const result = await spectacle({
     query: `{ 
-    request {
+    requests {
       id
       pathId
       absolutePathPattern
       method
-      body {
+      bodies {
         contentType
         rootShapeId
       }
-      response {
+      responses {
         id
         statusCode
-        body {
+        bodies {
           contentType
           rootShapeId
         }
