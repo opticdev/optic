@@ -59,12 +59,16 @@ export const ContributionEditingStore = (props: any) => {
 
   const value: ContributionEditContextValue = {
     isEditing,
-    save: () => {},
+    save: () => {
+      setIsEditing(false);
+      alert(JSON.stringify(pendingContributions));
+      setPendingContributions(() => []);
+    },
     pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),
     stagePendingContribution,
     lookupContribution: (id, contributionKey) => {
-      return undefined
+      return undefined;
     },
   };
 

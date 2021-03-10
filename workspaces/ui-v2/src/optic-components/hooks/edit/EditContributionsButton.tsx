@@ -8,7 +8,12 @@ import { useContributionEditing } from './Contributions';
 export function EditContributionsButton() {
   const classes = useStyles();
 
-  const { isEditing, pendingCount, setEditing } = useContributionEditing();
+  const {
+    isEditing,
+    save,
+    pendingCount,
+    setEditing,
+  } = useContributionEditing();
 
   const contents = !isEditing ? (
     <>
@@ -29,7 +34,9 @@ export function EditContributionsButton() {
     <ToggleButton
       value="check"
       selected={isEditing}
-      onClick={() => setEditing(!isEditing)}
+      onClick={() => {
+        isEditing ? save() : setEditing(true);
+      }}
       size="small"
       className={classes.button}
     >
