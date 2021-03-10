@@ -7,7 +7,6 @@ type Query {
   shapeChoices(shapeId: ID): [OpticShape]
 }
 type HttpBody {
-  id: String
   contentType: String
   rootShapeId: String
 }
