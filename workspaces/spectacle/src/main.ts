@@ -1207,11 +1207,25 @@ async function main() {
         }
       }
     }
-    }`,
+}`,
     variables: {}
   })
 
   console.log(JSON.stringify(result, null, 2))
+
+  {
+    const result = await spectacle({
+      query: `{ 
+    shapeChoices(shapeId: "shape_RvMMDY4eOD") {
+      id
+      jsonType
+    }
+}`,
+      variables: {}
+    })
+    console.log(JSON.stringify(result, null, 2))
+
+  }
 }
 
 main()

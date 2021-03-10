@@ -19,8 +19,12 @@ pub fn spec_from_events(spec_json: String) -> Result<WasmSpecProjection, JsValue
 }
 
 #[wasm_bindgen]
-pub fn get_endpoints_projection(spec: WasmSpecProjection) -> Result<String, JsValue> {
+pub fn get_endpoints_projection(spec: &WasmSpecProjection) -> Result<String, JsValue> {
   spec.spectacle_endpoints_projection()
+}
+#[wasm_bindgen]
+pub fn get_shapes_projection(spec: &WasmSpecProjection) -> Result<String, JsValue> {
+  spec.spectacle_shapes_projection()
 }
 
 #[wasm_bindgen]
@@ -48,8 +52,12 @@ impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
     optic_diff_engine::diff_interaction(&self.projection, interaction)
   }
-  pub fn spectacle_endpoints_projection(self) -> Result<String, JsValue> {
+  pub fn spectacle_endpoints_projection(&self) -> Result<String, JsValue> {
     let serialized = self.projection.spectacle_endpoints().to_json_string();
+    Ok(serialized)
+  }
+  pub fn spectacle_shapes_projection(&self) -> Result<String, JsValue> {
+    let serialized = self.projection.shape().to_json_string();
     Ok(serialized)
   }
 }

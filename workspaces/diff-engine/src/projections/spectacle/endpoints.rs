@@ -42,6 +42,7 @@ pub struct GraphNodesAndEdges<N, E> {
   node_index_to_id: BTreeMap<String, String>,
 }
 
+// duplicated in [projections/shape.rs]
 pub type SerializableGraph = GraphNodesAndEdges<Node, Edge>;
 impl From<EndpointsProjection> for SerializableGraph {
   fn from(endpoint_projection: EndpointsProjection) -> Self {

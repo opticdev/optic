@@ -2236,7 +2236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/command@npm:^1, @oclif/command@npm:^1.5.13, @oclif/command@npm:^1.5.20, @oclif/command@npm:^1.6.0, @oclif/command@npm:^1.6.1, @oclif/command@npm:^1.8.0":
+"@oclif/command@npm:^1.5.20, @oclif/command@npm:^1.6.0, @oclif/command@npm:^1.6.1, @oclif/command@npm:^1.8.0":
   version: 1.8.0
   resolution: "@oclif/command@npm:1.8.0"
   dependencies:
@@ -2252,7 +2252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/config@npm:^1, @oclif/config@npm:^1.15.1, @oclif/config@npm:^1.17.0":
+"@oclif/config@npm:^1.15.1, @oclif/config@npm:^1.17.0":
   version: 1.17.0
   resolution: "@oclif/config@npm:1.17.0"
   dependencies:
@@ -2289,7 +2289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/errors@npm:^1.2.1, @oclif/errors@npm:^1.2.2, @oclif/errors@npm:^1.3.3":
+"@oclif/errors@npm:^1.2.1, @oclif/errors@npm:^1.2.2, @oclif/errors@npm:^1.3.3, @oclif/errors@npm:^1.3.4":
   version: 1.3.4
   resolution: "@oclif/errors@npm:1.3.4"
   dependencies:
@@ -2321,23 +2321,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/plugin-help@npm:^2":
-  version: 2.2.3
-  resolution: "@oclif/plugin-help@npm:2.2.3"
-  dependencies:
-    "@oclif/command": ^1.5.13
-    chalk: ^2.4.1
-    indent-string: ^4.0.0
-    lodash.template: ^4.4.0
-    string-width: ^3.0.0
-    strip-ansi: ^5.0.0
-    widest-line: ^2.0.1
-    wrap-ansi: ^4.0.0
-  checksum: 10e2d0f561d9e42816e028353043413e51b8864a4563a1d7502a011dbf0d2307ea2420b854ca8ba4e2271c48249b8843f5b626f159e1244e996d0d6182fda8c3
-  languageName: node
-  linkType: hard
-
-"@oclif/plugin-help@npm:^3, @oclif/plugin-help@npm:^3.2.0":
+"@oclif/plugin-help@npm:^3, @oclif/plugin-help@npm:^3.2.0, @oclif/plugin-help@npm:^3.2.2":
   version: 3.2.2
   resolution: "@oclif/plugin-help@npm:3.2.2"
   dependencies:
@@ -4180,10 +4164,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@useoptic/cli@workspace:workspaces/local-cli"
   dependencies:
-    "@oclif/command": ^1
-    "@oclif/config": ^1
+    "@oclif/command": ^1.8.0
+    "@oclif/config": ^1.17.0
     "@oclif/dev-cli": ^1
-    "@oclif/plugin-help": ^2
+    "@oclif/errors": ^1.3.4
+    "@oclif/plugin-help": ^3.2.2
     "@oclif/test": ^1
     "@types/body-parser": ^1.19.0
     "@types/chai": ^4
@@ -21497,15 +21482,6 @@ typescript@^4.2.3:
   dependencies:
     string-width: ^1.0.2 || 2
   checksum: 4f850f84da84b7471d7b92f55e381e7ba286210470fe77a61e02464ef66d10e96057a0d137bc013fbbedb7363a26e79c0e8b21d99bb572467d3fee0465b8fd27
-  languageName: node
-  linkType: hard
-
-"widest-line@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "widest-line@npm:2.0.1"
-  dependencies:
-    string-width: ^2.1.1
-  checksum: dd98e47483dd3c5c2cc5515d576f386d0a42c11d3841bdd5040aeb819a2c84735a0cc65d3a3c9f9c000425c09678092d37d6d670c05192313ad7fdfd6111883f
   languageName: node
   linkType: hard
 

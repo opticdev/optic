@@ -7,7 +7,8 @@ use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
 use serde::Serialize;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
+use std::iter::FromIterator;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "type", content = "data")]
@@ -78,6 +79,49 @@ pub struct FieldNodeDescriptor {
 pub struct ShapeProjection {
   pub graph: Graph<Node, Edge>,
   pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct GraphNodesAndEdges<N, E> {
+  nodes: Vec<N>,
+  edges: Vec<(usize, usize, E)>,
+  node_index_to_id: BTreeMap<String, String>,
+}
+
+// duplicated in [projections/spectacle/endpoints.rs]
+pub type SerializableGraph = GraphNodesAndEdges<Node, Edge>;
+impl From<ShapeProjection> for SerializableGraph {
+  fn from(endpoint_projection: ShapeProjection) -> Self {
+    let (graph_nodes, graph_edges) = endpoint_projection.graph.into_nodes_edges();
+    let nodes = graph_nodes.into_iter().map(|x| x.weight).collect();
+    let edges = graph_edges
+      .into_iter()
+      .map(|x| (x.source().index(), x.target().index(), x.weight))
+      .collect();
+    let value: GraphNodesAndEdges<Node, Edge> = GraphNodesAndEdges {
+      nodes,
+      edges,
+      node_index_to_id: BTreeMap::from_iter(
+        endpoint_projection
+          .node_id_to_index
+          .into_iter()
+          .map(|(k, v)| (v.index().to_string(), k)),
+      ),
+    };
+    value
+  }
+}
+
+impl ShapeProjection {
+  pub fn to_json_string(&self) -> String {
+    serde_json::to_string(&self.to_serializable_graph()).expect("graph should serialize")
+  }
+
+  pub fn to_serializable_graph(&self) -> SerializableGraph {
+    let copy = self.clone();
+    copy.into()
+  }
 }
 
 impl Default for ShapeProjection {
@@ -474,16 +518,6 @@ impl ShapeProjection {
     Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.descriptor.kind))
   }
 }
-
-// struct Example {
-//     inside: Vec<u8>,
-// }
-
-// impl Example {
-//     pub fn inside_iter<T>(&self) -> impl Iterator<Item = &u8> {
-//         self.inside.iter()
-//     }
-// }
 
 impl Aggregate for ShapeProjection {
   fn aggregate_type() -> &'static str {

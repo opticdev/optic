@@ -4,6 +4,7 @@ schema {
 }
 type Query {
   request: [HttpRequest]
+  shapeChoices(shapeId: ID): [OpticShape]
 }
 type HttpBody {
   id: String
@@ -28,4 +29,28 @@ type HttpResponse {
   id: ID
   statusCode: Int
   body: [HttpBody]
-}`;
+}
+type ObjectFieldMetadata {
+  key: String
+  fieldId: ID
+  shapeId: [ID]
+  required: Boolean
+}
+type ObjectMetadata {
+  field: [ObjectFieldMetadata]
+}
+type ArrayItemMetadata {
+  shapeId: [ID]
+}
+type ArrayMetadata {
+  item: [ArrayItemMetadata]
+}
+type OpticShape {
+  id: ID
+  jsonType: String
+  asObject: ObjectMetadata
+  asArray: ArrayMetadata
+  # exampleValue: [JSON]
+}
+
+`;

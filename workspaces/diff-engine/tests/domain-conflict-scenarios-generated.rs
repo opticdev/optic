@@ -13,6 +13,10 @@ pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d
     "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__shape_graph",
     Dot::with_config(&spec_projection.shape().graph, &[])
   );
+  assert_json_snapshot!(
+    "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__shape_json",
+    &spec_projection.shapes_serializable()
+  );
   assert_debug_snapshot!(
     "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
