@@ -29,36 +29,35 @@ export function useEndpointBody(
       }
     }
     }`,
-    variables: {},
+    variables: {}
   });
 
   if (!data) {
     return { requests: [], responses: [] };
   } else {
-    const endpoint = data.request.find(
+    const request = data.request.find(
       (i: any) => i.pathId === pathId && i.method === method
     );
-    if (endpoint) {
-      const requests: IRequestBody[] = [];
-      const responses: IResponseBody[] = [];
-
-      endpoint.body.forEach((req: any) => {
-        requests.push({
-          requestId: req.id,
-          contentType: req.contentType,
-          rootShapeId: req.rootShapeId,
+    if (request) {
+      const requests: IRequestBody[] = request.body
+        .map((body: any) => {
+          return {
+            requestId: request.id,
+            contentType: body.contentType,
+            rootShapeId: body.rootShapeId
+          };
         });
-      });
-      endpoint.response.forEach((res: any) => {
-        res.body.forEach((i: any) =>
-          responses.push({
-            statusCode: res.statusCode,
-            responseId: res.responseId,
-            contentType: i.contentType,
-            rootShapeId: i.rootShapeId,
-          })
-        );
-      });
+      const responses: IResponseBody[] = request.response
+        .flatMap((response: any) => {
+          return response.body.map((body: any) => {
+            return {
+              statusCode: response.statusCode,
+              responseId: response.responseId,
+              contentType: body.contentType,
+              rootShapeId: body.rootShapeId
+            };
+          });
+        });
       //
       return { requests, responses };
     } else {
