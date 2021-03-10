@@ -8,7 +8,7 @@ export const useDocumentationPageLink: () => {
   const url = `${baseUrl}/documentation`;
   return {
     path: url,
-    linkTo: () => url
+    linkTo: () => url,
   };
 };
 export const useEndpointPageLink: () => {
@@ -19,7 +19,7 @@ export const useEndpointPageLink: () => {
   return {
     path: `${documentationPage.path}/paths/:pathId/methods/:method`,
     linkTo: (pathId: string, method: string) =>
-      `${documentationPage.path}/paths/${pathId}/methods/${method}`
+      `${documentationPage.path}/paths/${pathId}/methods/${method}`,
   };
 };
 // Diff use cases
@@ -31,9 +31,22 @@ export const useDiffReviewPageLink: () => {
   const url = `${baseUrl}/review`;
   return {
     path: url,
-    linkTo: () => url
+    linkTo: () => url,
   };
 };
+
+export const useDiffReviewPageWithBoundaryLink: () => {
+  path: string;
+  linkTo: () => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const url = `${baseUrl}/review/:boundaryId`;
+  return {
+    path: url,
+    linkTo: () => url,
+  };
+};
+
 // Setup page use cases
 export const useSetupPageLink: () => {
   path: string;
@@ -43,6 +56,6 @@ export const useSetupPageLink: () => {
   const url = `${baseUrl}/setup`;
   return {
     path: url,
-    linkTo: () => url
+    linkTo: () => url,
   };
 };

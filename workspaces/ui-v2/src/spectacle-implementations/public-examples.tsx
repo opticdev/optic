@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/navigation/Loading';
+import { DiffReviewPages } from '../optic-components/pages/ReviewDiffPage';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -40,7 +41,10 @@ export default function PublicExamples() {
     <SpectacleStore spectacle={data!}>
       <BaseUrlProvider value={{ url: match.url }}>
         <Switch>
-          <DocumentationPages />
+          <>
+            <DiffReviewPages />
+            <DocumentationPages />
+          </>
         </Switch>
       </BaseUrlProvider>
     </SpectacleStore>

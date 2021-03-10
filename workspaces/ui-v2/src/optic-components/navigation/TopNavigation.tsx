@@ -10,7 +10,7 @@ import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useApiName } from '../hooks/useApiNameHook';
 
-export function TopNavigation(props: { AccessoryNavigation: any; }) {
+export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
   const apiName = useApiName();
 
@@ -50,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1000,
     borderBottom: `1px solid ${SubtleGreyBackground}`,
     backgroundColor: SubtleBlueBackground,
+    position: 'fixed',
+    width: '100%',
   },
   toolbar: {
     height: '40px !important',

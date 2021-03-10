@@ -4372,6 +4372,7 @@ __metadata:
     "@types/react-router-dom": ^5.1.7
     "@typescript-eslint/eslint-plugin": ^4.5.0
     "@typescript-eslint/parser": ^4.5.0
+    "@useoptic/cli-shared": "workspace:workspaces/cli-shared"
     "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm"
     "@useoptic/spectacle": "workspace:workspaces/spectacle"
     babel-eslint: ^10.1.0

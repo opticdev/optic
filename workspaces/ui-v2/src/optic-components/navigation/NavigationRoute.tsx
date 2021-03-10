@@ -16,7 +16,7 @@ export function NavigationRoute(props: NavigationRouteProps) {
     <Route
       path={path}
       exact
-      component={(props: { match: any; }) => {
+      component={(props: { match: any }) => {
         const { match } = props;
         return (
           <div className={classes.root}>
@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   scroll: {
     overflow: 'scroll',
+    paddingTop: 40,
     flex: 1,
   },
 }));

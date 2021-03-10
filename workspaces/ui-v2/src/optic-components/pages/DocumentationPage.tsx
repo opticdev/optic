@@ -133,7 +133,7 @@ function EndpointRootPage(props: any) {
   const endpointId = getEndpointId({ method, pathId });
 
   return (
-    <FullWidth style={{ paddingBottom: 400 }}>
+    <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"
