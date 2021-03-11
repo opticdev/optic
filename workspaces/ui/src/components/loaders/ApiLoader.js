@@ -303,8 +303,18 @@ export async function createExampleSpecServiceFactory(data) {
     },
     processCommands(commands, commitMessage) {
       let spec = DiffEngine.spec_from_events(events);
-      DiffEngine.append_batch(spec, JSON.stringify(commands), commitMessage);
-      return Promise.resolve();
+      let newEventsJson = DiffEngine.append_batch_to_spec(
+        spec,
+        JSON.stringify(commands),
+        commitMessage
+      );
+      let newEvents = JSON.parse(newEventsJson);
+
+      events = JSON.stringify([...JSON.parse(events), ...newEvents]);
+      eventEmitter.emit('events-updated');
+
+      // eventEmitter.emit('events-appended', newEvents);
+      return Promise.resolve(newEvents);
     },
   };
 
