@@ -17,7 +17,7 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
   const { AccessoryNavigation } = props;
   return (
     <div className={classes.root} key="top-navigation">
-      <Container maxWidth="lg" style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <Container maxWidth={false} style={{ paddingLeft: 0, paddingRight: 0 }}>
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar className={classes.toolbar}>
             <div className={classes.stacked}>

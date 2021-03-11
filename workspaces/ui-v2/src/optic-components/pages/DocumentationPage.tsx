@@ -56,7 +56,7 @@ export function DocsPageAccessoryNavigation(props: any) {
   );
 }
 
-function DocumentationRootPage(props: any) {
+export function DocumentationRootPage(props: any) {
   const { endpoints, loading } = useEndpoints();
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
@@ -110,7 +110,7 @@ function DocumentationRootPage(props: any) {
   );
 }
 
-function EndpointRootPage(props: any) {
+export function EndpointRootPage(props: any) {
   const { endpoints, loading } = useEndpoints();
 
   const { match } = props;

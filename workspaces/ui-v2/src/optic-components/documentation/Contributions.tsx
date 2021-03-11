@@ -4,7 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField, Typography } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
-import { useDebounce } from '../hooks/useDebounceHook';
+import { useDebounce } from '../hooks/ui/useDebounceHook';
 import { useContributionEditing } from '../hooks/edit/Contributions';
 import { OpticBlueReadable } from '../theme';
 

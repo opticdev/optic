@@ -28,7 +28,7 @@ export const useDiffReviewPageLink: () => {
   linkTo: () => string;
 } = () => {
   const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/review`;
+  const url = `${baseUrl}/diffs`;
   return {
     path: url,
     linkTo: () => url,
@@ -40,7 +40,31 @@ export const useDiffReviewPageWithBoundaryLink: () => {
   linkTo: () => string;
 } = () => {
   const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/review/:boundaryId`;
+  const url = `${baseUrl}/diffs/:boundaryId`;
+  return {
+    path: url,
+    linkTo: () => url,
+  };
+};
+
+export const useDiffUndocumentedUrlsPageLink: () => {
+  path: string;
+  linkTo: () => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const url = `${baseUrl}/diffs/:boundaryId/urls`;
+  return {
+    path: url,
+    linkTo: () => url,
+  };
+};
+
+export const useDiffEndpoints: () => {
+  path: string;
+  linkTo: () => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const url = `${baseUrl}/diffs/:boundaryId/paths/:pathId/methods/:method`;
   return {
     path: url,
     linkTo: () => url,

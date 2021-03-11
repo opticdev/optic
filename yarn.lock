@@ -4409,6 +4409,7 @@ __metadata:
     lodash.debounce: ^4.0.8
     lodash.flatten: ^4.4.0
     lodash.groupby: ^4.6.0
+    lodash.isequal: ^4.5.0
     lodash.sortby: ^4.7.0
     mini-css-extract-plugin: 0.11.3
     optimize-css-assets-webpack-plugin: 5.0.4
@@ -13791,6 +13792,13 @@ fsevents@~2.1.1:
   version: 4.6.0
   resolution: "lodash.groupby@npm:4.6.0"
   checksum: fb4c30f93ca5a11c4234df33578c1c7f9d86edb8e85a808cffa6fc2064b3a1856e93948489b1774264cf35995a29f82cbf6fd31093d9ebcb9a9c8fd7225f4686
+  languageName: node
+  linkType: hard
+
+"lodash.isequal@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: 5b47e094641c18a915497343894c66f7da6aebb9aaa2a3fcc5643455aaf29d19df60ebbed664c8374fb959c8b4ce96810ee6becd8a71ac58c6c2ca8d29762947
   languageName: node
   linkType: hard
 
