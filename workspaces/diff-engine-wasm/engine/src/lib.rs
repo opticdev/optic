@@ -1,10 +1,11 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+use chrono::Utc;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use optic_diff_engine::{
-  HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
+  CommandContext, HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
 };
 
 #[wasm_bindgen(start)]
@@ -68,13 +69,31 @@ impl From<InteractionDiffResult> for ResultContainer<InteractionDiffResult> {
 // ------------
 
 #[wasm_bindgen]
-pub fn append_batch(
-  spec: &mut WasmSpecProjection,
+pub fn append_batch_to_spec(
+  spec: WasmSpecProjection,
   commands: String,
-  command_message: String,
+  commit_message: String,
 ) -> Result<String, JsValue> {
   let commands: Vec<SpecCommand> = serde_json::from_str(&commands).unwrap();
   let batch_id = Uuid::new_v4().to_hyphenated().to_string();
+  let batch_command_context = CommandContext::new(
+    batch_id.clone(),
+    String::from("diff-engine-wasm-user"),
+    String::from("diff-engine-wasm-session"),
+    Utc::now(),
+  );
 
-  Ok(String::from("Okay!"))
+  let mut batch =
+    optic_diff_engine::append_batch_to_spec(spec.projection, commit_message, batch_command_context);
+
+  for command in commands {
+    batch
+      .with_command(command)
+      .map_err(|err| format!("command could not be applied: {:?}", err))?;
+  }
+
+  let new_events = batch.commit();
+
+  serde_json::to_string(&new_events)
+    .map_err(|err| JsValue::from(format!("new events could not be serialized: {:?}", err)))
 }
