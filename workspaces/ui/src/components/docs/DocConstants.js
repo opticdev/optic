@@ -31,6 +31,8 @@ export const DocSubGroupHeadingBigStyles = {
 };
 
 export const methodColors = {
+  HEAD: '#aeaeae',
+  OPTIONS: '#aeaeae',
   GET: '#52e2a3',
   POST: '#5aaad1',
   PUT: '#ee7517',
@@ -39,6 +41,8 @@ export const methodColors = {
 };
 
 export const methodColorsDark = {
+  HEAD: '#aeaeae',
+  OPTIONS: '#aeaeae',
   GET: '#276c4e',
   POST: '#264859',
   PUT: '#69340a',
