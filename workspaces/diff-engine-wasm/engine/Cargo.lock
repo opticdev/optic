@@ -346,6 +346,7 @@ dependencies = [
 name = "optic_diff_wasm"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "console_error_panic_hook",
  "log",
  "optic_diff_engine",
