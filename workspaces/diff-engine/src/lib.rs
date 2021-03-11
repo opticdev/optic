@@ -23,6 +23,7 @@ pub use projections::{
 };
 pub use protos::shapehash;
 pub use shapes::diff as diff_shape;
+pub use spec::append_batch as append_batch_to_spec;
 pub use state::body::BodyDescriptor;
 
 pub mod errors {

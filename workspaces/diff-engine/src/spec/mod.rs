@@ -6,13 +6,21 @@ use crate::events::SpecEvent;
 use crate::projections::SpecProjection;
 use cqrs_core::Aggregate;
 
-pub struct BatchAppend {
+pub fn append_batch(
+  spec_projection: SpecProjection,
+  commit_message: String,
+  batch_command_context: CommandContext,
+) -> AppendedBatch {
+  AppendedBatch::new(spec_projection, commit_message, batch_command_context)
+}
+
+pub struct AppendedBatch {
   batch_id: String,
   command_handler: SpecCommandHandler,
   new_events: Vec<SpecEvent>,
 }
 
-impl BatchAppend {
+impl AppendedBatch {
   pub fn new(
     spec_projection: SpecProjection,
     commit_message: String,
@@ -59,7 +67,7 @@ impl BatchAppend {
     Ok(())
   }
 
-  pub fn into_new_events(self) -> Vec<SpecEvent> {
+  pub fn commit(self) -> Vec<SpecEvent> {
     let mut new_events = self.new_events;
     let end_event = self
       .command_handler
