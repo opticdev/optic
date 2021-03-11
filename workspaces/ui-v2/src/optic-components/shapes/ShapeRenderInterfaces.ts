@@ -1,7 +1,7 @@
 export interface IFieldRenderer {
   fieldId: string;
-  fieldKey: string;
-  shapeRenderers: IShapeRenderer[];
+  name: string;
+  shapeChoices: IShapeRenderer[];
   required: boolean;
   description?: string;
   changelog?: IChangeLog;
@@ -17,7 +17,7 @@ export interface IShapeRenderer {
 }
 
 export interface IArrayRender {
-  listItem: IShapeRenderer[];
+  shapeChoices: IShapeRenderer[];
 }
 
 export interface IObjectRender {

@@ -2,7 +2,7 @@ import { AsyncStatus, Spectacle } from './public-examples';
 import React, { useContext, useEffect, useState } from 'react';
 import { SpectacleInput } from '@useoptic/spectacle';
 
-export const SpectacleContext = React.createContext({});
+export const SpectacleContext = React.createContext<Spectacle>({query: null});
 
 export const SpectacleStore = (props: {
   spectacle: Spectacle;
@@ -16,7 +16,7 @@ export const SpectacleStore = (props: {
 };
 
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
-  const { query } = useContext(SpectacleContext) as Spectacle;
+  const { query } = useContext(SpectacleContext);
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);

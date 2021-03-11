@@ -61,7 +61,7 @@ function buildShapesGraph(spec: any, opticEngine: any) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id,
+      id
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -76,8 +76,10 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   const spec = opticEngine.spec_from_events(
     JSON.stringify(opticContext.specEvents)
   );
-  const shapesQueries = buildShapesGraph(spec, opticEngine);
+
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
+  const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
+  console.log({ shapeViewerProjection });
 
   const resolvers = {
     Query: {
@@ -85,8 +87,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
         return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.Request).results);
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
-        debugger
-        return [Promise.resolve(context.shapesQueries.findNodeById(args.shapeId))];
+        return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
       }
     },
     HttpRequest: {
@@ -107,7 +108,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().responses().results);
-      },
+      }
     },
     HttpResponse: {
       id: (parent: any) => {
@@ -118,7 +119,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
-      },
+      }
     },
     HttpBody: {
       contentType: (parent: any) => {
@@ -130,20 +131,35 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     },
     OpticShape: {
       id: (parent: any) => {
-        return Promise.resolve(parent.result.data.shapeId);
+        return Promise.resolve(parent.shapeId);
       },
       jsonType: (parent: any) => {
-        return Promise.resolve(parent.coreShape().result.data.descriptor.kind);
+        return Promise.resolve(parent.jsonType);
+      },
+      asArray: (parent: any) => {
+        if (parent.jsonType === 'Array') {
+          return Promise.resolve(parent);
+        }
+      },
+      asObject: (parent: any) => {
+        if (parent.jsonType === 'Object') {
+          return Promise.resolve(parent);
+        }
+      }
+    },
+    ArrayMetadata: {
+      shapeId: (parent: any) => {
+        return Promise.resolve(parent.itemShapeId)
       }
     }
   };
 
   const executableSchema = makeExecutableSchema({
     typeDefs: schema,
-    resolvers,
+    resolvers
   });
 
-  return function (input: SpectacleInput) {
+  return function(input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,
@@ -152,11 +168,12 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       contextValue: {
         opticContext,
         endpointsQueries,
-        shapesQueries
+        shapeViewerProjection
       }
     });
   };
 }
+
 export interface SpectacleInput {
   query: string,
   variables: {

@@ -48,8 +48,8 @@ export const ShapeRowBase = ({
 };
 
 export const RenderField = ({
-  fieldKey,
-  shapeRenderers,
+  name,
+  shapeChoices,
   required,
   changelog,
 }: IFieldRenderer) => {
@@ -59,14 +59,14 @@ export const RenderField = ({
   return (
     <>
       <ShapeRowBase depth={depth} changelog={changelog}>
-        <span className={sharedClasses.shapeFont}>"{fieldKey}"</span>
+        <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
-        <RenderFieldLeadingValue shapeRenderers={shapeRenderers} />
+        <RenderFieldLeadingValue shapeRenderers={shapeChoices} />
         {!required && (
           <span className={sharedClasses.symbolFont}> (optional) </span>
         )}
       </ShapeRowBase>
-      <RenderFieldRowValues shapeRenderers={shapeRenderers} />
+      <RenderFieldRowValues shapeRenderers={shapeChoices} />
     </>
   );
 };
@@ -153,18 +153,18 @@ export const RenderFieldRowValues = ({
     }
 
     if (shape.asArray) {
-      if (shape.asArray.listItem.length === 0) {
+      if (shape.asArray.shapeChoices.length === 0) {
         throw new Error('handle unknown');
       }
 
       const inner =
-        shape.asArray.listItem.length > 1 ? (
+        shape.asArray.shapeChoices.length > 1 ? (
           <OneOfRender
             parentShapeId={shape.shapeId}
-            shapes={shape.asArray.listItem}
+            shapes={shape.asArray.shapeChoices}
           />
         ) : (
-          <RenderRootShape shape={shape.asArray.listItem[0]} />
+          <RenderRootShape shape={shape.asArray.shapeChoices[0]} />
         );
 
       return (

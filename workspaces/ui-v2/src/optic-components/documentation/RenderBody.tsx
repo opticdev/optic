@@ -5,13 +5,18 @@ import { TwoColumn } from './TwoColumn';
 import { BodyRender } from './BodyRender';
 import { ContributionGroup } from './ContributionGroup';
 import { MarkdownBodyContribution } from './MarkdownBodyContribution';
+import { useShapeDescriptor } from '../hooks/useShapeDescriptor';
 
 export type TwoColumnBodyProps = {
   location: string;
   bodyId: string;
+  rootShapeId: string
 };
 
 export function TwoColumnBody(props: TwoColumnBodyProps) {
+  const x = useShapeDescriptor(props.rootShapeId, undefined);
+  console.log({x})
+  debugger;
   return (
     <TwoColumn
       style={{ marginTop: 50 }}
@@ -25,13 +30,13 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
               defaultText={'Add a description'}
             />
           </div>
-          <ContributionGroup rootShape={[tempExample]} />
+          <ContributionGroup rootShape={x} />
         </>
       }
       right={
         <BodyRender
           location="application/json"
-          shape={tempExample}
+          shape={x}
           style={{ marginTop: 35 }}
         />
       }
@@ -47,14 +52,14 @@ const tempExample: IShapeRenderer = {
   asObject: {
     fields: [
       {
-        fieldKey: 'street',
+        name: 'street',
         fieldId: makeid(6),
         description: 'this is the street where it happens',
         required: true,
         changelog: {
           added: true,
         },
-        shapeRenderers: [
+        shapeChoices: [
           {
             shapeId: makeid(6),
             value: '10 Waterway CT',
@@ -63,14 +68,14 @@ const tempExample: IShapeRenderer = {
         ],
       },
       {
-        fieldKey: 'zip_code',
+        name: 'zip_code',
         fieldId: makeid(6),
         description: '',
         required: true,
         changelog: {
           removed: true,
         },
-        shapeRenderers: [
+        shapeChoices: [
           {
             shapeId: makeid(6),
             value: 267005,
@@ -79,11 +84,11 @@ const tempExample: IShapeRenderer = {
         ],
       },
       {
-        fieldKey: 'country_code',
+        name: 'country_code',
         fieldId: makeid(6),
         description: 'two digit country code. see format x',
         required: true,
-        shapeRenderers: [
+        shapeChoices: [
           {
             shapeId: makeid(6),
             value: undefined,
@@ -92,11 +97,11 @@ const tempExample: IShapeRenderer = {
         ],
       },
       {
-        fieldKey: 'returnable',
+        name: 'returnable',
         fieldId: makeid(6),
         description: '',
         required: true,
-        shapeRenderers: [
+        shapeChoices: [
           {
             shapeId: makeid(6),
             value: true,
@@ -104,11 +109,11 @@ const tempExample: IShapeRenderer = {
             asObject: {
               fields: [
                 {
-                  fieldKey: 'by_date',
+                  name: 'by_date',
                   fieldId: makeid(6),
                   description: 'can it be returned by a date',
                   required: true,
-                  shapeRenderers: [
+                  shapeChoices: [
                     {
                       shapeId: makeid(6),
                       value: '9/10/11',
@@ -122,11 +127,11 @@ const tempExample: IShapeRenderer = {
         ],
       },
       {
-        fieldKey: 'note',
+        name: 'note',
         fieldId: makeid(6),
         description: '',
         required: false,
-        shapeRenderers: [
+        shapeChoices: [
           {
             shapeId: makeid(6),
             value:

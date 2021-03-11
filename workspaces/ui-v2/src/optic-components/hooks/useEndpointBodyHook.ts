@@ -66,8 +66,8 @@ export function useEndpointBody(
 
 export interface IRequestBody {
   requestId: string;
-  contentType?: string;
-  rootShapeId?: string;
+  contentType: string;
+  rootShapeId: string;
   changelog?: {
     added: boolean;
     removed: boolean;
@@ -78,8 +78,8 @@ export interface IRequestBody {
 export interface IResponseBody {
   responseId: string;
   statusCode: string;
-  contentType?: string;
-  rootShapeId?: string;
+  contentType: string;
+  rootShapeId: string;
   changelog?: {
     added: boolean;
     removed: boolean;

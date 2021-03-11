@@ -30,19 +30,16 @@ type HttpResponse {
   bodies: [HttpBody]
 }
 type ObjectFieldMetadata {
-  key: String
+  name: String
   fieldId: ID
-  shapeId: [ID]
-  required: Boolean
+  # query shapeChoices(shapeId) to recurse
+  shapeId: ID
 }
 type ObjectMetadata {
-  field: [ObjectFieldMetadata]
-}
-type ArrayItemMetadata {
-  shapeId: [ID]
+  fields: [ObjectFieldMetadata]
 }
 type ArrayMetadata {
-  item: [ArrayItemMetadata]
+  shapeId: ID
 }
 type OpticShape {
   id: ID

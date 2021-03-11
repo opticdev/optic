@@ -1,0 +1,19 @@
+---
+source: workspaces/diff-engine/tests/e2e-scenarios.rs
+expression: "&spec_projection.shape().to_choice_mapping()"
+---
+{
+  "shape_2": [],
+  "shape_3": [
+    {
+      "type": "Array",
+      "shapeId": "shape_2"
+    }
+  ],
+  "shape_4": [
+    {
+      "type": "Object",
+      "fields": []
+    }
+  ]
+}
