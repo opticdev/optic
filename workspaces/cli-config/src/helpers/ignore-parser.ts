@@ -61,14 +61,19 @@ export function parseRule(
       .map((i) => i.toUpperCase())
       .filter((i) => allowedMethods.includes(i));
   }
-  const regex = pathToRegexp(pathInput);
-  const shouldIgnore = (method: string, url: string) =>
-    methods.includes(method) && regex.exec(url) !== null;
+  try {
+    const regex = pathToRegexp(pathInput);
+    const shouldIgnore = (method: string, url: string) =>
+      methods.includes(method) && regex.exec(url) !== null;
 
-  return {
-    methods,
-    path: pathInput,
-    regex,
-    shouldIgnore,
-  };
+    return {
+      methods,
+      path: pathInput,
+      regex,
+      shouldIgnore,
+    };
+  } catch (e) {
+    console.warn('Invalid regex in ignore rule, skipping:' + userInput);
+    return undefined;
+  }
 }
