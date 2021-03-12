@@ -8,6 +8,9 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+#[macro_use]
+mod macros;
+
 pub mod endpoint;
 pub mod http_interaction;
 pub mod rfc;
