@@ -39,6 +39,7 @@ type ObjectMetadata {
   fields: [ObjectFieldMetadata]
 }
 type ArrayMetadata {
+  # query shapeChoices(shapeId) to recurse
   shapeId: ID
 }
 type OpticShape {
