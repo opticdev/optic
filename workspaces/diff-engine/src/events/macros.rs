@@ -10,7 +10,7 @@ macro_rules! cqrs_event {
     }
 
     impl $crate::events::WithEventContext for $event_type {
-      fn with_event_context(&mut self, event_context: EventContext) {
+      fn with_event_context(&mut self, event_context: $crate::events::EventContext) {
         self.event_context.replace(event_context);
       }
     }
@@ -27,7 +27,7 @@ macro_rules! cqrs_event {
     }
 
     impl $crate::events::WithEventContext for $group_type {
-      fn with_event_context(&mut self, event_context: EventContext) {
+      fn with_event_context(&mut self, event_context: $crate::events::EventContext) {
         match self {
           $( $group_type::$event_type(evt) => evt.with_event_context(event_context)),+,
         }
