@@ -45,6 +45,45 @@ pub enum EndpointEvent {
   ResponseRemoved(ResponseRemoved),
 }
 
+macro_rules! cqrs_event {
+  ($event_type: ty => $name: expr) => {
+    impl ::cqrs_core::Event for $event_type {
+      fn event_type(&self) -> &'static str {
+        $name
+      }
+    }
+
+    impl WithEventContext for $event_type {
+      fn with_event_context(&mut self, event_context: EventContext) {
+        self.event_context.replace(event_context);
+      }
+    }
+  };
+  ($group_type:ident { $($event_type: ident => $name: expr),+ }) => {
+
+    $( cqrs_event!($event_type => $name); )+
+
+    impl ::cqrs_core::Event for $group_type {
+      fn event_type(&self) -> &'static str {
+        match self {
+          $( $group_type::$event_type(evt) => evt.event_type() ),+,
+          _ => "unknown"
+        }
+      }
+    }
+
+    impl WithEventContext for $group_type {
+      fn with_event_context(&mut self, event_context: EventContext) {
+        match self {
+          $( $group_type::$event_type(evt) => evt.with_event_context(event_context)),+,
+          _ => {},
+        }
+      }
+    }
+  };
+
+}
+
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct PathComponentAdded {
@@ -53,6 +92,11 @@ pub struct PathComponentAdded {
   pub name: String,
   pub event_context: Option<EventContext>,
 }
+// cqrs_event!(PathComponentAdded => "PathComponentAdded");
+cqrs_event!(EndpointEvent {
+  PathComponentAdded => "PathComponentAdded",
+  PathComponentRenamed => "PathComponentRenamed"
+});
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -230,87 +274,87 @@ pub struct ResponseRemoved {
   pub event_context: Option<EventContext>,
 }
 
-impl Event for EndpointEvent {
-  fn event_type(&self) -> &'static str {
-    match self {
-      EndpointEvent::PathComponentAdded(evt) => evt.event_type(),
-      EndpointEvent::PathComponentRenamed(evt) => evt.event_type(),
-      EndpointEvent::PathComponentRemoved(evt) => evt.event_type(),
+// impl Event for EndpointEvent {
+//   fn event_type(&self) -> &'static str {
+//     match self {
+//       EndpointEvent::PathComponentAdded(evt) => evt.event_type(),
+//       EndpointEvent::PathComponentRenamed(evt) => evt.event_type(),
+//       EndpointEvent::PathComponentRemoved(evt) => evt.event_type(),
 
-      // path parameters
-      EndpointEvent::PathParameterAdded(evt) => evt.event_type(),
-      EndpointEvent::PathParameterShapeSet(evt) => evt.event_type(),
-      EndpointEvent::PathParameterRenamed(evt) => evt.event_type(),
-      EndpointEvent::PathParameterRemoved(evt) => evt.event_type(),
+//       // path parameters
+//       EndpointEvent::PathParameterAdded(evt) => evt.event_type(),
+//       EndpointEvent::PathParameterShapeSet(evt) => evt.event_type(),
+//       EndpointEvent::PathParameterRenamed(evt) => evt.event_type(),
+//       EndpointEvent::PathParameterRemoved(evt) => evt.event_type(),
 
-      // request parameters
-      EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => evt.event_type(),
-      EndpointEvent::RequestParameterRenamed(evt) => evt.event_type(),
-      EndpointEvent::RequestParameterShapeSet(evt) => evt.event_type(),
-      EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_type(),
-      EndpointEvent::RequestParameterRemoved(evt) => evt.event_type(),
+//       // request parameters
+//       EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => evt.event_type(),
+//       EndpointEvent::RequestParameterRenamed(evt) => evt.event_type(),
+//       EndpointEvent::RequestParameterShapeSet(evt) => evt.event_type(),
+//       EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_type(),
+//       EndpointEvent::RequestParameterRemoved(evt) => evt.event_type(),
 
-      // Request events
-      EndpointEvent::RequestAdded(evt) => evt.event_type(),
-      EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
-      EndpointEvent::RequestBodySet(evt) => evt.event_type(),
-      EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
+//       // Request events
+//       EndpointEvent::RequestAdded(evt) => evt.event_type(),
+//       EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
+//       EndpointEvent::RequestBodySet(evt) => evt.event_type(),
+//       EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
 
-      // Response events
-      EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_type(),
-      EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_type(),
-      EndpointEvent::ResponseContentTypeSet(evt) => evt.event_type(),
-      EndpointEvent::ResponseBodySet(evt) => evt.event_type(),
-      EndpointEvent::ResponseBodyUnset(evt) => evt.event_type(),
-      EndpointEvent::ResponseRemoved(evt) => evt.event_type(),
-    }
-  }
-}
+//       // Response events
+//       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_type(),
+//       EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_type(),
+//       EndpointEvent::ResponseContentTypeSet(evt) => evt.event_type(),
+//       EndpointEvent::ResponseBodySet(evt) => evt.event_type(),
+//       EndpointEvent::ResponseBodyUnset(evt) => evt.event_type(),
+//       EndpointEvent::ResponseRemoved(evt) => evt.event_type(),
+//     }
+//   }
+// }
 
-impl WithEventContext for EndpointEvent {
-  fn with_event_context(&mut self, event_context: EventContext) {
-    match self {
-      EndpointEvent::PathComponentAdded(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::PathComponentRenamed(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::PathComponentRemoved(evt) => evt.event_context.replace(event_context),
+// impl WithEventContext for EndpointEvent {
+//   fn with_event_context(&mut self, event_context: EventContext) {
+//     match self {
+//       EndpointEvent::PathComponentAdded(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::PathComponentRenamed(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::PathComponentRemoved(evt) => evt.event_context.replace(event_context),
 
-      // path parameters
-      EndpointEvent::PathParameterAdded(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::PathParameterShapeSet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::PathParameterRenamed(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::PathParameterRemoved(evt) => evt.event_context.replace(event_context),
+//       // path parameters
+//       EndpointEvent::PathParameterAdded(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::PathParameterShapeSet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::PathParameterRenamed(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::PathParameterRemoved(evt) => evt.event_context.replace(event_context),
 
-      // request parameters
-      EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => {
-        evt.event_context.replace(event_context)
-      }
-      EndpointEvent::RequestParameterRenamed(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestParameterShapeSet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestParameterRemoved(evt) => evt.event_context.replace(event_context),
+//       // request parameters
+//       EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => {
+//         evt.event_context.replace(event_context)
+//       }
+//       EndpointEvent::RequestParameterRenamed(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestParameterShapeSet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestParameterRemoved(evt) => evt.event_context.replace(event_context),
 
-      // Request events
-      EndpointEvent::RequestAdded(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
+//       // Request events
+//       EndpointEvent::RequestAdded(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
 
-      // Response events
-      EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::ResponseContentTypeSet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::ResponseBodySet(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::ResponseBodyUnset(evt) => evt.event_context.replace(event_context),
-      EndpointEvent::ResponseRemoved(evt) => evt.event_context.replace(event_context),
-    };
-  }
-}
+//       // Response events
+//       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::ResponseContentTypeSet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::ResponseBodySet(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::ResponseBodyUnset(evt) => evt.event_context.replace(event_context),
+//       EndpointEvent::ResponseRemoved(evt) => evt.event_context.replace(event_context),
+//     };
+//   }
+// }
 
-impl Event for PathComponentAdded {
-  fn event_type(&self) -> &'static str {
-    "PathComponentAdded"
-  }
-}
+// impl Event for PathComponentAdded {
+//   fn event_type(&self) -> &'static str {
+//     "PathComponentAdded"
+//   }
+// }
 
 impl Event for PathParameterShapeSet {
   fn event_type(&self) -> &'static str {
@@ -318,11 +362,11 @@ impl Event for PathParameterShapeSet {
   }
 }
 
-impl Event for PathComponentRenamed {
-  fn event_type(&self) -> &'static str {
-    "PathComponentRenamed"
-  }
-}
+// impl Event for PathComponentRenamed {
+//   fn event_type(&self) -> &'static str {
+//     "PathComponentRenamed"
+//   }
+// }
 
 impl Event for PathComponentRemoved {
   fn event_type(&self) -> &'static str {
