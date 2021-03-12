@@ -271,7 +271,7 @@ pub struct ShapeTrail {
   pub path: Vec<ShapeTrailPathComponent>,
 }
 impl ShapeTrail {
-  fn new(root_shape_id: ShapeId) -> Self {
+  pub fn new(root_shape_id: ShapeId) -> Self {
     ShapeTrail {
       root_shape_id,
       path: vec![],

@@ -6,6 +6,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_10": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "location",
@@ -25,6 +26,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_12": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ],
@@ -52,6 +54,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_5": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "long",
@@ -74,6 +77,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     },
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "long",
@@ -98,6 +102,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_8": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "population",
@@ -120,6 +125,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_9": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "principality",

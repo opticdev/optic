@@ -47,18 +47,18 @@ function createFlatList(
     if (shape.asObject) {
       shape.asObject.fields.forEach((field) => {
         contributions.push({
-          name: field.fieldKey,
+          name: field.name,
           depth,
           description: field.description || '',
-          shapes: field.shapeRenderers,
+          shapes: field.shapeChoices,
           contributionId: field.fieldId,
         });
 
-        contributions.push(...createFlatList(field.shapeRenderers, depth + 1));
+        contributions.push(...createFlatList(field.shapeChoices, depth + 1));
       });
     }
     if (shape.asArray) {
-      contributions.push(...createFlatList(shape.asArray.listItem, depth + 1));
+      contributions.push(...createFlatList(shape.asArray.shapeChoices, depth + 1));
     }
   });
 

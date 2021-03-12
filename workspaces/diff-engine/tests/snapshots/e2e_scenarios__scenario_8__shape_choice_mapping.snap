@@ -6,7 +6,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_10": [
     {
       "type": "Array",
-      "shapeId": "shape_9"
+      "jsonType": "Array",
+      "shapeId": "shape_10",
+      "itemShapeId": "shape_9"
     }
   ],
   "shape_11": [
@@ -19,6 +21,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_12": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "name",
@@ -41,12 +44,15 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_13": [
     {
       "type": "Array",
-      "shapeId": "shape_12"
+      "jsonType": "Array",
+      "shapeId": "shape_13",
+      "itemShapeId": "shape_12"
     }
   ],
   "shape_14": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ],

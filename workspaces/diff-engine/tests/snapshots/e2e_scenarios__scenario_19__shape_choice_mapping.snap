@@ -7,12 +7,15 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_3": [
     {
       "type": "Array",
-      "shapeId": "shape_2"
+      "jsonType": "Array",
+      "shapeId": "shape_3",
+      "itemShapeId": "shape_2"
     }
   ],
   "shape_4": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ]

@@ -6,6 +6,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_1T8ZANWIcd": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [],
             },
         ),
@@ -13,6 +14,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_6TnsL6trq7": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [],
             },
         ),
@@ -28,6 +30,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_9t5hqnMMma": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [],
             },
         ),
@@ -35,6 +38,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_ApnstcbWQx": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [
                     ObjectFieldChoice {
                         name: "name",
@@ -48,7 +52,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_E9IzHThmZv": [
         Array(
             ArrayChoice {
-                shape_id: "shape_j1aiWREIbU",
+                json_type: Array,
+                shape_id: "shape_E9IzHThmZv",
+                item_shape_id: "shape_j1aiWREIbU",
             },
         ),
     ],
@@ -63,7 +69,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_GsyFkrJzlL": [
         Array(
             ArrayChoice {
-                shape_id: "shape_bGU4HicHkV",
+                json_type: Array,
+                shape_id: "shape_GsyFkrJzlL",
+                item_shape_id: "shape_bGU4HicHkV",
             },
         ),
     ],
@@ -94,6 +102,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_MiVhGwZrMY": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [
                     ObjectFieldChoice {
                         name: "name",
@@ -107,6 +116,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_PBYuBrTCLk": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [],
             },
         ),
@@ -122,7 +132,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_UlLNexyAzZ": [
         Array(
             ArrayChoice {
-                shape_id: "shape_ZVgfHusbJW",
+                json_type: Array,
+                shape_id: "shape_UlLNexyAzZ",
+                item_shape_id: "shape_ZVgfHusbJW",
             },
         ),
     ],
@@ -137,6 +149,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_ZVgfHusbJW": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [
                     ObjectFieldChoice {
                         name: "postId",
@@ -160,6 +173,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_bGU4HicHkV": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [
                     ObjectFieldChoice {
                         name: "title",
@@ -199,6 +213,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_j1aiWREIbU": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [
                     ObjectFieldChoice {
                         name: "title",
@@ -222,6 +237,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
     "shape_jfIeomMZ5p": [
         Object(
             ObjectChoice {
+                json_type: Object,
                 fields: [],
             },
         ),

@@ -33,6 +33,10 @@ pub fn scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d
     "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__spectacle_endpoints_json",
     &spec_projection.spectacle_endpoints_serializable()
   );
+  assert_debug_snapshot!(
+    "scenario_9949a8cc69a0063a70f5ae98672d8c23a1068a2b2d08f8bb7b9bbd968ec29f0d__spectacle_shapes",
+    &spec_projection.shape().to_choice_mapping()
+  );
   let interactions_string = std::fs::read_to_string(interactions_file_path)
     .expect("expected interactions file to be readable");
   let interactions: Vec<HttpInteraction> = serde_json::from_str(&interactions_string).unwrap();

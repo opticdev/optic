@@ -6,6 +6,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_10": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "stats",
@@ -35,6 +36,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_12": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ],
@@ -55,6 +57,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_4": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "last",
@@ -79,7 +82,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_7": [
     {
       "type": "Array",
-      "shapeId": "shape_6"
+      "jsonType": "Array",
+      "shapeId": "shape_7",
+      "itemShapeId": "shape_6"
     }
   ],
   "shape_8": [
@@ -92,6 +97,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_9": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "rank",

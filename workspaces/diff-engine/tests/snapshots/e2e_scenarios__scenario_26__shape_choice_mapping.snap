@@ -13,6 +13,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_1K7h84XwT6": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "xmlns",
@@ -55,6 +56,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_1VbLLR6vHi": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "url",
@@ -116,12 +118,15 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_3qED1KRQhg": [
     {
       "type": "Array",
-      "shapeId": "shape_XA5M5sp7FW"
+      "jsonType": "Array",
+      "shapeId": "shape_3qED1KRQhg",
+      "itemShapeId": "shape_XA5M5sp7FW"
     }
   ],
   "shape_4gwDxcPIcD": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ],
@@ -191,6 +196,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_DTHG1XLMPV": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "rank",
@@ -225,6 +231,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_GMtxDoA6QP": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "MRData",
@@ -251,6 +258,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_HBb7JQz6nd": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "season",
@@ -273,6 +281,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_Hkes6mW059": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "time",
@@ -299,6 +308,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_KS7FqcnW2A": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "url",
@@ -340,6 +350,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_Mz0Bk8LJx4": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "units",
@@ -371,6 +382,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_Q1vmb3Yk2o": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "url",
@@ -418,6 +430,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_SjcBKS9X84": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "url",
@@ -452,6 +465,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_XA5M5sp7FW": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "status",
@@ -528,6 +542,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_ZaQCM40d39": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "time",
@@ -657,6 +672,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_mJS8YvoM93": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "long",
@@ -684,7 +700,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "shape_oCz30NI4Be": [
     {
       "type": "Array",
-      "shapeId": "shape_1VbLLR6vHi"
+      "jsonType": "Array",
+      "shapeId": "shape_oCz30NI4Be",
+      "itemShapeId": "shape_1VbLLR6vHi"
     }
   ],
   "shape_oHbu87Sp9N": [

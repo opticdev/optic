@@ -6,6 +6,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "baseline-shape_10": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": []
     }
   ],
@@ -26,7 +27,9 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "baseline-shape_5": [
     {
       "type": "Array",
-      "shapeId": "baseline-shape_4"
+      "jsonType": "Array",
+      "shapeId": "baseline-shape_5",
+      "itemShapeId": "baseline-shape_4"
     }
   ],
   "baseline-shape_6": [
@@ -46,6 +49,7 @@ expression: "&spec_projection.shape().to_choice_mapping()"
   "baseline-shape_8": [
     {
       "type": "Object",
+      "jsonType": "Object",
       "fields": [
         {
           "name": "lastName",

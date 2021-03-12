@@ -9,7 +9,7 @@ import { useShapeDescriptor } from '../hooks/useShapeDescriptor';
 
 export type TwoColumnBodyProps = {
   location: string;
-  bodyId: string;
+  bodyId: string; //@aidan make sure this name/value makes sense
   rootShapeId: string
 };
 
@@ -35,6 +35,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
       }
       right={
         <BodyRender
+          //@aidan make sure to grab this from the query result
           location="application/json"
           shape={x}
           style={{ marginTop: 35 }}
