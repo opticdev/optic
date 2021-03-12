@@ -66,8 +66,7 @@ macro_rules! cqrs_event {
     impl ::cqrs_core::Event for $group_type {
       fn event_type(&self) -> &'static str {
         match self {
-          $( $group_type::$event_type(evt) => evt.event_type() ),+,
-          _ => "unknown"
+          $( $group_type::$event_type(evt) => evt.event_type() ),+
         }
       }
     }
@@ -76,7 +75,6 @@ macro_rules! cqrs_event {
       fn with_event_context(&mut self, event_context: EventContext) {
         match self {
           $( $group_type::$event_type(evt) => evt.with_event_context(event_context)),+,
-          _ => {},
         }
       }
     }
