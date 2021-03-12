@@ -105,12 +105,6 @@ pub struct PathComponentAdded {
   pub name: String,
   pub event_context: Option<EventContext>,
 }
-cqrs_event!(PathComponentAdded => "PathComponentAdded");
-cqrs_event!(EndpointEvent { PathComponentAdded });
-// cqrs_event!(EndpointEvent {
-//   PathComponentAdded => "PathComponentAdded",
-//   PathComponentRenamed => "PathComponentRenamed"
-// });
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -288,285 +282,36 @@ pub struct ResponseRemoved {
   pub event_context: Option<EventContext>,
 }
 
-// impl Event for EndpointEvent {
-//   fn event_type(&self) -> &'static str {
-//     match self {
-//       EndpointEvent::PathComponentAdded(evt) => evt.event_type(),
-//       EndpointEvent::PathComponentRenamed(evt) => evt.event_type(),
-//       EndpointEvent::PathComponentRemoved(evt) => evt.event_type(),
+cqrs_event!(EndpointEvent {
+  PathComponentAdded => "PathComponentAdded",
+  PathComponentRenamed => "PathComponentRenamed",
+  PathComponentRemoved => "PathComponentRemoved",
 
-//       // path parameters
-//       EndpointEvent::PathParameterAdded(evt) => evt.event_type(),
-//       EndpointEvent::PathParameterShapeSet(evt) => evt.event_type(),
-//       EndpointEvent::PathParameterRenamed(evt) => evt.event_type(),
-//       EndpointEvent::PathParameterRemoved(evt) => evt.event_type(),
+  PathParameterAdded => "PathParameterAdded",
+  PathParameterRenamed => "PathParameterRenamed",
+  PathParameterRemoved => "PathParameterRemoved",
+  PathParameterShapeSet => "PathParameterShapeSet",
 
-//       // request parameters
-//       EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => evt.event_type(),
-//       EndpointEvent::RequestParameterRenamed(evt) => evt.event_type(),
-//       EndpointEvent::RequestParameterShapeSet(evt) => evt.event_type(),
-//       EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_type(),
-//       EndpointEvent::RequestParameterRemoved(evt) => evt.event_type(),
+  RequestParameterAddedByPathAndMethod => "RequestParameterAddedByPathAndMethod",
+  RequestParameterRenamed => "RequestParameterRenamed",
+  RequestParameterShapeSet => "RequestParameterShapeSet",
+  RequestParameterShapeUnset => "RequestParameterShapeUnset",
+  RequestParameterRemoved => "RequestParameterRemoved",
 
-//       // Request events
-//       EndpointEvent::RequestAdded(evt) => evt.event_type(),
-//       EndpointEvent::RequestContentTypeSet(evt) => evt.event_type(),
-//       EndpointEvent::RequestBodySet(evt) => evt.event_type(),
-//       EndpointEvent::RequestBodyUnset(evt) => evt.event_type(),
+  // Request events
+  RequestAdded => "RequestAdded",
+  RequestContentTypeSet => "RequestContentTypeSet",
+  RequestBodySet => "RequestBodySet",
+  RequestBodyUnset => "RequestBodyUnset",
 
-//       // Response events
-//       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_type(),
-//       EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_type(),
-//       EndpointEvent::ResponseContentTypeSet(evt) => evt.event_type(),
-//       EndpointEvent::ResponseBodySet(evt) => evt.event_type(),
-//       EndpointEvent::ResponseBodyUnset(evt) => evt.event_type(),
-//       EndpointEvent::ResponseRemoved(evt) => evt.event_type(),
-//     }
-//   }
-// }
-
-// impl WithEventContext for EndpointEvent {
-//   fn with_event_context(&mut self, event_context: EventContext) {
-//     match self {
-//       EndpointEvent::PathComponentAdded(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::PathComponentRenamed(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::PathComponentRemoved(evt) => evt.event_context.replace(event_context),
-
-//       // path parameters
-//       EndpointEvent::PathParameterAdded(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::PathParameterShapeSet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::PathParameterRenamed(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::PathParameterRemoved(evt) => evt.event_context.replace(event_context),
-
-//       // request parameters
-//       EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => {
-//         evt.event_context.replace(event_context)
-//       }
-//       EndpointEvent::RequestParameterRenamed(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestParameterShapeSet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestParameterRemoved(evt) => evt.event_context.replace(event_context),
-
-//       // Request events
-//       EndpointEvent::RequestAdded(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
-
-//       // Response events
-//       EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::ResponseContentTypeSet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::ResponseBodySet(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::ResponseBodyUnset(evt) => evt.event_context.replace(event_context),
-//       EndpointEvent::ResponseRemoved(evt) => evt.event_context.replace(event_context),
-//     };
-//   }
-// }
-
-// impl Event for PathComponentAdded {
-//   fn event_type(&self) -> &'static str {
-//     "PathComponentAdded"
-//   }
-// }
-
-impl Event for PathParameterShapeSet {
-  fn event_type(&self) -> &'static str {
-    "PathParameterShapeSet"
-  }
-}
-
-// impl Event for PathComponentRenamed {
-//   fn event_type(&self) -> &'static str {
-//     "PathComponentRenamed"
-//   }
-// }
-
-impl Event for PathComponentRemoved {
-  fn event_type(&self) -> &'static str {
-    "PathComponentRemoved"
-  }
-}
-
-impl Event for PathParameterAdded {
-  fn event_type(&self) -> &'static str {
-    "PathParameterAdded"
-  }
-}
-
-impl Event for PathParameterRenamed {
-  fn event_type(&self) -> &'static str {
-    "PathParameterRenamed"
-  }
-}
-
-impl Event for PathParameterRemoved {
-  fn event_type(&self) -> &'static str {
-    "PathParameterRemoved"
-  }
-}
-
-impl Event for RequestParameterAddedByPathAndMethod {
-  fn event_type(&self) -> &'static str {
-    "RequestParameterAddedByPathAndMethod"
-  }
-}
-
-impl Event for RequestParameterRenamed {
-  fn event_type(&self) -> &'static str {
-    "RequestParameterRenamed"
-  }
-}
-
-impl Event for RequestParameterShapeSet {
-  fn event_type(&self) -> &'static str {
-    "RequestParameterShapeSet"
-  }
-}
-
-impl Event for RequestParameterShapeUnset {
-  fn event_type(&self) -> &'static str {
-    "RequestParameterShapeUnset"
-  }
-}
-
-impl Event for RequestParameterRemoved {
-  fn event_type(&self) -> &'static str {
-    "RequestParameterRemoved"
-  }
-}
-
-impl Event for RequestAdded {
-  fn event_type(&self) -> &'static str {
-    "RequestAdded"
-  }
-}
-
-impl Event for RequestContentTypeSet {
-  fn event_type(&self) -> &'static str {
-    "RequestContentTypeSet"
-  }
-}
-
-impl Event for RequestBodySet {
-  fn event_type(&self) -> &'static str {
-    "RequestBodySet"
-  }
-}
-
-impl Event for RequestBodyUnset {
-  fn event_type(&self) -> &'static str {
-    "RequestBodyUnset"
-  }
-}
-
-impl Event for RequestRemoved {
-  fn event_type(&self) -> &'static str {
-    "RequestRemoved"
-  }
-}
-
-impl Event for ResponseAddedByPathAndMethod {
-  fn event_type(&self) -> &'static str {
-    "ResponseAddedByPathAndMethod"
-  }
-}
-
-impl Event for ResponseStatusCodeSet {
-  fn event_type(&self) -> &'static str {
-    "ResponseStatusCodeSet"
-  }
-}
-
-impl Event for ResponseContentTypeSet {
-  fn event_type(&self) -> &'static str {
-    "ResponseContentTypeSet"
-  }
-}
-
-impl Event for ResponseBodySet {
-  fn event_type(&self) -> &'static str {
-    "ResponseBodySet"
-  }
-}
-
-impl Event for ResponseBodyUnset {
-  fn event_type(&self) -> &'static str {
-    "ResponseBodyUnset"
-  }
-}
-
-impl Event for ResponseRemoved {
-  fn event_type(&self) -> &'static str {
-    "ResponseRemoved"
-  }
-}
-
-// impl From<PathComponentAdded> for EndpointEvent {
-//   fn from(event: PathComponentAdded) -> Self {
-//     Self::PathComponentAdded(event)
-//   }
-// }
-
-// impl From<PathComponentRenamed> for EndpointEvent {
-//   fn from(event: PathComponentRenamed) -> Self {
-//     Self::PathComponentRenamed(event)
-//   }
-// }
-
-impl From<PathComponentRemoved> for EndpointEvent {
-  fn from(event: PathComponentRemoved) -> Self {
-    Self::PathComponentRemoved(event)
-  }
-}
-
-impl From<PathParameterAdded> for EndpointEvent {
-  fn from(event: PathParameterAdded) -> Self {
-    Self::PathParameterAdded(event)
-  }
-}
-
-impl From<PathParameterShapeSet> for EndpointEvent {
-  fn from(event: PathParameterShapeSet) -> Self {
-    Self::PathParameterShapeSet(event)
-  }
-}
-
-impl From<PathParameterRenamed> for EndpointEvent {
-  fn from(event: PathParameterRenamed) -> Self {
-    Self::PathParameterRenamed(event)
-  }
-}
-
-impl From<PathParameterRemoved> for EndpointEvent {
-  fn from(event: PathParameterRemoved) -> Self {
-    Self::PathParameterRemoved(event)
-  }
-}
-
-impl From<RequestAdded> for EndpointEvent {
-  fn from(event: RequestAdded) -> Self {
-    Self::RequestAdded(event)
-  }
-}
-
-impl From<RequestBodySet> for EndpointEvent {
-  fn from(event: RequestBodySet) -> Self {
-    Self::RequestBodySet(event)
-  }
-}
-
-impl From<ResponseAddedByPathAndMethod> for EndpointEvent {
-  fn from(event: ResponseAddedByPathAndMethod) -> Self {
-    Self::ResponseAddedByPathAndMethod(event)
-  }
-}
-
-impl From<ResponseBodySet> for EndpointEvent {
-  fn from(event: ResponseBodySet) -> Self {
-    Self::ResponseBodySet(event)
-  }
-}
+  // Response events
+  ResponseAddedByPathAndMethod => "ResponseAddedByPathAndMethod",
+  ResponseStatusCodeSet => "ResponseStatusCodeSet",
+  ResponseContentTypeSet => "ResponseContentTypeSet",
+  ResponseBodySet => "ResponseBodySet",
+  ResponseBodyUnset => "ResponseBodyUnset",
+  ResponseRemoved => "ResponseRemoved"
+});
 
 // Conversion from commands
 // ------------------------
