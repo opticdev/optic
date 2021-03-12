@@ -46,6 +46,8 @@ pub enum EndpointEvent {
 }
 
 macro_rules! cqrs_event {
+
+  // Single Event => event_name
   ($event_type: ty => $name: expr) => {
     impl ::cqrs_core::Event for $event_type {
       fn event_type(&self) -> &'static str {
@@ -59,7 +61,9 @@ macro_rules! cqrs_event {
       }
     }
   };
-  ($group_type:ident { $($event_type: ident => $name: expr),+ }) => {
+
+  // Group (enum) { Event => event_name }
+  ($group_type: ident { $($event_type: ident => $name: expr),+ }) => {
 
     $( cqrs_event!($event_type => $name); )+
 
@@ -80,6 +84,14 @@ macro_rules! cqrs_event {
         }
       }
     }
+
+    $(
+      impl From<$event_type> for $group_type {
+        fn from(event: $event_type) -> Self {
+          Self::$event_type(event)
+        }
+      }
+    )+
   };
 
 }
@@ -92,11 +104,12 @@ pub struct PathComponentAdded {
   pub name: String,
   pub event_context: Option<EventContext>,
 }
-// cqrs_event!(PathComponentAdded => "PathComponentAdded");
-cqrs_event!(EndpointEvent {
-  PathComponentAdded => "PathComponentAdded",
-  PathComponentRenamed => "PathComponentRenamed"
-});
+cqrs_event!(PathComponentAdded => "PathComponentAdded");
+cqrs_event!(EndpointEvent { PathComponentAdded });
+// cqrs_event!(EndpointEvent {
+//   PathComponentAdded => "PathComponentAdded",
+//   PathComponentRenamed => "PathComponentRenamed"
+// });
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -488,17 +501,17 @@ impl Event for ResponseRemoved {
   }
 }
 
-impl From<PathComponentAdded> for EndpointEvent {
-  fn from(event: PathComponentAdded) -> Self {
-    Self::PathComponentAdded(event)
-  }
-}
+// impl From<PathComponentAdded> for EndpointEvent {
+//   fn from(event: PathComponentAdded) -> Self {
+//     Self::PathComponentAdded(event)
+//   }
+// }
 
-impl From<PathComponentRenamed> for EndpointEvent {
-  fn from(event: PathComponentRenamed) -> Self {
-    Self::PathComponentRenamed(event)
-  }
-}
+// impl From<PathComponentRenamed> for EndpointEvent {
+//   fn from(event: PathComponentRenamed) -> Self {
+//     Self::PathComponentRenamed(event)
+//   }
+// }
 
 impl From<PathComponentRemoved> for EndpointEvent {
   fn from(event: PathComponentRemoved) -> Self {
