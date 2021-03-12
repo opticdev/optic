@@ -15,7 +15,9 @@ pub mod streams;
 
 pub use commands::{CommandContext, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
-pub use events::{HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent};
+pub use events::{
+  EventContext, HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent, WithEventContext,
+};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
 pub use projections::{
