@@ -33,25 +33,11 @@ pub enum SpecEvent {
   ShapeEvent(shape::ShapeEvent),
 }
 
-impl Event for SpecEvent {
-  fn event_type(&self) -> &'static str {
-    match self {
-      SpecEvent::EndpointEvent(evt) => evt.event_type(),
-      SpecEvent::RfcEvent(evt) => evt.event_type(),
-      SpecEvent::ShapeEvent(evt) => evt.event_type(),
-    }
-  }
-}
-
-impl WithEventContext for SpecEvent {
-  fn with_event_context(&mut self, event_context: EventContext) {
-    match self {
-      SpecEvent::EndpointEvent(evt) => evt.with_event_context(event_context),
-      SpecEvent::RfcEvent(evt) => evt.with_event_context(event_context),
-      SpecEvent::ShapeEvent(evt) => evt.with_event_context(event_context),
-    };
-  }
-}
+cqrs_event!(SpecEvent {
+  EndpointEvent,
+  RfcEvent,
+  ShapeEvent
+});
 
 impl SpecEvent {
   pub fn from_file(filename: impl AsRef<Path>) -> Result<Vec<SpecEvent>, EventLoadingError> {
@@ -60,24 +46,6 @@ impl SpecEvent {
     let events: Vec<SpecEvent> = serde_json::from_str(&file_contents)?;
 
     Ok(events)
-  }
-}
-
-impl From<EndpointEvent> for SpecEvent {
-  fn from(endpoint_event: EndpointEvent) -> Self {
-    Self::EndpointEvent(endpoint_event)
-  }
-}
-
-impl From<RfcEvent> for SpecEvent {
-  fn from(rfc_event: RfcEvent) -> Self {
-    Self::RfcEvent(rfc_event)
-  }
-}
-
-impl From<ShapeEvent> for SpecEvent {
-  fn from(shape_event: ShapeEvent) -> Self {
-    Self::ShapeEvent(shape_event)
   }
 }
 

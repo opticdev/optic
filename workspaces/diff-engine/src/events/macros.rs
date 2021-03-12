@@ -1,3 +1,4 @@
+/// Implements cqrs_core::Event and WithEventContext for struct or enum of structs
 #[macro_export]
 macro_rules! cqrs_event {
   // Single Event => event_name. Impls for a single event

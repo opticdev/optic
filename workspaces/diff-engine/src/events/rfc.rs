@@ -58,71 +58,13 @@ pub struct BatchCommitEnded {
   event_context: Option<EventContext>,
 }
 
-impl Event for RfcEvent {
-  fn event_type(&self) -> &'static str {
-    match self {
-      RfcEvent::ContributionAdded(evt) => evt.event_type(),
-      RfcEvent::APINamed(evt) => evt.event_type(),
-      RfcEvent::GitStateSet(evt) => evt.event_type(),
-      RfcEvent::BatchCommitStarted(evt) => evt.event_type(),
-      RfcEvent::BatchCommitEnded(evt) => evt.event_type(),
-    }
-  }
-}
-
-impl WithEventContext for RfcEvent {
-  fn with_event_context(&mut self, event_context: EventContext) {
-    match self {
-      RfcEvent::ContributionAdded(evt) => evt.event_context.replace(event_context),
-      RfcEvent::APINamed(evt) => evt.event_context.replace(event_context),
-      RfcEvent::GitStateSet(evt) => evt.event_context.replace(event_context),
-      RfcEvent::BatchCommitStarted(evt) => evt.event_context.replace(event_context),
-      RfcEvent::BatchCommitEnded(evt) => evt.event_context.replace(event_context),
-    };
-  }
-}
-
-impl Event for ContributionAdded {
-  fn event_type(&self) -> &'static str {
-    "ContributionAdded"
-  }
-}
-
-impl Event for APINamed {
-  fn event_type(&self) -> &'static str {
-    "APINamed"
-  }
-}
-
-impl Event for GitStateSet {
-  fn event_type(&self) -> &'static str {
-    "GitStateSet"
-  }
-}
-
-impl Event for BatchCommitStarted {
-  fn event_type(&self) -> &'static str {
-    "BatchCommitStarted"
-  }
-}
-
-impl Event for BatchCommitEnded {
-  fn event_type(&self) -> &'static str {
-    "BatchCommitEnded"
-  }
-}
-
-impl From<BatchCommitStarted> for RfcEvent {
-  fn from(event: BatchCommitStarted) -> Self {
-    Self::BatchCommitStarted(event)
-  }
-}
-
-impl From<BatchCommitEnded> for RfcEvent {
-  fn from(event: BatchCommitEnded) -> Self {
-    Self::BatchCommitEnded(event)
-  }
-}
+cqrs_event!(RfcEvent {
+  ContributionAdded => "ContributionAdded",
+  APINamed => "APINamed",
+  GitStateSet => "GitStateSet",
+  BatchCommitStarted => "BatchCommitStarted",
+  BatchCommitEnded => "BatchCommitEnded"
+});
 
 // Conversion from commands
 // ------------------------
