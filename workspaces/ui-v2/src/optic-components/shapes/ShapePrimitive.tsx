@@ -54,6 +54,19 @@ export const ShapePrimitiveRender = ({ jsonType, value }: IShapeRenderer) => {
   return null;
 };
 
+export const UnknownPrimitiveRender = ({ props }: any) => {
+  const classes = useStyles();
+  const sharedClasses = useSharedStyles();
+
+    return (
+      <span
+        className={classNames(sharedClasses.valueFont, classes.stringClass)}
+      >
+        Unknown
+      </span>
+    );
+}
+
 const useStyles = makeStyles((theme) => ({
   stringClass: {
     color: '#09825d',
@@ -61,6 +74,9 @@ const useStyles = makeStyles((theme) => ({
   },
   numberClass: {
     color: '#e56f4a',
+  },
+  unknownClass: {
+    color: '#857b79',
   },
   booleanClass: {
     color: '#067ab8',

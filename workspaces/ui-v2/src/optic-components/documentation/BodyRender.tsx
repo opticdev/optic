@@ -7,7 +7,7 @@ import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
 import { ChoiceTabs } from '../shapes/OneOfTabs';
 
 export type BodyRenderProps = {
-  shape: IShapeRenderer;
+  shape: IShapeRenderer[];
   location: string;
   style: any;
 };

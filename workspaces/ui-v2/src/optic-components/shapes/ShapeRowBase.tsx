@@ -75,14 +75,14 @@ export const RenderRootShape = ({
   shape,
   right,
 }: {
-  shape: IShapeRenderer;
+  shape: IShapeRenderer[];
   right?: any[];
 }) => {
   const { depth } = useDepth();
   return (
     <>
       <ShapeRowBase depth={depth}>
-        <RenderFieldLeadingValue shapeRenderers={[shape]} />
+        <RenderFieldLeadingValue shapeRenderers={shape} />
         {right ? (
           <>
             <div style={{ flex: 1 }} />
@@ -90,7 +90,7 @@ export const RenderRootShape = ({
           </>
         ) : null}
       </ShapeRowBase>
-      <RenderFieldRowValues shapeRenderers={[shape]} />
+      <RenderFieldRowValues shapeRenderers={shape} />
     </>
   );
 };
@@ -105,7 +105,7 @@ export const RenderFieldLeadingValue = ({
   const sharedClasses = useSharedStyles();
   if (shapeRenderers.length === 1) {
     const shape = shapeRenderers[0];
-    if (shape.jsonType === JsonLike.OBJECT && shape.asObject) {
+    if (shape.jsonType === JsonLike.OBJECT) {
       return (
         <>
           <span className={sharedClasses.symbolFont}>{'{'}</span>
@@ -153,8 +153,10 @@ export const RenderFieldRowValues = ({
     }
 
     if (shape.asArray) {
+
+
       if (shape.asArray.shapeChoices.length === 0) {
-        throw new Error('handle unknown');
+        return <ShapePrimitiveRender {...shape} />
       }
 
       const inner =
@@ -164,12 +166,12 @@ export const RenderFieldRowValues = ({
             shapes={shape.asArray.shapeChoices}
           />
         ) : (
-          <RenderRootShape shape={shape.asArray.shapeChoices[0]} />
+          <RenderRootShape shape={shape.asArray.shapeChoices} />
         );
 
       return (
         <>
-          <Indent>{inner}</Indent>,
+          <Indent>{inner}</Indent>
           <ShapeRowBase depth={depth}>
             <span className={sharedClasses.symbolFont}>{']'}</span>
           </ShapeRowBase>
@@ -214,7 +216,7 @@ export function OneOfRender({
     throw new Error(`expected to find the chosen shape`);
   }
   return (
-    <RenderRootShape right={[<OneOfTabs {...tabProps} />]} shape={shape} />
+    <RenderRootShape right={[<OneOfTabs {...tabProps} />]} shape={[shape]} />
   );
 }
 

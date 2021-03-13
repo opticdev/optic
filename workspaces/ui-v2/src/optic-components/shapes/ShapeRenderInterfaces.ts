@@ -25,12 +25,12 @@ export interface IObjectRender {
 }
 
 export enum JsonLike {
-  OBJECT = 'OBJECT',
-  ARRAY = 'ARRAY',
-  NULL = 'NULL',
-  STRING = 'STRING',
-  NUMBER = 'NUMBER',
-  BOOLEAN = 'BOOLEAN',
+  OBJECT = 'Object',
+  ARRAY = 'Array',
+  NULL = 'Null',
+  STRING = 'String',
+  NUMBER = 'Number',
+  BOOLEAN = 'Boolean',
 }
 
 /// Changelog Types

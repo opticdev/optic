@@ -9,7 +9,7 @@ export function useShapeDescriptor(
 
   const spectacle = useContext(SpectacleContext);
   const query = `
-  query X($shapeId: ID) { 
+  query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {
       id
       jsonType
@@ -59,7 +59,7 @@ export function useShapeDescriptor(
           case 'Array':
             const results = await accumulateShapes(choice.asArray.shapeId)
             const shapeChoices = await Promise.all(results);
-            choice.shapeChoices = shapeChoices;
+            choice.asArray.shapeChoices = shapeChoices;
             return choice
           default:
             return choice;
