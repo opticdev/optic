@@ -5,7 +5,7 @@ import {
   useDiffReviewPageWithBoundaryLink,
 } from '../navigation/Routes';
 import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
-import { DocumentationRootPage, EndpointRootPage } from './DocumentationPage';
+import { DocumentationRootPage } from './DocumentationPage';
 import { ContributionEditingStore } from '../hooks/edit/Contributions';
 import { DiffHeader } from '../diffs/DiffHeader';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';

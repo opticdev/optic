@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
-import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 import { TwoColumn } from './TwoColumn';
 import { BodyRender } from './BodyRender';
 import { ContributionGroup } from './ContributionGroup';
@@ -28,7 +27,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
               defaultText={'Add a description'}
             />
           </div>
-          {/*<ContributionGroup rootShape={shapeChoices} />*/}
+          <ContributionGroup rootShape={shapeChoices} />
         </>
       }
       right={
