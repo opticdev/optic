@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  default:
+    desc: Runs all `util` tasks
+    cmds:
+      - task: create-docker-network
+
+  create-docker-network:
+    desc: Creates the Docker network applications may use locally to make communication simpler
+    cmds:
+      - docker network create optic
+    status:
+      - docker network inspect "optic"

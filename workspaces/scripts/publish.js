@@ -7,7 +7,7 @@ const { workspaces } = packageJson;
 console.log({ workspaces });
 const isPrivatePublish = process.env.OPTIC_PUBLISH_SCOPE !== 'public';
 const registry =
-  (process.env.OPTIC_PUBLISH_SCOPE === 'private' && 'http://localhost:4873') ||
+  (process.env.OPTIC_PUBLISH_SCOPE === 'private' && (process.env.NPM_REGISTRY || 'http://localhost:4873')) ||
   (process.env.OPTIC_PUBLISH_SCOPE === 'github' &&
     'https://npm.pkg.github.com/useoptic');
 const skipList = new Set((process.env.OPTIC_SKIP_CSV || '').split(','));
@@ -30,7 +30,7 @@ const promise = packages.reduce((acc, { name, version }) => {
         return resolve([...previousResults, true]);
       }
       const promise =
-        registry === 'http://localhost:4873'
+        registry === (process.env.NPM_REGISTRY || 'http://localhost:4873')
           ? new Promise((resolve1, reject1) => {
               console.log(`\nunpublish ${packageId}`);
               exec(
