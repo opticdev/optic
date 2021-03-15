@@ -130,6 +130,7 @@ export interface IOpticApiInterceptConfig {
 
 export interface IOpticTaskRunnerConfig {
   command?: string;
+  hostnameFilter?: string;
   // the target service, implementing the API we're observing
   serviceConfig: {
     port: number;
@@ -210,8 +211,13 @@ export async function TaskToStartConfig(
     basePath: serviceConfig.basePath,
   };
 
+  const hostnameFilter = targetUrl
+    ? (targetUrl as url.UrlWithStringQuery).hostname!
+    : undefined;
+
   return {
     command: task.command,
+    hostnameFilter,
     serviceConfig,
     proxyConfig,
   };
