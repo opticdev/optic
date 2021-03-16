@@ -225,7 +225,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       5,
       1,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -267,7 +267,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       8,
       1,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -330,7 +330,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       15,
       10,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -372,7 +372,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       18,
       10,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -414,7 +414,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       21,
       10,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ]
   ],

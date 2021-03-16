@@ -124,7 +124,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       5,
       3,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -166,7 +166,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       8,
       1,
       {
-        "type": "CreatedIn"
+        "type": "UpdatedIn"
       }
     ]
   ],

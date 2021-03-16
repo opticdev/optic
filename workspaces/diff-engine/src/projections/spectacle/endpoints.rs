@@ -136,7 +136,7 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_update_history(&c.client_command_batch_id, &e.request_id);
         }
       }
       EndpointEvent::ResponseBodySet(e) => {
@@ -147,7 +147,7 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         );
 
         if let Some(c) = e.event_context {
-          projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_update_history(&c.client_command_batch_id, &e.response_id);
         }
       }
       _ => eprintln!(
@@ -371,6 +371,22 @@ impl EndpointsProjection {
       self
         .graph
         .add_edge(*created_node_index, *batch_node_index, Edge::CreatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  pub fn with_update_history(&mut self, batch_id: &str, updated_node_id: &str) {
+    let updated_node_index = self
+      .domain_id_to_index
+      .get(updated_node_id)
+      .expect("expected updated_node_id to exist");
+
+    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*updated_node_index, *batch_node_index, Edge::UpdatedIn);
     } else {
       eprintln!("bad implicit batch id {}", &batch_id);
     }
