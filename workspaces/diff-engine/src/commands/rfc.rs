@@ -40,14 +40,18 @@ impl RfcCommand {
   pub fn end_batch_commit(batch_id: String) -> Self {
     Self::EndBatchCommit(EndBatchCommit { batch_id })
   }
+
+  pub fn add_contribution(id: String, key: String, value: String) -> Self {
+    Self::AddContribution(AddContribution { id, key, value })
+  }
 }
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddContribution {
-  id: String,
-  key: String,
-  value: String,
+  pub id: String,
+  pub key: String,
+  pub value: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -125,6 +129,10 @@ impl AggregateCommand<HistoryProjection> for RfcCommand {
         )?;
 
         vec![RfcEvent::from(rfc_events::BatchCommitEnded::from(command))]
+      }
+
+      RfcCommand::AddContribution(command) => {
+        vec![RfcEvent::from(rfc_events::ContributionAdded::from(command))]
       }
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -261,5 +269,24 @@ mod test {
     for event in new_events {
       projection.apply(event);
     }
+  }
+
+  #[test]
+  pub fn can_handle_contribution_commands() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([]))
+    .expect("initial events should be valid spec events");
+
+    let projection = HistoryProjection::from(initial_events);
+
+    let command: RfcCommand = RfcCommand::add_contribution(String::from("path123.method"), String::from("purpose"), String::from("Name of Endpoint"));
+
+    let new_events = projection
+      .execute(command)
+      .expect("new contributions should be applicable projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_add_contribution_command__new_events",
+      new_events
+    );
   }
 }
