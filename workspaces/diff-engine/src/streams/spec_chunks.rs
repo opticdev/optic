@@ -1,10 +1,9 @@
 use super::{spec_events, JsonLineEncoder, JsonLineEncoderError};
-use crate::{
-  events::{spec_chunk, SpecChunkEvent},
-  SpecAssemblerProjection, SpecEvent,
-};
+use crate::events::{EventLoadingError, SpecChunkEvent};
+use crate::{SpecAssemblerProjection, SpecEvent};
 use fs::{read_dir, read_to_string};
 use futures::{sink::Sink, SinkExt};
+use serde_json;
 use std::path::Path;
 use std::{convert::TryFrom, ffi::OsString, path::PathBuf};
 use tokio::io::AsyncWriteExt;
@@ -53,33 +52,39 @@ pub async fn from_api_dir(
   Ok(chunks)
 }
 
+pub async fn from_root_api_file(
+  path: impl AsRef<Path>,
+) -> Result<Vec<SpecChunkEvent>, SpecChunkLoaderError> {
+  let spec_events = spec_events::from_file(path).await?;
+
+  Ok(vec![SpecChunkEvent::root_from_events(spec_events)])
+}
+
 pub async fn to_api_dir(
   chunk_events: impl Iterator<Item = &SpecChunkEvent>,
   path: impl AsRef<Path>,
 ) -> Result<usize, SpecChunkWriterError> {
   let mut count = 0;
   for chunk_event in chunk_events {
-    let batch_chunk = match chunk_event {
-      SpecChunkEvent::Batch(batch_chunk) => batch_chunk,
-      SpecChunkEvent::Root(_) => Err(SpecChunkWriterError::UnsupportedKind(
-        "writing of root chunk events not supported",
-      ))?,
+    let name = match chunk_event {
+      SpecChunkEvent::Batch(batch_chunk) => batch_chunk.name.clone(),
+      SpecChunkEvent::Root(_) => String::from("specification"),
       SpecChunkEvent::Unknown(_) => Err(SpecChunkWriterError::UnsupportedKind(
         "writing of unknown chunk events not supported",
       ))?,
     };
 
-    let name = batch_chunk.name.clone();
-    let events = &batch_chunk.events;
+    let events = chunk_event.events();
 
     let file_path = path.as_ref().join(format!("{}.json", name));
     let file = fs::File::create(file_path).await?;
 
+    // TODO: use spec_events::write_to_json_array instead of doing this manually
     let mut sink = spec_events::into_json_array_items(file);
 
     sink
       .get_mut()
-      .write_u8(b'[')
+      .write_all(b"[\n")
       .await
       .expect("could not write array start to file");
 
@@ -89,7 +94,7 @@ pub async fn to_api_dir(
 
     sink
       .get_mut()
-      .write_u8(b']')
+      .write_all(b"\n]")
       .await
       .expect("could not write array end to file");
 
@@ -104,12 +109,23 @@ pub async fn to_api_dir(
 #[derive(Debug)]
 pub enum SpecChunkLoaderError {
   Io(io::Error),
+  Json(serde_json::Error),
   Other(&'static str),
 }
 
 impl From<io::Error> for SpecChunkLoaderError {
   fn from(err: io::Error) -> SpecChunkLoaderError {
     SpecChunkLoaderError::Io(err)
+  }
+}
+
+impl From<EventLoadingError> for SpecChunkLoaderError {
+  fn from(err: EventLoadingError) -> Self {
+    match err {
+      EventLoadingError::Io(err) => SpecChunkLoaderError::Io(err),
+      EventLoadingError::Json(err) => SpecChunkLoaderError::Json(err),
+      EventLoadingError::Avro(err) => SpecChunkLoaderError::Other("unsupported encoding used"),
+    }
   }
 }
 

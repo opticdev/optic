@@ -29,23 +29,6 @@ export function ApiSpecServiceLoader(props) {
     }
   }, [specService]);
 
-  useEffect(() => {
-    if (specService) {
-      function onEventAppended(newEvents) {
-        setEvents([...events, ...newEvents]);
-      }
-
-      specService.eventEmitter.on('events-appended', onEventAppended);
-
-      return function cleanup() {
-        specService.eventEmitter.removeListener(
-          'events-appended',
-          onEventAppended
-        );
-      };
-    }
-  }, [specService]);
-
   const captureServiceFactory = useCaptureServiceFactory(loadingExampleDiff);
   const diffServiceFactory = useDiffServiceFactory(loadingExampleDiff);
 
@@ -228,6 +211,7 @@ function useDiffServiceFactory(loadingExampleDiff) {
 export const captureId = 'example-session';
 export async function createExampleSpecServiceFactory(data) {
   let events = JSON.stringify(data.events);
+  let DiffEngine = await import('@useoptic/diff-engine-wasm/engine/browser');
 
   const examples = data.examples || {};
   const eventEmitter = new EventEmitter();
@@ -301,8 +285,19 @@ export async function createExampleSpecServiceFactory(data) {
       };
     },
     processCommands(commands, commitMessage) {
-      console.log('make wasm to me');
-      return Promise.resolve();
+      let spec = DiffEngine.spec_from_events(events);
+      let newEventsJson = DiffEngine.append_batch_to_spec(
+        spec,
+        JSON.stringify(commands),
+        commitMessage
+      );
+      let newEvents = JSON.parse(newEventsJson);
+
+      events = JSON.stringify([...JSON.parse(events), ...newEvents]);
+      eventEmitter.emit('events-updated');
+
+      // eventEmitter.emit('events-appended', newEvents);
+      return Promise.resolve(newEvents);
     },
   };
 

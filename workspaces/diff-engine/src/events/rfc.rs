@@ -1,4 +1,4 @@
-use super::EventContext;
+use super::{EventContext, WithEventContext};
 use crate::commands::rfc as rfc_commands;
 use crate::commands::RfcCommand;
 use cqrs_core::Event;
@@ -45,8 +45,10 @@ pub struct GitStateSet {
 pub struct BatchCommitStarted {
   pub batch_id: String,
   pub commit_message: String,
-  pub parent_id: Option<String>,
   event_context: Option<EventContext>,
+
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub parent_id: Option<String>,
 }
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
@@ -65,6 +67,18 @@ impl Event for RfcEvent {
       RfcEvent::BatchCommitStarted(evt) => evt.event_type(),
       RfcEvent::BatchCommitEnded(evt) => evt.event_type(),
     }
+  }
+}
+
+impl WithEventContext for RfcEvent {
+  fn with_event_context(&mut self, event_context: EventContext) {
+    match self {
+      RfcEvent::ContributionAdded(evt) => evt.event_context.replace(event_context),
+      RfcEvent::APINamed(evt) => evt.event_context.replace(event_context),
+      RfcEvent::GitStateSet(evt) => evt.event_context.replace(event_context),
+      RfcEvent::BatchCommitStarted(evt) => evt.event_context.replace(event_context),
+      RfcEvent::BatchCommitEnded(evt) => evt.event_context.replace(event_context),
+    };
   }
 }
 
@@ -110,6 +124,12 @@ impl From<BatchCommitEnded> for RfcEvent {
   }
 }
 
+impl From<ContributionAdded> for RfcEvent {
+  fn from(event: ContributionAdded) -> Self {
+    Self::ContributionAdded(event)
+  }
+}
+
 // Conversion from commands
 // ------------------------
 
@@ -118,6 +138,7 @@ impl From<RfcCommand> for RfcEvent {
     match rfc_command {
       RfcCommand::StartBatchCommit(command) => RfcEvent::from(BatchCommitStarted::from(command)),
       RfcCommand::EndBatchCommit(command) => RfcEvent::from(BatchCommitEnded::from(command)),
+      RfcCommand::AddContribution(command) => RfcEvent::from(ContributionAdded::from(command)),
       _ => unimplemented!(
         "conversion from rfc command to rfc event not implemented for variant: {:?}",
         rfc_command
@@ -142,6 +163,17 @@ impl From<rfc_commands::EndBatchCommit> for BatchCommitEnded {
     Self {
       batch_id: command.batch_id,
       event_context: None,
+    }
+  }
+}
+
+impl From<rfc_commands::AddContribution> for ContributionAdded {
+  fn from(command: rfc_commands::AddContribution) -> Self {
+    Self {
+      id: command.id,
+      key: command.key,
+      value: command.value,
+      event_context: None
     }
   }
 }

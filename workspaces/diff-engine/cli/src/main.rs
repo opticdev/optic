@@ -6,18 +6,17 @@ use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
-use optic_diff_engine::Aggregate;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecProjection;
-use optic_diff_engine::{RfcCommand, SpecCommand};
-use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
+use optic_diff_engine::{SpecChunkEvent, SpecEvent};
 use std::cmp;
-use std::path::Path;
 use std::process;
 use std::sync::Arc;
-use tokio::io::{stdin, stdout, AsyncWriteExt};
+use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
+
+mod commit;
 
 fn main() {
   let cli = App::new("Optic Engine CLI")
@@ -63,18 +62,7 @@ fn main() {
       SubCommand::with_name("assemble")
         .about("Assembles a directory of API spec files into a single events stream"),
     )
-    .subcommand(
-      SubCommand::with_name("commit")
-        .about("Commits results of commands received over stdin as a new batch commit")
-        .arg(
-          Arg::with_name("commit-message")
-            .short("m")
-            .required(true)
-            .value_name("COMMIT_MESSAGE")
-            .takes_value(true)
-            .help("The commit message describing the commands as a whole"),
-        ),
-    )
+    .subcommand(commit::create_subcommand())
     .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
@@ -116,42 +104,34 @@ fn main() {
   let runtime = runtime_builder.build().unwrap();
 
   runtime.block_on(async {
-    let spec_events = match spec_path_type {
-      SpecPathType::FILE => streams::spec_events::from_file(&spec_path)
+    let spec_chunks = match spec_path_type {
+      SpecPathType::FILE => streams::spec_chunks::from_root_api_file(&spec_path)
         .await
         .map_err(|err| match err {
-          errors::EventLoadingError::Io(err) => {
+          errors::SpecChunkLoaderError::Io(err) => {
             eprintln!("Could not read specification file: {}", err);
             process::exit(1);
           }
-          errors::EventLoadingError::Json(err) => {
+          errors::SpecChunkLoaderError::Json(err) => {
             eprintln!("Specification JSON file could not be parsed: {}", err);
             process::exit(1);
           }
           _ => unreachable!("Specification file not currently serialized as any other but JSON"),
         })
         .unwrap(),
-      SpecPathType::DIR => {
-        let spec_chunk_events = streams::spec_chunks::from_api_dir(&spec_path)
-          .await
-          .expect("should be able to find spec event chunks in a folder");
 
-        streams::spec_events::from_spec_chunks(spec_chunk_events)
-          .await
-          .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
-      }
+      SpecPathType::DIR => streams::spec_chunks::from_api_dir(&spec_path)
+        .await
+        .expect("should be able to find spec event chunks in a folder"),
     };
 
     match matches.subcommand() {
       ("assemble", Some(_)) => {
-        eprintln!("assembling spec folder into spec");
-        assemble(&spec_events).await;
+        // eprintln!("assembling spec folder into spec");
+        assemble(spec_chunks).await;
       }
-      ("commit", Some(subcommand_matches)) => {
-        let commit_message = subcommand_matches
-          .value_of("commit-message")
-          .expect("commit-message is required");
-        commit(spec_events, &spec_path, commit_message).await;
+      (commit::SUBCOMMAND_NAME, Some(subcommand_matches)) => {
+        commit::main(subcommand_matches, spec_chunks, spec_path).await
       }
       _ => {
         eprintln!("diffing interations against a spec");
@@ -161,7 +141,7 @@ fn main() {
         ) * 4;
         eprintln!("using diff size {}", diff_queue_size);
 
-        diff(spec_events, diff_queue_size).await;
+        diff(events_from_chunks(spec_chunks).await, diff_queue_size).await;
       }
     };
   });
@@ -249,109 +229,14 @@ async fn diff(events: Vec<SpecEvent>, diff_queue_size: usize) {
   try_join!(diffing_interactions, results_manager).expect("essential worker task panicked");
 }
 
-async fn assemble(spec_events: &Vec<SpecEvent>) {
+async fn assemble(spec_chunks: Vec<SpecChunkEvent>) {
+  let spec_events = events_from_chunks(spec_chunks).await;
+
   let stdout = stdout();
 
-  let mut results_sink = streams::spec_events::into_json_array_items(stdout);
-  results_sink
-    .get_mut()
-    .write_u8(b'[')
+  streams::spec_events::write_to_json_array(stdout, &spec_events)
     .await
-    .expect("could not write array start to stdout");
-
-  for spec_event in spec_events {
-    if let Err(_) = results_sink.send(spec_event).await {
-      panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
-    }
-  }
-  results_sink
-    .get_mut()
-    .write_u8(b']')
-    .await
-    .expect("could not write array start to stdout");
-
-  results_sink
-    .get_mut()
-    .flush()
-    .await
-    .expect("could not flush stdout")
-}
-
-async fn commit(
-  spec_events: Vec<SpecEvent>,
-  spec_dir_path: impl AsRef<Path>,
-  commit_message: &str,
-) {
-  let mut spec_projection = SpecProjection::from(spec_events);
-
-  let stdin = stdin(); // TODO: deal with std in never having been attached
-
-  let input_commands = streams::spec_events::from_json_lines(stdin);
-
-  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
-    commit_message,
-  )));
-
-  // Start event
-  let start_event = spec_projection
-    .execute(append_batch)
-    .expect("should be able to append new batch commit to spec")
-    .remove(0);
-  let batch_id = match &start_event {
-    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(event)) => Some(event.batch_id.clone()),
-    _ => None,
-  }
-  .expect("BatchCommitStarted with batch id to have been created");
-
-  spec_projection.apply(start_event.clone());
-
-  // input events
-  let mut input_events: Vec<SpecEvent> = input_commands
-    .map(|command_json_result| -> Vec<SpecEvent> {
-      // TODO: provide more useful error messages, like forwarding command validation errors
-      let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
-      let command: SpecCommand =
-        serde_json::from_str(&command_json).expect("could not parse command");
-      let events = spec_projection
-        .execute(command)
-        .expect("could not execute command");
-
-      for event in &events {
-        spec_projection.apply(event.clone());
-      }
-
-      events
-    })
-    .collect::<Vec<_>>()
-    .await
-    .into_iter()
-    .flatten()
-    .collect();
-
-  // end events
-  let end_event = spec_projection
-    .execute(SpecCommand::from(RfcCommand::end_batch_commit(
-      batch_id.clone(),
-    )))
-    .expect("should be able to append new batch commit to spec")
-    .remove(0);
-  spec_projection.apply(end_event.clone());
-
-  let mut new_events = Vec::with_capacity(input_events.len() + 2);
-  new_events.push(start_event);
-  new_events.append(&mut input_events);
-  new_events.push(end_event);
-
-  let spec_chunk_event = SpecChunkEvent::batch_from_events(batch_id, new_events)
-    .expect("valid batch chunk should have been created");
-
-  streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
-    .await
-    .unwrap_or_else(|err| {
-      panic!("could not write new spec batch chunk to api dir: {:?}", err);
-    });
-
-  assemble(spec_chunk_event.events()).await
+    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err));
 }
 
 enum SpecPathType {
@@ -370,6 +255,12 @@ impl From<(InteractionDiffResult, &Tags)> for ResultContainer<InteractionDiffRes
     let fingerprint = result.fingerprint();
     Self(result, tags.clone(), fingerprint)
   }
+}
+
+async fn events_from_chunks(chunks: Vec<SpecChunkEvent>) -> Vec<SpecEvent> {
+  streams::spec_events::from_spec_chunks(chunks)
+    .await
+    .unwrap() // TODO: report on these errors in a more user-friendly way (like for single spec files)
 }
 
 #[cfg(test)]

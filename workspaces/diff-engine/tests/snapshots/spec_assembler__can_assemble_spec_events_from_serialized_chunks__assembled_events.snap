@@ -28,10 +28,10 @@ expression: assembled_events
             BatchCommitStarted {
                 batch_id: "batch-1",
                 commit_message: "Add Request and Response for GET /todos",
+                event_context: None,
                 parent_id: Some(
                     "root",
                 ),
-                event_context: None,
             },
         ),
     ),
@@ -69,10 +69,10 @@ expression: assembled_events
             BatchCommitStarted {
                 batch_id: "batch-2",
                 commit_message: "dsasa",
+                event_context: None,
                 parent_id: Some(
                     "batch-1",
                 ),
-                event_context: None,
             },
         ),
     ),

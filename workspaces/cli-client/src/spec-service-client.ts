@@ -142,7 +142,7 @@ export class Client implements ISpecService {
       })
     );
 
-    this.eventEmitter.emit('events-appended', newEvents);
+    this.eventEmitter.emit('events-updated');
     return newEvents;
   }
 }

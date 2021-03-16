@@ -1,4 +1,4 @@
-use super::EventContext;
+use super::{EventContext, WithEventContext};
 use crate::state::shape::{
   FieldShapeDescriptor, ParameterShapeDescriptor, ShapeParametersDescriptor,
 };
@@ -145,6 +145,26 @@ impl Event for ShapeEvent {
       ShapeEvent::FieldRenamed(evt) => evt.event_type(),
       ShapeEvent::FieldRemoved(evt) => evt.event_type(),
     }
+  }
+}
+
+impl WithEventContext for ShapeEvent {
+  fn with_event_context(&mut self, event_context: EventContext) {
+    match self {
+      ShapeEvent::ShapeAdded(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::BaseShapeSet(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeRenamed(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeRemoved(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeParameterAdded(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeParameterShapeSet(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeParameterRenamed(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::ShapeParameterRemoved(evt) => evt.event_context.replace(event_context),
+
+      ShapeEvent::FieldAdded(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::FieldShapeSet(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::FieldRenamed(evt) => evt.event_context.replace(event_context),
+      ShapeEvent::FieldRemoved(evt) => evt.event_context.replace(event_context),
+    };
   }
 }
 

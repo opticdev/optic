@@ -54,18 +54,18 @@ Each custom task can be run with:
 api run <task name>
 ```
 
-## Transparent Proxy task mode
+## Proxy task mode
 
-For most local documentation, we recommend starting your API application directly with an [Optic task](/docs/), also known as Command Wrapper mode. This allows Optic to start your project and a new capture session to organize observed requests. Sometimes, this isn't feasible - such as when your API is always deployed in a Serverless architecture and cannot be run locally. In this case, the Optic Transparent Proxy mode will let you configure your downstream and upstream URLs.
+For most local documentation, we recommend starting your API application directly with an [Optic task](/docs/), also known as Command Wrapper mode. This allows Optic to start your project and a new capture session to organize observed requests. Sometimes, this isn't feasible - such as when your API is always deployed in a Serverless architecture and cannot be run locally. In this case, the Optic Proxy mode will let you configure your downstream and upstream URLs.
 
-### Setting up the Local CLI in Transparent Proxy mode
+### Setting up the Local CLI in Proxy mode
 
-All configuration items for local capture live in the `optic.yml` file. Create a new task to use the Transparent Proxy mode:
+All configuration items for local capture live in the `optic.yml` file. Create a new task to use the Proxy mode:
 
 - Create a new task `start-proxy` at the same level of indent as `start` (the default task).
 - `inboundUrl` (alias `baseUrl`) is the URL configuration where the application we're observing should expect to live. When using Optic to observe traffic, Optic adopts this URL to intercept traffic and pass it along to the application under observation. That way, your clients or tests can still run exactly as they have in the past.
 - `targetUrl` tells us the target for the observed traffic, our application under observation. We'll need to run the application on this URL so that Optic can pass traffic along to the target application.
-- The `command` field is for process wrapping, and isn't necessary for the transparent proxy configuration. Leave that out.
+- The `command` field is for process wrapping, and isn't necessary for the proxy configuration. Leave that out.
 
 The tasks section of the `optic.yml` file will look something like this:
 
@@ -97,11 +97,31 @@ api run start-proxy
 - The Optic CLI will listen on localhost at the port defined in `inboundUrl`.
 - Traffic sent to the Optic CLI will be forwarded to the defined `targetUrl` - assure that is already running, or if not, start it before sending any traffic.
 
-### Starting a new Capture Session in Transparent Poxy task mode
+### Starting a new Capture Session in Poxy task mode
 
-When Optic is started in Transparent Proxy task mode, it is not watching the application lifecycle and does not currently capture rebuild events of the application under observation. To start fresh with a new capture session, stop the current Optic proxy and restart with `api run start-proxy`. This will create a new capture session in the Optic dashboard and allow you to observe traffic sent to the most recent build of the application under observation.
+When Optic is started in Proxy task mode, it is not watching the application lifecycle and does not currently capture rebuild events of the application under observation. To start fresh with a new capture session, stop the current Optic proxy and restart with `api run start-proxy`. This will create a new capture session in the Optic dashboard and allow you to observe traffic sent to the most recent build of the application under observation.
 
-### Dependent tasks
+### Transparent Proxy mode
+
+Optic forwards all requests sent to the localhost `inboundUrl` to the `targetUrl` by default. This is not a one-size-fits-all solution. For example, if you are testing a UI and it makes requests to a CDN for assets, the default behavior will not work. Optic can run in **Transparent Proxy** mode that allows you to forward all requests transparently. To enable this mode, invoke a proxy task with:
+
+```
+api run --transparent-proxy start-proxy
+```
+
+You will need to set up your app to use Optic explicitly as a proxy. All traffic will flow through the Optic proxy, and can be filtered in the dashboard for relevant API traffic. The following `optic.yml` sets up a proxy task and a dependent task (see below) to start the Chrome browser with proxy settings. In this case, `api run --transparent-proxy ui-proxy` would start up the `start` proxy definition, and open a new Chrome browser (on MacOS) with the appropriate flags to proxy traffic through Optic:
+
+```
+tasks:
+  start:
+    targetUrl: https://api.example.com
+    inboundUrl: https://localhost:4000
+  ui-proxy:
+    useTask: start
+    command: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --ignore-certificate-errors --proxy-server="https://localhost:4000" --user-data-dir="/tmp/optic" https://api.example.com/api/docs
+```
+
+## Dependent tasks
 
 A task can depend on another task. For example, say you need to start your API service with a task, then want to run test traffic against that service through Optic. First, define the task to start your API service with Optic. Then, define a new task with the `command` parameter to run your test script and the `useTask` parameter specifying your service start task. The example below runs a Newman test against the start-proxy task above:
 

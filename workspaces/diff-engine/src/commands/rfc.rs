@@ -5,7 +5,6 @@ use crate::projections::{CommitId, HistoryProjection};
 use crate::queries::history::HistoryQueries;
 use cqrs_core::AggregateCommand;
 use serde::Deserialize;
-use uuid::Uuid;
 
 #[derive(Deserialize, Debug, Clone)]
 pub enum RfcCommand {
@@ -23,13 +22,14 @@ pub enum RfcCommand {
 }
 
 impl RfcCommand {
-  pub fn append_batch_commit(commit_message: String) -> Self {
-    Self::AppendBatch(AppendBatch { commit_message })
+  pub fn append_batch_commit(batch_id: String, commit_message: String) -> Self {
+    Self::AppendBatch(AppendBatch {
+      batch_id,
+      commit_message,
+    })
   }
 
-  pub fn start_batch_commit(parent_id: String, commit_message: String) -> Self {
-    let batch_id = Uuid::new_v4().to_hyphenated().to_string();
-
+  pub fn start_batch_commit(batch_id: String, parent_id: String, commit_message: String) -> Self {
     Self::StartBatchCommit(StartBatchCommit {
       batch_id,
       parent_id,
@@ -40,14 +40,18 @@ impl RfcCommand {
   pub fn end_batch_commit(batch_id: String) -> Self {
     Self::EndBatchCommit(EndBatchCommit { batch_id })
   }
+
+  pub fn add_contribution(id: String, key: String, value: String) -> Self {
+    Self::AddContribution(AddContribution { id, key, value })
+  }
 }
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddContribution {
-  id: String,
-  key: String,
-  value: String,
+  pub id: String,
+  pub key: String,
+  pub value: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -85,6 +89,7 @@ pub struct EndBatchCommit {
 
 #[derive(Debug, Clone)]
 pub struct AppendBatch {
+  pub batch_id: String,
   pub commit_message: String,
 }
 
@@ -107,6 +112,7 @@ impl AggregateCommand<HistoryProjection> for RfcCommand {
         };
 
         vec![RfcEvent::from(RfcCommand::start_batch_commit(
+          command.batch_id.clone(),
           parent_batch_id,
           command.commit_message.clone(),
         ))]
@@ -123,6 +129,10 @@ impl AggregateCommand<HistoryProjection> for RfcCommand {
         )?;
 
         vec![RfcEvent::from(rfc_events::BatchCommitEnded::from(command))]
+      }
+
+      RfcCommand::AddContribution(command) => {
+        vec![RfcEvent::from(rfc_events::ContributionAdded::from(command))]
       }
 
       _ => Err(SpecCommandError::Unimplemented(
@@ -188,14 +198,15 @@ mod test {
   pub fn can_handle_append_batch_command() {
     let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
       {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
-      {"BatchCommitStarted": {"batchId": "batch_1","parentId": "root", "commitMessage": "initial commit"}},
+      {"BatchCommitStarted": {"batchId": "batch_1", "commitMessage": "initial commit"}},
       {"BatchCommitEnded": {"batchId": "batch_1" }}
     ]))
     .expect("initial events should be valid spec events");
 
     let mut projection = HistoryProjection::from(initial_events);
 
-    let command: RfcCommand = RfcCommand::append_batch_commit(String::from("second commit"));
+    let command: RfcCommand =
+      RfcCommand::append_batch_commit(String::from("test-batch-1"), String::from("second commit"));
 
     let new_events = projection
       .execute(command)
@@ -258,5 +269,24 @@ mod test {
     for event in new_events {
       projection.apply(event);
     }
+  }
+
+  #[test]
+  pub fn can_handle_contribution_commands() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([]))
+    .expect("initial events should be valid spec events");
+
+    let projection = HistoryProjection::from(initial_events);
+
+    let command: RfcCommand = RfcCommand::add_contribution(String::from("path123.method"), String::from("purpose"), String::from("Name of Endpoint"));
+
+    let new_events = projection
+      .execute(command)
+      .expect("new contributions should be applicable projection");
+    assert_eq!(new_events.len(), 1);
+    assert_debug_snapshot!(
+      "can_handle_add_contribution_command__new_events",
+      new_events
+    );
   }
 }

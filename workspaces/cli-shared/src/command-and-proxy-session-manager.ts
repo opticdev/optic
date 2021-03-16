@@ -53,6 +53,10 @@ class CommandAndProxySessionManager {
         includeQueryString: true,
       },
       host: this.config.proxyConfig.host,
+      hostnameFilter:
+        process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes'
+          ? this.config.hostnameFilter
+          : undefined,
       proxyTarget:
         process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes'
           ? undefined

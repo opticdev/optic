@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/diff-engine",
-  "version": "9.0.13",
+  "version": "9.0.15",
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
@@ -18,7 +18,7 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@useoptic/diff-engine-wasm": "9.0.13",
+    "@useoptic/diff-engine-wasm": "9.0.15",
     "bent": "^7.3.12",
     "dotenv": "^8.2.0",
     "execa": "^4.0.3",

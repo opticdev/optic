@@ -3,11 +3,32 @@ use cqrs_core::Event;
 use serde_json;
 use std::convert::TryFrom;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum SpecChunkEvent {
   Root(RootChunkEvent),
   Batch(BatchChunkEvent),
   Unknown(UnknownChunkEvent),
+}
+
+#[derive(Debug, Clone)]
+pub struct RootChunkEvent {
+  pub id: String,
+  pub name: String,
+  pub events: Vec<SpecEvent>,
+}
+
+#[derive(Debug, Clone)]
+pub struct BatchChunkEvent {
+  pub id: String,
+  pub name: String,
+  pub parent_id: String,
+  pub events: Vec<SpecEvent>,
+}
+
+#[derive(Debug, Clone)]
+pub struct UnknownChunkEvent {
+  pub name: String,
+  pub events: Vec<SpecEvent>,
 }
 
 impl SpecChunkEvent {
@@ -19,30 +40,11 @@ impl SpecChunkEvent {
 
     Ok(SpecChunkEvent::Batch(batch))
   }
-}
 
-#[derive(Debug)]
-pub struct RootChunkEvent {
-  pub id: String,
-  pub name: String,
-  pub events: Vec<SpecEvent>,
-}
+  pub fn root_from_events(events: Vec<SpecEvent>) -> SpecChunkEvent {
+    SpecChunkEvent::from((String::from("root"), true, events))
+  }
 
-#[derive(Debug)]
-pub struct BatchChunkEvent {
-  pub id: String,
-  pub name: String,
-  pub parent_id: String,
-  pub events: Vec<SpecEvent>,
-}
-
-#[derive(Debug)]
-pub struct UnknownChunkEvent {
-  pub name: String,
-  pub events: Vec<SpecEvent>,
-}
-
-impl SpecChunkEvent {
   pub fn events(&self) -> &Vec<SpecEvent> {
     let events = match self {
       SpecChunkEvent::Root(chunk) => &chunk.events,
@@ -105,6 +107,20 @@ impl Event for BatchChunkEvent {
 impl Event for UnknownChunkEvent {
   fn event_type(&self) -> &'static str {
     "UnknownChunkEvent"
+  }
+}
+
+impl RootChunkEvent {
+  pub fn last_batch_id(&self) -> &String {
+    self
+      .events
+      .iter()
+      .rev()
+      .find_map(|event| match event {
+        SpecEvent::RfcEvent(RfcEvent::BatchCommitEnded(e)) => Some(&e.batch_id),
+        _ => None,
+      })
+      .unwrap_or_else(|| &self.id)
   }
 }
 

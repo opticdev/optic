@@ -5,19 +5,22 @@ dotenv:
 
 env:
   DOCKER_REGISTRY: 513974440343.dkr.ecr.us-east-1.amazonaws.com
+  NODE_ENV: '{{default "development" .NODE_ENV}}'
 
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
-  ui:
-    taskfile: workspaces/ui/Taskfile.yml
-    dir: workspaces/ui
   regression:
     taskfile: taskfiles/regression-tests/Taskfile.yml
   release:
     taskfile: taskfiles/release/Taskfile.yml
   release:side-channel:
     taskfile: taskfiles/release/side-channel/Taskfile.yml
+  ui:
+    taskfile: workspaces/ui/Taskfile.yml
+    dir: workspaces/ui
+  utility:
+    taskfile: taskfiles/utility/Taskfile.yml
   verdaccio:
     taskfile: docker/private-npm-registry/Taskfile.yml
     dir: docker/private-npm-registry
@@ -33,7 +36,8 @@ tasks:
     desc: Build Yarn workspaces
     vars:
       FLAGS_FILE: '{{.FLAGS_FILE}}'
-    deps: ["workspaces:setup"]
+    deps:
+      - workspaces:setup
     cmds:
       - |
         if [[ -n "$FLAGS_FILE" ]]; then
@@ -48,9 +52,6 @@ tasks:
           cp $FLAGS_FILE workspaces/ui/.env.production.local
         fi
         yarn wsrun --stages --report --fast-exit --exclude-missing ws:build
-
-    sources:
-      - !workspaces/*/build/**/*
     generates:
       - workspaces/diff-engine-wasm/lib/**/*
       - workspaces/diff-engine-wasm/engine/browser/**/*
