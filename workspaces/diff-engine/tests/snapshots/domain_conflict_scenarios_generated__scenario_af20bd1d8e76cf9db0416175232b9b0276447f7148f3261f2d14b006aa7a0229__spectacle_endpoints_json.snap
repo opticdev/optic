@@ -15,7 +15,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "BatchCommit",
       "data": {
         "batchId": "a83be1f3-a56f-43c3-a711-cc90eee84601",
-        "createdAt": ""
+        "createdAt": "2021-02-03T01:21:01.677Z"
       }
     },
     {
@@ -29,7 +29,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "BatchCommit",
       "data": {
         "batchId": "62b05d70-c86b-4df6-a243-946e21c35820",
-        "createdAt": ""
+        "createdAt": "2021-02-03T01:21:55.644Z"
       }
     },
     {

@@ -45,7 +45,7 @@ pub struct GitStateSet {
 pub struct BatchCommitStarted {
   pub batch_id: String,
   pub commit_message: String,
-  event_context: Option<EventContext>,
+  pub event_context: Option<EventContext>,
 
   #[serde(skip_serializing_if = "Option::is_none")]
   pub parent_id: Option<String>,
