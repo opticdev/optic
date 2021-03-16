@@ -44,7 +44,7 @@ jobs:
       - name: Build NPM packages for S3
         env:
           FLAGS_FILE: ${{ github.event.inputs.flags_file }}
-        run: task release:side-channel:npm_packages
+        run: task utility:create-docker-network verdaccio:up release:side-channel:npm_packages
       - uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # v2.2.2
         with:
           name: side-channel-announce

@@ -1,12 +1,17 @@
-version: '2.1'
+version: "3"
+
 services:
   verdaccio:
     image: verdaccio/verdaccio:4.6
     container_name: verdaccio-local-registry
     ports:
-      - "4873:4873"
+      - 4873:4873
     volumes:
-      - "./conf:/verdaccio/conf"
-volumes:
-  verdaccio:
-    driver: local
+      - ./conf:/verdaccio/conf
+    networks:
+      - optic
+
+networks:
+  optic:
+    name: optic
+    external: true

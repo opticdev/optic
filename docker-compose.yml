@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  devel:
+    image: optic/devel
+    build:
+      context: docker/devel
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+      # hack for https://github.com/EverlastingBugstopper/binary-install/issues/3
+      # once wasm-pack updates to a more recent binary-install package we
+      # should be able to drop this.
+      - wasm-pack-nodejs:/home/appuser/.config/wasm-pack-nodejs/bin
+    environment:
+      NPM_REGISTRY: http://verdaccio-local-registry:4873
+      NODE_ENV: development
+    networks: [optic]
+
+networks:
+  optic:
+    name: optic
+    external: true
+
+volumes:
+  wasm-pack-nodejs:
