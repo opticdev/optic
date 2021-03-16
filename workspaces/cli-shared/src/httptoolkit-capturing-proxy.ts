@@ -28,6 +28,7 @@ export interface IHttpToolkitCapturingProxyConfig {
     includeShapeHash: boolean;
     includeQueryString: boolean;
   };
+  hostnameFilter?: string;
   queryParser: IQueryParser;
 }
 
@@ -159,7 +160,8 @@ export class HttpToolkitCapturingProxy {
 
         developerDebugLogger(req);
 
-        const path = url.parse(req.url).pathname!;
+        const parsedUrl = url.parse(req.url);
+        const path = parsedUrl.pathname!;
 
         const sample: IHttpInteraction = {
           tags: [],
@@ -186,8 +188,24 @@ export class HttpToolkitCapturingProxy {
             body: this.extractBody(res),
           },
         };
-        developerDebugLogger(util.inspect(sample, {showHidden: false, depth: null, colors: true, getters: true}));
-        this.events.emit('sample', sample);
+        developerDebugLogger(
+          util.inspect(sample, {
+            showHidden: false,
+            depth: null,
+            colors: true,
+            getters: true,
+          })
+        );
+
+        if (this.config.hostnameFilter) {
+          //when filter is set, verify a match
+          if (parsedUrl.hostname === this.config.hostnameFilter) {
+            this.events.emit('sample', sample);
+          }
+        } else {
+          //when host filter is not set, emit sample for everything
+          this.events.emit('sample', sample);
+        }
         this.requests.delete(res.id);
       }
     });
