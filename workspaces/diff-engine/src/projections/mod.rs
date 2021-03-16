@@ -86,7 +86,10 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
         projection.shape.apply(event.clone());
         projection.conflicts.apply(event);
       }
-      SpecEvent::RfcEvent(event) => projection.history.apply(event),
+      SpecEvent::RfcEvent(event) => {
+        projection.history.apply(event.clone());
+        projection.spectacle_endpoints.apply(event.clone());
+      }
     }
   }
 }

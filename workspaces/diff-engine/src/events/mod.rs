@@ -22,10 +22,10 @@ pub use spec_chunk::SpecChunkEvent;
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct EventContext {
-  client_id: String,
-  client_session_id: String,
-  client_command_batch_id: String,
-  created_at: String,
+  pub client_id: String,
+  pub client_session_id: String,
+  pub client_command_batch_id: String,
+  pub created_at: String,
 }
 
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]

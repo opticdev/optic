@@ -14,6 +14,71 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     {
       "type": "BatchCommit",
       "data": {
+        "batchId": "2f5c2536-6500-495a-b0b1-947d55394009",
+        "createdAt": ""
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/posts",
+        "pathId": "path_rmPGKep5SW"
+      }
+    },
+    {
+      "type": "Path",
+      "data": {
+        "absolutePathPattern": "/profile",
+        "pathId": "path_CmA4ZrhSXc"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_lUXaqigODI"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_zEjgh3n6Uq"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_GsyFkrJzlL"
+      }
+    },
+    {
+      "type": "Request",
+      "data": {
+        "httpMethod": "GET",
+        "requestId": "request_ncEWlZU2g3"
+      }
+    },
+    {
+      "type": "Response",
+      "data": {
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "responseId": "response_pan3yNmeiQ"
+      }
+    },
+    {
+      "type": "Body",
+      "data": {
+        "httpContentType": "application/json",
+        "rootShapeId": "shape_ApnstcbWQx"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
         "batchId": "57630124-211a-440d-8bd3-2496ccc97f0c",
         "createdAt": ""
       }
@@ -104,71 +169,6 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
         "httpContentType": "application/json",
         "rootShapeId": "shape_MiVhGwZrMY"
       }
-    },
-    {
-      "type": "BatchCommit",
-      "data": {
-        "batchId": "2f5c2536-6500-495a-b0b1-947d55394009",
-        "createdAt": ""
-      }
-    },
-    {
-      "type": "Path",
-      "data": {
-        "absolutePathPattern": "/posts",
-        "pathId": "path_rmPGKep5SW"
-      }
-    },
-    {
-      "type": "Path",
-      "data": {
-        "absolutePathPattern": "/profile",
-        "pathId": "path_CmA4ZrhSXc"
-      }
-    },
-    {
-      "type": "Request",
-      "data": {
-        "httpMethod": "GET",
-        "requestId": "request_lUXaqigODI"
-      }
-    },
-    {
-      "type": "Response",
-      "data": {
-        "httpMethod": "GET",
-        "httpStatusCode": 200,
-        "responseId": "response_zEjgh3n6Uq"
-      }
-    },
-    {
-      "type": "Body",
-      "data": {
-        "httpContentType": "application/json",
-        "rootShapeId": "shape_GsyFkrJzlL"
-      }
-    },
-    {
-      "type": "Request",
-      "data": {
-        "httpMethod": "GET",
-        "requestId": "request_ncEWlZU2g3"
-      }
-    },
-    {
-      "type": "Response",
-      "data": {
-        "httpMethod": "GET",
-        "httpStatusCode": 200,
-        "responseId": "response_pan3yNmeiQ"
-      }
-    },
-    {
-      "type": "Body",
-      "data": {
-        "httpContentType": "application/json",
-        "rootShapeId": "shape_ApnstcbWQx"
-      }
     }
   ],
   "edges": [
@@ -188,6 +188,13 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       4,
+      2,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      4,
       1,
       {
         "type": "CreatedIn"
@@ -209,13 +216,13 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       6,
-      2,
+      5,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      6,
+      5,
       1,
       {
         "type": "CreatedIn"
@@ -223,13 +230,13 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       7,
-      6,
+      3,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      6,
+      7,
       1,
       {
         "type": "CreatedIn"
@@ -251,112 +258,105 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       9,
-      3,
+      8,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      9,
+      8,
       1,
       {
         "type": "CreatedIn"
       }
     ],
     [
+      11,
       10,
-      9,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      9,
-      1,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      11,
-      4,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      11,
-      1,
       {
         "type": "CreatedIn"
       }
     ],
     [
       12,
-      4,
-      {
-        "type": "IsChildOf"
-      }
-    ],
-    [
-      12,
-      1,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       13,
-      12,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      14,
+      11,
       {
         "type": "IsChildOf"
       }
     ],
     [
-      12,
-      1,
+      14,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       15,
-      14,
+      11,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      15,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       16,
-      14,
-      {
-        "type": "CreatedIn"
-      }
-    ],
-    [
-      17,
       15,
       {
         "type": "IsChildOf"
       }
     ],
     [
+      15,
+      10,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
       17,
-      14,
+      12,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      17,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       18,
-      15,
+      12,
       {
         "type": "IsChildOf"
       }
     ],
     [
       18,
-      14,
+      10,
       {
         "type": "CreatedIn"
       }
@@ -370,35 +370,35 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       18,
-      14,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       20,
-      16,
+      13,
       {
         "type": "IsChildOf"
       }
     ],
     [
       20,
-      14,
+      10,
       {
         "type": "CreatedIn"
       }
     ],
     [
       21,
-      16,
+      13,
       {
         "type": "IsChildOf"
       }
     ],
     [
       21,
-      14,
+      10,
       {
         "type": "CreatedIn"
       }
@@ -412,7 +412,7 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     ],
     [
       21,
-      14,
+      10,
       {
         "type": "CreatedIn"
       }
@@ -420,22 +420,22 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
   ],
   "nodeIndexToId": {
     "0": "root",
-    "1": "57630124-211a-440d-8bd3-2496ccc97f0c",
-    "11": "request_AJISCmgnoU",
-    "12": "response_HZFYN85Iui",
-    "14": "2f5c2536-6500-495a-b0b1-947d55394009",
-    "15": "path_rmPGKep5SW",
-    "16": "path_CmA4ZrhSXc",
-    "17": "request_lUXaqigODI",
-    "18": "response_zEjgh3n6Uq",
-    "2": "path_9Wdr4kyshW",
-    "20": "request_ncEWlZU2g3",
-    "21": "response_pan3yNmeiQ",
-    "3": "path_8paa69fCfC",
-    "4": "path_osi3pD8diw",
-    "5": "request_w0KmJ5kZIe",
-    "6": "response_iQd5ISIZH9",
-    "8": "request_CEJzcYN3NN",
-    "9": "response_ata4rM8zB1"
+    "1": "2f5c2536-6500-495a-b0b1-947d55394009",
+    "10": "57630124-211a-440d-8bd3-2496ccc97f0c",
+    "11": "path_9Wdr4kyshW",
+    "12": "path_8paa69fCfC",
+    "13": "path_osi3pD8diw",
+    "14": "request_w0KmJ5kZIe",
+    "15": "response_iQd5ISIZH9",
+    "17": "request_CEJzcYN3NN",
+    "18": "response_ata4rM8zB1",
+    "2": "path_rmPGKep5SW",
+    "20": "request_AJISCmgnoU",
+    "21": "response_HZFYN85Iui",
+    "3": "path_CmA4ZrhSXc",
+    "4": "request_lUXaqigODI",
+    "5": "response_zEjgh3n6Uq",
+    "7": "request_ncEWlZU2g3",
+    "8": "response_pan3yNmeiQ"
   }
 }

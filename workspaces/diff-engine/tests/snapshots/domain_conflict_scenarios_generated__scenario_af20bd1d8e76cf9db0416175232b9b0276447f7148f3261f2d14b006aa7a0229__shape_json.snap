@@ -1,0 +1,851 @@
+---
+source: workspaces/diff-engine/tests/domain-conflict-scenarios-generated.rs
+expression: "&spec_projection.shapes_serializable()"
+---
+{
+  "nodes": [
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$string",
+        "descriptor": {
+          "kind": "StringKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$number",
+        "descriptor": {
+          "kind": "NumberKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$boolean",
+        "descriptor": {
+          "kind": "BooleanKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$list",
+        "descriptor": {
+          "kind": "ListKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$listItem",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$object",
+        "descriptor": {
+          "kind": "ObjectKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$nullable",
+        "descriptor": {
+          "kind": "NullableKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$nullableInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$unknown",
+        "descriptor": {
+          "kind": "UnknownKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$optional",
+        "descriptor": {
+          "kind": "OptionalKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$optionalInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$oneOf",
+        "descriptor": {
+          "kind": "OneOfKind"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_X1SkJOUfKT"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_Fv4AnjuMfr"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_O5w3VQAJmV"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_nDtKtB2KtJ",
+        "descriptor": {
+          "name": "assignedBy"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_cvw6rvavN8"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_GROMPaJig6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_30c9L6fbQ3",
+        "descriptor": {
+          "name": "dueDate"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_gAv6yKZzFD"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_QO3y8UJ0Lv"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_fXda473ILm",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_JxlNtOYsuU"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_mYQDOd3Y0i",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_oZ77wP2E0G"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_iISbLxbnLI"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_AbzpZ0m9nF",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_h6noJEJact"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_GLsxCDU63N",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_KrxPAcTUDM"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_MINPkyPjlU"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_9eGPShaC6K"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sT8BeBcwG6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_QO5yNJDzl6",
+        "descriptor": {
+          "name": "assignedBy"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_wYhKIM87RV"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_y3btjllmxs"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_V93LVuyg6y",
+        "descriptor": {
+          "name": "dueDate"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_bASddE5AqG"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_PHlpFg1Im4"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_MzT8sXrwIj",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_ASYWWGZUXX"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_GEBzgPSSgx",
+        "descriptor": {
+          "name": "id"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sKcXmXqnpW"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_AJI1NUOcuk"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_Wsvi8Mz3I8",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_QlChWMhENf"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_RkcLaQrvWP",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_hcQz2zr63G"
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      3,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      7,
+      6,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      10,
+      9,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      12,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      13,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      15,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      15,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      16,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      17,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      17,
+      18,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      18,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      19,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      20,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      20,
+      21,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      21,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      22,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      22,
+      23,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      23,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      24,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      25,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      25,
+      26,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      26,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      27,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      27,
+      28,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      28,
+      13,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      29,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      17,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_cvw6rvavN8"
+        }
+      }
+    ],
+    [
+      20,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_gAv6yKZzFD"
+        }
+      }
+    ],
+    [
+      25,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_oZ77wP2E0G"
+        }
+      }
+    ],
+    [
+      29,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_Fv4AnjuMfr"
+        }
+      }
+    ],
+    [
+      30,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      31,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      33,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      33,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      34,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      35,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      35,
+      36,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      36,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      37,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      38,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      38,
+      39,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      39,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      40,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      40,
+      41,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      41,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      42,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      43,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      43,
+      44,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      44,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      45,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      45,
+      46,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      46,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      47,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      35,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_wYhKIM87RV"
+        }
+      }
+    ],
+    [
+      38,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_bASddE5AqG"
+        }
+      }
+    ],
+    [
+      43,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_sKcXmXqnpW"
+        }
+      }
+    ],
+    [
+      47,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "shape_9eGPShaC6K"
+        }
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "$string",
+    "1": "$number",
+    "10": "$optionalInner",
+    "11": "$oneOf",
+    "12": "shape_X1SkJOUfKT",
+    "13": "shape_Fv4AnjuMfr",
+    "14": "shape_O5w3VQAJmV",
+    "15": "field_nDtKtB2KtJ",
+    "16": "shape_cvw6rvavN8",
+    "17": "shape_GROMPaJig6",
+    "18": "field_30c9L6fbQ3",
+    "19": "shape_gAv6yKZzFD",
+    "2": "$boolean",
+    "20": "shape_QO3y8UJ0Lv",
+    "21": "field_fXda473ILm",
+    "22": "shape_JxlNtOYsuU",
+    "23": "field_mYQDOd3Y0i",
+    "24": "shape_oZ77wP2E0G",
+    "25": "shape_iISbLxbnLI",
+    "26": "field_AbzpZ0m9nF",
+    "27": "shape_h6noJEJact",
+    "28": "field_GLsxCDU63N",
+    "29": "shape_KrxPAcTUDM",
+    "3": "$list",
+    "30": "shape_MINPkyPjlU",
+    "31": "shape_9eGPShaC6K",
+    "32": "shape_sT8BeBcwG6",
+    "33": "field_QO5yNJDzl6",
+    "34": "shape_wYhKIM87RV",
+    "35": "shape_y3btjllmxs",
+    "36": "field_V93LVuyg6y",
+    "37": "shape_bASddE5AqG",
+    "38": "shape_PHlpFg1Im4",
+    "39": "field_MzT8sXrwIj",
+    "4": "$listItem",
+    "40": "shape_ASYWWGZUXX",
+    "41": "field_GEBzgPSSgx",
+    "42": "shape_sKcXmXqnpW",
+    "43": "shape_AJI1NUOcuk",
+    "44": "field_Wsvi8Mz3I8",
+    "45": "shape_QlChWMhENf",
+    "46": "field_RkcLaQrvWP",
+    "47": "shape_hcQz2zr63G",
+    "5": "$object",
+    "6": "$nullable",
+    "7": "$nullableInner",
+    "8": "$unknown",
+    "9": "$optional"
+  }
+}

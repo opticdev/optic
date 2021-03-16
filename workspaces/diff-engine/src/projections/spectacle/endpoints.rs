@@ -4,6 +4,7 @@ use crate::state::endpoint::{
   HttpContentType, HttpMethod, HttpStatusCode, PathComponentId, RequestId, ResponseId,
 };
 use crate::state::shape::ShapeId;
+use crate::RfcEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
 use petgraph::csr::NodeIndex;
 use petgraph::Direction::Incoming;
@@ -97,30 +98,57 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
   fn apply_to(self, projection: &mut EndpointsProjection) {
     match self {
       EndpointEvent::PathComponentAdded(e) => {
-        projection.with_path_component(e.parent_path_id, e.path_id, e.name);
+        projection.with_path_component(e.parent_path_id, e.path_id.clone(), e.name);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+        }
       }
       EndpointEvent::PathParameterAdded(e) => {
-        projection.with_path_parameter(e.parent_path_id, e.path_id, e.name);
+        projection.with_path_parameter(e.parent_path_id, e.path_id.clone(), e.name);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.path_id);
+        }
       }
       EndpointEvent::RequestAdded(e) => {
-        projection.with_request(e.request_id, e.path_id, e.http_method);
+        projection.with_request(e.request_id.clone(), e.path_id, e.http_method);
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
+        }
       }
       EndpointEvent::ResponseAddedByPathAndMethod(e) => {
-        projection.with_response(e.response_id, e.path_id, e.http_method, e.http_status_code);
+        projection.with_response(
+          e.response_id.clone(),
+          e.path_id,
+          e.http_method,
+          e.http_status_code,
+        );
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+        }
       }
       EndpointEvent::RequestBodySet(e) => {
         projection.with_request_body(
-          e.request_id,
+          e.request_id.clone(),
           e.body_descriptor.http_content_type,
           e.body_descriptor.shape_id,
         );
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.request_id);
+        }
       }
       EndpointEvent::ResponseBodySet(e) => {
         projection.with_response_body(
-          e.response_id,
+          e.response_id.clone(),
           e.body_descriptor.http_content_type,
           e.body_descriptor.shape_id,
         );
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.response_id);
+        }
       }
       _ => eprintln!(
         "Ignoring applying event of type '{}' for '{}'",
@@ -131,8 +159,17 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
   }
 }
 
-impl AggregateEvent<EndpointsProjection> for SpecEvent {
-  fn apply_to(self, projection: &mut EndpointsProjection) {}
+impl AggregateEvent<EndpointsProjection> for RfcEvent {
+  fn apply_to(self, projection: &mut EndpointsProjection) {
+    match self {
+      RfcEvent::BatchCommitStarted(e) => projection.with_batch_commit(e.batch_id),
+      _ => eprintln!(
+        "Ignoring applying event of type '{}' for '{}'",
+        self.event_type(),
+        EndpointsProjection::aggregate_type()
+      ),
+    }
+  }
 }
 
 impl<I> From<I> for EndpointsProjection
@@ -309,6 +346,31 @@ impl EndpointsProjection {
       .add_edge(node_index, *response_index, Edge::IsChildOf);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  pub fn with_batch_commit(&mut self, batch_id: String) {
+    let node = Node::BatchCommit(BatchCommitNode {
+      batch_id: batch_id.clone(),
+      created_at: "".to_string(),
+    });
+    let node_index = self.graph.add_node(node);
+    self.domain_id_to_index.insert(batch_id, node_index);
+  }
+  pub fn with_creation_history(&mut self, batch_id: &str, created_node_id: &str) {
+    let created_node_index = self
+      .domain_id_to_index
+      .get(created_node_id)
+      .expect("expected created_node_id to exist");
+
+    let batch_node_index_option = self.domain_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*created_node_index, *batch_node_index, Edge::CreatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -321,6 +383,14 @@ pub enum Node {
   Request(RequestNode),
   Response(ResponseNode),
   Body(BodyNode),
+  BatchCommit(BatchCommitNode),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BatchCommitNode {
+  batch_id: String,
+  created_at: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -356,5 +426,7 @@ pub struct BodyNode {
 #[serde(tag = "type", content = "data")]
 pub enum Edge {
   IsChildOf,
+  CreatedIn,
+  UpdatedIn,
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
