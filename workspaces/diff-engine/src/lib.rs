@@ -1,7 +1,7 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
 mod commands;
-mod events;
+pub mod events;
 mod interactions;
 mod projections;
 mod protos;
