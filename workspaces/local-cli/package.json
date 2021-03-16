@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "API CLI from Optic. Document and test your APIs as you build them.",
-  "version": "9.0.14",
+  "version": "9.0.15",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -16,12 +16,12 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "@useoptic/analytics": "9.0.14",
-    "@useoptic/cli-client": "9.0.14",
-    "@useoptic/cli-config": "9.0.14",
-    "@useoptic/cli-scripts": "9.0.14",
-    "@useoptic/cli-server": "9.0.14",
-    "@useoptic/cli-shared": "9.0.14",
+    "@useoptic/analytics": "9.0.15",
+    "@useoptic/cli-client": "9.0.15",
+    "@useoptic/cli-config": "9.0.15",
+    "@useoptic/cli-scripts": "9.0.15",
+    "@useoptic/cli-server": "9.0.15",
+    "@useoptic/cli-shared": "9.0.15",
     "@useoptic/domain": "10.0.64",
     "analytics-node": "^3.4.0-beta.1",
     "assert": "^2.0.0",
