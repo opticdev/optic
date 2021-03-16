@@ -53,12 +53,12 @@ pub struct Body {
   pub value: ArbitraryData,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
-  shape_hash_v1_base64: Option<String>,
-  as_json_string: Option<String>,
-  as_text: Option<String>,
+  pub shape_hash_v1_base64: Option<String>,
+  pub as_json_string: Option<String>,
+  pub as_text: Option<String>,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {
