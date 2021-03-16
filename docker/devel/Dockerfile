@@ -9,11 +9,9 @@ RUN apk --no-cache add \
 
 RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
-USER appuser
-
 # rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH=/home/appuser/.cargo/bin:$PATH
+ENV PATH=/root/.cargo/bin:$PATH
 
 # .profile isn't sourced if you exec a shell, so we copy to .bashrc
 RUN cp $HOME/.profile $HOME/.bashrc
