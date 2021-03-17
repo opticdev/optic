@@ -16,6 +16,7 @@ module.exports = {
       'using/reviewing-diffs',
       'using/share-with-team',
       'using/advanced-configuration',
+      'using/cli-commands',
     ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [
