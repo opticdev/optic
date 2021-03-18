@@ -31,6 +31,7 @@ export enum JsonLike {
   STRING = 'String',
   NUMBER = 'Number',
   BOOLEAN = 'Boolean',
+  UNDEFINED = 'Undefined',
 }
 
 /// Changelog Types

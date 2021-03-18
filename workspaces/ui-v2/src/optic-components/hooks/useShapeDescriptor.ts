@@ -1,4 +1,4 @@
-import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
+import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
 
@@ -6,7 +6,6 @@ export function useShapeDescriptor(
   rootShapeId: string,
   renderChangesSince: string | undefined
 ): IShapeRenderer[] {
-
   const spectacle = useContext(SpectacleContext);
   const query = `
   query X($shapeId: ID) {
@@ -29,9 +28,9 @@ export function useShapeDescriptor(
   async function accumulateShapes(rootShapeId: string) {
     const result = await spectacle.query({
       variables: {
-        shapeId: rootShapeId
+        shapeId: rootShapeId,
       },
-      query
+      query,
     });
 
     if (result.errors) {
@@ -40,7 +39,7 @@ export function useShapeDescriptor(
     }
 
     if (!result.data.shapeChoices) {
-      debugger
+      debugger;
     }
     return await Promise.all(
       result.data.shapeChoices.map(async (choice: any) => {
@@ -49,18 +48,23 @@ export function useShapeDescriptor(
             const newFields = await Promise.all(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(field.shapeId);
-                field.shapeChoices = shapeChoices;
-                return field
+                field.required = !shapeChoices.some(
+                  (i: any) => i.jsonType === JsonLike.UNDEFINED
+                ); // is required
+                field.shapeChoices = shapeChoices.filter(
+                  (i: any) => i.jsonType !== JsonLike.UNDEFINED
+                ); // don't include optional
+                return field;
               })
             );
             choice.asObject.fields = newFields;
-            return choice
+            return choice;
 
           case 'Array':
-            const results = await accumulateShapes(choice.asArray.shapeId)
+            const results = await accumulateShapes(choice.asArray.shapeId);
             const shapeChoices = await Promise.all(results);
             choice.asArray.shapeChoices = shapeChoices;
-            return choice
+            return choice;
           default:
             return choice;
         }
