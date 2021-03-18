@@ -31,6 +31,7 @@ pub struct Request {
   pub host: String,
   pub method: String,
   pub path: String,
+  pub headers: ArbitraryData,
   // #[serde(skip)]
   pub query: ArbitraryData,
   pub body: Body,
