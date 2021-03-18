@@ -14,7 +14,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "cross-fetch": "^3.0.4"
+    "cross-fetch": "3.0.6"
   },
   "devDependencies": {},
   "files": [
