@@ -69,7 +69,7 @@ pub fn diff(
 pub fn analyze_undocumented_bodies(
   spec_projection: &SpecProjection,
   interaction: HttpInteraction,
-) -> Vec<BodyAnalysisResult> {
+) -> impl Iterator<Item = BodyAnalysisResult> {
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
   let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
@@ -79,32 +79,27 @@ pub fn analyze_undocumented_bodies(
 
   let results = diff_visitors.take_results().unwrap();
 
-  let body_analysis_results: Vec<BodyAnalysisResult> = results
-    .into_iter()
-    .filter_map(move |result| match result {
-      InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
-        let body = &interaction.request.body;
-        let trail_values = trail_values_for_body(&body.value);
-        let interaction_trail = diff.interaction_trail.clone();
+  results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+      let body = &interaction.request.body;
+      let trail_values = trail_values_for_body(&body.value);
+      let interaction_trail = diff.interaction_trail.clone();
 
-        Some(BodyAnalysisResult {
-          interaction_trail,
-          trail_values,
-        })
-      }
-      InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
-        let body = &interaction.response.body;
-        let trail_values = trail_values_for_body(&body.value);
-        let interaction_trail = diff.interaction_trail.clone();
+      Some(BodyAnalysisResult {
+        interaction_trail,
+        trail_values,
+      })
+    }
+    InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
+      let body = &interaction.response.body;
+      let trail_values = trail_values_for_body(&body.value);
+      let interaction_trail = diff.interaction_trail.clone();
 
-        Some(BodyAnalysisResult {
-          interaction_trail,
-          trail_values,
-        })
-      }
-      _ => None,
-    })
-    .collect();
-
-  body_analysis_results
+      Some(BodyAnalysisResult {
+        interaction_trail,
+        trail_values,
+      })
+    }
+    _ => None,
+  })
 }

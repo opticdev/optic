@@ -178,6 +178,7 @@ impl UnmatchedResponseBodyShape {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#[derive(Clone, Debug)]
 pub struct BodyAnalysisResult {
   pub interaction_trail: InteractionTrail,
   pub trail_values: HashMap<JsonTrail, TrailValues>,

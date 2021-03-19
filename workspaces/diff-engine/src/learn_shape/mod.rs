@@ -9,7 +9,7 @@ mod visitors;
 pub type FieldSet = HashSet<String>;
 pub use trail_values::{for_body_descriptor as trail_values_for_body, TrailValueMap};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TrailValues {
   trail: JsonTrail,
   was_string: bool,
