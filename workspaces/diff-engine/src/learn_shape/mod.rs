@@ -2,11 +2,12 @@ use crate::shapes::JsonTrail;
 use crate::HttpInteraction;
 use std::collections::{HashMap, HashSet};
 
-pub(crate) mod trail_values;
+mod trail_values;
 mod traverser;
 mod visitors;
 
 pub type FieldSet = HashSet<String>;
+pub use trail_values::{for_body_descriptor as trail_values_for_body, TrailValueMap};
 
 #[derive(Debug)]
 pub struct TrailValues {
@@ -22,7 +23,7 @@ pub struct TrailValues {
 
 impl TrailValues {
   pub fn new(json_trail: &JsonTrail) -> Self {
-   Self {
+    Self {
       trail: json_trail.clone(),
       was_string: false,
       was_number: false,
@@ -30,7 +31,7 @@ impl TrailValues {
       was_null: false,
       was_array: false,
       was_object: false,
-      field_set: Default::default()
+      field_set: Default::default(),
     }
   }
 }

@@ -10,8 +10,8 @@ use crate::interactions::result::{
   InteractionTrail, InteractionTrailPathComponent, RequestSpecTrail, SpecPath, SpecRequestBody,
   SpecResponseBody,
 };
-use crate::interactions::HttpInteraction;
 use crate::state::endpoint::{RequestId, ResponseId};
+use crate::HttpInteraction;
 
 pub struct DiffVisitors {
   path: DiffPathVisitor,

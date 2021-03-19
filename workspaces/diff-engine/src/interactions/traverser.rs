@@ -2,7 +2,7 @@ use super::visitors::{
   InteractionVisitors, PathVisitor, PathVisitorContext, RequestBodyVisitor,
   RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext,
 };
-use crate::interactions::HttpInteraction;
+use crate::events::HttpInteraction;
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::queries::endpoint::EndpointQueries;
 use crate::state::endpoint::PathComponentId;
