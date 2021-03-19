@@ -1,7 +1,8 @@
-use crate::shapes::ShapeDiffResult;
+use crate::learn_shape::TrailValues;
+use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
-use std::collections::hash_map::DefaultHasher;
+use std::collections::hash_map::{DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Serialize, Hash)]
@@ -177,6 +178,12 @@ impl UnmatchedResponseBodyShape {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+pub struct BodyAnalysisResult {
+  pub interaction_trail: InteractionTrail,
+  pub trail_values: HashMap<JsonTrail, TrailValues>,
+}
+
+////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
@@ -201,6 +208,19 @@ impl InteractionTrail {
     self
       .path
       .push(InteractionTrailPathComponent::Method { method })
+  }
+
+  pub fn with_request_body(&mut self, content_type: String) {
+    self
+      .path
+      .push(InteractionTrailPathComponent::RequestBody { content_type })
+  }
+
+  pub fn with_response_body(&mut self, content_type: String, status_code: u16) {
+    self.path.push(InteractionTrailPathComponent::ResponseBody {
+      content_type,
+      status_code,
+    })
   }
 }
 ////////////////////////////////////////////////////////////////////////////////

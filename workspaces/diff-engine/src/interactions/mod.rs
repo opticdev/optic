@@ -10,7 +10,8 @@ pub mod result;
 mod traverser;
 mod visitors;
 
-pub use result::InteractionDiffResult;
+use result::InteractionTrail;
+pub use result::{BodyAnalysisResult, InteractionDiffResult};
 use visitors::{InteractionVisitors, PathVisitor};
 
 pub fn diff(
@@ -65,31 +66,43 @@ pub fn diff(
     .collect()
 }
 
-pub struct BodyAnalysisResult {}
 pub fn analyze_undocumented_bodies(
   spec_projection: &SpecProjection,
-  http_interaction: HttpInteraction,
+  interaction: HttpInteraction,
 ) -> Vec<BodyAnalysisResult> {
   let endpoint_projection = spec_projection.endpoint();
   let endpoint_queries = EndpointQueries::new(endpoint_projection);
   let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
   let mut diff_visitors = visitors::diff::DiffVisitors::new();
 
-  interaction_traverser.traverse(&http_interaction, &mut diff_visitors);
+  interaction_traverser.traverse(&interaction, &mut diff_visitors);
 
   let results = diff_visitors.take_results().unwrap();
 
   let body_analysis_results: Vec<BodyAnalysisResult> = results
     .into_iter()
-    .flat_map(move |result| match result {
+    .filter_map(move |result| match result {
       InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
-        let value_map = trail_values_for_body(&http_interaction.request.body.value);
-        vec![BodyAnalysisResult {}]
+        let body = &interaction.request.body;
+        let trail_values = trail_values_for_body(&body.value);
+        let interaction_trail = diff.interaction_trail.clone();
+
+        Some(BodyAnalysisResult {
+          interaction_trail,
+          trail_values,
+        })
       }
       InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
-        vec![]
+        let body = &interaction.response.body;
+        let trail_values = trail_values_for_body(&body.value);
+        let interaction_trail = diff.interaction_trail.clone();
+
+        Some(BodyAnalysisResult {
+          interaction_trail,
+          trail_values,
+        })
       }
-      _ => vec![],
+      _ => None,
     })
     .collect();
 
