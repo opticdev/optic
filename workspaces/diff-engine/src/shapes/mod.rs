@@ -4,10 +4,13 @@ mod result;
 pub mod traverser;
 pub mod visitors;
 
+use crate::learn_shape::TrailValueMap;
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
+use crate::InteractionDiffResult;
 pub use result::ShapeDiffResult;
+use std::collections::HashMap;
 pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
 use visitors::BodyVisitors;
 
@@ -27,4 +30,11 @@ pub fn diff(
   shape_traverser.traverse_root_shape(body, shape_id, &mut diff_visitors);
 
   diff_visitors.take_results().unwrap()
+}
+
+pub fn analyze_trail_values(
+  body: Option<&BodyDescriptor>,
+  diff_results: impl IntoIterator<Item = InteractionDiffResult>,
+) -> impl Iterator<Item = TrailValueMap> {
+  diff_results.into_iter().map(|diff_result| HashMap::new())
 }
