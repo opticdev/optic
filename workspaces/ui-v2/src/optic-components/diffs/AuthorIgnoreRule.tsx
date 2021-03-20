@@ -6,7 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
 import { IUndocumentedUrl } from '../hooks/diffs/SharedDiffState';
 import { EndpointName } from '../documentation/EndpointName';
-import { Button, Collapse, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import {
   IIgnoreRunnable,
   parseRule,
@@ -135,8 +135,6 @@ export function AuthorIgnoreRules({}: AuthorIgnoreRulesProps) {
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     padding: 9,
-    flex: 1,
-    flexGrow: 1,
     backgroundColor: SubtleBlueBackground,
     display: 'flex',
     flexDirection: 'column',

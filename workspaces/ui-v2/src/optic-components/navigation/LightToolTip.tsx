@@ -1,4 +1,3 @@
-import React from 'react';
 import { withStyles } from '@material-ui/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import { Theme } from '@material-ui/core';

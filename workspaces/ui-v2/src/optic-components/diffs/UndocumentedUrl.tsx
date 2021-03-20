@@ -1,18 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Collapse, IconButton, ListItem, TextField } from '@material-ui/core';
-import {
-  methodColorsDark,
-  OpticBlueReadable,
-  primary,
-  SubtleBlueBackground,
-} from '../theme';
+import { Collapse, IconButton, ListItem } from '@material-ui/core';
+import { methodColorsDark, OpticBlueReadable, primary } from '../theme';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import { useDebounce } from '../hooks/ui/useDebounceHook';
+import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
 export type UndocumentedUrlProps = {
   method: string;
@@ -28,10 +25,12 @@ export function UndocumentedUrl({
   hide,
 }: UndocumentedUrlProps) {
   const classes = useStyles();
+  const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
   const [components, setComponents] = useState<PathComponentAuthoring[]>([]);
+  const debouncedComponents = useDebounce(components, 500);
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
     setComponents((com) => {
@@ -51,8 +50,19 @@ export function UndocumentedUrl({
 
   // setup initial components
   useEffect(() => {
-    setComponents(urlStringToPathComponents(path));
+    if (wipPatterns[path + method]) {
+      setComponents(wipPatterns[path + method]);
+    } else {
+      setComponents(urlStringToPathComponents(path));
+    }
   }, [path]);
+
+  // persist in context
+  useEffect(() => {
+    if (debouncedComponents && persistWIPPattern) {
+      persistWIPPattern(path, method, debouncedComponents);
+    }
+  }, [debouncedComponents]);
 
   return (
     <Collapse in={!hide}>
@@ -133,7 +143,9 @@ function makePattern(components: PathComponentAuthoring[]) {
 
 function PathComponentRender({ onChange, pathComponent }: PathComponentProps) {
   const classes = useStyles();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(
+    pathComponent.name || pathComponent.originalName
+  );
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -144,6 +156,10 @@ function PathComponentRender({ onChange, pathComponent }: PathComponentProps) {
       setIsEditing(false);
     }
   }, [pathComponent.isParameter]);
+
+  useEffect(() => {
+    setIsEditing(false);
+  }, []);
 
   if (pathComponent.isParameter && !isEditing) {
     return (
@@ -305,7 +321,7 @@ const useStyles = makeStyles((theme) => ({
 
 ////////////////////////////////////////////
 
-type PathComponentAuthoring = {
+export type PathComponentAuthoring = {
   index: number;
   name: string;
   originalName: string;

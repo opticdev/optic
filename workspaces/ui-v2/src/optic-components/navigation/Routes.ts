@@ -47,6 +47,18 @@ export const useDiffReviewPageWithBoundaryLink: () => {
   };
 };
 
+export const useDiffReviewPagePendingEndpoint: () => {
+  path: string;
+  linkTo: (pendingId: string) => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const url = `${baseUrl}/diffs/pending/:endpointId`;
+  return {
+    path: url,
+    linkTo: (pendingId: string) => `${baseUrl}/diffs/pending/${pendingId}`,
+  };
+};
+
 export const useDiffUndocumentedUrlsPageLink: () => {
   path: string;
   linkTo: () => string;
