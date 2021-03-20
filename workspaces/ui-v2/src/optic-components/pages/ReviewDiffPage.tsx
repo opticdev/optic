@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { NavigationRoute } from '../navigation/NavigationRoute';
 import {
   useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
 } from '../navigation/Routes';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
 import { DocumentationRootPage } from './DocumentationPage';
 import { ContributionEditingStore } from '../hooks/edit/Contributions';
 import { DiffHeader } from '../diffs/DiffHeader';
-import { List } from '@material-ui/core';
+import { Box, List, TextField } from '@material-ui/core';
 import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
 import { UndocumentedUrl } from '../diffs/UndocumentedUrl';
 import {
@@ -19,8 +18,9 @@ import {
   useSharedDiffContext,
 } from '../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../diffs/AuthorIgnoreRule';
-import { ILearnedPendingEndpointStore } from '../hooks/diffs/LearnedPendingEndpointContext';
-import { PendingEndpointPage } from './PendingEndpointPage';
+import { PendingEndpointPageSession } from './PendingEndpointPage';
+import { useDebugValue, useEffect, useState } from 'react';
+import { useDebounce } from '../hooks/ui/useDebounceHook';
 
 export function DiffReviewPages(props: any) {
   const diffReviewPageLink = useDiffReviewPageLink();
@@ -46,21 +46,36 @@ export function DiffReviewPages(props: any) {
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
-  const name = `${urls.filter((i) => !i.hide).length} unmatched URL observed`;
   const history = useHistory();
   const { documentEndpoint } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+
+  const [filteredUrls, setFilteredUrls] = useState(urls);
+
+  const name = `${urls.filter((i) => !i.hide).length} unmatched URLs observed${
+    filteredUrls.length !== urls.length
+      ? `. Showing ${filteredUrls.length}`
+      : ''
+  }`;
 
   return (
     <TwoColumnFullWidth
       left={
         <>
-          <DiffHeader name={name} />
+          <DiffHeader name={name}>
+            <Box display="flex" flexDirection="row">
+              <UrlFilterInput
+                onDebouncedChange={(query) => {
+                  setFilteredUrls(urls.filter((i) => i.path.startsWith(query)));
+                }}
+              />
+            </Box>
+          </DiffHeader>
           <List style={{ paddingTop: 0, overflow: 'scroll' }}>
-            {urls.map((i, index) => (
+            {filteredUrls.map((i, index) => (
               <UndocumentedUrl
                 {...i}
-                key={index}
+                key={i.method + i.path}
                 onFinish={(pattern, method) => {
                   const pendingId = documentEndpoint(pattern, method);
                   const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
@@ -78,44 +93,30 @@ export function DiffUrlsPage(props: any) {
   );
 }
 
-export function PendingEndpointPageSession(props: any) {
-  const { match } = props;
-  const { endpointId } = match.params;
+function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 600);
 
-  const history = useHistory();
-  const diffReviewPageLink = useDiffReviewPageLink();
-
-  const goToDiffPage = () => history.push(diffReviewPageLink.linkTo());
-
-  const {
-    getPendingEndpointById,
-    stageEndpoint,
-    discardEndpoint,
-  } = useSharedDiffContext();
-
-  // should only run once
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const endpoint = useMemo(() => getPendingEndpointById(endpointId), [
-    endpointId,
-  ]);
-
-  if (!endpoint) {
-    return <Redirect to={diffReviewPageLink.linkTo()} />;
-  }
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      props.onDebouncedChange(debouncedSearchQuery);
+    }
+  }, [debouncedSearchQuery]);
 
   return (
-    <ILearnedPendingEndpointStore
-      endpoint={endpoint}
-      onEndpointStaged={() => {
-        stageEndpoint(endpoint.id);
-        goToDiffPage();
+    <TextField
+      size="small"
+      value={searchQuery}
+      inputProps={{ style: { fontSize: 10, width: 140 } }}
+      placeholder="filter urls"
+      onChange={(e: any) => {
+        const newValue = e.target.value.replace(/\s+/g, '');
+        if (!newValue.startsWith('/')) {
+          setSearchQuery('/' + newValue);
+        } else {
+          setSearchQuery(newValue);
+        }
       }}
-      onEndpointDiscarded={() => {
-        discardEndpoint(endpoint.id);
-        goToDiffPage();
-      }}
-    >
-      <PendingEndpointPage />
-    </ILearnedPendingEndpointStore>
+    />
   );
 }

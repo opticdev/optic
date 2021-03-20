@@ -85,14 +85,19 @@ export function AuthorIgnoreRules(props: any) {
             />
           )}
           renderInput={(params) => (
-            <TextField {...params} label="Add Ignore Rule" variant="outlined" />
+            <TextField
+              {...params}
+              label="Add Ignore Rule"
+              variant="outlined"
+              size="small"
+            />
           )}
         />
         <Button
           disabled={!validRule}
-          style={{ minWidth: 100, marginLeft: 10 }}
+          style={{ minWidth: 100, marginLeft: 10, marginTop: 2 }}
           color="primary"
-          size="small"
+          size="medium"
           onClick={finishAdding}
         >
           Add Rule

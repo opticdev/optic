@@ -12,7 +12,11 @@ export function DiffHeader({ name, children }: DiffHeaderProps) {
   return (
     <>
       <div className={classes.header}>
-        <Typography color="primary" className={classes.headerText}>
+        <Typography
+          color="primary"
+          component="div"
+          className={classes.headerText}
+        >
           {name}
         </Typography>
         <div style={{ flex: 1 }} />

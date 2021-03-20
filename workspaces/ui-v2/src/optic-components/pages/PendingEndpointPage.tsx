@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../diffs/DiffHeader';
-import { useLearnedPendingEndpointContext } from '../hooks/diffs/LearnedPendingEndpointContext';
+import {
+  ILearnedPendingEndpointStore,
+  useLearnedPendingEndpointContext,
+} from '../hooks/diffs/LearnedPendingEndpointContext';
+import { Redirect, useHistory } from 'react-router-dom';
+
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
 import { EndpointName } from '../documentation/EndpointName';
 import { Loader } from '../loaders/FullPageLoader';
@@ -10,6 +15,50 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../theme';
+import { useDiffReviewPageLink } from '../navigation/Routes';
+import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
+
+export function PendingEndpointPageSession(props: any) {
+  const { match } = props;
+  const { endpointId } = match.params;
+
+  const history = useHistory();
+  const diffReviewPageLink = useDiffReviewPageLink();
+
+  const goToDiffPage = () => history.push(diffReviewPageLink.linkTo());
+
+  const {
+    getPendingEndpointById,
+    stageEndpoint,
+    discardEndpoint,
+  } = useSharedDiffContext();
+
+  // should only run once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const endpoint = useMemo(() => getPendingEndpointById(endpointId), [
+    endpointId,
+  ]);
+
+  if (!endpoint) {
+    return <Redirect to={diffReviewPageLink.linkTo()} />;
+  }
+
+  return (
+    <ILearnedPendingEndpointStore
+      endpoint={endpoint}
+      onEndpointStaged={() => {
+        stageEndpoint(endpoint.id);
+        goToDiffPage();
+      }}
+      onEndpointDiscarded={() => {
+        discardEndpoint(endpoint.id);
+        goToDiffPage();
+      }}
+    >
+      <PendingEndpointPage />
+    </ILearnedPendingEndpointStore>
+  );
+}
 
 export function PendingEndpointPage(props: any) {
   const {

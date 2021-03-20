@@ -7,6 +7,8 @@ import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
+// @ts-ignore
+import equals from 'deep-equal';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useDebounce } from '../hooks/ui/useDebounceHook';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
@@ -61,7 +63,8 @@ export function UndocumentedUrl({
 
   // persist in context
   useEffect(() => {
-    if (debouncedComponents && persistWIPPattern) {
+    const isDifferent = equals(wipPatterns[path + method], debouncedComponents);
+    if (debouncedComponents && persistWIPPattern && isDifferent) {
       persistWIPPattern(path, method, debouncedComponents);
     }
     // should only run once
