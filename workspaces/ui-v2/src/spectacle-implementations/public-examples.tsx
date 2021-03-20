@@ -76,7 +76,8 @@ export function useInMemorySpectacle(
     }
 
     task();
-    //// eslint-disable-next-line react-hooks/exhaustive-deps
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

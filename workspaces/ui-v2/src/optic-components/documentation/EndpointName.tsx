@@ -10,6 +10,7 @@ export type EndpointNameProps = {
   fullPath: string;
   fontSize?: number;
   leftPad?: number;
+  style?: any;
 };
 
 export function EndpointName({
@@ -17,13 +18,14 @@ export function EndpointName({
   fullPath,
   fontSize = 13,
   leftPad = 10,
+  style,
 }: EndpointNameProps) {
   const classes = useStyles();
 
   const paddedMethod = padLeft(method, leftPad, ' ');
   const color = methodColorsDark[method.toUpperCase()];
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.wrapper} style={style}>
       <div className={classes.method} style={{ color, fontSize }}>
         {paddedMethod.toUpperCase()}
       </div>

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import {
+  IPendingEndpoint,
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
@@ -19,7 +20,10 @@ type ISharedDiffContext = {
     method: string,
     components: PathComponentAuthoring[]
   ) => void;
+  getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
+  stageEndpoint: (id: string) => void;
+  discardEndpoint: (id: string) => void;
 };
 
 export const SharedDiffStore = (props: any) => {
@@ -36,8 +40,15 @@ export const SharedDiffStore = (props: any) => {
       send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });
       return uuid;
     },
+    stageEndpoint: (id: string) =>
+      send({ type: 'PENDING_ENDPOINT_STAGED', id }),
+    discardEndpoint: (id: string) =>
+      send({ type: 'PENDING_ENDPOINT_DISCARDED', id }),
     addIgnoreRule: (rule: string) => {
       send({ type: 'ADD_IGNORE_RULE', rule });
+    },
+    getPendingEndpointById: (id: string) => {
+      return context.pendingEndpoints.find((i) => i.id === id);
     },
     persistWIPPattern: (
       path: string,

@@ -37,7 +37,6 @@ export const newSharedDiffMachine = () => {
                     start: true,
                     end: true,
                   });
-
                   return [
                     ...ctx.pendingEndpoints,
                     {
@@ -50,6 +49,36 @@ export const newSharedDiffMachine = () => {
                       },
                     },
                   ];
+                },
+              }),
+              assign({
+                results: (ctx) => updateUrlResults(ctx),
+              }),
+            ],
+          },
+          PENDING_ENDPOINT_STAGED: {
+            actions: [
+              assign({
+                pendingEndpoints: (ctx, event) => {
+                  return [...ctx.pendingEndpoints].map((i) => {
+                    if (i.id === event.id) {
+                      return { ...i, staged: true };
+                    } else return i;
+                  });
+                },
+              }),
+              assign({
+                results: (ctx) => updateUrlResults(ctx),
+              }),
+            ],
+          },
+          PENDING_ENDPOINT_DISCARDED: {
+            actions: [
+              assign({
+                pendingEndpoints: (ctx, event) => {
+                  return [...ctx.pendingEndpoints].filter(
+                    (i) => i.id !== event.id
+                  );
                 },
               }),
               assign({
@@ -129,6 +158,14 @@ export type SharedDiffStateEvent =
   | {
       type: 'ADD_IGNORE_RULE';
       rule: string;
+    }
+  | {
+      type: 'PENDING_ENDPOINT_STAGED';
+      id: string;
+    }
+  | {
+      type: 'PENDING_ENDPOINT_DISCARDED';
+      id: string;
     };
 
 // The context (extended state) of the machine
@@ -153,6 +190,7 @@ export interface IPendingEndpoint {
   method: string;
   id: string;
   matchesPattern: (url: string, method: string) => boolean;
+  staged?: boolean;
 }
 
 export interface IUndocumentedUrl {

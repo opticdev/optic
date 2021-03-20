@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Typography } from '@material-ui/core';
 import { SubtleBlueBackground } from '../theme';
 export type DiffHeaderProps = {
-  name: string;
+  name: any;
   children?: any;
 };
 

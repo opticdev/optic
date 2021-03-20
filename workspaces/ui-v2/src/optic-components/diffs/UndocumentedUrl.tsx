@@ -55,6 +55,8 @@ export function UndocumentedUrl({
     } else {
       setComponents(urlStringToPathComponents(path));
     }
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
   // persist in context
@@ -62,6 +64,8 @@ export function UndocumentedUrl({
     if (debouncedComponents && persistWIPPattern) {
       persistWIPPattern(path, method, debouncedComponents);
     }
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedComponents]);
 
   return (
@@ -155,10 +159,14 @@ function PathComponentRender({ onChange, pathComponent }: PathComponentProps) {
       setName('');
       setIsEditing(false);
     }
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathComponent.isParameter]);
 
   useEffect(() => {
     setIsEditing(false);
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (pathComponent.isParameter && !isEditing) {

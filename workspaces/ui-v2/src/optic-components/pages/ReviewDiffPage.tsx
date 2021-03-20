@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { NavigationRoute } from '../navigation/NavigationRoute';
 import {
   useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
-  useDiffReviewPageWithBoundaryLink,
 } from '../navigation/Routes';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
 import { DocumentationRootPage } from './DocumentationPage';
@@ -19,6 +19,8 @@ import {
   useSharedDiffContext,
 } from '../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../diffs/AuthorIgnoreRule';
+import { ILearnedPendingEndpointStore } from '../hooks/diffs/LearnedPendingEndpointContext';
+import { PendingEndpointPage } from './PendingEndpointPage';
 
 export function DiffReviewPages(props: any) {
   const diffReviewPageLink = useDiffReviewPageLink();
@@ -34,7 +36,7 @@ export function DiffReviewPages(props: any) {
         />
         <NavigationRoute
           path={diffReviewPagePendingEndpoint.path}
-          Component={PendingEndpointPage}
+          Component={PendingEndpointPageSession}
           AccessoryNavigation={() => <div></div>}
         />
       </ContributionEditingStore>
@@ -58,7 +60,7 @@ export function DiffUrlsPage(props: any) {
             {urls.map((i, index) => (
               <UndocumentedUrl
                 {...i}
-                key={i.method + i.path}
+                key={index}
                 onFinish={(pattern, method) => {
                   const pendingId = documentEndpoint(pattern, method);
                   const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
@@ -76,17 +78,44 @@ export function DiffUrlsPage(props: any) {
   );
 }
 
-export function PendingEndpointPage(props: any) {
+export function PendingEndpointPageSession(props: any) {
   const { match } = props;
-  const { endpointId } = match;
+  const { endpointId } = match.params;
+
+  const history = useHistory();
+  const diffReviewPageLink = useDiffReviewPageLink();
+
+  const goToDiffPage = () => history.push(diffReviewPageLink.linkTo());
+
+  const {
+    getPendingEndpointById,
+    stageEndpoint,
+    discardEndpoint,
+  } = useSharedDiffContext();
+
+  // should only run once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const endpoint = useMemo(() => getPendingEndpointById(endpointId), [
+    endpointId,
+  ]);
+
+  if (!endpoint) {
+    return <Redirect to={diffReviewPageLink.linkTo()} />;
+  }
+
   return (
-    <TwoColumnFullWidth
-      left={
-        <>
-          <DiffHeader name={'pending'} />
-        </>
-      }
-      right={'HEY I AM PENDING'}
-    />
+    <ILearnedPendingEndpointStore
+      endpoint={endpoint}
+      onEndpointStaged={() => {
+        stageEndpoint(endpoint.id);
+        goToDiffPage();
+      }}
+      onEndpointDiscarded={() => {
+        discardEndpoint(endpoint.id);
+        goToDiffPage();
+      }}
+    >
+      <PendingEndpointPage />
+    </ILearnedPendingEndpointStore>
   );
 }

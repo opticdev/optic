@@ -14,9 +14,7 @@ import {
 import { useDebounce } from '../hooks/ui/useDebounceHook';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
-export type AuthorIgnoreRulesProps = {};
-
-export function AuthorIgnoreRules({}: AuthorIgnoreRulesProps) {
+export function AuthorIgnoreRules(props: any) {
   const classes = useStyles();
   const observedUrls = useUndocumentedUrls();
 
@@ -64,7 +62,7 @@ export function AuthorIgnoreRules({}: AuthorIgnoreRulesProps) {
         })
       );
     }
-  }, [debouncedRuleEval]);
+  }, [debouncedRuleEval, urlOptions]);
 
   return (
     <div className={classes.toolbar}>
