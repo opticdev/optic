@@ -1,9 +1,10 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import padLeft from 'pad-left';
-import { methodColorsDark } from '../theme';
+import { AddedGreenBackground, methodColorsDark } from '../theme';
 import { ListItem } from '@material-ui/core';
 import { EndpointNameMiniContribution } from './Contributions';
+
 export type EndpointNameProps = {
   method: string;
   fullPath: string;
@@ -72,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
   method: {
     whiteSpace: 'pre',
     fontFamily: 'Ubuntu Mono',
+  },
+  added: {
+    backgroundColor: AddedGreenBackground,
   },
   endpointName: {
     fontSize: 12,

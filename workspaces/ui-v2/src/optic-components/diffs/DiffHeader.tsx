@@ -4,7 +4,7 @@ import { Divider, Typography } from '@material-ui/core';
 import { SubtleBlueBackground } from '../theme';
 export type DiffHeaderProps = {
   name: string;
-  children: any;
+  children?: any;
 };
 
 export function DiffHeader({ name, children }: DiffHeaderProps) {

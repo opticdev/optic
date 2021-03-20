@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { NavigationRoute } from '../navigation/NavigationRoute';
 import {
   useDocumentationPageLink,
-  useEndpointPageLink
+  useEndpointPageLink,
 } from '../navigation/Routes';
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../layouts/CenteredColumn';
@@ -97,7 +97,7 @@ export function DocumentationRootPage(props: any) {
                     method={endpoint.method}
                     endpointId={getEndpointId({
                       method: endpoint.method,
-                      pathId: endpoint.pathId
+                      pathId: endpoint.pathId,
                     })}
                   />
                 );
@@ -170,7 +170,7 @@ export function EndpointRootPage(props: any) {
               style={{
                 marginTop: 10,
                 backgroundColor: SubtleBlueBackground,
-                borderTop: '1px solid #e2e2e2'
+                borderTop: '1px solid #e2e2e2',
               }}
             >
               <EndpointTOC
@@ -183,20 +183,24 @@ export function EndpointRootPage(props: any) {
       />
 
       {bodies.requests.map((i, index) => {
-        return (<TwoColumnBody
-          key={index}
-          rootShapeId={i.rootShapeId}
-          bodyId={i.requestId}
-          location={'Request Body Parameters'}
-        />);
+        return (
+          <TwoColumnBody
+            key={index}
+            rootShapeId={i.rootShapeId}
+            bodyId={i.requestId}
+            location={'Request Body Parameters'}
+          />
+        );
       })}
       {bodies.responses.map((i, index) => {
-        return (<TwoColumnBody
-          key={index}
-          rootShapeId={i.rootShapeId}
-          bodyId={i.responseId}
-          location={`${i.statusCode} Response`}
-        />);
+        return (
+          <TwoColumnBody
+            key={index}
+            rootShapeId={i.rootShapeId}
+            bodyId={i.responseId}
+            location={`${i.statusCode} Response`}
+          />
+        );
       })}
     </FullWidth>
   );

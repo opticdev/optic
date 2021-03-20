@@ -31,7 +31,7 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
               </Typography>
 
               <NavButton title="Docs" to="/documentation" Icon={SubjectIcon} />
-              <NavButton title="Diffs" to="/review" Icon={ChangeHistoryIcon} />
+              <NavButton title="Diffs" to="/diffs" Icon={ChangeHistoryIcon} />
               {/*<NavButton title="Team" Icon={ImportExportIcon} />*/}
             </div>
             <div className={classes.spacer} />

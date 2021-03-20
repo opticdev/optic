@@ -39,6 +39,8 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 630,
     height: 'calc(100vh - 40px)',
     overflow: 'scroll',
+    display: 'flex',
+    flexDirection: 'column',
   },
   right: { flex: 1 },
 }));
