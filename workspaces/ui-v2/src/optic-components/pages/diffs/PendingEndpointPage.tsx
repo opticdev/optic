@@ -15,10 +15,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
-import {
-  useDiffReviewPageLink,
-  useDiffUndocumentedUrlsPageLink,
-} from '../../navigation/Routes';
+import { useDiffUndocumentedUrlsPageLink } from '../../navigation/Routes';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 export function PendingEndpointPageSession(props: any) {

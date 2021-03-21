@@ -2,7 +2,6 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { LightBlueBackground, OpticBlueReadable } from '../theme';
-import { useBaseUrl } from '../hooks/useBaseUrl';
 import { useHistory } from 'react-router-dom';
 
 export type NavButtonProps = {
@@ -15,7 +14,6 @@ export function NavButton(props: NavButtonProps) {
   const classes = useStyles();
   const { Icon, title, to } = props;
 
-  const baseUrl = useBaseUrl();
   const history = useHistory();
 
   return (

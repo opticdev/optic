@@ -65,12 +65,14 @@ export function DiffUrlsPage(props: any) {
 
 function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { onDebouncedChange } = props;
   const debouncedSearchQuery = useDebounce(searchQuery, 600);
 
   useEffect(() => {
     if (debouncedSearchQuery) {
-      props.onDebouncedChange(debouncedSearchQuery);
+      onDebouncedChange(debouncedSearchQuery);
     }
+    // eslint-disable-next-line
   }, [debouncedSearchQuery]);
 
   return (

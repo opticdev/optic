@@ -9,12 +9,7 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useApiName } from '../hooks/useApiNameHook';
-import {
-  useDiffEnvironmentsRoot,
-  useDiffReviewPageLink,
-  useDiffUndocumentedUrlsPageLink,
-  useDocumentationPageLink,
-} from './Routes';
+import { useDiffEnvironmentsRoot, useDocumentationPageLink } from './Routes';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();

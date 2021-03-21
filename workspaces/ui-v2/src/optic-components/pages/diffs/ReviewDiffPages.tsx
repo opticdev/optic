@@ -3,7 +3,6 @@ import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
-  useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
@@ -11,10 +10,10 @@ import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 export function DiffReviewPages(props: any) {
-  const { match } = props;
+  // const { match } = props;
   // const { environment, boundaryId } = match.params;
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
