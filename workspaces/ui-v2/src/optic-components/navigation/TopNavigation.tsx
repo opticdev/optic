@@ -9,10 +9,19 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useApiName } from '../hooks/useApiNameHook';
+import {
+  useDiffEnvironmentsRoot,
+  useDiffReviewPageLink,
+  useDiffUndocumentedUrlsPageLink,
+  useDocumentationPageLink,
+} from './Routes';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
   const apiName = useApiName();
+
+  const documentationPage = useDocumentationPageLink();
+  const diffsPage = useDiffEnvironmentsRoot();
 
   const { AccessoryNavigation } = props;
   return (
@@ -30,8 +39,16 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
                 {apiName}
               </Typography>
 
-              <NavButton title="Docs" to="/documentation" Icon={SubjectIcon} />
-              <NavButton title="Diffs" to="/diffs" Icon={ChangeHistoryIcon} />
+              <NavButton
+                title="Docs"
+                to={documentationPage.linkTo()}
+                Icon={SubjectIcon}
+              />
+              <NavButton
+                title="Diffs"
+                to={diffsPage.linkTo('local', '123') + '/urls'}
+                Icon={ChangeHistoryIcon}
+              />
               {/*<NavButton title="Team" Icon={ImportExportIcon} />*/}
             </div>
             <div className={classes.spacer} />

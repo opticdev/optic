@@ -3,10 +3,10 @@ import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
-import { DocumentationPages } from '../optic-components/pages/DocumentationPage';
+import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/navigation/Loading';
-import { DiffReviewPages } from '../optic-components/pages/ReviewDiffPage';
+import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -42,7 +42,7 @@ export default function PublicExamples() {
       <BaseUrlProvider value={{ url: match.url }}>
         <Switch>
           <>
-            <DiffReviewPages />
+            <DiffReviewEnvironments />
             <DocumentationPages />
           </>
         </Switch>

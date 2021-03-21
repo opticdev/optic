@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {
-  LightBlueBackground,
-  OpticBlueReadable,
-} from '../theme';
+import { LightBlueBackground, OpticBlueReadable } from '../theme';
 import { useBaseUrl } from '../hooks/useBaseUrl';
 import { useHistory } from 'react-router-dom';
 
@@ -25,7 +22,7 @@ export function NavButton(props: NavButtonProps) {
     <div
       className={classes.root}
       onClick={() => {
-        history.push(`${baseUrl}${to}`);
+        history.push(to);
       }}
     >
       <div className={classes.box}>

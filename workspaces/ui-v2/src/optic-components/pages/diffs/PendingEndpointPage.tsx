@@ -1,31 +1,35 @@
 import React, { useMemo, useState } from 'react';
-import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../diffs/DiffHeader';
+import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
+import { DiffHeader } from '../../diffs/DiffHeader';
 import {
   ILearnedPendingEndpointStore,
   useLearnedPendingEndpointContext,
-} from '../hooks/diffs/LearnedPendingEndpointContext';
+} from '../../hooks/diffs/LearnedPendingEndpointContext';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
-import { EndpointName } from '../documentation/EndpointName';
-import { Loader } from '../loaders/FullPageLoader';
+import { EndpointName } from '../../documentation/EndpointName';
+import { Loader } from '../../loaders/FullPageLoader';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
-import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../theme';
-import { useDiffReviewPageLink } from '../navigation/Routes';
-import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
+import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
+import {
+  useDiffReviewPageLink,
+  useDiffUndocumentedUrlsPageLink,
+} from '../../navigation/Routes';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
   const { endpointId } = match.params;
 
   const history = useHistory();
-  const diffReviewPageLink = useDiffReviewPageLink();
+  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
-  const goToDiffPage = () => history.push(diffReviewPageLink.linkTo());
+  const goToDiffPage = () =>
+    history.push(diffUndocumentedUrlsPageLink.linkTo());
 
   const {
     getPendingEndpointById,
@@ -39,8 +43,10 @@ export function PendingEndpointPageSession(props: any) {
     endpointId,
   ]);
 
+  debugger;
+
   if (!endpoint) {
-    return <Redirect to={diffReviewPageLink.linkTo()} />;
+    return <Redirect to={diffUndocumentedUrlsPageLink.linkTo()} />;
   }
 
   return (

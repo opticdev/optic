@@ -1,30 +1,30 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { NavigationRoute } from '../navigation/NavigationRoute';
+import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDocumentationPageLink,
   useEndpointPageLink,
-} from '../navigation/Routes';
+} from '../../navigation/Routes';
 import groupBy from 'lodash.groupby';
-import { CenteredColumn } from '../layouts/CenteredColumn';
-import { IEndpoint, useEndpoints } from '../hooks/useEndpointsHook';
+import { CenteredColumn } from '../../layouts/CenteredColumn';
+import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, Typography } from '@material-ui/core';
-import { EndpointName, EndpointRow } from '../documentation/EndpointName';
-import { ContributionEditingStore } from '../hooks/edit/Contributions';
-import { EditContributionsButton } from '../hooks/edit/EditContributionsButton';
-import { FullWidth } from '../layouts/FullWidth';
-import { EndpointNameContribution } from '../documentation/Contributions';
-import { MarkdownBodyContribution } from '../documentation/MarkdownBodyContribution';
-import { TwoColumn } from '../documentation/TwoColumn';
+import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
+import { ContributionEditingStore } from '../../hooks/edit/Contributions';
+import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
+import { FullWidth } from '../../layouts/FullWidth';
+import { EndpointNameContribution } from '../../documentation/Contributions';
+import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
+import { TwoColumn } from '../../documentation/TwoColumn';
 import { useHistory } from 'react-router-dom';
-import { PathParametersViewEdit } from '../documentation/PathParameters';
-import { EndpointTOC } from '../documentation/EndpointTOC';
-import { useEndpointBody } from '../hooks/useEndpointBodyHook';
-import { CodeBlock } from '../documentation/BodyRender';
-import { SubtleBlueBackground } from '../theme';
-import { TwoColumnBody } from '../documentation/RenderBody';
-import { getEndpointId } from '../utilities/endpoint-utilities';
-import { Loading } from '../navigation/Loading';
+import { PathParametersViewEdit } from '../../documentation/PathParameters';
+import { EndpointTOC } from '../../documentation/EndpointTOC';
+import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
+import { CodeBlock } from '../../documentation/BodyRender';
+import { SubtleBlueBackground } from '../../theme';
+import { TwoColumnBody } from '../../documentation/RenderBody';
+import { getEndpointId } from '../../utilities/endpoint-utilities';
+import { Loading } from '../../navigation/Loading';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();

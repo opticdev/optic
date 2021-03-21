@@ -1,4 +1,5 @@
 import { useBaseUrl } from '../hooks/useBaseUrl';
+import { useParams } from 'react-router-dom';
 
 export const useDocumentationPageLink: () => {
   path: string;
@@ -35,15 +36,16 @@ export const useDiffReviewPageLink: () => {
   };
 };
 
-export const useDiffReviewPageWithBoundaryLink: () => {
+export const useDiffEnvironmentsRoot: () => {
   path: string;
-  linkTo: () => string;
+  linkTo: (environment: string, boundaryId: string) => string;
 } = () => {
-  const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/diffs/:boundaryId`;
+  const parentUrl = useDiffReviewPageLink();
+  const url = `${parentUrl.path}/:environment/:boundaryId`;
   return {
     path: url,
-    linkTo: () => url,
+    linkTo: (environment: string, boundaryId: string) =>
+      `${parentUrl.linkTo()}/${environment}/${boundaryId}`,
   };
 };
 
@@ -51,11 +53,16 @@ export const useDiffReviewPagePendingEndpoint: () => {
   path: string;
   linkTo: (pendingId: string) => string;
 } = () => {
-  const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/diffs/pending/:endpointId`;
+  const parentUrl = useDiffEnvironmentsRoot();
+  const url = `${parentUrl.path}/pending/:endpointId`;
+  const { environment, boundaryId } = useParams<{
+    environment: string;
+    boundaryId: string;
+  }>();
   return {
     path: url,
-    linkTo: (pendingId: string) => `${baseUrl}/diffs/pending/${pendingId}`,
+    linkTo: (pendingId: string) =>
+      `${parentUrl.linkTo(environment, boundaryId)}/pending/${pendingId}`,
   };
 };
 
@@ -63,35 +70,34 @@ export const useDiffUndocumentedUrlsPageLink: () => {
   path: string;
   linkTo: () => string;
 } = () => {
-  const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/diffs/:boundaryId/urls`;
+  const parentUrl = useDiffEnvironmentsRoot();
+  const url = `${parentUrl.path}/urls`;
+  const { environment, boundaryId } = useParams<{
+    environment: string;
+    boundaryId: string;
+  }>();
   return {
     path: url,
-    linkTo: () => url,
+    linkTo: () => `${parentUrl.linkTo(environment, boundaryId)}/urls`,
   };
 };
 
-export const useDiffEndpoints: () => {
+export const useDiffForEndpointLink: () => {
   path: string;
-  linkTo: () => string;
+  linkTo: (pathId: string, method: string) => string;
 } = () => {
-  const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/diffs/:boundaryId/paths/:pathId/methods/:method`;
+  const parentUrl = useDiffEnvironmentsRoot();
+  const { environment, boundaryId } = useParams<{
+    environment: string;
+    boundaryId: string;
+  }>();
+  const url = `${parentUrl.path}/paths/:pathId/methods/:method`;
   return {
     path: url,
-    linkTo: () => url,
-  };
-};
-
-// Setup page use cases
-export const useSetupPageLink: () => {
-  path: string;
-  linkTo: () => string;
-} = () => {
-  const baseUrl = useBaseUrl();
-  const url = `${baseUrl}/setup`;
-  return {
-    path: url,
-    linkTo: () => url,
+    linkTo: (pathId: string, method: string) =>
+      `${parentUrl.linkTo(
+        environment,
+        boundaryId
+      )}/paths/${pathId}/methods/${method}`,
   };
 };

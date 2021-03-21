@@ -1,48 +1,17 @@
 import * as React from 'react';
-import { NavigationRoute } from '../navigation/NavigationRoute';
-import {
-  useDiffReviewPageLink,
-  useDiffReviewPagePendingEndpoint,
-} from '../navigation/Routes';
+import { useEffect, useState } from 'react';
+import { useDiffReviewPagePendingEndpoint } from '../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 
-import { TwoColumnFullWidth } from '../layouts/TwoColumnFullWidth';
-import { DocumentationRootPage } from './DocumentationPage';
-import { ContributionEditingStore } from '../hooks/edit/Contributions';
-import { DiffHeader } from '../diffs/DiffHeader';
+import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
+import { DocumentationRootPage } from '../docs/DocumentationPage';
+import { DiffHeader } from '../../diffs/DiffHeader';
 import { Box, List, TextField } from '@material-ui/core';
-import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
-import { UndocumentedUrl } from '../diffs/UndocumentedUrl';
-import {
-  SharedDiffStore,
-  useSharedDiffContext,
-} from '../hooks/diffs/SharedDiffContext';
-import { AuthorIgnoreRules } from '../diffs/AuthorIgnoreRule';
-import { PendingEndpointPageSession } from './PendingEndpointPage';
-import { useDebugValue, useEffect, useState } from 'react';
-import { useDebounce } from '../hooks/ui/useDebounceHook';
-
-export function DiffReviewPages(props: any) {
-  const diffReviewPageLink = useDiffReviewPageLink();
-  const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
-
-  return (
-    <SharedDiffStore>
-      <ContributionEditingStore>
-        <NavigationRoute
-          path={diffReviewPageLink.path}
-          Component={DiffUrlsPage}
-          AccessoryNavigation={() => <div></div>}
-        />
-        <NavigationRoute
-          path={diffReviewPagePendingEndpoint.path}
-          Component={PendingEndpointPageSession}
-          AccessoryNavigation={() => <div></div>}
-        />
-      </ContributionEditingStore>
-    </SharedDiffStore>
-  );
-}
+import { useUndocumentedUrls } from '../../hooks/diffs/useUndocumentedUrls';
+import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
+import { AuthorIgnoreRules } from '../../diffs/AuthorIgnoreRule';
+import { useDebounce } from '../../hooks/ui/useDebounceHook';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -79,6 +48,7 @@ export function DiffUrlsPage(props: any) {
                 onFinish={(pattern, method) => {
                   const pendingId = documentEndpoint(pattern, method);
                   const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
+                  console.log(link);
                   setTimeout(() => history.push(link), 500);
                 }}
               />
