@@ -5,7 +5,7 @@ import {
   IIgnoreBody,
   newLearnPendingEndpointMachine,
 } from './LearnPendingEndpointState';
-import { ILearnedBodies } from '../../../../../cli-shared/build/diffs/initial-types';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export const LearnedPendingEndpointContext = React.createContext({});
 
