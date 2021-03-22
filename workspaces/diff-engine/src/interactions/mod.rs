@@ -11,7 +11,7 @@ mod traverser;
 mod visitors;
 
 use result::InteractionTrail;
-pub use result::{BodyAnalysisResult, InteractionDiffResult};
+pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 use visitors::{InteractionVisitors, PathVisitor};
 
 pub fn diff(
@@ -91,9 +91,8 @@ pub fn analyze_undocumented_bodies(
         .clone();
 
       Some(BodyAnalysisResult {
-        path_id,
-        interaction_trail,
-        trail_values,
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations: trail_values,
       })
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
@@ -107,9 +106,8 @@ pub fn analyze_undocumented_bodies(
         .clone();
 
       Some(BodyAnalysisResult {
-        path_id,
-        interaction_trail,
-        trail_values,
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations: trail_values,
       })
     }
     _ => None,

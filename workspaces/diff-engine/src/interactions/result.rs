@@ -180,9 +180,70 @@ impl UnmatchedResponseBodyShape {
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug)]
 pub struct BodyAnalysisResult {
-  pub path_id: PathComponentId,
-  pub interaction_trail: InteractionTrail,
-  pub trail_values: HashMap<JsonTrail, TrailValues>,
+  pub body_location: BodyAnalysisLocation,
+  pub trail_observations: HashMap<JsonTrail, TrailValues>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+pub enum BodyAnalysisLocation {
+  Request {
+    path_id: PathComponentId,
+    method: String,
+    content_type: String,
+  },
+  Response {
+    path_id: PathComponentId,
+    method: String,
+    content_type: String,
+    status_code: u16,
+  },
+}
+
+impl From<UnmatchedRequestBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedRequestBodyContentType) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Request {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedRequestBodyContentType implies request to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedRequestBodyContentType implies request to have a known method")
+        .clone(),
+      content_type: interaction_trail
+        .get_request_content_type()
+        .expect("UnmatchedRequestBodyContentType implies request to have a content type")
+        .clone(),
+    }
+  }
+}
+
+impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedResponseBodyContentType) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Response {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedResponseBodyContentType implies response to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedResponseBodyContentType implies response to have a known method")
+        .clone(),
+      content_type: interaction_trail
+        .get_response_content_type()
+        .expect("UnmatchedResponseBodyContentType implies response to have a content type")
+        .clone(),
+      status_code: interaction_trail
+        .get_response_status_code()
+        .expect("UnmatchedResponseBodyContentType implies response to have a status code"),
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -228,6 +289,27 @@ impl InteractionTrail {
   pub fn get_method(&self) -> Option<&String> {
     self.path.iter().find_map(|component| match component {
       InteractionTrailPathComponent::Method { method } => Some(method),
+      _ => None,
+    })
+  }
+
+  pub fn get_request_content_type(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::RequestBody { content_type } => Some(content_type),
+      _ => None,
+    })
+  }
+
+  pub fn get_response_content_type(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::ResponseBody { content_type, .. } => Some(content_type),
+      _ => None,
+    })
+  }
+
+  pub fn get_response_status_code(&self) -> Option<u16> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::ResponseBody { status_code, .. } => Some(*status_code),
       _ => None,
     })
   }

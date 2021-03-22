@@ -112,17 +112,13 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
     while let Some(analysis) = analysiss.next().await {
-      // let endpoint = (analysis.interaction_trail.get)
-      let method = analysis
-        .interaction_trail
-        .get_method()
-        .expect("analysis should contain path in interaction trail");
-      let key = (analysis.path_id.clone(), method.clone());
-      let endpoint_bodies = results_by_endpoint
-        .entry(key)
-        .or_insert_with(|| EndpointBodies::new(analysis.path_id.clone(), method.clone()));
+      let json_trails = results_by_endpoint
+        .entry(analysis.body_location)
+        .or_insert_with(|| vec![]);
 
-      endpoint_bodies.with_analysis(analysis);
+      json_trails.push(String::from(
+        "TODO: replace me with unioned trail observations",
+      ));
 
       todo!("write updated endpoint bodies to stdout")
     }
@@ -149,8 +145,6 @@ impl EndpointBodies {
       response: vec![],
     }
   }
-
-  pub fn with_analysis(&mut self, analysis: BodyAnalysisResult) {}
 }
 
 #[derive(Default, Serialize)]
