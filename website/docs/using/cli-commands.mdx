@@ -1,0 +1,95 @@
+---
+title: Optic CLI commands
+sidebar_label: CLI commands
+---
+
+The Optic CLI installs the `api` command, which is used to manage integration, observation, and documentation of your API. In addition, it provides tools to integrate with other products via OpenAPI exports. 
+
+## Documenting your API
+
+### `init`
+
+Integrates Optic with your API. API init [guides you through setup](/docs/get-started/config) so that you can get running as quickly as possible. There are no required parameters, and the CLI will take you directly to the Optic dashboard to complete and test the integration.
+
+Optionally, `api init` can take parameters to pre-populate your configuration. While we wouldn't recommend users learn these flags, we may provide you with an init command including some of these parameters to help you get started:
+
+- `inboundUrl`
+- `targetUrl`
+- `command`
+
+For example, to set up Optic in [proxy mode](/docs/using/advanced-configuration#proxy-task-mode) to document the GitHub API, we might provide the following init command:
+
+`api init --inboundUrl https://localhost:4000 --targetUrl https://api.github.com`
+
+### `check`
+
+Verifies that Optic can run your tasks and monitor traffic. When initializing Optic with your repository, the guided setup will have you run this command to validate the configuration. If there are any issues, they will be reported on the command line and in the Optic setup UI with recommendations on how to proceed. It takes the name of the task you wish to check, usually `start`:
+
+`api check start`
+  
+### `run`
+
+Runs a task from your `optic.yml` file. This is the last step of the initialization process, and the command you will use when you want to observe API traffic in your local environment. It takes the name of the task you wish to run, usually `start`. You may have multiple configurations to [run tests](/docs/get-started/testing), or get into [advanced configurations](/docs/using/advanced-configuration), depending on your project. 
+
+`api run start`
+
+:::tip api start
+Since start is the most common task run, Optic has a command `start` that is an alias for `run start`.
+:::
+
+Run has a few flags that can modify the default behavior:
+
+- `--collect-coverage` will report the [coverage](/docs/get-started/testing#api-coverage) of observed traffic over the API specification when the process is stopped.
+- `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
+- `--transparent-proxy` configures Optic to [transparently forward](/docs/using/advanced-configuration#transparent-proxy-mode) all traffic, which may be necessary for certain application configurations.
+
+### `spec`
+
+Opens your current API specification. This is a quick way to see the current state of the documentation, or jump in and add detail to the endpoints and fields. The Optic dashboard will be opened in your browser on the Documentation page.
+
+`api spec`
+
+### `start`
+
+An alias for `run start`. Start is the default task, which makes it the most commonly run task. This alias saves a few keystrokes:
+
+`api start`.
+
+### `status`
+
+Lists API diffs observed since your last git commit. This is a quick way on the command line to see if there are any undocumented behaviors that need to be resolved.
+
+`api status`
+
+- `--review` will open the Optic dashboard to review and document any new endpoints or differences in behavior on existing endpoints. This is a handy way to get into the review process.
+- `--pre-commit` returns an exit code of `1` if there are any diffs that need to be resolved in the behavior, such as undocumented endpoints or endpoints whose observed behavior doesn't match the specification. This allows developers to use git hooks such as pre-commit hooks to assure the specification is up to date as part of their normal workflow.
+
+## Integrating with other tools
+
+### `generate:oas`
+
+Exports an OpenAPI 3.0.1 specification. This allows you to generate an OpenAPI specification for use in other software, such as third-party documentation generation software. Both `--json` and `--yaml` flags are supported to determine the output format. 
+
+:::tip api scripts
+The `scripts` command will export an OpenAPI specification and allow you to run a command or script to process that specification. It can even manage dependencies! `generate:oas` is great for a one-time run, for workflow integration we recommend `scripts`.
+:::
+
+### `scripts`
+
+Runs an [Optic Script](/docs/apiops/scripts) in optic.yml with the current specification. Scripts are defined in the `optic.yml` file and allow you to build integration workflows with other tools via OpenAPI exports. Scripts may manage dependencies as well. It takes the name of the Script task to run and has an optional flag to install dependencies if necessary:
+
+`api script publish-readme`
+
+- `--install` will install any declared dependencies that are missing, using the provided command. By default, if a dependency is missing the Script task will stop and ask you to use the `--install` flag to proceed.
+
+## Debugging commands
+
+### `debug:endpoint-delete`
+
+Removes an endpoint from the specification. This takes the method and `pathId` for the appropriate endpoint. The `pathId` is most easily determined by browsing the documentation (available with `api spec`) and clicking through the target endpoint. The pathId will be part of the URL path for the detailed documentation, of the form `path_[a-zA-Z0-9]{10}` (`path_` and ten alphanumeric characters). To delete the GET endpoint for pathId `path_085xFHU7NG`:
+
+`api debug:endpoint-delete GET path_085xFHU7NG`
+
+### `daemon`
+
+The daemon commands, which include `daemon:start` and `daemon:stop`. These start and stop the Optic daemon, respectively. Under normal circumstances, the daemon is managed by the Optic CLI and you should never have to run either command. To start the daemon, prefer the use of `api spec` which will assure you are in the proper project directory.
