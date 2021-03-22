@@ -2,13 +2,16 @@ use super::events_from_chunks;
 
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, StreamExt, TryStreamExt};
+use serde::Serialize;
 use serde_json;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
+use tokio_stream::wrappers::ReceiverStream;
 
-use optic_diff_engine::analyze_undocumented_bodies;
 use optic_diff_engine::streams;
+use optic_diff_engine::{analyze_undocumented_bodies, SpecCommand};
 use optic_diff_engine::{
   BodyAnalysisResult, HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection,
 };
@@ -59,11 +62,15 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
   let stdin = stdin();
   let interaction_lines = streams::http_interaction::json_lines(stdin);
 
+  let (analysis_sender, mut analysis_receiver) = mpsc::channel(32);
+
   let analyzing_bodies = async move {
     let analyze_results = interaction_lines
       .map(Ok)
       .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
         let projection = spec_projection.clone();
+        let analysis_sender = analysis_sender.clone();
+
         let analyze_task = tokio::spawn(async move {
           let analyze_comp = tokio::task::spawn_blocking(move || {
             let interaction_json =
@@ -77,7 +84,12 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
 
           match analyze_comp.await {
             Ok(results) => {
-              dbg!(results.collect::<Vec<_>>());
+              for result in results {
+                analysis_sender
+                  .send(result)
+                  .await
+                  .expect("could not send analysis result to aggregation channel")
+              }
             }
             Err(err) => {
               // ignore a single interaction not being able to deserialize
@@ -93,5 +105,63 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
     analyze_results
   };
 
-  try_join!(analyzing_bodies).expect("essential worker task panicked");
+  let aggregating_results = tokio::spawn(async move {
+    let mut results_by_endpoint = HashMap::new();
+    let stdout = stdout();
+
+    let mut analysiss = ReceiverStream::new(analysis_receiver);
+
+    while let Some(analysis) = analysiss.next().await {
+      // let endpoint = (analysis.interaction_trail.get)
+      let path_id = analysis
+        .interaction_trail
+        .get_path_id()
+        .expect("analysis should contain path in interaction trail");
+      let method = analysis
+        .interaction_trail
+        .get_method()
+        .expect("analysis should contain path in interaction trail");
+      let key = (path_id.clone(), method.clone());
+      let endpoint_bodies = results_by_endpoint
+        .entry(key)
+        .or_insert_with(|| EndpointBodies::new(path_id.clone(), method.clone()));
+
+      endpoint_bodies.with_analysis(analysis);
+
+      todo!("write updated endpoint bodies to stdout")
+    }
+  });
+
+  try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
+}
+
+#[derive(Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EndpointBodies {
+  path_id: String,
+  method: String,
+  requests: Vec<EndpointBody>,
+  response: Vec<EndpointBody>,
+}
+
+impl EndpointBodies {
+  pub fn new(path_id: String, method: String) -> Self {
+    Self {
+      path_id,
+      method,
+      requests: vec![],
+      response: vec![],
+    }
+  }
+
+  pub fn with_analysis(&mut self, analysis: BodyAnalysisResult) {}
+}
+
+#[derive(Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EndpointBody {
+  content_type: String,
+  status_code: Option<u16>,
+  commands: Vec<SpecCommand>,
+  rootShapeId: String,
 }
