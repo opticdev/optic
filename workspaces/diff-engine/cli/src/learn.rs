@@ -113,18 +113,14 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
 
     while let Some(analysis) = analysiss.next().await {
       // let endpoint = (analysis.interaction_trail.get)
-      let path_id = analysis
-        .interaction_trail
-        .get_path_id()
-        .expect("analysis should contain path in interaction trail");
       let method = analysis
         .interaction_trail
         .get_method()
         .expect("analysis should contain path in interaction trail");
-      let key = (path_id.clone(), method.clone());
+      let key = (analysis.path_id.clone(), method.clone());
       let endpoint_bodies = results_by_endpoint
         .entry(key)
-        .or_insert_with(|| EndpointBodies::new(path_id.clone(), method.clone()));
+        .or_insert_with(|| EndpointBodies::new(analysis.path_id.clone(), method.clone()));
 
       endpoint_bodies.with_analysis(analysis);
 

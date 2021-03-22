@@ -180,6 +180,7 @@ impl UnmatchedResponseBodyShape {
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug)]
 pub struct BodyAnalysisResult {
+  pub path_id: PathComponentId,
   pub interaction_trail: InteractionTrail,
   pub trail_values: HashMap<JsonTrail, TrailValues>,
 }
@@ -224,13 +225,6 @@ impl InteractionTrail {
     })
   }
 
-  pub fn get_path_id(&self) -> Option<&String> {
-    self.path.iter().find_map(|component| match component {
-      InteractionTrailPathComponent::Url { path } => Some(path),
-      _ => None,
-    })
-  }
-
   pub fn get_method(&self) -> Option<&String> {
     self.path.iter().find_map(|component| match component {
       InteractionTrailPathComponent::Method { method } => Some(method),
@@ -247,6 +241,15 @@ pub enum RequestSpecTrail {
   SpecRequestBody(SpecRequestBody),
   SpecResponseRoot(SpecResponseRoot),
   SpecResponseBody(SpecResponseBody),
+}
+
+impl RequestSpecTrail {
+  pub fn get_path_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecPath(spec_path) => Some(&spec_path.path_id),
+      _ => None,
+    }
+  }
 }
 
 #[derive(Clone, Debug, Serialize, Hash)]

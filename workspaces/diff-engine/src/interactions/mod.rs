@@ -84,8 +84,14 @@ pub fn analyze_undocumented_bodies(
       let body = &interaction.request.body;
       let trail_values = trail_values_for_body(&body.value);
       let interaction_trail = diff.interaction_trail.clone();
+      let path_id = diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedRequestBodyContentType implies request to have a known path")
+        .clone();
 
       Some(BodyAnalysisResult {
+        path_id,
         interaction_trail,
         trail_values,
       })
@@ -94,8 +100,14 @@ pub fn analyze_undocumented_bodies(
       let body = &interaction.response.body;
       let trail_values = trail_values_for_body(&body.value);
       let interaction_trail = diff.interaction_trail.clone();
+      let path_id = diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedResponseBodyContentType implies request to have a known path")
+        .clone();
 
       Some(BodyAnalysisResult {
+        path_id,
         interaction_trail,
         trail_values,
       })
