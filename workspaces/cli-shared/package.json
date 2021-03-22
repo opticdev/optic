@@ -31,7 +31,7 @@
     "fs-extra": "^9.0.0",
     "keymirror": "^0.1.1",
     "lodash.throttle": "^4.1.1",
-    "mockttp": "^1.1.0",
+    "mockttp": "^1.2.0",
     "oboe": "^2.1.5",
     "ora": "^4.0.4",
     "proper-lockfile": "^4.1.1",

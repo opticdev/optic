@@ -18,7 +18,7 @@
     "@useoptic/cli-config": "9.0.15",
     "@useoptic/client-utilities": "9.0.15",
     "bottleneck": "^2.19.5",
-    "cross-fetch": "^3.0.4"
+    "cross-fetch": "3.0.6"
   },
   "devDependencies": {},
   "files": [
