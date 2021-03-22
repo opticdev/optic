@@ -2,7 +2,7 @@ use chrono::{DateTime, TimeZone, Utc};
 use std::process::Command;
 
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
-pub use serde::Deserialize;
+pub use serde::{Deserialize, Serialize};
 
 pub mod endpoint;
 pub mod rfc;
@@ -21,7 +21,7 @@ use crate::events::{
 use crate::projections::SpecProjection;
 use crate::queries::history::HistoryQueries;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum SpecCommand {
   EndpointCommand(EndpointCommand),

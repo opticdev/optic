@@ -223,6 +223,20 @@ impl InteractionTrail {
       status_code,
     })
   }
+
+  pub fn get_path_id(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::Url { path } => Some(path),
+      _ => None,
+    })
+  }
+
+  pub fn get_method(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::Method { method } => Some(method),
+      _ => None,
+    })
+  }
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
