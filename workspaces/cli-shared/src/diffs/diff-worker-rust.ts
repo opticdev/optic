@@ -105,6 +105,7 @@ export class DiffWorkerRust {
 
     // setup streams
     const interactionsStream = chain([
+      // @ts-ignore
       Readable.from(interactionIterator, {
         objectMode: true,
       }),

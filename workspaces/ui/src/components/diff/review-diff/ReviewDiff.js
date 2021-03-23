@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDiffSession } from './ReviewDiffSession';
-import WarningIcon from '@material-ui/icons/Warning';
 import { useContext } from 'react';
 import { useEndpointDiffSession } from './ReviewEndpoint';
+import WarningIcon from '@material-ui/icons/Warning';
 import BlockIcon from '@material-ui/icons/Block';
 import CheckIcon from '@material-ui/icons/Check';
 import {

@@ -186,7 +186,15 @@ export class HttpToolkitCapturingProxy {
             body: this.extractBody(res),
           },
         };
-        developerDebugLogger(util.inspect(sample, {showHidden: false, depth: null, colors: true, getters: true}));
+        developerDebugLogger(
+          //@ts-ignore
+          util.inspect(sample, {
+            showHidden: false,
+            depth: null,
+            colors: true,
+            getters: true,
+          })
+        );
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }

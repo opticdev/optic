@@ -11,6 +11,7 @@ import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
 import { Route } from 'react-router-dom';
+import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 
 export function DiffReviewPages(props: any) {
   // const { match } = props;
@@ -29,7 +30,7 @@ export function DiffReviewPages(props: any) {
         />
         <NavigationRoute
           path={diffForEndpointLink.path}
-          Component={() => <div>HELLO WORLD</div>}
+          Component={ReviewEndpointDiffPage}
           AccessoryNavigation={() => <div></div>}
         />
         <NavigationRoute
