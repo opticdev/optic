@@ -1,4 +1,6 @@
+use crate::commands::SpecCommand;
 use crate::shapes::JsonTrail;
+use crate::state::shape::ShapeKindDescriptor;
 use crate::BodyDescriptor;
 use std::collections::{HashMap, HashSet};
 
@@ -17,6 +19,12 @@ impl TrailObservationsResult {
 
       existing_trail_values.union(new_trail_values);
     }
+  }
+
+  pub fn into_commands(self) -> impl Iterator<Item = SpecCommand> {
+    todo!("create shape prototype for each trail and use them to generate commands");
+
+    std::iter::empty()
   }
 }
 
@@ -63,4 +71,40 @@ impl TrailValues {
     self.was_object = self.was_object || new_values.was_object;
     // TODO: figure out what to do about field sets
   }
+
+  fn into_shape_prototype(self, id: String) -> ShapePrototype {
+    todo!()
+  }
+}
+
+struct ShapePrototype {
+  id: String,
+  trail: JsonTrail,
+  prototype_descriptor: ShapePrototypeDescriptor,
+}
+
+enum ShapePrototypeDescriptor {
+  OptionalShape {
+    shape: Box<ShapePrototype>,
+  },
+  NullableShape {
+    shape: Box<ShapePrototype>,
+  },
+  OneOfShape {
+    branches: Vec<ShapePrototype>,
+  },
+  ObjectWithFields {
+    fields: Vec<ShapePrototype>,
+  },
+  ListOfShape {
+    shape: Box<ShapePrototype>,
+  },
+  FieldWithShape {
+    key: String,
+    shape: Box<ShapePrototype>,
+  },
+  PrimitiveKind {
+    base_shape_kind: ShapeKindDescriptor,
+  },
+  Unknown {},
 }
