@@ -1,8 +1,7 @@
 use super::{
   BodyArrayVisitor, BodyObjectKeyVisitor, BodyObjectVisitor, BodyPrimitiveVisitor, BodyVisitor,
-  VisitorResults,
+  TrailValues, VisitorResults,
 };
-use std::iter::FromIterator;
 use crate::learn_shape::visitors::BodyVisitors;
 use crate::queries::shape::ChoiceOutput;
 use crate::shapes::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
@@ -10,9 +9,9 @@ use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind};
 use serde_json::Value as JsonValue;
 use std::borrow::Borrow;
-use crate::learn_shape::TrailValues;
-use std::collections::{HashSet, HashMap};
 use std::collections::hash_map::RandomState;
+use std::collections::{HashMap, HashSet};
+use std::iter::FromIterator;
 
 pub struct LearnVisitors {
   array: LearnArrayVisitor,
@@ -89,7 +88,9 @@ impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
       let value = TrailValues::new(&json_trail);
       self.insert(json_trail.clone(), value);
     }
-    let trail_values =  self.get(&json_trail).expect("expected map to contain a value at the json_trail");
+    let trail_values = self
+      .get(&json_trail)
+      .expect("expected map to contain a value at the json_trail");
 
     dbg!(&trail_values);
 
@@ -102,7 +103,6 @@ impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
     }
 
     dbg!(&trail_values);
-
   }
 }
 
@@ -165,8 +165,6 @@ impl BodyVisitor<TrailValues> for LearnObjectVisitor {
 
 impl BodyObjectVisitor<TrailValues> for LearnObjectVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
-
-
     // dbg!(&body);
     // dbg!(&json_trail);
 
@@ -186,7 +184,6 @@ impl BodyObjectVisitor<TrailValues> for LearnObjectVisitor {
       // });
       //
     }
-
   }
 }
 

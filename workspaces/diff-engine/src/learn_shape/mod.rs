@@ -1,37 +1,51 @@
 use crate::shapes::JsonTrail;
+use crate::BodyDescriptor;
 use crate::HttpInteraction;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
-mod trail_values;
+mod result;
 mod traverser;
 mod visitors;
 
-pub type FieldSet = HashSet<String>;
-pub use trail_values::{for_body_descriptor as trail_values_for_body, TrailValueMap};
+pub use result::{TrailObservationsResult, TrailValues};
+use traverser::Traverser;
+use visitors::learn_json_values::LearnVisitors;
+use visitors::BodyVisitors;
 
-#[derive(Clone, Debug)]
-pub struct TrailValues {
-  trail: JsonTrail,
-  was_string: bool,
-  was_number: bool,
-  was_boolean: bool,
-  was_null: bool,
-  was_array: bool,
-  was_object: bool,
-  field_set: HashSet<FieldSet>,
+pub fn observe_body_trails(
+  into_body: impl Into<Option<BodyDescriptor>>,
+) -> TrailObservationsResult {
+  let body = into_body.into();
+  let trail_map: HashMap<JsonTrail, TrailValues> = HashMap::new();
+
+  let values_by_trail = if body.is_some() {
+    let traverser = Traverser::new();
+    let mut visitors = LearnVisitors::new();
+
+    traverser.traverse_root_shape(body, &mut visitors);
+    visitors.take_results()
+  } else {
+    HashMap::new()
+  };
+
+  TrailObservationsResult::from(values_by_trail)
 }
 
-impl TrailValues {
-  pub fn new(json_trail: &JsonTrail) -> Self {
-    Self {
-      trail: json_trail.clone(),
-      was_string: false,
-      was_number: false,
-      was_boolean: false,
-      was_null: false,
-      was_array: false,
-      was_object: false,
-      field_set: Default::default(),
-    }
+#[cfg(test)]
+mod test {
+  use super::*;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  fn trail_values_should_produce_magp() {
+    let object_body = json!(
+      [{"message": "hello"}, {"message": 123}, {"colors": ["red", true]}]
+    );
+
+    let body: Option<BodyDescriptor> = Some(BodyDescriptor::from(object_body));
+
+    let result = observe_body_trails(body);
+    assert_debug_snapshot!(result);
   }
 }

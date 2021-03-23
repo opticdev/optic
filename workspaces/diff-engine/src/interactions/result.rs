@@ -1,4 +1,4 @@
-use crate::learn_shape::TrailValues;
+use crate::learn_shape::TrailObservationsResult;
 use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
@@ -181,7 +181,7 @@ impl UnmatchedResponseBodyShape {
 #[derive(Clone, Debug)]
 pub struct BodyAnalysisResult {
   pub body_location: BodyAnalysisLocation,
-  pub trail_observations: HashMap<JsonTrail, TrailValues>,
+  pub trail_observations: TrailObservationsResult,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]

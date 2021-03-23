@@ -4,7 +4,7 @@ mod result;
 pub mod traverser;
 pub mod visitors;
 
-use crate::learn_shape::TrailValueMap;
+use crate::learn_shape::TrailObservationsResult;
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
@@ -35,6 +35,8 @@ pub fn diff(
 pub fn analyze_trail_values(
   body: Option<&BodyDescriptor>,
   diff_results: impl IntoIterator<Item = InteractionDiffResult>,
-) -> impl Iterator<Item = TrailValueMap> {
-  diff_results.into_iter().map(|diff_result| HashMap::new())
+) -> impl Iterator<Item = TrailObservationsResult> {
+  diff_results
+    .into_iter()
+    .map(|diff_result| TrailObservationsResult::default())
 }

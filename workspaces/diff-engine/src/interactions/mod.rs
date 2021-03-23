@@ -1,5 +1,5 @@
 use crate::events::http_interaction::{Body, HttpInteraction};
-use crate::learn_shape::{trail_values_for_body, TrailValueMap};
+use crate::learn_shape::{observe_body_trails, TrailObservationsResult};
 use crate::projections::{EndpointProjection, SpecProjection};
 use crate::protos::shapehash::ShapeDescriptor;
 use crate::queries::endpoint::EndpointQueries;
@@ -82,7 +82,7 @@ pub fn analyze_undocumented_bodies(
   results.into_iter().filter_map(move |result| match result {
     InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
-      let trail_values = trail_values_for_body(&body.value);
+      let trail_observations = observe_body_trails(&body.value);
       let interaction_trail = diff.interaction_trail.clone();
       let path_id = diff
         .requests_trail
@@ -92,12 +92,12 @@ pub fn analyze_undocumented_bodies(
 
       Some(BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),
-        trail_observations: trail_values,
+        trail_observations,
       })
     }
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
-      let trail_values = trail_values_for_body(&body.value);
+      let trail_observations = observe_body_trails(&body.value);
       let interaction_trail = diff.interaction_trail.clone();
       let path_id = diff
         .requests_trail
@@ -107,7 +107,7 @@ pub fn analyze_undocumented_bodies(
 
       Some(BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),
-        trail_observations: trail_values,
+        trail_observations,
       })
     }
     _ => None,

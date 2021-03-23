@@ -13,7 +13,7 @@ use tokio_stream::wrappers::ReceiverStream;
 use optic_diff_engine::streams;
 use optic_diff_engine::{analyze_undocumented_bodies, SpecCommand};
 use optic_diff_engine::{
-  BodyAnalysisResult, HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection,
+  HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection, TrailObservationsResult,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
@@ -112,13 +112,11 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
     while let Some(analysis) = analysiss.next().await {
-      let json_trails = results_by_endpoint
+      let existing_observations = results_by_endpoint
         .entry(analysis.body_location)
-        .or_insert_with(|| vec![]);
+        .or_insert_with(|| TrailObservationsResult::default());
 
-      json_trails.push(String::from(
-        "TODO: replace me with unioned trail observations",
-      ));
+      existing_observations.union(analysis.trail_observations);
 
       todo!("write updated endpoint bodies to stdout")
     }

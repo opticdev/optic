@@ -1,9 +1,9 @@
+pub use super::result::TrailValues;
 use crate::shapes::JsonTrail;
 use crate::state::body::BodyDescriptor;
 use serde_json::Value as JsonValue;
-use std::collections::HashMap;
-use crate::learn_shape::TrailValues;
 use std::borrow::Borrow;
+use std::collections::HashMap;
 
 pub mod learn_json_values;
 
@@ -24,7 +24,6 @@ pub trait BodyVisitors<R> {
 }
 
 pub trait BodyVisitor<R> {
-
   fn results(&mut self) -> Option<&mut VisitorResults<R>> {
     None
   }
@@ -46,7 +45,7 @@ pub trait BodyVisitor<R> {
     if let Some(results) = self.results() {
       results.take_results()
     } else {
-    HashMap::new()
+      HashMap::new()
     }
   }
 }
@@ -71,26 +70,34 @@ pub trait BodyPrimitiveVisitor<R>: BodyVisitor<R> {
 // -------
 
 pub struct VisitorResults<R> {
-  results: Option<HashMap<JsonTrail, R>>
+  results: Option<HashMap<JsonTrail, R>>,
 }
 
 impl<R> VisitorResults<R> {
   pub fn new() -> Self {
     VisitorResults {
-      results:Some(HashMap::new()),
+      results: Some(HashMap::new()),
     }
   }
 
-  pub fn get(&mut self, json_trail:&JsonTrail) -> Option<&mut R> {
-    self.results.as_mut().expect("expected results to be present").get_mut(&json_trail)
+  pub fn get(&mut self, json_trail: &JsonTrail) -> Option<&mut R> {
+    self
+      .results
+      .as_mut()
+      .expect("expected results to be present")
+      .get_mut(&json_trail)
   }
 
   pub fn insert(&mut self, json_trail: JsonTrail, result: R) {
-    self.results.as_mut().expect("expected results to be present").insert(json_trail, result);
+    self
+      .results
+      .as_mut()
+      .expect("expected results to be present")
+      .insert(json_trail, result);
   }
 
   pub fn take_results(&mut self) -> HashMap<JsonTrail, R> {
-    let  results = self.results.take();
+    let results = self.results.take();
     self.results = Some(HashMap::new());
     results.expect("expected results to be present")
   }
