@@ -1,7 +1,7 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
 mod commands;
-pub mod events;
+mod events;
 mod interactions;
 mod projections;
 mod protos;
@@ -15,7 +15,10 @@ pub mod streams;
 
 pub use commands::{CommandContext, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
-pub use events::{HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent};
+pub use events::{
+  http_interaction::{HttpInteraction, ArbitraryData, Request, Response, Body},
+  RfcEvent, SpecChunkEvent, SpecEvent,
+};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
 pub use projections::{
