@@ -1,6 +1,6 @@
 use crate::commands::SpecCommand;
 use crate::shapes::JsonTrail;
-use crate::state::shape::ShapeKindDescriptor;
+use crate::state::shape::{ShapeKind, ShapeKindDescriptor};
 use crate::BodyDescriptor;
 use std::collections::{HashMap, HashSet};
 
@@ -72,8 +72,64 @@ impl TrailValues {
     // TODO: figure out what to do about field sets
   }
 
-  fn into_shape_prototype(self, id: String) -> ShapePrototype {
-    todo!()
+  fn into_shape_prototype<F>(self, generate_id: &mut F) -> ShapePrototype
+  where
+    F: FnMut() -> String,
+  {
+    let mut descriptors: Vec<_> = vec![
+      if self.was_string {
+        Some(ShapePrototypeDescriptor::PrimitiveKind {
+          base_shape_kind: ShapeKind::StringKind,
+        })
+      } else {
+        None
+      },
+      if self.was_number {
+        Some(ShapePrototypeDescriptor::PrimitiveKind {
+          base_shape_kind: ShapeKind::NumberKind,
+        })
+      } else {
+        None
+      },
+      if self.was_boolean {
+        Some(ShapePrototypeDescriptor::PrimitiveKind {
+          base_shape_kind: ShapeKind::BooleanKind,
+        })
+      } else {
+        None
+      },
+      // if self.was_array {
+      //   Some(ShapePrototypeDescriptor::ListOfShape {
+
+      //   })
+      // } else {
+      //   None
+      // }
+    ]
+    .into_iter()
+    .flatten()
+    .collect();
+
+    let descriptors_count = descriptors.len();
+    match descriptors_count {
+      0 => ShapePrototype {
+        id: generate_id(),
+        trail: self.trail,
+        prototype_descriptor: ShapePrototypeDescriptor::Unknown,
+      },
+      1 => ShapePrototype {
+        id: generate_id(),
+        trail: self.trail,
+        prototype_descriptor: descriptors.pop().unwrap(),
+      },
+      _ => ShapePrototype {
+        id: generate_id(),
+        trail: self.trail.clone(),
+        prototype_descriptor: ShapePrototypeDescriptor::OneOfShape {
+          branches: descriptors,
+        },
+      },
+    }
   }
 }
 
@@ -91,7 +147,7 @@ enum ShapePrototypeDescriptor {
     shape: Box<ShapePrototype>,
   },
   OneOfShape {
-    branches: Vec<ShapePrototype>,
+    branches: Vec<ShapePrototypeDescriptor>,
   },
   ObjectWithFields {
     fields: Vec<ShapePrototype>,
@@ -104,7 +160,7 @@ enum ShapePrototypeDescriptor {
     shape: Box<ShapePrototype>,
   },
   PrimitiveKind {
-    base_shape_kind: ShapeKindDescriptor,
+    base_shape_kind: ShapeKind,
   },
-  Unknown {},
+  Unknown,
 }
