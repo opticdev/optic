@@ -1,4 +1,5 @@
-use crate::commands::SpecCommand;
+use crate::commands::shape as shape_commands;
+use crate::commands::{ShapeCommand, SpecCommand};
 use crate::shapes::JsonTrail;
 use crate::state::shape::{ShapeKind, ShapeKindDescriptor};
 use crate::BodyDescriptor;
@@ -21,10 +22,55 @@ impl TrailObservationsResult {
     }
   }
 
-  pub fn into_commands(self) -> impl Iterator<Item = SpecCommand> {
-    todo!("create shape prototype for each trail and use them to generate commands");
+  pub fn into_commands<F>(self, generate_id: &mut F) -> impl Iterator<Item = SpecCommand>
+  where
+    F: Fn() -> String,
+  {
+    self
+      .values_by_trail
+      .into_iter()
+      .map(|(json_trail, trail_values)| {
+        let shape_prototype = trail_values.into_shape_prototype(generate_id);
 
-    std::iter::empty()
+        let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
+          match shape_prototype.prototype_descriptor {
+            ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
+              let shape_kind_descriptor = base_shape_kind.get_descriptor();
+              let add_command = ShapeCommand::add_shape(
+                generate_id(),
+                String::from(shape_kind_descriptor.name),
+                String::from(""),
+              );
+              [Some(vec![add_command]), None]
+            }
+            _ => [None, None],
+          };
+
+        [init_commands, describe_commands]
+      })
+      .fold(
+        vec![vec![], vec![]],
+        |mut existing_commands, new_commands| {
+          let [new_init, new_describe] = new_commands;
+          {
+            let init_commands = &mut existing_commands[0];
+            if let Some(commands) = new_init {
+              init_commands.extend(commands);
+            }
+          }
+          {
+            let describe_commands = &mut existing_commands[1];
+
+            if let Some(commands) = new_describe {
+              describe_commands.extend(commands);
+            }
+          }
+          existing_commands
+        },
+      )
+      .into_iter()
+      .flatten()
+      .map(|command| SpecCommand::from(command))
   }
 }
 
@@ -74,7 +120,7 @@ impl TrailValues {
 
   fn into_shape_prototype<F>(self, generate_id: &mut F) -> ShapePrototype
   where
-    F: FnMut() -> String,
+    F: Fn() -> String,
   {
     let mut descriptors: Vec<_> = vec![
       if self.was_string {

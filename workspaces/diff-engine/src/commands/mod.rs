@@ -1,5 +1,6 @@
 use chrono::{DateTime, TimeZone, Utc};
 use std::process::Command;
+use uuid::Uuid;
 
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
 pub use serde::{Deserialize, Serialize};
@@ -188,6 +189,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         };
 
         let shape_added_event = ShapeEvent::from(ShapeCommand::add_shape(
+          Uuid::new_v4().to_hyphenated().to_string(),
           String::from("$string"),
           String::from(""),
         ));

@@ -31,8 +31,8 @@ pub enum ShapeCommand {
 }
 
 impl ShapeCommand {
-  pub fn add_shape(base_shape_id: ShapeId, name: String) -> Self {
-    Self::AddShape(AddShape::new(base_shape_id, name))
+  pub fn add_shape(shape_id: ShapeId, base_shape_id: ShapeId, name: String) -> Self {
+    Self::AddShape(AddShape::new(shape_id, base_shape_id, name))
   }
 }
 
@@ -45,9 +45,9 @@ pub struct AddShape {
 }
 
 impl AddShape {
-  pub fn new(base_shape_id: ShapeId, name: String) -> Self {
+  pub fn new(shape_id: ShapeId, base_shape_id: ShapeId, name: String) -> Self {
     AddShape {
-      shape_id: Uuid::new_v4().to_hyphenated().to_string(),
+      shape_id,
       base_shape_id,
       name,
     }
