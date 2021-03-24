@@ -9,6 +9,7 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
+use uuid::Uuid;
 
 use optic_diff_engine::streams;
 use optic_diff_engine::{analyze_undocumented_bodies, SpecCommand};
@@ -62,7 +63,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
   let stdin = stdin();
   let interaction_lines = streams::http_interaction::json_lines(stdin);
 
-  let (analysis_sender, mut analysis_receiver) = mpsc::channel(32);
+  let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
   let analyzing_bodies = async move {
     let analyze_results = interaction_lines
@@ -106,23 +107,29 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
   };
 
   let aggregating_results = tokio::spawn(async move {
-    let mut results_by_endpoint = HashMap::new();
+    let mut observations_by_body_location = HashMap::new();
     let stdout = stdout();
 
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
     while let Some(analysis) = analysiss.next().await {
-      let existing_observations = results_by_endpoint
+      let existing_observations = observations_by_body_location
         .entry(analysis.body_location)
         .or_insert_with(|| TrailObservationsResult::default());
 
       existing_observations.union(analysis.trail_observations);
+    }
 
-      todo!("write updated endpoint bodies to stdout")
+    for (body_location, observations) in observations_by_body_location {
+      let commands = observations.into_commands(&generate_id);
     }
   });
 
   try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
+}
+
+fn generate_id() -> String {
+  uuid::Uuid::new_v4().to_hyphenated().to_string()
 }
 
 #[derive(Default, Serialize)]

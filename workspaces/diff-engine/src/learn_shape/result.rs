@@ -22,7 +22,7 @@ impl TrailObservationsResult {
     }
   }
 
-  pub fn into_commands<F>(self, generate_id: &mut F) -> impl Iterator<Item = SpecCommand>
+  pub fn into_commands<F>(self, generate_id: &F) -> impl Iterator<Item = SpecCommand>
   where
     F: Fn() -> String,
   {
@@ -30,14 +30,14 @@ impl TrailObservationsResult {
       .values_by_trail
       .into_iter()
       .map(|(json_trail, trail_values)| {
-        let shape_prototype = trail_values.into_shape_prototype(generate_id);
+        let shape_prototype = trail_values.into_shape_prototype(&generate_id);
 
         let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
           match shape_prototype.prototype_descriptor {
             ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
               let shape_kind_descriptor = base_shape_kind.get_descriptor();
               let add_command = ShapeCommand::add_shape(
-                generate_id(),
+                shape_prototype.id,
                 String::from(shape_kind_descriptor.name),
                 String::from(""),
               );
@@ -118,7 +118,7 @@ impl TrailValues {
     // TODO: figure out what to do about field sets
   }
 
-  fn into_shape_prototype<F>(self, generate_id: &mut F) -> ShapePrototype
+  fn into_shape_prototype<F>(self, generate_id: &F) -> ShapePrototype
   where
     F: Fn() -> String,
   {
