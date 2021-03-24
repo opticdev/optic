@@ -6,6 +6,7 @@ use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
+use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 
 pub struct Traverser<'a> {
@@ -285,7 +286,7 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Serialize, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -297,35 +298,107 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Clone)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
+
+  #[serde(skip)]
+  normalized: Vec<JsonTrailPathComponent>,
 }
 impl JsonTrail {
-  pub(crate) fn empty() -> Self {
-    JsonTrail { path: vec![] }
+  pub fn empty() -> Self {
+    JsonTrail {
+      path: vec![],
+      normalized: vec![],
+    }
   }
   pub fn with_component(&self, component: JsonTrailPathComponent) -> Self {
     let mut new_trail = self.clone();
+    let normalized_component = match component {
+      JsonTrailPathComponent::JsonArrayItem { index } => {
+        JsonTrailPathComponent::JsonArrayItem { index: 0 }
+      }
+      _ => component.clone(),
+    };
+
     new_trail.path.push(component);
+    new_trail.normalized.push(normalized_component);
+
     new_trail
+  }
+}
+
+impl PartialEq for JsonTrail {
+  fn eq(&self, other: &Self) -> bool {
+    self.normalized == other.normalized
+  }
+}
+
+impl Eq for JsonTrail {}
+
+impl Ord for JsonTrail {
+  fn cmp(&self, other: &Self) -> Ordering {
+    self.normalized.cmp(&other.normalized)
+  }
+}
+
+impl PartialOrd for JsonTrail {
+  fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    Some(self.cmp(other))
   }
 }
 
 impl Hash for JsonTrail {
   fn hash<H: Hasher>(&self, hash_state: &mut H) {
-    let components = self
-      .path
-      .clone()
-      .into_iter()
-      .map(|component| match component {
-        JsonTrailPathComponent::JsonArrayItem { index } => {
-          JsonTrailPathComponent::JsonArrayItem { index: 0 }
-        }
-        _ => component,
-      })
-      .collect::<Vec<_>>();
+    self.normalized.hash(hash_state);
+  }
+}
 
-    components.hash(hash_state);
+#[cfg(test)]
+mod test {
+  use super::*;
+  use insta::assert_json_snapshot;
+
+  #[test]
+  pub fn json_trails_order_root_to_leaf() {
+    let mut trails = vec![
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        })
+        .with_component(JsonTrailPathComponent::JsonArray {})
+        .with_component(JsonTrailPathComponent::JsonArrayItem { index: 0 }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("b"),
+        }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("b"),
+        })
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("foo"),
+        }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        }),
+      JsonTrail::empty().with_component(JsonTrailPathComponent::JsonObject {}),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        })
+        .with_component(JsonTrailPathComponent::JsonArray {}),
+    ];
+
+    trails.sort();
+
+    assert_json_snapshot!("json_trails_order_root_to_leaf__sorted", trails);
   }
 }
