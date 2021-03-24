@@ -25,7 +25,7 @@ export async function ingestS3({
   pathPrefix?: string,
   endpointOverride?: string
 }) {
-  let { capturesPath: captureBaseDirectory, opticIgnorePath, configPath } = await getPathsRelativeToConfig();
+  let { capturesPath: capturesBaseDirectory, opticIgnorePath, configPath } = await getPathsRelativeToConfig();
 
   let ignoreRules = await new IgnoreFileHelper(opticIgnorePath, configPath).getCurrentIgnoreRules();
   let parsedRules = ignoreRules
@@ -40,7 +40,7 @@ export async function ingestS3({
   const s3 = new AWS.S3(endpointOverride ? { endpoint: `${endpointOverride}/${bucketName}`, s3BucketEndpoint: true } : undefined);
 
   const captureSaver = new CaptureSaver({
-    captureBaseDirectory,
+    captureBaseDirectory: capturesBaseDirectory,
     captureId,
   });
   await captureSaver.init();
@@ -105,6 +105,33 @@ export async function ingestS3({
   });
 
   await Promise.all([fetchPump(), oboePromose]);
+
+  const files = [
+    {
+      location: path.join(
+        capturesBaseDirectory,
+        captureId,
+        'optic-capture-state.json'
+      ),
+      contents: JSON.stringify({
+        captureId,
+        status: 'completed',
+        metadata: {
+          startedAt: new Date().toISOString(),
+          taskConfig: null,
+          lastInteraction: null,
+        },
+      }),
+    },
+  ];
+
+  await Promise.all(
+    files.map(async (x) => {
+      const { location, contents } = x;
+      await fs.ensureDir(path.dirname(location));
+      return fs.writeFile(location, contents);
+    })
+  );  
 }
 
 async function pipeAsync(tap: Readable, sink: Writable) {

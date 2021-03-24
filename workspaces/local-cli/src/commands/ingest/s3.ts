@@ -46,7 +46,7 @@ export default class IngestS3 extends Command {
       cliClient.setIdentity(await getUser());
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       const uiBaseUrl = makeUiBaseUrl(daemonState);
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/dashboard`;
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
       openBrowser(uiUrl);
       cleanupAndExit();
     } catch (e) {
