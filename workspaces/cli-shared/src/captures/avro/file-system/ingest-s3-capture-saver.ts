@@ -50,20 +50,20 @@ export async function ingestS3({
 
   console.log(`Looking in s3://${bucketName}${prefix} in region ${region}, ${endpointOverride ?? ''}`);
 
-  const listAll = async (token?: ContinuationToken): Promise<S3Object[]> => {
+  const listAll = async (token?: ContinuationToken): Promise<string[]> => {
     const objects = await s3.listObjectsV2({
       Bucket: bucketName,
-      MaxKeys: 100,
+      MaxKeys: 1000,
       Prefix: prefix,
       ContinuationToken: token
     }).promise();
     if (objects.Contents) {
-      console.log(`Found ${objects.Contents.length} capture files to ingest.`);
+      let obj_keys = objects.Contents.map(o=>o.Key).filter((o): o is string => !!o);
       if (objects.IsTruncated) {
         let rest = await listAll(objects.NextContinuationToken);
-        return objects.Contents.concat(rest);
+        return obj_keys.concat(rest);
       } else {
-        return objects.Contents;
+        return obj_keys;
       }
     } else {
       console.log("No object contents?");
@@ -71,35 +71,38 @@ export async function ingestS3({
     }
   }
 
-  let allObjects = await listAll();
+  cli.action.start("Loading capture batch list");
+  let allKeys = await listAll();
+  cli.action.stop(`Found ${allKeys.length} capture batches to ingest`);
   let objectsHandled = 0;
   let passThrough = new stream.PassThrough();
 
   const customBar = cli.progress({
-    format: 'Ingesting | {bar} | {value}/{total} Files',
+    format: 'Ingesting | {bar} | {value}/{total} batches',
     barCompleteChar: '\u2588',
     barIncompleteChar: '\u2591',
   })
-  customBar.start(allObjects.length,0);
+  customBar.start(allKeys.length,0);
 
   let fetchPump = async () => {
-    for (const obj of allObjects) {
-      if (obj.Key) {
-        let objReadStream = s3.getObject({
-          Bucket: bucketName,
-          Key: obj.Key
-        }).createReadStream();
-        await pipeAsync(objReadStream, passThrough);
-        objectsHandled++;
-        customBar.update(objectsHandled);
-      }
+    for (const key of allKeys) {
+      let objReadStream = s3.getObject({
+        Bucket: bucketName,
+        Key: key
+      }).createReadStream();
+      await pipeAsync(objReadStream, passThrough);
+      objectsHandled++;
+      customBar.update(objectsHandled);
     }
   }
+
+  let interactionCount = 0;
 
   const oboePromose = new Promise<void>((resolve, reject) => {
     oboe(passThrough)
       .node('!', (row: IHttpInteraction) => {
         if (!parsedRules.some(r => r.shouldIgnore(row.request.method, `${row.request.host}${row.request.path}?${row.request.query}`))) {
+          interactionCount++;
           captureSaver.save(row);
         }
       })
@@ -115,6 +118,8 @@ export async function ingestS3({
   await Promise.all([fetchPump(), oboePromose]);
 
   customBar.stop();
+
+  console.log(`Successfully loaded ${interactionCount} interaction events from your bucket!`);
 
   const files = [
     {
@@ -142,6 +147,8 @@ export async function ingestS3({
       return fs.writeFile(location, contents);
     })
   );  
+
+  return interactionCount;
 }
 
 async function pipeAsync(tap: Readable, sink: Writable) {
