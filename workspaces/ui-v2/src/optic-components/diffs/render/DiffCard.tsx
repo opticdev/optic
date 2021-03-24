@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import {
   AddedGreen,
+  ChangedYellow,
   OpticBlue,
   OpticBlueLightened,
   OpticBlueReadable,
+  RemovedRed,
   secondary,
+  SubtleBlueBackground,
 } from '../../theme';
 import { makeStyles } from '@material-ui/styles';
 import { Skeleton } from '@material-ui/lab';
@@ -15,16 +18,22 @@ import BlockIcon from '@material-ui/icons/Block';
 import CheckIcon from '@material-ui/icons/Check';
 
 import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
+import InteractionBodyViewerAllJS from './IDiffExampleViewer';
+import { IChangeType, ISuggestion } from '../lib/Interfaces';
+import { SuggestionGroup } from './SuggestionGroup';
 
-type IDiffCardProps = {};
+type IDiffCardProps = {
+  changeType: IChangeType;
+  suggestions: ISuggestion[];
+};
 
-export function DiffCard({}: IDiffCardProps) {
+export function DiffCard({ changeType, suggestions }: IDiffCardProps) {
   const classes = useStyles();
 
   const color = (() => {
-    // if (changeType === 0) return AddedGreen;
-    // if (changeType === 1) return ChangedYellow;
-    // if (changeType === 2) return RemovedRed;
+    if (changeType === 0) return AddedGreen;
+    if (changeType === 1) return ChangedYellow;
+    if (changeType === 2) return RemovedRed;
     return AddedGreen;
   })();
 
@@ -60,36 +69,47 @@ export function DiffCard({}: IDiffCardProps) {
   const [previewTab, setPreviewTab] = useState(previewTabs[0].title);
 
   return (
-    <div className={classes.preview}>
-      {/*{isLoading && <LoadingExample lines={3} />}*/}
-      {previewTabs.length && (
-        <div className={classes.previewHeader}>
-          <Typography
-            variant="caption"
-            style={{ color: OpticBlueReadable, marginRight: 5 }}
-          >
-            {/*{isNewRegion ? 'new body: ' : 'observed as: '}*/}
-          </Typography>
-          {previewTab && (
-            <DiffTabs
-              value={previewTab}
-              style={{ marginBottom: 5 }}
-              // onChange={(e, newValue) => setPreviewTab(newValue)}
+    <>
+      <div className={classes.suggestionRegion}>
+        <SuggestionGroup suggestions={suggestions} />
+      </div>
+
+      <div className={classes.preview}>
+        {/*{isLoading && <LoadingExample lines={3} />}*/}
+        {previewTabs.length && (
+          <div className={classes.previewHeader}>
+            <Typography
+              variant="caption"
+              style={{ color: OpticBlueReadable, marginRight: 5 }}
             >
-              {previewTabs.map((tab, index) => (
-                <DiffTab
-                  key={index}
-                  label={tab.title}
-                  value={tab.title}
-                  invalid={tab.invalid}
-                  selected={previewTab === tab.title}
-                />
-              ))}
-            </DiffTabs>
-          )}
-        </div>
-      )}
-    </div>
+              {/*{isNewRegion ? 'new body: ' : 'observed as: '}*/}
+            </Typography>
+            {previewTab && (
+              <DiffTabs
+                value={previewTab}
+                style={{ marginBottom: 5 }}
+                // onChange={(e, newValue) => setPreviewTab(newValue)}
+              >
+                {previewTabs.map((tab, index) => (
+                  <DiffTab
+                    key={index}
+                    label={tab.title}
+                    value={tab.title}
+                    invalid={tab.invalid}
+                    selected={previewTab === tab.title}
+                  />
+                ))}
+              </DiffTabs>
+            )}
+          </div>
+        )}
+        <InteractionBodyViewerAllJS
+          body={{
+            asJson: exampleGitHub,
+          }}
+        />
+      </div>
+    </>
   );
 }
 
@@ -160,6 +180,7 @@ const useStyles = makeStyles((theme) => ({
   },
   preview: {
     backgroundColor: OpticBlue,
+    overflow: 'scroll',
   },
   previewHeader: {
     display: 'flex',
@@ -167,6 +188,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     paddingLeft: 10,
     paddingRight: 4,
+    position: 'sticky',
+  },
+  suggestionRegion: {
+    backgroundColor: 'white',
+    padding: 8,
+    paddingRight: 0,
   },
 }));
 
@@ -262,3 +289,60 @@ export interface IInteractionPreviewTab {
   // interactionPointers: string[];
   // ignoreRule: IgnoreRule;
 }
+
+const exampleGitHub = {
+  url: 'https://api.github.com/repos/octocat/Hello-World/pulls/1347',
+  id: 1,
+  node_id: 'MDExOlB1bGxSZXF1ZXN0MQ==',
+  html_url: 'https://github.com/octocat/Hello-World/pull/1347',
+  diff_url: 'https://github.com/octocat/Hello-World/pull/1347.diff',
+  patch_url: 'https://github.com/octocat/Hello-World/pull/1347.patch',
+  issue_url: 'https://api.github.com/repos/octocat/Hello-World/issues/1347',
+  commits_url:
+    'https://api.github.com/repos/octocat/Hello-World/pulls/1347/commits',
+  review_comments_url:
+    'https://api.github.com/repos/octocat/Hello-World/pulls/1347/comments',
+  review_comment_url:
+    'https://api.github.com/repos/octocat/Hello-World/pulls/comments{/number}',
+  comments_url:
+    'https://api.github.com/repos/octocat/Hello-World/issues/1347/comments',
+  statuses_url:
+    'https://api.github.com/repos/octocat/Hello-World/statuses/6dcb09b5b57875f334f61aebed695e2e4193db5e',
+  number: 1347,
+  state: 'open',
+  locked: true,
+  title: 'Amazing new feature',
+  user: {
+    login: 'octocat',
+    id: 1,
+    node_id: 'MDQ6VXNlcjE=',
+    avatar_url: 'https://github.com/images/error/octocat_happy.gif',
+    gravatar_id: '',
+    url: 'https://api.github.com/users/octocat',
+    html_url: 'https://github.com/octocat',
+    followers_url: 'https://api.github.com/users/octocat/followers',
+    following_url:
+      'https://api.github.com/users/octocat/following{/other_user}',
+    gists_url: 'https://api.github.com/users/octocat/gists{/gist_id}',
+    starred_url: 'https://api.github.com/users/octocat/starred{/owner}{/repo}',
+    subscriptions_url: 'https://api.github.com/users/octocat/subscriptions',
+    organizations_url: 'https://api.github.com/users/octocat/orgs',
+    repos_url: 'https://api.github.com/users/octocat/repos',
+    events_url: 'https://api.github.com/users/octocat/events{/privacy}',
+    received_events_url: 'https://api.github.com/users/octocat/received_events',
+    type: 'User',
+    site_admin: false,
+  },
+  body: 'Please pull these awesome changes in!',
+  labels: [
+    {
+      id: 208045946,
+      node_id: 'MDU6TGFiZWwyMDgwNDU5NDY=',
+      url: 'https://api.github.com/repos/octocat/Hello-World/labels/bug',
+      name: 'bug',
+      description: "Something isn't working",
+      color: 'f29513',
+      default: true,
+    },
+  ],
+};

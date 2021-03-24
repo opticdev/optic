@@ -68,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     overflow: 'hidden',
     backgroundColor: '#f8fafc',
+    width: '100%',
   },
   headerRegion: {
     display: 'flex',

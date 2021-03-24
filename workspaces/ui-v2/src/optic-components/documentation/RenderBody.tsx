@@ -9,13 +9,14 @@ import { useShapeDescriptor } from '../hooks/useShapeDescriptor';
 export type TwoColumnBodyProps = {
   location: string;
   bodyId: string; //@aidan make sure this name/value makes sense
-  rootShapeId: string
+  rootShapeId: string;
 };
 
 export function TwoColumnBody(props: TwoColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
   return (
     <TwoColumn
+      id={props.bodyId}
       style={{ marginTop: 50 }}
       left={
         <>
@@ -38,5 +39,19 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
         />
       }
     />
+  );
+}
+
+export function OneColumnBody(props: TwoColumnBodyProps) {
+  const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
+  return (
+    <div style={{ marginTop: 50, width: '100%' }} id={props.bodyId}>
+      <Typography variant="h6">{props.location}</Typography>
+      <BodyRender
+        location="application/json"
+        shape={shapeChoices}
+        style={{ marginTop: 20 }}
+      />
+    </div>
   );
 }

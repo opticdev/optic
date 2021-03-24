@@ -5,12 +5,13 @@ export type TwoColumnProps = {
   left: any;
   right: any;
   style?: any;
+  id?: string;
 };
 
 export function TwoColumn(props: TwoColumnProps) {
   const classes = useStyles();
   return (
-    <div className={classes.container} style={props.style}>
+    <div id={props.id} className={classes.container} style={props.style}>
       <div className={classes.left}>{props.left}</div>
       <div className={classes.right}>{props.right}</div>
     </div>

@@ -13,6 +13,16 @@ export interface ICopy {
   text: string;
 }
 
+export function plain(text: string): ICopy {
+  return { text: text, style: ICopyStyle.Plain };
+}
+export function bold(text: string): ICopy {
+  return { text: text, style: ICopyStyle.Bold };
+}
+export function code(text: string): ICopy {
+  return { text: text.trim(), style: ICopyStyle.Code };
+}
+
 export function ICopyRender({
   copy,
   style,
@@ -34,7 +44,7 @@ export function ICopyRender({
                   variant={variant}
                   style={{
                     ...style,
-                    fontWeight: 200,
+                    fontWeight: 400,
                     whiteSpace: 'break-spaces',
                   }}
                 >

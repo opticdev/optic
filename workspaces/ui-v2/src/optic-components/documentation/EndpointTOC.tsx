@@ -4,6 +4,7 @@ import { getReasonPhrase } from 'http-status-codes';
 import { List, ListItem, Typography } from '@material-ui/core';
 import { SubtleGreyBackground } from '../theme';
 import { IRequestBody, IResponseBody } from '../hooks/useEndpointBodyHook';
+import { goToAnchor } from '../utilities/go-to-anchor';
 
 export type EndpointTOCProps = {
   requests: IRequestBody[];
@@ -38,7 +39,7 @@ export function EndpointTOC(props: EndpointTOCProps) {
           <EndpointTOCRow
             key={index}
             label={'Request Body'}
-            anchorLink={''}
+            anchorLink={i.requestId}
             detail={
               <>
                 consumes <Code value="application/json" />
@@ -54,7 +55,7 @@ export function EndpointTOC(props: EndpointTOCProps) {
             label={`${getReasonPhrase(i.statusCode)} - ${
               i.statusCode
             } Response`}
-            anchorLink={''}
+            anchorLink={i.responseId}
             key={index}
             detail={
               <>
@@ -74,11 +75,15 @@ export type EndpointTOCRowProps = {
   detail: any;
 };
 
-export function EndpointTOCRow({ label, detail }: EndpointTOCRowProps) {
+export function EndpointTOCRow({
+  label,
+  detail,
+  anchorLink,
+}: EndpointTOCRowProps) {
   const classes = useStyles();
 
   return (
-    <ListItem className={classes.row} button>
+    <ListItem className={classes.row} button onClick={goToAnchor(anchorLink)}>
       <div className={classes.leftContent}>{label}</div>
       <div className={classes.rightContent}> {detail}</div>
     </ListItem>

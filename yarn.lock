@@ -1552,15 +1552,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0":
-  version: 7.13.10
-  resolution: "@babel/runtime@npm:7.13.10"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 22014226b96a8c8e8d4e8bcdb011f317d1b32881aef424a669dc6ceaee14993d3609172967853cbf9c25c724c25145d45885b6c9df56ba241c12820776607f1f
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.3, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
   version: 7.13.9
   resolution: "@babel/runtime@npm:7.13.9"
@@ -3301,12 +3292,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.get@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "@types/lodash.get@npm:4.4.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: f08237e3d45e7883cf2cfe202475db6a2bd1a53576c0e66b2e89e0ca0c6f36e700ecc9926ad28b3b9ff6d348074f8c82b393f9fc2cf523fa26a86c95304f7a02
+  languageName: node
+  linkType: hard
+
 "@types/lodash.groupby@npm:^4.6.6":
   version: 4.6.6
   resolution: "@types/lodash.groupby@npm:4.6.6"
   dependencies:
     "@types/lodash": "*"
   checksum: 03607aaa6e6d059ce010966138322859dd5438c63f35413e3c9744b6f295a82cc82470a462cfc6987e6b0c97468370cb935a498554c2746e6365de0ea0882e68
+  languageName: node
+  linkType: hard
+
+"@types/lodash.isequal@npm:^4.5.5":
+  version: 4.5.5
+  resolution: "@types/lodash.isequal@npm:4.5.5"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 141df617686010657bb3e46b21facce2dd15b771fdfebd9df2f3d6fd3603d6336b64da4027257402c640f71b65d91eca9305b53d282cf604bcbb88e662034aad
   languageName: node
   linkType: hard
 
@@ -3325,6 +3334,15 @@ __metadata:
   dependencies:
     "@types/lodash": "*"
   checksum: 6ee4ca706681cb561b96f0b7a14da2f637783d0fe9af0b68efa8f29bff3b2caa1ad4e13d59ed139a4e4ef10098c825447045145b1b8f63410cdb5dc256b33082
+  languageName: node
+  linkType: hard
+
+"@types/lodash.uniq@npm:^4.5.6":
+  version: 4.5.6
+  resolution: "@types/lodash.uniq@npm:4.5.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 1f25cfeeef528a6da8921098d390dcef9caf1713ed7cdeb32af7da82486e81e62d2d046dd069f3a68981b2e4397b42400a441c5343e2a2de492aea635a1004b9
   languageName: node
   linkType: hard
 
@@ -3558,15 +3576,6 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 7d9d9ecf8187902c129c4bf99ee911658f5cf97ffe56f31703be06df70b5209d49515386e26be540508436c8383d2cb1cdc287777103c5eb5106a1027281e8ec
-  languageName: node
-  linkType: hard
-
-"@types/react-window@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@types/react-window@npm:1.8.2"
-  dependencies:
-    "@types/react": "*"
-  checksum: 9124565e95741f7cc0082aeeb9638cb4bb756c7921f04983f99d86582d1c4caeec1806d3231250e39e0270ba222b6e7e05d55e7afdb59f394219362ab7f76648
   languageName: node
   linkType: hard
 
@@ -4379,8 +4388,11 @@ __metadata:
     "@types/classnames": ^2.2.11
     "@types/jest": ^26.0.20
     "@types/lodash.debounce": ^4.0.6
+    "@types/lodash.get": ^4.4.6
     "@types/lodash.groupby": ^4.6.6
+    "@types/lodash.isequal": ^4.5.5
     "@types/lodash.sortby": ^4.7.6
+    "@types/lodash.uniq": ^4.5.6
     "@types/long": ^4.0.1
     "@types/node": ^14.14.32
     "@types/pad-left": ^2.1.0
@@ -4388,7 +4400,6 @@ __metadata:
     "@types/react-dom": ^17.0.2
     "@types/react-helmet": ^6.1.0
     "@types/react-router-dom": ^5.1.7
-    "@types/react-window": ^1.8.2
     "@typescript-eslint/eslint-plugin": ^4.5.0
     "@typescript-eslint/parser": ^4.5.0
     "@useoptic/cli-config": "workspace:workspaces/cli-config"
@@ -4429,9 +4440,11 @@ __metadata:
     jest-watch-typeahead: 0.6.1
     lodash.debounce: ^4.0.8
     lodash.flatten: ^4.4.0
+    lodash.get: ^4.4.2
     lodash.groupby: ^4.6.0
     lodash.isequal: ^4.5.0
     lodash.sortby: ^4.7.0
+    lodash.uniq: ^4.5.0
     mini-css-extract-plugin: 0.11.3
     nice-try: ^3.0.0
     optimize-css-assets-webpack-plugin: 5.0.4
@@ -4452,7 +4465,6 @@ __metadata:
     react-markdown: ^5.0.3
     react-refresh: ^0.8.3
     react-router-dom: ^5.2.0
-    react-window: ^1.8.6
     resolve: 1.18.1
     resolve-url-loader: ^3.1.2
     sass-loader: ^10.0.5
@@ -14295,13 +14307,6 @@ fsevents@~2.1.1:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:>=3.1.1 <6":
-  version: 5.1.1
-  resolution: "memoize-one@npm:5.1.1"
-  checksum: e7c4a9cceca71334bf09c38818c375a280dc6e8ec03a92701c16199763269ce756b7b0b370f4b464c071045349fb7b3e4a3cc7460a3f46a277f394d8634a6eb5
-  languageName: node
-  linkType: hard
-
 "memory-fs@npm:^0.4.1":
   version: 0.4.1
   resolution: "memory-fs@npm:0.4.1"
@@ -17730,19 +17735,6 @@ fsevents@~2.1.1:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: e14446123f820e804335c64be5270333c29e8cfaa43dfc33387e132c5d521cf4a0a7c2408058a147b254ae82a6569f373394d83e977ef340d6937bc2f4ff7d6c
-  languageName: node
-  linkType: hard
-
-"react-window@npm:^1.8.6":
-  version: 1.8.6
-  resolution: "react-window@npm:1.8.6"
-  dependencies:
-    "@babel/runtime": ^7.0.0
-    memoize-one: ">=3.1.1 <6"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0
-    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: e2bfdfbe39f165c8ca4005b36837288546db5701fc6b53da0acb352317f5dad14cd7abbdff3b13644a8615074fa9841996249b2776f8f94e7efa4e37236b06a4
   languageName: node
   linkType: hard
 

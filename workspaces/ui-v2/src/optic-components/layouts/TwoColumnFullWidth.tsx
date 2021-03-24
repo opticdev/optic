@@ -18,7 +18,7 @@ export function TwoColumnFullWidth(props: TwoColumnFullWidthProps) {
       className={classes.wrapper}
       style={props.style}
     >
-      <Paper square className={classes.left}>
+      <Paper square className={classes.left} elevation={4}>
         {props.left}
       </Paper>
       <div className={classes.right}>{props.right}</div>
@@ -42,5 +42,5 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  right: { flex: 1 },
+  right: { flex: 1, overflow: 'scroll', height: 'calc(100vh - 40px)' },
 }));

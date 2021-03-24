@@ -25,7 +25,7 @@ export const methodColors = {
   PATCH: '#c8a5dc',
   DELETE: '#cd8d8c',
 };
-export const methodColorsDark: {[key: string]: string | undefined} = {
+export const methodColorsDark: { [key: string]: string | undefined } = {
   OPTIONS: '#686868',
   GET: '#276c4e',
   POST: '#264859',
@@ -33,6 +33,14 @@ export const methodColorsDark: {[key: string]: string | undefined} = {
   PATCH: '#796384',
   DELETE: '#be5353',
 };
+
+export const ShapeViewerTheme = {
+  updated: { main: UpdatedBlue, background: UpdatedBlueBackground },
+  changed: { main: ChangedYellow, background: ChangedYellowBackground },
+  added: { main: AddedGreen, background: AddedGreenBackground },
+  removed: { main: RemovedRed, background: RemovedRedBackground },
+};
+
 export const appTheme = createMuiTheme({
   palette: {
     primary: { main: primary },
@@ -40,5 +48,5 @@ export const appTheme = createMuiTheme({
     info: {
       main: '#323232',
     },
-  }
+  },
 });
