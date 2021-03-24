@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import {cli} from "cli-ux";
 import stream, { Readable, Writable } from "stream";
 import { getPathsRelativeToConfig, parseRule } from '@useoptic/cli-config';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
@@ -74,6 +75,13 @@ export async function ingestS3({
   let objectsHandled = 0;
   let passThrough = new stream.PassThrough();
 
+  const customBar = cli.progress({
+    format: 'Ingesting | {bar} | {value}/{total} Files',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+  })
+  customBar.start(allObjects.length,0);
+
   let fetchPump = async () => {
     for (const obj of allObjects) {
       if (obj.Key) {
@@ -83,7 +91,7 @@ export async function ingestS3({
         }).createReadStream();
         await pipeAsync(objReadStream, passThrough);
         objectsHandled++;
-        console.log(`Handled ${objectsHandled}/${allObjects.length} files`);
+        customBar.update(objectsHandled);
       }
     }
   }
@@ -105,6 +113,8 @@ export async function ingestS3({
   });
 
   await Promise.all([fetchPump(), oboePromose]);
+
+  customBar.stop();
 
   const files = [
     {
@@ -136,6 +146,7 @@ export async function ingestS3({
 
 async function pipeAsync(tap: Readable, sink: Writable) {
   return new Promise((resolve, reject) => {
+    // end: false is important -- it prevents the stream from ending when one source emits an `end` event
     tap.pipe(sink, { end: false })
     tap.on("end", resolve)
     tap.on("error", reject)
