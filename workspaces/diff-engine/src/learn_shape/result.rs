@@ -22,16 +22,40 @@ impl TrailObservationsResult {
     }
   }
 
-  pub fn into_commands<F>(self, generate_id: &F) -> impl Iterator<Item = SpecCommand>
+  pub fn into_commands<F>(
+    mut self,
+    generate_id: &F,
+  ) -> (Option<String>, impl Iterator<Item = SpecCommand>)
   where
     F: Fn() -> String,
   {
-    self
-      .values_by_trail
-      .into_iter()
-      .map(|(json_trail, trail_values)| {
-        let shape_prototype = trail_values.into_shape_prototype(&generate_id);
+    let sorted_trails = {
+      let mut trails = self
+        .values_by_trail
+        .keys()
+        .map(|trail| trail.clone())
+        .collect::<Vec<_>>();
+      trails.sort(); // parents before children
+      trails
+    };
 
+    let shape_prototypes = sorted_trails
+      .into_iter()
+      .rev() // leafs first
+      .map(|json_trail| {
+        let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
+
+        trail_values.into_shape_prototype(&generate_id)
+      })
+      .collect::<Vec<_>>();
+
+    let root_shape_id = shape_prototypes
+      .last() // since we created these leafs first, the last must be the root
+      .map(|last_shape| last_shape.id.clone());
+
+    let commands_iter = shape_prototypes
+      .into_iter()
+      .map(|shape_prototype| {
         let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
           match shape_prototype.prototype_descriptor {
             ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
@@ -70,7 +94,9 @@ impl TrailObservationsResult {
       )
       .into_iter()
       .flatten()
-      .map(|command| SpecCommand::from(command))
+      .map(|command| SpecCommand::from(command));
+
+    (root_shape_id, commands_iter)
   }
 }
 

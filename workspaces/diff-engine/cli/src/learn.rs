@@ -14,7 +14,8 @@ use uuid::Uuid;
 use optic_diff_engine::streams;
 use optic_diff_engine::{analyze_undocumented_bodies, SpecCommand};
 use optic_diff_engine::{
-  HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection, TrailObservationsResult,
+  BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection,
+  TrailObservationsResult,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
@@ -121,7 +122,26 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
     }
 
     for (body_location, observations) in observations_by_body_location {
-      let commands = observations.into_commands(&generate_id);
+      let (root_shape_id, commands) = observations.into_commands(&generate_id);
+      let (content_type, status_code) = match &body_location {
+        BodyAnalysisLocation::Request { content_type, .. } => (content_type.clone(), None),
+        BodyAnalysisLocation::Response {
+          content_type,
+          status_code,
+          ..
+        } => (content_type.clone(), Some(*status_code)),
+      };
+
+      if let Some(root_shape_id) = root_shape_id {
+        let endpoint_body = EndpointBody {
+          content_type,
+          status_code,
+          commands: commands.collect(),
+          root_shape_id,
+        };
+
+        dbg!(endpoint_body);
+      }
     }
   });
 
@@ -132,7 +152,7 @@ fn generate_id() -> String {
   uuid::Uuid::new_v4().to_hyphenated().to_string()
 }
 
-#[derive(Default, Serialize)]
+#[derive(Default, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct EndpointBodies {
   path_id: String,
@@ -152,11 +172,11 @@ impl EndpointBodies {
   }
 }
 
-#[derive(Default, Serialize)]
+#[derive(Default, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct EndpointBody {
   content_type: String,
   status_code: Option<u16>,
   commands: Vec<SpecCommand>,
-  rootShapeId: String,
+  root_shape_id: String,
 }

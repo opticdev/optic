@@ -19,7 +19,7 @@ pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent};
 pub use interactions::analyze_undocumented_bodies;
 pub use interactions::diff as diff_interaction;
-pub use interactions::result::{BodyAnalysisResult, InteractionDiffResult};
+pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 pub use learn_shape::TrailObservationsResult;
 pub use projections::{
   EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
