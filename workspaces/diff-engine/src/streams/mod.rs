@@ -1,8 +1,12 @@
 use bytes::{BufMut, Bytes, BytesMut};
+use futures::{sink::Sink, SinkExt};
 use serde::Serialize;
 use serde_json;
 use std::io;
-use tokio_util::codec::Encoder;
+use tokio::io::{
+  AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader, BufWriter, Lines,
+};
+use tokio_util::codec::{Encoder, FramedWrite};
 
 pub mod diff;
 pub mod http_interaction;
@@ -66,4 +70,54 @@ impl From<serde_json::Error> for JsonLineEncoderError {
   fn from(err: serde_json::Error) -> JsonLineEncoderError {
     JsonLineEncoderError::Json(err)
   }
+}
+
+// TODO: return a proper error, so downstream can distinguish between IO, serde, etc
+// TODO: make this work with impl Stream instead
+pub async fn write_to_json_array<'a, S, I>(
+  sink: S,
+  items: impl IntoIterator<Item = &'a I>,
+) -> Result<(), &'static str>
+where
+  S: AsyncWrite,
+  S: Unpin,
+  I: Serialize,
+  I: 'a,
+  // E: Unpin
+{
+  let mut framed_write = into_json_array_items(sink);
+
+  framed_write
+    .get_mut()
+    .write_u8(b'[')
+    .await
+    .map_err(|_| "could not write array start")?;
+
+  for item in items {
+    if let Err(_) = framed_write.send(item).await {
+      panic!("could not item to sink"); // TODO: Find way to actually write error info
+    }
+  }
+  framed_write
+    .get_mut()
+    .write_u8(b']')
+    .await
+    .map_err(|_| "could not write array start to sink")?;
+
+  framed_write
+    .get_mut()
+    .flush()
+    .await
+    .map_err(|_| "could not flush sink")?;
+
+  Ok(())
+}
+
+pub fn into_json_array_items<S>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
+where
+  S: AsyncWrite,
+{
+  let writer = BufWriter::new(sink);
+  let codec = JsonLineEncoder::new(b"\n,");
+  FramedWrite::new(writer, codec)
 }

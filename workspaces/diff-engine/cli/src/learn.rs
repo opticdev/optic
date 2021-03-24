@@ -108,11 +108,11 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
   };
 
   let aggregating_results = tokio::spawn(async move {
-    let mut observations_by_body_location = HashMap::new();
     let stdout = stdout();
 
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
+    let mut observations_by_body_location = HashMap::new();
     while let Some(analysis) = analysiss.next().await {
       let existing_observations = observations_by_body_location
         .entry(analysis.body_location)
@@ -121,15 +121,26 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
       existing_observations.union(analysis.trail_observations);
     }
 
+    let mut endpoint_bodies_by_endpoint = HashMap::new();
     for (body_location, observations) in observations_by_body_location {
       let (root_shape_id, commands) = observations.into_commands(&generate_id);
-      let (content_type, status_code) = match &body_location {
-        BodyAnalysisLocation::Request { content_type, .. } => (content_type.clone(), None),
+      let (content_type, status_code, path_id, method) = match &body_location {
+        BodyAnalysisLocation::Request {
+          content_type,
+          path_id,
+          method,
+        } => (content_type.clone(), None, path_id.clone(), method.clone()),
         BodyAnalysisLocation::Response {
           content_type,
           status_code,
-          ..
-        } => (content_type.clone(), Some(*status_code)),
+          path_id,
+          method,
+        } => (
+          content_type.clone(),
+          Some(*status_code),
+          path_id.clone(),
+          method.clone(),
+        ),
       };
 
       if let Some(root_shape_id) = root_shape_id {
@@ -140,9 +151,19 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
           root_shape_id,
         };
 
-        dbg!(endpoint_body);
+        let endpoint_bodies = endpoint_bodies_by_endpoint
+          .entry((path_id, method))
+          .or_insert_with_key(|(path_id, method)| {
+            EndpointBodies::new(path_id.clone(), method.clone())
+          });
+
+        endpoint_bodies.push_body(endpoint_body);
       }
     }
+
+    streams::write_to_json_array(stdout, endpoint_bodies_by_endpoint.values())
+      .await
+      .expect("could not write endpoint bodies to stdout");
   });
 
   try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
@@ -169,6 +190,16 @@ impl EndpointBodies {
       requests: vec![],
       response: vec![],
     }
+  }
+
+  pub fn push_body(&mut self, body: EndpointBody) {
+    // TODO: get rid of this ducktyping and introduce EndpointRequestBody and EndpointResponseBody
+    let collection = match body.status_code {
+      Some(_) => &mut self.response,
+      None => &mut self.requests,
+    };
+
+    collection.push(body);
   }
 }
 
