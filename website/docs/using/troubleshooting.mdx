@@ -1,0 +1,38 @@
+---
+title: Troubleshooting
+sidebar_label: Troubleshooting
+---
+
+### Debug Captures
+If you encounter an error within Optic, you can help us fix your issue and improve the experience for other members of the community by sending us a debug capture.
+
+Debug captures sanitize your JSON bodies using the same [Shape Hash](https://github.com/opticdev/shape-hash) function we use in the Optic Agents designed for staging and production environments. This removes all the actual JSON values from your capture, but retains the keys and shape of the data for Optic to process.
+
+When our team runs your debug capture we'll see all the JSON values replaced by filler data of the same type. For example:
+
+```json
+{
+  "name": "Bob",
+  "age": 35,
+  "isAdmin": true
+}
+```
+```json
+{
+  "name": "string",
+  "age": 0,
+  "isAdmin": true
+}
+```
+
+### Creating Debug Captures
+1. Open a capture in Optic `/apis/1/diffs/{captureId}`
+2. Open the Developer Tools Console and run the command:
+
+``` javascript
+debugOptic()
+```
+
+3. A JSON file will be downloaded. This file contains a copy of your spec, and a sanitized Optic capture that is safe to share with our team since it does not contain any sensitive data.
+
+[Share it with the Optic team](https://github.com/opticdev/optic/issues/new), and we'll help you get the issue resolved!
