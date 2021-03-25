@@ -11,5 +11,5 @@ where
   S: AsyncWrite,
   T: Serialize,
 {
-  super::into_json_lines(sink)
+  super::into_json_lines::<S, T>(sink)
 }

@@ -42,7 +42,7 @@ pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent>
 where
   S: AsyncWrite,
 {
-  super::into_json_lines(sink)
+  super::into_json_lines::<S, SpecEvent>(sink)
 }
 
 pub fn into_json_array_items<S>(sink: S) -> impl Sink<SpecEvent>
@@ -55,7 +55,7 @@ where
 pub async fn write_to_json_array<S>(
   sink: S,
   spec_events: impl IntoIterator<Item = &SpecEvent>,
-) -> Result<(), &'static str>
+) -> Result<(), super::JsonLineEncoderError>
 where
   S: AsyncWrite,
   S: Unpin,

@@ -55,8 +55,11 @@ where
   }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum JsonLineEncoderError {
+  #[error("json serialisation error: {}", .0)]
   Json(serde_json::Error),
+  #[error("io error: {}", .0)]
   Io(io::Error),
 }
 
@@ -83,11 +86,11 @@ where
   I: 'a,
   // E: Unpin
 {
-  let mut framed_write = into_json_lines(sink);
+  let mut framed_write = into_json_lines::<S, I>(sink);
 
   for item in items {
     if let Err(_) = framed_write.send(item).await {
-      panic!("could not item to sink"); // TODO: Find way to actually write error info
+      panic!("could not send json line to sink"); // TODO: Find way to actually write error info
     }
   }
 
@@ -99,7 +102,7 @@ where
 pub async fn write_to_json_array<'a, S, I>(
   sink: S,
   items: impl IntoIterator<Item = &'a I>,
-) -> Result<(), &'static str>
+) -> Result<(), JsonLineEncoderError>
 where
   S: AsyncWrite,
   S: Unpin,
@@ -109,33 +112,21 @@ where
 {
   let mut framed_write = into_json_array_items(sink);
 
-  framed_write
-    .get_mut()
-    .write_u8(b'[')
-    .await
-    .map_err(|_| "could not write array start")?;
+  framed_write.get_mut().write_u8(b'[').await?;
 
   for item in items {
     if let Err(_) = framed_write.send(item).await {
-      panic!("could not item to sink"); // TODO: Find way to actually write error info
+      panic!("could not send json array item to sink"); // TODO: Find way to actually write error info
     }
   }
-  framed_write
-    .get_mut()
-    .write_u8(b']')
-    .await
-    .map_err(|_| "could not write array start to sink")?;
+  framed_write.get_mut().write_u8(b']').await?;
 
-  framed_write
-    .get_mut()
-    .flush()
-    .await
-    .map_err(|_| "could not flush sink")?;
+  framed_write.get_mut().flush().await?;
 
   Ok(())
 }
 
-pub fn into_json_lines<S, I>(sink: S) -> impl Sink<I>
+pub fn into_json_lines<S, I>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
 where
   S: AsyncWrite,
   I: Serialize,
