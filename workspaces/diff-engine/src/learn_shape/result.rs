@@ -24,10 +24,10 @@ impl TrailObservationsResult {
 
   pub fn into_commands<F>(
     mut self,
-    generate_id: &F,
+    mut generate_id: &mut F,
   ) -> (Option<String>, impl Iterator<Item = SpecCommand>)
   where
-    F: Fn() -> String,
+    F: FnMut() -> String,
   {
     let sorted_trails = {
       let mut trails = self
@@ -45,7 +45,7 @@ impl TrailObservationsResult {
       .map(|json_trail| {
         let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
 
-        trail_values.into_shape_prototype(&generate_id)
+        trail_values.into_shape_prototype(&mut generate_id)
       })
       .collect::<Vec<_>>();
 
@@ -62,7 +62,7 @@ impl TrailObservationsResult {
               let shape_kind_descriptor = base_shape_kind.get_descriptor();
               let add_command = ShapeCommand::add_shape(
                 shape_prototype.id,
-                String::from(shape_kind_descriptor.name),
+                String::from(shape_kind_descriptor.base_shape_id),
                 String::from(""),
               );
               [Some(vec![add_command]), None]
@@ -144,9 +144,9 @@ impl TrailValues {
     // TODO: figure out what to do about field sets
   }
 
-  fn into_shape_prototype<F>(self, generate_id: &F) -> ShapePrototype
+  fn into_shape_prototype<F>(self, generate_id: &mut F) -> ShapePrototype
   where
-    F: Fn() -> String,
+    F: FnMut() -> String,
   {
     let mut descriptors: Vec<_> = vec![
       if self.was_string {
@@ -235,4 +235,73 @@ enum ShapePrototypeDescriptor {
     base_shape_kind: ShapeKind,
   },
   Unknown,
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::learn_shape::observe_body_trails;
+  use crate::projections::SpecProjection;
+  use crate::state::body::BodyDescriptor;
+  use cqrs_core::Aggregate;
+  use insta::assert_debug_snapshot;
+  use serde_json::json;
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_primitive_bodies() {
+    let string_body = BodyDescriptor::from(json!("a string body"));
+    let number_body = BodyDescriptor::from(json!(48));
+    let boolean_body = BodyDescriptor::from(json!(true));
+
+    let string_observations = observe_body_trails(string_body);
+    let number_observations = observe_body_trails(number_body);
+    let boolean_observations = observe_body_trails(boolean_body);
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+    let spec_projection = SpecProjection::default();
+
+    let string_results = collect_commands(string_observations.into_commands(&mut test_id));
+    assert!(string_results.0.is_some());
+    assert_eq!(string_results.1.len(), 1);
+    spec_projection
+      .execute((&string_results.1[0]).clone())
+      .expect("generated command should be valid");
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_primitive_bodies__string_results",
+      &string_results
+    );
+
+    let number_results = collect_commands(number_observations.into_commands(&mut test_id));
+    assert!(number_results.0.is_some());
+    assert_eq!(number_results.1.len(), 1);
+    spec_projection
+      .execute((&number_results.1[0]).clone())
+      .expect("generated command should be valid");
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_primitive_bodies__number_results",
+      number_results
+    );
+
+    let boolean_results = collect_commands(boolean_observations.into_commands(&mut test_id));
+    assert!(boolean_results.0.is_some());
+    assert_eq!(boolean_results.1.len(), 1);
+    spec_projection
+      .execute((&boolean_results.1[0]).clone())
+      .expect("generated command should be valid");
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_primitive_bodies__boolean_results",
+      boolean_results
+    );
+  }
+
+  fn collect_commands(
+    (root_shape_id, commands): (Option<String>, impl Iterator<Item = SpecCommand>),
+  ) -> (Option<String>, Vec<SpecCommand>) {
+    (root_shape_id, commands.collect::<Vec<_>>())
+  }
 }

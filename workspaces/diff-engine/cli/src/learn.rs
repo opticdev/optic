@@ -124,7 +124,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
 
     let mut endpoint_bodies_by_endpoint = HashMap::new();
     for (body_location, observations) in observations_by_body_location {
-      let (root_shape_id, commands) = observations.into_commands(&generate_id);
+      let (root_shape_id, commands) = observations.into_commands(&mut generate_id);
       let (content_type, status_code, path_id, method) = match &body_location {
         BodyAnalysisLocation::Request {
           content_type,
