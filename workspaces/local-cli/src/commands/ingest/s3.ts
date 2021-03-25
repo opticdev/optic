@@ -1,9 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
-import { ingestS3 } from "@useoptic/cli-shared/build/captures/avro/file-system/ingest-s3-capture-saver";
-import {
-  LiveTrafficIngestedWithLocalCli,
-} from '@useoptic/analytics/lib/events/tasks';
+import { ingestS3 } from '@useoptic/cli-shared/build/captures/avro/file-system/ingest-s3-capture-saver';
+import { LiveTrafficIngestedWithLocalCli } from '@useoptic/analytics/lib/events/tasks';
 import { lockFilePath } from '../../shared/paths';
 import { Config } from '../../config';
 import { cleanupAndExit, makeUiBaseUrl } from '@useoptic/cli-shared';
@@ -16,32 +14,31 @@ export default class IngestS3 extends Command {
   static hidden: boolean = true;
 
   static flags = {
-    bucketName: flags.string({ required: true, char: "b" }),
-    region: flags.string({ char: "r" }),
-    captureId: flags.string({ char: "c", required: true }),
+    bucketName: flags.string({ required: true, char: 'b' }),
+    region: flags.string({ char: 'r' }),
+    captureId: flags.string({ char: 'c', required: true }),
     pathPrefix: flags.string({ required: false }),
-    endpointOverride: flags.string({ required: false })
-  }
+    endpointOverride: flags.string({ required: false }),
+  };
 
   async run() {
     try {
-      const { flags: {
-        bucketName,
-        region,
-        captureId,
-        pathPrefix,
-        endpointOverride
-      } } = this.parse(IngestS3);
+      const {
+        flags: { bucketName, region, captureId, pathPrefix, endpointOverride },
+      } = this.parse(IngestS3);
 
       let interactionCount = await ingestS3({
         bucketName,
         region,
         captureId,
         pathPrefix,
-        endpointOverride
+        endpointOverride,
       });
 
-      const daemonState = await ensureDaemonStarted(lockFilePath, Config.apiBaseUrl);
+      const daemonState = await ensureDaemonStarted(
+        lockFilePath,
+        Config.apiBaseUrl
+      );
 
       const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
       const paths = await getPathsRelativeToConfig();
@@ -62,7 +59,7 @@ export default class IngestS3 extends Command {
         apiCfg.name,
         LiveTrafficIngestedWithLocalCli.withProps({
           captureId,
-          interactionCount
+          interactionCount,
         })
       );
 
