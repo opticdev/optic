@@ -25,6 +25,7 @@ pub fn create_subcommand<'a, 'b>() -> App<'a, 'b> {
     .about("Learns about possible changes to the spec based on interactions or diffs")
     .arg(
       Arg::with_name("undocumented-bodies")
+        .long("undocumented-bodies")
         .takes_value(false)
         .help("Learn shapes of undocumented bodies from interactions piped to stdin"),
     )
@@ -161,7 +162,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
       }
     }
 
-    streams::write_to_json_array(stdout, endpoint_bodies_by_endpoint.values())
+    streams::write_to_json_lines(stdout, endpoint_bodies_by_endpoint.values())
       .await
       .expect("could not write endpoint bodies to stdout");
   });

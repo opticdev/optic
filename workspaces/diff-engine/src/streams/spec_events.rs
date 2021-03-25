@@ -42,18 +42,14 @@ pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent>
 where
   S: AsyncWrite,
 {
-  let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b"\n");
-  FramedWrite::new(writer, codec)
+  super::into_json_lines(sink)
 }
 
-pub fn into_json_array_items<S>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
+pub fn into_json_array_items<S>(sink: S) -> impl Sink<SpecEvent>
 where
   S: AsyncWrite,
 {
-  let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b"\n,");
-  FramedWrite::new(writer, codec)
+  super::into_json_array_items(sink)
 }
 
 pub async fn write_to_json_array<S>(

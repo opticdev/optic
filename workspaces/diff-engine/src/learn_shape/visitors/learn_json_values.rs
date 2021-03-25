@@ -92,8 +92,6 @@ impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
       .get(&json_trail)
       .expect("expected map to contain a value at the json_trail");
 
-    dbg!(&trail_values);
-
     match body {
       BodyDescriptor::Boolean => trail_values.was_boolean = true,
       BodyDescriptor::Number => trail_values.was_number = true,

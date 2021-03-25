@@ -72,6 +72,28 @@ impl From<serde_json::Error> for JsonLineEncoderError {
   }
 }
 
+pub async fn write_to_json_lines<'a, S, I>(
+  sink: S,
+  items: impl IntoIterator<Item = &'a I>,
+) -> Result<(), &'static str>
+where
+  S: AsyncWrite,
+  S: Unpin,
+  I: Serialize,
+  I: 'a,
+  // E: Unpin
+{
+  let mut framed_write = into_json_lines(sink);
+
+  for item in items {
+    if let Err(_) = framed_write.send(item).await {
+      panic!("could not item to sink"); // TODO: Find way to actually write error info
+    }
+  }
+
+  Ok(())
+}
+
 // TODO: return a proper error, so downstream can distinguish between IO, serde, etc
 // TODO: make this work with impl Stream instead
 pub async fn write_to_json_array<'a, S, I>(
@@ -111,6 +133,16 @@ where
     .map_err(|_| "could not flush sink")?;
 
   Ok(())
+}
+
+pub fn into_json_lines<S, I>(sink: S) -> impl Sink<I>
+where
+  S: AsyncWrite,
+  I: Serialize,
+{
+  let writer = BufWriter::new(sink);
+  let codec = JsonLineEncoder::new(b"\n");
+  FramedWrite::new(writer, codec)
 }
 
 pub fn into_json_array_items<S>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
