@@ -822,7 +822,6 @@ function objectRows(
 
   const objectKeys = _uniq([...Object.keys(objectShape), ...keysWithDiffs]);
   let collapsedCount = 0;
-
   const collapseAt = 9;
 
   const shouldCollapse =

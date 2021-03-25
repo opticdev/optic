@@ -1,0 +1,238 @@
+import React from 'react';
+import { makeStyles } from '@material-ui/styles';
+import { Theme } from '@material-ui/core/styles';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { EndpointName } from '../documentation/EndpointName';
+import { AddedDarkGreen, OpticBlueReadable } from '../theme';
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@material-ui/core';
+
+const tabs123: any[] = [
+  { method: 'GET', fullPath: '/todos/{todoId}', diffs: 3, done: true },
+  { method: 'GET', fullPath: '/todos', diffs: 1, done: true },
+  { method: 'PUT', fullPath: '/todos/{todoId}/status', diffs: 2, done: false },
+];
+
+export function DiffAccessoryNavigation() {
+  const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+
+  const hasChanges = false;
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div className={classes.root}>
+        <Tabs
+          value={value}
+          classes={{ root: classes.tabsRoot }}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="on"
+          aria-label="scrollable auto tabs example"
+        >
+          <UndocumentedTab
+            onClick={() => setValue(0)}
+            numberOfUndocumented={123}
+            done={false}
+          />
+          {tabs123.map((i, index) => (
+            <EndpointChangedTab
+              key={index + 1}
+              onClick={() => setValue(index + 1)}
+              value={index + 1}
+              method={i.method}
+              fullPath={i.fullPath}
+              diffs={i.diffs}
+              done={i.done}
+            />
+          ))}
+        </Tabs>
+      </div>
+      <div className={classes.finishedButtons}>
+        {hasChanges && (
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            style={{ fontSize: 10 }}
+          >
+            Save Changes
+          </Button>
+        )}
+        <ExtraDiffOptions />
+      </div>
+    </div>
+  );
+}
+
+type IEndpointChangedTabProps = {
+  method: string;
+  fullPath: string;
+  diffs: number;
+  done: boolean;
+  value: number;
+  onClick: any;
+};
+
+function EndpointChangedTab({
+  method,
+  fullPath,
+  diffs,
+  value,
+  onClick,
+  done,
+}: IEndpointChangedTabProps) {
+  const classes = useStyles();
+  return (
+    <Tab
+      classes={{ wrapper: classes.tabWrapper }}
+      className={classes.tabRoot}
+      onClick={onClick}
+      label={
+        <div className={classes.tabInner}>
+          <EndpointName
+            method={method}
+            fullPath={fullPath}
+            fontSize={8}
+            leftPad={0}
+          />
+          {done ? (
+            <div className={classes.text} style={{ color: AddedDarkGreen }}>
+              Done! {diffs} reviewed
+            </div>
+          ) : (
+            <div className={classes.text}>{diffs} diffs to review</div>
+          )}
+        </div>
+      }
+    />
+  );
+}
+
+type IUndocumentedTabProps = {
+  numberOfUndocumented: number;
+  done: boolean;
+  onClick: any;
+};
+
+function UndocumentedTab({
+  numberOfUndocumented,
+  onClick,
+  done,
+}: IUndocumentedTabProps) {
+  const classes = useStyles();
+  return (
+    <Tab
+      classes={{ wrapper: classes.tabWrapper }}
+      className={classes.tabRoot}
+      onClick={onClick}
+      label={
+        <div className={classes.tabInner}>
+          <div style={{ fontSize: 8, color: OpticBlueReadable }}>
+            Undocumented URLs observed
+          </div>
+          {done ? (
+            <div className={classes.text} style={{ color: AddedDarkGreen }}>
+              Done! 16 endpoints added
+            </div>
+          ) : (
+            <div className={classes.text}>
+              {numberOfUndocumented} urls to review
+            </div>
+          )}
+        </div>
+      }
+    />
+  );
+}
+
+const tabHeight = 33;
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: 'transparent',
+    maxWidth: 800,
+  },
+  tabsRoot: {
+    minHeight: tabHeight,
+    height: tabHeight,
+  },
+  text: {
+    textTransform: 'none',
+    marginTop: -3,
+  },
+  tabRoot: {
+    minHeight: tabHeight,
+    height: tabHeight,
+    fontSize: 10,
+    padding: 0,
+    marginRight: 4,
+    minWidth: 10,
+  },
+  tabInner: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContents: 'center',
+    paddingRight: 9,
+    paddingLeft: 3,
+    textTransform: 'none',
+  },
+  tabWrapper: {
+    alignItems: 'flex-start',
+    paddingLeft: 0,
+  },
+  finishedButtons: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+}));
+
+function ExtraDiffOptions() {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const iconSize = { height: 18, width: 18 };
+  return (
+    <div style={{ marginRight: 5 }}>
+      <IconButton onClick={handleClick} style={iconSize}>
+        <MoreVertIcon style={iconSize} />
+      </IconButton>
+      <Menu
+        id="long-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>
+          <Typography variant="body2">Reset</Typography>
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <Typography variant="body2">Approve All (Extend Baseline)</Typography>
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+}

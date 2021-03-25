@@ -18,10 +18,12 @@ export function TwoColumnFullWidth(props: TwoColumnFullWidthProps) {
       className={classes.wrapper}
       style={props.style}
     >
-      <Paper square className={classes.left} elevation={4}>
+      <Paper square className={classes.left} elevation={2}>
         {props.left}
       </Paper>
-      <div className={classes.right}>{props.right}</div>
+      <div className={classes.right} id="right-pane">
+        {props.right}
+      </div>
     </Container>
   );
 }

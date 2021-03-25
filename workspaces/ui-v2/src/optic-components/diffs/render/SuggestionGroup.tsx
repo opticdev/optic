@@ -3,7 +3,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { code, ICopyRender, plain } from './ICopyRender';
+import { ICopyRender } from './ICopyRender';
 import { ISuggestion } from '../lib/Interfaces';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Zoom } from '@material-ui/core';
@@ -66,7 +66,7 @@ export function SuggestionGroup({ suggestions }: ISuggestionGroup) {
                       onKeyDown={(e: any) => {
                         if (e.keyCode === 13) onEnter();
                       }}
-                      endIcon={<KeyboardArrowRightIcon />}
+                      endIcon={<KeyboardArrowRightIcon size="small" />}
                     >
                       Apply
                     </Button>

@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingLeft: 15,
+    paddingRight: 0,
     paddingTop: theme.spacing(0),
     paddingBottom: theme.spacing(0),
   },

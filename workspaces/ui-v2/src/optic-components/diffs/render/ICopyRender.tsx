@@ -81,6 +81,8 @@ export function ICopyRender({
               {i.text}
             </Code>
           );
+        } else {
+          return null;
         }
       })}
     </div>
@@ -118,6 +120,8 @@ export function ICopyRenderSpan({
               {i.text}
             </Code>
           );
+        } else {
+          return null;
         }
       })}
     </span>
@@ -166,6 +170,8 @@ export function ICopyRenderMultiline({
               </Code>
             </div>
           );
+        } else {
+          return null;
         }
       })}
     </div>

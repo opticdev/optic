@@ -7,14 +7,11 @@ import {
   OpticBlueReadable,
   RemovedRed,
   secondary,
-  SubtleBlueBackground,
 } from '../../theme';
 import { makeStyles } from '@material-ui/styles';
 import { Skeleton } from '@material-ui/lab';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { ICopy, ICopyRender, ICopyStyle } from './ICopyRender';
+import { ICopy } from './ICopyRender';
 import WarningIcon from '@material-ui/icons/Warning';
-import BlockIcon from '@material-ui/icons/Block';
 import CheckIcon from '@material-ui/icons/Check';
 
 import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
@@ -30,12 +27,12 @@ type IDiffCardProps = {
 export function DiffCard({ changeType, suggestions }: IDiffCardProps) {
   const classes = useStyles();
 
-  const color = (() => {
-    if (changeType === 0) return AddedGreen;
-    if (changeType === 1) return ChangedYellow;
-    if (changeType === 2) return RemovedRed;
-    return AddedGreen;
-  })();
+  // const color = (() => {
+  //   if (changeType === 0) return AddedGreen;
+  //   if (changeType === 1) return ChangedYellow;
+  //   if (changeType === 2) return RemovedRed;
+  //   return AddedGreen;
+  // })();
 
   // return (
   //   <>
