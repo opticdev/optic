@@ -99,8 +99,6 @@ impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
       BodyDescriptor::Null => trail_values.was_null = true,
       _ => unreachable!("should not call primitive visitor without a primitive value"),
     }
-
-    dbg!(&trail_values);
   }
 }
 
