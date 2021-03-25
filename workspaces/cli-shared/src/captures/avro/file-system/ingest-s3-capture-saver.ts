@@ -1,17 +1,17 @@
 import fs from 'fs-extra';
 import {cli} from "cli-ux";
-import stream, { Readable, Writable } from "stream";
-import { getPathsRelativeToConfig, parseRule } from '@useoptic/cli-config';
+import { Readable } from "stream";
+import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import path from 'path';
+import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
+import {map as streamMap, flatMap} from "axax";
 import { IHttpInteraction } from '@useoptic/domain-types';
 //@ts-ignore
-import oboe from 'oboe';
-import AWS, { Endpoint } from "aws-sdk";
+import AWS from "aws-sdk";
 import { CaptureSaver } from './capture-saver';
-import { Token as ContinuationToken, Object as S3Object } from 'aws-sdk/clients/s3';
-import { Command } from "commander";
-import { IIgnoreRunnablePredicate } from '@useoptic/cli-config/build/helpers/ignore-parser';
+import { Token as ContinuationToken } from 'aws-sdk/clients/s3';
+import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 
 export async function ingestS3({ 
   bucketName, 
@@ -28,11 +28,8 @@ export async function ingestS3({
 }) {
   let { capturesPath: capturesBaseDirectory, opticIgnorePath, configPath } = await getPathsRelativeToConfig();
 
-  let ignoreRules = await new IgnoreFileHelper(opticIgnorePath, configPath).getCurrentIgnoreRules();
-  let parsedRules = ignoreRules
-    .allRules
-    .map(r => parseRule(r))
-    .filter((r): r is IIgnoreRunnablePredicate => r !== undefined);
+  let {allRules} = await new IgnoreFileHelper(opticIgnorePath, configPath).getCurrentIgnoreRules();
+  let { shouldIgnore } = parseIgnore(allRules);
 
   AWS.config.update({ region });
 
@@ -50,72 +47,60 @@ export async function ingestS3({
 
   console.log(`Looking in s3://${bucketName}${prefix} in region ${region}, ${endpointOverride ?? ''}`);
 
-  const listAll = async (token?: ContinuationToken): Promise<string[]> => {
+  const customBar = cli.progress({
+    format: 'Ingesting | {bar} | {value}/{total} batches, {interactions} interactions',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+  })
+
+  let interactionCount = 0;
+  let batchCount = 0;
+  let totalBatches = 0;
+
+  async function* bucket_keys(cursor?: ContinuationToken): AsyncIterable<string> {
     const objects = await s3.listObjectsV2({
       Bucket: bucketName,
       MaxKeys: 1000,
       Prefix: prefix,
-      ContinuationToken: token
+      ContinuationToken: cursor
     }).promise();
-    if (objects.Contents) {
-      let obj_keys = objects.Contents.map(o=>o.Key).filter((o): o is string => !!o);
-      if (objects.IsTruncated) {
-        let rest = await listAll(objects.NextContinuationToken);
-        return obj_keys.concat(rest);
-      } else {
-        return obj_keys;
-      }
-    } else {
-      console.log("No object contents?");
-      return [];
+
+    let batch_files = objects.Contents?.map(c=>c?.Key).filter((o): o is string => !!o) ?? [];
+    totalBatches += batch_files.length;
+
+    customBar.setTotal(totalBatches);
+    
+    for(const batch of batch_files){
+      yield batch;
+      batchCount++;
+      customBar.update(batchCount);
+    }
+    
+    if(objects.IsTruncated){
+      yield* bucket_keys(objects.NextContinuationToken);
     }
   }
-
-  cli.action.start("Loading capture batch list");
-  let allKeys = await listAll();
-  cli.action.stop(`Found ${allKeys.length} capture batches to ingest`);
-  let objectsHandled = 0;
-  let passThrough = new stream.PassThrough();
-
-  const customBar = cli.progress({
-    format: 'Ingesting | {bar} | {value}/{total} batches',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
-  })
-  customBar.start(allKeys.length,0);
-
-  let fetchPump = async () => {
-    for (const key of allKeys) {
-      let objReadStream = s3.getObject({
-        Bucket: bucketName,
-        Key: key
-      }).createReadStream();
-      await pipeAsync(objReadStream, passThrough);
-      objectsHandled++;
-      customBar.update(objectsHandled);
-    }
+  
+  function key_to_readstream(key: string): Readable {
+    return s3.getObject({
+      Bucket: bucketName,
+      Key: key
+    }).createReadStream();
   }
 
-  let interactionCount = 0;
+  let continuous_readable: Readable = Readable.from(flatMap(key_to_readstream)(bucket_keys()));
+  let parser = continuous_readable.pipe(jsonlParser());
+  let obj_stream = streamMap((obj: {value: IHttpInteraction}) => obj.value)(parser);
 
-  const oboePromose = new Promise<void>((resolve, reject) => {
-    oboe(passThrough)
-      .node('!', (row: IHttpInteraction) => {
-        if (!parsedRules.some(r => r.shouldIgnore(row.request.method, `${row.request.host}${row.request.path}?${row.request.query}`))) {
-          interactionCount++;
-          captureSaver.save(row);
-        }
-      })
-      .on('done', function () {
-        resolve();
-      })
-      .on('fail', function (e: any) {
-        console.error(e);
-        reject(e);
-      });
-  });
+  customBar.start(0,0,{interactions: 0});
 
-  await Promise.all([fetchPump(), oboePromose]);
+  for await (const interaction of obj_stream){
+    if (!shouldIgnore(interaction.request.method, interaction.request.path)) {
+      captureSaver.save(interaction);
+      interactionCount++;
+      customBar.update({interactions: interactionCount});
+    }
+  }
 
   customBar.stop();
 
@@ -149,13 +134,4 @@ export async function ingestS3({
   );  
 
   return interactionCount;
-}
-
-async function pipeAsync(tap: Readable, sink: Writable) {
-  return new Promise((resolve, reject) => {
-    // end: false is important -- it prevents the stream from ending when one source emits an `end` event
-    tap.pipe(sink, { end: false })
-    tap.on("end", resolve)
-    tap.on("error", reject)
-  })
 }
