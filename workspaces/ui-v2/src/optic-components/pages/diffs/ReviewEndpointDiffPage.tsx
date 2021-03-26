@@ -4,17 +4,16 @@ import { DiffHeader } from '../../diffs/DiffHeader';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { DiffCard } from '../../diffs/render/DiffCard';
 import { makeStyles } from '@material-ui/styles';
-import { IChangeType } from '../../diffs/lib/Interfaces';
+import { IChangeType } from '../../../lib/Interfaces';
 import { code, plain } from '../../diffs/render/ICopyRender';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
+import { useEndpointDiffs } from '../../hooks/diffs/useEndpointDiffs';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
   const { method, pathId } = match.params;
-  //
-  // const endpoints = useEndpoints().endpoints;
-  //
-  // const classes = useStyles();
+
+  const endpointDiffs = useEndpointDiffs(pathId, method);
 
   return (
     <TwoColumnFullWidth

@@ -7,7 +7,7 @@ import {
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
 import { ContributionEditingStore } from '../../hooks/edit/Contributions';
-import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
+import { SharedDiffStoreWithDependencies } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
 import { Route } from 'react-router-dom';
@@ -21,13 +21,16 @@ export function DiffReviewPages(props: any) {
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+
   return (
-    <SharedDiffStore>
+    <SharedDiffStoreWithDependencies>
       <ContributionEditingStore>
         <NavigationRoute
           path={diffUndocumentedUrlsPageLink.path}
           Component={DiffUrlsPage}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
+          AccessoryNavigation={() => (
+            <DiffAccessoryNavigation onUrlsPage={true} />
+          )}
         />
         <NavigationRoute
           path={diffForEndpointLink.path}
@@ -37,10 +40,12 @@ export function DiffReviewPages(props: any) {
         <NavigationRoute
           path={diffReviewPagePendingEndpoint.path}
           Component={PendingEndpointPageSession}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
+          AccessoryNavigation={() => (
+            <DiffAccessoryNavigation onUrlsPage={true} />
+          )}
         />
       </ContributionEditingStore>
-    </SharedDiffStore>
+    </SharedDiffStoreWithDependencies>
   );
 }
 

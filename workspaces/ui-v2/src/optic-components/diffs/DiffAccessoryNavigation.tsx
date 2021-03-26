@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useParams, useHistory } from 'react-router-dom';
 import { EndpointName } from '../documentation/EndpointName';
 import { AddedDarkGreen, OpticBlueReadable } from '../theme';
 import {
@@ -13,20 +14,49 @@ import {
   MenuItem,
   Typography,
 } from '@material-ui/core';
+import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
+import {
+  useDiffForEndpointLink,
+  useDiffUndocumentedUrlsPageLink,
+} from '../navigation/Routes';
 
-const tabs123: any[] = [
-  { method: 'GET', fullPath: '/todos/{todoId}', diffs: 3, done: true },
-  { method: 'GET', fullPath: '/todos', diffs: 1, done: true },
-  { method: 'PUT', fullPath: '/todos/{todoId}/status', diffs: 2, done: false },
-];
+type DiffAccessoryNavigationProps = {
+  onUrlsPage?: boolean;
+};
 
-export function DiffAccessoryNavigation() {
+export function DiffAccessoryNavigation({
+  onUrlsPage = false,
+}: DiffAccessoryNavigationProps) {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+
+  const { diffsGroupedByEndpoints } = useSharedDiffContext();
+  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
+  const diffForEndpointLink = useDiffForEndpointLink();
+  const params = useParams<{ pathId?: string; method?: string }>();
+  const history = useHistory();
+  const diffsByEndpoints = useMemo(() => diffsGroupedByEndpoints(), []);
+
+  const { pathId, method } = params;
+
+  const value = onUrlsPage
+    ? 0
+    : 1 +
+      diffsByEndpoints.findIndex(
+        (i) => i.pathId === pathId && method === i.method
+      );
 
   const hasChanges = false;
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+
+  const handleChangeToUndocumentedUrlPage = () => {
+    history.push(diffUndocumentedUrlsPageLink.linkTo());
+  };
+
+  const handleChangeToEndpointPage = (
+    pathId: string,
+    method: string,
+    tabIndex: number
+  ) => () => {
+    history.push(diffForEndpointLink.linkTo(pathId, method));
   };
 
   return (
@@ -39,22 +69,27 @@ export function DiffAccessoryNavigation() {
           textColor="primary"
           variant="scrollable"
           scrollButtons="on"
+          disableRipple
           aria-label="scrollable auto tabs example"
         >
           <UndocumentedTab
-            onClick={() => setValue(0)}
+            onClick={handleChangeToUndocumentedUrlPage}
             numberOfUndocumented={123}
             done={false}
           />
-          {tabs123.map((i, index) => (
+          {diffsByEndpoints.map((i, index) => (
             <EndpointChangedTab
               key={index + 1}
-              onClick={() => setValue(index + 1)}
+              onClick={handleChangeToEndpointPage(
+                i.pathId,
+                i.method,
+                index + 1
+              )}
               value={index + 1}
               method={i.method}
               fullPath={i.fullPath}
-              diffs={i.diffs}
-              done={i.done}
+              diffCount={i.diffCount}
+              done={false}
             />
           ))}
         </Tabs>
@@ -79,7 +114,7 @@ export function DiffAccessoryNavigation() {
 type IEndpointChangedTabProps = {
   method: string;
   fullPath: string;
-  diffs: number;
+  diffCount: number;
   done: boolean;
   value: number;
   onClick: any;
@@ -88,7 +123,7 @@ type IEndpointChangedTabProps = {
 function EndpointChangedTab({
   method,
   fullPath,
-  diffs,
+  diffCount,
   value,
   onClick,
   done,
@@ -98,6 +133,7 @@ function EndpointChangedTab({
     <Tab
       classes={{ wrapper: classes.tabWrapper }}
       className={classes.tabRoot}
+      disableRipple={true}
       onClick={onClick}
       label={
         <div className={classes.tabInner}>
@@ -109,10 +145,10 @@ function EndpointChangedTab({
           />
           {done ? (
             <div className={classes.text} style={{ color: AddedDarkGreen }}>
-              Done! {diffs} reviewed
+              Done! {diffCount} reviewed
             </div>
           ) : (
-            <div className={classes.text}>{diffs} diffs to review</div>
+            <div className={classes.text}>{diffCount} diffs to review</div>
           )}
         </div>
       }
@@ -134,6 +170,7 @@ function UndocumentedTab({
   const classes = useStyles();
   return (
     <Tab
+      disableRipple={true}
       classes={{ wrapper: classes.tabWrapper }}
       className={classes.tabRoot}
       onClick={onClick}

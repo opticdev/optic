@@ -17,6 +17,7 @@ export type UndocumentedUrlProps = {
   method: string;
   path: string;
   hide?: boolean;
+  style: any;
   onFinish: (pattern: string, method: string) => void;
 };
 
@@ -25,6 +26,7 @@ export function UndocumentedUrl({
   path,
   onFinish,
   hide,
+  style,
 }: UndocumentedUrlProps) {
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
@@ -71,64 +73,66 @@ export function UndocumentedUrl({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedComponents]);
 
+  if (hide) {
+    return null;
+  }
+
   return (
-    <Collapse in={!hide}>
-      <ListItem
-        disableRipple
-        divider
-        disableGutters
-        style={{ display: 'flex' }}
-        // onClick={onClick}
-      >
-        <div style={{ flex: 1 }}>
-          <div className={classes.wrapper}>
-            <div className={classes.pathWrapper}>
-              <div className={classes.method} style={{ color: methodColor }}>
-                {paddedMethod.toUpperCase()}
-              </div>
-              <div className={classes.componentsWrapper}>
-                {components.map((i, index) => (
-                  <div
+    <ListItem
+      disableRipple
+      divider
+      disableGutters
+      style={{ display: 'flex', ...style }}
+      // onClick={onClick}
+    >
+      <div style={{ flex: 1 }}>
+        <div className={classes.wrapper}>
+          <div className={classes.pathWrapper}>
+            <div className={classes.method} style={{ color: methodColor }}>
+              {paddedMethod.toUpperCase()}
+            </div>
+            <div className={classes.componentsWrapper}>
+              {components.map((i, index) => (
+                <div
+                  key={index}
+                  style={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  {components.length > index && (
+                    <span className={classes.pathComponent}>/</span>
+                  )}
+                  <PathComponentRender
+                    pathComponent={i}
                     key={index}
-                    style={{ display: 'flex', flexDirection: 'row' }}
-                  >
-                    {components.length > index && (
-                      <span className={classes.pathComponent}>/</span>
-                    )}
-                    <PathComponentRender
-                      pathComponent={i}
-                      key={index}
-                      onChange={onChange(index)}
-                    />
-                  </div>
-                ))}
-              </div>
+                    onChange={onChange(index)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        <div style={{ paddingRight: 5 }}>
-          <LightTooltip title="Show Recorded Example" enterDelay={1000}>
-            <IconButton
-              size="small"
-              color="primary"
-              style={{ color: OpticBlueReadable }}
-              onClick={() => alert('coming soon')}
-            >
-              <VisibilityIcon style={{ width: 17, height: 17 }} />
-            </IconButton>
-          </LightTooltip>
-          <LightTooltip title="Add to API Documentation" enterDelay={1000}>
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={() => onFinish(makePattern(components), method)}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          </LightTooltip>
-        </div>
-      </ListItem>
-    </Collapse>
+      </div>
+      <div style={{ paddingRight: 5 }}>
+        <LightTooltip title="Show Recorded Example" enterDelay={1000}>
+          <IconButton
+            size="small"
+            color="primary"
+            style={{ color: OpticBlueReadable }}
+            onClick={() => alert('coming soon')}
+          >
+            <VisibilityIcon style={{ width: 17, height: 17 }} />
+          </IconButton>
+        </LightTooltip>
+        <LightTooltip title="Add to API Documentation" enterDelay={1000}>
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() => onFinish(makePattern(components), method)}
+          >
+            <KeyboardArrowRightIcon />
+          </IconButton>
+        </LightTooltip>
+      </div>
+    </ListItem>
   );
 }
 

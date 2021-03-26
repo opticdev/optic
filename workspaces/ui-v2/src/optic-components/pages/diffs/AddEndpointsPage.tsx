@@ -12,6 +12,9 @@ import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { AuthorIgnoreRules } from '../../diffs/AuthorIgnoreRule';
 import { useDebounce } from '../../hooks/ui/useDebounceHook';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
+// @ts-ignore
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -21,10 +24,28 @@ export function DiffUrlsPage(props: any) {
 
   const [filteredUrls, setFilteredUrls] = useState(urls);
 
+  const shownUrls = filteredUrls.filter((i) => !i.hide);
+
+  function renderRow(props: ListChildComponentProps) {
+    const { index, style } = props;
+    const data = shownUrls[index];
+
+    return (
+      <UndocumentedUrl
+        style={style}
+        {...data}
+        key={data.method + data.path}
+        onFinish={(pattern, method) => {
+          const pendingId = documentEndpoint(pattern, method);
+          const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
+          setTimeout(() => history.push(link), 500);
+        }}
+      />
+    );
+  }
+
   const name = `${urls.filter((i) => !i.hide).length} unmatched URLs observed${
-    filteredUrls.length !== urls.length
-      ? `. Showing ${filteredUrls.length}`
-      : ''
+    shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
   }`;
 
   return (
@@ -40,21 +61,21 @@ export function DiffUrlsPage(props: any) {
               />
             </Box>
           </DiffHeader>
-          <List style={{ paddingTop: 0, overflow: 'scroll' }}>
-            {filteredUrls.map((i, index) => (
-              <UndocumentedUrl
-                {...i}
-                key={i.method + i.path}
-                onFinish={(pattern, method) => {
-                  const pendingId = documentEndpoint(pattern, method);
-                  const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
-                  console.log(link);
-                  setTimeout(() => history.push(link), 500);
-                }}
-              />
-            ))}
-          </List>
-          <div style={{ flex: 1 }} />
+
+          <div style={{ flex: 1 }}>
+            <AutoSizer>
+              {({ height, width }: any) => (
+                <FixedSizeList
+                  height={height}
+                  width={width}
+                  itemSize={47}
+                  itemCount={shownUrls.length}
+                >
+                  {renderRow}
+                </FixedSizeList>
+              )}
+            </AutoSizer>
+          </div>
           <AuthorIgnoreRules />
         </>
       }

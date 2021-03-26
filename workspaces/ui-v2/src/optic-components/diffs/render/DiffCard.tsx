@@ -16,7 +16,7 @@ import CheckIcon from '@material-ui/icons/Check';
 
 import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
 import InteractionBodyViewerAllJS from './IDiffExampleViewer';
-import { IChangeType, ISuggestion } from '../lib/Interfaces';
+import { IChangeType, ISuggestion } from '../../../lib/Interfaces';
 import { SuggestionGroup } from './SuggestionGroup';
 
 type IDiffCardProps = {

@@ -11,7 +11,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { toCommonJsPath } from '@useoptic/cli-shared/build/diffs/json-trail';
 import CheckIcon from '@material-ui/icons/Check';
 import { ICopy, ICopyRenderSpan } from './ICopyRender';
-import { IChangeType } from '../lib/Interfaces';
+import { IChangeType } from '../../../lib/Interfaces';
 import { AddedGreen, secondary, ShapeViewerTheme } from '../../theme';
 
 /*
