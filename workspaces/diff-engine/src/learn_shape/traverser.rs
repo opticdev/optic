@@ -56,9 +56,7 @@ impl Traverser {
         };
 
         items.into_unique().for_each(|(item, indexes)| {
-          let item_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonArrayItem {
-            index: *(indexes.first().unwrap()) as u32,
-          });
+          let item_json_trail = body_trail.with_array_item(*(indexes.first().unwrap()) as u32);
 
           self.traverse(Some(item), item_json_trail, visitors)
         });
@@ -79,9 +77,7 @@ impl Traverser {
         object_key_visitor.visit(&body_trail, &object_keys);
 
         object.entries().for_each(|(field_key, field_body)| {
-          let field_json_trail = body_trail.with_component(JsonTrailPathComponent::JsonObjectKey {
-            key: field_key.clone(),
-          });
+          let field_json_trail = body_trail.with_object_key(field_key.clone());
 
           self.traverse(Some(field_body), field_json_trail, visitors)
         });

@@ -326,6 +326,22 @@ impl JsonTrail {
 
     new_trail
   }
+
+  pub fn with_array(&self) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonArray {})
+  }
+
+  pub fn with_array_item(&self, index: u32) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonArrayItem { index })
+  }
+
+  pub fn with_object(&self) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonObject {})
+  }
+
+  pub fn with_object_key(&self, key: String) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonObjectKey { key })
+  }
 }
 
 impl PartialEq for JsonTrail {
