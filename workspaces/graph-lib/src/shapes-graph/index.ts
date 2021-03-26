@@ -153,9 +153,9 @@ class ShapeNodeWrapper implements NodeWrapper {
   coreShape(): NodeWrapper {
     const coreShapeNode = this.queries.findOutgoingNeighborByEdgeType(this.result.id, EdgeType.IsDescendantOf);
     if (!coreShapeNode) {
-      throw new Error(`expected node to have a core shape node`)
+      throw new Error(`expected node to have a core shape node`);
     }
-    return coreShapeNode
+    return coreShapeNode;
   }
 }
 

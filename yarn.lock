@@ -3239,6 +3239,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jest@npm:^26.0.21":
+  version: 26.0.22
+  resolution: "@types/jest@npm:26.0.22"
+  dependencies:
+    jest-diff: ^26.0.0
+    pretty-format: ^26.0.0
+  checksum: 4c98ed058522f6cc74bcb47b8b7b104b77b2d4e42e087171f3d2d3ae5338c21f43ec26f2a186bc229c1bd72c3f776ad07faba837f0ec27f22cf94e154516c0b3
+  languageName: node
+  linkType: hard
+
 "@types/joi@npm:^14.3.4":
   version: 14.3.4
   resolution: "@types/joi@npm:14.3.4"
@@ -4029,6 +4039,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@useoptic/changelog@workspace:workspaces/changelog":
+  version: 0.0.0-use.local
+  resolution: "@useoptic/changelog@workspace:workspaces/changelog"
+  dependencies:
+    "@graphql-tools/schema": ^7.1.3
+    "@types/jest": ^26.0.21
+    "@types/node": ^12.12.6
+    "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm"
+    "@useoptic/graph-lib": "workspace:workspaces/graph-lib"
+    "@useoptic/spectacle": "workspace:workspaces/spectacle"
+    graphql: ^15.5.0
+    typescript: ^3.8.3
+  languageName: unknown
+  linkType: soft
+
 "@useoptic/cli-client@workspace:workspaces/cli-client":
   version: 0.0.0-use.local
   resolution: "@useoptic/cli-client@workspace:workspaces/cli-client"
@@ -4344,9 +4369,8 @@ __metadata:
     "@types/fs-extra": ^9.0.8
     "@useoptic/cli-shared": "workspace:workspaces/cli-shared"
     "@useoptic/client-utilities": "workspace:workspaces/client-utilities"
-    "@useoptic/domain": 10.0.64
+    "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm"
     "@useoptic/domain-types": 10.0.64
-    "@useoptic/domain-utilities": 10.0.64
     dataloader: ^2.0.0
     eventsource: ^1.0.7
     fs-extra: ^9.0.0
@@ -20665,7 +20689,7 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"typescript@^3.7.2, typescript@^3.8":
+"typescript@^3.7.2, typescript@^3.8, typescript@^3.8.3":
   version: 3.9.9
   resolution: "typescript@npm:3.9.9"
   bin:
@@ -20685,7 +20709,7 @@ typescript@^4.2.3:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.7.2#builtin<compat/typescript>, typescript@patch:typescript@^3.8#builtin<compat/typescript>":
+"typescript@patch:typescript@^3.7.2#builtin<compat/typescript>, typescript@patch:typescript@^3.8#builtin<compat/typescript>, typescript@patch:typescript@^3.8.3#builtin<compat/typescript>":
   version: 3.9.9
   resolution: "typescript@patch:typescript@npm%3A3.9.9#builtin<compat/typescript>::version=3.9.9&hash=a45b0e"
   bin:

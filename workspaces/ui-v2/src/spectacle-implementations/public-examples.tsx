@@ -69,8 +69,12 @@ export function useInMemorySpectacle(
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
-      const query = makeSpectacle(result.opticEngine, {
-        specEvents: result.events,
+      const query = await makeSpectacle(result.opticEngine, {
+        specRepository: {
+          listEvents() {
+            return Promise.resolve(result.events)
+          }
+        },
       });
       setSpectacle({ query });
     }

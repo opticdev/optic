@@ -5,7 +5,7 @@ import {
   ITaskSpecificationInputs,
   TaskType,
 } from '..';
-import { rfcStateFromEvents } from '@useoptic/domain-utilities';
+import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import {
   EventsFileToJsTaskOutput,
   EventsFileToJsTaskSpecification,
@@ -30,18 +30,20 @@ export interface EventsToRfcStateTaskSpecification extends ITaskSpecification {
 }
 
 export interface EventsToRfcStateTaskOutput {
-  rfcState: IRfcState;
+  shapesProjection: IShapesProjection;
 }
 
-export interface IRfcState {}
+export interface IShapesProjection {}
 
 export const buildRfcStateFromEvents: ITaskExecutor<
   EventsToRfcStateTaskSpecification,
   EventsToRfcStateTaskDependencies,
   EventsToRfcStateTaskOutput
-> = function (task, dependencies) {
-  console.log('fak');
-  console.log(dependencies[eventsFromFileKey].events);
-  const rfcState = rfcStateFromEvents(dependencies[eventsFromFileKey].events);
-  return Promise.resolve({ rfcState });
+> = async function (task, dependencies) {
+  const events = dependencies[eventsFromFileKey].events;
+  const spec = opticEngine.spec_from_events(
+    JSON.stringify(events)
+  );
+  const shapesProjection = JSON.parse(opticEngine.get_shapes_projection(spec));
+  return Promise.resolve({ shapesProjection });
 };
