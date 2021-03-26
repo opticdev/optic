@@ -126,6 +126,25 @@ fn shape_prototypes_to_commands(
 
             [Some(commands), None]
           }
+          ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
+            let shape_command = ShapeCommand::add_shape(
+              shape_prototype.id.clone(),
+              ShapeKind::ListKind,
+              String::from(""),
+            );
+            let parameter_command = ShapeCommand::set_parameter_shape(
+              shape_prototype.id,
+              String::from(
+                ShapeKind::ListKind
+                  .get_parameter_descriptor()
+                  .unwrap()
+                  .shape_parameter_id,
+              ),
+              item_shape_id,
+            );
+
+            [Some(vec![shape_command, parameter_command]), None]
+          }
           _ => [None, None],
         };
 
@@ -242,7 +261,7 @@ impl TrailValues {
           .expect("item shape prototype should have been generated before its parent list");
 
         Some(ShapePrototypeDescriptor::ListOfShape {
-          shape_id: item_prototype.id.clone(),
+          item_shape_id: item_prototype.id.clone(),
         })
       } else {
         None
@@ -306,7 +325,7 @@ enum ShapePrototypeDescriptor {
     fields: Vec<ShapePrototype>,
   },
   ListOfShape {
-    shape_id: ShapeId,
+    item_shape_id: ShapeId,
   },
   FieldWithShape {
     key: String,
@@ -417,9 +436,67 @@ mod test {
     }
   }
 
+  #[test]
+  fn trail_observations_can_generate_commands_for_array_bodies() {
+    let primitive_array_body = BodyDescriptor::from(json!(["a", "b", "c"]));
+    let empty_array_body = BodyDescriptor::from(json!([]));
+    let polymorphic_array_body = BodyDescriptor::from(json!(["a", "b", 1, 2]));
+
+    let primitive_array_observations = observe_body_trails(primitive_array_body);
+    let empty_array_observations = observe_body_trails(empty_array_body);
+    let polymorphic_array_observations = observe_body_trails(polymorphic_array_body);
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+
+    let primitive_array_results =
+      collect_commands(primitive_array_observations.into_commands(&mut test_id));
+    assert!(primitive_array_results.0.is_some());
+    assert_valid_commands(primitive_array_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_array_bodies__primitive_array_results",
+      &primitive_array_results
+    );
+
+    // let empty_array_results =
+    //   collect_commands(empty_array_observations.into_commands(&mut test_id));
+    // assert!(empty_array_results.0.is_some());
+    // assert_valid_commands(SpecProjection::default(), empty_array_results.1.clone());
+    // assert_debug_snapshot!(
+    //   "trail_observations_can_generate_commands_for_array_bodies__empty_array_results",
+    //   &empty_array_results
+    // );
+
+    let polymorphic_array_results =
+      collect_commands(polymorphic_array_observations.into_commands(&mut test_id));
+    assert!(polymorphic_array_results.0.is_some());
+    assert_valid_commands(polymorphic_array_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_array_bodies__polymorphic_array_results",
+      &polymorphic_array_results
+    );
+  }
+
   fn collect_commands(
     (root_shape_id, commands): (Option<String>, impl Iterator<Item = SpecCommand>),
   ) -> (Option<String>, Vec<SpecCommand>) {
     (root_shape_id, commands.collect::<Vec<_>>())
+  }
+
+  fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) {
+    let mut spec_projection = SpecProjection::default();
+    for command in commands {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
   }
 }
