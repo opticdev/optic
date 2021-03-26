@@ -1,7 +1,7 @@
 use crate::commands::shape as shape_commands;
 use crate::commands::{ShapeCommand, SpecCommand};
 use crate::shapes::JsonTrail;
-use crate::state::shape::{ShapeKind, ShapeKindDescriptor};
+use crate::state::shape::{ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::BodyDescriptor;
 use std::collections::{HashMap, HashSet};
 
@@ -47,19 +47,22 @@ impl TrailObservationsResult {
       trails
     };
 
-    let shape_prototypes = sorted_trails
-      .into_iter()
-      .rev() // leafs first
-      .map(|json_trail| {
-        let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
+    let mut shape_prototypes_by_trail = HashMap::new();
+    let mut shape_prototypes = Vec::with_capacity(sorted_trails.len());
 
-        trail_values.into_shape_prototype(&mut generate_id)
-      })
-      .collect::<Vec<_>>();
+    for json_trail in sorted_trails.into_iter().rev() {
+      let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
 
-    let root_shape_id = shape_prototypes
-      .last() // since we created these leafs first, the last must be the root
-      .map(|last_shape| last_shape.id.clone());
+      let shape_prototype =
+        trail_values.into_shape_prototype(&mut generate_id, &shape_prototypes_by_trail);
+
+      shape_prototypes_by_trail.insert(json_trail, shape_prototype.clone());
+      shape_prototypes.push(shape_prototype);
+    }
+
+    let root_shape_id = shape_prototypes_by_trail
+      .get(&JsonTrail::empty())
+      .map(|root_shape_prototype| root_shape_prototype.id.clone());
 
     let commands =
       shape_prototypes_to_commands(shape_prototypes).map(|command| SpecCommand::from(command));
@@ -202,7 +205,11 @@ impl TrailValues {
     // TODO: figure out what to do about field sets
   }
 
-  fn into_shape_prototype<F>(self, generate_id: &mut F) -> ShapePrototype
+  fn into_shape_prototype<F>(
+    self,
+    generate_id: &mut F,
+    existing_prototypes: &HashMap<JsonTrail, ShapePrototype>,
+  ) -> ShapePrototype
   where
     F: FnMut() -> String,
   {
@@ -228,13 +235,18 @@ impl TrailValues {
       } else {
         None
       },
-      // if self.was_array {
-      //   Some(ShapePrototypeDescriptor::ListOfShape {
+      if self.was_array {
+        let item_trail = self.trail.with_array_item(0);
+        let item_prototype = existing_prototypes
+          .get(&item_trail)
+          .expect("item shape prototype should have been generated before its parent list");
 
-      //   })
-      // } else {
-      //   None
-      // }
+        Some(ShapePrototypeDescriptor::ListOfShape {
+          shape_id: item_prototype.id.clone(),
+        })
+      } else {
+        None
+      },
     ]
     .into_iter()
     .flatten()
@@ -271,14 +283,14 @@ impl TrailValues {
   }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct ShapePrototype {
-  id: String,
+  id: ShapeId,
   trail: JsonTrail,
   prototype_descriptor: ShapePrototypeDescriptor,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 enum ShapePrototypeDescriptor {
   OptionalShape {
     shape: Box<ShapePrototype>,
@@ -294,7 +306,7 @@ enum ShapePrototypeDescriptor {
     fields: Vec<ShapePrototype>,
   },
   ListOfShape {
-    shape: Box<ShapePrototype>,
+    shape_id: ShapeId,
   },
   FieldWithShape {
     key: String,
