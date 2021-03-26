@@ -107,6 +107,13 @@ expression: "&spec_projection.shapes_serializable()"
       }
     },
     {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "57630124-211a-440d-8bd3-2496ccc97f0c",
+        "createdAt": "2021-02-01T18:25:15.656Z"
+      }
+    },
+    {
       "type": "Shape",
       "data": {
         "shapeId": "shape_1T8ZANWIcd"
@@ -260,6 +267,13 @@ expression: "&spec_projection.shapes_serializable()"
       }
     },
     {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "2f5c2536-6500-495a-b0b1-947d55394009",
+        "createdAt": "2021-02-01T18:26:25.849Z"
+      }
+    },
+    {
       "type": "Shape",
       "data": {
         "shapeId": "shape_PBYuBrTCLk"
@@ -373,13 +387,6 @@ expression: "&spec_projection.shapes_serializable()"
       }
     ],
     [
-      12,
-      5,
-      {
-        "type": "IsDescendantOf"
-      }
-    ],
-    [
       13,
       5,
       {
@@ -387,77 +394,147 @@ expression: "&spec_projection.shapes_serializable()"
       }
     ],
     [
+      13,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
       14,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      14,
       15,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      15,
+      16,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      15,
-      13,
+      16,
+      14,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       16,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      17,
       1,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      16,
       17,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      17,
+      18,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      17,
-      13,
+      18,
+      14,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       18,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      18,
       19,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      19,
+      20,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      19,
-      13,
+      20,
+      14,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       20,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
       3,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      20,
+      21,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      21,
       4,
       {
         "type": "HasBinding",
@@ -468,9 +545,9 @@ expression: "&spec_projection.shapes_serializable()"
     ],
     [
       21,
-      5,
+      12,
       {
-        "type": "IsDescendantOf"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -481,77 +558,147 @@ expression: "&spec_projection.shapes_serializable()"
       }
     ],
     [
+      22,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
       23,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      23,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
+      24,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      24,
+      25,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      25,
       23,
-      24,
-      {
-        "type": "BelongsTo"
-      }
-    ],
-    [
-      24,
-      22,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       25,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      26,
       1,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      25,
       26,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      26,
+      27,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      26,
-      22,
+      27,
+      23,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       27,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      28,
       1,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      27,
       28,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      28,
+      29,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      28,
-      22,
+      29,
+      23,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       29,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      30,
       3,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      29,
+      30,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      30,
       4,
       {
         "type": "HasBinding",
@@ -562,9 +709,9 @@ expression: "&spec_projection.shapes_serializable()"
     ],
     [
       30,
-      5,
+      12,
       {
-        "type": "IsDescendantOf"
+        "type": "UpdatedIn"
       }
     ],
     [
@@ -575,35 +722,63 @@ expression: "&spec_projection.shapes_serializable()"
       }
     ],
     [
+      31,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
       32,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      33,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      32,
       33,
+      12,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      33,
+      34,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      33,
-      31,
+      34,
+      32,
       {
         "type": "IsFieldOf"
       }
     ],
     [
       34,
-      5,
+      12,
       {
-        "type": "IsDescendantOf"
+        "type": "CreatedIn"
       }
     ],
     [
-      35,
+      36,
       5,
       {
         "type": "IsDescendantOf"
@@ -611,76 +786,146 @@ expression: "&spec_projection.shapes_serializable()"
     ],
     [
       36,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      37,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      37,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      38,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      36,
-      37,
+      38,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      38,
+      39,
       {
         "type": "BelongsTo"
       }
     ],
     [
+      39,
       37,
-      35,
       {
         "type": "IsFieldOf"
       }
     ],
     [
-      38,
+      39,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
       1,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      38,
-      39,
+      40,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      40,
+      41,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      39,
-      35,
+      41,
+      37,
       {
         "type": "IsFieldOf"
       }
     ],
     [
-      40,
+      41,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      40,
-      41,
+      42,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      42,
+      43,
       {
         "type": "BelongsTo"
       }
     ],
     [
-      41,
-      35,
+      43,
+      37,
       {
         "type": "IsFieldOf"
       }
     ],
     [
-      42,
+      43,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      44,
       3,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      42,
+      44,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      44,
       4,
       {
         "type": "HasBinding",
@@ -690,14 +935,14 @@ expression: "&spec_projection.shapes_serializable()"
       }
     ],
     [
-      43,
-      5,
+      44,
+      35,
       {
-        "type": "IsDescendantOf"
+        "type": "UpdatedIn"
       }
     ],
     [
-      44,
+      45,
       5,
       {
         "type": "IsDescendantOf"
@@ -705,23 +950,58 @@ expression: "&spec_projection.shapes_serializable()"
     ],
     [
       45,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      46,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      46,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
       0,
       {
         "type": "IsDescendantOf"
       }
     ],
     [
-      45,
-      46,
+      47,
+      35,
+      {
+        "type": "CreatedIn"
+      }
+    ],
+    [
+      47,
+      48,
       {
         "type": "BelongsTo"
       }
     ],
     [
+      48,
       46,
-      44,
       {
         "type": "IsFieldOf"
+      }
+    ],
+    [
+      48,
+      35,
+      {
+        "type": "CreatedIn"
       }
     ]
   ],
@@ -730,44 +1010,46 @@ expression: "&spec_projection.shapes_serializable()"
     "1": "$number",
     "10": "$optionalInner",
     "11": "$oneOf",
-    "12": "shape_1T8ZANWIcd",
-    "13": "shape_j1aiWREIbU",
-    "14": "shape_JH0cqjvNSd",
-    "15": "field_OCXyZL2Lyp",
-    "16": "shape_hnfXS9Vmns",
-    "17": "field_CXHgTtjIPq",
-    "18": "shape_FIaVxhxPUW",
-    "19": "field_pb75z9dypc",
+    "12": "57630124-211a-440d-8bd3-2496ccc97f0c",
+    "13": "shape_1T8ZANWIcd",
+    "14": "shape_j1aiWREIbU",
+    "15": "shape_JH0cqjvNSd",
+    "16": "field_OCXyZL2Lyp",
+    "17": "shape_hnfXS9Vmns",
+    "18": "field_CXHgTtjIPq",
+    "19": "shape_FIaVxhxPUW",
     "2": "$boolean",
-    "20": "shape_E9IzHThmZv",
-    "21": "shape_9t5hqnMMma",
-    "22": "shape_ZVgfHusbJW",
-    "23": "shape_6dDj0Z3HkT",
-    "24": "field_tZbQYoQmxt",
-    "25": "shape_If49etudqF",
-    "26": "field_UMhLN288Z3",
-    "27": "shape_VXfig63hnr",
-    "28": "field_VMgg5gTvnO",
-    "29": "shape_UlLNexyAzZ",
+    "20": "field_pb75z9dypc",
+    "21": "shape_E9IzHThmZv",
+    "22": "shape_9t5hqnMMma",
+    "23": "shape_ZVgfHusbJW",
+    "24": "shape_6dDj0Z3HkT",
+    "25": "field_tZbQYoQmxt",
+    "26": "shape_If49etudqF",
+    "27": "field_UMhLN288Z3",
+    "28": "shape_VXfig63hnr",
+    "29": "field_VMgg5gTvnO",
     "3": "$list",
-    "30": "shape_6TnsL6trq7",
-    "31": "shape_MiVhGwZrMY",
-    "32": "shape_iQB4J3IWzb",
-    "33": "field_SXC48X1nmc",
-    "34": "shape_PBYuBrTCLk",
-    "35": "shape_bGU4HicHkV",
-    "36": "shape_RvMMDY4eOD",
-    "37": "field_jvGuxAjlRn",
-    "38": "shape_u6waaccsqU",
-    "39": "field_gGefUJrPwF",
+    "30": "shape_UlLNexyAzZ",
+    "31": "shape_6TnsL6trq7",
+    "32": "shape_MiVhGwZrMY",
+    "33": "shape_iQB4J3IWzb",
+    "34": "field_SXC48X1nmc",
+    "35": "2f5c2536-6500-495a-b0b1-947d55394009",
+    "36": "shape_PBYuBrTCLk",
+    "37": "shape_bGU4HicHkV",
+    "38": "shape_RvMMDY4eOD",
+    "39": "field_jvGuxAjlRn",
     "4": "$listItem",
-    "40": "shape_Mh5lZMGWAO",
-    "41": "field_iYJ7dR4ihV",
-    "42": "shape_GsyFkrJzlL",
-    "43": "shape_jfIeomMZ5p",
-    "44": "shape_ApnstcbWQx",
-    "45": "shape_sgKygyPuZL",
-    "46": "field_KhuvysQCWY",
+    "40": "shape_u6waaccsqU",
+    "41": "field_gGefUJrPwF",
+    "42": "shape_Mh5lZMGWAO",
+    "43": "field_iYJ7dR4ihV",
+    "44": "shape_GsyFkrJzlL",
+    "45": "shape_jfIeomMZ5p",
+    "46": "shape_ApnstcbWQx",
+    "47": "shape_sgKygyPuZL",
+    "48": "field_KhuvysQCWY",
     "5": "$object",
     "6": "$nullable",
     "7": "$nullableInner",

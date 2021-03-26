@@ -191,6 +191,23 @@ export class GraphQueries {
     return this.wrapList(outgoingNeighborType, neighborsOfType || []);
   }
 
+
+
+  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
+    debugger
+    const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
+    if (!inboundNeighbors) {
+      return;
+    }
+    for (const neighborsByNodeType of inboundNeighbors.values()) {
+      for (const neighborNode of neighborsByNodeType) {
+        yield neighborNode;
+        // @ts-ignore
+        yield* this.descendantsIterator(neighborNode.id);
+      }
+    }
+  }
+
   //@TODO wrap() and wrapList() should be injected?
   wrap(node: Node): NodeWrapper {
     if (node.type === NodeType.Request) {

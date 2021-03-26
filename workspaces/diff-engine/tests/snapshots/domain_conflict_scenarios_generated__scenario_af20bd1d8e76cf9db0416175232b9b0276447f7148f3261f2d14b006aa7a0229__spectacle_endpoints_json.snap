@@ -121,10 +121,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      5,
+      6,
       3,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -163,10 +163,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      8,
+      9,
       1,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ]
   ],
@@ -177,7 +177,9 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     "3": "62b05d70-c86b-4df6-a243-946e21c35820",
     "4": "request_eaGDFPq9ha",
     "5": "response_7XA4cz1Jq4",
+    "6": "shape_KrxPAcTUDM",
     "7": "request_p8FwHVQwXH",
-    "8": "response_fr6lmtes1c"
+    "8": "response_fr6lmtes1c",
+    "9": "shape_hcQz2zr63G"
   }
 }

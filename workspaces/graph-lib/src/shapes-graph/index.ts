@@ -189,6 +189,21 @@ export class GraphQueries {
     return this.wrapList(type, this.index.nodesByType.get(type) || []);
   }
 
+  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
+    debugger
+    const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
+    if (!inboundNeighbors) {
+      return;
+    }
+    for (const neighborsByNodeType of inboundNeighbors.values()) {
+      for (const neighborNode of neighborsByNodeType) {
+        yield neighborNode;
+        // @ts-ignore
+        yield* this.descendantsIterator(neighborNode.id);
+      }
+    }
+  }
+
   //@TODO add singular find* variant
   listIncomingNeighborsByType(id: NodeId, incomingNeighborType: NodeType) {
     const neighbors = this.index.inboundNeighbors.get(id);

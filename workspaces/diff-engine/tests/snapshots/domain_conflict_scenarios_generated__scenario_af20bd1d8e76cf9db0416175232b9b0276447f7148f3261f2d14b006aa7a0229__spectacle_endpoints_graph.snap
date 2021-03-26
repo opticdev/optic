@@ -19,12 +19,12 @@ digraph {
     5 -> 2 [ label = "IsChildOf\l" ]
     5 -> 3 [ label = "CreatedIn\l" ]
     6 -> 5 [ label = "IsChildOf\l" ]
-    5 -> 3 [ label = "UpdatedIn\l" ]
+    6 -> 3 [ label = "CreatedIn\l" ]
     7 -> 2 [ label = "IsChildOf\l" ]
     7 -> 1 [ label = "CreatedIn\l" ]
     8 -> 2 [ label = "IsChildOf\l" ]
     8 -> 1 [ label = "CreatedIn\l" ]
     9 -> 8 [ label = "IsChildOf\l" ]
-    8 -> 1 [ label = "UpdatedIn\l" ]
+    9 -> 1 [ label = "CreatedIn\l" ]
 }
 
