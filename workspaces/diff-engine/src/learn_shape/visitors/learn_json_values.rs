@@ -56,8 +56,25 @@ impl BodyVisitors<TrailValues> for LearnVisitors {
   }
 
   fn take_results(&mut self) -> HashMap<JsonTrail, TrailValues, RandomState> {
-    dbg!("@TODO merge self.object, array, etc.");
-    self.primitive().take_results()
+    let mut total_results = HashMap::new();
+    let visitors_results = vec![
+      self.array().take_results(),
+      self.object().take_results(),
+      self.object_key().take_results(),
+      self.primitive().take_results(),
+    ];
+
+    for visitor_results in visitors_results {
+      for (json_trail, trail_values) in visitor_results {
+        let existing_values = total_results
+          .entry(json_trail)
+          .or_insert_with_key(|trail| TrailValues::from(trail.clone()));
+
+        existing_values.union(trail_values)
+      }
+    }
+
+    total_results
   }
 }
 
@@ -125,16 +142,8 @@ impl BodyVisitor<TrailValues> for LearnArrayVisitor {
 
 impl BodyArrayVisitor<TrailValues> for LearnArrayVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
-    // self.push(TrailValues {
-    //   trail: json_trail.clone(),
-    //   was_array: true,
-    //   was_boolean: false,
-    //   was_string: false,
-    //   was_number: false,
-    //   was_object: false,
-    //   was_null: false,
-    //   field_set: Default::default()
-    // });
+    let trail_values = self.get_or_insert(json_trail);
+    trail_values.was_array = true;
   }
 }
 

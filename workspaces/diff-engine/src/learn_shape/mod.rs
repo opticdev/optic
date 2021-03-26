@@ -46,6 +46,15 @@ mod test {
     let body: Option<BodyDescriptor> = Some(BodyDescriptor::from(object_body));
 
     let result = observe_body_trails(body);
-    assert_debug_snapshot!(result);
+
+    let root_shape_trail = JsonTrail::empty();
+    let root_shape_result = result
+      .values()
+      .find(|value| value.trail == root_shape_trail)
+      .expect("results should contain a json trail for the root shape");
+    assert!(root_shape_result.was_array);
+
+    dbg!(result);
+    // assert_debug_snapshot!(result);
   }
 }

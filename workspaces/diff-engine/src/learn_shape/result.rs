@@ -22,6 +22,14 @@ impl TrailObservationsResult {
     }
   }
 
+  pub fn trails(&self) -> impl Iterator<Item = &JsonTrail> {
+    self.values_by_trail.keys()
+  }
+
+  pub fn values(&self) -> impl Iterator<Item = &TrailValues> {
+    self.values_by_trail.values()
+  }
+
   pub fn into_commands<F>(
     mut self,
     mut generate_id: &mut F,
@@ -154,7 +162,7 @@ pub type FieldSet = HashSet<String>;
 
 #[derive(Clone, Debug)]
 pub struct TrailValues {
-  trail: JsonTrail,
+  pub trail: JsonTrail,
   pub was_string: bool,
   pub was_number: bool,
   pub was_boolean: bool,
