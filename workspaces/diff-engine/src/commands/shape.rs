@@ -1,9 +1,9 @@
 use super::{EndpointCommand, SpecCommand, SpecCommandError};
-use crate::events::shape as shape_events;
+use crate::{events::shape as shape_events, shapehash::ShapeDescriptor, state::shape::ShapeProvider};
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
-  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeKind,
+  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ProviderInShape, ShapeId, ShapeKind,
   ShapeParameterId, ShapeParametersDescriptor,
 };
 use cqrs_core::AggregateCommand;
@@ -31,8 +31,22 @@ pub enum ShapeCommand {
 }
 
 impl ShapeCommand {
-  pub fn add_shape(shape_id: ShapeId, base_shape_id: ShapeId, name: String) -> Self {
-    Self::AddShape(AddShape::new(shape_id, base_shape_id, name))
+  pub fn add_shape(shape_id: ShapeId, shape_kind: ShapeKind, name: String) -> Self {
+    Self::AddShape(AddShape::new(shape_id, String::from(shape_kind.get_descriptor().base_shape_id), name))
+  }
+
+  pub fn add_shape_parameter(shape_parameter_id: ShapeParameterId, shape_id: ShapeId, name: String) -> Self {
+    Self::AddShapeParameter(AddShapeParameter { shape_parameter_id, shape_id, name })
+  }
+
+  pub fn set_parameter_shape(shape_id: ShapeId, consuming_parameter_id: ShapeParameterId, provided_shape_id: ShapeId) -> Self {
+    let provider = ProviderInShape {
+      shape_id,
+      consuming_parameter_id,
+      provider_descriptor: ProviderDescriptor::ShapeProvider(ShapeProvider { shape_id: provided_shape_id })
+    };
+
+    Self::SetParameterShape(SetParameterShape { shape_descriptor: ParameterShapeDescriptor::ProviderInShape(provider) })
   }
 }
 

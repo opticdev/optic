@@ -53,51 +53,95 @@ impl TrailObservationsResult {
       .last() // since we created these leafs first, the last must be the root
       .map(|last_shape| last_shape.id.clone());
 
-    let commands_iter = shape_prototypes
-      .into_iter()
-      .map(|shape_prototype| {
-        let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
-          match shape_prototype.prototype_descriptor {
-            ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
-              let shape_kind_descriptor = base_shape_kind.get_descriptor();
-              let add_command = ShapeCommand::add_shape(
-                shape_prototype.id,
-                String::from(shape_kind_descriptor.base_shape_id),
-                String::from(""),
-              );
-              [Some(vec![add_command]), None]
-            }
-            _ => [None, None],
-          };
+    let commands =
+      shape_prototypes_to_commands(shape_prototypes).map(|command| SpecCommand::from(command));
 
-        [init_commands, describe_commands]
-      })
-      .fold(
-        vec![vec![], vec![]],
-        |mut existing_commands, new_commands| {
-          let [new_init, new_describe] = new_commands;
-          {
-            let init_commands = &mut existing_commands[0];
-            if let Some(commands) = new_init {
-              init_commands.extend(commands);
-            }
-          }
-          {
-            let describe_commands = &mut existing_commands[1];
-
-            if let Some(commands) = new_describe {
-              describe_commands.extend(commands);
-            }
-          }
-          existing_commands
-        },
-      )
-      .into_iter()
-      .flatten()
-      .map(|command| SpecCommand::from(command));
-
-    (root_shape_id, commands_iter)
+    (root_shape_id, commands)
   }
+}
+
+fn shape_prototypes_to_commands(
+  shape_prototypes: impl IntoIterator<Item = ShapePrototype>,
+) -> impl Iterator<Item = ShapeCommand> {
+  shape_prototypes
+    .into_iter()
+    .map(|shape_prototype| {
+      let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
+        match shape_prototype.prototype_descriptor {
+          ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
+            let add_command =
+              ShapeCommand::add_shape(shape_prototype.id, base_shape_kind, String::from(""));
+            [Some(vec![add_command]), None]
+          }
+          ShapePrototypeDescriptor::OneOfShape {
+            branches,
+            parameter_ids,
+          } => {
+            let mut commands = vec![ShapeCommand::add_shape(
+              shape_prototype.id.clone(),
+              ShapeKind::OneOfKind,
+              String::from(""),
+            )];
+
+            let one_off_shape_id = shape_prototype.id.clone();
+
+            let branch_ids = branches
+              .iter()
+              .zip(parameter_ids)
+              .map(|(shape_prototype, parameter_id)| {
+                (shape_prototype.id.clone(), parameter_id.clone())
+              })
+              .collect::<Vec<_>>();
+
+            let branches_commands = shape_prototypes_to_commands(branches)
+              .zip(branch_ids)
+              .flat_map(|(branch_command, (branch_shape_id, parameter_id))| {
+                vec![
+                  branch_command,
+                  ShapeCommand::add_shape_parameter(
+                    parameter_id.clone(),
+                    one_off_shape_id.clone(),
+                    String::from(""),
+                  ),
+                  ShapeCommand::set_parameter_shape(
+                    one_off_shape_id.clone(),
+                    parameter_id.clone(),
+                    branch_shape_id.clone(),
+                  ),
+                ]
+              });
+
+            commands.extend(branches_commands);
+
+            [Some(commands), None]
+          }
+          _ => [None, None],
+        };
+
+      [init_commands, describe_commands]
+    })
+    .fold(
+      vec![vec![], vec![]],
+      |mut existing_commands, new_commands| {
+        let [new_init, new_describe] = new_commands;
+        {
+          let init_commands = &mut existing_commands[0];
+          if let Some(commands) = new_init {
+            init_commands.extend(commands);
+          }
+        }
+        {
+          let describe_commands = &mut existing_commands[1];
+
+          if let Some(commands) = new_describe {
+            describe_commands.extend(commands);
+          }
+        }
+        existing_commands
+      },
+    )
+    .into_iter()
+    .flatten()
 }
 
 impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
@@ -198,19 +242,29 @@ impl TrailValues {
         id: generate_id(),
         trail: self.trail.clone(),
         prototype_descriptor: ShapePrototypeDescriptor::OneOfShape {
-          branches: descriptors,
+          parameter_ids: (0..descriptors.len()).map(|_| generate_id()).collect(),
+          branches: descriptors
+            .into_iter()
+            .map(|descriptor| ShapePrototype {
+              id: generate_id(),
+              trail: self.trail.clone(),
+              prototype_descriptor: descriptor,
+            })
+            .collect(),
         },
       },
     }
   }
 }
 
+#[derive(Debug)]
 struct ShapePrototype {
   id: String,
   trail: JsonTrail,
   prototype_descriptor: ShapePrototypeDescriptor,
 }
 
+#[derive(Debug)]
 enum ShapePrototypeDescriptor {
   OptionalShape {
     shape: Box<ShapePrototype>,
@@ -219,7 +273,8 @@ enum ShapePrototypeDescriptor {
     shape: Box<ShapePrototype>,
   },
   OneOfShape {
-    branches: Vec<ShapePrototypeDescriptor>,
+    branches: Vec<ShapePrototype>,
+    parameter_ids: Vec<String>,
   },
   ObjectWithFields {
     fields: Vec<ShapePrototype>,
@@ -297,6 +352,43 @@ mod test {
       "trail_observations_can_generate_commands_for_primitive_bodies__boolean_results",
       boolean_results
     );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_one_off_of_primitives() {
+    let string_body = BodyDescriptor::from(json!("a string body"));
+    let number_body = BodyDescriptor::from(json!(48));
+    let boolean_body = BodyDescriptor::from(json!(true));
+
+    let mut observations = TrailObservationsResult::default();
+    observations.union(observe_body_trails(string_body));
+    observations.union(observe_body_trails(number_body));
+    observations.union(observe_body_trails(boolean_body));
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+    let mut spec_projection = SpecProjection::default();
+
+    let observation_results = collect_commands(observations.into_commands(&mut test_id));
+    assert!(observation_results.0.is_some());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_one_off_of_primitives__observation_results",
+      observation_results
+    );
+
+    for command in observation_results.1 {
+      let events = spec_projection
+        .execute(command)
+        .expect("generated commands must be valid");
+
+      for event in events {
+        spec_projection.apply(event)
+      }
+    }
   }
 
   fn collect_commands(

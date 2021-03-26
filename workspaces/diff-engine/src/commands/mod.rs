@@ -21,6 +21,7 @@ use crate::events::{
 };
 use crate::projections::SpecProjection;
 use crate::queries::history::HistoryQueries;
+use crate::state::shape::ShapeKind;
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
@@ -190,7 +191,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
 
         let shape_added_event = ShapeEvent::from(ShapeCommand::add_shape(
           Uuid::new_v4().to_hyphenated().to_string(),
-          String::from("$string"),
+          ShapeKind::StringKind,
           String::from(""),
         ));
 
