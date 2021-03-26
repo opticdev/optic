@@ -164,6 +164,12 @@ pub struct TrailValues {
   field_set: HashSet<FieldSet>,
 }
 
+impl From<JsonTrail> for TrailValues {
+  fn from(json_trail: JsonTrail) -> Self {
+    TrailValues::new(&json_trail)
+  }
+}
+
 impl TrailValues {
   pub fn new(json_trail: &JsonTrail) -> Self {
     Self {

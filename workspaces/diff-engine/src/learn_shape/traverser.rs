@@ -20,7 +20,9 @@ impl Traverser {
     &self,
     body_option: Option<BodyDescriptor>,
     visitors: &mut impl BodyVisitors<R>,
-  ) {
+  ) where
+    R: From<JsonTrail>,
+  {
     let body_trail = JsonTrail::empty();
     self.traverse(body_option, body_trail, visitors)
   }
@@ -30,7 +32,9 @@ impl Traverser {
     body_option: Option<BodyDescriptor>,
     body_trail: JsonTrail,
     visitors: &mut impl BodyVisitors<R>,
-  ) {
+  ) where
+    R: From<JsonTrail>,
+  {
     // eprintln!("shape-traverser: traversing body");
     if let None = body_option {
       // eprintln!("shape-traverser: no body available");
