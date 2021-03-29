@@ -177,24 +177,15 @@ impl BodyVisitor<TrailValues> for LearnObjectVisitor {
 
 impl BodyObjectVisitor<TrailValues> for LearnObjectVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
-    // dbg!(&body);
-    // dbg!(&json_trail);
+    let trail_values = self.get_or_insert(json_trail);
 
     if let BodyDescriptor::Object(object_description) = &body {
+      trail_values.was_object = true;
+
       let keys = object_description.keys().map(|x| (*x).clone());
       let keys_set = HashSet::<String>::from_iter(keys);
 
-      // self.push(TrailValues {
-      //   trail: json_trail.clone(),
-      //   was_object: true,
-      //   was_array: false,
-      //   was_boolean: false,
-      //   was_string: false,
-      //   was_number: false,
-      //   was_null: false,
-      //   field_set:
-      // });
-      //
+      trail_values.insert_field_set(keys_set);
     }
   }
 }

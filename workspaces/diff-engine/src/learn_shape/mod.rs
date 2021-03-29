@@ -54,6 +54,15 @@ mod test {
       .expect("results should contain a json trail for the root shape");
     assert!(root_shape_result.was_array);
 
+    let item_trail = JsonTrail::empty().with_array_item(0);
+    let item_shape_result = result
+      .values()
+      .find(|value| value.trail == item_trail)
+      .expect("results should contain a json trail for the array item");
+    dbg!(&item_shape_result);
+    assert!(item_shape_result.was_object);
+    assert_eq!(item_shape_result.field_sets.len(), 2);
+
     dbg!(result);
     // assert_debug_snapshot!(result);
   }

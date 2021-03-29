@@ -196,7 +196,7 @@ pub struct TrailValues {
   pub was_array: bool,
   pub was_object: bool,
   pub was_empty_array: bool,
-  field_set: HashSet<FieldSet>,
+  pub field_sets: Vec<FieldSet>,
 }
 
 impl From<JsonTrail> for TrailValues {
@@ -216,7 +216,7 @@ impl TrailValues {
       was_array: false,
       was_object: false,
       was_empty_array: false,
-      field_set: Default::default(),
+      field_sets: Default::default(),
     }
   }
 
@@ -228,7 +228,24 @@ impl TrailValues {
     self.was_array = self.was_array || new_values.was_array;
     self.was_empty_array = self.was_empty_array || new_values.was_empty_array;
     self.was_object = self.was_object || new_values.was_object;
-    // TODO: figure out what to do about field sets
+
+    for new_field_set in new_values.field_sets {
+      self.insert_field_set(new_field_set);
+    }
+  }
+
+  pub fn insert_field_set(&mut self, field_set: FieldSet) {
+    let exists = self.field_sets.iter().any(|existing_set| {
+      if let None = existing_set.difference(&field_set).next() {
+        true
+      } else {
+        false
+      }
+    });
+
+    if !exists {
+      self.field_sets.push(field_set);
+    }
   }
 
   fn into_shape_prototype<F>(
