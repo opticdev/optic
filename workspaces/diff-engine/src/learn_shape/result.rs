@@ -1,7 +1,7 @@
 use crate::commands::shape as shape_commands;
 use crate::commands::{ShapeCommand, SpecCommand};
 use crate::shapes::JsonTrail;
-use crate::state::shape::{ShapeId, ShapeKind, ShapeKindDescriptor};
+use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::BodyDescriptor;
 use std::collections::{HashMap, HashSet};
 
@@ -293,6 +293,42 @@ impl TrailValues {
       } else {
         None
       },
+      if self.was_object {
+        let field_keys = {
+          let mut keys = self
+            .field_sets
+            .iter()
+            .fold(HashSet::new(), |aggregate: HashSet<String>, field_set| {
+              aggregate.union(&field_set).cloned().collect()
+            })
+            .into_iter()
+            .collect::<Vec<_>>();
+          keys.sort();
+          keys
+        };
+
+        let field_descriptors = field_keys
+          .into_iter()
+          .map(|key| {
+            let field_trail = self.trail.with_object_key(key.clone());
+            let field_shape_prototype = existing_prototypes.get(&field_trail).expect(
+              "object field shape prototype should have been generated before its parent object",
+            );
+
+            FieldPrototypeDescriptor {
+              field_id: generate_id(),
+              key,
+              value_shape_id: field_shape_prototype.id.clone(),
+            }
+          })
+          .collect::<Vec<_>>();
+
+        Some(ShapePrototypeDescriptor::ObjectWithFields {
+          fields: field_descriptors,
+        })
+      } else {
+        None
+      },
     ]
     .into_iter()
     .flatten()
@@ -349,19 +385,22 @@ enum ShapePrototypeDescriptor {
     parameter_ids: Vec<String>,
   },
   ObjectWithFields {
-    fields: Vec<ShapePrototype>,
+    fields: Vec<FieldPrototypeDescriptor>,
   },
   ListOfShape {
     item_shape_id: Option<ShapeId>,
-  },
-  FieldWithShape {
-    key: String,
-    shape: Box<ShapePrototype>,
   },
   PrimitiveKind {
     base_shape_kind: ShapeKind,
   },
   Unknown,
+}
+
+#[derive(Clone, Debug)]
+struct FieldPrototypeDescriptor {
+  field_id: FieldId,
+  key: String,
+  value_shape_id: ShapeId,
 }
 
 #[cfg(test)]
@@ -505,6 +544,44 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_array_bodies__polymorphic_array_results",
       &polymorphic_array_results
+    );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_object_bodies() {
+    let primitive_object_body = BodyDescriptor::from(json!({
+      "a-str": "a-value",
+      "b-field": true,
+      "c-field": 3
+    }));
+    let empty_object_body = BodyDescriptor::from(json!({}));
+
+    let primitive_object_observations = observe_body_trails(primitive_object_body);
+    let empty_object_observations = observe_body_trails(empty_object_body);
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+
+    let primitive_object_results =
+      collect_commands(primitive_object_observations.into_commands(&mut test_id));
+    assert!(primitive_object_results.0.is_some());
+    assert_valid_commands(primitive_object_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_bodies__primitive_object_results",
+      &primitive_object_results
+    );
+
+    let empty_object_results =
+      collect_commands(empty_object_observations.into_commands(&mut test_id));
+    assert!(empty_object_results.0.is_some());
+    assert_valid_commands(empty_object_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_bodies__empty_object_results",
+      &empty_object_results
     );
   }
 
