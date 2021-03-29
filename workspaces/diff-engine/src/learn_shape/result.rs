@@ -149,6 +149,25 @@ fn shape_prototypes_to_commands(
 
             [Some(commands), None]
           }
+          ShapePrototypeDescriptor::ObjectWithFields { fields } => {
+            let mut commands = vec![];
+            commands.push(ShapeCommand::add_shape(
+              shape_prototype.id.clone(),
+              ShapeKind::ObjectKind,
+              String::from(""),
+            ));
+
+            for field in fields {
+              commands.push(ShapeCommand::add_field(
+                field.key,
+                field.field_id,
+                shape_prototype.id.clone(),
+                field.value_shape_id,
+              ));
+            }
+
+            [Some(commands), None]
+          }
           _ => [None, None],
         };
 
@@ -555,9 +574,16 @@ mod test {
       "c-field": 3
     }));
     let empty_object_body = BodyDescriptor::from(json!({}));
+    let nested_object_body = BodyDescriptor::from(json!({
+      "some-object": {
+        "nested-field": "nested-value"
+      },
+      "other-field": true
+    }));
 
     let primitive_object_observations = observe_body_trails(primitive_object_body);
     let empty_object_observations = observe_body_trails(empty_object_body);
+    let nested_object_observations = observe_body_trails(nested_object_body);
 
     let mut counter = 0;
     let mut test_id = || {
@@ -582,6 +608,15 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__empty_object_results",
       &empty_object_results
+    );
+
+    let nested_object_results =
+      collect_commands(nested_object_observations.into_commands(&mut test_id));
+    assert!(nested_object_results.0.is_some());
+    assert_valid_commands(nested_object_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_bodies__nested_object_results",
+      &nested_object_results
     );
   }
 

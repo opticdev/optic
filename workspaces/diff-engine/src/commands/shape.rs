@@ -3,7 +3,7 @@ use crate::{events::shape as shape_events, shapehash::ShapeDescriptor, state::sh
 use crate::events::ShapeEvent;
 use crate::projections::ShapeProjection;
 use crate::state::shape::{
-  FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ProviderInShape, ShapeId, ShapeKind,
+  FieldId, FieldShapeDescriptor, FieldShapeFromShape, ParameterShapeDescriptor, ProviderDescriptor, ProviderInShape, ShapeId, ShapeKind,
   ShapeParameterId, ShapeParametersDescriptor,
 };
 use cqrs_core::AggregateCommand;
@@ -47,6 +47,18 @@ impl ShapeCommand {
     };
 
     Self::SetParameterShape(SetParameterShape { shape_descriptor: ParameterShapeDescriptor::ProviderInShape(provider) })
+  }
+
+  pub fn add_field(key: String, field_id: ShapeId, object_shape_id: ShapeId, field_shape_id: ShapeId) -> Self {
+    Self::AddField(AddField {
+      shape_id: object_shape_id,
+      field_id: field_id.clone(),
+      name: key,
+      shape_descriptor: FieldShapeDescriptor::FieldShapeFromShape(FieldShapeFromShape {
+        field_id,
+        shape_id: field_shape_id
+      })
+    })
   }
 }
 
