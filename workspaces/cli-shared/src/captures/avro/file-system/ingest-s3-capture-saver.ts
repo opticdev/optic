@@ -7,11 +7,19 @@ import path from 'path';
 import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { map as streamMap, flatMap } from 'axax';
 import { IHttpInteraction } from '@useoptic/domain-types';
+import { fromNodeStream } from 'axax/es5/fromNodeStream';
 //@ts-ignore
 import AWS from 'aws-sdk';
 import { CaptureSaver } from './capture-saver';
 import { Token as ContinuationToken } from 'aws-sdk/clients/s3';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
+import { flatten, map, pipe } from '@useoptic/diff-engine-wasm/lib/async-tools';
+
+async function* fromReadable<T>(r: Readable): AsyncIterable<T> {
+  for await (const chunk of r) {
+    yield chunk;
+  }
+}
 
 export async function ingestS3({
   bucketName,
@@ -76,13 +84,13 @@ export async function ingestS3({
   let batchCount = 0;
   let totalBatches = 0;
 
-  async function* bucket_keys(
+  async function* bucket_key_chunks(
     cursor?: ContinuationToken
-  ): AsyncIterable<string> {
+  ): AsyncIterable<string[]> {
     const objects = await s3
       .listObjectsV2({
         Bucket: bucketName,
-        MaxKeys: 1000,
+        MaxKeys: 100,
         Prefix: prefix,
         ContinuationToken: cursor,
       })
@@ -95,14 +103,10 @@ export async function ingestS3({
 
     customBar.setTotal(totalBatches);
 
-    for (const batch of batch_files) {
-      yield batch;
-      batchCount++;
-      customBar.update(batchCount);
-    }
+    yield batch_files;
 
     if (objects.IsTruncated) {
-      yield* bucket_keys(objects.NextContinuationToken);
+      yield* bucket_key_chunks(objects.NextContinuationToken);
     }
   }
 
@@ -115,9 +119,31 @@ export async function ingestS3({
       .createReadStream();
   }
 
+  // We convert this to Readable and back so we can get the nice buffering functionality
+  // that readable provides, even for objectMode streams.
+  let key_chunk_readable = Readable.from(bucket_key_chunks(), {
+    objectMode: true,
+    highWaterMark: 5,
+  });
+  let iterable_again = fromReadable<string[]>(key_chunk_readable);
+
   let continuous_readable: Readable = Readable.from(
-    flatMap(key_to_readstream)(bucket_keys())
+    pipe(
+      // Starting out with AsyncIterable<string[]> from `bucket_key_chunks()` which yields string[], not string
+      // Flatten it into AsyncIterable<string>, while also updating the progress as a side-effect
+      flatMap(async function* (items: string[]) {
+        for await (const item of items) {
+          batchCount++;
+          customBar.update(batchCount);
+          yield item;
+        }
+      }),
+      // Go from an iterable of bucket keys to an iterable of readstreams,
+      // Then flatten that to a single stream of string chunks
+      flatMap(key_to_readstream)
+    )(iterable_again)
   );
+
   let parser = continuous_readable.pipe(jsonlParser());
   let obj_stream = streamMap((obj: { value: IHttpInteraction }) => obj.value)(
     parser
