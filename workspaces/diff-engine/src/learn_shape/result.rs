@@ -127,23 +127,27 @@ fn shape_prototypes_to_commands(
             [Some(commands), None]
           }
           ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
-            let shape_command = ShapeCommand::add_shape(
+            let mut commands = vec![];
+            commands.push(ShapeCommand::add_shape(
               shape_prototype.id.clone(),
               ShapeKind::ListKind,
               String::from(""),
-            );
-            let parameter_command = ShapeCommand::set_parameter_shape(
-              shape_prototype.id,
-              String::from(
-                ShapeKind::ListKind
-                  .get_parameter_descriptor()
-                  .unwrap()
-                  .shape_parameter_id,
-              ),
-              item_shape_id,
-            );
+            ));
 
-            [Some(vec![shape_command, parameter_command]), None]
+            if let Some(item_shape_id) = item_shape_id {
+              commands.push(ShapeCommand::set_parameter_shape(
+                shape_prototype.id,
+                String::from(
+                  ShapeKind::ListKind
+                    .get_parameter_descriptor()
+                    .unwrap()
+                    .shape_parameter_id,
+                ),
+                item_shape_id,
+              ));
+            }
+
+            [Some(commands), None]
           }
           _ => [None, None],
         };
@@ -191,6 +195,7 @@ pub struct TrailValues {
   pub was_null: bool,
   pub was_array: bool,
   pub was_object: bool,
+  pub was_empty_array: bool,
   field_set: HashSet<FieldSet>,
 }
 
@@ -210,6 +215,7 @@ impl TrailValues {
       was_null: false,
       was_array: false,
       was_object: false,
+      was_empty_array: false,
       field_set: Default::default(),
     }
   }
@@ -220,6 +226,7 @@ impl TrailValues {
     self.was_boolean = self.was_boolean || new_values.was_boolean;
     self.was_null = self.was_null || new_values.was_null;
     self.was_array = self.was_array || new_values.was_array;
+    self.was_empty_array = self.was_empty_array || new_values.was_empty_array;
     self.was_object = self.was_object || new_values.was_object;
     // TODO: figure out what to do about field sets
   }
@@ -256,13 +263,16 @@ impl TrailValues {
       },
       if self.was_array {
         let item_trail = self.trail.with_array_item(0);
-        let item_prototype = existing_prototypes
-          .get(&item_trail)
-          .expect("item shape prototype should have been generated before its parent list");
+        let item_shape_id = if self.was_empty_array {
+          None
+        } else {
+          let item_prototype = existing_prototypes
+            .get(&item_trail)
+            .expect("item shape prototype should have been generated before its parent list");
+          Some(item_prototype.id.clone())
+        };
 
-        Some(ShapePrototypeDescriptor::ListOfShape {
-          item_shape_id: item_prototype.id.clone(),
-        })
+        Some(ShapePrototypeDescriptor::ListOfShape { item_shape_id })
       } else {
         None
       },
@@ -325,7 +335,7 @@ enum ShapePrototypeDescriptor {
     fields: Vec<ShapePrototype>,
   },
   ListOfShape {
-    item_shape_id: ShapeId,
+    item_shape_id: Option<ShapeId>,
   },
   FieldWithShape {
     key: String,
@@ -462,14 +472,14 @@ mod test {
       &primitive_array_results
     );
 
-    // let empty_array_results =
-    //   collect_commands(empty_array_observations.into_commands(&mut test_id));
-    // assert!(empty_array_results.0.is_some());
-    // assert_valid_commands(SpecProjection::default(), empty_array_results.1.clone());
-    // assert_debug_snapshot!(
-    //   "trail_observations_can_generate_commands_for_array_bodies__empty_array_results",
-    //   &empty_array_results
-    // );
+    let empty_array_results =
+      collect_commands(empty_array_observations.into_commands(&mut test_id));
+    assert!(empty_array_results.0.is_some());
+    assert_valid_commands(empty_array_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_array_bodies__empty_array_results",
+      &empty_array_results
+    );
 
     let polymorphic_array_results =
       collect_commands(polymorphic_array_observations.into_commands(&mut test_id));

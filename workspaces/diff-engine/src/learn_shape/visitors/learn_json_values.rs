@@ -144,6 +144,13 @@ impl BodyArrayVisitor<TrailValues> for LearnArrayVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
     let trail_values = self.get_or_insert(json_trail);
     trail_values.was_array = true;
+
+    let items = match body {
+      BodyDescriptor::Array(items) => items,
+      _ => unreachable!("only array bodies should be passed to the BodyArrayVisitor"),
+    };
+
+    trail_values.was_empty_array = items.unique_items_count() == 0;
   }
 }
 
