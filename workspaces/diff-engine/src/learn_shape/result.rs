@@ -209,7 +209,7 @@ fn shape_prototypes_to_commands(
 
             [Some(commands), None]
           }
-          _ => [None, None],
+          ShapePrototypeDescriptor::Unknown => [None, None],
         };
 
       [init_commands, describe_commands]
