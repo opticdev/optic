@@ -1183,25 +1183,6 @@ const _events = [
     }
   }
 ];
-const _endpointChanges = {
-  opticUrl: 'https://example.com',
-  endpoints: [
-    {
-      change: {
-        category: 'added'
-      },
-      path: '/foo',
-      method: 'get'
-    },
-    {
-      change: {
-        category: 'updated'
-      },
-      path: '/bar',
-      method: 'post'
-    }
-  ]
-};
 
 async function main() {
   const spectacle = await makeSpectacle(DiffEngine, {
@@ -1283,8 +1264,3 @@ async function main() {
 }
 
 main();
-/*
-@TODO: add ids
-@TODO: inline changelog since()
-@TODO: add support for contributions
- */
