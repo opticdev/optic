@@ -126,6 +126,35 @@ fn shape_prototypes_to_commands(
 
             [Some(commands), None]
           }
+          ShapePrototypeDescriptor::NullableShape { shape } => {
+            let mut commands = vec![];
+
+            let item_shape_prototype = *shape;
+            let item_shape_id = item_shape_prototype.id.clone();
+
+            commands.extend(shape_prototypes_to_commands(std::iter::once(
+              item_shape_prototype,
+            )));
+
+            let nullable_shape_id = shape_prototype.id;
+            commands.push(ShapeCommand::add_shape(
+              nullable_shape_id.clone(),
+              ShapeKind::NullableKind,
+              String::from(""),
+            ));
+
+            let parameter_id = ShapeKind::NullableKind
+              .get_parameter_descriptor()
+              .unwrap()
+              .shape_parameter_id;
+            commands.push(ShapeCommand::set_parameter_shape(
+              nullable_shape_id,
+              String::from(parameter_id),
+              item_shape_id,
+            ));
+
+            [Some(commands), None]
+          }
           ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
             let mut commands = vec![];
             commands.push(ShapeCommand::add_shape(
@@ -384,7 +413,7 @@ impl TrailValues {
     .collect();
 
     let descriptors_count = descriptors.len();
-    match descriptors_count {
+    let shape_prototype = match descriptors_count {
       0 => ShapePrototype {
         id: generate_id(),
         trail: self.trail,
@@ -410,6 +439,18 @@ impl TrailValues {
             .collect(),
         },
       },
+    };
+
+    if self.was_null {
+      ShapePrototype {
+        id: generate_id(),
+        trail: shape_prototype.trail.clone(),
+        prototype_descriptor: ShapePrototypeDescriptor::NullableShape {
+          shape: Box::new(shape_prototype),
+        },
+      }
+    } else {
+      shape_prototype
     }
   }
 }
@@ -705,6 +746,86 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_with_optional_fields__nested_optional_results",
       &nested_optional_results
+    );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_nullable_bodies() {
+    let nullable_primitive_observations = {
+      let complete_body = BodyDescriptor::from(json!("a-string-value"));
+      let null_body = BodyDescriptor::from(json!(null));
+
+      let mut result = observe_body_trails(complete_body);
+      result.union(observe_body_trails(null_body));
+      result
+    };
+
+    let nullable_object_field_observations = {
+      let complete_body = BodyDescriptor::from(json!({ "nullable-field": "string" }));
+      let null_body = BodyDescriptor::from(json!({ "nullable-field": null }));
+
+      let mut result = observe_body_trails(complete_body);
+      result.union(observe_body_trails(null_body));
+      result
+    };
+
+    let nullable_array_item_observations = {
+      let body = BodyDescriptor::from(json!(["string-value", null]));
+      observe_body_trails(body)
+    };
+
+    let nullable_one_off_observations = {
+      let complete_body = BodyDescriptor::from(json!("a-string-value"));
+      let other_body = BodyDescriptor::from(json!(48));
+      let null_body = BodyDescriptor::from(json!(null));
+
+      let mut result = observe_body_trails(complete_body);
+      result.union(observe_body_trails(other_body));
+      result.union(observe_body_trails(null_body));
+      result
+    };
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+
+    let nullable_primitive_results =
+      collect_commands(nullable_primitive_observations.into_commands(&mut test_id));
+    assert!(nullable_primitive_results.0.is_some());
+    assert_valid_commands(nullable_primitive_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_nullable_bodies__nullable_primitive_results",
+      &nullable_primitive_results
+    );
+
+    let nullable_object_field_results =
+      collect_commands(nullable_object_field_observations.into_commands(&mut test_id));
+    assert!(nullable_object_field_results.0.is_some());
+    assert_valid_commands(nullable_object_field_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_nullable_bodies__nullable_object_field_results",
+      &nullable_object_field_results
+    );
+
+    let nullable_array_item_results =
+      collect_commands(nullable_array_item_observations.into_commands(&mut test_id));
+    assert!(nullable_array_item_results.0.is_some());
+    assert_valid_commands(nullable_array_item_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_nullable_bodies__nullable_array_item_results",
+      &nullable_array_item_results
+    );
+
+    let nullable_one_off_results =
+      collect_commands(nullable_one_off_observations.into_commands(&mut test_id));
+    assert!(nullable_one_off_results.0.is_some());
+    assert_valid_commands(nullable_one_off_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_nullable_bodies__nullable_one_off_results",
+      &nullable_one_off_results
     );
   }
 
