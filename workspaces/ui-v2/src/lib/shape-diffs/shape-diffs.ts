@@ -1,43 +1,43 @@
-import { ParsedDiff } from '../../parse-diff';
-import { IInterpretation } from '../../interfaces/interpretors';
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { Actual, Expectation } from '../shape-diff-dsl';
+
+// import { fieldShapeDiffInterpretor } from './field';
+//
+// import { listItemShapeDiffInterpreter } from './list';
+// import { rootShapeDiffInterpreter } from './root';
+import { BodyShapeDiff } from '../parse-diff';
+import { IChangeType, IInterpretation } from '../Interfaces';
+import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
-import { DiffSessionConfig } from '../../interfaces/session';
-import { listItemShapeDiffInterpreter } from './list';
-import { rootShapeDiffInterpreter } from './root';
+import { descriptionForShapeDiff } from '../diff-description-interpreter';
 
-//only ever take 1 diff at a time
-export function interpretShapeDiffs(
-  diff: ParsedDiff,
+export async function interpretShapeDiffs(
+  diff: BodyShapeDiff,
   learnedTrails: IValueAffordanceSerializationWithCounter,
-  services: DiffSessionConfig
-): IInterpretation {
-  const asShapeDiff = diff.asShapeDiff(services.rfcBaseState)!;
-  const { rfcBaseState } = services;
-  const { normalizedShapeTrail, jsonTrail } = asShapeDiff;
+  domainQuery: any
+): Promise<IInterpretation> {
+  const { normalizedShapeTrail, jsonTrail } = diff;
 
-  const isUnmatched = asShapeDiff.isUnmatched;
-  const isUnspecified = asShapeDiff.isUnspecified;
+  const isUnmatched = diff.isUnmatched;
+  const isUnspecified = diff.isUnspecified;
+
+  const diffDescription = await descriptionForShapeDiff(diff, domainQuery);
 
   const actual = new Actual(learnedTrails, normalizedShapeTrail, jsonTrail);
-  const expected = new Expectation(
-    diff,
-    rfcBaseState,
-    normalizedShapeTrail,
-    jsonTrail
+  const expected = await getExpectationsForShapeTrail(
+    diff.shapeTrail,
+    domainQuery
   );
 
   // Route to field interpreter
   /////////////////////////////////////////////////////////////////////
   const isUnspecifiedField = isUnspecified && actual.isField(); //this needs to use lastObject + key
   if (expected.isField() || isUnspecifiedField) {
-    return fieldShapeDiffInterpretor(asShapeDiff, actual, expected, services);
+    return fieldShapeDiffInterpretor(diff, actual, expected, diffDescription);
   }
 
   // Route to list item
   /////////////////////////////////////////////////////////////////////
-  if (expected.isListItemShape()) {
+  /*  if (expected.isListItemShape()) {
     return listItemShapeDiffInterpreter(
       asShapeDiff,
       actual,
@@ -51,7 +51,7 @@ export function interpretShapeDiffs(
 
   if (expected.rootShapeId() && normalizedShapeTrail.path.length === 0) {
     return rootShapeDiffInterpreter(asShapeDiff, actual, expected, services);
-  }
+  }*/
 
   return { suggestions: [], previewTabs: [] };
 }

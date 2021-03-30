@@ -4,6 +4,53 @@ import {
   IRequestBody,
   IResponseBody,
 } from '../optic-components/hooks/useEndpointBodyHook';
+import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
+import { IgnoreRule } from './ignore-rule';
+
+export interface IInterpretation {
+  suggestions: ISuggestion[];
+  previewTabs: IInteractionPreviewTab[];
+  diffDescription?: IDiffDescription;
+}
+
+export interface IDiffSuggestionPreview {
+  for: 'shape' | 'region';
+  diffDescription: IDiffDescription;
+  tabs: IInteractionPreviewTab[];
+  suggestions: ISuggestion[];
+  overrideTitle?: ICopy[];
+}
+
+export interface IInteractionPreviewTab {
+  title: string;
+  allowsExpand: boolean;
+  invalid: boolean;
+  assertion: ICopy[];
+  jsonTrailsByInteractions: { [key: string]: IJsonTrail[] };
+  interactionPointers: string[];
+  ignoreRule: IgnoreRule;
+}
+
+export interface BodyPreview {
+  asJson: any | null;
+  asText: any | null;
+  noBody: boolean;
+}
+export interface IDiffDescription {
+  title: ICopy[];
+  assertion: ICopy[];
+  location: IParsedLocation;
+  changeType: IChangeType;
+  getJsonBodyToPreview: (interaction: any) => BodyPreview;
+  unknownDiffBehavior?: boolean;
+  diffHash: string;
+}
+
+export interface ISuggestion {
+  action: ICopyPair;
+  commands: any[];
+  changeType: IChangeType;
+}
 
 export enum IChangeType {
   Added,

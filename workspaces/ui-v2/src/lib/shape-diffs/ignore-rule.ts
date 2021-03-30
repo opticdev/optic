@@ -1,11 +1,12 @@
+// @ts-nocheck
+import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
+import equals from 'lodash.isequal';
+import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
 import {
   ICoreShapeKinds,
   IRequestBodyLocation,
   IResponseBodyLocation,
-} from '../../interfaces/interfaces';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
-import equals from 'lodash.isequal';
-import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
+} from '../Interfaces';
 export interface IgnoreRule {
   diffHash: string;
   specificInteractions?: string[];

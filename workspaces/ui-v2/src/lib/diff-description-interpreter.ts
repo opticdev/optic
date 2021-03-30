@@ -1,77 +1,59 @@
-import {
-  code,
-  IChangeType,
-  ICopy,
-  IDiffDescription,
-  plain,
-} from '../interfaces/interpretors';
-import { ParsedDiff } from '../parse-diff';
-import { Actual, Expectation } from './shape-diff-dsl';
-import { JsonHelper } from '@useoptic/domain';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
-import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
+import { BodyShapeDiff, ParsedDiff } from './parse-diff';
+import { IChangeType, IDiffDescription } from './Interfaces';
+import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
+import { code, plain } from '../optic-components/diffs/render/ICopyRender';
+import { IJsonObjectKey } from '../../../cli-shared/build/diffs/json-trail';
+import invariant from 'invariant';
+//@ts-ignore
+const { toJsonExample } = require('shape-hash');
 
-export function descriptionForDiffs(
-  diff: ParsedDiff,
-  rfcBaseState: DiffRfcBaseState
-): IDiffDescription {
-  if (diff.isNewRegionDiff()) {
-    return descriptionForNewRegions(diff, rfcBaseState);
-  }
+// function descriptionForNewRegions(
+//   diff: ParsedDiff,
+// ): IDiffDescription {loadSync
+//   const location = diff.location(rfcBaseState);
+//   let title: ICopy[] = [];
+//   if (location.inRequest) {
+//     title = [
+//       plain('undocumented'),
+//       code(location.inRequest.contentType || 'No Body'),
+//       plain('request observed'),
+//     ];
+//   }
+//   if (location.inResponse) {
+//     title = [
+//       plain('undocumented'),
+//       code(location.inResponse.statusCode.toString()),
+//       plain('response with'),
+//       code(location.inResponse.contentType || 'No Body'),
+//       plain('observed'),
+//     ];
+//   }
+//
+//   return {
+//     title,
+//     changeType: IChangeType.Added,
+//     location,
+//     assertion: [plain('Undocumented Body Observed')],
+//     getJsonBodyToPreview: (interaction: any) => {
+//       const body =
+//         (location.inRequest && interaction.request.body) ||
+//         (location.inResponse && interaction.response.body);
+//
+//       if (body) {
+//         return JsonHelper.fromInteractionBodyToJs(body);
+//       } else {
+//         return { asJson: null, asText: null, noBody: true };
+//       }
+//     },
+//   };
+// }
 
-  if (diff.isBodyShapeDiff()) {
-    return descriptionForShapeDiff(diff, rfcBaseState);
-  }
-}
+export async function descriptionForShapeDiff(
+  asShapeDiff: BodyShapeDiff,
+  query: any
+): Promise<IDiffDescription> {
+  const location = asShapeDiff.location;
 
-function descriptionForNewRegions(
-  diff: ParsedDiff,
-  rfcBaseState: DiffRfcBaseState
-): IDiffDescription {
-  const location = diff.location(rfcBaseState);
-  let title: ICopy[] = [];
-  if (location.inRequest) {
-    title = [
-      plain('undocumented'),
-      code(location.inRequest.contentType || 'No Body'),
-      plain('request observed'),
-    ];
-  }
-  if (location.inResponse) {
-    title = [
-      plain('undocumented'),
-      code(location.inResponse.statusCode.toString()),
-      plain('response with'),
-      code(location.inResponse.contentType || 'No Body'),
-      plain('observed'),
-    ];
-  }
-
-  return {
-    title,
-    changeType: IChangeType.Added,
-    location,
-    assertion: [plain('Undocumented Body Observed')],
-    getJsonBodyToPreview: (interaction: any) => {
-      const body =
-        (location.inRequest && interaction.request.body) ||
-        (location.inResponse && interaction.response.body);
-
-      if (body) {
-        return JsonHelper.fromInteractionBodyToJs(body);
-      } else {
-        return { asJson: null, asText: null, noBody: true };
-      }
-    },
-  };
-}
-
-function descriptionForShapeDiff(
-  diff: ParsedDiff,
-  rfcBaseState: DiffRfcBaseState
-): IDiffDescription {
-  const location = diff.location(rfcBaseState);
-  const asShapeDiff = diff.asShapeDiff(rfcBaseState);
   const jsonTrailPath = asShapeDiff.jsonTrail.path;
   const jsonTrailLast = jsonTrailPath[jsonTrailPath.length - 1]!;
 
@@ -81,17 +63,35 @@ function descriptionForShapeDiff(
       (location.inResponse && interaction.response.body);
 
     if (body) {
-      return JsonHelper.fromInteractionBodyToJs(body);
+      const { shapeHashV1Base64, asText, asJsonString } = body.value;
+
+      if (asJsonString) {
+        return {
+          asJson: JSON.parse(asJsonString),
+          asText: null,
+          noBody: false,
+        };
+      }
+
+      if (shapeHashV1Base64) {
+        return {
+          asJson: toJsonExample(shapeHashV1Base64),
+          asText: null,
+          noBody: false,
+        };
+      }
+      if (asText) {
+        return { asJson: null, asText: asText, noBody: false };
+      }
+      return { asJson: null, asText: null, noBody: false };
     } else {
       return { asJson: null, asText: null, noBody: true };
     }
   };
 
-  const expected = new Expectation(
-    diff,
-    rfcBaseState,
-    asShapeDiff.normalizedShapeTrail,
-    asShapeDiff.jsonTrail
+  const expected = await getExpectationsForShapeTrail(
+    asShapeDiff.shapeTrail,
+    query
   );
 
   //root handler
@@ -105,6 +105,7 @@ function descriptionForShapeDiff(
       location,
       changeType: IChangeType.Changed,
       assertion: [plain('expected'), code(expected.shapeName())],
+      diffHash: asShapeDiff.diffHash(),
       getJsonBodyToPreview,
     };
   }
@@ -121,6 +122,7 @@ function descriptionForShapeDiff(
         ],
         location,
         changeType: IChangeType.Changed,
+        diffHash: asShapeDiff.diffHash(),
         assertion: [plain('expected'), code(expected.shapeName())],
         getJsonBodyToPreview,
       };
@@ -137,6 +139,8 @@ function descriptionForShapeDiff(
       ],
       location,
       changeType: IChangeType.Added,
+      diffHash: asShapeDiff.diffHash(),
+
       assertion: [code('undocumented field')],
       getJsonBodyToPreview,
     };
@@ -148,6 +152,8 @@ function descriptionForShapeDiff(
       title: [plain('list items did not match'), code(expected.shapeName())],
       location,
       changeType: IChangeType.Changed,
+      diffHash: asShapeDiff.diffHash(),
+
       assertion: [plain('expected'), code(expected.shapeName())],
       getJsonBodyToPreview,
     };
@@ -160,7 +166,8 @@ function descriptionForShapeDiff(
     changeType: IChangeType.Changed,
     assertion: [],
     unknownDiffBehavior: true,
+    diffHash: asShapeDiff.diffHash(),
     getJsonBodyToPreview,
   };
-  // invariant(false, 'Unexpected shape diff');
+  invariant(false, 'Unexpected shape diff');
 }

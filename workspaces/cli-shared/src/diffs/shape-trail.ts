@@ -7,7 +7,9 @@ export type IShapeTrailComponent =
   | INullableTrail
   | IOptionalItemTrail
   | INullableItemTrail
-  | IUnknownTrail;
+  | IUnknownTrail
+  | IOneOfTrail
+  | IOptionalTrail;
 
 //todo one time export from scala js, switch to types from Rust
 
@@ -76,13 +78,13 @@ export interface IUnknownTrail {
 }
 
 export interface IOneOfTrail {
-  IOneOfTrail: {
+  OneOfTrail: {
     shapeId: string;
   };
 }
 
 export interface IOptionalTrail {
-  IOptionalTrail: {
+  OptionalTrail: {
     shapeId: string;
   };
 }

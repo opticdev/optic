@@ -1,18 +1,9 @@
-import { BodyShapeDiff, ParsedDiff } from '../../parse-diff';
-import {
-  IChangeType,
-  IInterpretation,
-  ISuggestion,
-  plain,
-} from '../../interfaces/interpretors';
-import {
-  ILearnedBodies,
-  IValueAffordanceSerializationWithCounter,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { ParsedDiff } from '../../parse-diff';
+import { IInterpretation } from '../../interfaces/interpretors';
+import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { Actual, Expectation } from '../shape-diff-dsl';
 import { fieldShapeDiffInterpretor } from './field';
 import { DiffSessionConfig } from '../../interfaces/session';
-import { IJsonObjectKey } from '@useoptic/cli-shared/build/diffs/json-trail';
 import { listItemShapeDiffInterpreter } from './list';
 import { rootShapeDiffInterpreter } from './root';
 

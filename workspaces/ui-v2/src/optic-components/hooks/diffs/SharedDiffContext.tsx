@@ -27,12 +27,6 @@ type ISharedDiffContext = {
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
-  diffsGroupedByEndpoints: () => {
-    pathId: string;
-    method: string;
-    fullPath: string;
-    diffCount: number;
-  }[];
 };
 
 export const SharedDiffStoreWithDependencies = (props: any) => {
@@ -80,19 +74,6 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
 
   const value: ISharedDiffContext = {
     context,
-    diffsGroupedByEndpoints: () =>
-      props.endpoints.map((endpoint) => {
-        return {
-          pathId: endpoint.pathId,
-          fullPath: endpoint.fullPath,
-          method: endpoint.method,
-          diffCount: (
-            context.results.diffHashesByEndpoints[
-              `${endpoint.method}.${endpoint.pathId}`
-            ] || []
-          ).length,
-        };
-      }),
     documentEndpoint: (pattern: string, method: string) => {
       const uuid = shortId.generate();
       send({ type: 'DOCUMENT_ENDPOINT', pattern, method, pendingId: uuid });

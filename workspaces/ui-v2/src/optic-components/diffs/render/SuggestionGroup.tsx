@@ -29,7 +29,6 @@ export function SuggestionGroup({ suggestions }: ISuggestionGroup) {
 
   return (
     <FormControl component="fieldset" style={{ width: '100%', marginLeft: 10 }}>
-      {/*<Typography variant="overline">Recommended Changes:</Typography>*/}
       <RadioGroup
         style={{ width: '100%' }}
         value={value}

@@ -107,7 +107,7 @@ export function ICopyRenderSpan({
                 <Typography
                   component="span"
                   variant={variant}
-                  style={{ ...style, fontWeight: 200 }}
+                  style={{ ...style, fontWeight: 400 }}
                 >
                   {i.text}
                 </Typography>
@@ -149,7 +149,7 @@ export function ICopyRenderMultiline({
                   variant={variant}
                   style={{
                     ...style,
-                    fontWeight: 200,
+                    fontWeight: 400,
                     // marginLeft: index === 0 && 3,
                   }}
                 >

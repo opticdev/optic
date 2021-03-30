@@ -2,7 +2,10 @@ import { AsyncStatus, Spectacle } from './public-examples';
 import React, { useContext, useEffect, useState } from 'react';
 import { SpectacleInput } from '@useoptic/spectacle';
 
-export const SpectacleContext = React.createContext<Spectacle>({query: null});
+export const SpectacleContext = React.createContext<Spectacle>({
+  query: null,
+  samples: [],
+});
 
 export const SpectacleStore = (props: {
   spectacle: Spectacle;
@@ -26,7 +29,7 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
       if (result.errors) {
         console.error(result.errors);
         debugger;
-        result.error = new Error(result.errors)
+        result.error = new Error(result.errors);
       }
       setResult(result);
     }
@@ -35,4 +38,9 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   }, [stringInput]);
 
   return result;
+}
+
+export function useSpectacleRawQuery() {
+  const { query } = useContext(SpectacleContext);
+  return query;
 }

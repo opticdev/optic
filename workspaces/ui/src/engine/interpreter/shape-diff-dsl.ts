@@ -41,11 +41,6 @@ interface IExpectationHelper {
   lastObject?: string;
   lastList?: string;
   lastListItem?: string;
-  lastOneOf?: IOneOfTrail;
-  lastOneOfItem?: IOneOfItemTrail;
-  lastUnknownTrail?: IUnknownTrail;
-  lastNullable?: INullableTrail;
-  lastOptionalItemTrail?: IOptionalItemTrail;
   rootShapeId?: string;
   shapeName?: string;
 }

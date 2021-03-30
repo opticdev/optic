@@ -38,7 +38,6 @@ type InteractionBodyViewerProps = {
 };
 
 export default function InteractionBodyViewerAllJS({
-  diff,
   description,
   jsonTrails = [],
   body,
@@ -49,11 +48,11 @@ export default function InteractionBodyViewerAllJS({
 
   const [{ rows }, dispatch] = useReducer(
     updateState,
-    { diff, body, jsonTrails, description },
+    { body, jsonTrails, description },
     createInitialState
   );
 
-  const diffDetails = diff && {
+  const diffDetails = description && {
     description,
     assertion,
     changeType: description.changeType,
@@ -614,7 +613,7 @@ const useStyles = makeStyles((theme) => ({
 // TODO: consider moving this to it's own module, partly to enable the usecase
 // stated above.
 
-function createInitialState({ diff, jsonTrails, description, body }: any) {
+function createInitialState({ jsonTrails, body }: any) {
   const diffTrails = jsonTrails.map(toCommonJsPath);
   const shape = !body.noBody ? body.asJson || body.asText : undefined;
 

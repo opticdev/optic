@@ -1,82 +1,36 @@
-import equals from 'lodash.isequal';
-
 import {
   IJsonObjectKey,
   IJsonTrail,
   normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
+import equals from 'lodash.isequal';
 import sortBy from 'lodash.sortby';
+import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
+import { ICoreShapeKinds } from './Interfaces';
+import {
+  IExpectationHelper,
+  shapeTrailParserLastId,
+} from './shape-trail-parser';
 import {
   IValueAffordanceSerialization,
   IValueAffordanceSerializationWithCounter,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
-import { JsonHelper, opticEngine } from '@useoptic/domain';
-import { ParsedDiff } from '../parse-diff';
+} from '../../../cli-shared/build/diffs/initial-types';
 import invariant from 'invariant';
-import { ICoreShapeKinds } from '../interfaces/interfaces';
-import { FieldContextSpecChange } from './spec-change-dsl';
-import { namer, namerForOneOf } from './quick-namer';
-import {
-  INullableTrail,
-  IOneOfItemTrail,
-  IOneOfTrail,
-  IOptionalItemTrail,
-  IShapeTrail,
-  IUnknownTrail,
-} from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
+import { namer } from './quick-namer';
 
-/*
-Goal: Make the shape diff interpretation logic (the hard stuff) drop dead simple to read
- */
-const ExpectedScalaHelper = opticEngine.com.useoptic.diff.interactions.interpreters.ExpectedHelper();
-
-interface IExpectationHelper {
-  allowedCoreShapes: string[];
-  lastField?: string;
-  lastFieldKey?: string;
-  allowedCoreShapeKindsByShapeId: { [key: string]: ICoreShapeKinds };
-  lastFieldShapeId?: string;
-  fieldIsOptional?: boolean;
-  lastObject?: string;
-  lastList?: string;
-  lastListItem?: string;
-  lastOneOf?: IOneOfTrail;
-  lastOneOfItem?: IOneOfItemTrail;
-  lastUnknownTrail?: IUnknownTrail;
-  lastNullable?: INullableTrail;
-  lastOptionalItemTrail?: IOptionalItemTrail;
-  rootShapeId?: string;
-  shapeName?: string;
-}
-
-export function expectationsFromSpecOption(
-  diff: ParsedDiff,
-  rfcBaseState: DiffRfcBaseState,
+export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
-  jsonTrail: IJsonTrail
-) {
-  try {
-    return new Expectation(diff, rfcBaseState, shapeTrail, jsonTrail);
-  } catch (e) {
-    console.error('scala domain confused by diff', e);
-    return undefined;
-  }
+  query: any
+): Promise<Expectation> {
+  const expectations = await shapeTrailParserLastId(shapeTrail, query);
+  return new Expectation(expectations);
 }
 
 export class Expectation {
   private expectationsFromSpec: IExpectationHelper;
-  constructor(
-    private diff: ParsedDiff,
-    public rfcBaseState: DiffRfcBaseState,
-    private shapeTrail: IShapeTrail,
-    private jsonTrail: IJsonTrail
-  ) {
-    const expected = ExpectedScalaHelper.expectedForDiffStrings(
-      JSON.stringify(shapeTrail),
-      rfcBaseState.rfcState
-    );
-    this.expectationsFromSpec = JsonHelper.toJs(expected);
+
+  constructor(expectationsFromSpec: IExpectationHelper) {
+    this.expectationsFromSpec = expectationsFromSpec;
   }
 
   isListItemShape(): boolean {
@@ -113,7 +67,7 @@ export class Expectation {
 
   isOptionalField(): boolean {
     invariant(this.isField(), 'shape trail is not a field.');
-    return this.expectationsFromSpec.fieldIsOptional;
+    return this.expectationsFromSpec.fieldIsOptional || false;
   }
 
   fieldKey(): string {
@@ -150,26 +104,27 @@ export class Expectation {
   // this tells us which (if any) shapes were observed at trail that weren't expected
   // ie expects [string, number]. If this returns [], nothing more than [string, number] observed
   // if this return [list, nullable], that means it's also been a list and null.
-  diffActual: (Actual) => ICoreShapeKinds[] = (actual: Actual) => {
+  diffActual: (actual: Actual) => ICoreShapeKinds[] = (actual: Actual) => {
     const a = this.expectedShapes();
     const b = actual.observedCoreShapeKinds();
     return Array.from(b).filter((x) => !a.has(x));
   };
 
-  unionWithActual: (Actual) => ICoreShapeKinds[] = (actual: Actual) => {
+  unionWithActual: (actual: Actual) => ICoreShapeKinds[] = (actual: Actual) => {
     const a = this.expectedShapes();
     const b = actual.observedCoreShapeKinds();
     return Array.from(new Set([...Array.from(a), ...Array.from(b)]));
   };
 
   // build the command helpers
-  fieldChangeHelper(actual: Actual) {
-    return new FieldContextSpecChange(this, actual, this.rfcBaseState);
-  }
+  // fieldChangeHelper(actual: Actual) {
+  //   return new FieldContextSpecChange(this, actual, this.rfcBaseState);
+  // }
 }
 
 export class Actual {
   private trailAffordances: IValueAffordanceSerialization[];
+
   constructor(
     public learnedTrails: IValueAffordanceSerializationWithCounter,
     private shapeTrail: IShapeTrail,
@@ -184,6 +139,7 @@ export class Actual {
   isField(): boolean {
     return Boolean(this.fieldKey());
   }
+
   fieldKey(): string | undefined {
     const jsonTrailLast = this.jsonTrail.path[this.jsonTrail.path.length - 1];
     const last = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;

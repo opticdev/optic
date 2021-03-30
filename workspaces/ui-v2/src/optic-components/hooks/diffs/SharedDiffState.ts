@@ -3,13 +3,15 @@ import { assign, Machine } from 'xstate';
 import * as niceTry from 'nice-try';
 import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
-import { ParsedDiff } from '../../../lib/parse-diff';
+import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import groupBy from 'lodash.groupby';
+import { DiffSet } from '../../../lib/diff-set';
+import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '../../../../../cli-shared/build/diffs/initial-types';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
-  parsedDiffs: ParsedDiff[] = exampleParsedDiffs
+  parsedDiffs: ParsedDiff[] = exampleParsedDiffs,
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash = learnedTrails
 ) => {
   return Machine<
     SharedDiffStateContext,
@@ -26,7 +28,8 @@ export const newSharedDiffMachine = (
         undocumentedUrls: exampleUrls,
         displayedUndocumentedUrls: exampleUrls,
         parsedDiffs: exampleParsedDiffs,
-        diffHashesByEndpoints: groupDiffsByTheirEndpoints(
+        trailValues,
+        diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
           currentSpecContext,
           parsedDiffs
         ),
@@ -128,35 +131,47 @@ function updateUrlResults(
       ctx.browserAppliedIgnoreRules
     ),
     parsedDiffs: ctx.results.parsedDiffs,
-    diffHashesByEndpoints: ctx.results.diffHashesByEndpoints,
+    trailValues: ctx.results.trailValues,
+    diffsGroupedByEndpoint: ctx.results.diffsGroupedByEndpoint,
   };
+}
+
+export interface EndpointDiffGrouping {
+  pathId: string;
+  method: string;
+  fullPath: string;
+  newRegionDiffs: ParsedDiff[];
+  shapeDiffs: BodyShapeDiff[];
 }
 
 function groupDiffsByTheirEndpoints(
   currentSpecContext: CurrentSpecContext,
   parsedDiffs: ParsedDiff[]
   // endpoint id method+pathId -> hashes
-): { [key: string]: string[] } {
-  // const set = new DiffSet(parsedDiffs, null);
+): EndpointDiffGrouping[] {
+  const set = new DiffSet(parsedDiffs, currentSpecContext);
+  const byEndpoint = set.groupedByEndpoint();
+  return byEndpoint.map((i) => {
+    const newRegionDiffs = new DiffSet(i.diffs, currentSpecContext)
+      .newRegions()
+      .iterator();
+    const shapeDiffs = new DiffSet(i.diffs, currentSpecContext)
+      .shapeDiffs()
+      .groupedByEndpointAndShapeTrail()
+      .map((i) => i.diffs[0].asShapeDiff(currentSpecContext)!);
 
-  const grouped = groupBy(
-    parsedDiffs.map((i) => {
-      const location = i.location(currentSpecContext);
-      return {
-        location: location,
-        diffHash: i.diffHash,
-        endpointId: `${location.method}.${location.pathId}`,
-      };
-    }),
-    'endpointId'
-  );
+    const fullPath = currentSpecContext.currentSpecEndpoints.find(
+      (e) => e.pathId === i.pathId && e.method === i.method
+    )!.fullPath;
 
-  const final: { [key: string]: string[] } = {};
-  Object.entries(grouped).map(([key, value]) => {
-    final[key] = value.map((i) => i.diffHash);
+    return {
+      pathId: i.pathId,
+      method: i.method,
+      fullPath,
+      newRegionDiffs,
+      shapeDiffs,
+    };
   });
-
-  return final;
 }
 
 function filterDisplayedUndocumentedUrls(
@@ -218,7 +233,8 @@ export interface SharedDiffStateContext {
     undocumentedUrls: IUndocumentedUrl[];
     displayedUndocumentedUrls: IUndocumentedUrl[];
     parsedDiffs: ParsedDiff[];
-    diffHashesByEndpoints: { [key: string]: string[] };
+    trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
+    diffsGroupedByEndpoint: EndpointDiffGrouping[];
   };
   pendingEndpoints: IPendingEndpoint[];
 
@@ -862,3 +878,1106 @@ const exampleParsedDiffs: ParsedDiff[] = [
   },
   //@ts-ignore
 ].map((i: any) => new ParsedDiff(i.serialized_diff, i.interactions));
+
+const learnedTrails = {
+  '16d1fe3075a7d6a81170756d1e4be4cd7dd02563': {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: ['fa0def9226-abf8-41a7-ba1f-7fd09c509090'],
+      wasNumber: [],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        'fa0def9226-abf8-41a7-ba1f-7fd09c509090': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: ['fa0def9226-abf8-41a7-ba1f-7fd09c509090'],
+      wasNumberTrails: {},
+      wasMissingTrails: {
+        'fa0def9226-abf8-41a7-ba1f-7fd09c509090': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+  c1e2d600f2350e9c9ce96cf7c32071cc578d6a63: {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: ['fa0def9226-abf8-41a7-ba1f-7fd09c509090'],
+      wasNumber: [],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        'fa0def9226-abf8-41a7-ba1f-7fd09c509090': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: ['fa0def9226-abf8-41a7-ba1f-7fd09c509090'],
+      wasNumberTrails: {},
+      wasMissingTrails: {
+        'fa0def9226-abf8-41a7-ba1f-7fd09c509090': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+  '705c9a0bf998ab8a6d5f4dd5298680ef31be9984': {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: true,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: [
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475',
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4',
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5',
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd',
+        'e930e3f5-a006-46d8-85ae-447ce3150906',
+      ],
+      wasNumber: ['1c47baf2-0b1d-43a1-a5c5-64f9249801a5'],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'e930e3f5-a006-46d8-85ae-447ce3150906': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: [
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4',
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475',
+        'e930e3f5-a006-46d8-85ae-447ce3150906',
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd',
+      ],
+      wasNumberTrails: {
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasMissingTrails: {
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'e930e3f5-a006-46d8-85ae-447ce3150906': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+  ac39daa7f953bf4c332b2368a4a0dbf68b5b661e: {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: [
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475',
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4',
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5',
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd',
+        'e930e3f5-a006-46d8-85ae-447ce3150906',
+      ],
+      wasNumber: [],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'e930e3f5-a006-46d8-85ae-447ce3150906': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: [
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475',
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4',
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5',
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd',
+        'e930e3f5-a006-46d8-85ae-447ce3150906',
+      ],
+      wasNumberTrails: {},
+      wasMissingTrails: {
+        '1c0b722f-107c-4082-abe7-f3cdd1d92475': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '8eff95b1-4f6d-4d3c-ba71-5e3792780ce4': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        '1c47baf2-0b1d-43a1-a5c5-64f9249801a5': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'a3af782f-8e44-4e17-806d-025c8fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+        'e930e3f5-a006-46d8-85ae-447ce3150906': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+  c8432ee3c00bfe3b4c714a30c88b6a956ee5b6c0: {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: ['a3af782f-8e44-4e1327-806d-032323fb0a4fd'],
+      wasNumber: [],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        'a3af782f-8e44-4e1327-806d-032323fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: ['a3af782f-8e44-4e1327-806d-032323fb0a4fd'],
+      wasNumberTrails: {},
+      wasMissingTrails: {
+        'a3af782f-8e44-4e1327-806d-032323fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+  '564b7c1aa1908494eead92a0ab1f1a4c051d0ce9': {
+    affordances: [
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'task' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [
+          ['task', 'dueDate', 'isDone', 'id'],
+          ['task', 'isDone', 'id'],
+        ],
+        wasNumber: false,
+        trail: { path: [{ JsonArrayItem: { index: 0 } }] },
+        wasArray: false,
+        wasObject: true,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'id' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: { path: [] },
+        wasArray: true,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+      {
+        wasString: false,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'isDone' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: true,
+      },
+      {
+        wasString: true,
+        fieldSet: [],
+        wasNumber: false,
+        trail: {
+          path: [
+            { JsonArrayItem: { index: 0 } },
+            { JsonObjectKey: { key: 'dueDate' } },
+          ],
+        },
+        wasArray: false,
+        wasObject: false,
+        wasNull: false,
+        wasBoolean: false,
+      },
+    ],
+    interactions: {
+      wasArrayTrails: {},
+      wasString: ['a3af782f-8e44-4e1327-806d-032323fb0a4fd'],
+      wasNumber: [],
+      wasNullTrails: {},
+      wasBooleanTrails: {},
+      wasArray: [],
+      wasObject: [],
+      wasStringTrails: {
+        'a3af782f-8e44-4e1327-806d-032323fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 0 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasNull: [],
+      wasMissing: ['a3af782f-8e44-4e1327-806d-032323fb0a4fd'],
+      wasNumberTrails: {},
+      wasMissingTrails: {
+        'a3af782f-8e44-4e1327-806d-032323fb0a4fd': [
+          {
+            path: [
+              { JsonArrayItem: { index: 1 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 2 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 3 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+          {
+            path: [
+              { JsonArrayItem: { index: 4 } },
+              { JsonObjectKey: { key: 'dueDate' } },
+            ],
+          },
+        ],
+      },
+      wasBoolean: [],
+      wasObjectTrails: {},
+    },
+  },
+};

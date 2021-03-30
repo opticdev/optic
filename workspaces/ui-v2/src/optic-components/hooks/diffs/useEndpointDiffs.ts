@@ -1,14 +1,15 @@
 import { useSharedDiffContext } from './SharedDiffContext';
+import { EndpointDiffGrouping } from './SharedDiffState';
 
-type IDiffsByHash = { [key: string]: {} };
-
-export function useEndpointDiffs(pathId: string, method: string): IDiffsByHash {
+export function useEndpointDiffs(
+  pathId: string,
+  method: string
+): EndpointDiffGrouping {
   const diffState = useSharedDiffContext();
-  const diffHashes =
-    diffState.context.results.diffHashesByEndpoints[`${method}.${pathId}`] ||
-    [];
 
-  const results: IDiffsByHash = {};
-  diffHashes.forEach((i) => (results[i] = {}));
-  return results;
+  const endpoint = diffState.context.results.diffsGroupedByEndpoint.find(
+    (i) => i.pathId === pathId && i.method === method
+  )!;
+
+  return endpoint;
 }

@@ -29,19 +29,19 @@ export function DiffAccessoryNavigation({
 }: DiffAccessoryNavigationProps) {
   const classes = useStyles();
 
-  const { diffsGroupedByEndpoints } = useSharedDiffContext();
+  const { context } = useSharedDiffContext();
+  const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const params = useParams<{ pathId?: string; method?: string }>();
   const history = useHistory();
-  const diffsByEndpoints = useMemo(() => diffsGroupedByEndpoints(), []);
 
   const { pathId, method } = params;
 
   const value = onUrlsPage
     ? 0
     : 1 +
-      diffsByEndpoints.findIndex(
+      diffsGroupedByEndpoints.findIndex(
         (i) => i.pathId === pathId && method === i.method
       );
 
@@ -77,7 +77,7 @@ export function DiffAccessoryNavigation({
             numberOfUndocumented={123}
             done={false}
           />
-          {diffsByEndpoints.map((i, index) => (
+          {diffsGroupedByEndpoints.map((i, index) => (
             <EndpointChangedTab
               key={index + 1}
               onClick={handleChangeToEndpointPage(
@@ -88,7 +88,7 @@ export function DiffAccessoryNavigation({
               value={index + 1}
               method={i.method}
               fullPath={i.fullPath}
-              diffCount={i.diffCount}
+              diffCount={i.newRegionDiffs.length + i.shapeDiffs.length}
               done={false}
             />
           ))}

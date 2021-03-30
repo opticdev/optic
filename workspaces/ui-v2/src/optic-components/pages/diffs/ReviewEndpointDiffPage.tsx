@@ -1,59 +1,264 @@
 import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
-import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { DiffCard } from '../../diffs/render/DiffCard';
+import sortBy from 'lodash.sortby';
 import { makeStyles } from '@material-ui/styles';
-import { IChangeType } from '../../../lib/Interfaces';
-import { code, plain } from '../../diffs/render/ICopyRender';
+import {
+  IInterpretation,
+  IRequestBodyLocation,
+  IResponseBodyLocation,
+} from '../../../lib/Interfaces';
+import { ICopyRender } from '../../diffs/render/ICopyRender';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { useEndpointDiffs } from '../../hooks/diffs/useEndpointDiffs';
+import { useShapeDiffInterpretations } from '../../hooks/diffs/useDiffInterpretations';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
+import {
+  Collapse,
+  IconButton,
+  List,
+  ListItem,
+  ListSubheader,
+  Typography,
+} from '@material-ui/core';
+import { ArrowLeft, ArrowRight } from '@material-ui/icons';
+import MenuIcon from '@material-ui/icons/Menu';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
   const { method, pathId } = match.params;
 
   const endpointDiffs = useEndpointDiffs(pathId, method);
+  const { context } = useSharedDiffContext();
+
+  const shapeDiffs = useShapeDiffInterpretations(
+    endpointDiffs.shapeDiffs,
+    context.results.trailValues
+  );
+
+  const [showToc, setShowToc] = useState(false);
+  const [selectedDiff, setSelectedDiffHash] = useState<string | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    if (shapeDiffs.results[0]) {
+      setSelectedDiffHash(shapeDiffs.results[0]!.diffDescription!.diffHash);
+    }
+  }, [shapeDiffs.results.length > 0]);
+
+  const renderedDiff: IInterpretation | undefined = useMemo(() => {
+    if (selectedDiff) {
+      return shapeDiffs.results.find(
+        (i) => i.diffDescription!.diffHash === selectedDiff
+      );
+    }
+  }, [selectedDiff]);
+
+  const currentIndex = shapeDiffs.results.findIndex(
+    (i) => i.diffDescription?.diffHash === selectedDiff
+  );
+  const nextHash =
+    shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
+  const previousHash =
+    shapeDiffs.results[currentIndex - 1]?.diffDescription?.diffHash;
 
   return (
     <TwoColumnFullWidth
       left={
         <>
-          <DiffHeader name={'Review (3) Endpoint Diffs'} />
-          <DiffCard
-            changeType={IChangeType.Added}
-            suggestions={[
-              {
-                action: {
-                  activeTense: [
-                    plain('make field'),
-                    code('hello'),
-                    plain('optional'),
-                  ],
-                  pastTense: [],
-                },
-                commands: [],
-                changeType: IChangeType.Added,
-              },
-              {
-                action: {
-                  activeTense: [plain('remove field'), code('hello')],
-                  pastTense: [],
-                },
-                commands: [],
-                changeType: IChangeType.Removed,
-              },
-            ]}
-          />
+          <DiffHeader
+            name={`Review (${
+              endpointDiffs.newRegionDiffs.length +
+              endpointDiffs.shapeDiffs.length
+            }) Endpoint Diffs`}
+            secondary={
+              <Collapse in={showToc}>
+                <DiffLinks
+                  shapeDiffs={shapeDiffs.results}
+                  setSelectedDiffHash={(hash: string) => {
+                    setSelectedDiffHash(hash);
+                    setShowToc(false);
+                  }}
+                />
+              </Collapse>
+            }
+          >
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => setSelectedDiffHash(previousHash)}
+              disabled={currentIndex === 0}
+            >
+              <ArrowLeft />
+            </IconButton>
+            <Typography variant="caption" color="textPrimary">
+              ({currentIndex + 1}/{shapeDiffs.results.length})
+            </Typography>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => setSelectedDiffHash(nextHash)}
+              disabled={shapeDiffs.results.length - 1 === currentIndex}
+            >
+              <ArrowRight />
+            </IconButton>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => setShowToc(!showToc)}
+            >
+              <MenuIcon style={{ width: 20, height: 20 }} />
+            </IconButton>
+          </DiffHeader>
+
+          {renderedDiff && (
+            <DiffCard
+              diffDescription={renderedDiff.diffDescription!}
+              previewTabs={renderedDiff.previewTabs}
+              changeType={renderedDiff.diffDescription!.changeType}
+              suggestions={renderedDiff.suggestions}
+            />
+          )}
         </>
       }
-      right={<EndpointDocumentationPane method={method} pathId={pathId} />}
+      right={
+        <EndpointDocumentationPane
+          highlightedLocation={renderedDiff?.diffDescription?.location}
+          method={method}
+          pathId={pathId}
+        />
+      }
     />
+  );
+}
+
+type Section = {
+  requestId?: string;
+  responseId?: string;
+  statusCode?: number;
+  contentType?: string;
+};
+
+function DiffLinks({
+  shapeDiffs,
+  setSelectedDiffHash,
+}: {
+  shapeDiffs: IInterpretation[];
+  setSelectedDiffHash: (hash: string) => void;
+}) {
+  const classes = useStyles();
+  const sections = useMemo<Section[]>(() => {
+    const sections: Section[] = [];
+    const inRequests: IRequestBodyLocation[] = sortBy(
+      shapeDiffs
+        .filter((i) => i.diffDescription?.location!.inRequest)
+        .map((i) => i.diffDescription?.location.inRequest!),
+      'contentType'
+    );
+
+    inRequests.forEach((req) => {
+      const alreadyAdded = sections.find(
+        (i) => i.requestId && i.requestId === req.requestId
+      );
+      if (!alreadyAdded) {
+        sections.push({
+          requestId: req.requestId,
+          contentType: req.contentType,
+        });
+      }
+    });
+
+    const inResponses: IResponseBodyLocation[] = sortBy(
+      shapeDiffs
+        .filter((i) => i.diffDescription?.location!.inResponse)
+        .map((i) => i.diffDescription?.location.inResponse!),
+      'statusCode'
+    );
+
+    inResponses.forEach((res) => {
+      const alreadyAdded = sections.find(
+        (i) => i.responseId && i.responseId === res.responseId
+      );
+      if (!alreadyAdded) {
+        sections.push({
+          responseId: res.responseId,
+          statusCode: res.statusCode,
+          contentType: res.contentType,
+        });
+      }
+    });
+    return sections;
+  }, [shapeDiffs.length]);
+
+  return (
+    <List>
+      {sections.map((section) => {
+        if (section.requestId) {
+          return (
+            <div>
+              <ListSubheader className={classes.locationHeader}>
+                {'Request Body ' + section.contentType}
+              </ListSubheader>
+              {shapeDiffs.map((i, index) => {
+                if (
+                  i.diffDescription?.location!.inRequest?.requestId ===
+                  section.requestId
+                )
+                  return (
+                    <ListItem
+                      button
+                      key={index}
+                      onClick={() =>
+                        setSelectedDiffHash(i.diffDescription!.diffHash)
+                      }
+                    >
+                      <ICopyRender variant="" copy={i.diffDescription!.title} />
+                    </ListItem>
+                  );
+              })}
+            </div>
+          );
+        } else if (section.responseId) {
+          return (
+            <div>
+              <ListSubheader
+                className={classes.locationHeader}
+              >{`${section.statusCode} Response ${section.contentType}`}</ListSubheader>
+              {shapeDiffs.map((i, index) => {
+                if (
+                  i.diffDescription?.location!.inResponse?.responseId ===
+                  section.responseId
+                )
+                  return (
+                    <ListItem
+                      button
+                      key={index}
+                      onClick={() =>
+                        setSelectedDiffHash(i.diffDescription!.diffHash)
+                      }
+                    >
+                      <ICopyRender variant="" copy={i.diffDescription!.title} />
+                    </ListItem>
+                  );
+              })}
+            </div>
+          );
+        }
+        return null;
+      })}
+    </List>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
   scroll: {
     overflow: 'scroll',
+  },
+  locationHeader: {
+    fontSize: 10,
+    height: 33,
   },
 }));

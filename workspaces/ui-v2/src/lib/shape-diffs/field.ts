@@ -1,39 +1,29 @@
-import { BodyShapeDiff, ParsedDiff } from '../../parse-diff';
-import { Actual, Expectation } from '../shape-diff-dsl';
+import { BodyShapeDiff } from '../parse-diff';
+import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
-  code,
   IChangeType,
-  ICopy,
+  ICoreShapeKinds,
+  IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
   ISuggestion,
-  plain,
-} from '../../interfaces/interpretors';
-import { ICoreShapeKinds } from '../../interfaces/interfaces';
-import flatten from 'lodash.flatten';
+} from '../Interfaces';
+import { IShapeTrail } from '../../../../cli-shared/build/diffs/shape-trail';
+import { IJsonTrail } from '../../../../cli-shared/build/diffs/json-trail';
+import { IValueAffordanceSerializationWithCounter } from '../../../../cli-shared/build/diffs/initial-types';
 import {
-  IJsonObjectKey,
-  IJsonTrail,
-} from '@useoptic/cli-shared/build/diffs/json-trail';
-import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
-import { DiffSessionConfig } from '../../interfaces/session';
-import { Simulate } from 'react-dom/test-utils';
-import sortBy from 'lodash.sortby';
-import { addNewFieldCommands, IShapeChange } from '../spec-change-dsl';
-import { setDifference, setEquals } from '../../set-ops';
-import { nameForCoreShapeKind, namerForOneOf } from '../quick-namer';
-import { targetKindSuggestion } from '../target-shape-kind';
-import { DiffRfcBaseState } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
-import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
-
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
+  code,
+  ICopy,
+  plain,
+} from '../../optic-components/diffs/render/ICopyRender';
+import { setEquals } from '../set-ops';
+import { IShapeChange, targetKindSuggestion } from './target-shape-kind';
 
 export function fieldShapeDiffInterpretor(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
-  services: DiffSessionConfig
+  diffDescription: IDiffDescription
 ): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
@@ -41,12 +31,12 @@ export function fieldShapeDiffInterpretor(
 
   const present = new FieldShapeInterpretationHelper(
     shapeDiff.diffHash(),
-    services.rfcBaseState,
     shapeTrail,
     jsonTrail,
     actual.learnedTrails,
     actual,
-    expected
+    expected,
+    diffDescription
   );
 
   // field is in the spec, the value was not what we expected to see
@@ -76,12 +66,12 @@ class FieldShapeInterpretationHelper {
   private additionalCoreShapeKinds: ICoreShapeKinds[] = [];
   constructor(
     private diffHash: string,
-    private rfcBaseState: DiffRfcBaseState,
     private shapeTrail: IShapeTrail,
     private jsonTrail: IJsonTrail,
     private learnedTrails: IValueAffordanceSerializationWithCounter,
     private actual: Actual,
-    private expected: Expectation
+    private expected: Expectation,
+    private diffDescription: IDiffDescription
   ) {}
 
   askAddField = (key: string) => (this.shouldAskAddField = key);
@@ -186,7 +176,11 @@ class FieldShapeInterpretationHelper {
         plain('was null'),
       ];
     }
-    return { suggestions, previewTabs: this.createPreviews(), overrideTitle };
+    return {
+      suggestions,
+      previewTabs: this.createPreviews(),
+      diffDescription: this.diffDescription,
+    };
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -246,17 +240,18 @@ class FieldShapeInterpretationHelper {
     const key = this.expected.fieldKey();
     const sharedCopy = [code(key), plain('an optional'), ...updatedName];
 
-    const changeField = this.expected.fieldChangeHelper(this.actual);
+    // const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: changeField
-        .changeShape(shapeChange) // may be empty :)
-        .wrapInOptional()
-        .toCommands(),
+      commands: [],
+      // commands: changeField
+      //   .changeShape(shapeChange) // may be empty :)
+      //   .wrapInOptional()
+      //   .toCommands(),
       changeType: IChangeType.Changed,
     };
   }
@@ -265,14 +260,15 @@ class FieldShapeInterpretationHelper {
     const key = this.expected.fieldKey();
     const sharedCopy = [code(key)];
 
-    const changeField = this.expected.fieldChangeHelper(this.actual);
+    // const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
         activeTense: [plain('remove field'), ...sharedCopy],
         pastTense: [plain('Removed field'), ...sharedCopy],
       },
-      commands: changeField.stageFieldRemoval().toCommands(),
+      // commands: changeField.stageFieldRemoval().toCommands(),
+      commands: [],
       changeType: IChangeType.Removed,
     };
   }
@@ -287,17 +283,18 @@ class FieldShapeInterpretationHelper {
     const key = this.expected.fieldKey();
 
     const sharedCopy = [code(key), plain('a required'), ...updatedShapeName];
-    const changeField = this.expected.fieldChangeHelper(this.actual);
+    // const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: changeField
-        .changeShape(shapeChange)
-        .makeRequired()
-        .toCommands(),
+      // commands: changeField
+      //   .changeShape(shapeChange)
+      //   .makeRequired()
+      //   .toCommands(),
+      commands: [],
       changeType: IChangeType.Changed,
     };
   }
@@ -307,8 +304,22 @@ class FieldShapeInterpretationHelper {
       name,
       asRequiredCommands,
       asOptionalCommands,
-    } = addNewFieldCommands(key, this.expected, this.actual, true);
+    }: {
+      name: string;
+      asRequiredCommands: any[];
+      asOptionalCommands: any[];
+    } = {
+      name: key,
+      asOptionalCommands: [],
+      asRequiredCommands: [],
+    };
 
+    // const {
+    //   name,
+    //   asRequiredCommands,
+    //   asOptionalCommands,
+    // } = addNewFieldCommands(key, this.expected, this.actual, true);
+    //
     const sharedCopy = [code(key), plain('as'), code(name)];
 
     const suggestOptionalFirst = this.actual.wasMissing();
@@ -352,6 +363,7 @@ class FieldShapeInterpretationHelper {
     return {
       suggestions: suggestOptionalFirst ? suggestions.reverse() : suggestions,
       previewTabs: orderTabs(true, tabs),
+      diffDescription: this.diffDescription,
     };
   }
 }
@@ -365,7 +377,9 @@ function orderTabs(newField: boolean, tabs: IInteractionPreviewTab[]) {
   };
 
   return tabs.sort((a, b) => {
+    // @ts-ignore
     const aI = ordering[a.title] || 0;
+    // @ts-ignore
     const bI = ordering[b.title] || 0;
 
     if (aI > bI) {

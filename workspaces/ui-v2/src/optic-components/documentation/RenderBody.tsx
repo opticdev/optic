@@ -45,7 +45,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
 export function OneColumnBody(props: TwoColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(props.rootShapeId, undefined);
   return (
-    <div style={{ marginTop: 50, width: '100%' }} id={props.bodyId}>
+    <div style={{ width: '100%' }} id={props.bodyId}>
       <Typography variant="h6">{props.location}</Typography>
       <BodyRender
         location="application/json"

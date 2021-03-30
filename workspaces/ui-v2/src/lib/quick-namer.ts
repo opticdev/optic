@@ -1,6 +1,10 @@
-import { ICoreShapeKinds } from '../interfaces/interfaces';
 import sortby from 'lodash.sortby';
-import { code, ICopy, plain } from '../interfaces/interpretors';
+import {
+  code,
+  ICopy,
+  plain,
+} from '../optic-components/diffs/render/ICopyRender';
+import { ICoreShapeKinds } from './Interfaces';
 
 export function namer(kinds: ICoreShapeKinds[]): string {
   const kindsFiltered = kinds.filter(
