@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -13,9 +13,15 @@ import { SubtleBlueBackground } from '../../theme';
 
 type ISuggestionGroup = {
   suggestions: ISuggestion[];
+  onApprove: (commands: any[]) => void;
+  onSuggestionSelected: (commands: any[]) => void;
 };
 
-export function SuggestionGroup({ suggestions }: ISuggestionGroup) {
+export function SuggestionGroup({
+  suggestions,
+  onApprove,
+  onSuggestionSelected,
+}: ISuggestionGroup) {
   const [value, setValue] = React.useState<number>(0);
   const classes = useStyles();
 
@@ -23,9 +29,13 @@ export function SuggestionGroup({ suggestions }: ISuggestionGroup) {
     setValue(parseInt(event.target.value));
   };
 
-  const onEnter = () => {
-    debugger;
-  };
+  const onEnter = () => onApprove(suggestions[value].commands);
+
+  useEffect(() => {
+    if (suggestions[value]) {
+      onSuggestionSelected(suggestions[value].commands);
+    }
+  }, [value]);
 
   return (
     <FormControl component="fieldset" style={{ width: '100%', marginLeft: 10 }}>
@@ -65,6 +75,7 @@ export function SuggestionGroup({ suggestions }: ISuggestionGroup) {
                       onKeyDown={(e: any) => {
                         if (e.keyCode === 13) onEnter();
                       }}
+                      onClick={onEnter}
                       endIcon={<KeyboardArrowRightIcon size="small" />}
                     >
                       Apply

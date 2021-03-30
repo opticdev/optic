@@ -14,6 +14,8 @@ import { Loading } from '../../navigation/Loading';
 import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
+import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 export function EndpointDocumentationPane({
   method,
@@ -26,6 +28,9 @@ export function EndpointDocumentationPane({
 }) {
   const { endpoints, loading } = useEndpoints();
   const bodies = useEndpointBody(pathId, method);
+  const previewCommands = useSimulatedCommands();
+  const { context } = useSharedDiffContext();
+  console.log(context.choices.approvedSuggestions);
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
@@ -44,6 +49,9 @@ export function EndpointDocumentationPane({
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
+      {'simulated ' +
+        JSON.stringify([...context.simulatedCommands, ...previewCommands])}
+
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"

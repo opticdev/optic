@@ -49,6 +49,8 @@ type IDiffCardProps = {
   suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
+  approve: (diffHash: string, commands: any[]) => void;
+  suggestionSelected: (commands: any[]) => void;
 };
 
 export function DiffCard({
@@ -56,6 +58,8 @@ export function DiffCard({
   previewTabs,
   suggestions,
   diffDescription,
+  approve,
+  suggestionSelected,
 }: IDiffCardProps) {
   const classes = useStyles();
 
@@ -163,7 +167,15 @@ export function DiffCard({
         >
           suggested changes:
         </Typography>
-        <SuggestionGroup suggestions={suggestions} />
+        <SuggestionGroup
+          suggestions={suggestions}
+          onSuggestionSelected={(commands: any[]) => {
+            suggestionSelected(commands);
+          }}
+          onApprove={(commands: any[]) => {
+            approve(diffDescription.diffHash, commands);
+          }}
+        />
       </div>
     </>
   );

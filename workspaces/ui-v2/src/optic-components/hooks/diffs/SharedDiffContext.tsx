@@ -27,6 +27,8 @@ type ISharedDiffContext = {
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
+  approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  isDiffHandled: (diffHash: string) => boolean;
 };
 
 export const SharedDiffStoreWithDependencies = (props: any) => {
@@ -88,6 +90,12 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     },
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);
+    },
+    isDiffHandled: (diffHash: string) => {
+      return context.choices.approvedSuggestions.hasOwnProperty(diffHash);
+    },
+    approveCommandsForDiff: (diffHash: string, commands: any[]) => {
+      send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
     persistWIPPattern: (
       path: string,

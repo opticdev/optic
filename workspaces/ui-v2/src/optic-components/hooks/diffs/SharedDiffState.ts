@@ -7,6 +7,8 @@ import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '../../../../../cli-shared/build/diffs/initial-types';
+import { IgnoreRule } from '../../../lib/ignore-rule';
+import { AssembleCommands } from '../../../lib/assemble-commands';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
@@ -23,6 +25,11 @@ export const newSharedDiffMachine = (
       loading: {
         count: 0,
         total: 0,
+      },
+      simulatedCommands: [],
+      choices: {
+        approvedSuggestions: {},
+        diffIgnoreRules: [],
       },
       results: {
         undocumentedUrls: exampleUrls,
@@ -110,6 +117,27 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+              }),
+            ],
+          },
+          // shape diffs
+          COMMANDS_APPROVED_FOR_DIFF: {
+            actions: [
+              assign({
+                choices: (ctx, event) => ({
+                  ...ctx.choices,
+                  approvedSuggestions: {
+                    ...ctx.choices.approvedSuggestions,
+                    [event.diffHash]: event.commands,
+                  },
+                }),
+              }),
+              assign({
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -221,6 +249,11 @@ export type SharedDiffStateEvent =
   | {
       type: 'PENDING_ENDPOINT_DISCARDED';
       id: string;
+    }
+  | {
+      type: 'COMMANDS_APPROVED_FOR_DIFF';
+      diffHash: string;
+      commands: any[];
     };
 
 // The context (extended state) of the machine
@@ -236,8 +269,12 @@ export interface SharedDiffStateContext {
     trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
     diffsGroupedByEndpoint: EndpointDiffGrouping[];
   };
+  choices: {
+    diffIgnoreRules: IgnoreRule[];
+    approvedSuggestions: { [key: string]: any[] };
+  };
+  simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];
-
   browserAppliedIgnoreRules: string[];
 }
 

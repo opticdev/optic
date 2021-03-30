@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
 import { DiffCard } from '../../diffs/render/DiffCard';
@@ -25,33 +26,54 @@ import {
 } from '@material-ui/core';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
+import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
+import { useNextEndpointLink } from '../../hooks/diffs/useNextEndpointWithDiffLink';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
   const { method, pathId } = match.params;
 
+  const history = useHistory();
+  const nextLink = useNextEndpointLink();
   const endpointDiffs = useEndpointDiffs(pathId, method);
-  const { context } = useSharedDiffContext();
+  const {
+    context,
+    approveCommandsForDiff,
+    isDiffHandled,
+  } = useSharedDiffContext();
 
   const shapeDiffs = useShapeDiffInterpretations(
     endpointDiffs.shapeDiffs,
     context.results.trailValues
   );
 
+  const filteredShapeDiffs = shapeDiffs.results?.filter((i: any) => {
+    return !isDiffHandled(i.diffDescription.diffHash);
+  });
+
   const [showToc, setShowToc] = useState(false);
+  const [previewCommands, setPreviewCommands] = useState<any[]>([]);
   const [selectedDiff, setSelectedDiffHash] = useState<string | undefined>(
     undefined
   );
 
   useEffect(() => {
-    if (shapeDiffs.results[0]) {
-      setSelectedDiffHash(shapeDiffs.results[0]!.diffDescription!.diffHash);
+    if (filteredShapeDiffs[0]) {
+      setPreviewCommands([]);
+      setSelectedDiffHash(filteredShapeDiffs[0]!.diffDescription!.diffHash);
+    } else if (
+      shapeDiffs.results.length > 0 &&
+      shapeDiffs.results.every((i) =>
+        isDiffHandled(i.diffDescription?.diffHash!)
+      )
+    ) {
+      history.push(nextLink);
     }
-  }, [shapeDiffs.results.length > 0]);
+  }, [filteredShapeDiffs.length]);
 
   const renderedDiff: IInterpretation | undefined = useMemo(() => {
     if (selectedDiff) {
-      return shapeDiffs.results.find(
+      return filteredShapeDiffs.find(
         (i) => i.diffDescription!.diffHash === selectedDiff
       );
     }
@@ -61,9 +83,9 @@ export function ReviewEndpointDiffPage(props: any) {
     (i) => i.diffDescription?.diffHash === selectedDiff
   );
   const nextHash =
-    shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
+    filteredShapeDiffs[currentIndex + 1]?.diffDescription?.diffHash;
   const previousHash =
-    shapeDiffs.results[currentIndex - 1]?.diffDescription?.diffHash;
+    filteredShapeDiffs[currentIndex - 1]?.diffDescription?.diffHash;
 
   return (
     <TwoColumnFullWidth
@@ -77,7 +99,7 @@ export function ReviewEndpointDiffPage(props: any) {
             secondary={
               <Collapse in={showToc}>
                 <DiffLinks
-                  shapeDiffs={shapeDiffs.results}
+                  shapeDiffs={filteredShapeDiffs}
                   setSelectedDiffHash={(hash: string) => {
                     setSelectedDiffHash(hash);
                     setShowToc(false);
@@ -95,13 +117,13 @@ export function ReviewEndpointDiffPage(props: any) {
               <ArrowLeft />
             </IconButton>
             <Typography variant="caption" color="textPrimary">
-              ({currentIndex + 1}/{shapeDiffs.results.length})
+              ({currentIndex + 1}/{filteredShapeDiffs.length})
             </Typography>
             <IconButton
               size="small"
               color="primary"
               onClick={() => setSelectedDiffHash(nextHash)}
-              disabled={shapeDiffs.results.length - 1 === currentIndex}
+              disabled={filteredShapeDiffs.length - 1 === currentIndex}
             >
               <ArrowRight />
             </IconButton>
@@ -120,16 +142,20 @@ export function ReviewEndpointDiffPage(props: any) {
               previewTabs={renderedDiff.previewTabs}
               changeType={renderedDiff.diffDescription!.changeType}
               suggestions={renderedDiff.suggestions}
+              approve={approveCommandsForDiff}
+              suggestionSelected={(commands) => setPreviewCommands(commands)}
             />
           )}
         </>
       }
       right={
-        <EndpointDocumentationPane
-          highlightedLocation={renderedDiff?.diffDescription?.location}
-          method={method}
-          pathId={pathId}
-        />
+        <SimulatedCommandStore previewCommands={previewCommands}>
+          <EndpointDocumentationPane
+            highlightedLocation={renderedDiff?.diffDescription?.location}
+            method={method}
+            pathId={pathId}
+          />
+        </SimulatedCommandStore>
       }
     />
   );
