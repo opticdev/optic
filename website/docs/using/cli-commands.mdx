@@ -7,11 +7,25 @@ The Optic CLI installs the `api` command, which is used to manage integration, o
 
 ## Documenting your API
 
+### `check`
+
+Verifies that Optic can run your tasks and monitor traffic. When initializing Optic with your repository, the guided setup will have you run this command to validate the configuration. If there are any issues, they will be reported on the command line and in the Optic setup UI with recommendations on how to proceed. It takes the name of the task you wish to check, usually `start`:
+
+`api check start`
+
+### `help`
+
+Provides usage information for `api` and subcommands. For subcommands that take parameters, such as `run` and `check` which take a task name, `--help` will provide the same information.
+
+For example, to learn more about the `init` command, run:
+
+`api init help` or `api init --help`
+
 ### `init`
 
 Integrates Optic with your API. API init [guides you through setup](/docs/get-started/config) so that you can get running as quickly as possible. There are no required parameters, and the CLI will take you directly to the Optic dashboard to complete and test the integration.
 
-Optionally, `api init` can take parameters to pre-populate your configuration. While we wouldn't recommend users learn these flags, we may provide you with an init command including some of these parameters to help you get started:
+The following optional parameters may be included to pre-populate configuration items:
 
 - `inboundUrl`
 - `targetUrl`
@@ -21,12 +35,6 @@ For example, to set up Optic in [proxy mode](/docs/using/advanced-configuration#
 
 `api init --inboundUrl https://localhost:4000 --targetUrl https://api.github.com`
 
-### `check`
-
-Verifies that Optic can run your tasks and monitor traffic. When initializing Optic with your repository, the guided setup will have you run this command to validate the configuration. If there are any issues, they will be reported on the command line and in the Optic setup UI with recommendations on how to proceed. It takes the name of the task you wish to check, usually `start`:
-
-`api check start`
-  
 ### `run`
 
 Runs a task from your `optic.yml` file. This is the last step of the initialization process, and the command you will use when you want to observe API traffic in your local environment. It takes the name of the task you wish to run, usually `start`. You may have multiple configurations to [run tests](/docs/get-started/testing), or get into [advanced configurations](/docs/using/advanced-configuration), depending on your project. 
@@ -84,12 +92,12 @@ Runs an [Optic Script](/docs/apiops/scripts) in optic.yml with the current speci
 
 ## Debugging commands
 
+### `daemon`
+
+The daemon commands, which include `daemon:start` and `daemon:stop`. These start and stop the Optic daemon, respectively. Under normal circumstances, the daemon is managed by the Optic CLI and you should never have to run either command. To start the daemon, prefer the use of `api spec` which will assure you are in the proper project directory.
+
 ### `debug:endpoint-delete`
 
 Removes an endpoint from the specification. This takes the method and `pathId` for the appropriate endpoint. The `pathId` is most easily determined by browsing the documentation (available with `api spec`) and clicking through the target endpoint. The pathId will be part of the URL path for the detailed documentation, of the form `path_[a-zA-Z0-9]{10}` (`path_` and ten alphanumeric characters). To delete the GET endpoint for pathId `path_085xFHU7NG`:
 
 `api debug:endpoint-delete GET path_085xFHU7NG`
-
-### `daemon`
-
-The daemon commands, which include `daemon:start` and `daemon:stop`. These start and stop the Optic daemon, respectively. Under normal circumstances, the daemon is managed by the Optic CLI and you should never have to run either command. To start the daemon, prefer the use of `api spec` which will assure you are in the proper project directory.
