@@ -158,11 +158,31 @@ fn shape_prototypes_to_commands(
             ));
 
             for field in fields {
+              let field_shape_id = if let Some(optional_shape_id) = field.optional_shape_id {
+                commands.push(ShapeCommand::add_shape(
+                  optional_shape_id.clone(),
+                  ShapeKind::OptionalKind,
+                  String::from(""),
+                ));
+                let parameter_id = ShapeKind::OptionalKind
+                  .get_parameter_descriptor()
+                  .unwrap()
+                  .shape_parameter_id;
+                commands.push(ShapeCommand::set_parameter_shape(
+                  optional_shape_id.clone(),
+                  String::from(parameter_id),
+                  field.value_shape_id,
+                ));
+                optional_shape_id
+              } else {
+                field.value_shape_id
+              };
+
               commands.push(ShapeCommand::add_field(
                 field.key,
                 field.field_id,
                 shape_prototype.id.clone(),
-                field.value_shape_id,
+                field_shape_id,
               ));
             }
 
@@ -313,17 +333,22 @@ impl TrailValues {
         None
       },
       if self.was_object {
-        let field_keys = {
-          let mut keys = self
-            .field_sets
-            .iter()
-            .fold(HashSet::new(), |aggregate: HashSet<String>, field_set| {
-              aggregate.union(&field_set).cloned().collect()
-            })
-            .into_iter()
-            .collect::<Vec<_>>();
-          keys.sort();
-          keys
+        let (field_keys, optional_keys) = {
+          let (all_keys_set, optional_keys_set) = self.field_sets.iter().fold(
+            (HashSet::new(), HashSet::new()),
+            |(all_keys, optional_keys): (HashSet<String>, HashSet<String>), field_set| {
+              let updated_all_keys: HashSet<String> = all_keys.union(&field_set).cloned().collect();
+              let missing_keys = updated_all_keys.difference(&field_set).cloned().collect();
+              let updated_optional_keys = optional_keys.union(&missing_keys).cloned().collect();
+              (updated_all_keys, updated_optional_keys)
+            },
+          );
+
+          let mut all_keys = all_keys_set.into_iter().collect::<Vec<_>>();
+          all_keys.sort();
+
+          let optional_keys = optional_keys_set.into_iter().collect::<Vec<_>>();
+          (all_keys, optional_keys)
         };
 
         let field_descriptors = field_keys
@@ -333,10 +358,15 @@ impl TrailValues {
             let field_shape_prototype = existing_prototypes.get(&field_trail).expect(
               "object field shape prototype should have been generated before its parent object",
             );
+            let is_optional = optional_keys.contains(&key);
 
             FieldPrototypeDescriptor {
               field_id: generate_id(),
               key,
+              optional_shape_id: match is_optional {
+                true => Some(generate_id()),
+                false => None,
+              },
               value_shape_id: field_shape_prototype.id.clone(),
             }
           })
@@ -393,9 +423,6 @@ struct ShapePrototype {
 
 #[derive(Clone, Debug)]
 enum ShapePrototypeDescriptor {
-  OptionalShape {
-    shape: Box<ShapePrototype>,
-  },
   NullableShape {
     shape: Box<ShapePrototype>,
   },
@@ -419,6 +446,7 @@ enum ShapePrototypeDescriptor {
 struct FieldPrototypeDescriptor {
   field_id: FieldId,
   key: String,
+  optional_shape_id: Option<ShapeId>,
   value_shape_id: ShapeId,
 }
 
@@ -617,6 +645,66 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__nested_object_results",
       &nested_object_results
+    );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_object_with_optional_fields() {
+    let complete_object_body = BodyDescriptor::from(json!({
+      "a-str": "a-value",
+      "b-field": true,
+      "c-field": 3
+    }));
+    let partial_object_body = BodyDescriptor::from(json!({
+      "b-field": false,
+      "c-field": 122
+    }));
+
+    let complete_nested_optional_body = BodyDescriptor::from(json!({
+      "nested": {
+        "nested-field": "nested-value"
+      },
+      "other-field": true
+    }));
+    let partial_nested_optional_body = BodyDescriptor::from(json!({
+      "other-field": true
+    }));
+
+    let primitive_object_observations = {
+      let mut result = observe_body_trails(complete_object_body);
+      result.union(observe_body_trails(partial_object_body));
+      result
+    };
+
+    let nested_optional_observations = {
+      let mut result = observe_body_trails(complete_nested_optional_body);
+      result.union(observe_body_trails(partial_nested_optional_body));
+      result
+    };
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+
+    let primitive_object_results =
+      collect_commands(primitive_object_observations.into_commands(&mut test_id));
+    assert!(primitive_object_results.0.is_some());
+    assert_valid_commands(primitive_object_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_with_optional_fields__primitive_object_results",
+      &primitive_object_results
+    );
+
+    let nested_optional_results =
+      collect_commands(nested_optional_observations.into_commands(&mut test_id));
+    assert!(nested_optional_results.0.is_some());
+    assert_valid_commands(nested_optional_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_object_with_optional_fields__nested_optional_results",
+      &nested_optional_results
     );
   }
 
