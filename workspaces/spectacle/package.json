@@ -24,10 +24,8 @@
     "graphql": "^15.5.0"
   },
   "devDependencies": {
-    "@types/mkdirp": "^1",
     "@types/node": "^12.12.6",
     "@types/tap": "^14.10.1",
-    "mkdirp": "^1.0.4",
     "tap": "^14.11.0"
   }
 }
