@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { SpectacleInput } from '../../../spectacle';
 import { AsyncStatus } from './public-examples';
-import { SpectacleContext } from './spectacle-provider';
 
 type InteractionLoader = {
   loadInteraction: (pointer: string) => Promise<any | undefined>;

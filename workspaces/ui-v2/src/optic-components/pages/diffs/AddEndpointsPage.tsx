@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DocumentationRootPage } from '../docs/DocumentationPage';
 import { DiffHeader } from '../../diffs/DiffHeader';
-import { Box, List, TextField } from '@material-ui/core';
+import { Box, TextField } from '@material-ui/core';
 import { useUndocumentedUrls } from '../../hooks/diffs/useUndocumentedUrls';
 import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';

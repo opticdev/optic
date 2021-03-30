@@ -35,6 +35,7 @@ export function SuggestionGroup({
     if (suggestions[value]) {
       onSuggestionSelected(suggestions[value].commands);
     }
+    //@ts-ignore
   }, [value]);
 
   return (

@@ -7,6 +7,7 @@ import {
   IRequestBodyLocation,
   IResponseBodyLocation,
 } from '../Interfaces';
+
 export interface IgnoreRule {
   diffHash: string;
   specificInteractions?: string[];

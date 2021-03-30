@@ -5,7 +5,7 @@ import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/b
 // import { listItemShapeDiffInterpreter } from './list';
 // import { rootShapeDiffInterpreter } from './root';
 import { BodyShapeDiff } from '../parse-diff';
-import { IChangeType, IInterpretation } from '../Interfaces';
+import { IInterpretation } from '../Interfaces';
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';

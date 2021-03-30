@@ -1,4 +1,4 @@
-import { BodyShapeDiff, ParsedDiff } from './parse-diff';
+import { BodyShapeDiff } from './parse-diff';
 import { IChangeType, IDiffDescription } from './Interfaces';
 import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, plain } from '../optic-components/diffs/render/ICopyRender';

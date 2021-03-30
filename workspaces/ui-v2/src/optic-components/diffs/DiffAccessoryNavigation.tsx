@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { EndpointName } from '../documentation/EndpointName';
 import { AddedDarkGreen, OpticBlueReadable } from '../theme';
 import {

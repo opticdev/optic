@@ -4,12 +4,7 @@ import { transformAffordanceMappingByIgnoreRules } from '../../../lib/ignore-rul
 import { useSpectacleRawQuery } from '../../../spectacle-implementations/spectacle-provider';
 import { interpretShapeDiffs } from '../../../lib/shape-diffs/shape-diffs';
 import { useEffect, useState } from 'react';
-import {
-  IInteractionPreviewTab,
-  IInterpretation,
-  ISuggestion,
-} from '../../../lib/Interfaces';
-import { ICopy } from '../../diffs/render/ICopyRender';
+import { IInterpretation } from '../../../lib/Interfaces';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
@@ -38,6 +33,7 @@ export function useShapeDiffInterpretations(
       setResults(diffs);
       setLoading(false);
     });
+    //@ts-ignore
   }, [diffs]);
 
   return { results, loading };
