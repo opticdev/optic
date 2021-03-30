@@ -8,7 +8,7 @@ const Bent = require('bent');
 const Tar = require('tar');
 
 const {
-  Streams: { Commands },
+  Streams: { Commands, HttpInteractions },
 } = require('@useoptic/diff-engine-wasm');
 const Config = require('./config');
 
@@ -107,6 +107,38 @@ function commit(
 
   // get a clean result promise, so we stay in control of the exact API we're exposing
   commitProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+
+  return output;
+}
+
+function learnUndocumentedBodies(interactions, { specPath }) {
+  if (!interactions || typeof interactions[Symbol.asyncIterator] !== 'function')
+    throw new Error(
+      'interactionsStream must be AsyncIterator to learn undocumented bodies'
+    );
+
+  const input = Readable.from(HttpInteractions.intoJSONL(interactions));
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  const learnProcess = Execa(
+    binPath,
+    [specPath, '-f', 'learn', '--undocumented-bodies'],
+    {
+      stdio: ['pipe', 'pipe', 'inherit'],
+    }
+  );
+
+  input.pipe(learnProcess.stdin);
+  learnProcess.stdout.pipe(output);
+
+  learnProcess.then(
     (childResult) => {},
     (childResult) => {
       output.emit('error', new DiffEngineError(childResult));
@@ -288,6 +320,7 @@ class DiffEngineError extends Error {
 exports.spawn = spawn;
 exports.readSpec = readSpec;
 exports.commit = commit;
+exports.learnUndocumentedBodies = learnUndocumentedBodies;
 exports.install = install;
 exports.uninstall = uninstall;
 exports.DiffEngineError = DiffEngineError;

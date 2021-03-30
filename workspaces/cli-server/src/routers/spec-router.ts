@@ -26,7 +26,7 @@ import { SessionsManager } from '../sessions';
 import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
-import { AsyncTools as AT } from '@useoptic/diff-engine-wasm';
+import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -236,7 +236,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
           });
         }
 
-        const commands = AT.from(payload.commands);
+        const commands = AT.from<Streams.Commands.Command>(payload.commands);
         const events = DiffEngine.commit(commands, {
           specDirPath: req.optic.paths.specDirPath,
           commitMessage: payload.commitMessage,
