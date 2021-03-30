@@ -76,165 +76,141 @@ fn shape_prototypes_to_commands(
 ) -> impl Iterator<Item = ShapeCommand> {
   shape_prototypes
     .into_iter()
-    .map(|shape_prototype| {
-      let [init_commands, describe_commands]: [Option<Vec<ShapeCommand>>; 2] =
-        match shape_prototype.prototype_descriptor {
-          ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
-            let add_command =
-              ShapeCommand::add_shape(shape_prototype.id, base_shape_kind, String::from(""));
-            [Some(vec![add_command]), None]
-          }
-          ShapePrototypeDescriptor::OneOfShape {
-            branches,
-            parameter_ids,
-          } => {
-            let mut commands = vec![ShapeCommand::add_shape(
-              shape_prototype.id.clone(),
-              ShapeKind::OneOfKind,
-              String::from(""),
-            )];
+    .flat_map(
+      |shape_prototype| match shape_prototype.prototype_descriptor {
+        ShapePrototypeDescriptor::PrimitiveKind { base_shape_kind } => {
+          let add_command =
+            ShapeCommand::add_shape(shape_prototype.id, base_shape_kind, String::from(""));
+          Some(vec![add_command])
+        }
+        ShapePrototypeDescriptor::OneOfShape {
+          branches,
+          parameter_ids,
+        } => {
+          let mut commands = vec![ShapeCommand::add_shape(
+            shape_prototype.id.clone(),
+            ShapeKind::OneOfKind,
+            String::from(""),
+          )];
 
-            let one_off_shape_id = shape_prototype.id.clone();
+          let one_off_shape_id = shape_prototype.id.clone();
 
-            for (branch_shape_prototype, branch_parameter_id) in
-              branches.into_iter().zip(parameter_ids)
-            {
-              let branch_shape_id = branch_shape_prototype.id.clone();
-              let branch_commands =
-                shape_prototypes_to_commands(std::iter::once(branch_shape_prototype));
+          for (branch_shape_prototype, branch_parameter_id) in
+            branches.into_iter().zip(parameter_ids)
+          {
+            let branch_shape_id = branch_shape_prototype.id.clone();
+            let branch_commands =
+              shape_prototypes_to_commands(std::iter::once(branch_shape_prototype));
 
-              commands.extend(branch_commands);
-              commands.push(ShapeCommand::add_shape_parameter(
-                branch_parameter_id.clone(),
-                one_off_shape_id.clone(),
-                String::from(""),
-              ));
-              commands.push(ShapeCommand::set_parameter_shape(
-                one_off_shape_id.clone(),
-                branch_parameter_id.clone(),
-                branch_shape_id,
-              ));
-            }
-
-            [Some(commands), None]
-          }
-          ShapePrototypeDescriptor::NullableShape { shape } => {
-            let mut commands = vec![];
-
-            let item_shape_prototype = *shape;
-            let item_shape_id = item_shape_prototype.id.clone();
-
-            commands.extend(shape_prototypes_to_commands(std::iter::once(
-              item_shape_prototype,
-            )));
-
-            let nullable_shape_id = shape_prototype.id;
-            commands.push(ShapeCommand::add_shape(
-              nullable_shape_id.clone(),
-              ShapeKind::NullableKind,
+            commands.extend(branch_commands);
+            commands.push(ShapeCommand::add_shape_parameter(
+              branch_parameter_id.clone(),
+              one_off_shape_id.clone(),
               String::from(""),
             ));
-
-            let parameter_id = ShapeKind::NullableKind
-              .get_parameter_descriptor()
-              .unwrap()
-              .shape_parameter_id;
             commands.push(ShapeCommand::set_parameter_shape(
-              nullable_shape_id,
-              String::from(parameter_id),
-              item_shape_id,
+              one_off_shape_id.clone(),
+              branch_parameter_id.clone(),
+              branch_shape_id,
             ));
-
-            [Some(commands), None]
           }
-          ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
-            let mut commands = vec![];
-            commands.push(ShapeCommand::add_shape(
-              shape_prototype.id.clone(),
-              ShapeKind::ListKind,
-              String::from(""),
-            ));
 
-            if let Some(item_shape_id) = item_shape_id {
-              commands.push(ShapeCommand::set_parameter_shape(
-                shape_prototype.id,
-                String::from(
-                  ShapeKind::ListKind
-                    .get_parameter_descriptor()
-                    .unwrap()
-                    .shape_parameter_id,
-                ),
-                item_shape_id,
-              ));
-            }
+          Some(commands)
+        }
+        ShapePrototypeDescriptor::NullableShape { shape } => {
+          let mut commands = vec![];
 
-            [Some(commands), None]
-          }
-          ShapePrototypeDescriptor::ObjectWithFields { fields } => {
-            let mut commands = vec![];
-            commands.push(ShapeCommand::add_shape(
-              shape_prototype.id.clone(),
-              ShapeKind::ObjectKind,
-              String::from(""),
-            ));
+          let item_shape_prototype = *shape;
+          let item_shape_id = item_shape_prototype.id.clone();
 
-            for field in fields {
-              let field_shape_id = if let Some(optional_shape_id) = field.optional_shape_id {
-                commands.push(ShapeCommand::add_shape(
-                  optional_shape_id.clone(),
-                  ShapeKind::OptionalKind,
-                  String::from(""),
-                ));
-                let parameter_id = ShapeKind::OptionalKind
+          commands.extend(shape_prototypes_to_commands(std::iter::once(
+            item_shape_prototype,
+          )));
+
+          let nullable_shape_id = shape_prototype.id;
+          commands.push(ShapeCommand::add_shape(
+            nullable_shape_id.clone(),
+            ShapeKind::NullableKind,
+            String::from(""),
+          ));
+
+          let parameter_id = ShapeKind::NullableKind
+            .get_parameter_descriptor()
+            .unwrap()
+            .shape_parameter_id;
+          commands.push(ShapeCommand::set_parameter_shape(
+            nullable_shape_id,
+            String::from(parameter_id),
+            item_shape_id,
+          ));
+
+          Some(commands)
+        }
+        ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
+          let mut commands = vec![];
+          commands.push(ShapeCommand::add_shape(
+            shape_prototype.id.clone(),
+            ShapeKind::ListKind,
+            String::from(""),
+          ));
+
+          if let Some(item_shape_id) = item_shape_id {
+            commands.push(ShapeCommand::set_parameter_shape(
+              shape_prototype.id,
+              String::from(
+                ShapeKind::ListKind
                   .get_parameter_descriptor()
                   .unwrap()
-                  .shape_parameter_id;
-                commands.push(ShapeCommand::set_parameter_shape(
-                  optional_shape_id.clone(),
-                  String::from(parameter_id),
-                  field.value_shape_id,
-                ));
-                optional_shape_id
-              } else {
-                field.value_shape_id
-              };
+                  .shape_parameter_id,
+              ),
+              item_shape_id,
+            ));
+          }
 
-              commands.push(ShapeCommand::add_field(
-                field.key,
-                field.field_id,
-                shape_prototype.id.clone(),
-                field_shape_id,
+          Some(commands)
+        }
+        ShapePrototypeDescriptor::ObjectWithFields { fields } => {
+          let mut commands = vec![];
+          commands.push(ShapeCommand::add_shape(
+            shape_prototype.id.clone(),
+            ShapeKind::ObjectKind,
+            String::from(""),
+          ));
+
+          for field in fields {
+            let field_shape_id = if let Some(optional_shape_id) = field.optional_shape_id {
+              commands.push(ShapeCommand::add_shape(
+                optional_shape_id.clone(),
+                ShapeKind::OptionalKind,
+                String::from(""),
               ));
-            }
+              let parameter_id = ShapeKind::OptionalKind
+                .get_parameter_descriptor()
+                .unwrap()
+                .shape_parameter_id;
+              commands.push(ShapeCommand::set_parameter_shape(
+                optional_shape_id.clone(),
+                String::from(parameter_id),
+                field.value_shape_id,
+              ));
+              optional_shape_id
+            } else {
+              field.value_shape_id
+            };
 
-            [Some(commands), None]
+            commands.push(ShapeCommand::add_field(
+              field.key,
+              field.field_id,
+              shape_prototype.id.clone(),
+              field_shape_id,
+            ));
           }
-          ShapePrototypeDescriptor::Unknown => [None, None],
-        };
 
-      [init_commands, describe_commands]
-    })
-    .fold(
-      vec![vec![], vec![]],
-      |mut existing_commands, new_commands| {
-        let [new_init, new_describe] = new_commands;
-        {
-          let init_commands = &mut existing_commands[0];
-          if let Some(commands) = new_init {
-            init_commands.extend(commands);
-          }
+          Some(commands)
         }
-        {
-          let describe_commands = &mut existing_commands[1];
-
-          if let Some(commands) = new_describe {
-            describe_commands.extend(commands);
-          }
-        }
-        existing_commands
+        ShapePrototypeDescriptor::Unknown => None,
       },
     )
-    .into_iter()
     .flatten()
 }
 
