@@ -96,33 +96,25 @@ fn shape_prototypes_to_commands(
 
             let one_off_shape_id = shape_prototype.id.clone();
 
-            let branch_ids = branches
-              .iter()
-              .zip(parameter_ids)
-              .map(|(shape_prototype, parameter_id)| {
-                (shape_prototype.id.clone(), parameter_id.clone())
-              })
-              .collect::<Vec<_>>();
+            for (branch_shape_prototype, branch_parameter_id) in
+              branches.into_iter().zip(parameter_ids)
+            {
+              let branch_shape_id = branch_shape_prototype.id.clone();
+              let branch_commands =
+                shape_prototypes_to_commands(std::iter::once(branch_shape_prototype));
 
-            let branches_commands = shape_prototypes_to_commands(branches)
-              .zip(branch_ids)
-              .flat_map(|(branch_command, (branch_shape_id, parameter_id))| {
-                vec![
-                  branch_command,
-                  ShapeCommand::add_shape_parameter(
-                    parameter_id.clone(),
-                    one_off_shape_id.clone(),
-                    String::from(""),
-                  ),
-                  ShapeCommand::set_parameter_shape(
-                    one_off_shape_id.clone(),
-                    parameter_id.clone(),
-                    branch_shape_id.clone(),
-                  ),
-                ]
-              });
-
-            commands.extend(branches_commands);
+              commands.extend(branch_commands);
+              commands.push(ShapeCommand::add_shape_parameter(
+                branch_parameter_id.clone(),
+                one_off_shape_id.clone(),
+                String::from(""),
+              ));
+              commands.push(ShapeCommand::set_parameter_shape(
+                one_off_shape_id.clone(),
+                branch_parameter_id.clone(),
+                branch_shape_id,
+              ));
+            }
 
             [Some(commands), None]
           }
@@ -554,43 +546,6 @@ mod test {
   }
 
   #[test]
-  fn trail_observations_can_generate_commands_for_one_off_of_primitives() {
-    let string_body = BodyDescriptor::from(json!("a string body"));
-    let number_body = BodyDescriptor::from(json!(48));
-    let boolean_body = BodyDescriptor::from(json!(true));
-
-    let mut observations = TrailObservationsResult::default();
-    observations.union(observe_body_trails(string_body));
-    observations.union(observe_body_trails(number_body));
-    observations.union(observe_body_trails(boolean_body));
-
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
-    let mut spec_projection = SpecProjection::default();
-
-    let observation_results = collect_commands(observations.into_commands(&mut test_id));
-    assert!(observation_results.0.is_some());
-    assert_debug_snapshot!(
-      "trail_observations_can_generate_commands_for_one_off_of_primitives__observation_results",
-      observation_results
-    );
-
-    for command in observation_results.1 {
-      let events = spec_projection
-        .execute(command)
-        .expect("generated commands must be valid");
-
-      for event in events {
-        spec_projection.apply(event)
-      }
-    }
-  }
-
-  #[test]
   fn trail_observations_can_generate_commands_for_array_bodies() {
     let primitive_array_body = BodyDescriptor::from(json!(["a", "b", "c"]));
     let empty_array_body = BodyDescriptor::from(json!([]));
@@ -826,6 +781,57 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_one_off_results",
       &nullable_one_off_results
+    );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_commands_for_one_off_polymorphic_bodies() {
+    let primitive_observations = {
+      let string_body = BodyDescriptor::from(json!("a string body"));
+      let number_body = BodyDescriptor::from(json!(48));
+      let boolean_body = BodyDescriptor::from(json!(true));
+
+      let mut observations = TrailObservationsResult::default();
+      observations.union(observe_body_trails(string_body));
+      observations.union(observe_body_trails(number_body));
+      observations.union(observe_body_trails(boolean_body));
+
+      observations
+    };
+
+    let collections_observations = {
+      let array_body = BodyDescriptor::from(json!([1, 2, 3]));
+      let object_body = BodyDescriptor::from(json!({ "a-field": "string" }));
+
+      let mut observations = TrailObservationsResult::default();
+      observations.union(observe_body_trails(array_body));
+      observations.union(observe_body_trails(object_body));
+
+      observations
+    };
+
+    let mut counter = 0;
+    let mut test_id = || {
+      let id = format!("test-id-{}", counter);
+      counter += 1;
+      id
+    };
+
+    let primitive_results = collect_commands(primitive_observations.into_commands(&mut test_id));
+    assert!(primitive_results.0.is_some());
+    assert_valid_commands(primitive_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_one_off_polymorphic_bodies__primitive_results",
+      &primitive_results
+    );
+
+    let collections_results =
+      collect_commands(collections_observations.into_commands(&mut test_id));
+    assert!(collections_results.0.is_some());
+    assert_valid_commands(collections_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_one_off_polymorphic_bodies__collections_results",
+      &collections_results
     );
   }
 

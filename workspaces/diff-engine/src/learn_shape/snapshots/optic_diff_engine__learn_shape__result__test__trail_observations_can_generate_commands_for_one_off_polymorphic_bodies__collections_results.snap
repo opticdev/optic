@@ -1,16 +1,34 @@
 ---
 source: workspaces/diff-engine/src/learn_shape/result.rs
-expression: observation_results
+expression: "&collections_results"
 ---
 (
     Some(
-        "test-id-0",
+        "test-id-10",
     ),
     [
         ShapeCommand(
             AddShape(
                 AddShape {
-                    shape_id: "test-id-0",
+                    shape_id: "test-id-7",
+                    base_shape_id: "$number",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-8",
+                    base_shape_id: "$string",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-10",
                     base_shape_id: "$oneOf",
                     name: "",
                 },
@@ -19,17 +37,8 @@ expression: observation_results
         ShapeCommand(
             AddShape(
                 AddShape {
-                    shape_id: "test-id-4",
-                    base_shape_id: "$string",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
-            AddShapeParameter(
-                AddShapeParameter {
-                    shape_parameter_id: "test-id-1",
-                    shape_id: "test-id-0",
+                    shape_id: "test-id-13",
+                    base_shape_id: "$list",
                     name: "",
                 },
             ),
@@ -39,13 +48,39 @@ expression: observation_results
                 SetParameterShape {
                     shape_descriptor: ProviderInShape(
                         ProviderInShape {
-                            shape_id: "test-id-0",
+                            shape_id: "test-id-13",
                             provider_descriptor: ShapeProvider(
                                 ShapeProvider {
-                                    shape_id: "test-id-4",
+                                    shape_id: "test-id-7",
                                 },
                             ),
-                            consuming_parameter_id: "test-id-1",
+                            consuming_parameter_id: "$listItem",
+                        },
+                    ),
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShapeParameter(
+                AddShapeParameter {
+                    shape_parameter_id: "test-id-11",
+                    shape_id: "test-id-10",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-10",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-13",
+                                },
+                            ),
+                            consuming_parameter_id: "test-id-11",
                         },
                     ),
                 },
@@ -54,52 +89,32 @@ expression: observation_results
         ShapeCommand(
             AddShape(
                 AddShape {
-                    shape_id: "test-id-5",
-                    base_shape_id: "$number",
+                    shape_id: "test-id-14",
+                    base_shape_id: "$object",
                     name: "",
                 },
             ),
         ),
         ShapeCommand(
-            AddShapeParameter(
-                AddShapeParameter {
-                    shape_parameter_id: "test-id-2",
-                    shape_id: "test-id-0",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
-            SetParameterShape(
-                SetParameterShape {
-                    shape_descriptor: ProviderInShape(
-                        ProviderInShape {
-                            shape_id: "test-id-0",
-                            provider_descriptor: ShapeProvider(
-                                ShapeProvider {
-                                    shape_id: "test-id-5",
-                                },
-                            ),
-                            consuming_parameter_id: "test-id-2",
+            AddField(
+                AddField {
+                    field_id: "test-id-9",
+                    shape_id: "test-id-14",
+                    name: "a-field",
+                    shape_descriptor: FieldShapeFromShape(
+                        FieldShapeFromShape {
+                            field_id: "test-id-9",
+                            shape_id: "test-id-8",
                         },
                     ),
                 },
             ),
         ),
         ShapeCommand(
-            AddShape(
-                AddShape {
-                    shape_id: "test-id-6",
-                    base_shape_id: "$boolean",
-                    name: "",
-                },
-            ),
-        ),
-        ShapeCommand(
             AddShapeParameter(
                 AddShapeParameter {
-                    shape_parameter_id: "test-id-3",
-                    shape_id: "test-id-0",
+                    shape_parameter_id: "test-id-12",
+                    shape_id: "test-id-10",
                     name: "",
                 },
             ),
@@ -109,13 +124,13 @@ expression: observation_results
                 SetParameterShape {
                     shape_descriptor: ProviderInShape(
                         ProviderInShape {
-                            shape_id: "test-id-0",
+                            shape_id: "test-id-10",
                             provider_descriptor: ShapeProvider(
                                 ShapeProvider {
-                                    shape_id: "test-id-6",
+                                    shape_id: "test-id-14",
                                 },
                             ),
-                            consuming_parameter_id: "test-id-3",
+                            consuming_parameter_id: "test-id-12",
                         },
                     ),
                 },
