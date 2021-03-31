@@ -162,41 +162,36 @@ function buildEndpointChanges(
 
   const batchCommitIds = deltaBatchCommits.map((batchCommit: any) => batchCommit.result.id);
 
-  const batchCommitNeighborIds: string[] = batchCommitIds.reduce((result, batchCommitId: any) => {
-    return result.concat(
-      shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
-        .results
-        .map((shape: any) => shape.result.id),
-      shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
-        .results
-        .map((field: any) => field.result.id),
-    )
-  }, []);
+  const batchCommitNeighborIds = new Map();
+
+  batchCommitIds.forEach((batchCommitId: any) => {
+    // TODO: create query for neighbors of all types
+    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results
+      .forEach((shape: any) => {
+        batchCommitNeighborIds.set(shape.result.id, batchCommitId);
+      });
+    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results
+      .forEach((field: any) => {
+        batchCommitNeighborIds.set(field.result.id, batchCommitId);
+      });
+  });
 
   const rootShapeIds = endpointQueries
     .listNodesByType(endpoints.NodeType.Body)
     .results
     .map((bodyNode: any) => bodyNode.result.data.rootShapeId);
 
-  const rootShapeNeighborIds = new Map();
-
-  rootShapeIds.forEach((rootShapeId: any) => {
-    const descendantIds = [];
-    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
-      descendantIds.push(descendant.id);
-    }
-    rootShapeNeighborIds.set(rootShapeId, descendantIds);
-  });
-
   const changedRootShapeIds: string[] = [];
 
-  rootShapeNeighborIds.forEach((descendantIds, rootShapeId) => {
-    if (batchCommitNeighborIds.includes(rootShapeId)) {
+  rootShapeIds.forEach((rootShapeId: any) => {
+    if (batchCommitNeighborIds.has(rootShapeId)) {
       changedRootShapeIds.push(rootShapeId);
       return;
     }
-    for (const descendantId of descendantIds) {
-      if (batchCommitNeighborIds.includes(descendantId)) {
+    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+      if (batchCommitNeighborIds.has(descendant.id)) {
         changedRootShapeIds.push(rootShapeId);
         return;
       }
@@ -208,18 +203,14 @@ function buildEndpointChanges(
   changedRootShapeIds.forEach((changedRootShapeId: any) => {
     const body: any = endpointQueries.findNodeById(changedRootShapeId);
 
-    try {
-      const response = body.response();
+    const response = body.response();
 
-      // TODO: copy/pasted from above
+    if (response) {
       const pathNode = response.path();
       const path = pathNode.result.data.absolutePathPattern;
       const method = response.result.data.httpMethod;
       const endpointId = JSON.stringify({ path, method });
 
-      // If the endpoint is there, we should ignore this change
-      // We can then assume if the endpoint does not exist, it means
-      // this endpoint should be marked as updated.
       if (changes.has(endpointId)) return;
 
       changes.set(endpointId, {
@@ -231,28 +222,26 @@ function buildEndpointChanges(
       });
 
       return;
-    } catch (e) {}
+    }
 
     const request = body.request();
 
-    // TODO: copy/pasted from above
-    const pathNode = request.path();
-    const path = pathNode.result.data.absolutePathPattern;
-    const method = request.result.data.httpMethod;
-    const endpointId = JSON.stringify({ path, method });
+    if (request) {
+      const pathNode = request.path();
+      const path = pathNode.result.data.absolutePathPattern;
+      const method = request.result.data.httpMethod;
+      const endpointId = JSON.stringify({ path, method });
 
-    // If the endpoint is there, we should ignore this change
-    // We can then assume if the endpoint does not exist, it means
-    // this endpoint should be marked as updated.
-    if (changes.has(endpointId)) return;
+      if (changes.has(endpointId)) return;
 
-    changes.set(endpointId, {
-      change: {
-        category: 'updated'
-      },
-      path,
-      method
-    });
+      changes.set(endpointId, {
+        change: {
+          category: 'updated'
+        },
+        path,
+        method
+      });
+    }
   });
 
   return {
