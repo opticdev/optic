@@ -126,6 +126,14 @@ export class BodyNodeWrapper implements NodeWrapper {
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
+
+  request(): PathNodeWrapper {
+    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Request);
+    if (neighbors.results.length === 0) {
+      throw new Error(`expected Body to have a parent Request`);
+    }
+    return neighbors.results[0] as PathNodeWrapper;
+  }
 }
 
 export class RequestNodeWrapper implements NodeWrapper {

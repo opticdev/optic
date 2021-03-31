@@ -28,6 +28,8 @@ function buildEndpointsGraph(spec: any, opticEngine: any) {
     nodes, edges, nodeIndexToId
   } = serializedGraph;
 
+  // console.log(JSON.stringify(serializedGraph, null, 2));
+
   const indexer = new endpoints.GraphIndexer();
 
   function remapId(arrayIndex: number) {
@@ -103,6 +105,8 @@ function buildEndpointChanges(
   shapeQueries: shapesGraph.GraphQueries,
   since?: string
 ): EndpointChanges {
+  const r = endpointQueries.listNodesByType(endpoints.NodeType.Request)
+  console.log(JSON.stringify(r, null, 2));
   let sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
     .results
@@ -201,14 +205,42 @@ function buildEndpointChanges(
     }
   });
 
+  // TODO: so much copy/pasta! This is bad for now. I'll refactor soon.
+  // Looks for response first, then request
   changedRootShapeIds.forEach((changedRootShapeId: any) => {
     const body: any = endpointQueries.findNodeById(changedRootShapeId);
-    const response = body.response();
+
+    try {
+      const response = body.response();
+
+      // TODO: copy/pasted from above
+      const pathNode = response.path();
+      const path = pathNode.result.data.absolutePathPattern;
+      const method = response.result.data.httpMethod;
+      const endpointId = JSON.stringify({ path, method });
+
+      // If the endpoint is there, we should ignore this change
+      // We can then assume if the endpoint does not exist, it means
+      // this endpoint should be marked as updated.
+      if (changes.has(endpointId)) return;
+
+      changes.set(endpointId, {
+        change: {
+          category: 'updated'
+        },
+        path,
+        method
+      });
+
+      return;
+    } catch (e) {}
+
+    const request = body.request();
 
     // TODO: copy/pasted from above
-    const pathNode = response.path();
+    const pathNode = request.path();
     const path = pathNode.result.data.absolutePathPattern;
-    const method = response.result.data.httpMethod;
+    const method = request.result.data.httpMethod;
     const endpointId = JSON.stringify({ path, method });
 
     // If the endpoint is there, we should ignore this change
