@@ -5,6 +5,8 @@ schema {
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
+  endpointChanges(since: String): EndpointChanges
+  batchCommits: [BatchCommit]
 }
 type HttpBody {
   contentType: String
@@ -49,5 +51,20 @@ type OpticShape {
   asArray: ArrayMetadata
   # exampleValue: [JSON]
 }
-
+type EndpointChanges {
+  opticUrl: String
+  endpoints: [EndpointChange]
+}
+type EndpointChange {
+  change: EndpointChangeMetadata
+  path: String
+  method: String
+}
+type EndpointChangeMetadata {
+  category: String
+}
+type BatchCommit {
+  createdAt: String
+  batchId: String
+}
 `;

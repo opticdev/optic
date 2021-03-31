@@ -129,25 +129,27 @@ impl AggregateEvent<EndpointsProjection> for EndpointEvent {
         }
       }
       EndpointEvent::RequestBodySet(e) => {
+        //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (request_id, http_content_type)
         projection.with_request_body(
-          e.request_id.clone(),
+          e.request_id,
           e.body_descriptor.http_content_type,
-          e.body_descriptor.shape_id,
+          e.body_descriptor.shape_id.clone(),
         );
 
         if let Some(c) = e.event_context {
-          projection.with_update_history(&c.client_command_batch_id, &e.request_id);
+          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
         }
       }
       EndpointEvent::ResponseBodySet(e) => {
+        //@GOTCHA: this doesn't invalidate previous RequestBodySet events for the same (response_id, http_content_type)
         projection.with_response_body(
-          e.response_id.clone(),
+          e.response_id,
           e.body_descriptor.http_content_type,
-          e.body_descriptor.shape_id,
+          e.body_descriptor.shape_id.clone(),
         );
 
         if let Some(c) = e.event_context {
-          projection.with_update_history(&c.client_command_batch_id, &e.response_id);
+          projection.with_creation_history(&c.client_command_batch_id, &e.body_descriptor.shape_id);
         }
       }
       _ => eprintln!(
@@ -317,18 +319,21 @@ impl EndpointsProjection {
     http_content_type: HttpContentType,
     root_shape_id: ShapeId,
   ) {
-    let request_index = self
+    let request_index = *self
       .domain_id_to_index
       .get(&request_id)
       .expect("expected node with domain_id $request_id to exist in the graph");
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
-      root_shape_id: root_shape_id,
+      root_shape_id: root_shape_id.clone(),
     });
     let node_index = self.graph.add_node(node);
     self
+      .domain_id_to_index
+      .insert(root_shape_id.clone(), node_index);
+    self
       .graph
-      .add_edge(node_index, *request_index, Edge::IsChildOf);
+      .add_edge(node_index, request_index, Edge::IsChildOf);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_response_body(
@@ -337,18 +342,21 @@ impl EndpointsProjection {
     http_content_type: HttpContentType,
     root_shape_id: ShapeId,
   ) {
-    let response_index = self
+    let response_index = *self
       .domain_id_to_index
       .get(&response_id)
       .expect("expected node with domain_id $response_id to exist in the graph");
     let node = Node::Body(BodyNode {
       http_content_type: http_content_type,
-      root_shape_id: root_shape_id,
+      root_shape_id: root_shape_id.clone(),
     });
     let node_index = self.graph.add_node(node);
     self
+      .domain_id_to_index
+      .insert(root_shape_id.clone(), node_index);
+    self
       .graph
-      .add_edge(node_index, *response_index, Edge::IsChildOf);
+      .add_edge(node_index, response_index, Edge::IsChildOf);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   pub fn with_batch_commit(&mut self, batch_id: String, created_at: String) {

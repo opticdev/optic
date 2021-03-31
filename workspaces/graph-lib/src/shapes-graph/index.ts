@@ -153,9 +153,9 @@ class ShapeNodeWrapper implements NodeWrapper {
   coreShape(): NodeWrapper {
     const coreShapeNode = this.queries.findOutgoingNeighborByEdgeType(this.result.id, EdgeType.IsDescendantOf);
     if (!coreShapeNode) {
-      throw new Error(`expected node to have a core shape node`)
+      throw new Error(`expected node to have a core shape node`);
     }
-    return coreShapeNode
+    return coreShapeNode;
   }
 }
 
@@ -187,6 +187,21 @@ export class GraphQueries {
 
   listNodesByType(type: NodeType): NodeListWrapper {
     return this.wrapList(type, this.index.nodesByType.get(type) || []);
+  }
+
+  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
+    debugger
+    const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
+    if (!inboundNeighbors) {
+      return;
+    }
+    for (const neighborsByNodeType of inboundNeighbors.values()) {
+      for (const neighborNode of neighborsByNodeType) {
+        yield neighborNode;
+        // @ts-ignore
+        yield* this.descendantsIterator(neighborNode.id);
+      }
+    }
   }
 
   //@TODO add singular find* variant

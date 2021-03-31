@@ -222,10 +222,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      5,
+      6,
       1,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -264,10 +264,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      8,
+      9,
       1,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -327,10 +327,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      15,
+      16,
       10,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -369,10 +369,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      18,
+      19,
       10,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ],
     [
@@ -411,10 +411,10 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       }
     ],
     [
-      21,
+      22,
       10,
       {
-        "type": "UpdatedIn"
+        "type": "CreatedIn"
       }
     ]
   ],
@@ -427,15 +427,20 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
     "13": "path_osi3pD8diw",
     "14": "request_w0KmJ5kZIe",
     "15": "response_iQd5ISIZH9",
+    "16": "shape_E9IzHThmZv",
     "17": "request_CEJzcYN3NN",
     "18": "response_ata4rM8zB1",
+    "19": "shape_UlLNexyAzZ",
     "2": "path_rmPGKep5SW",
     "20": "request_AJISCmgnoU",
     "21": "response_HZFYN85Iui",
+    "22": "shape_MiVhGwZrMY",
     "3": "path_CmA4ZrhSXc",
     "4": "request_lUXaqigODI",
     "5": "response_zEjgh3n6Uq",
+    "6": "shape_GsyFkrJzlL",
     "7": "request_ncEWlZU2g3",
-    "8": "response_pan3yNmeiQ"
+    "8": "response_pan3yNmeiQ",
+    "9": "shape_ApnstcbWQx"
   }
 }

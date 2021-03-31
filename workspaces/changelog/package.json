@@ -1,15 +1,16 @@
 {
-  "name": "@useoptic/spectacle",
+  "name": "@useoptic/changelog",
   "version": "9.0.13",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
-    "ws:test": "tap"
+    "ws:test": "echo 'no tests'",
+    "test": "echo 'no tests'"
   },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/useoptic/optic-package.git",
-    "directory": "workspaces/spectacle"
+    "directory": "workspaces/changelog"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -21,11 +22,12 @@
     "@graphql-tools/schema": "^7.1.3",
     "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm",
     "@useoptic/graph-lib": "workspace:workspaces/graph-lib",
+    "@useoptic/spectacle": "workspace:workspaces/spectacle",
     "graphql": "^15.5.0"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.21",
     "@types/node": "^12.12.6",
-    "@types/tap": "^14.10.1",
-    "tap": "^14.11.0"
+    "typescript": "^3.8.3"
   }
 }

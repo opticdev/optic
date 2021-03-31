@@ -7,10 +7,11 @@ use crate::state::shape::{
   FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeIdRef,
   ShapeKind, ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef, ShapeParametersDescriptor,
 };
-use cqrs_core::{Aggregate, AggregateEvent};
+use crate::RfcEvent;
+use cqrs_core::{Aggregate, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::iter::FromIterator;
 
@@ -21,6 +22,7 @@ pub enum Node {
   Shape(ShapeNode),
   Field(FieldNode),
   ShapeParameter(ShapeParameterNode),
+  BatchCommit(BatchCommitNode),
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -47,6 +49,13 @@ pub struct ShapeParameterNode {
   pub descriptor: ShapeParameterNodeDescriptor,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BatchCommitNode {
+  batch_id: String,
+  created_at: String,
+}
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "type", content = "data")]
 pub enum Edge {
@@ -55,6 +64,8 @@ pub enum Edge {
   IsFieldOf,
   IsParameterOf,
   HasBinding(ShapeParameterBinding),
+  CreatedIn,
+  UpdatedIn,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -334,6 +345,48 @@ fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_ki
 }
 
 impl ShapeProjection {
+  ////////////////////////////////////////////////////////////////////////////////
+  pub fn with_batch_commit(&mut self, batch_id: String, created_at: String) {
+    let node = Node::BatchCommit(BatchCommitNode {
+      batch_id: batch_id.clone(),
+      created_at: created_at.clone(),
+    });
+    let node_index = self.graph.add_node(node);
+    self.node_id_to_index.insert(batch_id, node_index);
+  }
+  pub fn with_creation_history(&mut self, batch_id: &str, created_node_id: &str) {
+    let created_node_index = self
+      .node_id_to_index
+      .get(created_node_id)
+      .expect("expected created_node_id to exist");
+
+    let batch_node_index_option = self.node_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*created_node_index, *batch_node_index, Edge::CreatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  pub fn with_update_history(&mut self, batch_id: &str, updated_node_id: &str) {
+    let updated_node_index = self
+      .node_id_to_index
+      .get(updated_node_id)
+      .expect("expected updated_node_id to exist");
+
+    let batch_node_index_option = self.node_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*updated_node_index, *batch_node_index, Edge::UpdatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  ////////////////////////////////////////////////////////////////////////////////
   pub fn with_shape_parameter(&mut self, shape_parameter_id: ShapeParameterId, shape_id: ShapeId) {
     let shape_node_index = *self.get_shape_node_index(&shape_id).unwrap();
     let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode {
@@ -681,27 +734,69 @@ impl Aggregate for ShapeProjection {
     "shape_projection"
   }
 }
+impl AggregateEvent<ShapeProjection> for RfcEvent {
+  fn apply_to(self, projection: &mut ShapeProjection) {
+    match self {
+      RfcEvent::BatchCommitStarted(e) => projection.with_batch_commit(
+        e.batch_id,
+        e.event_context
+          .expect("why is event_context optional again?")
+          .created_at,
+      ),
+      _ => eprintln!(
+        "Ignoring applying event of type '{}' for '{}'",
+        self.event_type(),
+        ShapeProjection::aggregate_type()
+      ),
+    }
+  }
+}
 
 impl AggregateEvent<ShapeProjection> for ShapeEvent {
   fn apply_to(self, projection: &mut ShapeProjection) {
     match self {
       ShapeEvent::ShapeAdded(e) => {
-        projection.with_shape(e.shape_id, e.base_shape_id, e.parameters, e.name)
+        projection.with_shape(e.shape_id.clone(), e.base_shape_id, e.parameters, e.name);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.shape_id);
+        }
       }
       ShapeEvent::ShapeParameterAdded(e) => {
-        projection.with_shape_parameter(e.shape_parameter_id, e.shape_id)
+        projection.with_shape_parameter(e.shape_parameter_id.clone(), e.shape_id);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.shape_parameter_id);
+        }
       }
       ShapeEvent::ShapeParameterShapeSet(e) => {
-        projection.with_shape_parameter_shape(e.shape_descriptor)
+        projection.with_shape_parameter_shape(e.shape_descriptor.clone());
+        if let Some(c) = e.event_context {
+          if let ParameterShapeDescriptor::ProviderInShape(d) = &e.shape_descriptor {
+            projection.with_update_history(&c.client_command_batch_id, &d.shape_id);
+          }
+        }
       }
       ShapeEvent::FieldAdded(e) => {
-        projection.with_field(e.field_id, e.shape_id, e.shape_descriptor, e.name)
+        projection.with_field(e.field_id.clone(), e.shape_id, e.shape_descriptor, e.name);
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.field_id);
+        }
       }
       ShapeEvent::FieldShapeSet(e) => {
-        projection.with_field_shape(e.shape_descriptor);
+        projection.with_field_shape(e.shape_descriptor.clone());
+
+        if let Some(c) = e.event_context {
+          if let FieldShapeDescriptor::FieldShapeFromShape(d) = &e.shape_descriptor {
+            projection.with_update_history(&c.client_command_batch_id, &d.field_id);
+          }
+        }
       }
       ShapeEvent::BaseShapeSet(e) => {
-        projection.with_base_shape(e.shape_id, e.base_shape_id);
+        projection.with_base_shape(e.shape_id.clone(), e.base_shape_id);
+
+        if let Some(c) = e.event_context {
+          projection.with_update_history(&c.client_command_batch_id, &e.shape_id);
+        }
       }
       x => {
         //dbg!("skipping ShapeEvent in ShapeProjection. warning?");
