@@ -12,8 +12,12 @@ import {
   getInitialBodiesOutputPaths,
 } from './initial-bodies-worker';
 import { learnUndocumentedBodies } from '@useoptic/diff-engine';
-import { Streams } from '@useoptic/diff-engine-wasm';
-import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
+import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
+import {
+  LearnedBodies,
+  LearnedBody,
+} from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
+import { Stream } from 'stream-json/jsonl/Parser';
 
 export interface InitialBodiesWorkerConfig {
   pathId: string;
@@ -56,14 +60,17 @@ export class InitialBodiesWorkerRust {
       }
     })(interactionIterator);
 
-    let learningResults = Streams.LearningResults.fromJSONL(
+    let learningResults = Streams.LearningResults.fromJSONL()(
       learnUndocumentedBodies(interactions, {
         specPath: outputPaths.events,
       })
     );
 
-    let result = await learningResults.next(); // we should get result and only one, since we're filtering per endpoint
-    return result.value;
+    for await (let result of learningResults) {
+      return result;
+    }
+
+    throw new Error('expected to receive a single learning result');
   }
 }
 

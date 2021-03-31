@@ -15,8 +15,8 @@ export interface LearnedBody {
   rootShapeId: string;
 }
 
-export async function* fromJSONL(
+export function fromJSONL(): (
   source: Readable
-): AsyncGenerator<LearnedBodies> {
-  return fromReadableJSONL(source);
+) => AsyncIterable<LearnedBodies> {
+  return fromReadableJSONL();
 }

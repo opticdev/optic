@@ -45,13 +45,15 @@ export function fromReadable<T>(stream: Readable): () => AsyncIterable<T> {
   };
 }
 
-export async function* fromReadableJSONL<T>(
-  source: Readable
-): AsyncGenerator<T> {
-  let parseResults = source.pipe(jsonlParser());
-  for await (let parseResult of parseResults) {
-    yield parseResult.value;
-  }
+export function fromReadableJSONL<T>(): (stream: Readable) => AsyncIterable<T> {
+  return async function* (source: Readable) {
+    let parseResults = source.pipe(jsonlParser());
+    for await (let parseResult of parseResults) {
+      yield parseResult.value;
+    }
+  };
+}
+
 export function tap<T>(
   predicate: (subject: T) => void
 ): (source: AsyncIterable<T>) => AsyncIterable<T> {
