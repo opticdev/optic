@@ -160,45 +160,70 @@ function buildEndpointChanges(
 
   const batchCommitIds = deltaBatchCommits.map((batchCommit: any) => batchCommit.result.id);
 
-  const changedRootIds: string[] = [];
+  const batchCommitNeighborIds: string[] = batchCommitIds.reduce((result, batchCommitId: any) => {
+    return result.concat(
+      shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+        .results
+        .map((shape: any) => shape.result.id),
+      shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+        .results
+        .map((field: any) => field.result.id),
+    )
+  }, []);
 
   const rootShapeIds = endpointQueries
     .listNodesByType(endpoints.NodeType.Body)
     .results
     .map((bodyNode: any) => bodyNode.result.data.rootShapeId);
 
-  // We look for rootShapeIds with BatchCommits in the delta
-  // Then we look for descendents of those with BatchCommits in the delta
-  // If we find one, we store the rootShapeId
-  rootShapeIds.forEach((rootShapeId: string) => {
-    const rootBatchCommits = shapeQueries.listOutgoingNeighborsByType(rootShapeId, NodeType.BatchCommit);
+  const rootShapeNeighborIds = new Map();
 
-    for (const rootBatchCommit of rootBatchCommits.results) {
-      if (batchCommitIds.includes(rootBatchCommit.result.id)) {
-        changedRootIds.push(rootShapeId);
-        return;
-      }
-    }
-
+  rootShapeIds.forEach((rootShapeId: any) => {
+    const descendantIds = [];
     for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
-      // TODO: same code from above, can be simplified
-      const descBatchCommits = shapeQueries.listOutgoingNeighborsByType(descendant.id, NodeType.BatchCommit);
+      descendantIds.push(descendant.id);
+    }
+    rootShapeNeighborIds.set(rootShapeId, descendantIds);
+  });
 
-      for (const descBatchCommit of descBatchCommits.results) {
-        if (batchCommitIds.includes(descBatchCommit.result.id)) {
-          changedRootIds.push(rootShapeId);
-          return;
-        }
+  const changedRootShapeIds: string[] = [];
+
+  rootShapeNeighborIds.forEach((descendantIds, rootShapeId) => {
+    if (batchCommitNeighborIds.includes(rootShapeId)) {
+      changedRootShapeIds.push(rootShapeId);
+      return;
+    }
+    for (const descendantId of descendantIds) {
+      if (batchCommitNeighborIds.includes(descendantId)) {
+        changedRootShapeIds.push(rootShapeId);
+        return;
       }
     }
   });
 
-  // Next:
-  // Go from changedRootIds to response
-  // If not there, go to request
-  // On either match, go up to path
+  changedRootShapeIds.forEach((changedRootShapeId: any) => {
+    const body: any = endpointQueries.findNodeById(changedRootShapeId);
+    const response = body.response();
 
-  console.log(changedRootIds)
+    // TODO: copy/pasted from above
+    const pathNode = response.path();
+    const path = pathNode.result.data.absolutePathPattern;
+    const method = response.result.data.httpMethod;
+    const endpointId = JSON.stringify({ path, method });
+
+    // If the endpoint is there, we should ignore this change
+    // We can then assume if the endpoint does not exist, it means
+    // this endpoint should be marked as updated.
+    if (changes.has(endpointId)) return;
+
+    changes.set(endpointId, {
+      change: {
+        category: 'updated'
+      },
+      path,
+      method
+    });
+  });
 
   return {
     data: {

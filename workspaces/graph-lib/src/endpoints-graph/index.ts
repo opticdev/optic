@@ -115,6 +115,19 @@ export interface NodeListWrapper {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+export class BodyNodeWrapper implements NodeWrapper {
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+
+  response(): PathNodeWrapper {
+    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Response);
+    if (neighbors.results.length === 0) {
+      throw new Error(`expected Body to have a parent Response`);
+    }
+    return neighbors.results[0] as PathNodeWrapper;
+  }
+}
+
 export class RequestNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {
   }
@@ -238,7 +251,7 @@ export class GraphQueries {
     } else if (node.type === NodeType.Path) {
       return new PathNodeWrapper(node, this);
     } else if (node.type === NodeType.Body) {
-      return { result: node };
+      return new BodyNodeWrapper(node, this);
     } else if (node.type === NodeType.BatchCommit) {
       return new BatchCommitNodeWrapper(node, this);
     }

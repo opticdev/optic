@@ -1222,7 +1222,7 @@ async function main() {
     variables: {}
   });
 
-  console.log(JSON.stringify(batchCommitResults, null, 2));
+  // console.log(JSON.stringify(batchCommitResults, null, 2));
 
   const endpointChangesResult = await spectacle({
     query: `{
@@ -1240,6 +1240,8 @@ async function main() {
   });
 
   console.log(JSON.stringify(endpointChangesResult, null, 2));
+
+  return;
 
   const result = await spectacle({
     query: `{ 
