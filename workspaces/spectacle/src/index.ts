@@ -88,15 +88,17 @@ function buildShapesGraph(spec: any, opticEngine: any) {
   return queries;
 }
 
+type EndpointChange = {
+  change: {
+    category: string
+  }
+  path: string
+  method: string
+}
+
 type EndpointChanges = {
   data: {
-    endpoints: {
-      change: {
-        category: string
-      }
-      path: string
-      method: string
-    }[]
+    endpoints: EndpointChange[]
   }
 }
 
@@ -117,54 +119,22 @@ function buildEndpointChanges(
     ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
     : sortedBatchCommits;
 
-  const changes = new Map();
+  const changes = new Changes();
 
-  // Go through requests first. When we go through responses second, we can check
-  // to see if the endpoint has been added by a request existing in the batch commits.
-  // If the endpoint exists, we can ignore since it's already there. Otherwise we
-  // can say the endpoint was updated.
   deltaBatchCommits.forEach((batchCommit: any) => {
     batchCommit.requests().results.forEach((request: any) => {
-      const path = request.path().result.data.absolutePathPattern;
-      const method = request.result.data.httpMethod;
-      const endpointId = JSON.stringify({ path, method });
-
-      // We can always assume a new request means a new endpoint
-      changes.set(endpointId, {
-        change: {
-          category: 'added'
-        },
-        path,
-        method
-      });
+      changes.captureChange('added', endpointFromRequest(request));
     });
 
     batchCommit.responses().results.forEach((response: any) => {
-      const pathNode = response.path();
-      const path = pathNode.result.data.absolutePathPattern;
-      const method = response.result.data.httpMethod;
-      const endpointId = JSON.stringify({ path, method });
-
-      // If the endpoint is there, we should ignore this change
-      // We can then assume if the endpoint does not exist, it means
-      // this endpoint should be marked as updated.
-      if (changes.has(endpointId)) return;
-
-      changes.set(endpointId, {
-        change: {
-          category: 'updated'
-        },
-        path,
-        method
-      });
+      changes.captureChange('updated', endpointFromResponse(response))
     });
   });
 
-  const batchCommitIds = deltaBatchCommits.map((batchCommit: any) => batchCommit.result.id);
-
+  // Gather batch commit neighbors
   const batchCommitNeighborIds = new Map();
-
-  batchCommitIds.forEach((batchCommitId: any) => {
+  deltaBatchCommits.forEach((batchCommit: any) => {
+    const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
     shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
       .results
@@ -178,77 +148,86 @@ function buildEndpointChanges(
       });
   });
 
-  const rootShapeIds = endpointQueries
+  endpointQueries
     .listNodesByType(endpoints.NodeType.Body)
     .results
-    .map((bodyNode: any) => bodyNode.result.data.rootShapeId);
+    .reduce((results: string[], bodyNode: any) => {
+      const { rootShapeId } = bodyNode.result.data;
+      if (batchCommitNeighborIds.has(rootShapeId)) {
+        results.push(rootShapeId);
+        return results;
+      }
+      for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+        if (batchCommitNeighborIds.has(descendant.id)) {
+          results.push(rootShapeId);
+          return results;
+        }
+      }
+      return results;
+    }, [])
+    .forEach((changedRootShapeId: any) => {
+      const body: any = endpointQueries.findNodeById(changedRootShapeId);
+      const response = body.response();
+      if (response) {
+        if (changes.captureChange('updated', endpointFromResponse(response))) {
+          return;
+        }
+      }
+      const request = body.request();
+      if (request) {
+        changes.captureChange('updated', endpointFromRequest(request));
+      }
+    });
 
-  const changedRootShapeIds: string[] = [];
+  return changes.toEndpointChanges();
+}
 
-  rootShapeIds.forEach((rootShapeId: any) => {
-    if (batchCommitNeighborIds.has(rootShapeId)) {
-      changedRootShapeIds.push(rootShapeId);
-      return;
-    }
-    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
-      if (batchCommitNeighborIds.has(descendant.id)) {
-        changedRootShapeIds.push(rootShapeId);
-        return;
+type Endpoint = {
+  endpointId: string,
+  path: string,
+  method: string
+}
+
+class Changes {
+  public changes: Map<string, EndpointChange>;
+
+  constructor() {
+    this.changes = new Map();
+  }
+
+  captureChange(category: string, endpoint: Endpoint): boolean {
+    if (this.changes.has(endpoint.endpointId)) return false;
+    this.changes.set(endpoint.endpointId, {
+      change: { category },
+      path: endpoint.path,
+      method: endpoint.method
+    });
+    return true;
+  }
+
+  toEndpointChanges(): EndpointChanges {
+    return {
+      data: {
+        endpoints: Array.from(this.changes.values())
       }
     }
-  });
+  }
+}
 
-  // TODO: so much copy/pasta! This is bad for now. I'll refactor soon.
-  // Looks for response first, then request
-  changedRootShapeIds.forEach((changedRootShapeId: any) => {
-    const body: any = endpointQueries.findNodeById(changedRootShapeId);
+function endpointFromRequest(request: any): Endpoint {
+  const pathNode = request.path();
+  const path = pathNode.result.data.absolutePathPattern;
+  const method = request.result.data.httpMethod;
+  const endpointId = JSON.stringify({ path, method });
+  return { endpointId, path, method };
+}
 
-    const response = body.response();
-
-    if (response) {
-      const pathNode = response.path();
-      const path = pathNode.result.data.absolutePathPattern;
-      const method = response.result.data.httpMethod;
-      const endpointId = JSON.stringify({ path, method });
-
-      if (changes.has(endpointId)) return;
-
-      changes.set(endpointId, {
-        change: {
-          category: 'updated'
-        },
-        path,
-        method
-      });
-
-      return;
-    }
-
-    const request = body.request();
-
-    if (request) {
-      const pathNode = request.path();
-      const path = pathNode.result.data.absolutePathPattern;
-      const method = request.result.data.httpMethod;
-      const endpointId = JSON.stringify({ path, method });
-
-      if (changes.has(endpointId)) return;
-
-      changes.set(endpointId, {
-        change: {
-          category: 'updated'
-        },
-        path,
-        method
-      });
-    }
-  });
-
-  return {
-    data: {
-      endpoints: Array.from(changes.values())
-    }
-  } as EndpointChanges;
+function endpointFromResponse(response: any): Endpoint {
+  const pathNode = response.path();
+  const path = pathNode.result.data.absolutePathPattern;
+  const method = response.result.data.httpMethod;
+  const endpointId = JSON.stringify({ path, method });
+  return { endpointId, path, method };
 }
 
 export async function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
