@@ -1,4 +1,5 @@
 import { GraphCommandHandler, mapAppend } from '../index';
+import { BatchCommitNode } from '../endpoints-graph';
 
 export type NodeId = string;
 
@@ -6,7 +7,8 @@ export enum NodeType {
   CoreShape = 'CoreShape',
   Shape = 'Shape',
   ShapeParameter = 'ShapeParameter',
-  Field = 'Field'
+  Field = 'Field',
+  BatchCommit = 'BatchCommit',
 }
 
 export type Node = {
@@ -23,6 +25,9 @@ export type Node = {
 } | {
   type: NodeType.Field,
   data: FieldNode
+} | {
+  type: NodeType.BatchCommit,
+  data: BatchCommitNode
 })
 
 export type CoreShapeNode = {
@@ -171,6 +176,11 @@ class FieldNodeWrapper implements NodeWrapper {
   }
 }
 
+export class BatchCommitNodeWrapper implements NodeWrapper {
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GraphQueries {
@@ -189,7 +199,7 @@ export class GraphQueries {
     return this.wrapList(type, this.index.nodesByType.get(type) || []);
   }
 
-  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
+  * descendantsIterator(nodeId: NodeId): Generator<Node> {
     debugger
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
@@ -248,6 +258,8 @@ export class GraphQueries {
       return new ShapeParameterNodeWrapper(node, this);
     } else if (node.type === NodeType.Field) {
       return new FieldNodeWrapper(node, this);
+    }else if (node.type === NodeType.BatchCommit) {
+      return new BatchCommitNodeWrapper(node, this);
     }
     throw new Error(`unexpected node.type`);
   }

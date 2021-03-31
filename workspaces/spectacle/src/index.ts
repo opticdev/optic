@@ -1,8 +1,10 @@
 import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { shapes, endpoints } from '@useoptic/graph-lib';
-import { GraphQueries } from '../../graph-lib/build/endpoints-graph';
+import { endpoints, shapes } from '@useoptic/graph-lib';
+import * as endpointsGraph from '../../graph-lib/build/endpoints-graph';
+import * as shapesGraph from '../../graph-lib/build/shapes-graph';
+import { NodeType } from '../../graph-lib/build/shapes-graph';
 
 export interface IOpticSpecRepository {
   listEvents(): Promise<any[]>
@@ -96,9 +98,14 @@ type EndpointChanges = {
   }
 }
 
-function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointChanges {
-  let sortedBatchCommits = queries
-    .listNodesByType(endpoints.NodeType.BatchCommit).results
+function buildEndpointChanges(
+  endpointQueries: endpointsGraph.GraphQueries,
+  shapeQueries: shapesGraph.GraphQueries,
+  since?: string
+): EndpointChanges {
+  let sortedBatchCommits = endpointQueries
+    .listNodesByType(endpoints.NodeType.BatchCommit)
+    .results
     .sort((a: any, b: any) => {
       return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
     });
@@ -151,6 +158,48 @@ function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointCh
     });
   });
 
+  const batchCommitIds = deltaBatchCommits.map((batchCommit: any) => batchCommit.result.id);
+
+  const changedRootIds: string[] = [];
+
+  const rootShapeIds = endpointQueries
+    .listNodesByType(endpoints.NodeType.Body)
+    .results
+    .map((bodyNode: any) => bodyNode.result.data.rootShapeId);
+
+  // We look for rootShapeIds with BatchCommits in the delta
+  // Then we look for descendents of those with BatchCommits in the delta
+  // If we find one, we store the rootShapeId
+  rootShapeIds.forEach((rootShapeId: string) => {
+    const rootBatchCommits = shapeQueries.listOutgoingNeighborsByType(rootShapeId, NodeType.BatchCommit);
+
+    for (const rootBatchCommit of rootBatchCommits.results) {
+      if (batchCommitIds.includes(rootBatchCommit.result.id)) {
+        changedRootIds.push(rootShapeId);
+        return;
+      }
+    }
+
+    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+      // TODO: same code from above, can be simplified
+      const descBatchCommits = shapeQueries.listOutgoingNeighborsByType(descendant.id, NodeType.BatchCommit);
+
+      for (const descBatchCommit of descBatchCommits.results) {
+        if (batchCommitIds.includes(descBatchCommit.result.id)) {
+          changedRootIds.push(rootShapeId);
+          return;
+        }
+      }
+    }
+  });
+
+  // Next:
+  // Go from changedRootIds to response
+  // If not there, go to request
+  // On either match, go up to path
+
+  console.log(changedRootIds)
+
   return {
     data: {
       endpoints: Array.from(changes.values())
@@ -165,6 +214,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
   );
 
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
+  const shapeQueries = buildShapesGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
 
   const resolvers = {
@@ -176,7 +226,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
         return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
       },
       endpointChanges: (parent: any, { since }: { since?: string }, context: any, info: any) => {
-        const endpointChanges = buildEndpointChanges(endpointsQueries, since);
+        const endpointChanges = buildEndpointChanges(endpointsQueries, shapeQueries, since);
         return Promise.resolve(endpointChanges);
       },
       batchCommits: (parent: any, args: any, context: any, info: any) => {
