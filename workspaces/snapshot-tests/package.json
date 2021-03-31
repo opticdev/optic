@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/snapshot-tests",
-  "version": "9.0.15",
+  "version": "9.0.16",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -15,8 +15,8 @@
     "@useoptic/domain": "10.0.64",
     "@useoptic/domain-types": "10.0.64",
     "@useoptic/domain-utilities": "10.0.64",
-    "@useoptic/client-utilities": "9.0.15",
-    "@useoptic/cli-shared": "9.0.15",
+    "@useoptic/client-utilities": "9.0.16",
+    "@useoptic/cli-shared": "9.0.16",
     "dataloader": "^2.0.0",
     "eventsource": "^1.0.7",
     "fs-extra": "^9.0.0"
