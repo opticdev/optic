@@ -105,8 +105,6 @@ function buildEndpointChanges(
   shapeQueries: shapesGraph.GraphQueries,
   since?: string
 ): EndpointChanges {
-  const r = endpointQueries.listNodesByType(endpoints.NodeType.Request)
-  console.log(JSON.stringify(r, null, 2));
   let sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
     .results

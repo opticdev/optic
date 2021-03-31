@@ -10,7 +10,7 @@ function loadExampleSpec(name: string): any[] {
 }
 
 // TODO: replace examples with snapshot tests
-const _events = loadExampleSpec('add-req-body-field');
+const _events = loadExampleSpec('default');
 
 async function main() {
   const spectacle = await makeSpectacle(DiffEngine, {
@@ -35,7 +35,7 @@ async function main() {
 
   const endpointChangesResult = await spectacle({
     query: `{
-  endpointChanges(since: "2021-02-23T20:09:41.006Z") {
+  endpointChanges {
     endpoints {
       change {
         category
