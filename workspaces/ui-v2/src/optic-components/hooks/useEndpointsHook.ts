@@ -1,19 +1,21 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 
-export function useEndpoints(
-  renderChangesSince?: string
-): { endpoints: IEndpoint[]; loading?: boolean } {
-  //@TODO
-
-  const { data, error } = useSpectacleQuery({
-    query: `{
+export const AllEndpointsQuery = `{
     requests {
       id
       pathId
       absolutePathPattern
       method
     }
-    }`,
+    }`;
+
+export function useEndpoints(
+  renderChangesSince?: string
+): { endpoints: IEndpoint[]; loading?: boolean } {
+  //@TODO
+
+  const { data, error } = useSpectacleQuery({
+    query: AllEndpointsQuery,
     variables: {},
   });
 
@@ -23,27 +25,44 @@ export function useEndpoints(
   }
 
   if (data) {
-    const commonStart = sharedStart(
-      data.requests.map((req: any) => req.absolutePathPattern)
-    );
-
-    const requests = data.requests.map((request: any) => {
-      return {
-        pathId: request.pathId,
-        method: request.method,
-        fullPath: request.absolutePathPattern,
-        group: request.absolutePathPattern
-          .substring(commonStart.length)
-          .split('/')[0],
-        pathParameters: [],
-      } as IEndpoint;
-    });
-    return {
-      endpoints: requests,
-    };
+    return { endpoints: endpointQueryResultsToJson(data) };
   } else {
     return { endpoints: [], loading: true };
   }
+}
+
+export function useEndpoint(
+  pathId: string,
+  method: string
+): IEndpoint | undefined {
+  const results = useEndpoints();
+  if (results.endpoints) {
+    return results.endpoints.find(
+      (i) => i.pathId === pathId && i.method === method
+    );
+  } else {
+    return undefined;
+  }
+}
+
+export function endpointQueryResultsToJson(data: any): IEndpoint[] {
+  const commonStart = sharedStart(
+    data.requests.map((req: any) => req.absolutePathPattern)
+  );
+
+  const endpoints = data.requests.map((request: any) => {
+    return {
+      pathId: request.pathId,
+      method: request.method,
+      fullPath: request.absolutePathPattern,
+      group: request.absolutePathPattern
+        .substring(commonStart.length)
+        .split('/')[0],
+      pathParameters: [],
+    } as IEndpoint;
+  });
+
+  return endpoints;
 }
 
 export interface IEndpoint {

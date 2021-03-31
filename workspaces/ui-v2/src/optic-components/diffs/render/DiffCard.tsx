@@ -50,6 +50,7 @@ type IDiffCardProps = {
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   approve: (diffHash: string, commands: any[]) => void;
+  handled: boolean;
   suggestionSelected: (commands: any[]) => void;
 };
 
@@ -59,6 +60,7 @@ export function DiffCard({
   suggestions,
   diffDescription,
   approve,
+  handled,
   suggestionSelected,
 }: IDiffCardProps) {
   const classes = useStyles();

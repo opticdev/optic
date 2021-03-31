@@ -153,7 +153,6 @@
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jsdom",
-    "testRunner": "/Users/dev/work/optic/.yarn/cache/jest-circus-npm-26.6.0-7b352c940a-b08d8dde4a.zip/node_modules/jest-circus/runner.js",
     "transform": {
       "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
@@ -209,6 +208,7 @@
     "@types/react-dom": "^17.0.2",
     "@types/react-helmet": "^6.1.0",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-window": "^1.8.2"
+    "@types/react-window": "^1.8.2",
+    "threads": "^1.6.3"
   }
 }

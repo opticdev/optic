@@ -30,7 +30,6 @@ export function EndpointDocumentationPane({
   const bodies = useEndpointBody(pathId, method);
   const previewCommands = useSimulatedCommands();
   const { context } = useSharedDiffContext();
-  console.log(context.choices.approvedSuggestions);
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),

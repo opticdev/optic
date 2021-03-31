@@ -28,7 +28,6 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
       const result = await query(input);
       if (result.errors) {
         console.error(result.errors);
-        debugger;
         result.error = new Error(result.errors);
       }
       setResult(result);

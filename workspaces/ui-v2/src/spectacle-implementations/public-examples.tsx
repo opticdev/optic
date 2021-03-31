@@ -8,6 +8,7 @@ import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/navigation/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
+import { makeCurrentSpecContext } from '../lib/__tests/diff-helpers/universes/makeCurrentSpecContext';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -85,9 +86,12 @@ export function useInMemorySpectacle(
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
-      const query = makeSpectacle(result.opticEngine, {
+      const query: any = makeSpectacle(result.opticEngine, {
         specEvents: result.events,
       });
+
+      // const specContext = await makeCurrentSpecContext(query);
+
       setSpectacle({ query, samples: result.samples });
     }
 

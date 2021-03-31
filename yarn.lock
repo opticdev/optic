@@ -4514,6 +4514,7 @@ __metadata:
     shortid: ^2.2.16
     style-loader: 1.3.0
     terser-webpack-plugin: 4.2.3
+    threads: ^1.6.3
     ts-pnp: 1.2.0
     typescript: ^4.2.3
     url-loader: 4.1.1
@@ -6449,7 +6450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"callsites@npm:^3.0.0":
+"callsites@npm:^3.0.0, callsites@npm:^3.1.0":
   version: 3.1.0
   resolution: "callsites@npm:3.1.0"
   checksum: f726bf10d752901174cae348e69c2e58206404d5eebcea485b3fedbcf7fcffdb397e10919fdf6ee2c8adb4be52a64eea2365d52583611939bfecd109260451c9
@@ -15517,6 +15518,13 @@ fsevents@~2.1.1:
   languageName: node
   linkType: hard
 
+"observable-fns@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "observable-fns@npm:0.5.1"
+  checksum: 047165e9967a414e51bef1543bcb5d967f0e98053cd6ccef65578f27ab67de5d1872b0ffbba905dc3dea4365e3ffdcb35f2801c37d687dbf06803173dd48ce4c
+  languageName: node
+  linkType: hard
+
 "obuf@npm:^1.0.0, obuf@npm:^1.1.2":
   version: 1.1.2
   resolution: "obuf@npm:1.1.2"
@@ -20304,6 +20312,22 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
+"threads@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "threads@npm:1.6.3"
+  dependencies:
+    callsites: ^3.1.0
+    debug: ^4.1.1
+    is-observable: ^1.1.0
+    observable-fns: ^0.5.1
+    tiny-worker: ">= 2"
+  dependenciesMeta:
+    tiny-worker:
+      optional: true
+  checksum: fcf505ea2c89c6f792a172b924b0222ae2ae3a5442cc1e12bc9f7d91d360aa26e6701e36f0e7a7f4da657fb30af31ce558a2cbfde0df751440b675b7de4d4531
+  languageName: node
+  linkType: hard
+
 "throat@npm:^4.0.0, throat@npm:^4.1.0":
   version: 4.1.0
   resolution: "throat@npm:4.1.0"
@@ -20369,6 +20393,15 @@ resolve@1.18.1:
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: 6cf9f66cb765b893976b8cd1c1310338861f30fb04d02ef2c8e0a748cbc2ed5acd8bb1954b78c15f640ad4116def67134d7d705f2a0c9bf27e6e2eb3e92bff29
+  languageName: node
+  linkType: hard
+
+"tiny-worker@npm:>= 2":
+  version: 2.3.0
+  resolution: "tiny-worker@npm:2.3.0"
+  dependencies:
+    esm: ^3.2.25
+  checksum: a61d600cc3df85c6fdf0b3ead8ed2e49d29d9d9536230335131b645c0a4248e5e4cfe33321e1b6fed58dd94e6358695873c9eaa691185c66c5d2d76e7efb96e6
   languageName: node
   linkType: hard
 

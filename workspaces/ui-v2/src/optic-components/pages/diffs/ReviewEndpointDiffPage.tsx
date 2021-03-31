@@ -28,6 +28,8 @@ import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
 import { useNextEndpointLink } from '../../hooks/diffs/useNextEndpointWithDiffLink';
+import { EndpointName } from '../../documentation/EndpointName';
+import { useEndpoint } from '../../hooks/useEndpointsHook';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
@@ -36,6 +38,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const history = useHistory();
   const nextLink = useNextEndpointLink();
   const endpointDiffs = useEndpointDiffs(pathId, method);
+  const endpoint = useEndpoint(pathId, method);
   const {
     context,
     approveCommandsForDiff,
@@ -73,7 +76,7 @@ export function ReviewEndpointDiffPage(props: any) {
 
   const renderedDiff: IInterpretation | undefined = useMemo(() => {
     if (selectedDiff) {
-      return filteredShapeDiffs.find(
+      return shapeDiffs.results.find(
         (i) => i.diffDescription!.diffHash === selectedDiff
       );
     }
@@ -83,23 +86,28 @@ export function ReviewEndpointDiffPage(props: any) {
     (i) => i.diffDescription?.diffHash === selectedDiff
   );
   const nextHash =
-    filteredShapeDiffs[currentIndex + 1]?.diffDescription?.diffHash;
+    shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
   const previousHash =
-    filteredShapeDiffs[currentIndex - 1]?.diffDescription?.diffHash;
+    shapeDiffs.results[currentIndex - 1]?.diffDescription?.diffHash;
 
   return (
     <TwoColumnFullWidth
       left={
         <>
           <DiffHeader
-            name={`Review (${
-              endpointDiffs.newRegionDiffs.length +
-              endpointDiffs.shapeDiffs.length
-            }) Endpoint Diffs`}
+            name={
+              endpoint && (
+                <EndpointName
+                  method={endpoint!.method}
+                  fullPath={endpoint!.fullPath}
+                  leftPad={0}
+                />
+              )
+            }
             secondary={
               <Collapse in={showToc}>
                 <DiffLinks
-                  shapeDiffs={filteredShapeDiffs}
+                  shapeDiffs={shapeDiffs.results}
                   setSelectedDiffHash={(hash: string) => {
                     setSelectedDiffHash(hash);
                     setShowToc(false);
@@ -117,13 +125,13 @@ export function ReviewEndpointDiffPage(props: any) {
               <ArrowLeft />
             </IconButton>
             <Typography variant="caption" color="textPrimary">
-              ({currentIndex + 1}/{filteredShapeDiffs.length})
+              ({currentIndex + 1}/{shapeDiffs.results.length})
             </Typography>
             <IconButton
               size="small"
               color="primary"
               onClick={() => setSelectedDiffHash(nextHash)}
-              disabled={filteredShapeDiffs.length - 1 === currentIndex}
+              disabled={shapeDiffs.results.length - 1 === currentIndex}
             >
               <ArrowRight />
             </IconButton>
@@ -139,6 +147,7 @@ export function ReviewEndpointDiffPage(props: any) {
           {renderedDiff && (
             <DiffCard
               diffDescription={renderedDiff.diffDescription!}
+              handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
               previewTabs={renderedDiff.previewTabs}
               changeType={renderedDiff.diffDescription!.changeType}
               suggestions={renderedDiff.suggestions}
