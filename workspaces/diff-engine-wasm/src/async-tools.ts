@@ -1,5 +1,6 @@
 export * from 'axax/esnext';
 import _ from 'axax/esnext';
+import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { reduce } from 'axax/esnext/reduce';
 export { reduce };
 import { Subject } from 'axax/esnext';
@@ -42,4 +43,13 @@ export function fromReadable<T>(stream: Readable): () => AsyncIterable<T> {
       yield chunk;
     }
   };
+}
+
+export async function* fromReadableJSONL<T>(
+  source: Readable
+): AsyncGenerator<T> {
+  let parseResults = source.pipe(jsonlParser());
+  for await (let parseResult of parseResults) {
+    yield parseResult.value;
+  }
 }
