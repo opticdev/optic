@@ -1,6 +1,5 @@
 import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
-import { ILearnedBodies as LearnedBodies } from './initial-types';
 import { cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq } from '@useoptic/domain-utilities';
 import {
   opticEngine,
@@ -12,14 +11,30 @@ import {
   IInitialBodiesProjectionEmitterConfig as WorkerConfig,
   getInitialBodiesOutputPaths,
 } from './initial-bodies-worker';
-import { AsyncTools as AT } from '@useoptic/diff-engine-wasm';
+import { learnUndocumentedBodies } from '@useoptic/diff-engine';
+import { Streams } from '@useoptic/diff-engine-wasm';
+import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
+
+export interface InitialBodiesWorkerConfig {
+  pathId: string;
+  method: string;
+  captureId: string;
+  events: any;
+  captureBaseDirectory: string;
+}
+
+export { LearnedBodies };
 
 export class InitialBodiesWorkerRust {
-  constructor(private config: WorkerConfig) {}
+  constructor(private config: InitialBodiesWorkerConfig) {}
 
-  async run() {
+  async run(): Promise<LearnedBodies> {
+    const outputPaths = getInitialBodiesOutputPaths(this.config);
+    await fs.ensureDir(outputPaths.base);
+    await fs.writeJson(outputPaths.events, this.config.events);
+
     const interactionFilter = await createEndpointFilter(
-      this.config.specFilePath,
+      this.config.events,
       this.config.pathId,
       this.config.method
     );
@@ -32,16 +47,23 @@ export class InitialBodiesWorkerRust {
       interactionFilter
     );
 
-    let hasMoreInteractions = false;
     const interactions = (async function* (interactionItems) {
       for await (let item of interactionItems) {
-        hasMoreInteractions = item.hasMoreInteractions;
         if (!item.hasMoreInteractions) break;
         if (!item.interaction) continue;
 
         yield item.interaction.value;
       }
     })(interactionIterator);
+
+    let learningResults = Streams.LearningResults.fromJSONL(
+      learnUndocumentedBodies(interactions, {
+        specPath: outputPaths.events,
+      })
+    );
+
+    let result = await learningResults.next(); // we should get result and only one, since we're filtering per endpoint
+    return result.value;
   }
 }
 
@@ -51,12 +73,11 @@ interface EndpointInteractionFilter {
 
 // TODO: implement this with WASM domain instead of ScalaJS
 async function createEndpointFilter(
-  specFilePath: string,
+  events: any[],
   pathId: string,
   method: string
 ): Promise<EndpointInteractionFilter> {
   console.time('load inputs');
-  const events = await fs.readJson(specFilePath);
   console.timeEnd('load inputs');
   console.time('build state');
   const batchId = 'bbb';
