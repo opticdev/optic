@@ -52,4 +52,13 @@ export async function* fromReadableJSONL<T>(
   for await (let parseResult of parseResults) {
     yield parseResult.value;
   }
+export function tap<T>(
+  predicate: (subject: T) => void
+): (source: AsyncIterable<T>) => AsyncIterable<T> {
+  return async function* (source: AsyncIterable<T>) {
+    for await (let chunk of source) {
+      predicate(chunk);
+      yield chunk;
+    }
+  };
 }
