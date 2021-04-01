@@ -1,7 +1,6 @@
 use super::{CommandContext, SpecCommand, SpecCommandError};
 use serde::{Deserialize, Serialize};
 
-use crate::events::endpoint as endpoint_events;
 use crate::events::EndpointEvent;
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::projections::EndpointProjection;
@@ -10,6 +9,7 @@ use crate::state::endpoint::{
   ShapedRequestParameterShapeDescriptor,
 };
 use crate::state::shape::ShapeId;
+use crate::{events::endpoint as endpoint_events, state::body};
 use cqrs_core::AggregateCommand;
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -56,6 +56,70 @@ impl EndpointCommand {
       shaped_request_parameter_shape_descriptor: ShapedRequestParameterShapeDescriptor {
         shape_id,
         is_removed: false,
+      },
+    })
+  }
+
+  // Requests
+  // --------
+
+  pub fn add_request(
+    request_id: RequestId,
+    path_id: PathComponentId,
+    http_method: String,
+  ) -> EndpointCommand {
+    EndpointCommand::AddRequest(AddRequest {
+      request_id,
+      path_id,
+      http_method,
+    })
+  }
+
+  pub fn set_request_body_shape(
+    request_id: RequestId,
+    shape_id: ShapeId,
+    http_content_type: String,
+    is_removed: bool,
+  ) -> EndpointCommand {
+    EndpointCommand::SetRequestBodyShape(SetRequestBodyShape {
+      request_id,
+      body_descriptor: ShapedBodyDescriptor {
+        http_content_type,
+        shape_id,
+        is_removed,
+      },
+    })
+  }
+
+  // Responses
+  // ---------
+
+  pub fn add_response_by_path_and_method(
+    response_id: ResponseId,
+    path_id: PathComponentId,
+    http_method: String,
+    http_status_code: u16,
+  ) -> EndpointCommand {
+    EndpointCommand::AddResponseByPathAndMethod(AddResponseByPathAndMethod {
+      response_id,
+      path_id,
+      http_method,
+      http_status_code,
+    })
+  }
+
+  pub fn set_response_body_shape(
+    response_id: ResponseId,
+    shape_id: ShapeId,
+    http_content_type: String,
+    is_removed: bool,
+  ) -> EndpointCommand {
+    EndpointCommand::SetResponseBodyShape(SetResponseBodyShape {
+      response_id,
+      body_descriptor: ShapedBodyDescriptor {
+        http_content_type,
+        shape_id,
+        is_removed,
       },
     })
   }

@@ -14,7 +14,7 @@ mod state;
 #[cfg(feature = "streams")]
 pub mod streams;
 
-pub use commands::{CommandContext, RfcCommand, SpecCommand, SpecCommandHandler};
+pub use commands::{CommandContext, EndpointCommand, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, RfcEvent, SpecChunkEvent, SpecEvent};
 pub use interactions::analyze_undocumented_bodies;

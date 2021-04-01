@@ -12,7 +12,7 @@ use tokio_stream::wrappers::ReceiverStream;
 use uuid::Uuid;
 
 use optic_diff_engine::streams;
-use optic_diff_engine::{analyze_undocumented_bodies, SpecCommand};
+use optic_diff_engine::{analyze_undocumented_bodies, EndpointCommand, SpecCommand};
 use optic_diff_engine::{
   BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection,
   TrailObservationsResult,
@@ -124,7 +124,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
 
     let mut endpoint_bodies_by_endpoint = HashMap::new();
     for (body_location, observations) in observations_by_body_location {
-      let (root_shape_id, commands) = observations.into_commands(&mut generate_id);
+      let (root_shape_id, body_commands) = observations.into_commands(&mut generate_id);
       let (content_type, status_code, path_id, method) = match &body_location {
         BodyAnalysisLocation::Request {
           content_type,
@@ -145,12 +145,13 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
       };
 
       if let Some(root_shape_id) = root_shape_id {
-        let endpoint_body = EndpointBody {
+        let mut endpoint_body = EndpointBody {
           content_type,
           status_code,
-          commands: commands.collect(),
-          root_shape_id,
+          commands: body_commands.collect(),
+          root_shape_id: root_shape_id.clone(),
         };
+        endpoint_body.append_endpoint_commands(body_location, root_shape_id);
 
         let endpoint_bodies = endpoint_bodies_by_endpoint
           .entry((path_id, method))
@@ -171,7 +172,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
 }
 
 fn generate_id() -> String {
-  uuid::Uuid::new_v4().to_hyphenated().to_string()
+  Uuid::new_v4().to_hyphenated().to_string()
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -211,4 +212,49 @@ struct EndpointBody {
   status_code: Option<u16>,
   commands: Vec<SpecCommand>,
   root_shape_id: String,
+}
+
+impl EndpointBody {
+  fn append_endpoint_commands(
+    &mut self,
+    body_location: BodyAnalysisLocation,
+    root_shape_id: String,
+  ) {
+    let endpoint_commands = match body_location {
+      BodyAnalysisLocation::Request {
+        path_id,
+        method,
+        content_type,
+      } => {
+        let request_id = generate_id();
+        vec![
+          EndpointCommand::add_request(request_id.clone(), path_id, method),
+          EndpointCommand::set_request_body_shape(request_id, root_shape_id, content_type, false),
+        ]
+      }
+      BodyAnalysisLocation::Response {
+        path_id,
+        method,
+        content_type,
+        status_code,
+      } => {
+        let response_id = generate_id();
+        vec![
+          EndpointCommand::add_response_by_path_and_method(
+            response_id.clone(),
+            path_id,
+            method,
+            status_code,
+          ),
+          EndpointCommand::set_response_body_shape(response_id, root_shape_id, content_type, false),
+        ]
+      }
+    };
+
+    self.commands.extend(
+      endpoint_commands
+        .into_iter()
+        .map(|command| SpecCommand::from(command)),
+    );
+  }
 }
