@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/client-utilities",
-  "version": "9.0.15",
+  "version": "9.0.16",
   "scripts": {
     "ws:build": "yarn run tsc -b --verbose",
     "ws:clean": "rm -rf build/*",
@@ -14,7 +14,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "cross-fetch": "^3.0.4"
+    "cross-fetch": "3.0.6"
   },
   "devDependencies": {},
   "files": [
