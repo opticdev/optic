@@ -158,7 +158,7 @@ export class HttpToolkitCapturingProxy {
           return;
         }
 
-        developerDebugLogger(req);
+        developerDebugLogger(res);
 
         const parsedUrl = url.parse(req.url);
         const path = parsedUrl.pathname!;
@@ -188,6 +188,7 @@ export class HttpToolkitCapturingProxy {
             body: this.extractBody(res),
           },
         };
+
         developerDebugLogger(
           util.inspect(sample, {
             showHidden: false,
@@ -201,10 +202,16 @@ export class HttpToolkitCapturingProxy {
           //when filter is set, verify a match
           if (parsedUrl.hostname === this.config.hostnameFilter) {
             this.events.emit('sample', sample);
+            developerDebugLogger('saving sample');
+          } else {
+            developerDebugLogger(
+              'not saving sample because it did not match hostname filter'
+            );
           }
         } else {
           //when host filter is not set, emit sample for everything
           this.events.emit('sample', sample);
+          developerDebugLogger('saving sample');
         }
         this.requests.delete(res.id);
       }

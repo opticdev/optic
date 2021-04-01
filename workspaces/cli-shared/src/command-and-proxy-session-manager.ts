@@ -34,7 +34,7 @@ class CommandAndProxySessionManager {
 
     inboundProxy.events.on('sample', (sample: IHttpInteraction) => {
       userDebugLogger(
-        `got sample ${sample.request.method} ${sample.request.path}`
+        `attempting to save sample ${sample.request.method} ${sample.request.path}`
       );
       persistenceManager.save(sample);
     });
