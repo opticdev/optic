@@ -7,7 +7,6 @@ import { DocumentationPages } from '../optic-components/pages/docs/Documentation
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/navigation/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { InMemoryInteractionLoaderStore } from './interaction-loader';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -24,22 +23,11 @@ export default function PublicExamples() {
       const responseJson = await response.json();
       return responseJson.events;
     };
-    const loadSamples = async () => {
-      const response = await fetch(`/example-sessions/${exampleId}.json`, {
-        headers: { accept: 'application/json' },
-      });
-      if (!response.ok) {
-        throw new Error(`could not find example ${exampleId}`);
-      }
-      const responseJson = await response.json();
-      return responseJson.session.samples;
-    };
-    const [events, samples, opticEngine] = await Promise.all([
+    const [events, opticEngine] = await Promise.all([
       loadEvents(),
-      loadSamples(),
       import('@useoptic/diff-engine-wasm/engine/browser'),
     ]);
-    return { events, samples, opticEngine };
+    return { events, opticEngine };
   };
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
@@ -51,30 +39,26 @@ export default function PublicExamples() {
 
   return (
     <SpectacleStore spectacle={data!}>
-      <InMemoryInteractionLoaderStore samples={data!.samples}>
-        <BaseUrlProvider value={{ url: match.url }}>
-          <Switch>
-            <>
-              <DiffReviewEnvironments />
-              <DocumentationPages />
-            </>
-          </Switch>
-        </BaseUrlProvider>
-      </InMemoryInteractionLoaderStore>
+      <BaseUrlProvider value={{ url: match.url }}>
+        <Switch>
+          <>
+            <DiffReviewEnvironments />
+            <DocumentationPages />
+          </>
+        </Switch>
+      </BaseUrlProvider>
     </SpectacleStore>
   );
 }
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<{
   events: any[];
-  samples: any[];
   opticEngine: any;
 }>;
 export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
 export interface Spectacle {
   query: any;
-  samples: any[];
 }
 
 export function useInMemorySpectacle(
@@ -88,14 +72,11 @@ export function useInMemorySpectacle(
       const query = await makeSpectacle(result.opticEngine, {
         specRepository: {
           listEvents() {
-            return Promise.resolve(result.events);
-          },
+            return Promise.resolve(result.events)
+          }
         },
       });
-
-      // const specContext = await makeCurrentSpecContext(query);
-
-      setSpectacle({ query, samples: result.samples });
+      setSpectacle({ query });
     }
 
     task();

@@ -15,6 +15,9 @@ import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 
 export function DiffReviewPages(props: any) {
+  // const { match } = props;
+  // const { environment, boundaryId } = match.params;
+
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
