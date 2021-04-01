@@ -205,7 +205,9 @@ export class HttpToolkitCapturingProxy {
             developerDebugLogger('saving sample');
           } else {
             developerDebugLogger(
-              'not saving sample because it did not match hostname filter'
+              `not saving sample because it did not match hostname filter comparing ${
+                parsedUrl.hostname
+              } ${this.config.hostnameFilter} ${JSON.stringify(parsedUrl)}`
             );
           }
         } else {
