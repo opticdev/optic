@@ -180,7 +180,7 @@ struct EndpointBodies {
   path_id: String,
   method: String,
   requests: Vec<EndpointBody>,
-  response: Vec<EndpointBody>,
+  responses: Vec<EndpointBody>,
 }
 
 impl EndpointBodies {
@@ -189,14 +189,14 @@ impl EndpointBodies {
       path_id,
       method,
       requests: vec![],
-      response: vec![],
+      responses: vec![],
     }
   }
 
   pub fn push_body(&mut self, body: EndpointBody) {
     // TODO: get rid of this ducktyping and introduce EndpointRequestBody and EndpointResponseBody
     let collection = match body.status_code {
-      Some(_) => &mut self.response,
+      Some(_) => &mut self.responses,
       None => &mut self.requests,
     };
 
