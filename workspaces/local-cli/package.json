@@ -16,6 +16,7 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
+    "@oclif/plugin-not-found": "^1.2.4",
     "@useoptic/analytics": "9.0.16",
     "@useoptic/cli-client": "9.0.16",
     "@useoptic/cli-config": "9.0.16",
@@ -88,7 +89,7 @@
     "commands": "./lib/commands",
     "bin": "api",
     "plugins": [
-      "@oclif/plugin-help"
+      "@oclif/plugin-help", "@oclif/plugin-not-found"
     ]
   },
   "scripts": {
