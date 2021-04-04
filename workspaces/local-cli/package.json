@@ -13,6 +13,7 @@
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
+    "@httptoolkit/browser-launcher": "^1.9.0",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
@@ -40,6 +41,7 @@
     "lodash.sortby": "^4.7.0",
     "nice-try": "^2.0.1",
     "pad-left": "^2.1.0",
+    "ps-node": "^0.1.6",
     "react-dev-utils": "^11.0.4",
     "slugify": "^1.4.0",
     "strip-ansi": "^6.0.0",
