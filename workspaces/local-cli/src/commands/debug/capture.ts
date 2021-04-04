@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 const pJson = require('../../../package.json');
 
 export default class DebugCapture extends Command {
@@ -36,7 +37,7 @@ export default class DebugCapture extends Command {
       specStorePath,
     } = await getPathsRelativeToConfig();
     const configJson = await readApiConfig(configPath);
-    const events = await fs.readJson(specStorePath);
+    const events = getSpecEventsFrom(specStorePath)
     const ignoreRules = await new IgnoreFileHelper(
       opticIgnorePath,
       configPath

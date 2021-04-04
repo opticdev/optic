@@ -45,6 +45,7 @@ import { printCoverage } from './coverage';
 import { spawnProcess } from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 
 export const runCommandFlags = {
   'collect-coverage': flags.boolean({
@@ -93,6 +94,8 @@ export async function LocalTaskSessionWrapper(
     flags['collect-coverage'] || flags['exit-on-diff'];
 
   const { paths, config } = await loadPathsAndConfig(cli);
+
+  await getSpecEventsFrom(paths.specStorePath)
 
   const captureId = usesTaskSpecificBoundary
     ? uuid.v4()
