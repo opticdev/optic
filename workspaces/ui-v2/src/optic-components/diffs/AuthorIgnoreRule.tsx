@@ -18,7 +18,7 @@ export function AuthorIgnoreRules(props: any) {
   const classes = useStyles();
   const observedUrls = useUndocumentedUrls();
 
-  const { addIgnoreRule } = useSharedDiffContext();
+  const { addPathIgnoreRule } = useSharedDiffContext();
 
   const urlOptions = useMemo(() => observedUrls.filter((i) => !i.hide), [
     observedUrls,
@@ -46,7 +46,7 @@ export function AuthorIgnoreRules(props: any) {
   };
 
   const finishAdding = () => {
-    addIgnoreRule(pendingIgnore);
+    addPathIgnoreRule(pendingIgnore);
     reset();
   };
 

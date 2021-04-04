@@ -35,6 +35,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
   const { method, pathId } = match.params;
 
+  const classes = useStyles();
   const history = useHistory();
   const nextLink = useNextEndpointLink();
   const endpointDiffs = useEndpointDiffs(pathId, method);
@@ -43,11 +44,15 @@ export function ReviewEndpointDiffPage(props: any) {
     context,
     approveCommandsForDiff,
     isDiffHandled,
+    addDiffIgnoreRule,
   } = useSharedDiffContext();
+
+  const { browserAppliedDiffIgnoreRules } = context;
 
   const shapeDiffs = useShapeDiffInterpretations(
     endpointDiffs.shapeDiffs,
-    context.results.trailValues
+    context.results.trailValues,
+    browserAppliedDiffIgnoreRules
   );
 
   const filteredShapeDiffs = shapeDiffs.results?.filter((i: any) => {
@@ -80,7 +85,7 @@ export function ReviewEndpointDiffPage(props: any) {
         (i) => i.diffDescription!.diffHash === selectedDiff
       );
     }
-  }, [selectedDiff]);
+  }, [selectedDiff, shapeDiffs]);
 
   const currentIndex = shapeDiffs.results.findIndex(
     (i) => i.diffDescription?.diffHash === selectedDiff
@@ -89,6 +94,40 @@ export function ReviewEndpointDiffPage(props: any) {
     shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
   const previousHash =
     shapeDiffs.results[currentIndex - 1]?.diffDescription?.diffHash;
+
+  const allDiffsHandled = filteredShapeDiffs.length === 0;
+
+  if (allDiffsHandled) {
+    return (
+      <TwoColumnFullWidth
+        left={
+          <>
+            <DiffHeader
+              name={
+                endpoint && (
+                  <EndpointName
+                    method={endpoint!.method}
+                    fullPath={endpoint!.fullPath}
+                    leftPad={0}
+                  />
+                )
+              }
+            />
+            <div className={classes.centered}>
+              <Typography variant="body2" color="primary">
+                All Diffs for this Endpoint have been reviewed.
+              </Typography>
+            </div>
+          </>
+        }
+        right={
+          <SimulatedCommandStore previewCommands={previewCommands}>
+            <EndpointDocumentationPane method={method} pathId={pathId} />
+          </SimulatedCommandStore>
+        }
+      />
+    );
+  }
 
   return (
     <TwoColumnFullWidth
@@ -146,6 +185,7 @@ export function ReviewEndpointDiffPage(props: any) {
 
           {renderedDiff && (
             <DiffCard
+              addDiffIgnoreRule={addDiffIgnoreRule}
               diffDescription={renderedDiff.diffDescription!}
               handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
               previewTabs={renderedDiff.previewTabs}
@@ -295,5 +335,8 @@ const useStyles = makeStyles((theme) => ({
   locationHeader: {
     fontSize: 10,
     height: 33,
+  },
+  centered: {
+    padding: 10,
   },
 }));

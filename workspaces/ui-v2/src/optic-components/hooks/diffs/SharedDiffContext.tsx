@@ -11,13 +11,15 @@ import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
 import { useAllRequestsAndResponses } from './useAllRequestsAndResponses';
 import { IEndpoint, useEndpoints } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
+import { IgnoreRule } from '../../../lib/ignore-rule';
 
 export const SharedDiffReactContext = React.createContext({});
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
   documentEndpoint: (pattern: string, method: string) => string;
-  addIgnoreRule: (rule: string) => void;
+  addPathIgnoreRule: (rule: string) => void;
+  addDiffIgnoreRule: (rule: IgnoreRule) => void;
   persistWIPPattern: (
     path: string,
     method: string,
@@ -85,8 +87,11 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
       send({ type: 'PENDING_ENDPOINT_STAGED', id }),
     discardEndpoint: (id: string) =>
       send({ type: 'PENDING_ENDPOINT_DISCARDED', id }),
-    addIgnoreRule: (rule: string) => {
-      send({ type: 'ADD_IGNORE_RULE', rule });
+    addPathIgnoreRule: (rule: string) => {
+      send({ type: 'ADD_PATH_IGNORE_RULE', rule });
+    },
+    addDiffIgnoreRule: (rule: IgnoreRule) => {
+      send({ type: 'ADD_DIFF_IGNORE_RULE', rule });
     },
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);

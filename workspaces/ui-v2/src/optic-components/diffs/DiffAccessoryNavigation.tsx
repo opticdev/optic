@@ -29,7 +29,7 @@ export function DiffAccessoryNavigation({
 }: DiffAccessoryNavigationProps) {
   const classes = useStyles();
 
-  const { context } = useSharedDiffContext();
+  const { context, isDiffHandled } = useSharedDiffContext();
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
@@ -74,7 +74,9 @@ export function DiffAccessoryNavigation({
         >
           <UndocumentedTab
             onClick={handleChangeToUndocumentedUrlPage}
-            numberOfUndocumented={123}
+            numberOfUndocumented={
+              context.results.displayedUndocumentedUrls.length
+            }
             done={false}
           />
           {diffsGroupedByEndpoints.map((i, index) => (
@@ -89,7 +91,9 @@ export function DiffAccessoryNavigation({
               method={i.method}
               fullPath={i.fullPath}
               diffCount={i.newRegionDiffs.length + i.shapeDiffs.length}
-              done={false}
+              diffCompletedCount={
+                i.shapeDiffs.filter((i) => isDiffHandled(i.diffHash())).length
+              }
             />
           ))}
         </Tabs>
@@ -115,7 +119,7 @@ type IEndpointChangedTabProps = {
   method: string;
   fullPath: string;
   diffCount: number;
-  done: boolean;
+  diffCompletedCount: number;
   value: number;
   onClick: any;
 };
@@ -124,11 +128,14 @@ function EndpointChangedTab({
   method,
   fullPath,
   diffCount,
+  diffCompletedCount,
   value,
   onClick,
-  done,
 }: IEndpointChangedTabProps) {
   const classes = useStyles();
+
+  const done = diffCompletedCount === diffCount;
+  const remaining = diffCount - diffCompletedCount;
   return (
     <Tab
       classes={{ wrapper: classes.tabWrapper }}
@@ -148,7 +155,9 @@ function EndpointChangedTab({
               Done! {diffCount} reviewed
             </div>
           ) : (
-            <div className={classes.text}>{diffCount} diffs to review</div>
+            <div className={classes.text}>
+              {remaining} diff{remaining === 1 ? '' : 's'} to review
+            </div>
           )}
         </div>
       }

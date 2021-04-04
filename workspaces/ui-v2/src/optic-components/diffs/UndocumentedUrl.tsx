@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Collapse, IconButton, ListItem } from '@material-ui/core';
 import { methodColorsDark, OpticBlueReadable, primary } from '../theme';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';
 import classNames from 'classnames';
@@ -18,7 +19,8 @@ export type UndocumentedUrlProps = {
   path: string;
   hide?: boolean;
   style: any;
-  onFinish: (pattern: string, method: string) => void;
+  bulkMode: boolean;
+  onFinish: (pattern: string, method: string, autolearn: boolean) => void;
 };
 
 export function UndocumentedUrl({
@@ -26,6 +28,7 @@ export function UndocumentedUrl({
   path,
   onFinish,
   hide,
+  bulkMode,
   style,
 }: UndocumentedUrlProps) {
   const classes = useStyles();
@@ -112,25 +115,40 @@ export function UndocumentedUrl({
         </div>
       </div>
       <div style={{ paddingRight: 5 }}>
-        <LightTooltip title="Show Recorded Example" enterDelay={1000}>
-          <IconButton
-            size="small"
-            color="primary"
-            style={{ color: OpticBlueReadable }}
-            onClick={() => alert('coming soon')}
+        {/*<LightTooltip title="Show Recorded Example" enterDelay={1000}>*/}
+        {/*  <IconButton*/}
+        {/*    size="small"*/}
+        {/*    color="primary"*/}
+        {/*    style={{ color: OpticBlueReadable }}*/}
+        {/*    onClick={() => alert('coming soon')}*/}
+        {/*  >*/}
+        {/*    <VisibilityIcon style={{ width: 17, height: 17 }} />*/}
+        {/*  </IconButton>*/}
+        {/*</LightTooltip>*/}
+        {bulkMode ? (
+          <LightTooltip title="Add to API Documentation" enterDelay={1000}>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => onFinish(makePattern(components), method, true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </LightTooltip>
+        ) : (
+          <LightTooltip
+            title="Review Endpoint and add to API Documentation"
+            enterDelay={1000}
           >
-            <VisibilityIcon style={{ width: 17, height: 17 }} />
-          </IconButton>
-        </LightTooltip>
-        <LightTooltip title="Add to API Documentation" enterDelay={1000}>
-          <IconButton
-            size="small"
-            color="primary"
-            onClick={() => onFinish(makePattern(components), method)}
-          >
-            <KeyboardArrowRightIcon />
-          </IconButton>
-        </LightTooltip>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => onFinish(makePattern(components), method, false)}
+            >
+              <KeyboardArrowRightIcon />
+            </IconButton>
+          </LightTooltip>
+        )}
       </div>
     </ListItem>
   );

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DocumentationRootPage } from '../docs/DocumentationPage';
 import { DiffHeader } from '../../diffs/DiffHeader';
-import { Box, TextField } from '@material-ui/core';
+import { Box, Switch, TextField, Typography } from '@material-ui/core';
 import { useUndocumentedUrls } from '../../hooks/diffs/useUndocumentedUrls';
 import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
@@ -23,6 +23,7 @@ export function DiffUrlsPage(props: any) {
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
 
   const [filteredUrls, setFilteredUrls] = useState(urls);
+  const [bulkMode, setBulkMode] = useState<boolean>(false);
 
   const shownUrls = filteredUrls.filter((i) => !i.hide);
 
@@ -33,12 +34,15 @@ export function DiffUrlsPage(props: any) {
     return (
       <UndocumentedUrl
         style={style}
+        bulkMode={bulkMode}
         {...data}
         key={data.method + data.path}
-        onFinish={(pattern, method) => {
+        onFinish={(pattern, method, autolearn) => {
           const pendingId = documentEndpoint(pattern, method);
-          const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
-          setTimeout(() => history.push(link), 500);
+          if (!autolearn) {
+            const link = diffReviewPagePendingEndpoint.linkTo(pendingId);
+            setTimeout(() => history.push(link), 500);
+          }
         }}
       />
     );
@@ -59,6 +63,23 @@ export function DiffUrlsPage(props: any) {
                   setFilteredUrls(urls.filter((i) => i.path.startsWith(query)));
                 }}
               />
+              <div style={{ marginLeft: 13 }}>
+                <Typography
+                  variant="subtitle2"
+                  component="span"
+                  color="primary"
+                  style={{ fontWeight: 600, fontSize: 11 }}
+                >
+                  {' '}
+                  bulk mode
+                </Typography>
+                <Switch
+                  value={bulkMode}
+                  onChange={(e: any) => setBulkMode(e.target.checked)}
+                  color="primary"
+                  size="small"
+                />{' '}
+              </div>
             </Box>
           </DiffHeader>
 

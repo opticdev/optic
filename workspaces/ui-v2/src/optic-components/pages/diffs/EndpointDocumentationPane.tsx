@@ -24,7 +24,7 @@ export function EndpointDocumentationPane({
 }: {
   method: string;
   pathId: string;
-  highlightedLocation: IParsedLocation | undefined;
+  highlightedLocation?: IParsedLocation | undefined;
 }) {
   const { endpoints, loading } = useEndpoints();
   const bodies = useEndpointBody(pathId, method);

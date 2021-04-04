@@ -1,6 +1,10 @@
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { transformAffordanceMappingByIgnoreRules } from '../../../lib/ignore-rule';
+import isEqual from 'lodash.isequal';
+import {
+  IgnoreRule,
+  transformAffordanceMappingByIgnoreRules,
+} from '../../../lib/ignore-rule';
 import { useSpectacleRawQuery } from '../../../spectacle-implementations/spectacle-provider';
 import { interpretShapeDiffs } from '../../../lib/shape-diffs/shape-diffs';
 import { useEffect, useState } from 'react';
@@ -8,7 +12,8 @@ import { IInterpretation } from '../../../lib/Interfaces';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+  ignoreRules: IgnoreRule[]
 ): { loading: boolean; results: IInterpretation[] } {
   const query = useSpectacleRawQuery();
 
@@ -17,14 +22,17 @@ export function useShapeDiffInterpretations(
 
   async function computeDiffInterpretation(diff: BodyShapeDiff) {
     const learnedTrails = trailValues[diff.diffHash()];
+
     const trailsWithIgnored = transformAffordanceMappingByIgnoreRules(
       learnedTrails,
       diff.diffHash(),
       diff.jsonTrail,
-      []
+      ignoreRules
     );
 
-    return await interpretShapeDiffs(diff, trailsWithIgnored, query);
+    const abc = await interpretShapeDiffs(diff, trailsWithIgnored, query);
+
+    return abc;
   }
 
   useEffect(() => {
@@ -34,7 +42,7 @@ export function useShapeDiffInterpretations(
       setLoading(false);
     });
     //@ts-ignore
-  }, [diffs]);
+  }, [diffs, ignoreRules]);
 
   return { results, loading };
 }

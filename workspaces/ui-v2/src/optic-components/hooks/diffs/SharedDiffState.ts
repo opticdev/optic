@@ -43,6 +43,7 @@ export const newSharedDiffMachine = (
       },
       pendingEndpoints: [],
       browserAppliedIgnoreRules: [],
+      browserAppliedDiffIgnoreRules: [],
     },
     initial: 'ready',
     states: {
@@ -107,7 +108,7 @@ export const newSharedDiffMachine = (
               }),
             ],
           },
-          ADD_IGNORE_RULE: {
+          ADD_PATH_IGNORE_RULE: {
             actions: [
               assign({
                 browserAppliedIgnoreRules: (ctx, event) => [
@@ -117,6 +118,16 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+              }),
+            ],
+          },
+          ADD_DIFF_IGNORE_RULE: {
+            actions: [
+              assign({
+                browserAppliedDiffIgnoreRules: (ctx, event) => [
+                  ...ctx.browserAppliedDiffIgnoreRules,
+                  event.rule,
+                ],
               }),
             ],
           },
@@ -239,8 +250,12 @@ export type SharedDiffStateEvent =
       pendingId: string;
     }
   | {
-      type: 'ADD_IGNORE_RULE';
+      type: 'ADD_PATH_IGNORE_RULE';
       rule: string;
+    }
+  | {
+      type: 'ADD_DIFF_IGNORE_RULE';
+      rule: IgnoreRule;
     }
   | {
       type: 'PENDING_ENDPOINT_STAGED';
@@ -276,6 +291,7 @@ export interface SharedDiffStateContext {
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];
   browserAppliedIgnoreRules: string[];
+  browserAppliedDiffIgnoreRules: IgnoreRule[];
 }
 
 ////////////////////////////////Diff Types

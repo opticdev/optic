@@ -40,9 +40,9 @@ import {
 } from '../../../lib/Interfaces';
 import { SuggestionGroup } from './SuggestionGroup';
 import { IJsonTrail } from '../../../../../cli-shared/build/diffs/json-trail';
-import { IgnoreRule } from '../../../lib/ignore-rule';
 import { useInteraction } from '../../../spectacle-implementations/interaction-loader';
 import { LightTooltip } from '../../navigation/LightToolTip';
+import { IgnoreRule } from '../../../lib/ignore-rule';
 
 type IDiffCardProps = {
   changeType: IChangeType;
@@ -52,6 +52,7 @@ type IDiffCardProps = {
   approve: (diffHash: string, commands: any[]) => void;
   handled: boolean;
   suggestionSelected: (commands: any[]) => void;
+  addDiffIgnoreRule: (rule: IgnoreRule) => void;
 };
 
 export function DiffCard({
@@ -61,6 +62,7 @@ export function DiffCard({
   diffDescription,
   approve,
   handled,
+  addDiffIgnoreRule,
   suggestionSelected,
 }: IDiffCardProps) {
   const classes = useStyles();
@@ -73,6 +75,9 @@ export function DiffCard({
   })();
 
   const [previewTab, setPreviewTab] = useState(previewTabs[0].title);
+  useEffect(() => {
+    setPreviewTab(previewTabs[0].title);
+  }, [previewTabs.length]);
 
   const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab)!;
 
@@ -120,6 +125,7 @@ export function DiffCard({
             )}
             <div style={{ flex: 1 }} />
             <IgnoreButton
+              addDiffIgnoreRule={addDiffIgnoreRule}
               selectedPreviewTab={selectedPreviewTab}
               previewTabs={previewTabs}
             />
@@ -396,9 +402,11 @@ const DiffTab = withStyles((theme) => {
 function IgnoreButton({
   selectedPreviewTab,
   previewTabs,
+  addDiffIgnoreRule,
 }: {
   selectedPreviewTab: IInteractionPreviewTab;
   previewTabs: IInteractionPreviewTab[];
+  addDiffIgnoreRule: (rule: IgnoreRule) => void;
 }) {
   const classes = useStyles();
   if (!selectedPreviewTab) {
@@ -450,10 +458,10 @@ function IgnoreButton({
       <Button
         onClick={() => {
           if (selectedPreviewTab) {
-            // endpointActions.addIgnoreRule(selectedPreviewTab.ignoreRule);
+            addDiffIgnoreRule(selectedPreviewTab.ignoreRule);
           }
         }}
-        // disabled={!selectedPreviewTab && selectedPreviewTab.ignoreRule}
+        disabled={!selectedPreviewTab && selectedPreviewTab!.ignoreRule}
         className={classes.ignoreButton}
         size="small"
         endIcon={<BlockIcon style={{ width: 10, height: 10 }} />}
