@@ -147,7 +147,7 @@ export interface IOpticTaskRunnerConfig {
   };
 }
 
-function randomLowerBound(): number {
+export function randomLowerBound(): number {
   const max = 3500;
   const min = 3300;
   return Math.floor(Math.random() * (max - min + 1)) + min;
