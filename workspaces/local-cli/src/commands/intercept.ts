@@ -25,39 +25,41 @@ export default class Intercept extends Command {
 
   static flags = {
     chrome: flags.boolean({}),
-    postman: flags.string({}),
-    shell: flags.string({}),
+    firefox: flags.boolean({}),
   };
 
   static args = [
     {
-      name: 'environments',
+      name: 'environment',
+      required: true,
     },
   ];
 
   async run() {
     const cwd = process.cwd();
 
-    const { args } = this.parse(Intercept);
-
-    const resolved: IEnvironmentsConfig = {
-      production: {
-        host: 'https://api.github.com',
-        webUI: 'https://api.github.com/orgs/opticdev',
-      },
-    };
-
-    const envToTarget = resolved[args.environments];
+    const { args, flags } = this.parse(Intercept);
 
     const { paths, config } = await loadPathsAndConfig(this);
+    const environments = config.environments || {};
+
+    if (!environments[args.environment]) {
+      return this.error(
+        `No environment ${args.environment} found in optic.yml.Set one up like this:\n
+environments:
+  production:
+    host: https://api.github.com # the hostname of the API we should record traffic from
+    webUI: https://github.com # the url that should open when a browser flag is passed`
+      );
+    }
+
+    const envToTarget = environments[args.environment]!;
 
     const captureId = await getCaptureId(paths);
     const daemonState = await ensureDaemonStarted(
       lockFilePath,
       Config.apiBaseUrl
     );
-
-    console.log(captureId);
 
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`api base url: ${apiBaseUrl}`);
@@ -107,14 +109,18 @@ export default class Intercept extends Command {
       basePath: '/',
     };
 
+    let browsers: BrowserLaunchers | undefined = undefined;
+
     const onStarted = (fingerprint: string) => {
-      const browsers = new BrowserLaunchers(
+      browsers = new BrowserLaunchers(
         `${proxyConfig.protocol}//${proxyConfig.host}:${proxyConfig.port}`,
         envToTarget.webUI || envToTarget.host,
         fingerprint,
         this
       );
-      browsers.chrome();
+
+      if (flags.chrome) browsers.chrome();
+      if (flags.firefox) browsers.firefox();
     };
 
     const sessionManager = new CommandAndProxySessionManager(
@@ -128,18 +134,14 @@ export default class Intercept extends Command {
 
     console.log(
       fromOptic(
-        `Transparent proxy is running on http://localhost:${transparentProxyPort} and https://localhost:${transparentProxyPort}\nMonitoring Traffic to ${envToTarget.host}`
+        `Transparent proxy is running on ${serviceConfig.protocol}//localhost:${transparentProxyPort}\nMonitoring Traffic to ${envToTarget.host}`
       )
     );
 
     await sessionManager.run(persistenceManager);
+    if (browsers) {
+      browsers!.cleanup();
+    }
     cleanupAndExit(0);
   }
-}
-
-interface IEnvironmentsConfig {
-  [key: string]: {
-    host: string;
-    webUI?: string;
-  };
 }

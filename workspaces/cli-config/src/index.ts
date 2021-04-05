@@ -56,7 +56,15 @@ export interface IApiCliConfig {
   scripts?: {
     [key: string]: string | IOpticScript;
   };
+  environments?: IEnvironmentsConfig;
   ignoreRequests?: string[];
+}
+
+export interface IEnvironmentsConfig {
+  [key: string]: {
+    host: string;
+    webUI?: string;
+  };
 }
 
 export async function readApiConfig(
