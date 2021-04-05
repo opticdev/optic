@@ -12,7 +12,7 @@ export class BrowserLaunchers {
     private cli: Command
   ) {}
 
-  private pidStore: string[] = [];
+  private browserStore: any[] = [];
 
   async launch(name: string) {
     if ((await this.browsersPromise).find((i) => i.name === name)) {
@@ -22,13 +22,10 @@ export class BrowserLaunchers {
           return console.error(err);
         }
 
-        console.log(this.proxy);
-
         launch(
           this.webUI,
           {
             browser: name,
-            detached: false,
             proxy: this.proxy,
             noProxy: ['<-loopback>', this.proxy],
             // profile: null,
@@ -43,7 +40,7 @@ export class BrowserLaunchers {
             if (err) {
               return console.error(err);
             }
-            this.pidStore = [...this.pidStore, instance.pid];
+            this.browserStore = [...this.browserStore, instance];
           }
         );
       });
@@ -52,8 +49,21 @@ export class BrowserLaunchers {
     }
   }
 
+  public async cleanup() {
+    return Promise.all(
+      this.browserStore.map(
+        (i) =>
+          new Promise((resolve, reject) => {
+            i.stop(resolve);
+          })
+      )
+    );
+  }
   // options
-  async chrome() {
+  public async chrome() {
     await this.launch('chrome');
+  }
+  public async firefox() {
+    await this.launch('firefox');
   }
 }
