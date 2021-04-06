@@ -70,7 +70,7 @@ export class InitialBodiesWorkerRust {
       return result;
     }
 
-    throw new Error('expected to receive a single learning result');
+    throw new Error('expected to receive a learning result');
   }
 }
 

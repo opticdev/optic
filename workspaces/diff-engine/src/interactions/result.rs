@@ -189,14 +189,23 @@ pub enum BodyAnalysisLocation {
   Request {
     path_id: PathComponentId,
     method: String,
-    content_type: String,
+    content_type: Option<String>,
   },
   Response {
     path_id: PathComponentId,
     method: String,
-    content_type: String,
+    content_type: Option<String>,
     status_code: u16,
   },
+}
+
+impl BodyAnalysisLocation {
+  pub fn content_type(&self) -> Option<&String> {
+    match self {
+      BodyAnalysisLocation::Request { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::Response { content_type, .. } => content_type.as_ref(),
+    }
+  }
 }
 
 impl From<UnmatchedRequestBodyContentType> for BodyAnalysisLocation {
@@ -213,10 +222,7 @@ impl From<UnmatchedRequestBodyContentType> for BodyAnalysisLocation {
         .get_method()
         .expect("UnmatchedRequestBodyContentType implies request to have a known method")
         .clone(),
-      content_type: interaction_trail
-        .get_request_content_type()
-        .expect("UnmatchedRequestBodyContentType implies request to have a content type")
-        .clone(),
+      content_type: interaction_trail.get_request_content_type().cloned(),
     }
   }
 }
@@ -235,10 +241,7 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
         .get_method()
         .expect("UnmatchedResponseBodyContentType implies response to have a known method")
         .clone(),
-      content_type: interaction_trail
-        .get_response_content_type()
-        .expect("UnmatchedResponseBodyContentType implies response to have a content type")
-        .clone(),
+      content_type: interaction_trail.get_response_content_type().cloned(),
       status_code: interaction_trail
         .get_response_status_code()
         .expect("UnmatchedResponseBodyContentType implies response to have a status code"),

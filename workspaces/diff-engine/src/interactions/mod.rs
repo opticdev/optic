@@ -104,6 +104,9 @@ pub fn analyze_undocumented_bodies(
         .get_path_id()
         .expect("UnmatchedResponseBodyContentType implies request to have a known path")
         .clone();
+      let method = interaction_trail
+        .get_method()
+        .expect("UnmatchedResponseBodyContentType implies request to have a method");
 
       Some(BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),

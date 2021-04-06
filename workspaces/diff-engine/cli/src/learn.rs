@@ -122,48 +122,30 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
       existing_observations.union(analysis.trail_observations);
     }
 
-    let mut endpoint_bodies_by_endpoint = HashMap::new();
+    let mut endpoints_by_endpoint = HashMap::new();
     for (body_location, observations) in observations_by_body_location {
       let (root_shape_id, body_commands) = observations.into_commands(&mut generate_id);
-      let (content_type, status_code, path_id, method) = match &body_location {
+      let endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
+
+      let (path_id, method) = match body_location {
         BodyAnalysisLocation::Request {
-          content_type,
-          path_id,
-          method,
-        } => (content_type.clone(), None, path_id.clone(), method.clone()),
+          path_id, method, ..
+        } => (path_id, method),
         BodyAnalysisLocation::Response {
-          content_type,
-          status_code,
-          path_id,
-          method,
-        } => (
-          content_type.clone(),
-          Some(*status_code),
-          path_id.clone(),
-          method.clone(),
-        ),
+          path_id, method, ..
+        } => (path_id, method),
       };
 
-      if let Some(root_shape_id) = root_shape_id {
-        let mut endpoint_body = EndpointBody {
-          content_type,
-          status_code,
-          commands: body_commands.collect(),
-          root_shape_id: root_shape_id.clone(),
-        };
-        endpoint_body.append_endpoint_commands(body_location, root_shape_id);
+      let endpoint_bodies = endpoints_by_endpoint
+        .entry((path_id, method))
+        .or_insert_with_key(|(path_id, method)| {
+          EndpointBodies::new(path_id.clone(), method.clone())
+        });
 
-        let endpoint_bodies = endpoint_bodies_by_endpoint
-          .entry((path_id, method))
-          .or_insert_with_key(|(path_id, method)| {
-            EndpointBodies::new(path_id.clone(), method.clone())
-          });
-
-        endpoint_bodies.push_body(endpoint_body);
-      }
+      endpoint_bodies.push(endpoint_body);
     }
 
-    streams::write_to_json_lines(stdout, endpoint_bodies_by_endpoint.values())
+    streams::write_to_json_lines(stdout, endpoints_by_endpoint.values())
       .await
       .expect("could not write endpoint bodies to stdout");
   });
@@ -180,8 +162,8 @@ fn generate_id() -> String {
 struct EndpointBodies {
   path_id: String,
   method: String,
-  requests: Vec<EndpointBody>,
-  responses: Vec<EndpointBody>,
+  requests: Vec<EndpointRequestBody>,
+  responses: Vec<EndpointResponseBody>,
 }
 
 impl EndpointBodies {
@@ -194,67 +176,150 @@ impl EndpointBodies {
     }
   }
 
-  pub fn push_body(&mut self, body: EndpointBody) {
-    // TODO: get rid of this ducktyping and introduce EndpointRequestBody and EndpointResponseBody
-    let collection = match body.status_code {
-      Some(_) => &mut self.responses,
-      None => &mut self.requests,
-    };
-
-    collection.push(body);
+  pub fn push(&mut self, endpoint: EndpointBody) {
+    match endpoint {
+      EndpointBody::Request(endpoint_request) => {
+        self.requests.push(endpoint_request);
+      }
+      EndpointBody::Response(endpoint_response) => {
+        self.responses.push(endpoint_response);
+      }
+    }
   }
+}
+
+#[derive(Debug)]
+enum EndpointBody {
+  Request(EndpointRequestBody),
+  Response(EndpointResponseBody),
 }
 
 #[derive(Default, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-struct EndpointBody {
-  content_type: String,
-  status_code: Option<u16>,
+struct EndpointRequestBody {
   commands: Vec<SpecCommand>,
+
+  #[serde(skip)]
+  path_id: String,
+  #[serde(skip)]
+  method: String,
+
+  #[serde(flatten)]
+  body_descriptor: Option<EndpointBodyDescriptor>,
+}
+
+#[derive(Default, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EndpointResponseBody {
+  commands: Vec<SpecCommand>,
+  status_code: u16,
+
+  #[serde(skip)]
+  path_id: String,
+  #[serde(skip)]
+  method: String,
+
+  #[serde(flatten)]
+  body_descriptor: Option<EndpointBodyDescriptor>,
+}
+
+#[derive(Default, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EndpointBodyDescriptor {
+  content_type: String,
   root_shape_id: String,
 }
 
 impl EndpointBody {
-  fn append_endpoint_commands(
-    &mut self,
-    body_location: BodyAnalysisLocation,
-    root_shape_id: String,
-  ) {
-    let endpoint_commands = match body_location {
-      BodyAnalysisLocation::Request {
-        path_id,
-        method,
-        content_type,
-      } => {
-        let request_id = generate_id();
-        vec![
-          EndpointCommand::add_request(request_id.clone(), path_id, method),
-          EndpointCommand::set_request_body_shape(request_id, root_shape_id, content_type, false),
-        ]
-      }
-      BodyAnalysisLocation::Response {
-        path_id,
-        method,
-        content_type,
-        status_code,
-      } => {
-        let response_id = generate_id();
-        vec![
-          EndpointCommand::add_response_by_path_and_method(
-            response_id.clone(),
-            path_id,
-            method,
-            status_code,
-          ),
-          EndpointCommand::set_response_body_shape(response_id, root_shape_id, content_type, false),
-        ]
-      }
+  fn new(
+    body_location: &BodyAnalysisLocation,
+    root_shape_id: Option<String>,
+    body_commands: impl IntoIterator<Item = SpecCommand>,
+  ) -> Self {
+    let body_descriptor = match root_shape_id {
+      Some(root_shape_id) => Some(EndpointBodyDescriptor {
+        content_type: body_location
+          .content_type()
+          .expect("root shape id implies a content type to be present")
+          .clone(),
+        root_shape_id,
+      }),
+      None => None,
     };
 
-    self.commands.extend(
-      endpoint_commands
-        .into_iter()
-        .map(|command| SpecCommand::from(command)),
-    );
+    let mut body = match body_location {
+      BodyAnalysisLocation::Request {
+        path_id, method, ..
+      } => EndpointBody::Request(EndpointRequestBody {
+        body_descriptor,
+        path_id: path_id.clone(),
+        method: method.clone(),
+        commands: body_commands.into_iter().collect(),
+      }),
+      BodyAnalysisLocation::Response {
+        status_code,
+        path_id,
+        method,
+        ..
+      } => EndpointBody::Response(EndpointResponseBody {
+        body_descriptor,
+        path_id: path_id.clone(),
+        method: method.clone(),
+        commands: body_commands.into_iter().collect(),
+        status_code: *status_code,
+      }),
+    };
+
+    body.append_endpoint_commands();
+
+    body
+  }
+
+  fn append_endpoint_commands(&mut self) {
+    match self {
+      EndpointBody::Request(request_body) => {
+        let request_id = generate_id();
+        request_body
+          .commands
+          .push(SpecCommand::from(EndpointCommand::add_request(
+            request_id.clone(),
+            request_body.path_id.clone(),
+            request_body.method.clone(),
+          )));
+
+        if let Some(body_descriptor) = &request_body.body_descriptor {
+          request_body
+            .commands
+            .push(SpecCommand::from(EndpointCommand::set_request_body_shape(
+              request_id,
+              body_descriptor.root_shape_id.clone(),
+              body_descriptor.content_type.clone(),
+              false,
+            )));
+        }
+      }
+      EndpointBody::Response(response_body) => {
+        let response_id = generate_id();
+        response_body.commands.push(SpecCommand::from(
+          EndpointCommand::add_response_by_path_and_method(
+            response_id.clone(),
+            response_body.path_id.clone(),
+            response_body.method.clone(),
+            response_body.status_code.clone(),
+          ),
+        ));
+
+        if let Some(body_descriptor) = &response_body.body_descriptor {
+          response_body
+            .commands
+            .push(SpecCommand::from(EndpointCommand::set_response_body_shape(
+              response_id,
+              body_descriptor.root_shape_id.clone(),
+              body_descriptor.content_type.clone(),
+              false,
+            )));
+        }
+      }
+    };
   }
 }
