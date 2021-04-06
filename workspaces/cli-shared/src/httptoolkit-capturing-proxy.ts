@@ -242,7 +242,6 @@ export class HttpToolkitCapturingProxy {
 
   extractQueryParameters(req: mockttp.CompletedRequest): IArbitraryData {
     const rawQuery = url.parse(req.url).query;
-
     developerDebugLogger('extracting query params', { rawQuery });
 
     if (rawQuery) {
@@ -270,6 +269,9 @@ export class HttpToolkitCapturingProxy {
     if (req.headers['content-type'] || req.headers['transfer-encoding']) {
       const contentType = mime.parse(req.headers['content-type'] || '');
       const json = req.body.json || null;
+
+      developerDebugLogger(json && toBytes(json).toString('base64'))
+
       return {
         contentType: (req.body.text && contentType?.essence) || null,
         value: {
