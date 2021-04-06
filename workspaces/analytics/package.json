@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/analytics",
-  "version": "9.0.17",
+  "version": "9.0.18",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build/*",

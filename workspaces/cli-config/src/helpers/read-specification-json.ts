@@ -37,7 +37,7 @@ export async function resolveConflictsIfPresent(contents: string, specStorePath:
     } else return false
   })
 
-  if (startLine && sepLine && endLine) {
+  if (startLine !== -1 && sepLine !== -1 && endLine !== -1) {
     console.log(`${colors.cyan('[optic]')} specification.json conflict detected. merging ${baseBranch} ${headBranch}`)
     const toRemove = [startLine, sepLine, endLine]
     const newEvents = JSON.parse(lines.filter((i, index) => !toRemove.includes(index)).join('\n'))
