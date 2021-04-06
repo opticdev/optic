@@ -1,6 +1,7 @@
 import { Command } from '@oclif/command';
 import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import fs from 'fs-extra';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 
 export default class EndpointDelete extends Command {
   static description = 'delete an endpoint (the dirty WIP way).';
@@ -27,7 +28,7 @@ export default class EndpointDelete extends Command {
 
     const { specStorePath } = await getPathsRelativeToConfig();
 
-    const specEvents: any[] = await fs.readJson(specStorePath);
+    const specEvents: any[] = await getSpecEventsFrom(specStorePath)
 
     const collectedEdges: string[] = [];
 

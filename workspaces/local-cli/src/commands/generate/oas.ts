@@ -8,6 +8,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
 import * as DiffEngine from '@useoptic/diff-engine';
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 
 export default class GenerateOas extends Command {
   static description = 'export an OpenAPI 3.0.1 spec';
@@ -32,13 +33,9 @@ export async function generateOas(
 ): Promise<{ json: string | undefined; yaml: string | undefined } | undefined> {
   try {
     const paths = await getPathsRelativeToConfig();
-    const { specDirPath } = paths;
+    const { specStorePath } = paths;
     try {
-      const events = await getStream(
-        DiffEngine.readSpec({
-          specDirPath,
-        })
-      );
+      const events = await getSpecEventsFrom(specStorePath);
 
       const parsedOas = OasProjectionHelper.fromEventString(events);
 

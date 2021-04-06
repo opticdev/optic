@@ -45,6 +45,7 @@ import { printCoverage } from './coverage';
 import { spawnProcess } from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 
 export const runCommandFlags = {
   'collect-coverage': flags.boolean({
@@ -93,6 +94,8 @@ export async function LocalTaskSessionWrapper(
     flags['collect-coverage'] || flags['exit-on-diff'];
 
   const { paths, config } = await loadPathsAndConfig(cli);
+
+  await getSpecEventsFrom(paths.specStorePath)
 
   const captureId = usesTaskSpecificBoundary
     ? uuid.v4()
@@ -247,7 +250,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
     process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
-    process.env.OPTIC_ENABLE_TRANSPARENT_PROXY = this.options.shouldTransparentProxy ? 'yes' : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
+    process.env.OPTIC_ENABLE_TRANSPARENT_PROXY = this.options
+      .shouldTransparentProxy
+      ? 'yes'
+      : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
 
     const testCommand = commandToRunWhenStarted
       ? async () => {
@@ -295,7 +301,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       const usesTaskSpecificCapture =
         this.options.shouldExitOnDiff || this.options.shouldCollectCoverage;
 
-      if (usesTaskSpecificCapture || !process.env.GITFLOW_CAPTURE) {
+      if (usesTaskSpecificCapture) {
         cli.log(
           fromOptic(`Observed Unexpected API Behavior. Review at ${uiUrl}`)
         );
