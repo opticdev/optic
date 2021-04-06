@@ -247,7 +247,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     ////////////////////////////////////////////////////////////////////////////////
     process.env.OPTIC_ENABLE_CAPTURE_BODY = 'yes';
-    process.env.OPTIC_ENABLE_TRANSPARENT_PROXY = this.options.shouldTransparentProxy ? 'yes' : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
+    process.env.OPTIC_ENABLE_TRANSPARENT_PROXY = this.options
+      .shouldTransparentProxy
+      ? 'yes'
+      : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
 
     const testCommand = commandToRunWhenStarted
       ? async () => {
@@ -295,7 +298,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       const usesTaskSpecificCapture =
         this.options.shouldExitOnDiff || this.options.shouldCollectCoverage;
 
-      if (usesTaskSpecificCapture || !process.env.GITFLOW_CAPTURE) {
+      if (usesTaskSpecificCapture) {
         cli.log(
           fromOptic(`Observed Unexpected API Behavior. Review at ${uiUrl}`)
         );
