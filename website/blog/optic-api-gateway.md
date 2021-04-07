@@ -12,7 +12,7 @@ Optic helps teams write and maintain their first OpenAPI specifications. You don
 
 ## Manual Configurations for remote targets
 
-When you [start configuring Optic](https://app.useoptic.com/) to work with your project, you'll be able to select from a recommended mode of setup and a manual mode. We have our (perhaps obvious) preference that you run through the setup in Recommended mode. This helps Optic assure your API project is up and running, is reachable, and wraps each invocation in a [capture session](https://www.useoptic.com/docs/#the-optic-proxy---how-optic-observes-your-apis-behavior) to organize your traffic observations.
+When you [start configuring Optic](/docs/) to work with your project, you'll be able to select from a recommended mode of setup and a manual mode. We have our (perhaps obvious) preference that you run through the setup in Recommended mode. This helps Optic assure your API project is up and running, is reachable, and wraps each invocation in a [capture session](https://www.useoptic.com/docs/#the-optic-proxy---how-optic-observes-your-apis-behavior) to organize your traffic observations.
 
 ![Paths to integrating Optic with your project](/img/blog-content/manual-choices.png)
 
@@ -67,4 +67,4 @@ Optic recognized the three responses all had a status code of `200`, and documen
 
 ## Get started with Optic!
 
-You can start documenting your API today by [setting up Optic](https://app.useoptic.com/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).
+You can start documenting your API today by [setting up Optic](/docs/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).

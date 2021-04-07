@@ -47,7 +47,7 @@ curl http://localhost:8100/currency-converter/from/EUR/to/INR/quantity/10000
 {"id":10002,"from":"EUR","to":"INR","conversionMultiple":75.00,"quantity":10000,"totalCalculatedAmount":750000.00,"port":8000}
 ```
 
-At this point, we haven't observed any traffic with Optic. Traditionally, we'd recommend [setting up Optic](https://app.useoptic.com) with our Recommended Mode. This allows you to start up your API and observe it with Optic all in one command. It's very convenient, and would work well if we put it in front of the consumer service. In this example, we want to monitor the internal service (`FOREX-SERVICE`) directly. That looks a bit different:
+At this point, we haven't observed any traffic with Optic. Traditionally, we'd recommend [setting up Optic](/docs/) with our Recommended Mode. This allows you to start up your API and observe it with Optic all in one command. It's very convenient, and would work well if we put it in front of the consumer service. In this example, we want to monitor the internal service (`FOREX-SERVICE`) directly. That looks a bit different:
 
 ``` bash
 curl http://localhost:8000/currency-exchange/from/EUR/to/INR
@@ -121,7 +121,7 @@ Success! We now have a documented internal service. We can monitor it for change
 
 This was a very simplified example of how Optic could work on internal services in a microservices oriented architecture. We took a few shortcuts to keep things as simple as possible. This definitely isn't a prescriptive solution, and the best fit will determine what you are documenting, how it's architected, and who the consumers of the documentation will be. You can always set up time to [chat with the Optic team](https://calendly.com/optic-onboarding/setup-help) to go over your use case. If you have a specific use case with an example project you'd like to see highlighted, let me know at `lou@useoptic.com`. I'd be happy to get more specific, and if you don't mind, share the results in a future blog post.
 
-Please feel free to [get started](https://app.useoptic.com) on your own as well, and reach out to us if you have any issues.
+Please feel free to [get started](/docs/) on your own as well, and reach out to us if you have any issues.
 
 ## Resources
 
