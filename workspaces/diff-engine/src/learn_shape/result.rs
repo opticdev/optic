@@ -217,7 +217,11 @@ fn shape_prototypes_to_commands(
 
           Some(commands)
         }
-        ShapePrototypeDescriptor::Unknown => None,
+        ShapePrototypeDescriptor::Unknown => {
+          let add_command =
+            ShapeCommand::add_shape(shape_prototype.id, ShapeKind::UnknownKind, String::from(""));
+          Some(vec![add_command])
+        }
       },
     )
     .flatten()
@@ -729,6 +733,11 @@ mod test {
       result
     };
 
+    let only_null_observations = {
+      let body = BodyDescriptor::from(json!(null));
+      observe_body_trails(body)
+    };
+
     let mut counter = 0;
     let mut test_id = || {
       let id = format!("test-id-{}", counter);
@@ -770,6 +779,14 @@ mod test {
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_one_off_results",
       &nullable_one_off_results
+    );
+
+    let only_null_results = collect_commands(only_null_observations.into_commands(&mut test_id));
+    assert!(only_null_results.0.is_some());
+    assert_valid_commands(only_null_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_commands_for_nullable_bodies__only_null_results",
+      &only_null_results
     );
   }
 
