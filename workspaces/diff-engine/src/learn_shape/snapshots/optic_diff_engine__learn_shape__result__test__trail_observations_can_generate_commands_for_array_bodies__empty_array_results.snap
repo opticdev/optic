@@ -4,15 +4,41 @@ expression: "&empty_array_results"
 ---
 (
     Some(
-        "test-id-2",
+        "test-id-3",
     ),
     [
         ShapeCommand(
             AddShape(
                 AddShape {
-                    shape_id: "test-id-2",
+                    shape_id: "test-id-3",
                     base_shape_id: "$list",
                     name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            AddShape(
+                AddShape {
+                    shape_id: "test-id-2",
+                    base_shape_id: "$unknown",
+                    name: "",
+                },
+            ),
+        ),
+        ShapeCommand(
+            SetParameterShape(
+                SetParameterShape {
+                    shape_descriptor: ProviderInShape(
+                        ProviderInShape {
+                            shape_id: "test-id-3",
+                            provider_descriptor: ShapeProvider(
+                                ShapeProvider {
+                                    shape_id: "test-id-2",
+                                },
+                            ),
+                            consuming_parameter_id: "$listItem",
+                        },
+                    ),
                 },
             ),
         ),

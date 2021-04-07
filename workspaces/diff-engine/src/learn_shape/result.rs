@@ -146,7 +146,10 @@ fn shape_prototypes_to_commands(
 
           Some(commands)
         }
-        ShapePrototypeDescriptor::ListOfShape { item_shape_id } => {
+        ShapePrototypeDescriptor::ListOfShape {
+          item_shape_id,
+          item_is_unknown,
+        } => {
           let mut commands = vec![];
           commands.push(ShapeCommand::add_shape(
             shape_prototype.id.clone(),
@@ -154,18 +157,24 @@ fn shape_prototypes_to_commands(
             String::from(""),
           ));
 
-          if let Some(item_shape_id) = item_shape_id {
-            commands.push(ShapeCommand::set_parameter_shape(
-              shape_prototype.id,
-              String::from(
-                ShapeKind::ListKind
-                  .get_parameter_descriptor()
-                  .unwrap()
-                  .shape_parameter_id,
-              ),
-              item_shape_id,
+          if item_is_unknown {
+            commands.push(ShapeCommand::add_shape(
+              item_shape_id.clone(),
+              ShapeKind::UnknownKind,
+              String::from(""),
             ));
           }
+
+          commands.push(ShapeCommand::set_parameter_shape(
+            shape_prototype.id,
+            String::from(
+              ShapeKind::ListKind
+                .get_parameter_descriptor()
+                .unwrap()
+                .shape_parameter_id,
+            ),
+            item_shape_id,
+          ));
 
           Some(commands)
         }
@@ -316,16 +325,19 @@ impl TrailValues {
       },
       if self.was_array {
         let item_trail = self.trail.with_array_item(0);
-        let item_shape_id = if self.was_empty_array {
-          None
+        let (item_shape_id, item_is_unknown) = if self.was_empty_array {
+          (generate_id(), true) // will be used for an $unknown shape
         } else {
           let item_prototype = existing_prototypes
             .get(&item_trail)
             .expect("item shape prototype should have been generated before its parent list");
-          Some(item_prototype.id.clone())
+          (item_prototype.id.clone(), false)
         };
 
-        Some(ShapePrototypeDescriptor::ListOfShape { item_shape_id })
+        Some(ShapePrototypeDescriptor::ListOfShape {
+          item_shape_id,
+          item_is_unknown,
+        })
       } else {
         None
       },
@@ -443,7 +455,8 @@ enum ShapePrototypeDescriptor {
     fields: Vec<FieldPrototypeDescriptor>,
   },
   ListOfShape {
-    item_shape_id: Option<ShapeId>,
+    item_shape_id: ShapeId,
+    item_is_unknown: bool,
   },
   PrimitiveKind {
     base_shape_kind: ShapeKind,
