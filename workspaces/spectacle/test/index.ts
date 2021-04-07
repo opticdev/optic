@@ -39,7 +39,14 @@ const specs = [
     file: "./test/specs/add-endpoint-to-existing-spec.json",
     sinceCreatedAt: "2021-04-07T15:20:11.649Z",
     sinceBatchCommitId: "c03ccae6-f3c9-4d9c-a3b6-3d710dbdb4ec"
-  }
+  },
+  // Use an existing spec but pick last batch commit
+  {
+    name: "no changes",
+    file: "./test/specs/add-endpoint-to-existing-spec.json",
+    sinceCreatedAt: "2021-04-07T15:52:15.419Z",
+    sinceBatchCommitId: "42355178-d7d7-4510-a261-bf7f579d71a3"
+  },
 ]
 
 Tap.test('spectacle batchCommits query', async (test) => {
