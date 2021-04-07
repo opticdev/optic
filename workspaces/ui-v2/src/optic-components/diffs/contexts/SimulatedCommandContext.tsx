@@ -17,11 +17,12 @@ export const SimulatedCommandContext = React.createContext<SimulatedCommandConte
 
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
+  const [isProcessing, setIsProcessing] = useState(true);
   useEffect(() => {
     async function task() {
       debugger;
-      //const simulated = await props.spectacle.fork();
-      props.spectacle.mutate({
+      const simulated = await props.spectacle.fork();
+      await simulated.mutate({
         query: `
 mutation X($commands: [JSON]) {
   applyCommands(commands: $commands) {
@@ -33,11 +34,14 @@ mutation X($commands: [JSON]) {
           commands: props.previewCommands
         }
       });
+      setIsProcessing(false);
     }
 
     task();
   }, [JSON.stringify(props.previewCommands)]);
-
+  if (isProcessing) {
+    return <div>working...</div>;
+  }
   return (
     <SimulatedCommandContext.Provider value={value}>
       {props.children}

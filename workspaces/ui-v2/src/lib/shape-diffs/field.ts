@@ -58,7 +58,7 @@ export function fieldShapeDiffInterpretor(
 
   return present.flush();
 }
-
+let i = 0;
 class FieldShapeInterpretationHelper {
   private shouldAskMakeOptional = false;
   private shouldAskAddField: string | undefined = undefined;
@@ -247,7 +247,7 @@ class FieldShapeInterpretationHelper {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: [],
+      commands: [i++],
       // commands: changeField
       //   .changeShape(shapeChange) // may be empty :)
       //   .wrapInOptional()
@@ -268,7 +268,7 @@ class FieldShapeInterpretationHelper {
         pastTense: [plain('Removed field'), ...sharedCopy],
       },
       // commands: changeField.stageFieldRemoval().toCommands(),
-      commands: [],
+      commands: [i++],
       changeType: IChangeType.Removed,
     };
   }
@@ -294,7 +294,7 @@ class FieldShapeInterpretationHelper {
       //   .changeShape(shapeChange)
       //   .makeRequired()
       //   .toCommands(),
-      commands: [],
+      commands: [i++],
       changeType: IChangeType.Changed,
     };
   }

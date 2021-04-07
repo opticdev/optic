@@ -179,6 +179,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
     JSON: GraphQLJSON,
     Mutation: {
       applyCommands: (parent: any, args: any, context: any) => {
+        //@TODO expose command handling via wasm
         debugger
         context.opticContext.specRepository.appendEvents([])
         return Promise.resolve({
