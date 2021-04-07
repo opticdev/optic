@@ -15,8 +15,9 @@ import { awaitTaskUp } from './tasks/await-up';
 class CommandAndProxySessionManager {
   constructor(
     private config: IOpticTaskRunnerConfig,
-    private onStarted?: (fingerPrint: string) => void
-  ) {}
+    private onStarted?: (fingerPrint: string) => void,
+    private onSample?: (sample: IHttpInteraction) => void
+) {}
 
   async run(persistenceManager: ICaptureSaver) {
     const commandSession = new CommandSession();
@@ -37,6 +38,9 @@ class CommandAndProxySessionManager {
         `attempting to save sample ${sample.request.method} ${sample.request.path}`
       );
       persistenceManager.save(sample);
+      if (this.onSample) {
+        this.onSample(sample)
+      }
     });
 
     const target = url.format({
