@@ -9,7 +9,7 @@ import { Loading } from '../optic-components/navigation/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
-import { IForkableSpectacle, InMemorySpecRepository } from '@useoptic/spectacle/src';
+import { IForkableSpectacle, InMemorySpecRepository } from '@useoptic/spectacle';
 import { EventEmitter } from 'events';
 
 export default function PublicExamples() {
