@@ -6,6 +6,7 @@ import {
 } from '../optic-components/hooks/useEndpointBodyHook';
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
+import { DomainIdGenerator } from './domain-id-generator';
 
 export interface IInterpretation {
   suggestions: ISuggestion[];
@@ -203,4 +204,5 @@ export type CurrentSpecContext = {
   currentSpecEndpoints: IEndpoint[];
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];
+  domainIds: DomainIdGenerator;
 };

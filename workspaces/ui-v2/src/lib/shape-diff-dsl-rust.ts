@@ -6,7 +6,7 @@ import {
 import equals from 'lodash.isequal';
 import sortBy from 'lodash.sortby';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
-import { ICoreShapeKinds } from './Interfaces';
+import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
 import {
   IExpectationHelper,
   shapeTrailParserLastId,
@@ -20,17 +20,23 @@ import { namer } from './quick-namer';
 
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
-  query: any
+  query: any,
+  currentSpecContext: CurrentSpecContext
 ): Promise<Expectation> {
   const expectations = await shapeTrailParserLastId(shapeTrail, query);
-  return new Expectation(expectations);
+  return new Expectation(expectations, currentSpecContext);
 }
 
 export class Expectation {
   private expectationsFromSpec: IExpectationHelper;
+  private currentSpecContext: CurrentSpecContext;
 
-  constructor(expectationsFromSpec: IExpectationHelper) {
+  constructor(
+    expectationsFromSpec: IExpectationHelper,
+    currentSpecContext: CurrentSpecContext
+  ) {
     this.expectationsFromSpec = expectationsFromSpec;
+    this.currentSpecContext = currentSpecContext;
   }
 
   isListItemShape(): boolean {
@@ -117,9 +123,9 @@ export class Expectation {
   };
 
   // build the command helpers
-  // fieldChangeHelper(actual: Actual) {
-  //   return new FieldContextSpecChange(this, actual, this.rfcBaseState);
-  // }
+  fieldChangeHelper(actual: Actual) {
+    // return new FieldContextSpecChange(this, actual, this.currentSpecContext);
+  }
 }
 
 export class Actual {

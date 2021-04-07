@@ -53,6 +53,7 @@ type IDiffCardProps = {
   handled: boolean;
   suggestionSelected: (commands: any[]) => void;
   addDiffIgnoreRule: (rule: IgnoreRule) => void;
+  resetIgnoreRules: (diffHash: string) => void;
 };
 
 export function DiffCard({
@@ -63,6 +64,7 @@ export function DiffCard({
   approve,
   handled,
   addDiffIgnoreRule,
+  resetIgnoreRules,
   suggestionSelected,
 }: IDiffCardProps) {
   const classes = useStyles();
@@ -74,16 +76,58 @@ export function DiffCard({
     return AddedGreen;
   })();
 
-  const [previewTab, setPreviewTab] = useState(previewTabs[0].title);
+  const [previewTab, setPreviewTab] = useState(
+    previewTabs.length ? previewTabs[0].title : undefined
+  );
+
   useEffect(() => {
-    setPreviewTab(previewTabs[0].title);
+    if (previewTabs.length) {
+      setPreviewTab(previewTabs[0].title);
+    }
   }, [previewTabs.length]);
 
   const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab)!;
 
   useEffect(() => {
-    setPreviewTab(previewTabs[0].title);
+    if (previewTabs.length) {
+      setPreviewTab(previewTabs[0].title);
+    }
   }, [diffDescription.diffHash]);
+
+  if (!selectedPreviewTab && previewTabs.length === 0) {
+    return (
+      <>
+        <div className={classes.titleHeader}>
+          <Typography
+            variant="caption"
+            style={{
+              color: OpticBlueReadable,
+              fontWeight: 600,
+              marginRight: 3,
+            }}
+          >
+            diff:{' '}
+          </Typography>
+          <ICopyRender variant="caption" copy={diffDescription.title} />
+        </div>
+        <div style={{ padding: 10 }}>
+          <Typography
+            variant="caption"
+            style={{
+              color: OpticBlueReadable,
+              fontWeight: 600,
+              marginRight: 3,
+            }}
+          >
+            You ignored this diff, reset?
+          </Typography>
+          <Button color="primary" size="small" onClick={resetIgnoreRules}>
+            Reset Diff
+          </Button>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

@@ -36,8 +36,14 @@ export function UndocumentedUrl({
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
-  const [components, setComponents] = useState<PathComponentAuthoring[]>([]);
-  const debouncedComponents = useDebounce(components, 500);
+  const [isEditing, setIsEditing] = useState(false);
+  const [components, setComponents] = useState<PathComponentAuthoring[]>(
+    wipPatterns[path + method]
+      ? wipPatterns[path + method]
+      : urlStringToPathComponents(path)
+  );
+  const debouncedComponents = useDebounce(components, 800);
+  const debouncedIsEditing = useDebounce(isEditing, 800);
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
     setComponents((com) => {
@@ -55,26 +61,13 @@ export function UndocumentedUrl({
     });
   };
 
-  // setup initial components
   useEffect(() => {
-    if (wipPatterns[path + method]) {
-      setComponents(wipPatterns[path + method]);
-    } else {
-      setComponents(urlStringToPathComponents(path));
-    }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path]);
+    const isDifferent = !equals(wipPatterns[path + method], components);
 
-  // persist in context
-  useEffect(() => {
-    const isDifferent = equals(wipPatterns[path + method], debouncedComponents);
-    if (debouncedComponents && persistWIPPattern && isDifferent) {
-      persistWIPPattern(path, method, debouncedComponents);
+    if (components && isDifferent && !isEditing) {
+      persistWIPPattern(path, method, components);
     }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedComponents]);
+  }, [JSON.stringify(debouncedComponents), debouncedIsEditing]);
 
   if (hide) {
     return null;
@@ -104,6 +97,7 @@ export function UndocumentedUrl({
                     <span className={classes.pathComponent}>/</span>
                   )}
                   <PathComponentRender
+                    parentSetIsEditing={setIsEditing}
                     pathComponent={i}
                     key={index}
                     onChange={onChange(index)}
@@ -156,6 +150,7 @@ export function UndocumentedUrl({
 
 export type PathComponentProps = {
   pathComponent: PathComponentAuthoring;
+  parentSetIsEditing: (bool: boolean) => void;
   onChange: (pathParameter: PathComponentAuthoring) => void;
 };
 
@@ -170,12 +165,21 @@ function makePattern(components: PathComponentAuthoring[]) {
   );
 }
 
-function PathComponentRender({ onChange, pathComponent }: PathComponentProps) {
+function PathComponentRender({
+  onChange,
+  parentSetIsEditing,
+  pathComponent,
+}: PathComponentProps) {
   const classes = useStyles();
   const [name, setName] = useState(
     pathComponent.name || pathComponent.originalName
   );
   const [isEditing, setIsEditing] = useState(false);
+
+  //share edit state with parent
+  useEffect(() => {
+    parentSetIsEditing(isEditing);
+  }, [isEditing]);
 
   useEffect(() => {
     if (!isEditing && pathComponent.isParameter) {

@@ -3612,6 +3612,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/shortid@npm:^0.0.29":
+  version: 0.0.29
+  resolution: "@types/shortid@npm:0.0.29"
+  checksum: 4c96e2e820bc431502d3ce45628a1c0354cdd02fa588b31efa461faa7762988effc4b6a769c8bcbebdb5727e616ac7fc7216b8fe6e980aac0d4e8328652a6d6e
+  languageName: node
+  linkType: hard
+
 "@types/sinon@npm:*":
   version: 9.0.11
   resolution: "@types/sinon@npm:9.0.11"
@@ -4374,6 +4381,7 @@ __metadata:
     "@types/react-helmet": ^6.1.0
     "@types/react-router-dom": ^5.1.7
     "@types/react-window": ^1.8.2
+    "@types/shortid": ^0.0.29
     "@typescript-eslint/eslint-plugin": ^4.5.0
     "@typescript-eslint/parser": ^4.5.0
     "@useoptic/cli-config": "workspace:workspaces/cli-config"

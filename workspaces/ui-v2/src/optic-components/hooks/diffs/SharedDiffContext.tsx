@@ -12,6 +12,8 @@ import { useAllRequestsAndResponses } from './useAllRequestsAndResponses';
 import { IEndpoint, useEndpoints } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { IgnoreRule } from '../../../lib/ignore-rule';
+import { CurrentSpecContext } from '../../../lib/Interfaces';
+import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -30,7 +32,10 @@ type ISharedDiffContext = {
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
   approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  pendingEndpoints: IPendingEndpoint[];
+  resetIgnoreRules: (diffHash: string) => void;
   isDiffHandled: (diffHash: string) => boolean;
+  currentSpecContext: CurrentSpecContext;
 };
 
 export const SharedDiffStoreWithDependencies = (props: any) => {
@@ -64,12 +69,15 @@ type SharedDiffStoreProps = {
 };
 
 const SharedDiffStore = (props: SharedDiffStoreProps) => {
+  const currentSpecContext: CurrentSpecContext = {
+    currentSpecEndpoints: props.endpoints,
+    currentSpecRequests: props.requests,
+    currentSpecResponses: props.responses,
+    domainIds: newRandomIdGenerator(),
+  };
+
   const [state, send]: any = useMachine(() =>
-    newSharedDiffMachine({
-      currentSpecEndpoints: props.endpoints,
-      currentSpecRequests: props.requests,
-      currentSpecResponses: props.responses,
-    })
+    newSharedDiffMachine(currentSpecContext)
   );
   const context: SharedDiffStateContext = state.context;
   const [wipPatterns, setWIPPatterns] = useState<{
@@ -96,11 +104,15 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);
     },
+    pendingEndpoints: context.pendingEndpoints,
     isDiffHandled: (diffHash: string) => {
       return context.choices.approvedSuggestions.hasOwnProperty(diffHash);
     },
     approveCommandsForDiff: (diffHash: string, commands: any[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
+    },
+    resetIgnoreRules: (diffHash: string) => {
+      send({ type: 'RESET_IGNORES_FOR_DIFF', diffHash });
     },
     persistWIPPattern: (
       path: string,
@@ -112,6 +124,7 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
         [path + method]: components,
       })),
     wipPatterns,
+    currentSpecContext,
   };
 
   return (

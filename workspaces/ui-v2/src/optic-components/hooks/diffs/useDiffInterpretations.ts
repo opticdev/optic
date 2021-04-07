@@ -9,6 +9,7 @@ import { useSpectacleRawQuery } from '../../../spectacle-implementations/spectac
 import { interpretShapeDiffs } from '../../../lib/shape-diffs/shape-diffs';
 import { useEffect, useState } from 'react';
 import { IInterpretation } from '../../../lib/Interfaces';
+import { useSharedDiffContext } from './SharedDiffContext';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
@@ -16,6 +17,7 @@ export function useShapeDiffInterpretations(
   ignoreRules: IgnoreRule[]
 ): { loading: boolean; results: IInterpretation[] } {
   const query = useSpectacleRawQuery();
+  const { currentSpecContext } = useSharedDiffContext();
 
   const [results, setResults] = useState<IInterpretation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,9 +32,12 @@ export function useShapeDiffInterpretations(
       ignoreRules
     );
 
-    const abc = await interpretShapeDiffs(diff, trailsWithIgnored, query);
-
-    return abc;
+    return await interpretShapeDiffs(
+      diff,
+      trailsWithIgnored,
+      query,
+      currentSpecContext
+    );
   }
 
   useEffect(() => {

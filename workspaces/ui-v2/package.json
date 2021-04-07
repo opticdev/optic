@@ -209,6 +209,7 @@
     "@types/react-helmet": "^6.1.0",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-window": "^1.8.2",
+    "@types/shortid": "^0.0.29",
     "threads": "^1.6.3"
   }
 }

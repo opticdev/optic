@@ -45,6 +45,7 @@ export function ReviewEndpointDiffPage(props: any) {
     approveCommandsForDiff,
     isDiffHandled,
     addDiffIgnoreRule,
+    resetIgnoreRules,
   } = useSharedDiffContext();
 
   const { browserAppliedDiffIgnoreRules } = context;
@@ -192,6 +193,9 @@ export function ReviewEndpointDiffPage(props: any) {
               changeType={renderedDiff.diffDescription!.changeType}
               suggestions={renderedDiff.suggestions}
               approve={approveCommandsForDiff}
+              resetIgnoreRules={() =>
+                resetIgnoreRules(renderedDiff.diffDescription!.diffHash)
+              }
               suggestionSelected={(commands) => setPreviewCommands(commands)}
             />
           )}

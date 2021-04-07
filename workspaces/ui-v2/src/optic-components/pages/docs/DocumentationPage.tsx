@@ -8,7 +8,7 @@ import {
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { List, Typography } from '@material-ui/core';
+import { Box, List, Typography } from '@material-ui/core';
 import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
 import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
@@ -25,6 +25,7 @@ import { SubtleBlueBackground } from '../../theme';
 import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../navigation/Loading';
+import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -50,9 +51,10 @@ export function DocumentationPages(props: any) {
 
 export function DocsPageAccessoryNavigation(props: any) {
   return (
-    <>
+    <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+      <ChangesSinceDropdown />
       <EditContributionsButton />
-    </>
+    </div>
   );
 }
 

@@ -5,7 +5,7 @@ import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/b
 // import { listItemShapeDiffInterpreter } from './list';
 // import { rootShapeDiffInterpreter } from './root';
 import { BodyShapeDiff } from '../parse-diff';
-import { IInterpretation } from '../Interfaces';
+import { CurrentSpecContext, IInterpretation } from '../Interfaces';
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';
@@ -13,19 +13,25 @@ import { descriptionForShapeDiff } from '../diff-description-interpreter';
 export async function interpretShapeDiffs(
   diff: BodyShapeDiff,
   learnedTrails: IValueAffordanceSerializationWithCounter,
-  domainQuery: any
+  domainQuery: any,
+  currentSpecContext: CurrentSpecContext
 ): Promise<IInterpretation> {
   const { normalizedShapeTrail, jsonTrail } = diff;
 
   const isUnmatched = diff.isUnmatched;
   const isUnspecified = diff.isUnspecified;
 
-  const diffDescription = await descriptionForShapeDiff(diff, domainQuery);
+  const diffDescription = await descriptionForShapeDiff(
+    diff,
+    domainQuery,
+    currentSpecContext
+  );
 
   const actual = new Actual(learnedTrails, normalizedShapeTrail, jsonTrail);
   const expected = await getExpectationsForShapeTrail(
     diff.shapeTrail,
-    domainQuery
+    domainQuery,
+    currentSpecContext
   );
 
   // Route to field interpreter

@@ -131,6 +131,17 @@ export const newSharedDiffMachine = (
               }),
             ],
           },
+          RESET_IGNORES_FOR_DIFF: {
+            actions: [
+              assign({
+                browserAppliedDiffIgnoreRules: (ctx, event) => {
+                  return ctx.browserAppliedDiffIgnoreRules.filter(
+                    (i) => i.diffHash !== event.diffHash
+                  );
+                },
+              }),
+            ],
+          },
           // shape diffs
           COMMANDS_APPROVED_FOR_DIFF: {
             actions: [
@@ -269,6 +280,10 @@ export type SharedDiffStateEvent =
       type: 'COMMANDS_APPROVED_FOR_DIFF';
       diffHash: string;
       commands: any[];
+    }
+  | {
+      type: 'RESET_IGNORES_FOR_DIFF';
+      diffHash: string;
     };
 
 // The context (extended state) of the machine

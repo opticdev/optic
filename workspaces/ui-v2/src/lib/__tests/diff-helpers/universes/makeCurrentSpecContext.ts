@@ -8,6 +8,7 @@ import {
   AllRequestsAndResponsesQuery,
   queryResultToAllRequestsResponses,
 } from '../../../../optic-components/hooks/diffs/useAllRequestsAndResponses';
+import { newDeterministicIdGenerator } from '../../../domain-id-generator';
 
 export async function makeCurrentSpecContext(
   query: (spectacleInput: SpectacleInput) => Promise<any>
@@ -34,5 +35,6 @@ export async function makeCurrentSpecContext(
     currentSpecEndpoints: endpoints,
     currentSpecResponses: responses,
     currentSpecRequests: requests,
+    domainIds: newDeterministicIdGenerator(),
   };
 }

@@ -3,6 +3,7 @@ import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
+  useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
@@ -13,6 +14,7 @@ import { DiffUrlsPage } from './AddEndpointsPage';
 import { Route } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
+import { DiffEnvsPage } from './DiffEnvsPage';
 
 export function DiffReviewPages(props: any) {
   // const { match } = props;
@@ -24,7 +26,7 @@ export function DiffReviewPages(props: any) {
 
   return (
     <SharedDiffStoreWithDependencies>
-      <ContributionEditingStore>
+      <ContributionEditingStore initialIsEditingState={true}>
         <NavigationRoute
           path={diffUndocumentedUrlsPageLink.path}
           Component={DiffUrlsPage}
@@ -50,9 +52,15 @@ export function DiffReviewPages(props: any) {
 }
 
 export function DiffReviewEnvironments(props: any) {
+  const diffRoot = useDiffReviewPageLink();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
   return (
     <>
+      <NavigationRoute
+        path={diffRoot.path}
+        Component={DiffEnvsPage}
+        AccessoryNavigation={null}
+      />
       <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
     </>
   );

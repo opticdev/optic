@@ -240,7 +240,7 @@ class FieldShapeInterpretationHelper {
     const key = this.expected.fieldKey();
     const sharedCopy = [code(key), plain('an optional'), ...updatedName];
 
-    // const changeField = this.expected.fieldChangeHelper(this.actual);
+    const changeField = this.expected.fieldChangeHelper(this.actual);
 
     return {
       action: {
