@@ -34,32 +34,32 @@ export function EndpointTOC(props: EndpointTOCProps) {
         <Typography className={classes.none}>No bodies documented.</Typography>
       ) : null}
 
-      {props.requests.map((i, index) => {
+      {props.requests.map((body, index) => {
         return (
           <EndpointTOCRow
             key={index}
             label={'Request Body'}
-            anchorLink={i.requestId}
+            anchorLink={body.requestId}
             detail={
               <>
-                consumes <Code value="application/json" />
+                consumes <Code value={body.contentType} />
               </>
             }
           />
         );
       })}
 
-      {props.responses.map((i, index) => {
+      {props.responses.map((body, index) => {
         return (
           <EndpointTOCRow
-            label={`${getReasonPhrase(i.statusCode)} - ${
-              i.statusCode
+            label={`${getReasonPhrase(body.statusCode)} - ${
+              body.statusCode
             } Response`}
-            anchorLink={i.responseId}
+            anchorLink={body.responseId}
             key={index}
             detail={
               <>
-                consumes <Code value="application/json" />
+                produces <Code value={body.contentType} />
               </>
             }
           />

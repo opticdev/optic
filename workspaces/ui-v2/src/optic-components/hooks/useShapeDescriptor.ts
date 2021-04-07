@@ -6,7 +6,7 @@ export function useShapeDescriptor(
   rootShapeId: string,
   renderChangesSince: string | undefined
 ): IShapeRenderer[] {
-  const spectacle = useContext(SpectacleContext);
+  const spectacle = useContext(SpectacleContext)!;
   const query = `
   query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {

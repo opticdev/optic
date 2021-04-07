@@ -1,13 +1,12 @@
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import isEqual from 'lodash.isequal';
 import {
   IgnoreRule,
   transformAffordanceMappingByIgnoreRules,
 } from '../../../lib/ignore-rule';
-import { useSpectacleRawQuery } from '../../../spectacle-implementations/spectacle-provider';
+import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { interpretShapeDiffs } from '../../../lib/shape-diffs/shape-diffs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { IInterpretation } from '../../../lib/Interfaces';
 import { useSharedDiffContext } from './SharedDiffContext';
 
@@ -16,7 +15,7 @@ export function useShapeDiffInterpretations(
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
   ignoreRules: IgnoreRule[]
 ): { loading: boolean; results: IInterpretation[] } {
-  const query = useSpectacleRawQuery();
+  const spectacle = useContext(SpectacleContext)!;
   const { currentSpecContext } = useSharedDiffContext();
 
   const [results, setResults] = useState<IInterpretation[]>([]);
@@ -35,7 +34,7 @@ export function useShapeDiffInterpretations(
     return await interpretShapeDiffs(
       diff,
       trailsWithIgnored,
-      query,
+      spectacle,
       currentSpecContext
     );
   }
@@ -46,7 +45,6 @@ export function useShapeDiffInterpretations(
       setResults(diffs);
       setLoading(false);
     });
-    //@ts-ignore
   }, [diffs, ignoreRules]);
 
   return { results, loading };

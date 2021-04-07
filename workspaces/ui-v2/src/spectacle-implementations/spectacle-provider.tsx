@@ -17,14 +17,14 @@ export const SpectacleStore = (props: {
 };
 
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
-  const { query } = useContext(SpectacleContext)!;
+  const spectacle = useContext(SpectacleContext)!;
 
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await query(input);
+      const result = await spectacle.query(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;
@@ -40,14 +40,14 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
-  const { mutate } = useContext(SpectacleContext)!;
+  const spectacle = useContext(SpectacleContext)!;
 
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await mutate(input);
+      const result = await spectacle.mutate(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;
@@ -61,9 +61,4 @@ export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
   }, [stringInput]);
 
   return result;
-}
-
-export function useSpectacleRawQuery() {
-  const { query } = useContext(SpectacleContext)!;
-  return query;
 }

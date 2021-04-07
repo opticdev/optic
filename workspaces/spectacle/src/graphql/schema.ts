@@ -1,6 +1,14 @@
 export const schema = `
+scalar JSON
 schema {
   query: Query
+  mutation: Mutation
+}
+type Mutation {
+  applyCommands(commands: [JSON]): AppliedCommandsResult
+}
+type AppliedCommandsResult {
+  batchCommitId: ID
 }
 type Query {
   requests: [HttpRequest]

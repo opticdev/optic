@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { IForkableSpectacle, IBaseSpectacle } from '@useoptic/spectacle';
 
 type SimulatedCommandStoreProps = {
+  spectacle: IForkableSpectacle;
   previewCommands: any[];
   children?: any;
 };
@@ -15,6 +17,26 @@ export const SimulatedCommandContext = React.createContext<SimulatedCommandConte
 
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
+  useEffect(() => {
+    async function task() {
+      debugger;
+      //const simulated = await props.spectacle.fork();
+      props.spectacle.mutate({
+        query: `
+mutation X($commands: [JSON]) {
+  applyCommands(commands: $commands) {
+    batchCommitId
+  }
+}
+        `,
+        variables: {
+          commands: props.previewCommands
+        }
+      });
+    }
+
+    task();
+  }, [JSON.stringify(props.previewCommands)]);
 
   return (
     <SimulatedCommandContext.Provider value={value}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
@@ -30,6 +30,8 @@ import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandCont
 import { useNextEndpointLink } from '../../hooks/diffs/useNextEndpointWithDiffLink';
 import { EndpointName } from '../../documentation/EndpointName';
 import { useEndpoint } from '../../hooks/useEndpointsHook';
+import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
@@ -37,6 +39,8 @@ export function ReviewEndpointDiffPage(props: any) {
 
   const classes = useStyles();
   const history = useHistory();
+  const spectacle = useContext(SpectacleContext)!;
+
   const nextLink = useNextEndpointLink();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
@@ -122,7 +126,7 @@ export function ReviewEndpointDiffPage(props: any) {
           </>
         }
         right={
-          <SimulatedCommandStore previewCommands={previewCommands}>
+          <SimulatedCommandStore spectacle={spectacle as IForkableSpectacle} previewCommands={previewCommands}>
             <EndpointDocumentationPane method={method} pathId={pathId} />
           </SimulatedCommandStore>
         }
@@ -202,7 +206,7 @@ export function ReviewEndpointDiffPage(props: any) {
         </>
       }
       right={
-        <SimulatedCommandStore previewCommands={previewCommands}>
+        <SimulatedCommandStore spectacle={spectacle as IForkableSpectacle} previewCommands={previewCommands}>
           <EndpointDocumentationPane
             highlightedLocation={renderedDiff?.diffDescription?.location}
             method={method}

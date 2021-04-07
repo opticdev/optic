@@ -27,7 +27,7 @@ export interface IExpectationHelper {
 
 export async function shapeTrailParserLastId(
   shapeTrail: IShapeTrail,
-  query: any
+  spectacle: any
 ): Promise<IExpectationHelper> {
   const lastTrail: IShapeTrailComponent =
     shapeTrail.path[shapeTrail.path.length - 1];
@@ -35,7 +35,7 @@ export async function shapeTrailParserLastId(
   if (lastTrail) {
     if (lastTrail.hasOwnProperty('ObjectTrail')) {
       const shapeId = (lastTrail as IObjectTrail).ObjectTrail.shapeId;
-      const choices = await getChoices(shapeId, query);
+      const choices = await getChoices(shapeId, spectacle);
       const lastObjectOption = Object.entries(
         choices.allowedCoreShapeKindsByShapeId
       ).find(([key, value]) => value === ICoreShapeKinds.ObjectKind);
@@ -48,7 +48,7 @@ export async function shapeTrailParserLastId(
 
     if (lastTrail.hasOwnProperty('OneOfItemTrail')) {
       const shapeId = (lastTrail as IOneOfItemTrail).OneOfItemTrail.itemShapeId;
-      const choices = await getChoices(shapeId, query);
+      const choices = await getChoices(shapeId, spectacle);
       return {
         ...choices,
       };
@@ -61,9 +61,9 @@ export async function shapeTrailParserLastId(
         shapeTrail.rootShapeId,
         fieldTrail.fieldId,
 
-        query
+        spectacle
       );
-      const choices = await getChoices(fieldTrail.fieldShapeId, query);
+      const choices = await getChoices(fieldTrail.fieldShapeId, spectacle);
       return {
         lastField: fieldTrail.fieldId,
         lastFieldShapeId: fieldTrail.fieldShapeId,
@@ -77,7 +77,7 @@ export async function shapeTrailParserLastId(
 
     if (lastTrail.hasOwnProperty('ListTrail')) {
       const shapeId = (lastTrail as IListTrail).ListTrail.shapeId;
-      const choices = await getChoices(shapeId, query);
+      const choices = await getChoices(shapeId, spectacle);
 
       return {
         lastList: shapeId,
@@ -87,7 +87,7 @@ export async function shapeTrailParserLastId(
 
     if (lastTrail.hasOwnProperty('ListItemTrail')) {
       const listItemTrail = (lastTrail as IListItemTrail).ListItemTrail;
-      const choices = await getChoices(listItemTrail.itemShapeId, query);
+      const choices = await getChoices(listItemTrail.itemShapeId, spectacle);
       return {
         lastList: listItemTrail.listShapeId,
         lastListItem: listItemTrail.itemShapeId,
@@ -135,7 +135,7 @@ export async function shapeTrailParserLastId(
     // }
     invariant(true, 'shape trail could not be parsed');
   } else {
-    const choices = await getChoices(shapeTrail.rootShapeId, query);
+    const choices = await getChoices(shapeTrail.rootShapeId, spectacle);
     return {
       ...choices,
       rootShapeId: shapeTrail.rootShapeId,
@@ -151,7 +151,7 @@ export async function shapeTrailParserLastId(
 
 async function getChoices(
   shapeId: string,
-  queryRunner: any
+  spectacle: any
 ): Promise<{
   allowedCoreShapes: string[];
   allowedCoreShapeKindsByShapeId: { [key: string]: ICoreShapeKinds };
@@ -164,7 +164,7 @@ async function getChoices(
     }
 }`;
 
-  const result = await queryRunner({
+  const result = await spectacle.query({
     variables: {
       shapeId: shapeId,
     },
@@ -197,7 +197,7 @@ async function getChoices(
 async function getFieldFromRootShapeId(
   rootShapeId: string,
   fieldId: string,
-  queryRunner: any
+  spectacle: any
 ): Promise<{ fieldId: string; shapeId: string; name: string }> {
   const query = `
   query X($shapeId: ID) {
@@ -222,7 +222,7 @@ async function getFieldFromRootShapeId(
   } = {};
 
   async function accumulateShapes(rootShapeId: string) {
-    const result = await queryRunner({
+    const result = await spectacle.query({
       variables: {
         shapeId: rootShapeId,
       },

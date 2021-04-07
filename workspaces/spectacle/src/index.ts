@@ -3,6 +3,7 @@ import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
 import { EventEmitter } from 'events';
+import GraphQLJSON from 'graphql-type-json';
 
 export interface IOpticSpecRepository {
   listEvents(): Promise<any[]>
@@ -175,6 +176,16 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
 
   const resolvers = {
+    JSON: GraphQLJSON,
+    Mutation: {
+      applyCommands: (parent: any, args: any, context: any) => {
+        debugger
+        context.opticContext.specRepository.appendEvents([])
+        return Promise.resolve({
+          batchCommitId: 'bbb'
+        })
+      }
+    },
     Query: {
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.Request).results);
@@ -309,7 +320,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
 export interface SpectacleInput {
   query: string,
   variables: {
-    [key: string]: string
+    [key: string]: any
   },
   operationName?: string
 }

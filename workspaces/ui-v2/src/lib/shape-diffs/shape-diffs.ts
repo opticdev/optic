@@ -13,7 +13,7 @@ import { descriptionForShapeDiff } from '../diff-description-interpreter';
 export async function interpretShapeDiffs(
   diff: BodyShapeDiff,
   learnedTrails: IValueAffordanceSerializationWithCounter,
-  domainQuery: any,
+  spectacle: any,
   currentSpecContext: CurrentSpecContext
 ): Promise<IInterpretation> {
   const { normalizedShapeTrail, jsonTrail } = diff;
@@ -23,14 +23,14 @@ export async function interpretShapeDiffs(
 
   const diffDescription = await descriptionForShapeDiff(
     diff,
-    domainQuery,
+    spectacle,
     currentSpecContext
   );
 
   const actual = new Actual(learnedTrails, normalizedShapeTrail, jsonTrail);
   const expected = await getExpectationsForShapeTrail(
     diff.shapeTrail,
-    domainQuery,
+    spectacle,
     currentSpecContext
   );
 

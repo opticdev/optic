@@ -72,25 +72,27 @@ export interface InMemorySpectacleDependencies {
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
-class InMemorySpectacle implements IForkableSpectacle {
-  private spectacle: any;
+class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
+  private readonly spectaclePromise: Promise<any>;
 
-  constructor(private readonly opticEngine: any, private events: any[], notifications: EventEmitter) {
-    this.spectacle = makeSpectacle(opticEngine, {
+  constructor(private readonly opticEngine: any, private events: any[], public samples: any[], notifications: EventEmitter) {
+    this.spectaclePromise = makeSpectacle(opticEngine, {
       specRepository: new InMemorySpecRepository(notifications, { events })
     });
   }
 
   async fork(): Promise<IBaseSpectacle> {
-    return new InMemorySpectacle(this.opticEngine, this.events, new EventEmitter());
+    return new InMemorySpectacle(this.opticEngine, this.events, this.samples, new EventEmitter());
   }
 
   async mutate(options: SpectacleInput): Promise<any> {
-    return this.spectacle(options);
+    const spectacle = await this.spectaclePromise;
+    return spectacle(options);
   }
 
   async query(options: SpectacleInput): Promise<any> {
-    return this.spectacle(options);
+    const spectacle = await this.spectaclePromise;
+    return spectacle(options);
   }
 }
 
@@ -107,22 +109,9 @@ export function useInMemorySpectacle(
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
-      const events = [...result.events];
       const notifications = new EventEmitter();
-      const specRepository = new InMemorySpecRepository(notifications, { events });
-      const query = await makeSpectacle(result.opticEngine, {
-        specRepository
-      });
-
-      setSpectacle({
-        samples: result.samples,
-        query,
-        mutate(mutation: SpectacleInput) {
-          debugger
-          const result = query(mutation);
-          return result;
-        }
-      });
+      const inMemorySpectacle = new InMemorySpectacle(result.opticEngine, result.events, result.samples, notifications);
+      setSpectacle(inMemorySpectacle);
     }
 
     task();
