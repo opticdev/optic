@@ -33,6 +33,12 @@ const specs = [
     file: "./test/specs/update-optional-res-field.json",
     sinceCreatedAt: "2021-04-07T15:15:16.190Z",
     sinceBatchCommitId: "5fb6357e-fc7a-4fac-8f00-db1589061e85"
+  },
+  {
+    name: "add endpoint to existing spec",
+    file: "./test/specs/add-endpoint-to-existing-spec.json",
+    sinceCreatedAt: "2021-04-07T15:20:11.649Z",
+    sinceBatchCommitId: "c03ccae6-f3c9-4d9c-a3b6-3d710dbdb4ec"
   }
 ]
 

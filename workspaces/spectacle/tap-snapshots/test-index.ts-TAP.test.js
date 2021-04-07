@@ -13,6 +13,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query add endpoint to existing spec > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "method": "POST",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query add new endpoint > must match snapshot 1`] = `
 Object {
   "data": Null Object {
