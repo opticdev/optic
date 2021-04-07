@@ -4,11 +4,11 @@ import {
   IRequestBody,
   IResponseBody,
   IResponseStatusCode,
-} from '../../../cli-shared/build/diffs/interaction-trail';
+} from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import {
   IRequestSpecTrail,
   RequestTrailConstants,
-} from '../../../cli-shared/build/diffs/request-spec-trail';
+} from '@useoptic/cli-shared/build/diffs/request-spec-trail';
 
 function getNormalizedBodyDescriptor(value: any) {
   if (value && value.ShapedBodyDescriptor) {

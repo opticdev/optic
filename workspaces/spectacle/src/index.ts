@@ -13,8 +13,29 @@ export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
   notifications: EventEmitter;
 }
 
+export interface IStartDiffResponse {
+  diffId: string;
+  notificationsUrl?: string;
+}
+
+export interface IOpticCaptureService {
+  startDiff(
+    events: any[],
+    ignoreRequests: string[]
+  ): Promise<IStartDiffResponse>;
+  loadInteraction(pointer: string): Promise<any>;
+}
+
+export interface IOpticDiffService {
+  listDiffs(): Promise<any[]>;
+  listUnrecognizedUrls(): Promise<any[]>;
+  learnInitial(events: any[], pathId: string, method: string): Promise<any>;
+}
+
 export interface IOpticContext {
-  specRepository: IOpticSpecReadWriteRepository;
+  specRepository: IOpticSpecRepository;
+  captureService?: IOpticCaptureService;
+  diffService?: IOpticDiffService;
 }
 
 export interface IBaseSpectacle {
