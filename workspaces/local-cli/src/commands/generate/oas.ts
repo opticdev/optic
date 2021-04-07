@@ -2,7 +2,6 @@ import Command, { flags } from '@oclif/command';
 import { getPathsRelativeToConfig } from '@useoptic/cli-config';
 import { IPathMapping } from '@useoptic/cli-config';
 import { OasProjectionHelper } from '@useoptic/domain';
-import { cli } from 'cli-ux';
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -37,7 +36,7 @@ export async function generateOas(
     try {
       const events = await getSpecEventsFrom(specStorePath);
 
-      const parsedOas = OasProjectionHelper.fromEventString(events);
+      const parsedOas = OasProjectionHelper.fromEventString(JSON.stringify(events))
 
       const outputFiles = await emit(paths, parsedOas, flagYaml, flagJson);
       const filePaths = Object.values(outputFiles);
