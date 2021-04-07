@@ -3427,7 +3427,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
+"@types/prop-types@npm:*, @types/prop-types@npm:^15":
   version: 15.7.3
   resolution: "@types/prop-types@npm:15.7.3"
   checksum: bd0eab69d5120ad3784d0c9985f902653d5924707a7f2b3702a330e762dfd61b6494954cb54ad0c52b918ffd6f1e7e27c9270e4442bc15250de348596f2f60cb
@@ -4377,6 +4377,7 @@ __metadata:
     "@types/long": ^4.0.1
     "@types/node": ^14.14.32
     "@types/pad-left": ^2.1.0
+    "@types/prop-types": ^15
     "@types/react": ^17.0.3
     "@types/react-dom": ^17.0.2
     "@types/react-helmet": ^6.1.0
@@ -4444,6 +4445,7 @@ __metadata:
     postcss-preset-env: 6.7.0
     postcss-safe-parser: 5.0.2
     prompts: 2.4.0
+    prop-types: ^15.7.2
     react: ^17.0.1
     react-app-polyfill: ^2.0.0
     react-dev-utils: ^11.0.3
