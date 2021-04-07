@@ -1,12 +1,12 @@
 use super::events_from_chunks;
 
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
-use futures::{try_join, StreamExt, TryStreamExt};
+use futures::{try_join, Stream, StreamExt, TryStreamExt};
 use serde::Serialize;
 use serde_json;
 use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::io::{stdin, stdout};
+use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use uuid::Uuid;
@@ -51,7 +51,11 @@ pub async fn main<'a>(
   let spec_events = events_from_chunks(spec_chunks).await;
 
   if command_matches.is_present("undocumented-bodies") {
-    learn_undocumented_bodies(spec_events, input_queue_size).await;
+    let stdin = stdin();
+    let interaction_lines = streams::http_interaction::json_lines(stdin);
+    let sink = stdout();
+
+    learn_undocumented_bodies(spec_events, input_queue_size, interaction_lines, sink).await;
   } else if command_matches.is_present("shape-diffs") {
     todo!("shape diffs learning is yet to be implemented");
   } else {
@@ -59,11 +63,13 @@ pub async fn main<'a>(
   }
 }
 
-async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size: usize) {
+async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
+  spec_events: Vec<SpecEvent>,
+  input_queue_size: usize,
+  interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
+  sink: S,
+) {
   let spec_projection = Arc::new(SpecProjection::from(spec_events));
-
-  let stdin = stdin();
-  let interaction_lines = streams::http_interaction::json_lines(stdin);
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
@@ -109,8 +115,6 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
   };
 
   let aggregating_results = tokio::spawn(async move {
-    let stdout = stdout();
-
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
     let mut observations_by_body_location = HashMap::new();
@@ -145,7 +149,7 @@ async fn learn_undocumented_bodies(spec_events: Vec<SpecEvent>, input_queue_size
       endpoint_bodies.push(endpoint_body);
     }
 
-    streams::write_to_json_lines(stdout, endpoints_by_endpoint.values())
+    streams::write_to_json_lines(sink, endpoints_by_endpoint.values())
       .await
       .expect("could not write endpoint bodies to stdout");
   });
@@ -321,5 +325,26 @@ impl EndpointBody {
         }
       }
     };
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use serde_json::json;
+
+  #[tokio::main]
+  #[test]
+  async fn can_learn_endpoint_bodies_from_interactions() {
+    let spec_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded":{"pathId":"path_id_1","parentPathId":"root","name":"todos"}}
+    ]))
+    .expect("initial spec events should be valid events");
+
+    // TODO: feed actual interactions and assert the output
+    let interaction_lines = streams::http_interaction::json_lines(tokio::io::empty());
+    let sink = tokio::io::sink();
+
+    learn_undocumented_bodies(spec_events, 1, interaction_lines, sink).await;
   }
 }
