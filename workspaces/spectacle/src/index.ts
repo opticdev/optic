@@ -4,6 +4,9 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
 import { EventEmitter } from 'events';
 import GraphQLJSON from 'graphql-type-json';
+import {
+  v4 as uuidv4
+} from 'uuid';
 
 export interface IOpticSpecRepository {
   listEvents(): Promise<any[]>
@@ -11,6 +14,7 @@ export interface IOpticSpecRepository {
 
 export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
   appendEvents(events: any[]): Promise<void>
+
   notifications: EventEmitter
 }
 
@@ -174,17 +178,22 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
 
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
-
   const resolvers = {
     JSON: GraphQLJSON,
     Mutation: {
-      applyCommands: (parent: any, args: any, context: any) => {
-        //@TODO expose command handling via wasm
-        debugger
-        context.opticContext.specRepository.appendEvents([])
-        return Promise.resolve({
-          batchCommitId: 'bbb'
-        })
+      applyCommands: async (parent: any, args: any, context: any) => {
+        debugger;
+        const events = await opticContext.specRepository.listEvents();
+        const batchCommitId = uuidv4();
+        const newEventsString = opticEngine.try_apply_commands(
+          JSON.stringify([/*@aidan: use real args.commands here*/]),
+          JSON.stringify(events)
+        );
+        const newEvents = JSON.parse(newEventsString);
+        await context.opticContext.specRepository.appendEvents(newEvents);
+        return {
+          batchCommitId
+        };
       }
     },
     Query: {
