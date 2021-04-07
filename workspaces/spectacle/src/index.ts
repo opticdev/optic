@@ -2,20 +2,27 @@ import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
-import { GraphQueries } from '../../graph-lib/build/endpoints-graph';
+import { EventEmitter } from 'events';
 
 export interface IOpticSpecRepository {
   listEvents(): Promise<any[]>
 }
 
-export interface IOpticContext {
-  specRepository: IOpticSpecRepository;
+export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
+  appendEvents(events: any[]): Promise<void>
+  notifications: EventEmitter
 }
+
+export interface IOpticContext {
+  specRepository: IOpticSpecReadWriteRepository;
+}
+
 export interface IBaseSpectacle {
   query(options: SpectacleInput): Promise<any>
-  mutate(options: SpectacleInput): Promise<any>
 
+  mutate(options: SpectacleInput): Promise<any>
 }
+
 export interface IForkableSpectacle extends IBaseSpectacle {
   fork(): Promise<IBaseSpectacle>
 }
@@ -96,7 +103,7 @@ type EndpointChanges = {
   }
 }
 
-function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointChanges {
+function buildEndpointChanges(queries: endpoints.GraphQueries, since?: string): EndpointChanges {
   let sortedBatchCommits = queries
     .listNodesByType(endpoints.NodeType.BatchCommit).results
     .sort((a: any, b: any) => {
@@ -305,4 +312,32 @@ export interface SpectacleInput {
     [key: string]: string
   },
   operationName?: string
+}
+
+/*
+InMemorySpectacle and LocalCliSpectacle need to have similar interfaces from the perspective of the ui.
+When the applyCommands mutation is completed, the spectacle instance should notify its consumer that the state is stale
+thus the spectacle instance should expose an on() event emitter, with a 'change' event that triggers when any internal state changes. Since the mutation can trigger other effects downstream, they should be able to trigger the update as well.
+ */
+
+export interface InMemorySpecState {
+  events: any[]
+}
+
+export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
+  private events: any[] = [];
+
+  constructor(public notifications: EventEmitter, private initialState: InMemorySpecState) {
+    this.events.push(...initialState.events);
+  }
+
+  async appendEvents(events: any[]): Promise<void> {
+    this.events.push(...events);
+    this.notifications.emit('change');
+  }
+
+  async listEvents(): Promise<any[]> {
+    return this.events;
+  }
+
 }

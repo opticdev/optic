@@ -1,5 +1,6 @@
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
-import { makeSpectacle } from '@useoptic/spectacle';
+import { makeSpectacle, InMemorySpecRepository } from '@useoptic/spectacle';
+import { EventEmitter } from 'events';
 
 
 export async function generateEndpointChanges(initialEvents: any[] = [], currentEvents: any[]): Promise<any> {
@@ -8,11 +9,7 @@ export async function generateEndpointChanges(initialEvents: any[] = [], current
   // We only need to add a "since" to the query if there are initial events.
   if (initialEvents.length) {
     const initialSpectacle = await makeSpectacle(DiffEngine, {
-      specRepository: {
-        listEvents() {
-          return Promise.resolve(initialEvents)
-        }
-      }
+      specRepository: new InMemorySpecRepository(new EventEmitter(), { events: initialEvents })
     });
 
     const batchCommitResults = await initialSpectacle({
@@ -57,11 +54,7 @@ export async function generateEndpointChanges(initialEvents: any[] = [], current
   }
 
   const currentSpectacle = await makeSpectacle(DiffEngine, {
-    specRepository: {
-      listEvents() {
-        return Promise.resolve(currentEvents)
-      }
-    }
+    specRepository: new InMemorySpecRepository(new EventEmitter(), { events: currentEvents })
   });
 
   return await currentSpectacle({

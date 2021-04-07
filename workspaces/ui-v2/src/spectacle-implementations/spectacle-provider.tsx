@@ -1,14 +1,11 @@
-import { AsyncStatus, Spectacle } from './public-examples';
 import React, { useContext, useEffect, useState } from 'react';
-import { SpectacleInput } from '@useoptic/spectacle';
+import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
-export const SpectacleContext = React.createContext<Spectacle>({
-  query: null,
-  samples: [],
-});
+export const SpectacleContext = React.createContext<IBaseSpectacle | null>(null);
 
 export const SpectacleStore = (props: {
-  spectacle: Spectacle;
+  spectacle: IBaseSpectacle;
   children: any;
 }) => {
   return (
@@ -19,7 +16,8 @@ export const SpectacleStore = (props: {
 };
 
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
-  const { query } = useContext(SpectacleContext);
+  const { query } = useContext(SpectacleContext)!;
+
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
@@ -28,10 +26,35 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
       const result = await query(input);
       if (result.errors) {
         console.error(result.errors);
+        debugger;
         result.error = new Error(result.errors);
       }
       setResult(result);
     }
+
+    task();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stringInput]);
+
+  return result;
+}
+export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
+  const { mutate } = useContext(SpectacleContext)!;
+
+  const [result, setResult] = useState({ loading: true });
+
+  const stringInput = JSON.stringify(input);
+  useEffect(() => {
+    async function task() {
+      const result = await mutate(input);
+      if (result.errors) {
+        console.error(result.errors);
+        debugger;
+        result.error = new Error(result.errors);
+      }
+      setResult(result);
+    }
+
     task();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stringInput]);
@@ -40,6 +63,6 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
 }
 
 export function useSpectacleRawQuery() {
-  const { query } = useContext(SpectacleContext);
+  const { query } = useContext(SpectacleContext)!;
   return query;
 }
