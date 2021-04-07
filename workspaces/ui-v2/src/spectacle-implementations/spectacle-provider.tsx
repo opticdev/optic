@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+//@TODO find some better way to represent this kind of thing with Typescript
 export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
 export const SpectacleContext = React.createContext<IBaseSpectacle | null>(null);

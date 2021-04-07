@@ -17,7 +17,7 @@ export default function PublicExamples() {
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
-    const loadEvents = async () => {
+    const loadExample = async () => {
       const response = await fetch(`/example-sessions/${exampleId}.json`, {
         headers: { accept: 'application/json' }
       });
@@ -25,24 +25,17 @@ export default function PublicExamples() {
         throw new Error(`could not find example ${exampleId}`);
       }
       const responseJson = await response.json();
-      return responseJson.events;
+      return responseJson;
     };
-    const loadSamples = async () => {
-      const response = await fetch(`/example-sessions/${exampleId}.json`, {
-        headers: { accept: 'application/json' }
-      });
-      if (!response.ok) {
-        throw new Error(`could not find example ${exampleId}`);
-      }
-      const responseJson = await response.json();
-      return responseJson.session.samples;
-    };
-    const [events, samples, opticEngine] = await Promise.all([
-      loadEvents(),
-      loadSamples(),
+    const [example, opticEngine] = await Promise.all([
+      loadExample(),
       import('@useoptic/diff-engine-wasm/engine/browser')
     ]);
-    return { events, samples, opticEngine };
+    return {
+      events: example.events,
+      samples: example.session.samples,
+      opticEngine
+    };
   };
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
@@ -93,7 +86,7 @@ class InMemorySpectacle implements IForkableSpectacle {
   }
 
   async mutate(options: SpectacleInput): Promise<any> {
-    return this.spectacle(options)
+    return this.spectacle(options);
   }
 
   async query(options: SpectacleInput): Promise<any> {
