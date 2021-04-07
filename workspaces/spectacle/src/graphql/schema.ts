@@ -74,5 +74,6 @@ type EndpointChangeMetadata {
 type BatchCommit {
   createdAt: String
   batchId: String
+  commitMessage: String
 }
 `;

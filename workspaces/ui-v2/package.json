@@ -62,6 +62,7 @@
     "http-status-codes": "^2.1.4",
     "identity-obj-proxy": "3.0.0",
     "invariant": "^2.2.4",
+    "javascript-time-ago": "^2.3.4",
     "jest": "26.6.0",
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",

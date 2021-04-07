@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "@graphql-tools/schema": "^7.1.3",
+    "@useoptic/cli-shared": "workspace:workspaces/cli-shared",
     "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm",
     "@useoptic/graph-lib": "workspace:workspaces/graph-lib",
     "graphql": "^15.5.0",
