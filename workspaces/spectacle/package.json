@@ -4,7 +4,7 @@
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
-    "ws:test": "echo spectacle"
+    "ws:test": "tap"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,8 @@
     "graphql": "^15.5.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.6"
+    "@types/node": "^12.12.6",
+    "@types/tap": "^14.10.1",
+    "tap": "^14.11.0"
   }
 }

@@ -164,7 +164,7 @@ export function EndpointNameMiniContribution({
 
   const inner = isEditing ? (
     <TextField
-      inputProps={{ className: classes.endpointNameMini }}
+      inputProps={{ className: classes.endpointNameMini, autoComplete: 'off' }}
       error={isEmpty}
       fullWidth
       style={{ minWidth: 300 }}

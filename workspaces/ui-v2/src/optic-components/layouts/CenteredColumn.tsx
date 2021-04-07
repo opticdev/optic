@@ -7,7 +7,7 @@ export function CenteredColumn(props: any) {
 
   return (
     <div className={classes.centered}>
-      <Container maxWidth="lg" style={props.style}>
+      <Container maxWidth={props.maxWidth || 'lg'} style={props.style}>
         {props.children}
       </Container>
     </div>

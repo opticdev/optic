@@ -5,22 +5,26 @@ import { SubtleBlueBackground } from '../theme';
 export type DiffHeaderProps = {
   name: any;
   children?: any;
+  secondary?: any;
 };
 
-export function DiffHeader({ name, children }: DiffHeaderProps) {
+export function DiffHeader({ name, children, secondary }: DiffHeaderProps) {
   const classes = useStyles();
   return (
     <>
       <div className={classes.header}>
-        <Typography
-          color="primary"
-          component="div"
-          className={classes.headerText}
-        >
-          {name}
-        </Typography>
-        <div style={{ flex: 1 }} />
-        <div>{children}</div>
+        <div className={classes.topRow}>
+          <Typography
+            color="primary"
+            component="div"
+            className={classes.headerText}
+          >
+            {name}
+          </Typography>
+          <div style={{ flex: 1 }} />
+          <div>{children}</div>
+        </div>
+        {secondary && <div>{secondary}</div>}
       </div>
       <Divider />
     </>
@@ -31,6 +35,8 @@ const useStyles = makeStyles((theme) => ({
   header: {
     padding: 9,
     backgroundColor: SubtleBlueBackground,
+  },
+  topRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

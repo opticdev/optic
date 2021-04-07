@@ -5,9 +5,6 @@
     "resolveJsonModule": true,
     "rootDir": "src"
   },
-  "typeRoots": [
-    "./typings",
-    "./node_modules/@types",
-    "../../node_modules/@types"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["test"]
 }

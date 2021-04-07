@@ -104,9 +104,6 @@ export const newInteractiveEndpointSessionMachine = (
                 .filterToValidExpectations()
                 .groupedByEndpointAndShapeTrail();
 
-              console.log(diffs);
-              console.log(shapeDiffsGrouped);
-
               return shapeDiffsGrouped.map(
                 ({ diffs, shapeDiffGroupingHash, shapeTrail }) => {
                   const id = 'shape-diff' + shapeDiffGroupingHash;

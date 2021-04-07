@@ -25,11 +25,11 @@ export function useEndpointBody(
       }
     }
     }`,
-    variables: {}
+    variables: {},
   });
   if (error) {
     console.error(error);
-    debugger
+    debugger;
   }
   if (!data) {
     return { requests: [], responses: [] };
@@ -40,25 +40,29 @@ export function useEndpointBody(
     if (!request) {
       return { requests: [], responses: [] };
     }
-    const requests: IRequestBody[] = request.bodies
-      .map((body: any) => {
-        return {
-          requestId: request.id,
-          contentType: body.contentType,
-          rootShapeId: body.rootShapeId
-        };
-      });
-    const responses: IResponseBody[] = request.responses
-      .flatMap((response: any) => {
+    const requests: IRequestBody[] = request.bodies.map((body: any) => {
+      return {
+        requestId: request.id,
+        contentType: body.contentType,
+        rootShapeId: body.rootShapeId,
+        pathId: request.pathId,
+        method: request.method,
+      };
+    });
+    const responses: IResponseBody[] = request.responses.flatMap(
+      (response: any) => {
         return response.bodies.map((body: any) => {
           return {
             statusCode: response.statusCode,
             responseId: response.id,
             contentType: body.contentType,
-            rootShapeId: body.rootShapeId
+            rootShapeId: body.rootShapeId,
+            pathId: request.pathId,
+            method: request.method,
           };
         });
-      });
+      }
+    );
 
     return { requests, responses };
   }
@@ -68,6 +72,8 @@ export interface IRequestBody {
   requestId: string;
   contentType: string;
   rootShapeId: string;
+  pathId: string;
+  method: string;
   changelog?: {
     added: boolean;
     removed: boolean;
@@ -77,9 +83,11 @@ export interface IRequestBody {
 
 export interface IResponseBody {
   responseId: string;
-  statusCode: string;
+  statusCode: number;
   contentType: string;
   rootShapeId: string;
+  pathId: string;
+  method: string;
   changelog?: {
     added: boolean;
     removed: boolean;

@@ -40,8 +40,6 @@ export function PendingEndpointPageSession(props: any) {
     endpointId,
   ]);
 
-  debugger;
-
   if (!endpoint) {
     return <Redirect to={diffUndocumentedUrlsPageLink.linkTo()} />;
   }

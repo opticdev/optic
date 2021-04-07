@@ -4,6 +4,7 @@ import padLeft from 'pad-left';
 import { AddedGreenBackground, methodColorsDark } from '../theme';
 import { ListItem } from '@material-ui/core';
 import { EndpointNameMiniContribution } from './Contributions';
+import { useChangelogStyles } from '../changelog/ChangelogBackground';
 
 export type EndpointNameProps = {
   method: string;
@@ -41,6 +42,11 @@ export type EndpointRowProps = {
   endpointId: string;
   fullPath: string;
   onClick: () => void;
+  changelog?: {
+    added?: boolean;
+    removed?: boolean;
+    changed?: boolean;
+  };
 };
 
 export function EndpointRow({
@@ -48,7 +54,16 @@ export function EndpointRow({
   fullPath,
   endpointId,
   onClick,
+  changelog,
 }: EndpointRowProps) {
+  const changelogStyles = useChangelogStyles();
+
+  const bgClass = (() => {
+    if (changelog && changelog.added) {
+      return changelogStyles.added;
+    }
+  })();
+
   return (
     <ListItem
       button
@@ -56,11 +71,12 @@ export function EndpointRow({
       disableGutters
       style={{ display: 'flex' }}
       onClick={onClick}
+      className={bgClass}
     >
       <div style={{ flex: 1 }}>
         <EndpointName method={method} fullPath={fullPath} leftPad={4} />
       </div>
-      <div style={{ paddingRight: 15 }}>
+      <div style={{ paddingRight: 15 }} onClick={(e) => e.stopPropagation()}>
         <EndpointNameMiniContribution
           id={endpointId}
           defaultText="name for this endpoint"

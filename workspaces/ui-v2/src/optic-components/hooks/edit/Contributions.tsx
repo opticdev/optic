@@ -25,11 +25,20 @@ interface IContribution {
   value: string;
 }
 
-export const ContributionEditingStore = (props: any) => {
+type ContributionEditingStoreProps = {
+  initialIsEditingState?: boolean;
+  children?: any;
+};
+
+export const ContributionEditingStore = (
+  props: ContributionEditingStoreProps
+) => {
   //@TODO: replace with spectacle
   /////////////////////////////////////////
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(
+    props.initialIsEditingState || false
+  );
   const [pendingContributions, setPendingContributions]: [
     IContribution[],
     any

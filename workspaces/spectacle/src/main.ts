@@ -94,8 +94,3 @@ async function main() {
 }
 
 main();
-/*
-@TODO: add ids
-@TODO: inline changelog since()
-@TODO: add support for contributions
- */

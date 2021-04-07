@@ -8,13 +8,20 @@ import {
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
+import { useAllRequestsAndResponses } from './useAllRequestsAndResponses';
+import { IEndpoint, useEndpoints } from '../useEndpointsHook';
+import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
+import { IgnoreRule } from '../../../lib/ignore-rule';
+import { CurrentSpecContext } from '../../../lib/Interfaces';
+import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 
 export const SharedDiffReactContext = React.createContext({});
 
 type ISharedDiffContext = {
   context: SharedDiffStateContext;
   documentEndpoint: (pattern: string, method: string) => string;
-  addIgnoreRule: (rule: string) => void;
+  addPathIgnoreRule: (rule: string) => void;
+  addDiffIgnoreRule: (rule: IgnoreRule) => void;
   persistWIPPattern: (
     path: string,
     method: string,
@@ -24,10 +31,54 @@ type ISharedDiffContext = {
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
+  approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  pendingEndpoints: IPendingEndpoint[];
+  resetIgnoreRules: (diffHash: string) => void;
+  isDiffHandled: (diffHash: string) => boolean;
+  currentSpecContext: CurrentSpecContext;
 };
 
-export const SharedDiffStore = (props: any) => {
-  const [state, send]: any = useMachine(() => newSharedDiffMachine());
+export const SharedDiffStoreWithDependencies = (props: any) => {
+  const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
+  const allEndpointsOfBaseSpec = useEndpoints();
+
+  // loaded
+  if (
+    allRequestsAndResponsesOfBaseSpec.data &&
+    allEndpointsOfBaseSpec.endpoints
+  ) {
+    return (
+      <SharedDiffStore
+        endpoints={allEndpointsOfBaseSpec.endpoints}
+        requests={allRequestsAndResponsesOfBaseSpec.data.requests}
+        responses={allRequestsAndResponsesOfBaseSpec.data.responses}
+      >
+        {props.children}
+      </SharedDiffStore>
+    );
+  } else {
+    return <div>LOADING</div>;
+  }
+};
+
+type SharedDiffStoreProps = {
+  endpoints: IEndpoint[];
+  requests: IRequestBody[];
+  responses: IResponseBody[];
+  children?: any;
+};
+
+const SharedDiffStore = (props: SharedDiffStoreProps) => {
+  const currentSpecContext: CurrentSpecContext = {
+    currentSpecEndpoints: props.endpoints,
+    currentSpecRequests: props.requests,
+    currentSpecResponses: props.responses,
+    domainIds: newRandomIdGenerator(),
+  };
+
+  const [state, send]: any = useMachine(() =>
+    newSharedDiffMachine(currentSpecContext)
+  );
   const context: SharedDiffStateContext = state.context;
   const [wipPatterns, setWIPPatterns] = useState<{
     [key: string]: PathComponentAuthoring[];
@@ -44,11 +95,24 @@ export const SharedDiffStore = (props: any) => {
       send({ type: 'PENDING_ENDPOINT_STAGED', id }),
     discardEndpoint: (id: string) =>
       send({ type: 'PENDING_ENDPOINT_DISCARDED', id }),
-    addIgnoreRule: (rule: string) => {
-      send({ type: 'ADD_IGNORE_RULE', rule });
+    addPathIgnoreRule: (rule: string) => {
+      send({ type: 'ADD_PATH_IGNORE_RULE', rule });
+    },
+    addDiffIgnoreRule: (rule: IgnoreRule) => {
+      send({ type: 'ADD_DIFF_IGNORE_RULE', rule });
     },
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);
+    },
+    pendingEndpoints: context.pendingEndpoints,
+    isDiffHandled: (diffHash: string) => {
+      return context.choices.approvedSuggestions.hasOwnProperty(diffHash);
+    },
+    approveCommandsForDiff: (diffHash: string, commands: any[]) => {
+      send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
+    },
+    resetIgnoreRules: (diffHash: string) => {
+      send({ type: 'RESET_IGNORES_FOR_DIFF', diffHash });
     },
     persistWIPPattern: (
       path: string,
@@ -60,6 +124,7 @@ export const SharedDiffStore = (props: any) => {
         [path + method]: components,
       })),
     wipPatterns,
+    currentSpecContext,
   };
 
   return (

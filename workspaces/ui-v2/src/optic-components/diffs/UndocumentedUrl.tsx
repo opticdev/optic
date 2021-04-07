@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Collapse, IconButton, ListItem } from '@material-ui/core';
 import { methodColorsDark, OpticBlueReadable, primary } from '../theme';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';
 import classNames from 'classnames';
@@ -17,7 +18,9 @@ export type UndocumentedUrlProps = {
   method: string;
   path: string;
   hide?: boolean;
-  onFinish: (pattern: string, method: string) => void;
+  style: any;
+  bulkMode: boolean;
+  onFinish: (pattern: string, method: string, autolearn: boolean) => void;
 };
 
 export function UndocumentedUrl({
@@ -25,14 +28,22 @@ export function UndocumentedUrl({
   path,
   onFinish,
   hide,
+  bulkMode,
+  style,
 }: UndocumentedUrlProps) {
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
-  const [components, setComponents] = useState<PathComponentAuthoring[]>([]);
-  const debouncedComponents = useDebounce(components, 500);
+  const [isEditing, setIsEditing] = useState(false);
+  const [components, setComponents] = useState<PathComponentAuthoring[]>(
+    wipPatterns[path + method]
+      ? wipPatterns[path + method]
+      : urlStringToPathComponents(path)
+  );
+  const debouncedComponents = useDebounce(components, 800);
+  const debouncedIsEditing = useDebounce(isEditing, 800);
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
     setComponents((com) => {
@@ -50,90 +61,96 @@ export function UndocumentedUrl({
     });
   };
 
-  // setup initial components
   useEffect(() => {
-    if (wipPatterns[path + method]) {
-      setComponents(wipPatterns[path + method]);
-    } else {
-      setComponents(urlStringToPathComponents(path));
-    }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path]);
+    const isDifferent = !equals(wipPatterns[path + method], components);
 
-  // persist in context
-  useEffect(() => {
-    const isDifferent = equals(wipPatterns[path + method], debouncedComponents);
-    if (debouncedComponents && persistWIPPattern && isDifferent) {
-      persistWIPPattern(path, method, debouncedComponents);
+    if (components && isDifferent && !isEditing) {
+      persistWIPPattern(path, method, components);
     }
-    // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedComponents]);
+  }, [JSON.stringify(debouncedComponents), debouncedIsEditing]);
+
+  if (hide) {
+    return null;
+  }
 
   return (
-    <Collapse in={!hide}>
-      <ListItem
-        disableRipple
-        divider
-        disableGutters
-        style={{ display: 'flex' }}
-        // onClick={onClick}
-      >
-        <div style={{ flex: 1 }}>
-          <div className={classes.wrapper}>
-            <div className={classes.pathWrapper}>
-              <div className={classes.method} style={{ color: methodColor }}>
-                {paddedMethod.toUpperCase()}
-              </div>
-              <div className={classes.componentsWrapper}>
-                {components.map((i, index) => (
-                  <div
+    <ListItem
+      disableRipple
+      divider
+      disableGutters
+      style={{ display: 'flex', ...style }}
+      // onClick={onClick}
+    >
+      <div style={{ flex: 1 }}>
+        <div className={classes.wrapper}>
+          <div className={classes.pathWrapper}>
+            <div className={classes.method} style={{ color: methodColor }}>
+              {paddedMethod.toUpperCase()}
+            </div>
+            <div className={classes.componentsWrapper}>
+              {components.map((i, index) => (
+                <div
+                  key={index}
+                  style={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  {components.length > index && (
+                    <span className={classes.pathComponent}>/</span>
+                  )}
+                  <PathComponentRender
+                    parentSetIsEditing={setIsEditing}
+                    pathComponent={i}
                     key={index}
-                    style={{ display: 'flex', flexDirection: 'row' }}
-                  >
-                    {components.length > index && (
-                      <span className={classes.pathComponent}>/</span>
-                    )}
-                    <PathComponentRender
-                      pathComponent={i}
-                      key={index}
-                      onChange={onChange(index)}
-                    />
-                  </div>
-                ))}
-              </div>
+                    onChange={onChange(index)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        <div style={{ paddingRight: 5 }}>
-          <LightTooltip title="Show Recorded Example" enterDelay={1000}>
-            <IconButton
-              size="small"
-              color="primary"
-              style={{ color: OpticBlueReadable }}
-              onClick={() => alert('coming soon')}
-            >
-              <VisibilityIcon style={{ width: 17, height: 17 }} />
-            </IconButton>
-          </LightTooltip>
+      </div>
+      <div style={{ paddingRight: 5 }}>
+        {/*<LightTooltip title="Show Recorded Example" enterDelay={1000}>*/}
+        {/*  <IconButton*/}
+        {/*    size="small"*/}
+        {/*    color="primary"*/}
+        {/*    style={{ color: OpticBlueReadable }}*/}
+        {/*    onClick={() => alert('coming soon')}*/}
+        {/*  >*/}
+        {/*    <VisibilityIcon style={{ width: 17, height: 17 }} />*/}
+        {/*  </IconButton>*/}
+        {/*</LightTooltip>*/}
+        {bulkMode ? (
           <LightTooltip title="Add to API Documentation" enterDelay={1000}>
             <IconButton
               size="small"
               color="primary"
-              onClick={() => onFinish(makePattern(components), method)}
+              onClick={() => onFinish(makePattern(components), method, true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </LightTooltip>
+        ) : (
+          <LightTooltip
+            title="Review Endpoint and add to API Documentation"
+            enterDelay={1000}
+          >
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => onFinish(makePattern(components), method, false)}
             >
               <KeyboardArrowRightIcon />
             </IconButton>
           </LightTooltip>
-        </div>
-      </ListItem>
-    </Collapse>
+        )}
+      </div>
+    </ListItem>
   );
 }
 
 export type PathComponentProps = {
   pathComponent: PathComponentAuthoring;
+  parentSetIsEditing: (bool: boolean) => void;
   onChange: (pathParameter: PathComponentAuthoring) => void;
 };
 
@@ -148,12 +165,21 @@ function makePattern(components: PathComponentAuthoring[]) {
   );
 }
 
-function PathComponentRender({ onChange, pathComponent }: PathComponentProps) {
+function PathComponentRender({
+  onChange,
+  parentSetIsEditing,
+  pathComponent,
+}: PathComponentProps) {
   const classes = useStyles();
   const [name, setName] = useState(
     pathComponent.name || pathComponent.originalName
   );
   const [isEditing, setIsEditing] = useState(false);
+
+  //share edit state with parent
+  useEffect(() => {
+    parentSetIsEditing(isEditing);
+  }, [isEditing]);
 
   useEffect(() => {
     if (!isEditing && pathComponent.isParameter) {
