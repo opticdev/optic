@@ -4,11 +4,10 @@ import {
   CommandAndProxySessionManager,
   developerDebugLogger,
   fromOptic,
-  loadPathsAndConfig,
+  loadPathsAndConfig, makeUiBaseUrl,
 } from '@useoptic/cli-shared';
-import * as uuid from 'uuid';
+import colors from 'colors'
 import { getCaptureId } from '../shared/git/git-context-capture';
-import { LocalCliTaskRunner } from '../shared/local-cli-task-runner';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
@@ -18,6 +17,9 @@ import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import getPort from 'get-port';
 import url from 'url';
 import { BrowserLaunchers } from '../shared/intercept/browser-launchers';
+import {cli} from "cli-ux";
+import {IHttpInteraction} from "@useoptic/domain-types";
+import openBrowser from "react-dev-utils/openBrowser";
 
 export default class Intercept extends Command {
   static description =
@@ -25,13 +27,13 @@ export default class Intercept extends Command {
 
   static flags = {
     chrome: flags.boolean({}),
-    firefox: flags.boolean({}),
+    postman: flags.boolean({}),
   };
 
   static args = [
     {
       name: 'environment',
-      required: true,
+      required: false,
     },
   ];
 
@@ -44,13 +46,9 @@ export default class Intercept extends Command {
     const environments = config.environments || {};
 
     if (!environments[args.environment]) {
-      return this.error(
-        `No environment ${args.environment} found in optic.yml.Set one up like this:\n
-environments:
-  production:
-    host: https://api.github.com # the hostname of the API we should record traffic from
-    webUI: https://github.com # the url that should open when a browser flag is passed`
-      );
+      return this.warn(
+        `No environment ${args.environment} found in optic.yml.Set one up like this:\n${exampleenv}`
+      )
     }
 
     const envToTarget = environments[args.environment]!;
@@ -120,8 +118,15 @@ environments:
       );
 
       if (flags.chrome) browsers.chrome();
-      if (flags.firefox) browsers.firefox();
     };
+
+    let collected = 0
+    cli.action.start('Waiting for traffic...')
+    cli.action.type = "debug"
+    const onSample = (sample: IHttpInteraction) => {
+      collected++
+      cli.action.start(`Waiting for traffic...`, `${colors.gray(`${collected} requests collected`)}\n${sample.request.method} ${sample.request.host}${sample.request.path} | ${sample.response.statusCode}`)
+    }
 
     const sessionManager = new CommandAndProxySessionManager(
       {
@@ -129,7 +134,8 @@ environments:
         serviceConfig: serviceConfig,
         proxyConfig: proxyConfig,
       },
-      onStarted
+      onStarted,
+      onSample
     );
 
     console.log(
@@ -142,6 +148,18 @@ environments:
     if (browsers) {
       browsers!.cleanup();
     }
+    const uiBaseUrl = makeUiBaseUrl(daemonState);
+    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
+    openBrowser(uiUrl)
+
     cleanupAndExit(0);
   }
 }
+
+
+const exampleenv = `
+environments:
+  production:
+    host: https://api.github.com # the hostname of the API we should record traffic from
+    webUI: https://github.com # the url that should open when a browser flag is passed\`
+`
