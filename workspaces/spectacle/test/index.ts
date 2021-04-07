@@ -47,6 +47,12 @@ const specs = [
     sinceCreatedAt: "2021-04-07T15:52:15.419Z",
     sinceBatchCommitId: "42355178-d7d7-4510-a261-bf7f579d71a3"
   },
+  {
+    name: "complex changes",
+    file: "./test/specs/complex.json",
+    sinceCreatedAt: "2021-04-07T15:52:15.419Z",
+    sinceBatchCommitId: "42355178-d7d7-4510-a261-bf7f579d71a3"
+  },
 ]
 
 Tap.test('spectacle batchCommits query', async (test) => {

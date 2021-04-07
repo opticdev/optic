@@ -103,6 +103,31 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query complex changes > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "method": "GET",
+          "path": "/test2",
+        },
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "method": "GET",
+          "path": "/test1/{}",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query no changes > must match snapshot 1`] = `
 Object {
   "data": Null Object {
