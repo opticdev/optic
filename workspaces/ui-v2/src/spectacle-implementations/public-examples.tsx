@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { IOpticCaptureService, makeSpectacle } from '@useoptic/spectacle/build';
+import { makeSpectacle } from '@useoptic/spectacle/build';
 import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';

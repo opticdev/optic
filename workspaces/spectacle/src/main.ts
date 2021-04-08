@@ -1,5 +1,6 @@
-import { makeSpectacle } from './index';
+import { InMemorySpecRepository, makeSpectacle } from './index';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { EventEmitter } from 'events';
 
 const _events = [
   {
@@ -1186,11 +1187,9 @@ const _events = [
 
 async function main() {
   const spectacle = await makeSpectacle(DiffEngine, {
-    specRepository: {
-      listEvents(): Promise<any[]> {
-        return Promise.resolve(_events);
-      },
-    },
+    specRepository: new InMemorySpecRepository(new EventEmitter(), {
+      events: _events,
+    }),
   });
 
   const batchCommitResults = await spectacle({
