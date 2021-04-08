@@ -48,9 +48,14 @@ export function EndpointDocumentationPane({
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
-      {'simulated ' +
-        JSON.stringify([...context.simulatedCommands, ...previewCommands])}
-
+      <pre>
+        {'simulated ' +
+          JSON.stringify(
+            [...context.simulatedCommands, ...previewCommands],
+            null,
+            2
+          )}
+      </pre>
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"

@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
-//@TODO find some better way to represent this kind of thing with Typescript
+import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle/build';
+
 export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
-export const SpectacleContext = React.createContext<IBaseSpectacle | null>(null);
+export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
+  null
+);
 
 export const SpectacleStore = (props: {
   spectacle: IBaseSpectacle;
@@ -17,14 +19,14 @@ export const SpectacleStore = (props: {
 };
 
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
-  const spectacle = useContext(SpectacleContext)!;
+  const { query } = useContext(SpectacleContext)!;
 
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await spectacle.query(input);
+      const result = await query(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;
@@ -40,14 +42,14 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
-  const spectacle = useContext(SpectacleContext)!;
+  const { mutate } = useContext(SpectacleContext)!;
 
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await spectacle.mutate(input);
+      const result = await mutate(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;
@@ -61,4 +63,9 @@ export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
   }, [stringInput]);
 
   return result;
+}
+
+export function useSpectacleRawQuery() {
+  const { query } = useContext(SpectacleContext)!;
+  return query;
 }

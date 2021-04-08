@@ -26,7 +26,7 @@ export function useShapeDescriptor(
 }`;
 
   async function accumulateShapes(rootShapeId: string) {
-    const result = await spectacle.query({
+    const result = await spectacle!.query({
       variables: {
         shapeId: rootShapeId,
       },
