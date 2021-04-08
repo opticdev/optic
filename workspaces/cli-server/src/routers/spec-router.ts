@@ -27,6 +27,7 @@ import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
 import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -259,7 +260,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         });
         events.pipe(res).type('application/json');
       } else {
-        const events = await fs.readJson(req.optic.paths.specStorePath);
+        const events = await getSpecEventsFrom(req.optic.paths.specStorePath);
         res.json(events);
       }
     } catch (e) {

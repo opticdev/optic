@@ -1,0 +1,3339 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can parse a specification.json with a git conflict 1`] = `
+Array [
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+      "commitMessage": "Documented /todos
+",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.317Z",
+      },
+    },
+  },
+  Object {
+    "PathComponentAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.321Z",
+      },
+      "name": "todos",
+      "parentPathId": "root",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "httpMethod": "GET",
+      "name": "queryString",
+      "parameterId": "request-parameter_tVMvCe6k7l",
+      "parameterLocation": "query",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_rA5CUmskZY",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_rA5CUmskZY",
+      },
+      "parameterId": "request-parameter_tVMvCe6k7l",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "httpMethod": "GET",
+      "pathId": "path_VbYg8pcqs0",
+      "requestId": "request_mHdy4LvfS2",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.324Z",
+      },
+      "httpMethod": "GET",
+      "httpStatusCode": 200,
+      "pathId": "path_VbYg8pcqs0",
+      "responseId": "response_UsiG0OpmJb",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_G3nlRuuXhZ",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.326Z",
+      },
+      "fieldId": "field_lsEOXzaqqN",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_lsEOXzaqqN",
+          "shapeId": "shape_G3nlRuuXhZ",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6Ptx6ehLN6",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Pz2oxrU5XV",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "fieldId": "field_d6yGeQOuco",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_d6yGeQOuco",
+          "shapeId": "shape_Pz2oxrU5XV",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_55Imq5b8P2",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QKq3T4NUni",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "fieldId": "field_MTZFg9PEqu",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_MTZFg9PEqu",
+          "shapeId": "shape_QKq3T4NUni",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0goJbaqb0c",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "fieldId": "field_pG3fyUsnUI",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_pG3fyUsnUI",
+          "shapeId": "shape_0goJbaqb0c",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_lI7LYcTXO9",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_EQNd168g1Z",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "fieldId": "field_KevWWOevbE",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_KevWWOevbE",
+          "shapeId": "shape_EQNd168g1Z",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_EsykDEDpYg",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "fieldId": "field_YlYhO8nFE8",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_YlYhO8nFE8",
+          "shapeId": "shape_EsykDEDpYg",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$list",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QGoW6ZvjNt",
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_6Ptx6ehLN6",
+            },
+          },
+          "shapeId": "shape_Pz2oxrU5XV",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_55Imq5b8P2",
+            },
+          },
+          "shapeId": "shape_QKq3T4NUni",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_lI7LYcTXO9",
+            },
+          },
+          "shapeId": "shape_EQNd168g1Z",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$listItem",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_aP60CxBRGa",
+            },
+          },
+          "shapeId": "shape_QGoW6ZvjNt",
+        },
+      },
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_QGoW6ZvjNt",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "responseId": "response_UsiG0OpmJb",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.333Z",
+      },
+    },
+  },
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+      "commitMessage": "document post /todos",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.318Z",
+      },
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "httpMethod": "POST",
+      "name": "queryString",
+      "parameterId": "request-parameter_1WgAFBMUnA",
+      "parameterLocation": "query",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_JJ7uMyDKsb",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_JJ7uMyDKsb",
+      },
+      "parameterId": "request-parameter_1WgAFBMUnA",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "httpMethod": "POST",
+      "pathId": "path_VbYg8pcqs0",
+      "requestId": "request_tj0Wq7WKR2",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.324Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_uFUGgbiziw",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "fieldId": "field_j1hFxlrmiL",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_j1hFxlrmiL",
+          "shapeId": "shape_uFUGgbiziw",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6O7ILjbBvC",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_j14eLTPCos",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_j14eLTPCos",
+          "shapeId": "shape_6O7ILjbBvC",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_zpQu9XqWcF",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_aFXANUbgRj",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_aFXANUbgRj",
+          "shapeId": "shape_zpQu9XqWcF",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_vUoaySTmpS",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_PHKa7B34Xn",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_PHKa7B34Xn",
+          "shapeId": "shape_vUoaySTmpS",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_KF4YjhuC3p",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "fieldId": "field_FqgQVhY2jC",
+      "name": "message",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_FqgQVhY2jC",
+          "shapeId": "shape_KF4YjhuC3p",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_39NsJMOrdY",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "fieldId": "field_XrMeaZdVk2",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_XrMeaZdVk2",
+          "shapeId": "shape_39NsJMOrdY",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "RequestBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_R0csBKdaGa",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "requestId": "request_tj0Wq7WKR2",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "httpMethod": "POST",
+      "httpStatusCode": 200,
+      "pathId": "path_VbYg8pcqs0",
+      "responseId": "response_x9Ie1CSNuH",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_jXXBdMrH9X",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "fieldId": "field_i7xAHBuhOn",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_i7xAHBuhOn",
+          "shapeId": "shape_jXXBdMrH9X",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QsJRk36kcG",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "fieldId": "field_Bj1IigJWCW",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_Bj1IigJWCW",
+          "shapeId": "shape_QsJRk36kcG",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Qsu65eNxLG",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+      "fieldId": "field_1yom3h5U8U",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_1yom3h5U8U",
+          "shapeId": "shape_Qsu65eNxLG",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_6LYCLmEfaC",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+      "responseId": "response_x9Ie1CSNuH",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+    },
+  },
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+      "commitMessage": "document patch /todos/:todoId",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.676Z",
+      },
+    },
+  },
+  Object {
+    "PathParameterAdded": Object {
+      "eventContext": null,
+      "name": "todoId",
+      "parentPathId": "path_VbYg8pcqs0",
+      "pathId": "path_BD7CsgC54D",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": null,
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_WOdu4ScRQt",
+    },
+  },
+  Object {
+    "PathParameterShapeSet": Object {
+      "eventContext": null,
+      "pathId": "path_BD7CsgC54D",
+      "shapeDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_WOdu4ScRQt",
+      },
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "httpMethod": "PATCH",
+      "name": "queryString",
+      "parameterId": "request-parameter_8wi4wXig8d",
+      "parameterLocation": "query",
+      "pathId": "path_BD7CsgC54D",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_DTpVKF3tyw",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_DTpVKF3tyw",
+      },
+      "parameterId": "request-parameter_8wi4wXig8d",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "httpMethod": "PATCH",
+      "pathId": "path_BD7CsgC54D",
+      "requestId": "request_YlDp6GiQqq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.686Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.686Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_1qStDAO2fA",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "fieldId": "field_eEgzTMBnI3",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_eEgzTMBnI3",
+          "shapeId": "shape_1qStDAO2fA",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Ay0sbO7UrX",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "fieldId": "field_m7EsUEPHZW",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_m7EsUEPHZW",
+          "shapeId": "shape_Ay0sbO7UrX",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_BOI1pjvDtI",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "fieldId": "field_cAVHiDBpwO",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_cAVHiDBpwO",
+          "shapeId": "shape_BOI1pjvDtI",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_pYPJJuG2gp",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "fieldId": "field_b0TDs3q52Y",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_b0TDs3q52Y",
+          "shapeId": "shape_pYPJJuG2gp",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_tGe8tdn97r",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "fieldId": "field_gsvqas3wTs",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_gsvqas3wTs",
+          "shapeId": "shape_tGe8tdn97r",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_khohWCSVsI",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "fieldId": "field_FHWAUKvm3I",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_FHWAUKvm3I",
+          "shapeId": "shape_khohWCSVsI",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "RequestBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_2NmSGlRnVc",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "requestId": "request_YlDp6GiQqq",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "httpMethod": "PATCH",
+      "httpStatusCode": 200,
+      "pathId": "path_BD7CsgC54D",
+      "responseId": "response_oPWgOp0oZf",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_O613WZdJGX",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "fieldId": "field_5LTwExXTqD",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_5LTwExXTqD",
+          "shapeId": "shape_O613WZdJGX",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_MqfQtej9vJ",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_fjG0qj8OrC",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_fjG0qj8OrC",
+          "shapeId": "shape_MqfQtej9vJ",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_XyM6sS0YYe",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_B2I5flkymB",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_B2I5flkymB",
+          "shapeId": "shape_XyM6sS0YYe",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0721Iv1rUx",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_ivmYg5w1DA",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_ivmYg5w1DA",
+          "shapeId": "shape_0721Iv1rUx",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_KOSvmeZgsO",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "fieldId": "field_8oWiEMp1Nk",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_8oWiEMp1Nk",
+          "shapeId": "shape_KOSvmeZgsO",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_nhjVhuQTok",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "fieldId": "field_mDTEiAE6Jd",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_mDTEiAE6Jd",
+          "shapeId": "shape_nhjVhuQTok",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_0oOpmsrRLq",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.693Z",
+      },
+      "responseId": "response_oPWgOp0oZf",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.693Z",
+      },
+    },
+  },
+]
+`;
+
+exports[`can parse a specification.json without a git conflict 1`] = `
+Array [
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+      "commitMessage": "Documented /todos
+",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.317Z",
+      },
+    },
+  },
+  Object {
+    "PathComponentAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.321Z",
+      },
+      "name": "todos",
+      "parentPathId": "root",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "httpMethod": "GET",
+      "name": "queryString",
+      "parameterId": "request-parameter_tVMvCe6k7l",
+      "parameterLocation": "query",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_rA5CUmskZY",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_rA5CUmskZY",
+      },
+      "parameterId": "request-parameter_tVMvCe6k7l",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.322Z",
+      },
+      "httpMethod": "GET",
+      "pathId": "path_VbYg8pcqs0",
+      "requestId": "request_mHdy4LvfS2",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.324Z",
+      },
+      "httpMethod": "GET",
+      "httpStatusCode": 200,
+      "pathId": "path_VbYg8pcqs0",
+      "responseId": "response_UsiG0OpmJb",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_G3nlRuuXhZ",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.326Z",
+      },
+      "fieldId": "field_lsEOXzaqqN",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_lsEOXzaqqN",
+          "shapeId": "shape_G3nlRuuXhZ",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6Ptx6ehLN6",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Pz2oxrU5XV",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.327Z",
+      },
+      "fieldId": "field_d6yGeQOuco",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_d6yGeQOuco",
+          "shapeId": "shape_Pz2oxrU5XV",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_55Imq5b8P2",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QKq3T4NUni",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "fieldId": "field_MTZFg9PEqu",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_MTZFg9PEqu",
+          "shapeId": "shape_QKq3T4NUni",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0goJbaqb0c",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "fieldId": "field_pG3fyUsnUI",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_pG3fyUsnUI",
+          "shapeId": "shape_0goJbaqb0c",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_lI7LYcTXO9",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$optional",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.329Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_EQNd168g1Z",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "fieldId": "field_KevWWOevbE",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_KevWWOevbE",
+          "shapeId": "shape_EQNd168g1Z",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_EsykDEDpYg",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "fieldId": "field_YlYhO8nFE8",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_YlYhO8nFE8",
+          "shapeId": "shape_EsykDEDpYg",
+        },
+      },
+      "shapeId": "shape_aP60CxBRGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$list",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QGoW6ZvjNt",
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.330Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_6Ptx6ehLN6",
+            },
+          },
+          "shapeId": "shape_Pz2oxrU5XV",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_55Imq5b8P2",
+            },
+          },
+          "shapeId": "shape_QKq3T4NUni",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$optionalInner",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_lI7LYcTXO9",
+            },
+          },
+          "shapeId": "shape_EQNd168g1Z",
+        },
+      },
+    },
+  },
+  Object {
+    "ShapeParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "shapeDescriptor": Object {
+        "ProviderInShape": Object {
+          "consumingParameterId": "$listItem",
+          "providerDescriptor": Object {
+            "ShapeProvider": Object {
+              "shapeId": "shape_aP60CxBRGa",
+            },
+          },
+          "shapeId": "shape_QGoW6ZvjNt",
+        },
+      },
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_QGoW6ZvjNt",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.332Z",
+      },
+      "responseId": "response_UsiG0OpmJb",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+      "eventContext": Object {
+        "clientCommandBatchId": "7b0570b9-7e04-4fed-ac4e-999c5dbd6aec",
+        "clientId": "anonymous",
+        "clientSessionId": "0787f145-9b46-4355-bf25-b1c294c36cd9",
+        "createdAt": "2021-04-04T13:20:06.333Z",
+      },
+    },
+  },
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+      "commitMessage": "document post /todos",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.318Z",
+      },
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "httpMethod": "POST",
+      "name": "queryString",
+      "parameterId": "request-parameter_1WgAFBMUnA",
+      "parameterLocation": "query",
+      "pathId": "path_VbYg8pcqs0",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_JJ7uMyDKsb",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_JJ7uMyDKsb",
+      },
+      "parameterId": "request-parameter_1WgAFBMUnA",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.322Z",
+      },
+      "httpMethod": "POST",
+      "pathId": "path_VbYg8pcqs0",
+      "requestId": "request_tj0Wq7WKR2",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.324Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_uFUGgbiziw",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "fieldId": "field_j1hFxlrmiL",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_j1hFxlrmiL",
+          "shapeId": "shape_uFUGgbiziw",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.325Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6O7ILjbBvC",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_j14eLTPCos",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_j14eLTPCos",
+          "shapeId": "shape_6O7ILjbBvC",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_zpQu9XqWcF",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_aFXANUbgRj",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_aFXANUbgRj",
+          "shapeId": "shape_zpQu9XqWcF",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_vUoaySTmpS",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "fieldId": "field_PHKa7B34Xn",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_PHKa7B34Xn",
+          "shapeId": "shape_vUoaySTmpS",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.326Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_KF4YjhuC3p",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "fieldId": "field_FqgQVhY2jC",
+      "name": "message",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_FqgQVhY2jC",
+          "shapeId": "shape_KF4YjhuC3p",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_39NsJMOrdY",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "fieldId": "field_XrMeaZdVk2",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_XrMeaZdVk2",
+          "shapeId": "shape_39NsJMOrdY",
+        },
+      },
+      "shapeId": "shape_R0csBKdaGa",
+    },
+  },
+  Object {
+    "RequestBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_R0csBKdaGa",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "requestId": "request_tj0Wq7WKR2",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.327Z",
+      },
+      "httpMethod": "POST",
+      "httpStatusCode": 200,
+      "pathId": "path_VbYg8pcqs0",
+      "responseId": "response_x9Ie1CSNuH",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_jXXBdMrH9X",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "fieldId": "field_i7xAHBuhOn",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_i7xAHBuhOn",
+          "shapeId": "shape_jXXBdMrH9X",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_QsJRk36kcG",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "fieldId": "field_Bj1IigJWCW",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_Bj1IigJWCW",
+          "shapeId": "shape_QsJRk36kcG",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.328Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Qsu65eNxLG",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+      "fieldId": "field_1yom3h5U8U",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_1yom3h5U8U",
+          "shapeId": "shape_Qsu65eNxLG",
+        },
+      },
+      "shapeId": "shape_6LYCLmEfaC",
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_6LYCLmEfaC",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+      "responseId": "response_x9Ie1CSNuH",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+      "eventContext": Object {
+        "clientCommandBatchId": "b1d05af4-3aa7-47b6-82b7-76ff5200c2a8",
+        "clientId": "anonymous",
+        "clientSessionId": "c24f9da9-a0c1-4623-a2de-160da705c7b0",
+        "createdAt": "2021-04-04T13:20:53.329Z",
+      },
+    },
+  },
+  Object {
+    "BatchCommitStarted": Object {
+      "batchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+      "commitMessage": "document patch /todos/:todoId",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.676Z",
+      },
+    },
+  },
+  Object {
+    "PathParameterAdded": Object {
+      "eventContext": null,
+      "name": "todoId",
+      "parentPathId": "path_VbYg8pcqs0",
+      "pathId": "path_BD7CsgC54D",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": null,
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_WOdu4ScRQt",
+    },
+  },
+  Object {
+    "PathParameterShapeSet": Object {
+      "eventContext": null,
+      "pathId": "path_BD7CsgC54D",
+      "shapeDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_WOdu4ScRQt",
+      },
+    },
+  },
+  Object {
+    "RequestParameterAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "httpMethod": "PATCH",
+      "name": "queryString",
+      "parameterId": "request-parameter_8wi4wXig8d",
+      "parameterLocation": "query",
+      "pathId": "path_BD7CsgC54D",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_DTpVKF3tyw",
+    },
+  },
+  Object {
+    "RequestParameterShapeSet": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "parameterDescriptor": Object {
+        "isRemoved": false,
+        "shapeId": "shape_DTpVKF3tyw",
+      },
+      "parameterId": "request-parameter_8wi4wXig8d",
+    },
+  },
+  Object {
+    "RequestAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.684Z",
+      },
+      "httpMethod": "PATCH",
+      "pathId": "path_BD7CsgC54D",
+      "requestId": "request_YlDp6GiQqq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.686Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.686Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_1qStDAO2fA",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "fieldId": "field_eEgzTMBnI3",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_eEgzTMBnI3",
+          "shapeId": "shape_1qStDAO2fA",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_Ay0sbO7UrX",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.687Z",
+      },
+      "fieldId": "field_m7EsUEPHZW",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_m7EsUEPHZW",
+          "shapeId": "shape_Ay0sbO7UrX",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_BOI1pjvDtI",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "fieldId": "field_cAVHiDBpwO",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_cAVHiDBpwO",
+          "shapeId": "shape_BOI1pjvDtI",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_pYPJJuG2gp",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "fieldId": "field_b0TDs3q52Y",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_b0TDs3q52Y",
+          "shapeId": "shape_pYPJJuG2gp",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.688Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_tGe8tdn97r",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "fieldId": "field_gsvqas3wTs",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_gsvqas3wTs",
+          "shapeId": "shape_tGe8tdn97r",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_khohWCSVsI",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "fieldId": "field_FHWAUKvm3I",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_FHWAUKvm3I",
+          "shapeId": "shape_khohWCSVsI",
+        },
+      },
+      "shapeId": "shape_2NmSGlRnVc",
+    },
+  },
+  Object {
+    "RequestBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_2NmSGlRnVc",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.689Z",
+      },
+      "requestId": "request_YlDp6GiQqq",
+    },
+  },
+  Object {
+    "ResponseAddedByPathAndMethod": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "httpMethod": "PATCH",
+      "httpStatusCode": 200,
+      "pathId": "path_BD7CsgC54D",
+      "responseId": "response_oPWgOp0oZf",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$object",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_O613WZdJGX",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.690Z",
+      },
+      "fieldId": "field_5LTwExXTqD",
+      "name": "assignedBy",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_5LTwExXTqD",
+          "shapeId": "shape_O613WZdJGX",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_MqfQtej9vJ",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_fjG0qj8OrC",
+      "name": "dueDate",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_fjG0qj8OrC",
+          "shapeId": "shape_MqfQtej9vJ",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_XyM6sS0YYe",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_B2I5flkymB",
+      "name": "hello",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_B2I5flkymB",
+          "shapeId": "shape_XyM6sS0YYe",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_0721Iv1rUx",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.691Z",
+      },
+      "fieldId": "field_ivmYg5w1DA",
+      "name": "id",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_ivmYg5w1DA",
+          "shapeId": "shape_0721Iv1rUx",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$boolean",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_KOSvmeZgsO",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "fieldId": "field_8oWiEMp1Nk",
+      "name": "isDone",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_8oWiEMp1Nk",
+          "shapeId": "shape_KOSvmeZgsO",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ShapeAdded": Object {
+      "baseShapeId": "$string",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "name": "",
+      "parameters": Object {
+        "DynamicParameterList": Object {
+          "shapeParameterIds": Array [],
+        },
+      },
+      "shapeId": "shape_nhjVhuQTok",
+    },
+  },
+  Object {
+    "FieldAdded": Object {
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.692Z",
+      },
+      "fieldId": "field_mDTEiAE6Jd",
+      "name": "task",
+      "shapeDescriptor": Object {
+        "FieldShapeFromShape": Object {
+          "fieldId": "field_mDTEiAE6Jd",
+          "shapeId": "shape_nhjVhuQTok",
+        },
+      },
+      "shapeId": "shape_0oOpmsrRLq",
+    },
+  },
+  Object {
+    "ResponseBodySet": Object {
+      "bodyDescriptor": Object {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_0oOpmsrRLq",
+      },
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.693Z",
+      },
+      "responseId": "response_oPWgOp0oZf",
+    },
+  },
+  Object {
+    "BatchCommitEnded": Object {
+      "batchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+      "eventContext": Object {
+        "clientCommandBatchId": "e3b1fcce-cdce-4694-9942-68049f90ffa9",
+        "clientId": "anonymous",
+        "clientSessionId": "6b5058ae-e2c7-4bfd-be8e-8fa9df0cbd39",
+        "createdAt": "2021-04-04T13:21:49.693Z",
+      },
+    },
+  },
+]
+`;

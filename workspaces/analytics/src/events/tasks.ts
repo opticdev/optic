@@ -36,3 +36,18 @@ export const ExitedTaskWithLocalCli = DescribeEvent<
   ExitedTaskWithLocalCliSchema,
   (props) => `User ran task`
 );
+
+const LiveTrafficIngestedCliSchema = Joi.object({
+  captureId: Joi.string().required(),
+  interactionCount: Joi.number().required()
+});
+type LiveTrafficIngestedCliProperties = Joi.extractType<
+  typeof LiveTrafficIngestedCliSchema
+>;
+export const LiveTrafficIngestedWithLocalCli = DescribeEvent<
+  LiveTrafficIngestedCliProperties
+>(
+  Events.LiveTrafficIngestedWithLocalCli,
+  LiveTrafficIngestedCliSchema,
+  (props) => `User ingested live traffic`
+);

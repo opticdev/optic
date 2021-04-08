@@ -10,6 +10,7 @@ import Table from 'cli-table3';
 import sortBy from 'lodash.sortby';
 import colors from 'colors';
 import { coverageFilePrefix } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
+import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
 
 export async function printCoverage(
   paths: IPathMapping,
@@ -203,7 +204,7 @@ export interface KnownEndpoint {
 }
 
 async function getSpecEndpoints(paths: IPathMapping): Promise<KnownEndpoint[]> {
-  const events = await fs.readJSON(paths.specStorePath);
+  const events = await getSpecEventsFrom(paths.specStorePath)
   const { eventStore, rfcState, rfcService, rfcId } = universeFromEvents(
     events
   );
