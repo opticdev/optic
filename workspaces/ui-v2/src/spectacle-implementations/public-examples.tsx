@@ -78,14 +78,17 @@ export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacl
 class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
   private readonly spectaclePromise: Promise<any>;
 
+  public readonly specRepository: InMemorySpecRepository;
+
   constructor(
     private readonly opticEngine: any,
     private events: any[],
     public samples: any[],
     notifications: EventEmitter
   ) {
+    this.specRepository = new InMemorySpecRepository(notifications, { events });
     this.spectaclePromise = makeSpectacle(opticEngine, {
-      specRepository: new InMemorySpecRepository(notifications, { events }),
+      specRepository: this.specRepository,
     });
   }
 

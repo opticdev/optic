@@ -37,7 +37,7 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
 
     task();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stringInput]);
+  }, [stringInput, spectacle]);
 
   return result;
 }

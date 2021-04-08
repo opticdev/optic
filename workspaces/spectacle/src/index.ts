@@ -175,28 +175,36 @@ export async function makeSpectacle(
   opticEngine: any,
   opticContext: IOpticContext
 ) {
-  const events = await opticContext.specRepository.listEvents();
-  const spec = opticEngine.spec_from_events(JSON.stringify(events));
+  let events = await opticContext.specRepository.listEvents();
+  let spec = opticEngine.spec_from_events(JSON.stringify(events));
 
-  const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
-  const shapeViewerProjection = JSON.parse(
+  let endpointsQueries = buildEndpointsGraph(spec, opticEngine);
+  let shapeViewerProjection = JSON.parse(
     opticEngine.get_shape_viewer_projection(spec)
   );
   const resolvers = {
     JSON: GraphQLJSON,
     Mutation: {
       applyCommands: async (parent: any, args: any, context: any) => {
-        debugger;
-        const events = await opticContext.specRepository.listEvents();
+        const _events = await opticContext.specRepository.listEvents();
         const batchCommitId = uuidv4();
         const newEventsString = opticEngine.try_apply_commands(
-          JSON.stringify([
-            /*@aidan: use real args.commands here*/
-          ]),
-          JSON.stringify(events)
+          JSON.stringify(args.commands),
+          JSON.stringify(_events)
         );
+
         const newEvents = JSON.parse(newEventsString);
         await context.opticContext.specRepository.appendEvents(newEvents);
+
+        // updated shared resolver
+        events = await context.opticContext.specRepository.listEvents();
+        spec = opticEngine.spec_from_events(
+          JSON.stringify(await context.opticContext.specRepository.listEvents())
+        );
+        endpointsQueries = buildEndpointsGraph(spec, opticEngine);
+        shapeViewerProjection = JSON.parse(
+          opticEngine.get_shape_viewer_projection(spec)
+        );
         return {
           batchCommitId,
         };

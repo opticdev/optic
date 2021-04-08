@@ -7,6 +7,7 @@ export function useShapeDescriptor(
   renderChangesSince: string | undefined
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
+
   const query = `
   query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {
@@ -81,8 +82,7 @@ export function useShapeDescriptor(
 
     task();
     // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [spectacle]);
 
   return x;
 }
