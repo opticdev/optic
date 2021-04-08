@@ -18,6 +18,12 @@ import {
 } from '../../optic-components/diffs/render/ICopyRender';
 import { setEquals } from '../set-ops';
 import { IShapeChange, targetKindSuggestion } from './target-shape-kind';
+import {
+  AddField,
+  AddShape,
+  FieldShapeFromShape,
+  SetFieldShape,
+} from '../command-factory';
 
 export function fieldShapeDiffInterpretor(
   shapeDiff: BodyShapeDiff,
@@ -247,7 +253,10 @@ class FieldShapeInterpretationHelper {
         activeTense: [plain('make field'), ...sharedCopy],
         pastTense: [plain('Marked field'), ...sharedCopy],
       },
-      commands: [i++],
+      commands: [
+        AddShape('abcdefg', ICoreShapeKinds.NumberKind, ''),
+        SetFieldShape(FieldShapeFromShape(this.expected.fieldId()!, 'abcdefg')),
+      ],
       // commands: changeField
       //   .changeShape(shapeChange) // may be empty :)
       //   .wrapInOptional()
@@ -268,7 +277,10 @@ class FieldShapeInterpretationHelper {
         pastTense: [plain('Removed field'), ...sharedCopy],
       },
       // commands: changeField.stageFieldRemoval().toCommands(),
-      commands: [i++],
+      commands: [
+        AddShape('abcdefg', ICoreShapeKinds.ObjectKind, ''),
+        SetFieldShape(FieldShapeFromShape(this.expected.fieldId()!, 'abcdefg')),
+      ],
       changeType: IChangeType.Removed,
     };
   }

@@ -3,6 +3,8 @@ import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
 import { EventEmitter } from 'events';
+import GraphQLJSON from 'graphql-type-json';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IOpticSpecRepository {
   listEvents(): Promise<any[]>;
@@ -10,36 +12,17 @@ export interface IOpticSpecRepository {
 
 export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
   appendEvents(events: any[]): Promise<void>;
+
   notifications: EventEmitter;
 }
 
-export interface IStartDiffResponse {
-  diffId: string;
-  notificationsUrl?: string;
-}
-
-export interface IOpticCaptureService {
-  startDiff(
-    events: any[],
-    ignoreRequests: string[]
-  ): Promise<IStartDiffResponse>;
-  loadInteraction(pointer: string): Promise<any>;
-}
-
-export interface IOpticDiffService {
-  listDiffs(): Promise<any[]>;
-  listUnrecognizedUrls(): Promise<any[]>;
-  learnInitial(events: any[], pathId: string, method: string): Promise<any>;
-}
-
 export interface IOpticContext {
-  specRepository: IOpticSpecRepository;
-  captureService?: IOpticCaptureService;
-  diffService?: IOpticDiffService;
+  specRepository: IOpticSpecReadWriteRepository;
 }
 
 export interface IBaseSpectacle {
   query(options: SpectacleInput): Promise<any>;
+
   mutate(options: SpectacleInput): Promise<any>;
 }
 
@@ -199,8 +182,26 @@ export async function makeSpectacle(
   const shapeViewerProjection = JSON.parse(
     opticEngine.get_shape_viewer_projection(spec)
   );
-
   const resolvers = {
+    JSON: GraphQLJSON,
+    Mutation: {
+      applyCommands: async (parent: any, args: any, context: any) => {
+        debugger;
+        const events = await opticContext.specRepository.listEvents();
+        const batchCommitId = uuidv4();
+        const newEventsString = opticEngine.try_apply_commands(
+          JSON.stringify([
+            /*@aidan: use real args.commands here*/
+          ]),
+          JSON.stringify(events)
+        );
+        const newEvents = JSON.parse(newEventsString);
+        await context.opticContext.specRepository.appendEvents(newEvents);
+        return {
+          batchCommitId,
+        };
+      },
+    },
     Query: {
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
@@ -321,9 +322,6 @@ export async function makeSpectacle(
       batchId: (parent: any) => {
         return Promise.resolve(parent.result.data.batchId);
       },
-      commitMessage: (parent: any) => {
-        return Promise.resolve(parent.result.data.commitMessage);
-      },
     },
   };
 
@@ -350,7 +348,7 @@ export async function makeSpectacle(
 export interface SpectacleInput {
   query: string;
   variables: {
-    [key: string]: string;
+    [key: string]: any;
   };
   operationName?: string;
 }
