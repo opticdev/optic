@@ -1,23 +1,11 @@
 import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
-import { cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq } from '@useoptic/domain-utilities';
-import {
-  opticEngine,
-  RfcCommandContext,
-  ScalaJSHelpers,
-} from '@useoptic/domain';
 import fs from 'fs-extra';
-import {
-  IInitialBodiesProjectionEmitterConfig as WorkerConfig,
-  getInitialBodiesOutputPaths,
-} from './initial-bodies-worker';
+import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
 import { learnUndocumentedBodies } from '@useoptic/diff-engine';
-import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
-import {
-  LearnedBodies,
-  LearnedBody,
-} from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
-import { Stream } from 'stream-json/jsonl/Parser';
+import { Streams } from '@useoptic/diff-engine-wasm';
+import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export interface InitialBodiesWorkerConfig {
   pathId: string;
@@ -84,31 +72,12 @@ async function createEndpointFilter(
   pathId: string,
   method: string
 ): Promise<EndpointInteractionFilter> {
-  console.time('load inputs');
-  console.timeEnd('load inputs');
-  console.time('build state');
-  const batchId = 'bbb';
-  const clientId = 'ccc'; //@TODO: should use real values
-  const clientSessionId = 'sss'; //@TODO: should use real values
-  const commandsContext = RfcCommandContext(clientId, clientSessionId, batchId);
-
-  const {
-    rfcState,
-    resolvers,
-  } = cachingResolversAndRfcStateFromEventsAndAdditionalCommandsSeq(
-    events,
-    commandsContext,
-    opticEngine.CommandSerialization.fromJs([])
-  );
-  console.timeEnd('build state');
-
-  const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
-    rfcState
-  );
+  let spec = DiffEngine.spec_from_events(JSON.stringify(events));
 
   return function (interaction: HttpInteraction) {
-    const interactionPathId = ScalaJSHelpers.getOrUndefined(
-      undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
+    const interactionPathId = DiffEngine.spec_resolve_path_id(
+      spec,
+      interaction.request.path
     );
     return (
       method === interaction.request.method && pathId === interactionPathId
