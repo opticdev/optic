@@ -18,17 +18,25 @@ impl<'a> EndpointQueries<'a> {
     }
   }
 
-  fn extract_normalized_path(interaction: &HttpInteraction) -> &str {
-    if interaction.request.path.eq("/") {
-      &interaction.request.path
-    } else if interaction.request.path.ends_with("/") {
-      &interaction.request.path[..interaction.request.path.len() - 1]
+  fn extract_normalized_path(path: &str) -> &str {
+    if path.eq("/") {
+      path
+    } else if path.ends_with("/") {
+      &path[..path.len() - 1]
     } else {
-      &interaction.request.path
+      path
     }
   }
-  pub fn resolve_path(&self, interaction: &HttpInteraction) -> Option<PathComponentIdRef> {
-    let path = Self::extract_normalized_path(interaction);
+
+  pub fn resolve_interaction_path(
+    &self,
+    interaction: &HttpInteraction,
+  ) -> Option<PathComponentIdRef> {
+    self.resolve_path(&interaction.request.path)
+  }
+
+  pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
+    let path = Self::extract_normalized_path(path);
     // eprintln!("{}", path);
     let mut path_components = path.split('/');
     // skip leading empty
@@ -281,20 +289,20 @@ mod test {
   #[test]
   pub fn can_ignore_trailing_slash() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c/"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/a/b/c")
   }
 
   #[test]
   pub fn can_handle_no_trailing_slash() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/a/b/c")
   }
   #[test]
   pub fn can_handle_root_path() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
   }
 }
