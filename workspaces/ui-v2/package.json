@@ -14,7 +14,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "ws:clean": "echo 'cleaning' ",
+    "ws:build": "node scripts/build.js"
   },
   "dependencies": {
     "@babel/core": "7.12.3",
@@ -213,6 +215,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-window": "^1.8.2",
     "@types/shortid": "^0.0.29",
+    "fs-extra": "^9.1.0",
     "threads": "^1.6.3"
   }
 }
