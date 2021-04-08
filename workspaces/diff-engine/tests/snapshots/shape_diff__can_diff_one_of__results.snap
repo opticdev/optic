@@ -1,5 +1,5 @@
 ---
-source: tests/shape_diff.rs
+source: workspaces/diff-engine/tests/shape_diff.rs
 expression: results
 ---
 [
@@ -8,6 +8,14 @@ expression: results
             path: [
                 JsonArrayItem {
                     index: 1,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
                 },
                 JsonObjectKey {
                     key: "firstName",
@@ -46,6 +54,14 @@ expression: results
                     key: "firstName",
                 },
             ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
         },
         shape_trail: ShapeTrail {
             root_shape_id: "list_1",
@@ -74,6 +90,14 @@ expression: results
             path: [
                 JsonArrayItem {
                     index: 3,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
                 },
                 JsonObjectKey {
                     key: "firstName",

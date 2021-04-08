@@ -13,6 +13,14 @@ expression: results
                     key: "firstName",
                 },
             ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
         },
         shape_trail: ShapeTrail {
             root_shape_id: "list_1",
@@ -36,6 +44,14 @@ expression: results
             path: [
                 JsonArrayItem {
                     index: 1,
+                },
+                JsonObjectKey {
+                    key: "firstName",
+                },
+            ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
                 },
                 JsonObjectKey {
                     key: "firstName",

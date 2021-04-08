@@ -25,6 +25,11 @@ expression: results
                             key: "favoriteColor",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "favoriteColor",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "baseline-shape_8",
