@@ -10,6 +10,7 @@ edition = "2018"
 chrono = "0.4.19" 
 clap = "~2.33.3"
 futures = "0.3.12"
+nanoid = "0.4.0"
 num_cpus = "1.13.0"
 optic_diff_engine = { path = "../" }
 serde = { version = "1.0.106", features = ["derive"] }

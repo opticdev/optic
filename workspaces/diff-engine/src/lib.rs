@@ -28,7 +28,7 @@ pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
 pub use shapes::diff as diff_shape;
 pub use spec::append_batch as append_batch_to_spec;
-pub use state::body::BodyDescriptor;
+pub use state::{body::BodyDescriptor, SpecIdGenerator};
 
 pub mod errors {
   pub use super::events::EventLoadingError;

@@ -2,6 +2,7 @@ use crate::commands::shape as shape_commands;
 use crate::commands::{ShapeCommand, SpecCommand};
 use crate::shapes::JsonTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
+use crate::state::SpecIdGenerator;
 use crate::BodyDescriptor;
 use std::collections::{HashMap, HashSet};
 
@@ -30,13 +31,10 @@ impl TrailObservationsResult {
     self.values_by_trail.values()
   }
 
-  pub fn into_commands<F>(
+  pub fn into_commands(
     mut self,
-    mut generate_id: &mut F,
-  ) -> (Option<String>, impl Iterator<Item = SpecCommand>)
-  where
-    F: FnMut() -> String,
-  {
+    id_generator: &mut impl SpecIdGenerator,
+  ) -> (Option<String>, impl Iterator<Item = SpecCommand>) {
     let sorted_trails = {
       let mut trails = self
         .values_by_trail
@@ -54,7 +52,7 @@ impl TrailObservationsResult {
       let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
 
       let shape_prototype =
-        trail_values.into_shape_prototype(&mut generate_id, &shape_prototypes_by_trail);
+        trail_values.into_shape_prototype(id_generator, &shape_prototypes_by_trail);
 
       shape_prototypes_by_trail.insert(json_trail, shape_prototype.clone());
       shape_prototypes.push(shape_prototype);
@@ -297,14 +295,11 @@ impl TrailValues {
     }
   }
 
-  fn into_shape_prototype<F>(
+  fn into_shape_prototype(
     self,
-    generate_id: &mut F,
+    id_generator: &mut impl SpecIdGenerator,
     existing_prototypes: &HashMap<JsonTrail, ShapePrototype>,
-  ) -> ShapePrototype
-  where
-    F: FnMut() -> String,
-  {
+  ) -> ShapePrototype {
     let mut descriptors: Vec<_> = vec![
       if self.was_string {
         Some(ShapePrototypeDescriptor::PrimitiveKind {
@@ -330,7 +325,7 @@ impl TrailValues {
       if self.was_array {
         let item_trail = self.trail.with_array_item(0);
         let (item_shape_id, item_is_unknown) = if self.was_empty_array {
-          (generate_id(), true) // will be used for an $unknown shape
+          (id_generator.shape(), true) // will be used for an $unknown shape
         } else {
           let item_prototype = existing_prototypes
             .get(&item_trail)
@@ -374,10 +369,10 @@ impl TrailValues {
             let is_optional = optional_keys.contains(&key);
 
             FieldPrototypeDescriptor {
-              field_id: generate_id(),
+              field_id: id_generator.field(),
               key,
               optional_shape_id: match is_optional {
-                true => Some(generate_id()),
+                true => Some(id_generator.shape()),
                 false => None,
               },
               value_shape_id: field_shape_prototype.id.clone(),
@@ -397,26 +392,29 @@ impl TrailValues {
     .collect();
 
     let descriptors_count = descriptors.len();
+    let shape_id = id_generator.shape();
     let shape_prototype = match descriptors_count {
       0 => ShapePrototype {
-        id: generate_id(),
+        id: shape_id,
         trail: self.trail,
         prototype_descriptor: ShapePrototypeDescriptor::Unknown,
       },
       1 => ShapePrototype {
-        id: generate_id(),
+        id: shape_id,
         trail: self.trail,
         prototype_descriptor: descriptors.pop().unwrap(),
       },
       _ => ShapePrototype {
-        id: generate_id(),
+        id: shape_id,
         trail: self.trail.clone(),
         prototype_descriptor: ShapePrototypeDescriptor::OneOfShape {
-          parameter_ids: (0..descriptors.len()).map(|_| generate_id()).collect(),
+          parameter_ids: (0..descriptors.len())
+            .map(|_| id_generator.shape_param())
+            .collect(),
           branches: descriptors
             .into_iter()
             .map(|descriptor| ShapePrototype {
-              id: generate_id(),
+              id: id_generator.shape(),
               trail: self.trail.clone(),
               prototype_descriptor: descriptor,
             })
@@ -427,7 +425,7 @@ impl TrailValues {
 
     if self.was_null {
       ShapePrototype {
-        id: generate_id(),
+        id: id_generator.shape(),
         trail: shape_prototype.trail.clone(),
         prototype_descriptor: ShapePrototypeDescriptor::NullableShape {
           shape: Box::new(shape_prototype),
@@ -496,15 +494,11 @@ mod test {
     let number_observations = observe_body_trails(number_body);
     let boolean_observations = observe_body_trails(boolean_body);
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
     let spec_projection = SpecProjection::default();
 
-    let string_results = collect_commands(string_observations.into_commands(&mut test_id));
+    let string_results =
+      collect_commands(string_observations.into_commands(&mut test_id_generator));
     assert!(string_results.0.is_some());
     assert_eq!(string_results.1.len(), 1);
     spec_projection
@@ -515,7 +509,8 @@ mod test {
       &string_results
     );
 
-    let number_results = collect_commands(number_observations.into_commands(&mut test_id));
+    let number_results =
+      collect_commands(number_observations.into_commands(&mut test_id_generator));
     assert!(number_results.0.is_some());
     assert_eq!(number_results.1.len(), 1);
     spec_projection
@@ -526,7 +521,8 @@ mod test {
       number_results
     );
 
-    let boolean_results = collect_commands(boolean_observations.into_commands(&mut test_id));
+    let boolean_results =
+      collect_commands(boolean_observations.into_commands(&mut test_id_generator));
     assert!(boolean_results.0.is_some());
     assert_eq!(boolean_results.1.len(), 1);
     spec_projection
@@ -548,15 +544,10 @@ mod test {
     let empty_array_observations = observe_body_trails(empty_array_body);
     let polymorphic_array_observations = observe_body_trails(polymorphic_array_body);
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
 
     let primitive_array_results =
-      collect_commands(primitive_array_observations.into_commands(&mut test_id));
+      collect_commands(primitive_array_observations.into_commands(&mut test_id_generator));
     assert!(primitive_array_results.0.is_some());
     assert_valid_commands(primitive_array_results.1.clone());
     assert_debug_snapshot!(
@@ -565,7 +556,7 @@ mod test {
     );
 
     let empty_array_results =
-      collect_commands(empty_array_observations.into_commands(&mut test_id));
+      collect_commands(empty_array_observations.into_commands(&mut test_id_generator));
     assert!(empty_array_results.0.is_some());
     assert_valid_commands(empty_array_results.1.clone());
     assert_debug_snapshot!(
@@ -574,7 +565,7 @@ mod test {
     );
 
     let polymorphic_array_results =
-      collect_commands(polymorphic_array_observations.into_commands(&mut test_id));
+      collect_commands(polymorphic_array_observations.into_commands(&mut test_id_generator));
     assert!(polymorphic_array_results.0.is_some());
     assert_valid_commands(polymorphic_array_results.1.clone());
     assert_debug_snapshot!(
@@ -602,15 +593,10 @@ mod test {
     let empty_object_observations = observe_body_trails(empty_object_body);
     let nested_object_observations = observe_body_trails(nested_object_body);
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
 
     let primitive_object_results =
-      collect_commands(primitive_object_observations.into_commands(&mut test_id));
+      collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
     assert!(primitive_object_results.0.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
@@ -619,7 +605,7 @@ mod test {
     );
 
     let empty_object_results =
-      collect_commands(empty_object_observations.into_commands(&mut test_id));
+      collect_commands(empty_object_observations.into_commands(&mut test_id_generator));
     assert!(empty_object_results.0.is_some());
     assert_valid_commands(empty_object_results.1.clone());
     assert_debug_snapshot!(
@@ -628,7 +614,7 @@ mod test {
     );
 
     let nested_object_results =
-      collect_commands(nested_object_observations.into_commands(&mut test_id));
+      collect_commands(nested_object_observations.into_commands(&mut test_id_generator));
     assert!(nested_object_results.0.is_some());
     assert_valid_commands(nested_object_results.1.clone());
     assert_debug_snapshot!(
@@ -671,15 +657,10 @@ mod test {
       result
     };
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
 
     let primitive_object_results =
-      collect_commands(primitive_object_observations.into_commands(&mut test_id));
+      collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
     assert!(primitive_object_results.0.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
@@ -688,7 +669,7 @@ mod test {
     );
 
     let nested_optional_results =
-      collect_commands(nested_optional_observations.into_commands(&mut test_id));
+      collect_commands(nested_optional_observations.into_commands(&mut test_id_generator));
     assert!(nested_optional_results.0.is_some());
     assert_valid_commands(nested_optional_results.1.clone());
     assert_debug_snapshot!(
@@ -738,15 +719,10 @@ mod test {
       observe_body_trails(body)
     };
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
 
     let nullable_primitive_results =
-      collect_commands(nullable_primitive_observations.into_commands(&mut test_id));
+      collect_commands(nullable_primitive_observations.into_commands(&mut test_id_generator));
     assert!(nullable_primitive_results.0.is_some());
     assert_valid_commands(nullable_primitive_results.1.clone());
     assert_debug_snapshot!(
@@ -755,7 +731,7 @@ mod test {
     );
 
     let nullable_object_field_results =
-      collect_commands(nullable_object_field_observations.into_commands(&mut test_id));
+      collect_commands(nullable_object_field_observations.into_commands(&mut test_id_generator));
     assert!(nullable_object_field_results.0.is_some());
     assert_valid_commands(nullable_object_field_results.1.clone());
     assert_debug_snapshot!(
@@ -764,7 +740,7 @@ mod test {
     );
 
     let nullable_array_item_results =
-      collect_commands(nullable_array_item_observations.into_commands(&mut test_id));
+      collect_commands(nullable_array_item_observations.into_commands(&mut test_id_generator));
     assert!(nullable_array_item_results.0.is_some());
     assert_valid_commands(nullable_array_item_results.1.clone());
     assert_debug_snapshot!(
@@ -773,7 +749,7 @@ mod test {
     );
 
     let nullable_one_off_results =
-      collect_commands(nullable_one_off_observations.into_commands(&mut test_id));
+      collect_commands(nullable_one_off_observations.into_commands(&mut test_id_generator));
     assert!(nullable_one_off_results.0.is_some());
     assert_valid_commands(nullable_one_off_results.1.clone());
     assert_debug_snapshot!(
@@ -781,7 +757,8 @@ mod test {
       &nullable_one_off_results
     );
 
-    let only_null_results = collect_commands(only_null_observations.into_commands(&mut test_id));
+    let only_null_results =
+      collect_commands(only_null_observations.into_commands(&mut test_id_generator));
     assert!(only_null_results.0.is_some());
     assert_valid_commands(only_null_results.1.clone());
     assert_debug_snapshot!(
@@ -816,14 +793,10 @@ mod test {
       observations
     };
 
-    let mut counter = 0;
-    let mut test_id = || {
-      let id = format!("test-id-{}", counter);
-      counter += 1;
-      id
-    };
+    let mut test_id_generator = TestIdGenerator::default();
 
-    let primitive_results = collect_commands(primitive_observations.into_commands(&mut test_id));
+    let primitive_results =
+      collect_commands(primitive_observations.into_commands(&mut test_id_generator));
     assert!(primitive_results.0.is_some());
     assert_valid_commands(primitive_results.1.clone());
     assert_debug_snapshot!(
@@ -832,7 +805,7 @@ mod test {
     );
 
     let collections_results =
-      collect_commands(collections_observations.into_commands(&mut test_id));
+      collect_commands(collections_observations.into_commands(&mut test_id_generator));
     assert!(collections_results.0.is_some());
     assert_valid_commands(collections_results.1.clone());
     assert_debug_snapshot!(
@@ -857,6 +830,19 @@ mod test {
       for event in events {
         spec_projection.apply(event)
       }
+    }
+  }
+
+  #[derive(Debug, Default)]
+  struct TestIdGenerator {
+    counter: usize,
+  }
+
+  impl SpecIdGenerator for TestIdGenerator {
+    fn generate_id(&mut self, _prefix: &str) -> String {
+      let id = format!("test-id-{}", self.counter);
+      self.counter += 1;
+      id
     }
   }
 }

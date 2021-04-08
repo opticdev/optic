@@ -2,6 +2,7 @@ use super::events_from_chunks;
 
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, Stream, StreamExt, TryStreamExt};
+use nanoid::nanoid;
 use serde::Serialize;
 use serde_json;
 use std::collections::HashMap;
@@ -9,13 +10,12 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
-use uuid::Uuid;
 
 use optic_diff_engine::streams;
 use optic_diff_engine::{analyze_undocumented_bodies, EndpointCommand, SpecCommand};
 use optic_diff_engine::{
-  BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecProjection,
-  TrailObservationsResult,
+  BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator,
+  SpecProjection, TrailObservationsResult,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
@@ -116,6 +116,7 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
 
   let aggregating_results = tokio::spawn(async move {
     let mut analysiss = ReceiverStream::new(analysis_receiver);
+    let mut id_generator = IdGenerator::default();
 
     let mut observations_by_body_location = HashMap::new();
     while let Some(analysis) = analysiss.next().await {
@@ -128,7 +129,7 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
 
     let mut endpoints_by_endpoint = HashMap::new();
     for (body_location, observations) in observations_by_body_location {
-      let (root_shape_id, body_commands) = observations.into_commands(&mut generate_id);
+      let (root_shape_id, body_commands) = observations.into_commands(&mut id_generator);
       let endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
 
       let (path_id, method) = match body_location {
@@ -157,8 +158,17 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
   try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
 }
 
-fn generate_id() -> String {
-  Uuid::new_v4().to_hyphenated().to_string()
+#[derive(Debug, Default)]
+struct IdGenerator;
+
+impl SpecIdGenerator for IdGenerator {
+  fn generate_id(&mut self, prefix: &str) -> String {
+    // NanoID @ 10 chars:
+    // - URL-safe,
+    // - 17 years for a 1% chance of at least one global collision assuming
+    //   writing 1000 ids per hour (https://zelark.github.io/nano-id-cc/)
+    format!("{}{}", prefix, nanoid!(10))
+  }
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -280,9 +290,11 @@ impl EndpointBody {
   }
 
   fn append_endpoint_commands(&mut self) {
+    let mut ids = IdGenerator::default();
+
     match self {
       EndpointBody::Request(request_body) => {
-        let request_id = generate_id();
+        let request_id = ids.request();
         request_body
           .commands
           .push(SpecCommand::from(EndpointCommand::add_request(
@@ -303,7 +315,7 @@ impl EndpointBody {
         }
       }
       EndpointBody::Response(response_body) => {
-        let response_id = generate_id();
+        let response_id = ids.response();
         response_body.commands.push(SpecCommand::from(
           EndpointCommand::add_response_by_path_and_method(
             response_id.clone(),
