@@ -30,10 +30,10 @@ pub fn create_subcommand<'a, 'b>() -> App<'a, 'b> {
         .help("Learn shapes of undocumented bodies from interactions piped to stdin"),
     )
     .arg(
-      Arg::with_name("shape-diffs")
-        .long("shape-diffs")
+      Arg::with_name("shape-diffs-affordances")
+        .long("shape-diffs-affordances")
         .takes_value(false)
-        .help("Learn updated shapes from shape diffs piped to stdin"),
+        .help("Learn affordances for diff trails from interactions piped to stdin"),
     )
     .group(
       ArgGroup::with_name("subject")
@@ -156,6 +156,15 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
   });
 
   try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
+}
+
+async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
+  spec_events: Vec<SpecEvent>,
+  input_queue_size: usize,
+  interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
+  diffs: impl Stream<Item = Result<String, std::io::Error>>,
+  sink: S,
+) {
 }
 
 #[derive(Debug, Default)]
