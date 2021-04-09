@@ -5,7 +5,11 @@ import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/b
 // import { listItemShapeDiffInterpreter } from './list';
 // import { rootShapeDiffInterpreter } from './root';
 import { BodyShapeDiff } from '../parse-diff';
-import { CurrentSpecContext, IInterpretation } from '../Interfaces';
+import {
+  CurrentSpecContext,
+  IInterpretation,
+  IPatchChoices,
+} from '../Interfaces';
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';
@@ -38,7 +42,13 @@ export async function interpretShapeDiffs(
   /////////////////////////////////////////////////////////////////////
   const isUnspecifiedField = isUnspecified && actual.isField(); //this needs to use lastObject + key
   if (expected.isField() || isUnspecifiedField) {
-    return fieldShapeDiffInterpretor(diff, actual, expected, diffDescription);
+    return fieldShapeDiffInterpretor(
+      diff,
+      actual,
+      expected,
+      diffDescription,
+      currentSpecContext
+    );
   }
 
   // Route to list item
@@ -59,5 +69,10 @@ export async function interpretShapeDiffs(
     return rootShapeDiffInterpreter(asShapeDiff, actual, expected, services);
   }*/
 
-  return { suggestions: [], previewTabs: [] };
+  throw new Error('No interpreter');
+
+  // return {
+  //   diffDescription: undefined, toCommands(choices: IPatchChoices): any[] {
+  //     return [];
+  //   }, suggestions: [], previewTabs: [], specChoices: {shapes: [], } };
 }

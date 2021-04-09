@@ -1,6 +1,7 @@
 export interface IFieldRenderer {
   fieldId: string;
   name: string;
+  parentId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
   description?: string;

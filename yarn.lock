@@ -4301,6 +4301,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@useoptic/domain@npm:10.0.67":
+  version: 10.0.67
+  resolution: "@useoptic/domain@npm:10.0.67"
+  checksum: cf6b16356886337fd3450d44d752f38bcc6a6fc3c471802baecb078ff2fc4393b2ea1fb83a55fa1df62569a740ec88334ff079c43264bd6c323df85c573f0dfc
+  languageName: node
+  linkType: hard
+
 "@useoptic/graph-lib@workspace:workspaces/graph-lib":
   version: 0.0.0-use.local
   resolution: "@useoptic/graph-lib@workspace:workspaces/graph-lib"
@@ -4391,6 +4398,7 @@ __metadata:
     "@useoptic/cli-config": "workspace:workspaces/cli-config"
     "@useoptic/cli-shared": "workspace:workspaces/cli-shared"
     "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm"
+    "@useoptic/domain": 10.0.67
     "@useoptic/spectacle": "workspace:workspaces/spectacle"
     "@xstate/react": ^1.3.1
     babel-eslint: ^10.1.0
@@ -4404,6 +4412,7 @@ __metadata:
     classnames: ^2.2.6
     css-loader: 4.3.0
     deep-equal: ^2.0.5
+    deepcopy: ^2.1.0
     dotenv: 8.2.0
     dotenv-expand: 5.1.0
     eslint: ^7.11.0
@@ -8104,6 +8113,15 @@ __metadata:
   version: 0.1.3
   resolution: "deep-is@npm:0.1.3"
   checksum: 3de58f86af4dec86c8be531a5abaf2e6d8ea98fa2f1d81a3a778d0d8df920ee282043a6ef05bfb4eb699c8551df9ac1b808d4dc71d54cc40ab1efa5ce8792943
+  languageName: node
+  linkType: hard
+
+"deepcopy@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "deepcopy@npm:2.1.0"
+  dependencies:
+    type-detect: ^4.0.8
+  checksum: 2d997653f2d59cb293a1cebbb0dff0377095e339180bc11ec947670352115a6157c76c758386ec45d54d8576358a1a1b722c5c698fb1876385d2c8d72958a0ee
   languageName: node
   linkType: hard
 

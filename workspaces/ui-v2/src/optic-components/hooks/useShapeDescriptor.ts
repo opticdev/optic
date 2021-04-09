@@ -52,9 +52,9 @@ export function useShapeDescriptor(
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
-                field.shapeChoices = shapeChoices.filter(
-                  (i: any) => i.jsonType !== JsonLike.UNDEFINED
-                ); // don't include optional
+                field.shapeChoices = shapeChoices
+                  .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
+                  .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
                 return field;
               })
             );

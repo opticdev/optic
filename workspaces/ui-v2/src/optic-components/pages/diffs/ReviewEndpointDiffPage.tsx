@@ -126,7 +126,10 @@ export function ReviewEndpointDiffPage(props: any) {
           </>
         }
         right={
-          <SimulatedCommandStore spectacle={spectacle as IForkableSpectacle} previewCommands={previewCommands}>
+          <SimulatedCommandStore
+            spectacle={spectacle as IForkableSpectacle}
+            previewCommands={previewCommands}
+          >
             <EndpointDocumentationPane method={method} pathId={pathId} />
           </SimulatedCommandStore>
         }
@@ -190,23 +193,25 @@ export function ReviewEndpointDiffPage(props: any) {
 
           {renderedDiff && (
             <DiffCard
-              addDiffIgnoreRule={addDiffIgnoreRule}
+              updatedSpecChoices={(choices) => {
+                setPreviewCommands(renderedDiff?.toCommands(choices));
+              }}
               diffDescription={renderedDiff.diffDescription!}
               handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
               previewTabs={renderedDiff.previewTabs}
               changeType={renderedDiff.diffDescription!.changeType}
               suggestions={renderedDiff.suggestions}
+              specChoices={renderedDiff.updateSpecChoices}
               approve={approveCommandsForDiff}
-              resetIgnoreRules={() =>
-                resetIgnoreRules(renderedDiff.diffDescription!.diffHash)
-              }
-              suggestionSelected={(commands) => setPreviewCommands(commands)}
             />
           )}
         </>
       }
       right={
-        <SimulatedCommandStore spectacle={spectacle as IForkableSpectacle} previewCommands={previewCommands}>
+        <SimulatedCommandStore
+          spectacle={spectacle as IForkableSpectacle}
+          previewCommands={previewCommands}
+        >
           <EndpointDocumentationPane
             highlightedLocation={renderedDiff?.diffDescription?.location}
             method={method}

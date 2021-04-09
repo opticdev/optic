@@ -330,6 +330,7 @@ export function reduceShapeChangesToCommandsAndMappings(
   existingShapeIdsForTypes: { [p: string]: ICoreShapeKinds };
 } {
   const combined = setUnion(shapeChange.add, expected.expectedShapes());
+
   const targetFinal: Set<ICoreShapeKinds> = setDifference(
     combined,
     shapeChange.remove

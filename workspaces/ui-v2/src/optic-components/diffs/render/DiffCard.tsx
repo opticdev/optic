@@ -36,6 +36,7 @@ import {
   IChangeType,
   IDiffDescription,
   IInteractionPreviewTab,
+  IPatchChoices,
   ISuggestion,
 } from '../../../lib/Interfaces';
 import { SuggestionGroup } from './SuggestionGroup';
@@ -43,6 +44,7 @@ import { IJsonTrail } from '../../../../../cli-shared/build/diffs/json-trail';
 import { useInteraction } from '../../../spectacle-implementations/interaction-loader';
 import { LightTooltip } from '../../navigation/LightToolTip';
 import { IgnoreRule } from '../../../lib/ignore-rule';
+import { BuildSpecPatch } from './BuildSpecPatch';
 
 type IDiffCardProps = {
   changeType: IChangeType;
@@ -51,21 +53,18 @@ type IDiffCardProps = {
   diffDescription: IDiffDescription;
   approve: (diffHash: string, commands: any[]) => void;
   handled: boolean;
-  suggestionSelected: (commands: any[]) => void;
-  addDiffIgnoreRule: (rule: IgnoreRule) => void;
-  resetIgnoreRules: (diffHash: string) => void;
+  specChoices: IPatchChoices;
+  updatedSpecChoices: (choices: IPatchChoices) => void;
 };
 
 export function DiffCard({
   changeType,
   previewTabs,
-  suggestions,
   diffDescription,
   approve,
   handled,
-  addDiffIgnoreRule,
-  resetIgnoreRules,
-  suggestionSelected,
+  specChoices,
+  updatedSpecChoices,
 }: IDiffCardProps) {
   const classes = useStyles();
 
@@ -93,41 +92,6 @@ export function DiffCard({
       setPreviewTab(previewTabs[0].title);
     }
   }, [diffDescription.diffHash]);
-
-  if (!selectedPreviewTab && previewTabs.length === 0) {
-    return (
-      <>
-        <div className={classes.titleHeader}>
-          <Typography
-            variant="caption"
-            style={{
-              color: OpticBlueReadable,
-              fontWeight: 600,
-              marginRight: 3,
-            }}
-          >
-            diff:{' '}
-          </Typography>
-          <ICopyRender variant="caption" copy={diffDescription.title} />
-        </div>
-        <div style={{ padding: 10 }}>
-          <Typography
-            variant="caption"
-            style={{
-              color: OpticBlueReadable,
-              fontWeight: 600,
-              marginRight: 3,
-            }}
-          >
-            You ignored this diff, reset?
-          </Typography>
-          <Button color="primary" size="small" onClick={resetIgnoreRules}>
-            Reset Diff
-          </Button>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -167,12 +131,6 @@ export function DiffCard({
                 ))}
               </DiffTabs>
             )}
-            <div style={{ flex: 1 }} />
-            <IgnoreButton
-              addDiffIgnoreRule={addDiffIgnoreRule}
-              selectedPreviewTab={selectedPreviewTab}
-              previewTabs={previewTabs}
-            />
           </div>
         )}
 
@@ -208,25 +166,9 @@ export function DiffCard({
       </div>
 
       <div className={classes.suggestionRegion}>
-        <Typography
-          variant="caption"
-          component="div"
-          style={{
-            color: OpticBlueReadable,
-            fontWeight: 600,
-            marginBottom: 10,
-          }}
-        >
-          suggested changes:
-        </Typography>
-        <SuggestionGroup
-          suggestions={suggestions}
-          onSuggestionSelected={(commands: any[]) => {
-            suggestionSelected(commands);
-          }}
-          onApprove={(commands: any[]) => {
-            approve(diffDescription.diffHash, commands);
-          }}
+        <BuildSpecPatch
+          patchChoices={specChoices}
+          onPathChoicesUpdated={updatedSpecChoices}
         />
       </div>
     </>

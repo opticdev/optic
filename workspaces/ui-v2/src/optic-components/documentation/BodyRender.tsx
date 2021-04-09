@@ -28,14 +28,11 @@ export function BodyRender(props: BodyRenderProps) {
       <div className={classes.header}>
         <div>{props.location}</div>
         <div style={{ flex: 1 }} />
-        <ChoiceTabs
-          value={showExample}
-          setValue={setValue}
-          choices={[
-            { label: 'example', id: 'example' },
-            { label: 'shape', id: 'shape' },
-          ]}
-        />
+        {/*<ChoiceTabs*/}
+        {/*  value={showExample}*/}
+        {/*  setValue={setValue}*/}
+        {/*  choices={[{ label: 'shape', id: 'shape' }]}*/}
+        {/*/>*/}
       </div>
       <div className={classes.content} ref={contentRef}>
         <ShapeRenderStore showExamples={showExample === 'example'}>
