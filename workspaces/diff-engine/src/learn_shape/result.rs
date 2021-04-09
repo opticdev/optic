@@ -31,6 +31,10 @@ impl TrailObservationsResult {
     self.values_by_trail.values()
   }
 
+  pub fn remove(&mut self, trail: &JsonTrail) -> Option<TrailValues> {
+    self.values_by_trail.remove(trail)
+  }
+
   pub fn into_commands(
     mut self,
     id_generator: &mut impl SpecIdGenerator,

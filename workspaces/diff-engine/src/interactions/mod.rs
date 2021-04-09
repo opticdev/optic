@@ -1,9 +1,10 @@
 use crate::events::http_interaction::{Body, HttpInteraction};
-use crate::learn_shape::{observe_body_trails, TrailObservationsResult};
+use crate::learn_shape::{observe_body_trails, TrailObservationsResult, TrailValues};
 use crate::projections::{EndpointProjection, SpecProjection};
 use crate::protos::shapehash::ShapeDescriptor;
 use crate::queries::endpoint::EndpointQueries;
 use crate::shapes::diff as diff_shape;
+use crate::shapes::ShapeDiffResult;
 use crate::state::body::BodyDescriptor;
 
 pub mod result;
@@ -95,12 +96,6 @@ pub fn analyze_undocumented_bodies(
     InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let trail_observations = observe_body_trails(&body.value);
-      let interaction_trail = diff.interaction_trail.clone();
-      let path_id = diff
-        .requests_trail
-        .get_path_id()
-        .expect("UnmatchedRequestBodyContentType implies request to have a known path")
-        .clone();
 
       Some(BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),
@@ -110,15 +105,6 @@ pub fn analyze_undocumented_bodies(
     InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
       let trail_observations = observe_body_trails(&body.value);
-      let interaction_trail = diff.interaction_trail.clone();
-      let path_id = diff
-        .requests_trail
-        .get_path_id()
-        .expect("UnmatchedResponseBodyContentType implies request to have a known path")
-        .clone();
-      let method = interaction_trail
-        .get_method()
-        .expect("UnmatchedResponseBodyContentType implies request to have a method");
 
       Some(BodyAnalysisResult {
         body_location: BodyAnalysisLocation::from(diff),
@@ -127,4 +113,32 @@ pub fn analyze_undocumented_bodies(
     }
     _ => None,
   })
+}
+
+pub fn analyze_diff_affordances(
+  diff_result: &InteractionDiffResult,
+  interaction: HttpInteraction,
+) -> Option<TrailValues> {
+  let (mut trail_observations, shape_diff_result) = match diff_result {
+    InteractionDiffResult::UnmatchedRequestBodyShape(diff) => {
+      let body = &interaction.request.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some((trail_observations, &diff.shape_diff_result))
+    }
+    InteractionDiffResult::UnmatchedResponseBodyShape(diff) => {
+      let body = &interaction.response.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some((trail_observations, &diff.shape_diff_result))
+    }
+    _ => None,
+  }?;
+
+  let diff_trail = match shape_diff_result {
+    ShapeDiffResult::UnmatchedShape { json_trail, .. } => json_trail,
+    ShapeDiffResult::UnspecifiedShape { json_trail, .. } => json_trail,
+  };
+
+  trail_observations.remove(diff_trail)
 }

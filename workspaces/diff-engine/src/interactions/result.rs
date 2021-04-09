@@ -249,6 +249,47 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
   }
 }
 
+impl From<UnmatchedRequestBodyShape> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedRequestBodyShape) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Request {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedRequestBodyShape implies response to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedRequestBodyShape implies response to have a known method")
+        .clone(),
+      content_type: interaction_trail.get_request_content_type().cloned(),
+    }
+  }
+}
+
+impl From<UnmatchedResponseBodyShape> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedResponseBodyShape) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Response {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedResponseBodyShape implies response to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedResponseBodyShape implies response to have a known method")
+        .clone(),
+      content_type: interaction_trail.get_response_content_type().cloned(),
+      status_code: interaction_trail
+        .get_response_status_code()
+        .expect("UnmatchedResponseBodyShape implies response to have a status code"),
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
 pub struct InteractionTrail {
