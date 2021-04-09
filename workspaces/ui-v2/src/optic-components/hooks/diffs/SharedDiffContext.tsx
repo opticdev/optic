@@ -21,7 +21,7 @@ type ISharedDiffContext = {
   context: SharedDiffStateContext;
   documentEndpoint: (pattern: string, method: string) => string;
   addPathIgnoreRule: (rule: string) => void;
-  addDiffIgnoreRule: (rule: IgnoreRule) => void;
+  addDiffHashIgnore: (diffHash: string) => void;
   persistWIPPattern: (
     path: string,
     method: string,
@@ -33,7 +33,6 @@ type ISharedDiffContext = {
   discardEndpoint: (id: string) => void;
   approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
   pendingEndpoints: IPendingEndpoint[];
-  resetIgnoreRules: (diffHash: string) => void;
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
 };
@@ -98,22 +97,21 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     addPathIgnoreRule: (rule: string) => {
       send({ type: 'ADD_PATH_IGNORE_RULE', rule });
     },
-    addDiffIgnoreRule: (rule: IgnoreRule) => {
-      send({ type: 'ADD_DIFF_IGNORE_RULE', rule });
-    },
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);
     },
     pendingEndpoints: context.pendingEndpoints,
     isDiffHandled: (diffHash: string) => {
-      return context.choices.approvedSuggestions.hasOwnProperty(diffHash);
+      return (
+        context.choices.approvedSuggestions.hasOwnProperty(diffHash) ||
+        context.browserDiffHashIgnoreRules.includes(diffHash)
+      );
     },
     approveCommandsForDiff: (diffHash: string, commands: any[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
-    resetIgnoreRules: (diffHash: string) => {
-      send({ type: 'RESET_IGNORES_FOR_DIFF', diffHash });
-    },
+    addDiffHashIgnore: (diffHash: string) =>
+      send({ type: 'ADD_DIFF_HASH_IGNORE', diffHash }),
     persistWIPPattern: (
       path: string,
       method: string,

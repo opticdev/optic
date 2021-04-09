@@ -48,16 +48,12 @@ export function ReviewEndpointDiffPage(props: any) {
     context,
     approveCommandsForDiff,
     isDiffHandled,
-    addDiffIgnoreRule,
-    resetIgnoreRules,
+    addDiffHashIgnore,
   } = useSharedDiffContext();
-
-  const { browserAppliedDiffIgnoreRules } = context;
 
   const shapeDiffs = useShapeDiffInterpretations(
     endpointDiffs.shapeDiffs,
-    context.results.trailValues,
-    browserAppliedDiffIgnoreRules
+    context.results.trailValues
   );
 
   const filteredShapeDiffs = shapeDiffs.results?.filter((i: any) => {
@@ -193,6 +189,7 @@ export function ReviewEndpointDiffPage(props: any) {
 
           {renderedDiff && (
             <DiffCard
+              key={renderedDiff.diffDescription?.diffHash}
               updatedSpecChoices={(choices) => {
                 setPreviewCommands(renderedDiff?.toCommands(choices));
               }}

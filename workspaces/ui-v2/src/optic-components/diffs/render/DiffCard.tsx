@@ -167,6 +167,7 @@ export function DiffCard({
 
       <div className={classes.suggestionRegion}>
         <BuildSpecPatch
+          diffHash={diffDescription.diffHash}
           patchChoices={specChoices}
           onPathChoicesUpdated={updatedSpecChoices}
         />

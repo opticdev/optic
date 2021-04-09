@@ -12,8 +12,7 @@ import { useSharedDiffContext } from './SharedDiffContext';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-  ignoreRules: IgnoreRule[]
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
 ): { loading: boolean; results: IInterpretation[] } {
   const spectacle = useContext(SpectacleContext)!;
   const { currentSpecContext } = useSharedDiffContext();
@@ -23,17 +22,9 @@ export function useShapeDiffInterpretations(
 
   async function computeDiffInterpretation(diff: BodyShapeDiff) {
     const learnedTrails = trailValues[diff.diffHash()];
-
-    const trailsWithIgnored = transformAffordanceMappingByIgnoreRules(
-      learnedTrails,
-      diff.diffHash(),
-      diff.jsonTrail,
-      ignoreRules
-    );
-
     return await interpretShapeDiffs(
       diff,
-      trailsWithIgnored,
+      learnedTrails,
       spectacle,
       currentSpecContext
     );
@@ -45,7 +36,7 @@ export function useShapeDiffInterpretations(
       setResults(diffs);
       setLoading(false);
     });
-  }, [diffs, ignoreRules]);
+  }, [diffs]);
 
   return { results, loading };
 }

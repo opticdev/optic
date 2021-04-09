@@ -3,22 +3,16 @@ import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import sortBy from 'lodash.sortby';
 import {
   CurrentSpecContext,
-  IChangeType,
   ICoreShapeKinds,
   IDiffDescription,
   IInteractionPreviewTab,
   IInterpretation,
   IPatchChoices,
-  ISuggestion,
 } from '../Interfaces';
 import { IShapeTrail } from '../../../../cli-shared/build/diffs/shape-trail';
 import { IJsonTrail } from '../../../../cli-shared/build/diffs/json-trail';
 import { IValueAffordanceSerializationWithCounter } from '../../../../cli-shared/build/diffs/initial-types';
-import {
-  code,
-  ICopy,
-  plain,
-} from '../../optic-components/diffs/render/ICopyRender';
+import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
 import { FieldShapeFromShape, SetFieldShape } from '../command-factory';
 
@@ -101,7 +95,7 @@ export function fieldShapeDiffInterpretor(
   }
 
   return {
-    previewTabs: present.createPreviews(),
+    previewTabs: present.createPreviews().reverse(),
     diffDescription,
     suggestions: [],
     toCommands(choices: IPatchChoices): any[] {

@@ -16,9 +16,11 @@ import {
 import { OpticBlueReadable, SubtleBlueBackground } from '../../theme';
 import { namer } from '../../../lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 type IBuildSpecPatch = {
   patchChoices: IPatchChoices;
+  diffHash: string;
   onPathChoicesUpdated: (pathChoices: IPatchChoices) => void;
   // onSuggestionSelected: (commands: any[]) => void;
 };
@@ -26,10 +28,12 @@ type IBuildSpecPatch = {
 export function BuildSpecPatch({
   patchChoices,
   onPathChoicesUpdated,
+  diffHash,
 }: // onApprove,
 // onSuggestionSelected,
 IBuildSpecPatch) {
   const classes = useStyles();
+  const { addDiffHashIgnore } = useSharedDiffContext();
 
   const [selectedChoices, setSelectedChoices] = useState(
     deepCopy(patchChoices)
@@ -107,7 +111,13 @@ IBuildSpecPatch) {
 
         <div style={{ marginBottom: 5 }}>
           <Box display="flex" justifyContent="center">
-            <Button size="small" style={{ color: OpticBlueReadable }}>
+            <Button
+              size="small"
+              style={{ color: OpticBlueReadable }}
+              onClick={() => {
+                addDiffHashIgnore(diffHash);
+              }}
+            >
               Ignore Diff
             </Button>
             <Button size="small" style={{ color: OpticBlueReadable }}>
@@ -120,7 +130,7 @@ IBuildSpecPatch) {
               endIcon={<ArrowRight />}
               style={{ marginRight: 15 }}
             >
-              Save & Next
+              Save Changes
             </Button>
           </Box>
         </div>

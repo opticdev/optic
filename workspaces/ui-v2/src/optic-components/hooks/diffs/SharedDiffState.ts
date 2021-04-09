@@ -29,7 +29,6 @@ export const newSharedDiffMachine = (
       simulatedCommands: [],
       choices: {
         approvedSuggestions: {},
-        diffIgnoreRules: [],
       },
       results: {
         undocumentedUrls: exampleUrls,
@@ -43,7 +42,7 @@ export const newSharedDiffMachine = (
       },
       pendingEndpoints: [],
       browserAppliedIgnoreRules: [],
-      browserAppliedDiffIgnoreRules: [],
+      browserDiffHashIgnoreRules: [],
     },
     initial: 'ready',
     states: {
@@ -121,24 +120,13 @@ export const newSharedDiffMachine = (
               }),
             ],
           },
-          ADD_DIFF_IGNORE_RULE: {
+          ADD_DIFF_HASH_IGNORE: {
             actions: [
               assign({
-                browserAppliedDiffIgnoreRules: (ctx, event) => [
-                  ...ctx.browserAppliedDiffIgnoreRules,
-                  event.rule,
+                browserDiffHashIgnoreRules: (ctx, event) => [
+                  ...ctx.browserDiffHashIgnoreRules,
+                  event.diffHash,
                 ],
-              }),
-            ],
-          },
-          RESET_IGNORES_FOR_DIFF: {
-            actions: [
-              assign({
-                browserAppliedDiffIgnoreRules: (ctx, event) => {
-                  return ctx.browserAppliedDiffIgnoreRules.filter(
-                    (i) => i.diffHash !== event.diffHash
-                  );
-                },
               }),
             ],
           },
@@ -265,10 +253,6 @@ export type SharedDiffStateEvent =
       rule: string;
     }
   | {
-      type: 'ADD_DIFF_IGNORE_RULE';
-      rule: IgnoreRule;
-    }
-  | {
       type: 'PENDING_ENDPOINT_STAGED';
       id: string;
     }
@@ -282,7 +266,7 @@ export type SharedDiffStateEvent =
       commands: any[];
     }
   | {
-      type: 'RESET_IGNORES_FOR_DIFF';
+      type: 'ADD_DIFF_HASH_IGNORE';
       diffHash: string;
     };
 
@@ -300,13 +284,12 @@ export interface SharedDiffStateContext {
     diffsGroupedByEndpoint: EndpointDiffGrouping[];
   };
   choices: {
-    diffIgnoreRules: IgnoreRule[];
     approvedSuggestions: { [key: string]: any[] };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];
   browserAppliedIgnoreRules: string[];
-  browserAppliedDiffIgnoreRules: IgnoreRule[];
+  browserDiffHashIgnoreRules: string[];
 }
 
 ////////////////////////////////Diff Types
