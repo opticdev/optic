@@ -1,11 +1,12 @@
 use bytes::{BufMut, Bytes, BytesMut};
-use futures::{sink::Sink, SinkExt};
+use futures::{sink::Sink, SinkExt, Stream};
 use serde::Serialize;
 use serde_json;
 use std::io;
 use tokio::io::{
   AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader, BufWriter, Lines,
 };
+use tokio_stream::wrappers::LinesStream;
 use tokio_util::codec::{Encoder, FramedWrite};
 
 pub mod diff;
@@ -143,4 +144,13 @@ where
   let writer = BufWriter::new(sink);
   let codec = JsonLineEncoder::new(b"\n,");
   FramedWrite::new(writer, codec)
+}
+
+pub fn from_json_lines<R>(source: R) -> impl Stream<Item = Result<String, std::io::Error>>
+where
+  R: AsyncRead,
+{
+  // 10 megabytes of capacity, to deal with unbound nature of request and response bodies
+  let reader = BufReader::with_capacity(10 * 1024 * 1024, source);
+  LinesStream::new(reader.lines())
 }

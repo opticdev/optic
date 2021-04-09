@@ -1,11 +1,11 @@
 use crate::learn_shape::TrailObservationsResult;
 use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::hash_map::{DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionDiffResult {
   UnmatchedRequestUrl(UnmatchedRequestUrl),
   UnmatchedRequestBodyContentType(UnmatchedRequestBodyContentType),
@@ -30,7 +30,7 @@ impl InteractionDiffResult {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestUrl {
   pub interaction_trail: InteractionTrail,
@@ -46,7 +46,7 @@ impl UnmatchedRequestUrl {
   }
 }
 
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -90,7 +90,7 @@ impl MatchedRequestBodyContentType {
   }
 }
 
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedResponseBodyContentType {
   pub interaction_trail: InteractionTrail,
@@ -133,7 +133,7 @@ impl MatchedResponseBodyContentType {
     )
   }
 }
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedRequestBodyShape {
   pub interaction_trail: InteractionTrail,
@@ -155,7 +155,7 @@ impl UnmatchedRequestBodyShape {
   }
 }
 
-#[derive(Debug, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmatchedResponseBodyShape {
   pub interaction_trail: InteractionTrail,
@@ -291,7 +291,7 @@ impl From<UnmatchedResponseBodyShape> for BodyAnalysisLocation {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
 }
@@ -359,7 +359,7 @@ impl InteractionTrail {
   }
 }
 ////////////////////////////////////////////////////////////////////////////////
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 pub enum RequestSpecTrail {
   SpecRoot(SpecRoot),
   SpecPath(SpecPath),
@@ -378,40 +378,40 @@ impl RequestSpecTrail {
   }
 }
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 pub struct SpecRoot {}
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecPath {
   pub path_id: PathComponentId,
 }
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestRoot {
   pub request_id: RequestId,
 }
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecRequestBody {
   pub request_id: RequestId,
 }
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseRoot {
   pub response_id: ResponseId,
 }
 
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct SpecResponseBody {
   pub response_id: ResponseId,
 }
 //@GOTCHA make sure these serialize matching the existing scala code
-#[derive(Clone, Debug, Serialize, Hash)]
+#[derive(Clone, Debug, Deserialize, Serialize, Hash)]
 pub enum InteractionTrailPathComponent {
   Url {
     path: String,
