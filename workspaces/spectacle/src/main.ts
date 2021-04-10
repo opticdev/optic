@@ -1,6 +1,6 @@
-import { InMemorySpecRepository, makeSpectacle } from './index';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
-import { EventEmitter } from 'events';
+import { makeSpectacle } from './index';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import {  InMemoryOpticContextBuilder } from './in-memory';
 
 const _events = [
   {
@@ -11,9 +11,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.656Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.656Z'
+      }
+    }
   },
   {
     PathComponentAdded: {
@@ -24,9 +24,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.662Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.662Z'
+      }
+    }
   },
   {
     PathComponentAdded: {
@@ -37,9 +37,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.663Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.663Z'
+      }
+    }
   },
   {
     PathComponentAdded: {
@@ -50,9 +50,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.664Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.664Z'
+      }
+    }
   },
   {
     RequestParameterAddedByPathAndMethod: {
@@ -65,9 +65,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.664Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.664Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -75,32 +75,32 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.664Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.664Z'
+      }
+    }
   },
   {
     RequestParameterShapeSet: {
       parameterId: 'request-parameter_YTF5vLYlls',
       parameterDescriptor: {
         shapeId: 'shape_1T8ZANWIcd',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.664Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.664Z'
+      }
+    }
   },
   {
     RequestAdded: {
@@ -111,9 +111,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.664Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.664Z'
+      }
+    }
   },
   {
     ResponseAddedByPathAndMethod: {
@@ -125,9 +125,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.669Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.669Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -135,17 +135,17 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.671Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.671Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -153,17 +153,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.671Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.671Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -173,16 +173,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_OCXyZL2Lyp',
-          shapeId: 'shape_JH0cqjvNSd',
-        },
+          shapeId: 'shape_JH0cqjvNSd'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.671Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.671Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -190,17 +190,17 @@ const _events = [
       baseShapeId: '$number',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.672Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.672Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -210,16 +210,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_CXHgTtjIPq',
-          shapeId: 'shape_hnfXS9Vmns',
-        },
+          shapeId: 'shape_hnfXS9Vmns'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.672Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.672Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -227,17 +227,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.673Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.673Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -247,16 +247,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_pb75z9dypc',
-          shapeId: 'shape_FIaVxhxPUW',
-        },
+          shapeId: 'shape_FIaVxhxPUW'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.673Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.673Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -264,17 +264,17 @@ const _events = [
       baseShapeId: '$list',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.673Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.673Z'
+      }
+    }
   },
   {
     ShapeParameterShapeSet: {
@@ -283,19 +283,19 @@ const _events = [
           shapeId: 'shape_E9IzHThmZv',
           providerDescriptor: {
             ShapeProvider: {
-              shapeId: 'shape_j1aiWREIbU',
-            },
+              shapeId: 'shape_j1aiWREIbU'
+            }
           },
-          consumingParameterId: '$listItem',
-        },
+          consumingParameterId: '$listItem'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     ResponseBodySet: {
@@ -303,15 +303,15 @@ const _events = [
       bodyDescriptor: {
         httpContentType: 'application/json',
         shapeId: 'shape_E9IzHThmZv',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     RequestParameterAddedByPathAndMethod: {
@@ -324,9 +324,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -334,32 +334,32 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     RequestParameterShapeSet: {
       parameterId: 'request-parameter_dgmp5nlVrH',
       parameterDescriptor: {
         shapeId: 'shape_9t5hqnMMma',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     RequestAdded: {
@@ -370,9 +370,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.674Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.674Z'
+      }
+    }
   },
   {
     ResponseAddedByPathAndMethod: {
@@ -384,9 +384,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.675Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.675Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -394,17 +394,17 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.675Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.675Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -412,17 +412,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.675Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.675Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -432,16 +432,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_tZbQYoQmxt',
-          shapeId: 'shape_6dDj0Z3HkT',
-        },
+          shapeId: 'shape_6dDj0Z3HkT'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.675Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.675Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -449,17 +449,17 @@ const _events = [
       baseShapeId: '$number',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.676Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.676Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -469,16 +469,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_UMhLN288Z3',
-          shapeId: 'shape_If49etudqF',
-        },
+          shapeId: 'shape_If49etudqF'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.676Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.676Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -486,17 +486,17 @@ const _events = [
       baseShapeId: '$number',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.676Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.676Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -506,16 +506,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_VMgg5gTvnO',
-          shapeId: 'shape_VXfig63hnr',
-        },
+          shapeId: 'shape_VXfig63hnr'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.676Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.676Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -523,17 +523,17 @@ const _events = [
       baseShapeId: '$list',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     ShapeParameterShapeSet: {
@@ -542,19 +542,19 @@ const _events = [
           shapeId: 'shape_UlLNexyAzZ',
           providerDescriptor: {
             ShapeProvider: {
-              shapeId: 'shape_ZVgfHusbJW',
-            },
+              shapeId: 'shape_ZVgfHusbJW'
+            }
           },
-          consumingParameterId: '$listItem',
-        },
+          consumingParameterId: '$listItem'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     ResponseBodySet: {
@@ -562,15 +562,15 @@ const _events = [
       bodyDescriptor: {
         httpContentType: 'application/json',
         shapeId: 'shape_UlLNexyAzZ',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     RequestParameterAddedByPathAndMethod: {
@@ -583,9 +583,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -593,32 +593,32 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     RequestParameterShapeSet: {
       parameterId: 'request-parameter_GicuVFeYbm',
       parameterDescriptor: {
         shapeId: 'shape_6TnsL6trq7',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     RequestAdded: {
@@ -629,9 +629,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.677Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.677Z'
+      }
+    }
   },
   {
     ResponseAddedByPathAndMethod: {
@@ -643,9 +643,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.679Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.679Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -653,17 +653,17 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.680Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.680Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -671,17 +671,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.680Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.680Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -691,16 +691,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_SXC48X1nmc',
-          shapeId: 'shape_iQB4J3IWzb',
-        },
+          shapeId: 'shape_iQB4J3IWzb'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.680Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.680Z'
+      }
+    }
   },
   {
     ResponseBodySet: {
@@ -708,15 +708,15 @@ const _events = [
       bodyDescriptor: {
         httpContentType: 'application/json',
         shapeId: 'shape_MiVhGwZrMY',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.681Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.681Z'
+      }
+    }
   },
   {
     BatchCommitEnded: {
@@ -725,9 +725,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: '48bbf499-3d19-45be-a392-667939cce1d3',
         clientCommandBatchId: '57630124-211a-440d-8bd3-2496ccc97f0c',
-        createdAt: '2021-02-01T18:25:15.681Z',
-      },
-    },
+        createdAt: '2021-02-01T18:25:15.681Z'
+      }
+    }
   },
   {
     BatchCommitStarted: {
@@ -737,9 +737,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.849Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.849Z'
+      }
+    }
   },
   {
     PathComponentAdded: {
@@ -750,9 +750,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.857Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.857Z'
+      }
+    }
   },
   {
     PathComponentAdded: {
@@ -763,9 +763,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.859Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.859Z'
+      }
+    }
   },
   {
     RequestParameterAddedByPathAndMethod: {
@@ -778,9 +778,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.859Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.859Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -788,32 +788,32 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.859Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.859Z'
+      }
+    }
   },
   {
     RequestParameterShapeSet: {
       parameterId: 'request-parameter_VPFBtSXstf',
       parameterDescriptor: {
         shapeId: 'shape_PBYuBrTCLk',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.859Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.859Z'
+      }
+    }
   },
   {
     RequestAdded: {
@@ -824,9 +824,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.859Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.859Z'
+      }
+    }
   },
   {
     ResponseAddedByPathAndMethod: {
@@ -838,9 +838,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.862Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.862Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -848,17 +848,17 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.863Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.863Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -866,17 +866,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.863Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.863Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -886,16 +886,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_jvGuxAjlRn',
-          shapeId: 'shape_RvMMDY4eOD',
-        },
+          shapeId: 'shape_RvMMDY4eOD'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.863Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.863Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -903,17 +903,17 @@ const _events = [
       baseShapeId: '$number',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.864Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.864Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -923,16 +923,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_gGefUJrPwF',
-          shapeId: 'shape_u6waaccsqU',
-        },
+          shapeId: 'shape_u6waaccsqU'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.864Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.864Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -940,17 +940,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.865Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.865Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -960,16 +960,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_iYJ7dR4ihV',
-          shapeId: 'shape_Mh5lZMGWAO',
-        },
+          shapeId: 'shape_Mh5lZMGWAO'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.865Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.865Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -977,17 +977,17 @@ const _events = [
       baseShapeId: '$list',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.865Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.865Z'
+      }
+    }
   },
   {
     ShapeParameterShapeSet: {
@@ -996,19 +996,19 @@ const _events = [
           shapeId: 'shape_GsyFkrJzlL',
           providerDescriptor: {
             ShapeProvider: {
-              shapeId: 'shape_bGU4HicHkV',
-            },
+              shapeId: 'shape_bGU4HicHkV'
+            }
           },
-          consumingParameterId: '$listItem',
-        },
+          consumingParameterId: '$listItem'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.865Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.865Z'
+      }
+    }
   },
   {
     ResponseBodySet: {
@@ -1016,15 +1016,15 @@ const _events = [
       bodyDescriptor: {
         httpContentType: 'application/json',
         shapeId: 'shape_GsyFkrJzlL',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.866Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.866Z'
+      }
+    }
   },
   {
     RequestParameterAddedByPathAndMethod: {
@@ -1037,9 +1037,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.866Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.866Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -1047,32 +1047,32 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.866Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.866Z'
+      }
+    }
   },
   {
     RequestParameterShapeSet: {
       parameterId: 'request-parameter_nuUAdwMuqg',
       parameterDescriptor: {
         shapeId: 'shape_jfIeomMZ5p',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.866Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.866Z'
+      }
+    }
   },
   {
     RequestAdded: {
@@ -1083,9 +1083,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.866Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.866Z'
+      }
+    }
   },
   {
     ResponseAddedByPathAndMethod: {
@@ -1097,9 +1097,9 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.867Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.867Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -1107,17 +1107,17 @@ const _events = [
       baseShapeId: '$object',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.867Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.867Z'
+      }
+    }
   },
   {
     ShapeAdded: {
@@ -1125,17 +1125,17 @@ const _events = [
       baseShapeId: '$string',
       parameters: {
         DynamicParameterList: {
-          shapeParameterIds: [],
-        },
+          shapeParameterIds: []
+        }
       },
       name: '',
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.868Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.868Z'
+      }
+    }
   },
   {
     FieldAdded: {
@@ -1145,16 +1145,16 @@ const _events = [
       shapeDescriptor: {
         FieldShapeFromShape: {
           fieldId: 'field_KhuvysQCWY',
-          shapeId: 'shape_sgKygyPuZL',
-        },
+          shapeId: 'shape_sgKygyPuZL'
+        }
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.869Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.869Z'
+      }
+    }
   },
   {
     ResponseBodySet: {
@@ -1162,15 +1162,15 @@ const _events = [
       bodyDescriptor: {
         httpContentType: 'application/json',
         shapeId: 'shape_ApnstcbWQx',
-        isRemoved: false,
+        isRemoved: false
       },
       eventContext: {
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.870Z',
-      },
-    },
+        createdAt: '2021-02-01T18:26:25.870Z'
+      }
+    }
   },
   {
     BatchCommitEnded: {
@@ -1179,18 +1179,14 @@ const _events = [
         clientId: 'anonymous',
         clientSessionId: 'e28408c3-7f74-4719-bc03-cbebc7b96c4a',
         clientCommandBatchId: '2f5c2536-6500-495a-b0b1-947d55394009',
-        createdAt: '2021-02-01T18:26:25.870Z',
-      },
-    },
-  },
+        createdAt: '2021-02-01T18:26:25.870Z'
+      }
+    }
+  }
 ];
 
 async function main() {
-  const spectacle = await makeSpectacle(DiffEngine, {
-    specRepository: new InMemorySpecRepository(new EventEmitter(), {
-      events: _events,
-    }),
-  });
+  const spectacle = await makeSpectacle(InMemoryOpticContextBuilder.fromEvents(OpticEngine, _events));
 
   const batchCommitResults = await spectacle({
     query: `{
@@ -1199,7 +1195,7 @@ async function main() {
     batchId
   }
 }`,
-    variables: {},
+    variables: {}
   });
 
   console.log(JSON.stringify(batchCommitResults, null, 2));
@@ -1216,7 +1212,7 @@ async function main() {
     }
   }
 }`,
-    variables: {},
+    variables: {}
   });
 
   console.log(JSON.stringify(endpointChangesResult, null, 2));
@@ -1242,7 +1238,7 @@ async function main() {
       }
     }
 }`,
-    variables: {},
+    variables: {}
   });
 
   console.log(JSON.stringify(result, null, 2));
@@ -1255,7 +1251,7 @@ async function main() {
       jsonType
     }
 }`,
-      variables: {},
+      variables: {}
     });
     console.log(JSON.stringify(result, null, 2));
   }

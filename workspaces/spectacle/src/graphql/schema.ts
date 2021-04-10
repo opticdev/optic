@@ -6,15 +6,26 @@ schema {
 }
 type Mutation {
   applyCommands(commands: [JSON]): AppliedCommandsResult
+  startDiff(diffId: ID, captureId: ID): StartDiffResult
 }
 type AppliedCommandsResult {
   batchCommitId: ID
+}
+type StartDiffResult {
+  listDiffsQuery: String
+  listUnrecognizedUrlsQuery: String
 }
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
   endpointChanges(since: String): EndpointChanges
   batchCommits: [BatchCommit]
+  diff(diffId: ID): DiffState
+}
+type DiffState {
+  progress: JSON
+  diffs: JSON
+  unrecognizedUrls: JSON
 }
 type HttpBody {
   contentType: String

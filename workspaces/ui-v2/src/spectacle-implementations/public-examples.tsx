@@ -10,10 +10,10 @@ import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDi
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import {
-  IForkableSpectacle,
-  InMemorySpecRepository,
+  IForkableSpectacle
 } from '@useoptic/spectacle';
 import { EventEmitter } from 'events';
+import { InMemoryOpticContextBuilder, InMemorySpecRepository } from '@useoptic/spectacle/build/in-memory';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -22,7 +22,7 @@ export default function PublicExamples() {
   const task: InMemorySpectacleDependenciesLoader = async () => {
     const loadExample = async () => {
       const response = await fetch(`/example-sessions/${exampleId}.json`, {
-        headers: { accept: 'application/json' },
+        headers: { accept: 'application/json' }
       });
       if (!response.ok) {
         throw new Error(`could not find example ${exampleId}`);
@@ -32,12 +32,12 @@ export default function PublicExamples() {
     };
     const [example, opticEngine] = await Promise.all([
       loadExample(),
-      import('@useoptic/diff-engine-wasm/engine/browser'),
+      import('@useoptic/diff-engine-wasm/engine/browser')
     ]);
     return {
       events: example.events,
       samples: example.session.samples,
-      opticEngine,
+      opticEngine
     };
   };
   const { loading, error, data } = useInMemorySpectacle(task);
@@ -87,9 +87,10 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
     notifications: EventEmitter
   ) {
     this.specRepository = new InMemorySpecRepository(notifications, { events });
-    this.spectaclePromise = makeSpectacle(opticEngine, {
-      specRepository: this.specRepository,
-    });
+    this.spectaclePromise = makeSpectacle(InMemoryOpticContextBuilder.fromEvents(
+      opticEngine,
+      events
+    ));
   }
 
   async fork(): Promise<IBaseSpectacle> {
@@ -141,6 +142,6 @@ export function useInMemorySpectacle(
 
   return {
     loading: !spectacle,
-    data: spectacle,
+    data: spectacle
   };
 }
