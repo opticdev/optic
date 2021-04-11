@@ -16,10 +16,13 @@ import {
 } from '@material-ui/core';
 import { LoadingReview } from '../../diffs/LoadingPage';
 import { OpticBlue } from '../../theme';
+import { useCaptures } from '../../hooks/useCapturesHook';
+import { useDiffEnvironmentsRoot } from '../../navigation/Routes';
 
 export function DiffEnvsPage() {
   const [status, setStatus] = useState<number>(0);
-
+  const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
+  const capturesState = useCaptures();
   //@dev: useCaptures(), diffEnvironmentsRoot.linkTo
 
   useEffect(() => {
@@ -38,16 +41,27 @@ export function DiffEnvsPage() {
   const total = 100;
 
   return (
-    <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>
+    <CenteredColumn maxWidth='md' style={{ paddingTop: 50, paddingBottom: 50 }}>
       <Paper elevation={1}>
         <List dense>
           <ListItem style={{ height: 100 }}>
             <ListItemText
               primaryTypographyProps={{ variant: 'h6' }}
-              primary="Local Capture"
+              primary='Local Capture'
               secondary={`${100} interactions captured since last commit`}
             />
           </ListItem>
+          {capturesState.loading == false && (
+            capturesState.captures.map(capture => {
+                return (
+                  <ListItem key={capture.captureId}>
+                    <ListItemText primary={capture.startedAt}
+                                  secondary={diffEnvironmentsRoot.linkTo('local', capture.captureId)} />
+                  </ListItem>
+                );
+              },
+            ))
+          }
           <ListItemSecondaryAction>
             <LoadingReview cursor={cursor} total={total} reviewLink={''} />
           </ListItemSecondaryAction>
@@ -56,11 +70,11 @@ export function DiffEnvsPage() {
 
       <Divider style={{ marginTop: 200, marginBottom: 20 }} />
 
-      <Typography variant="h6" style={{ fontSize: 18 }}>
+      <Typography variant='h6' style={{ fontSize: 18 }}>
         Real Environments [Beta]
       </Typography>
 
-      <Typography variant="body2">
+      <Typography variant='body2'>
         Optic can securely monitor your API in real environments. Once deployed,
         Optic verifies your API meets its contract, alert you when it behaves
         unexpectedly, and help you understand what parts of your API each
@@ -89,14 +103,14 @@ export function DiffEnvsPage() {
         <Grid
           xs={4}
           item
-          alignContent="center"
-          justifyContent="center"
-          display="flex"
-          flexDirection="column"
+          alignContent='center'
+          justifyContent='center'
+          display='flex'
+          flexDirection='column'
           component={Box}
         >
           <Typography
-            variant="body2"
+            variant='body2'
             style={{
               fontFamily: 'Ubuntu Mono',
               marginBottom: 5,
@@ -105,26 +119,27 @@ export function DiffEnvsPage() {
           >
             Ready to put Optic into a real environment?
           </Typography>
-          <Button color="secondary" variant="contained">
+          <Button color='secondary' variant='contained'>
             Join Beta
           </Button>
         </Grid>
       </Grid>
     </CenteredColumn>
-  );
+  )
+    ;
 }
 
 export function RealEnvColumn({
-  name,
-  examples,
-}: {
+                                name,
+                                examples,
+                              }: {
   name: string;
   examples: LiveRowProps[];
 }) {
   return (
     <Paper elevation={1} square={false} style={{ overflow: 'hidden' }}>
       <Typography
-        variant="body1"
+        variant='body1'
         style={{
           fontFamily: 'Ubuntu Mono',
           color: '#e2e2e2',

@@ -115,6 +115,7 @@
     "ts-pnp": "1.2.0",
     "typescript": "^4.2.3",
     "url-loader": "4.1.1",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1",
     "webpack": "4.44.2",
     "webpack-dev-server": "3.11.1",
@@ -217,6 +218,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-window": "^1.8.2",
     "@types/shortid": "^0.0.29",
+    "@types/uuid": "^8",
     "fs-extra": "^9.1.0",
     "threads": "^1.6.3"
   }

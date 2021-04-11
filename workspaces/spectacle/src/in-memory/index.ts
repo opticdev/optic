@@ -69,11 +69,11 @@ interface InMemoryCapturesServiceDependencies {
 
 
 export class InMemoryCapturesService implements IOpticCapturesService {
-  constructor(private dependencies: InMemoryCapturesServiceDependencies) {
+  constructor(private dependencies: InMemoryCapturesServiceDependencies, private captures: ICapture[]) {
   }
 
   async listCaptures(): Promise<ICapture[]> {
-    return [];
+    return this.captures;
   }
 
   async listCapturedInteractions(captureId: string): Promise<any[]> {
@@ -258,7 +258,7 @@ export class InMemoryOpticContextBuilder {
         interactionsRepository,
         configRepository,
         specRepository,
-      }),
+      }, []),
       diffRepository,
       configRepository,
       specRepository,
@@ -280,7 +280,7 @@ export class InMemoryOpticContextBuilder {
         interactionsRepository,
         specRepository,
         configRepository,
-      }),
+      }, [{captureId, startedAt: new Date().toISOString()}]),
       diffRepository,
       configRepository,
       specRepository,

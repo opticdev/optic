@@ -15,11 +15,17 @@ import { Route } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { DiffEnvsPage } from './DiffEnvsPage';
+import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export function DiffReviewPages(props: any) {
-  // const { match } = props;
-  // const { environment, boundaryId } = match.params;
-
+  const { match } = props;
+  const { environment, boundaryId } = match.params;
+  const [diffId] = useState(uuidv4());
+  const diff = useDiffsForCapture(boundaryId, diffId);
+  console.log(diff)
+  debugger;
   //@dev: useCapture(boundaryId)
   //@dev: useDiff(diffId, boundaryId)
   // returns loading until diff is done
