@@ -44,27 +44,21 @@ export function DiffEnvsPage() {
     <CenteredColumn maxWidth='md' style={{ paddingTop: 50, paddingBottom: 50 }}>
       <Paper elevation={1}>
         <List dense>
-          <ListItem style={{ height: 100 }}>
-            <ListItemText
-              primaryTypographyProps={{ variant: 'h6' }}
-              primary='Local Capture'
-              secondary={`${100} interactions captured since last commit`}
-            />
-          </ListItem>
           {capturesState.loading == false && (
             capturesState.captures.map(capture => {
                 return (
                   <ListItem key={capture.captureId}>
                     <ListItemText primary={capture.startedAt}
-                                  secondary={diffEnvironmentsRoot.linkTo('local', capture.captureId)} />
+                                  secondary={diffEnvironmentsRoot.linkTo('local', capture.captureId) + '/urls'} />
+                    <ListItemSecondaryAction>
+                      <LoadingReview cursor={cursor} total={total}
+                                     reviewLink={diffEnvironmentsRoot.linkTo('local', capture.captureId)} />
+                    </ListItemSecondaryAction>
                   </ListItem>
                 );
               },
             ))
           }
-          <ListItemSecondaryAction>
-            <LoadingReview cursor={cursor} total={total} reviewLink={''} />
-          </ListItemSecondaryAction>
         </List>
       </Paper>
 

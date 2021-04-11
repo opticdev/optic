@@ -25,7 +25,6 @@ export function DiffReviewPages(props: any) {
   const [diffId] = useState(uuidv4());
   const diff = useDiffsForCapture(boundaryId, diffId);
   console.log(diff)
-  debugger;
   //@dev: useCapture(boundaryId)
   //@dev: useDiff(diffId, boundaryId)
   // returns loading until diff is done
