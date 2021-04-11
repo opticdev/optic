@@ -83,7 +83,6 @@ export class ParsedDiff {
   }
 
   location(currentSpecContext: CurrentSpecContext): IParsedLocation {
-    const diff = this.serialized_diff;
 
     const location = locationForTrails(
       this.requestsTrail(),

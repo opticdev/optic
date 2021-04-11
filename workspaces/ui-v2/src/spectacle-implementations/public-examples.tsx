@@ -10,10 +10,11 @@ import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDi
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import {
-  IForkableSpectacle
+  IForkableSpectacle,
 } from '@useoptic/spectacle';
-import { EventEmitter } from 'events';
-import { InMemoryOpticContextBuilder, InMemorySpecRepository } from '@useoptic/spectacle/build/in-memory';
+import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
+import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
+import { IOpticContext } from '@useoptic/spectacle';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -22,7 +23,7 @@ export default function PublicExamples() {
   const task: InMemorySpectacleDependenciesLoader = async () => {
     const loadExample = async () => {
       const response = await fetch(`/example-sessions/${exampleId}.json`, {
-        headers: { accept: 'application/json' }
+        headers: { accept: 'application/json' },
       });
       if (!response.ok) {
         throw new Error(`could not find example ${exampleId}`);
@@ -32,12 +33,12 @@ export default function PublicExamples() {
     };
     const [example, opticEngine] = await Promise.all([
       loadExample(),
-      import('@useoptic/diff-engine-wasm/engine/browser')
+      import('@useoptic/diff-engine-wasm/engine/browser'),
     ]);
     return {
       events: example.events,
       samples: example.session.samples,
-      opticEngine
+      opticEngine,
     };
   };
   const { loading, error, data } = useInMemorySpectacle(task);
@@ -53,16 +54,18 @@ export default function PublicExamples() {
 
   return (
     <SpectacleStore spectacle={data}>
-      <InMemoryInteractionLoaderStore samples={data.samples}>
-        <BaseUrlProvider value={{ url: match.url }}>
-          <Switch>
-            <>
-              <DiffReviewEnvironments />
-              <DocumentationPages />
-            </>
-          </Switch>
-        </BaseUrlProvider>
-      </InMemoryInteractionLoaderStore>
+      <CapturesServiceStore capturesService={data.opticContext.capturesService}>
+        <InMemoryInteractionLoaderStore samples={data.samples}>
+          <BaseUrlProvider value={{ url: match.url }}>
+            <Switch>
+              <>
+                <DiffReviewEnvironments />
+                <DocumentationPages />
+              </>
+            </Switch>
+          </BaseUrlProvider>
+        </InMemoryInteractionLoaderStore>
+      </CapturesServiceStore>
     </SpectacleStore>
   );
 }
@@ -73,32 +76,23 @@ export interface InMemorySpectacleDependencies {
   samples: any[];
 }
 
+
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
 class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
-  private readonly spectaclePromise: Promise<any>;
-
-  public readonly specRepository: InMemorySpecRepository;
+  private spectaclePromise: Promise<any>;
 
   constructor(
-    private readonly opticEngine: any,
-    private events: any[],
+    public readonly opticContext: IOpticContext,
     public samples: any[],
-    notifications: EventEmitter
   ) {
-    this.specRepository = new InMemorySpecRepository(notifications, { events });
-    this.spectaclePromise = makeSpectacle(InMemoryOpticContextBuilder.fromEvents(
-      opticEngine,
-      events
-    ));
+    this.spectaclePromise = makeSpectacle(opticContext);
   }
 
   async fork(): Promise<IBaseSpectacle> {
     return new InMemorySpectacle(
-      this.opticEngine,
-      this.events,
+      this.opticContext,
       this.samples,
-      new EventEmitter()
     );
   }
 
@@ -115,22 +109,26 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
 export interface InMemoryBaseSpectacle extends IBaseSpectacle {
   samples: any[];
+  opticContext: IOpticContext
 }
 
 export function useInMemorySpectacle(
-  loadDependencies: InMemorySpectacleDependenciesLoader
+  loadDependencies: InMemorySpectacleDependenciesLoader,
 ): AsyncStatus<InMemoryBaseSpectacle> {
   const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
 
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
-      const notifications = new EventEmitter();
-      const inMemorySpectacle = new InMemorySpectacle(
+      const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
         result.opticEngine,
         result.events,
         result.samples,
-        notifications
+        'example-session',
+      );
+      const inMemorySpectacle = new InMemorySpectacle(
+        opticContext,
+        result.samples,
       );
       setSpectacle(inMemorySpectacle);
     }
@@ -142,6 +140,6 @@ export function useInMemorySpectacle(
 
   return {
     loading: !spectacle,
-    data: spectacle
+    data: spectacle,
   };
 }

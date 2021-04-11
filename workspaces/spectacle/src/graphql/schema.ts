@@ -12,6 +12,7 @@ type AppliedCommandsResult {
   batchCommitId: ID
 }
 type StartDiffResult {
+  notificationsUrl: String
   listDiffsQuery: String
   listUnrecognizedUrlsQuery: String
 }
@@ -23,7 +24,6 @@ type Query {
   diff(diffId: ID): DiffState
 }
 type DiffState {
-  progress: JSON
   diffs: JSON
   unrecognizedUrls: JSON
 }

@@ -1186,7 +1186,8 @@ const _events = [
 ];
 
 async function main() {
-  const spectacle = await makeSpectacle(InMemoryOpticContextBuilder.fromEvents(OpticEngine, _events));
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, _events);
+  const spectacle = await makeSpectacle(opticContext);
 
   const batchCommitResults = await spectacle({
     query: `{

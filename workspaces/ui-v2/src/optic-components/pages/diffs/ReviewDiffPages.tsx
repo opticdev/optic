@@ -20,6 +20,11 @@ export function DiffReviewPages(props: any) {
   // const { match } = props;
   // const { environment, boundaryId } = match.params;
 
+  //@dev: useCapture(boundaryId)
+  //@dev: useDiff(diffId, boundaryId)
+  // returns loading until diff is done
+  // DiffContext.Provider value={{...}}
+
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();

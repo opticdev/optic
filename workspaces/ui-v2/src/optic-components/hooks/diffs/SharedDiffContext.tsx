@@ -74,7 +74,7 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
   };
-
+  //@dev here is where the diff output needs to go
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(currentSpecContext)
   );

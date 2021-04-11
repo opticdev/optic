@@ -8,7 +8,8 @@ export async function generateEndpointChanges(initialEvents: any[] = [], current
 
   // We only need to add a "since" to the query if there are initial events.
   if (initialEvents.length) {
-    const initialSpectacle = await makeSpectacle(InMemoryOpticContextBuilder.fromEvents(OpticEngine, initialEvents));
+    const initialOpticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, initialEvents)
+    const initialSpectacle = await makeSpectacle(initialOpticContext);
 
 
     const batchCommitResults = await initialSpectacle({
@@ -52,7 +53,8 @@ export async function generateEndpointChanges(initialEvents: any[] = [], current
     }`;
   }
 
-  const currentSpectacle = await makeSpectacle(InMemoryOpticContextBuilder.fromEvents(OpticEngine, currentEvents));
+  const currentOpticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, currentEvents)
+  const currentSpectacle = await makeSpectacle(currentOpticContext);
 
 
   return await currentSpectacle({

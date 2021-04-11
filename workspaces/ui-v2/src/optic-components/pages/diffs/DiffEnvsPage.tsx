@@ -20,6 +20,8 @@ import { OpticBlue } from '../../theme';
 export function DiffEnvsPage() {
   const [status, setStatus] = useState<number>(0);
 
+  //@dev: useCaptures(), diffEnvironmentsRoot.linkTo
+
   useEffect(() => {
     setTimeout(() => {
       setStatus(20);
