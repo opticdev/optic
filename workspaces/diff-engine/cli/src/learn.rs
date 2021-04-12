@@ -6,13 +6,16 @@ use nanoid::nanoid;
 use serde::Serialize;
 use serde_json;
 use std::collections::HashMap;
+use std::iter::FromIterator;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 
-use optic_diff_engine::{analyze_undocumented_bodies, EndpointCommand, SpecCommand};
-use optic_diff_engine::{streams, InteractionDiffResult};
+use optic_diff_engine::streams::TaggedInput;
+use optic_diff_engine::{
+  analyze_undocumented_bodies, streams, EndpointCommand, InteractionDiffResult, SpecCommand,
+};
 use optic_diff_engine::{
   BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator,
   SpecProjection, TrailObservationsResult,
@@ -33,12 +36,12 @@ pub fn create_subcommand<'a, 'b>() -> App<'a, 'b> {
       Arg::with_name("shape-diffs-affordances")
         .long("shape-diffs-affordances")
         .takes_value(false)
-        .requires("diffs-source")
+        .requires("tagged-diff-results")
         .help("Learn affordances for diff trails from interactions piped to stdin"),
     )
     .arg(
-      Arg::with_name("diffs-source")
-        .long("diffs-source")
+      Arg::with_name("tagged-diff-results")
+        .long("tagged-diff-results")
         .takes_value(true)
         .help("Path to file containing diff results for which to learn affordances"),
     )
@@ -65,12 +68,12 @@ pub async fn main<'a>(
     learn_undocumented_bodies(spec_events, input_queue_size, interaction_lines, sink).await;
   } else if command_matches.is_present("shape-diffs") {
     let diffs_path = command_matches
-      .value_of("diffs-source")
-      .expect("diffs-source is required for shape-diffs learning subject");
+      .value_of("tagged-diff-results")
+      .expect("tagged-diff-results is required for shape-diffs learning subject");
 
     let stdin = stdin();
     let interaction_lines = streams::http_interaction::json_lines(stdin);
-    let diffs = streams::diff::from_json_line_file(diffs_path)
+    let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
       .await
       .expect("could not read diffs");
     let sink = stdout();
@@ -188,9 +191,69 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
   spec_events: Vec<SpecEvent>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
-  diffs: Vec<InteractionDiffResult>,
+  tagged_diffs: Vec<TaggedInput<InteractionDiffResult>>,
   sink: S,
 ) {
+  let spec_projection = Arc::new(SpecProjection::from(spec_events));
+
+  let (analysis_sender, analysis_receiver) = mpsc::channel(32);
+
+  let mut fingerprints_by_tag = HashMap::new();
+  let mut diffs_by_fingerprint = HashMap::new();
+  for tagged_diff in tagged_diffs {
+    let (diff, tags) = tagged_diff.into_parts();
+    let fingerprint = diff.fingerprint();
+
+    diffs_by_fingerprint.insert(fingerprint, diff);
+
+    for tag in tags {
+      let tag_fingerprints = fingerprints_by_tag.entry(tag).or_insert_with(|| vec![]);
+
+      tag_fingerprints.push(fingerprint);
+    }
+  }
+
+  let analyzing_bodies = async move {
+    let analyze_results = interaction_lines
+      .map(Ok)
+      .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
+        let projection = spec_projection.clone();
+        let analysis_sender = analysis_sender.clone();
+
+        let analyze_task = tokio::spawn(async move {
+          let analyze_comp = tokio::task::spawn_blocking(move || {
+            let interaction_json =
+              interaction_json_result.expect("can read interaction json line form stdin");
+
+            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
+              serde_json::from_str(&interaction_json).expect("could not parse interaction json");
+
+            analyze_undocumented_bodies(&projection, interaction)
+          });
+
+          match analyze_comp.await {
+            Ok(results) => {
+              for result in results {
+                analysis_sender
+                  .send(result)
+                  .await
+                  .expect("could not send analysis result to aggregation channel")
+              }
+            }
+            Err(err) => {
+              // ignore a single interaction not being able to deserialize
+              eprintln!("interaction ignored: {}", err);
+            }
+          }
+        });
+
+        analyze_task
+      })
+      .await;
+
+    analyze_results
+  };
+
   todo!("shape diffs learning is yet to be implemented");
 }
 
@@ -206,6 +269,9 @@ impl SpecIdGenerator for IdGenerator {
     format!("{}{}", prefix, nanoid!(10))
   }
 }
+
+// Output types
+// ------------
 
 #[derive(Default, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]

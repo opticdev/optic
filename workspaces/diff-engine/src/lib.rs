@@ -17,12 +17,12 @@ pub mod streams;
 pub use commands::{CommandContext, EndpointCommand, RfcCommand, SpecCommand, SpecCommandHandler};
 pub use cqrs_core::Aggregate;
 pub use events::{
-  http_interaction::{HttpInteraction, ArbitraryData, Request, Response, Body},
+  http_interaction::{ArbitraryData, Body, HttpInteraction, Request, Response},
   RfcEvent, SpecChunkEvent, SpecEvent,
 };
-pub use interactions::analyze_undocumented_bodies;
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
+pub use interactions::{analyze_diff_affordances, analyze_undocumented_bodies};
 pub use learn_shape::TrailObservationsResult;
 pub use projections::{
   EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,

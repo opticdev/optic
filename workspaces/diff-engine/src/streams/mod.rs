@@ -1,6 +1,6 @@
 use bytes::{BufMut, Bytes, BytesMut};
 use futures::{sink::Sink, SinkExt, Stream};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io;
 use thiserror::Error;
@@ -90,6 +90,53 @@ pub enum JsonLineReaderError {
     #[from]
     source: io::Error,
   },
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct TaggedInput<T>(T, Tags);
+pub type Tags = Vec<String>;
+
+impl<T> TaggedInput<T> {
+  pub fn into_parts(self) -> (T, Tags) {
+    (self.0, self.1)
+  }
+}
+// pub struct TaggedInputIterator<T> {
+//   inner: Option<TaggedInput<T>>,
+// }
+
+// impl<T> Iterator for TaggedInputIterator<T> {
+//   type Item = (Tags, T);
+
+//   #[inline]
+//   fn next(&mut self) -> Option<Self::Item> {
+//     self.inner.take();
+
+//     tagged_input.map(|tagged_input| {
+//       let TaggedInput(input, tags) = tagged_input;
+//       (tags, input)
+//     })
+//   }
+// }
+
+// impl<T> IntoIterator for TaggedInput<T> {
+//   type Item = (Tags, T);
+//   type IntoIter = TaggedInputIterator<T>;
+
+//   fn into_iter(self) -> Self::IntoIter {
+//     TaggedInputIterator { inner: Some(self) }
+//   }
+// }
+
+pub fn json_lines<R>(
+  source: R,
+  buffer_capacity: usize,
+) -> impl Stream<Item = Result<String, std::io::Error>>
+where
+  R: AsyncRead,
+{
+  let reader = BufReader::with_capacity(buffer_capacity, source);
+  LinesStream::new(reader.lines())
 }
 
 pub async fn write_to_json_lines<'a, S, I>(
