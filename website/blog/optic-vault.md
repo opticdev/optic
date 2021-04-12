@@ -54,7 +54,7 @@ That's was a valid [unseal](https://www.vaultproject.io/docs/concepts/seal) key 
 
 ## Configuring Optic to observe Vault traffic
 
-There's several ways to [configure Optic](https://app.useoptic.com), and in this case I'm going to choose to define my inbound and target URLs to match Vault's defaults:
+There's several ways to [configure Optic](/docs/), and in this case I'm going to choose to define my inbound and target URLs to match Vault's defaults:
 
 ```
 api init --inboundUrl=http://localhost:8000 --targetUrl=http://localhost:8200
@@ -268,4 +268,4 @@ Success! We see new undocumented routes for our latest endpoints. Going forward,
 
 ## Get started with Optic!
 
-You can start documenting your API today by [setting up Optic](https://app.useoptic.com/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).
+You can start documenting your API today by [setting up Optic](/docs/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).

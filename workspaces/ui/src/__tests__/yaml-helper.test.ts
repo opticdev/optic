@@ -25,7 +25,7 @@ ignoreRequests:
 const opticyaml_missing_value = `name: Todo API
 tasks:
   # The default task, invoke using \`api run start\`
-  # Learn how to set up and use Optic at https://app.useoptic.com
+  # Learn how to set up and use Optic at https://www.useoptic.com/docs/
   start:
     command:
     inboundUrl: http://localhost:3005
