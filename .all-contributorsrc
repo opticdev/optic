@@ -228,6 +228,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jshearer",
+      "name": "Joseph Shearer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4368270?v=4",
+      "profile": "https://github.com/jshearer",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
