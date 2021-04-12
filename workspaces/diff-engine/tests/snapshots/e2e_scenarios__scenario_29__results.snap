@@ -31,6 +31,17 @@ expression: results
                             key: "array",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "location",
+                        },
+                        JsonObjectKey {
+                            key: "principality",
+                        },
+                        JsonObjectKey {
+                            key: "array",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

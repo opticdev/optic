@@ -4,14 +4,17 @@ mod result;
 pub mod traverser;
 pub mod visitors;
 
-pub use result::ShapeDiffResult;
-pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
-
+use crate::learn_shape::TrailObservationsResult;
 use crate::projections::shape::ShapeProjection;
 use crate::queries::shape::ShapeQueries;
 use crate::state::shape::ShapeId;
+use crate::InteractionDiffResult;
+pub use result::ShapeDiffResult;
+use std::collections::HashMap;
+pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
 use visitors::BodyVisitors;
 
+/// Compute the diff between a (normalized) body and a shape defintion from a spec.
 pub fn diff(
   shapes_projection: &ShapeProjection,
   body: Option<BodyDescriptor>,
@@ -28,4 +31,13 @@ pub fn diff(
   shape_traverser.traverse_root_shape(body, shape_id, &mut diff_visitors);
 
   diff_visitors.take_results().unwrap()
+}
+
+pub fn analyze_trail_values(
+  body: Option<&BodyDescriptor>,
+  diff_results: impl IntoIterator<Item = InteractionDiffResult>,
+) -> impl Iterator<Item = TrailObservationsResult> {
+  diff_results
+    .into_iter()
+    .map(|diff_result| TrailObservationsResult::default())
 }

@@ -1,7 +1,8 @@
-use crate::shapes::ShapeDiffResult;
+use crate::learn_shape::TrailObservationsResult;
+use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
 use serde::Serialize;
-use std::collections::hash_map::DefaultHasher;
+use std::collections::hash_map::{DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Serialize, Hash)]
@@ -177,6 +178,78 @@ impl UnmatchedResponseBodyShape {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#[derive(Clone, Debug)]
+pub struct BodyAnalysisResult {
+  pub body_location: BodyAnalysisLocation,
+  pub trail_observations: TrailObservationsResult,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+pub enum BodyAnalysisLocation {
+  Request {
+    path_id: PathComponentId,
+    method: String,
+    content_type: Option<String>,
+  },
+  Response {
+    path_id: PathComponentId,
+    method: String,
+    content_type: Option<String>,
+    status_code: u16,
+  },
+}
+
+impl BodyAnalysisLocation {
+  pub fn content_type(&self) -> Option<&String> {
+    match self {
+      BodyAnalysisLocation::Request { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::Response { content_type, .. } => content_type.as_ref(),
+    }
+  }
+}
+
+impl From<UnmatchedRequestBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedRequestBodyContentType) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Request {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedRequestBodyContentType implies request to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedRequestBodyContentType implies request to have a known method")
+        .clone(),
+      content_type: interaction_trail.get_request_content_type().cloned(),
+    }
+  }
+}
+
+impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: UnmatchedResponseBodyContentType) -> Self {
+    let interaction_trail = diff.interaction_trail;
+
+    Self::Response {
+      path_id: diff
+        .requests_trail
+        .get_path_id()
+        .expect("UnmatchedResponseBodyContentType implies response to have a known path")
+        .clone(),
+      method: interaction_trail
+        .get_method()
+        .expect("UnmatchedResponseBodyContentType implies response to have a known method")
+        .clone(),
+      content_type: interaction_trail.get_response_content_type().cloned(),
+      status_code: interaction_trail
+        .get_response_status_code()
+        .expect("UnmatchedResponseBodyContentType implies response to have a status code"),
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
 pub struct InteractionTrail {
   pub path: Vec<InteractionTrailPathComponent>,
@@ -202,6 +275,47 @@ impl InteractionTrail {
       .path
       .push(InteractionTrailPathComponent::Method { method })
   }
+
+  pub fn with_request_body(&mut self, content_type: String) {
+    self
+      .path
+      .push(InteractionTrailPathComponent::RequestBody { content_type })
+  }
+
+  pub fn with_response_body(&mut self, content_type: String, status_code: u16) {
+    self.path.push(InteractionTrailPathComponent::ResponseBody {
+      content_type,
+      status_code,
+    })
+  }
+
+  pub fn get_method(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::Method { method } => Some(method),
+      _ => None,
+    })
+  }
+
+  pub fn get_request_content_type(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::RequestBody { content_type } => Some(content_type),
+      _ => None,
+    })
+  }
+
+  pub fn get_response_content_type(&self) -> Option<&String> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::ResponseBody { content_type, .. } => Some(content_type),
+      _ => None,
+    })
+  }
+
+  pub fn get_response_status_code(&self) -> Option<u16> {
+    self.path.iter().find_map(|component| match component {
+      InteractionTrailPathComponent::ResponseBody { status_code, .. } => Some(*status_code),
+      _ => None,
+    })
+  }
 }
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Clone, Debug, Serialize, Hash)]
@@ -212,6 +326,15 @@ pub enum RequestSpecTrail {
   SpecRequestBody(SpecRequestBody),
   SpecResponseRoot(SpecResponseRoot),
   SpecResponseBody(SpecResponseBody),
+}
+
+impl RequestSpecTrail {
+  pub fn get_path_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecPath(spec_path) => Some(&spec_path.path_id),
+      _ => None,
+    }
+  }
 }
 
 #[derive(Clone, Debug, Serialize, Hash)]

@@ -4,9 +4,9 @@ use crate::events::RfcEvent;
 use crate::projections::{CommitId, HistoryProjection};
 use crate::queries::history::HistoryQueries;
 use cqrs_core::AggregateCommand;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 pub enum RfcCommand {
   AddContribution(AddContribution),
   SetAPIName(SetAPIName),
@@ -46,7 +46,7 @@ impl RfcCommand {
   }
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AddContribution {
   pub id: String,
@@ -54,26 +54,26 @@ pub struct AddContribution {
   pub value: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SetAPIName {
   new_name: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SetGitState {
   commit_id: String,
   branch_name: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MarkSetupStageComplete {
   step: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StartBatchCommit {
   pub batch_id: String,
@@ -81,7 +81,7 @@ pub struct StartBatchCommit {
   pub commit_message: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EndBatchCommit {
   pub batch_id: String,
@@ -273,12 +273,16 @@ mod test {
 
   #[test]
   pub fn can_handle_contribution_commands() {
-    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([]))
-    .expect("initial events should be valid spec events");
+    let initial_events: Vec<SpecEvent> =
+      serde_json::from_value(json!([])).expect("initial events should be valid spec events");
 
     let projection = HistoryProjection::from(initial_events);
 
-    let command: RfcCommand = RfcCommand::add_contribution(String::from("path123.method"), String::from("purpose"), String::from("Name of Endpoint"));
+    let command: RfcCommand = RfcCommand::add_contribution(
+      String::from("path123.method"),
+      String::from("purpose"),
+      String::from("Name of Endpoint"),
+    );
 
     let new_events = projection
       .execute(command)

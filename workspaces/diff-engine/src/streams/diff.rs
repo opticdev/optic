@@ -11,7 +11,5 @@ where
   S: AsyncWrite,
   T: Serialize,
 {
-  let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b"\n");
-  FramedWrite::new(writer, codec)
+  super::into_json_lines::<S, T>(sink)
 }

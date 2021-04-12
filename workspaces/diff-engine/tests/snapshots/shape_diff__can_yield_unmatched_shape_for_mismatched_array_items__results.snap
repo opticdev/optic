@@ -1,11 +1,16 @@
 ---
-source: tests/shape_diff.rs
+source: workspaces/diff-engine/tests/shape_diff.rs
 expression: results
 ---
 [
     UnmatchedShape {
         json_trail: JsonTrail {
             path: [
+                JsonArrayItem {
+                    index: 0,
+                },
+            ],
+            normalized: [
                 JsonArrayItem {
                     index: 0,
                 },
@@ -26,6 +31,11 @@ expression: results
             path: [
                 JsonArrayItem {
                     index: 2,
+                },
+            ],
+            normalized: [
+                JsonArrayItem {
+                    index: 0,
                 },
             ],
         },

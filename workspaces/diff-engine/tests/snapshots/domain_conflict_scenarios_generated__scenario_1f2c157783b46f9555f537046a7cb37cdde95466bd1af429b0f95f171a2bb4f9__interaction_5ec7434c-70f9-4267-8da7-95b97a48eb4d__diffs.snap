@@ -25,6 +25,11 @@ expression: diffs
                             key: "cars",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "cars",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",

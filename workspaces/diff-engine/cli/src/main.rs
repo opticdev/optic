@@ -17,6 +17,7 @@ use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
 
 mod commit;
+mod learn;
 
 fn main() {
   let cli = App::new("Optic Engine CLI")
@@ -63,6 +64,7 @@ fn main() {
         .about("Assembles a directory of API spec files into a single events stream"),
     )
     .subcommand(commit::create_subcommand())
+    .subcommand(learn::create_subcommand())
     .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
@@ -103,6 +105,11 @@ fn main() {
 
   let runtime = runtime_builder.build().unwrap();
 
+  let input_queue_size = cmp::min(
+    num_cpus::get(),
+    core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+  ) * 4;
+
   runtime.block_on(async {
     let spec_chunks = match spec_path_type {
       SpecPathType::FILE => streams::spec_chunks::from_root_api_file(&spec_path)
@@ -133,15 +140,14 @@ fn main() {
       (commit::SUBCOMMAND_NAME, Some(subcommand_matches)) => {
         commit::main(subcommand_matches, spec_chunks, spec_path).await
       }
+      (learn::SUBCOMMAND_NAME, Some(subcommand_matches)) => {
+        learn::main(subcommand_matches, spec_chunks, input_queue_size).await
+      }
       _ => {
         eprintln!("diffing interations against a spec");
-        let diff_queue_size = cmp::min(
-          num_cpus::get(),
-          core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-        ) * 4;
-        eprintln!("using diff size {}", diff_queue_size);
+        eprintln!("using input queue size {}", input_queue_size);
 
-        diff(events_from_chunks(spec_chunks).await, diff_queue_size).await;
+        diff(events_from_chunks(spec_chunks).await, input_queue_size).await;
       }
     };
   });
