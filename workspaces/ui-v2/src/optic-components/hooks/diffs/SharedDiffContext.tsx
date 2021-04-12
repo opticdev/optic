@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import {
   IPendingEndpoint,
+  IUndocumentedUrl,
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
@@ -13,7 +14,9 @@ import { IEndpoint, useEndpoints } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { IgnoreRule } from '../../../lib/ignore-rule';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
+import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
+import { ParsedDiff } from '../../../lib/parse-diff';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -25,7 +28,7 @@ type ISharedDiffContext = {
   persistWIPPattern: (
     path: string,
     method: string,
-    components: PathComponentAuthoring[]
+    components: PathComponentAuthoring[],
   ) => void;
   getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
@@ -37,37 +40,16 @@ type ISharedDiffContext = {
   currentSpecContext: CurrentSpecContext;
 };
 
-export const SharedDiffStoreWithDependencies = (props: any) => {
-  const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
-  const allEndpointsOfBaseSpec = useEndpoints();
-
-  // loaded
-  if (
-    allRequestsAndResponsesOfBaseSpec.data &&
-    allEndpointsOfBaseSpec.endpoints
-  ) {
-    return (
-      <SharedDiffStore
-        endpoints={allEndpointsOfBaseSpec.endpoints}
-        requests={allRequestsAndResponsesOfBaseSpec.data.requests}
-        responses={allRequestsAndResponsesOfBaseSpec.data.responses}
-      >
-        {props.children}
-      </SharedDiffStore>
-    );
-  } else {
-    return <div>LOADING</div>;
-  }
-};
-
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
   requests: IRequestBody[];
   responses: IResponseBody[];
+  diffs: any;
+  urls: IUnrecognizedUrl[];
   children?: any;
 };
 
-const SharedDiffStore = (props: SharedDiffStoreProps) => {
+export const SharedDiffStore = (props: SharedDiffStoreProps) => {
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -76,7 +58,11 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
   };
   //@dev here is where the diff output needs to go
   const [state, send]: any = useMachine(() =>
-    newSharedDiffMachine(currentSpecContext)
+    newSharedDiffMachine(
+      currentSpecContext,
+      props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
+      props.urls.map((i) => ({ ...i })),
+    ),
   );
   const context: SharedDiffStateContext = state.context;
   const [wipPatterns, setWIPPatterns] = useState<{
@@ -115,7 +101,7 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     persistWIPPattern: (
       path: string,
       method: string,
-      components: PathComponentAuthoring[]
+      components: PathComponentAuthoring[],
     ) =>
       setWIPPatterns((obj) => ({
         ...obj,

@@ -103,8 +103,9 @@ function BatchCommitMenuItem({
   onClick: () => void;
 }) {
   const name =
-    batch.commitMessage.split('\n')[0] ||
-    `API  ${batch.commitMessage.split('\n').length}  changes`;
+    batch.commitMessage &&
+    (batch.commitMessage.split('\n')[0] ||
+      `API  ${batch.commitMessage.split('\n').length}  changes`);
   return (
     <MenuItem onClick={onClick}>
       <Box display="flex" flexDirection="column">
