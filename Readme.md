@@ -152,7 +152,7 @@ MIT
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-24-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-25-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -189,6 +189,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://baptiste.darthenay.fr/"><img src="https://avatars.githubusercontent.com/u/2727048?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Baptiste Darthenay</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=batisteo" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/alexlmiller"><img src="https://avatars.githubusercontent.com/u/5964662?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Miller</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=alexlmiller" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/jshearer"><img src="https://avatars.githubusercontent.com/u/4368270?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Shearer</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=jshearer" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/raybejjani"><img src="https://avatars.githubusercontent.com/u/744312?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ray Bejjani</b></sub></a><br /><a href="https://github.com/opticdev/Optic/commits?author=raybejjani" title="Documentation">📖</a></td>
   </tr>
 </table>
 

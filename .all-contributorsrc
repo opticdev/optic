@@ -237,6 +237,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "raybejjani",
+      "name": "Ray Bejjani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/744312?v=4",
+      "profile": "https://github.com/raybejjani",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
