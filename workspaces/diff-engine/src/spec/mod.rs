@@ -6,6 +6,8 @@ use crate::events::SpecEvent;
 use crate::projections::SpecProjection;
 use cqrs_core::Aggregate;
 
+/// Create an interface that allows commands to be applied to a spec as part of a single
+/// batch. Will produce events enclosed in `BatchCommitStarted` and `BatchCommitEnded`.
 pub fn append_batch(
   spec_projection: SpecProjection,
   commit_message: String,

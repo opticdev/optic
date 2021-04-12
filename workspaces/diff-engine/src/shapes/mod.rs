@@ -14,6 +14,7 @@ use std::collections::HashMap;
 pub use traverser::{JsonTrail, JsonTrailPathComponent, ShapeTrail, ShapeTrailPathComponent};
 use visitors::BodyVisitors;
 
+/// Compute the diff between a (normalized) body and a shape defintion from a spec.
 pub fn diff(
   shapes_projection: &ShapeProjection,
   body: Option<BodyDescriptor>,

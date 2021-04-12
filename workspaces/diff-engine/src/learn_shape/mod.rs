@@ -12,6 +12,8 @@ use traverser::Traverser;
 use visitors::learn_json_values::LearnVisitors;
 use visitors::BodyVisitors;
 
+/// Traverse the description of a body and denote, per body trail, the types
+/// of values seen.
 pub fn observe_body_trails(
   into_body: impl Into<Option<BodyDescriptor>>,
 ) -> TrailObservationsResult {
@@ -62,8 +64,5 @@ mod test {
     dbg!(&item_shape_result);
     assert!(item_shape_result.was_object);
     assert_eq!(item_shape_result.field_sets.len(), 2);
-
-    dbg!(result);
-    // assert_debug_snapshot!(result);
   }
 }

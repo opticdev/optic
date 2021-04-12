@@ -66,7 +66,6 @@ interface EndpointInteractionFilter {
   (interaction: HttpInteraction): boolean;
 }
 
-// TODO: implement this with WASM domain instead of ScalaJS
 async function createEndpointFilter(
   events: any[],
   pathId: string,

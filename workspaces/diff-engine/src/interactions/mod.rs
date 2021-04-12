@@ -14,6 +14,11 @@ use result::InteractionTrail;
 pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 use visitors::{InteractionVisitors, PathVisitor};
 
+/// Compute diffs based on a spec and an interaction.
+///
+/// Will first try to match the interaction to a Request + Response pair from the spec. From there
+/// will either produce unmatched results or proceed to diff bodies of the Request and Response
+/// respectively.
 pub fn diff(
   spec_projection: &SpecProjection,
   http_interaction: HttpInteraction,
@@ -66,6 +71,13 @@ pub fn diff(
     .collect()
 }
 
+/// Analysises the shapes of interactions that have request or response bodies with previously
+/// unseen content types. From the result, observed types per json trail, commands can be generated
+/// applyable to the spec that would make the interaction compliant. Results can also be merged with
+/// each other, creating a union. In effect, this allows a spec to be learned from interactions.
+///
+/// A diff is performed to find a matching Request / Response, but with missing content types
+/// respectively. When found, a normalized description of the shape of the interaction is traversed.
 pub fn analyze_undocumented_bodies(
   spec_projection: &SpecProjection,
   interaction: HttpInteraction,
