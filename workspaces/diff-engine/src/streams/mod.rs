@@ -3,6 +3,7 @@ use futures::{sink::Sink, SinkExt, Stream};
 use serde::Serialize;
 use serde_json;
 use std::io;
+use thiserror::Error;
 use tokio::io::{
   AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader, BufWriter, Lines,
 };
@@ -56,7 +57,7 @@ where
   }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Error)]
 pub enum JsonLineEncoderError {
   #[error("json serialisation error: {}", .0)]
   Json(serde_json::Error),
@@ -74,6 +75,21 @@ impl From<serde_json::Error> for JsonLineEncoderError {
   fn from(err: serde_json::Error) -> JsonLineEncoderError {
     JsonLineEncoderError::Json(err)
   }
+}
+
+#[derive(Debug, Error)]
+pub enum JsonLineReaderError {
+  #[error("json deserialisation error: {}", .source)]
+  Json {
+    #[from]
+    source: serde_json::Error,
+  },
+
+  #[error("io error: {}", .source)]
+  Io {
+    #[from]
+    source: io::Error,
+  },
 }
 
 pub async fn write_to_json_lines<'a, S, I>(

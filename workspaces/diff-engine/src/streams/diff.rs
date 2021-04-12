@@ -1,5 +1,5 @@
-use super::JsonLineEncoder;
-use futures::{sink::Sink, Stream, StreamExt};
+use super::{JsonLineEncoder, JsonLineReaderError};
+use futures::{sink::Sink, Stream, StreamExt, TryStreamExt};
 use serde::Serialize;
 use serde_json;
 use std::path::Path;
@@ -9,20 +9,25 @@ use tokio_util::codec::FramedWrite;
 
 use crate::interactions::InteractionDiffResult;
 
+// TODO: return a Stream instead of a Vec, so consumer can decide on allocation
 pub async fn from_json_line_file(
   path: impl AsRef<Path>,
-) -> Result<Vec<InteractionDiffResult>, std::io::Error> {
-  // TODO: return a Stream instead of a Vec, so consumer can decide on allocation
+) -> Result<Vec<InteractionDiffResult>, JsonLineReaderError> {
   let file = fs::File::open(path).await?;
 
-  let json_lines = super::from_json_lines(file).map(|interaction_json_result| {
-    let interaction_json = interaction_json_result?;
-    let interaction: InteractionDiffResult = serde_json::from_str(&interaction_json)?;
+  let parsing_diff_result = super::from_json_lines(file)
+    .map(
+      |diff_result_json_result| -> Result<InteractionDiffResult, JsonLineReaderError> {
+        let diff_result_json = diff_result_json_result?;
+        let diff_result: InteractionDiffResult = serde_json::from_str(&diff_result_json)?;
 
-    Ok(interaction)
-  });
+        Ok(diff_result)
+      },
+    )
+    .try_collect::<Vec<_>>()
+    .await;
 
-  Ok(vec![])
+  parsing_diff_result
 }
 
 pub fn into_json_lines<S, T>(sink: S) -> impl Sink<T>
