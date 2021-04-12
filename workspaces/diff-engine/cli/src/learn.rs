@@ -11,8 +11,8 @@ use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 
-use optic_diff_engine::streams;
 use optic_diff_engine::{analyze_undocumented_bodies, EndpointCommand, SpecCommand};
+use optic_diff_engine::{streams, InteractionDiffResult};
 use optic_diff_engine::{
   BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator,
   SpecProjection, TrailObservationsResult,
@@ -33,7 +33,14 @@ pub fn create_subcommand<'a, 'b>() -> App<'a, 'b> {
       Arg::with_name("shape-diffs-affordances")
         .long("shape-diffs-affordances")
         .takes_value(false)
+        .requires("diffs-source")
         .help("Learn affordances for diff trails from interactions piped to stdin"),
+    )
+    .arg(
+      Arg::with_name("diffs-source")
+        .long("diffs-source")
+        .takes_value(true)
+        .help("Path to file containing diff results for which to learn affordances"),
     )
     .group(
       ArgGroup::with_name("subject")
@@ -57,6 +64,25 @@ pub async fn main<'a>(
 
     learn_undocumented_bodies(spec_events, input_queue_size, interaction_lines, sink).await;
   } else if command_matches.is_present("shape-diffs") {
+    let diffs_path = command_matches
+      .value_of("diffs-source")
+      .expect("diffs-source is required for shape-diffs learning subject");
+
+    let stdin = stdin();
+    let interaction_lines = streams::http_interaction::json_lines(stdin);
+    let diffs = streams::diff::from_json_line_file(diffs_path)
+      .await
+      .expect("could not read diffs");
+    let sink = stdout();
+
+    learn_diff_trail_affordances(
+      spec_events,
+      input_queue_size,
+      interaction_lines,
+      diffs,
+      sink,
+    )
+    .await;
     todo!("shape diffs learning is yet to be implemented");
   } else {
     unreachable!("subject is required");
@@ -162,9 +188,10 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
   spec_events: Vec<SpecEvent>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
-  diffs: impl Stream<Item = Result<String, std::io::Error>>,
+  diffs: Vec<InteractionDiffResult>,
   sink: S,
 ) {
+  todo!("shape diffs learning is yet to be implemented");
 }
 
 #[derive(Debug, Default)]
