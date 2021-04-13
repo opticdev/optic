@@ -4,6 +4,7 @@ use crate::shapes::JsonTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::state::SpecIdGenerator;
 use crate::BodyDescriptor;
+use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug, Default)]
@@ -237,7 +238,7 @@ impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
 
 pub type FieldSet = HashSet<String>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct TrailValues {
   pub trail: JsonTrail,
   pub was_string: bool,
@@ -283,6 +284,15 @@ impl TrailValues {
     for new_field_set in new_values.field_sets {
       self.insert_field_set(new_field_set);
     }
+  }
+
+  pub fn was_unknown(&self) -> bool {
+    !self.was_string
+      && !self.was_number
+      && !self.was_boolean
+      && !self.was_null
+      && !self.was_array
+      && !self.was_empty_array
   }
 
   pub fn insert_field_set(&mut self, field_set: FieldSet) {

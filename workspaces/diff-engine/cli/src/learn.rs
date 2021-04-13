@@ -6,19 +6,19 @@ use nanoid::nanoid;
 use serde::Serialize;
 use serde_json;
 use std::collections::HashMap;
-use std::iter::FromIterator;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 
-use optic_diff_engine::streams::TaggedInput;
+use optic_diff_engine::streams::{TaggedInput, Tags};
 use optic_diff_engine::{
-  analyze_undocumented_bodies, streams, EndpointCommand, InteractionDiffResult, SpecCommand,
+  analyze_diff_affordances, analyze_undocumented_bodies, streams, EndpointCommand,
+  InteractionDiffResult, SpecCommand,
 };
 use optic_diff_engine::{
-  BodyAnalysisLocation, HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator,
-  SpecProjection, TrailObservationsResult,
+  BodyAnalysisLocation, HttpInteraction, JsonTrail, SpecChunkEvent, SpecEvent, SpecIdGenerator,
+  SpecProjection, TrailObservationsResult, TrailValues,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
@@ -78,14 +78,7 @@ pub async fn main<'a>(
       .expect("could not read diffs");
     let sink = stdout();
 
-    learn_diff_trail_affordances(
-      spec_events,
-      input_queue_size,
-      interaction_lines,
-      diffs,
-      sink,
-    )
-    .await;
+    learn_diff_trail_affordances(diffs, input_queue_size, interaction_lines, sink).await;
     todo!("shape diffs learning is yet to be implemented");
   } else {
     unreachable!("subject is required");
@@ -188,73 +181,95 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
 }
 
 async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
-  spec_events: Vec<SpecEvent>,
+  tagged_diffs: Vec<TaggedInput<InteractionDiffResult>>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
-  tagged_diffs: Vec<TaggedInput<InteractionDiffResult>>,
   sink: S,
 ) {
-  let spec_projection = Arc::new(SpecProjection::from(spec_events));
+  let tagged_diffs = Arc::new(tagged_diffs);
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
-  let mut fingerprints_by_tag = HashMap::new();
-  let mut diffs_by_fingerprint = HashMap::new();
-  for tagged_diff in tagged_diffs {
-    let (diff, tags) = tagged_diff.into_parts();
-    let fingerprint = diff.fingerprint();
+  let analyzing_bodies = {
+    let tagged_diffs = tagged_diffs.clone();
 
-    diffs_by_fingerprint.insert(fingerprint, diff);
+    async move {
+      let analyze_results = interaction_lines
+        .map(Ok)
+        .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
+          let analysis_sender = analysis_sender.clone();
+          let tagged_diffs = tagged_diffs.clone();
 
-    for tag in tags {
-      let tag_fingerprints = fingerprints_by_tag.entry(tag).or_insert_with(|| vec![]);
+          let analyze_task = tokio::spawn(async move {
+            let analyze_comp = tokio::task::spawn_blocking(move || {
+              let interaction_json =
+                interaction_json_result.expect("can read interaction json line form stdin");
 
-      tag_fingerprints.push(fingerprint);
-    }
-  }
+              let TaggedInput(interaction, interaction_tags): TaggedInput<HttpInteraction> =
+                serde_json::from_str(&interaction_json).expect("could not parse interaction json");
 
-  let analyzing_bodies = async move {
-    let analyze_results = interaction_lines
-      .map(Ok)
-      .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
-        let projection = spec_projection.clone();
-        let analysis_sender = analysis_sender.clone();
+              let interaction_diffs = tagged_diffs.iter().filter_map(|tagged_diff| {
+                let (diff, diff_tags) = tagged_diff.parts();
 
-        let analyze_task = tokio::spawn(async move {
-          let analyze_comp = tokio::task::spawn_blocking(move || {
-            let interaction_json =
-              interaction_json_result.expect("can read interaction json line form stdin");
+                if diff_tags.is_disjoint(&interaction_tags) {
+                  None
+                } else {
+                  Some(diff)
+                }
+              });
 
-            let TaggedInput(interaction, tags): TaggedInput<HttpInteraction> =
-              serde_json::from_str(&interaction_json).expect("could not parse interaction json");
+              interaction_diffs
+                .map(|diff| {
+                  let result = analyze_diff_affordances(diff, &interaction);
+                  (diff.fingerprint(), result, interaction_tags.clone())
+                })
+                .collect::<Vec<_>>()
+            });
 
-            analyze_undocumented_bodies(&projection, interaction)
-          });
-
-          match analyze_comp.await {
-            Ok(results) => {
-              for result in results {
-                analysis_sender
-                  .send(result)
-                  .await
-                  .expect("could not send analysis result to aggregation channel")
+            match analyze_comp.await {
+              Ok(results) => {
+                for result in results {
+                  analysis_sender
+                    .send(result)
+                    .await
+                    .expect("could not send analysis result to aggregation channel")
+                }
+              }
+              Err(err) => {
+                // ignore a single interaction not being able to deserialize
+                eprintln!("interaction ignored: {}", err);
               }
             }
-            Err(err) => {
-              // ignore a single interaction not being able to deserialize
-              eprintln!("interaction ignored: {}", err);
-            }
-          }
-        });
+          });
 
-        analyze_task
-      })
-      .await;
+          analyze_task
+        })
+        .await;
 
-    analyze_results
+      analyze_results
+    }
   };
 
-  todo!("shape diffs learning is yet to be implemented");
+  let aggregating_results = {
+    let mut analysiss = ReceiverStream::new(analysis_receiver);
+
+    tokio::spawn(async move {
+      let mut affordances_by_diff_fingerprint = HashMap::new();
+      while let Some(analysis) = analysiss.next().await {
+        let (diff_fingerprint, trail_values, tags) = analysis;
+
+        if let Some(trail_values) = trail_values {
+          let affordances = affordances_by_diff_fingerprint
+            .entry(diff_fingerprint)
+            .or_insert_with(|| InteractionDiffTrailAffordances::default());
+
+          affordances.push((trail_values, tags));
+        }
+      }
+    })
+  };
+
+  try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
 }
 
 #[derive(Debug, Default)]
@@ -270,8 +285,8 @@ impl SpecIdGenerator for IdGenerator {
   }
 }
 
-// Output types
-// ------------
+// Output types: undocumented bodies
+// ---------------------------------
 
 #[derive(Default, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -439,6 +454,89 @@ impl EndpointBody {
         }
       }
     };
+  }
+}
+
+// Output types: shape diff affordances
+// ------------------------------------
+
+#[derive(Default, Debug, Serialize)]
+struct InteractionDiffTrailAffordances {
+  affordances: Vec<TrailValues>,
+  interactions: InteractionsAffordances,
+}
+type InteractionPointers = Tags;
+
+#[derive(Debug, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct InteractionsAffordances {
+  was_string: InteractionPointers,
+  was_number: InteractionPointers,
+  was_boolean: InteractionPointers,
+  was_null: InteractionPointers,
+  was_array: InteractionPointers,
+  was_object: InteractionPointers,
+  was_missing: InteractionPointers,
+  was_string_trails: HashMap<String, JsonTrail>,
+  was_number_trails: HashMap<String, JsonTrail>,
+  was_boolean_trails: HashMap<String, JsonTrail>,
+  was_null_trails: HashMap<String, JsonTrail>,
+  was_array_trails: HashMap<String, JsonTrail>,
+  was_object_trails: HashMap<String, JsonTrail>,
+  was_missing_trails: HashMap<String, JsonTrail>,
+}
+
+impl InteractionDiffTrailAffordances {
+  pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
+    self.interactions.push((&trail_values, pointers));
+
+    // TODO: find alternative way of serializing to an array of affordances, even though
+    // logic tells us there will only ever be one (supposed to be per JsonTrail, but
+    // both TrailValues en InteractionDiffResult use normalized trails, so would always
+    // just be one).
+    if self.affordances.len() > 0 {
+      let current_affordances = &mut self.affordances[0];
+      current_affordances.union(trail_values);
+    } else {
+      self.affordances.push(trail_values);
+    }
+  }
+}
+
+impl InteractionsAffordances {
+  pub fn push(&mut self, (trail_values, pointers): (&TrailValues, InteractionPointers)) {
+    let json_trail = trail_values.trail.clone();
+    let json_trails_by_pointer_iter = || {
+      pointers
+        .iter()
+        .map(|pointer| (pointer.clone(), json_trail.clone()))
+    };
+    if trail_values.was_string {
+      self.was_string.extend(pointers.clone());
+      self.was_string_trails.extend(json_trails_by_pointer_iter());
+    }
+    if trail_values.was_number {
+      self.was_number.extend(pointers.clone());
+      self.was_number_trails.extend(json_trails_by_pointer_iter());
+    }
+    if trail_values.was_null {
+      self.was_null.extend(pointers.clone());
+      self.was_null_trails.extend(json_trails_by_pointer_iter());
+    }
+    if trail_values.was_array {
+      self.was_array.extend(pointers.clone());
+      self.was_array_trails.extend(json_trails_by_pointer_iter());
+    }
+    if trail_values.was_object {
+      self.was_object.extend(pointers.clone());
+      self.was_object_trails.extend(json_trails_by_pointer_iter());
+    }
+    if trail_values.was_unknown() {
+      self.was_missing.extend(pointers.clone());
+      self
+        .was_missing_trails
+        .extend(json_trails_by_pointer_iter());
+    }
   }
 }
 

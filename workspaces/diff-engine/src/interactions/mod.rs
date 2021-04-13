@@ -117,7 +117,7 @@ pub fn analyze_undocumented_bodies(
 
 pub fn analyze_diff_affordances(
   diff_result: &InteractionDiffResult,
-  interaction: HttpInteraction,
+  interaction: &HttpInteraction,
 ) -> Option<TrailValues> {
   let (mut trail_observations, shape_diff_result) = match diff_result {
     InteractionDiffResult::UnmatchedRequestBodyShape(diff) => {

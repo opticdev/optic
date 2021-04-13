@@ -23,13 +23,13 @@ pub use events::{
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 pub use interactions::{analyze_diff_affordances, analyze_undocumented_bodies};
-pub use learn_shape::TrailObservationsResult;
+pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
   EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
-pub use shapes::diff as diff_shape;
+pub use shapes::{diff as diff_shape, JsonTrail};
 pub use spec::append_batch as append_batch_to_spec;
 pub use state::{body::BodyDescriptor, SpecIdGenerator};
 

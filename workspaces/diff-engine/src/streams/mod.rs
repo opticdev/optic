@@ -2,7 +2,7 @@ use bytes::{BufMut, Bytes, BytesMut};
 use futures::{sink::Sink, SinkExt, Stream};
 use serde::{Deserialize, Serialize};
 use serde_json;
-use std::io;
+use std::{collections::HashSet, io};
 use thiserror::Error;
 use tokio::io::{
   AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader, BufWriter, Lines,
@@ -93,12 +93,16 @@ pub enum JsonLineReaderError {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct TaggedInput<T>(T, Tags);
-pub type Tags = Vec<String>;
+pub struct TaggedInput<T>(pub T, pub Tags);
+pub type Tags = HashSet<String>;
 
 impl<T> TaggedInput<T> {
   pub fn into_parts(self) -> (T, Tags) {
     (self.0, self.1)
+  }
+
+  pub fn parts(&self) -> (&T, &Tags) {
+    (&self.0, &self.1)
   }
 }
 // pub struct TaggedInputIterator<T> {
