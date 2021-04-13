@@ -87,7 +87,13 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
   }
 
   async fork(): Promise<IBaseSpectacle> {
-    return new InMemorySpectacle(this.opticContext, this.samples);
+    const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+      this.opticContext.opticEngine,
+      [...await this.opticContext.specRepository.listEvents()],
+      this.samples,
+      'example-session',
+    );
+    return new InMemorySpectacle(opticContext, [...this.samples]);
   }
 
   async mutate(options: SpectacleInput): Promise<any> {
