@@ -78,7 +78,7 @@ async function main() {
         shapeChoices(shapeId: "shape_RvMMDY4eOD") {
           id
           jsonType
-          changes(since: "57630124-211a-440d-8bd3-2496ccc97f0c") {
+          changes(sinceBatchCommitId: "57630124-211a-440d-8bd3-2496ccc97f0c") {
             added
             changed
           }

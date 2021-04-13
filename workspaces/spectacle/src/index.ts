@@ -276,7 +276,7 @@ export async function makeSpectacle(
         }
       },
       changes: (parent: any, args: any, context: any) => {
-        return Promise.resolve(getShapeChanges(context.shapeQueries, parent.shapeId, args.since))
+        return Promise.resolve(getShapeChanges(context.shapeQueries, parent.shapeId, args.sinceBatchCommitId))
       }
     },
     ArrayMetadata: {

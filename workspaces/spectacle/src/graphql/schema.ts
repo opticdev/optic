@@ -54,6 +54,7 @@ type ObjectFieldMetadata {
   name: String
   fieldId: ID
   # query shapeChoices(shapeId) to recurse
+  changes(sinceBatchCommitId: String): ChangesResult
   shapeId: ID
 }
 type ObjectMetadata {
@@ -61,6 +62,7 @@ type ObjectMetadata {
 }
 type ArrayMetadata {
   # query shapeChoices(shapeId) to recurse
+  changes(sinceBatchCommitId: String): ChangesResult
   shapeId: ID
 }
 type OpticShape {
@@ -68,7 +70,7 @@ type OpticShape {
   jsonType: String
   asObject: ObjectMetadata
   asArray: ArrayMetadata
-  changes(since: String): ChangesResult
+  changes(sinceBatchCommitId: String): ChangesResult
   # exampleValue: [JSON]
 }
 type ChangesResult {

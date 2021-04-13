@@ -208,7 +208,7 @@ function endpointFromResponse(response: any): Endpoint {
 export function getShapeChanges(
   shapeQueries: shapes.GraphQueries,
   shapeId: string,
-  since?: string
+  sinceBatchCommitId?: string
 ): ChangeResult {
   let sortedBatchCommits = shapeQueries
     .listNodesByType(shapes.NodeType.BatchCommit)
@@ -216,11 +216,11 @@ export function getShapeChanges(
     .sort((a: any, b: any) => {
       return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
     });
-  const sinceBatchCommit: any = shapeQueries.findNodeById(since)!;
+  const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
   const shape: any = shapeQueries.findNodeById(shapeId)!;
   const deltaBatchCommits = new Map();
 
-  (since
+  (sinceBatchCommitId
     ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > sinceBatchCommit!.result.data.createdAt)
     : sortedBatchCommits)
     .forEach((batchCommit: any) => {
