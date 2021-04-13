@@ -4,7 +4,12 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
 import GraphQLJSON from 'graphql-type-json';
 import { v4 as uuidv4 } from 'uuid';
-import { buildEndpointChanges, buildEndpointsGraph, buildShapesGraph, getShapeChanges } from './helpers';
+import {
+  buildEndpointChanges,
+  buildEndpointsGraph,
+  buildShapesGraph,
+  getShapeChanges,
+} from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -283,8 +288,14 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         }
       },
       changes: (parent: any, args: any, context: any) => {
-        return Promise.resolve(getShapeChanges(context.shapeQueries, parent.shapeId, args.sinceBatchCommitId))
-      }
+        return Promise.resolve(
+          getShapeChanges(
+            context.shapeQueries,
+            parent.shapeId,
+            args.sinceBatchCommitId,
+          ),
+        );
+      },
     },
     ArrayMetadata: {
       shapeId: (parent: any) => {
