@@ -8,6 +8,7 @@ import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';
 import classNames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
+import isEqual from 'lodash.isequal';
 // @ts-ignore
 import equals from 'deep-equal';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -33,6 +34,7 @@ export function UndocumentedUrl({
 }: UndocumentedUrlProps) {
   const classes = useStyles();
   const { persistWIPPattern, wipPatterns } = useSharedDiffContext();
+
   const paddedMethod = padLeft(method, 6, ' ');
   const methodColor = methodColorsDark[method.toUpperCase()];
 
@@ -40,10 +42,37 @@ export function UndocumentedUrl({
   const [components, setComponents] = useState<PathComponentAuthoring[]>(
     wipPatterns[path + method]
       ? wipPatterns[path + method]
-      : urlStringToPathComponents(path)
+      : urlStringToPathComponents(path),
   );
-  const debouncedComponents = useDebounce(components, 800);
-  const debouncedIsEditing = useDebounce(isEditing, 800);
+
+  function initialNameForComponent(newIndex: number): string {
+    const otherPathComponents = Object.values(wipPatterns).filter((i) => {
+      const a = i
+        .slice(0, newIndex - 1)
+        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+      const b = components
+        .slice(0, newIndex - 1)
+        .map((c) => ({ name: c.name, isParameter: c.isParameter }));
+
+      return isEqual(a, b);
+    });
+    if (otherPathComponents.length === 0) {
+      return '';
+    } else {
+      const firstMatchingParamName = otherPathComponents
+        .map((i) => i.find((param) => param.index === newIndex))
+        .filter((param) => {
+          if (param && param.isParameter) {
+            return true;
+          }
+          return false;
+        })[0];
+      return firstMatchingParamName ? firstMatchingParamName.name : '';
+    }
+  }
+
+  const debouncedComponents = useDebounce(components, 300);
+  const debouncedIsEditing = useDebounce(isEditing, 300);
 
   const onChange = (index: number) => (parameter: PathComponentAuthoring) => {
     setComponents((com) => {
@@ -100,6 +129,7 @@ export function UndocumentedUrl({
                     parentSetIsEditing={setIsEditing}
                     pathComponent={i}
                     key={index}
+                    initialNameForComponent={initialNameForComponent}
                     onChange={onChange(index)}
                   />
                 </div>
@@ -151,6 +181,7 @@ export function UndocumentedUrl({
 export type PathComponentProps = {
   pathComponent: PathComponentAuthoring;
   parentSetIsEditing: (bool: boolean) => void;
+  initialNameForComponent: (index: number) => string;
   onChange: (pathParameter: PathComponentAuthoring) => void;
 };
 
@@ -169,12 +200,25 @@ function PathComponentRender({
   onChange,
   parentSetIsEditing,
   pathComponent,
+  initialNameForComponent,
 }: PathComponentProps) {
   const classes = useStyles();
-  const [name, setName] = useState(
-    pathComponent.name || pathComponent.originalName
-  );
+  const [name, setName] = useState(pathComponent.name);
+
+  const originalName = pathComponent.originalName;
+
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (name === '' && pathComponent.isParameter) {
+      const defaultValue = initialNameForComponent(pathComponent.index);
+      setName(defaultValue);
+      if (defaultValue.length) {
+        setIsEditing(false);
+        onChange({ ...pathComponent, isParameter: true, name: defaultValue });
+      }
+    }
+  }, [pathComponent.isParameter]);
 
   //share edit state with parent
   useEffect(() => {
@@ -203,7 +247,7 @@ function PathComponentRender({
       <div
         className={classNames(
           classes.pathComponent,
-          classes.pathComponentButton
+          classes.pathComponentButton,
         )}
         onClick={() => {
           if (pathComponent.isParameter) {
@@ -257,7 +301,7 @@ function PathComponentRender({
           }}
           className={classNames(
             classes.pathComponent,
-            classes.pathComponentInput
+            classes.pathComponentInput,
           )}
         />
         <IconButton
@@ -289,10 +333,10 @@ function PathComponentRender({
         }
         className={classNames(
           classes.pathComponent,
-          classes.pathComponentButton
+          classes.pathComponentButton,
         )}
       >
-        {pathComponent.name}
+        {pathComponent.originalName}
       </div>
     );
   }
@@ -366,7 +410,7 @@ export type PathComponentAuthoring = {
 };
 
 export function urlStringToPathComponents(
-  url: string
+  url: string,
 ): PathComponentAuthoring[] {
   const components: PathComponentAuthoring[] = url
     .split('/')
