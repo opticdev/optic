@@ -13,6 +13,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
 import { IOpticContext } from '@useoptic/spectacle';
+import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -59,6 +60,7 @@ export default function PublicExamples() {
               <>
                 <DiffReviewEnvironments />
                 <DocumentationPages />
+                <ChangelogPages />
               </>
             </Switch>
           </BaseUrlProvider>
@@ -89,7 +91,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
   async fork(): Promise<IBaseSpectacle> {
     const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
       this.opticContext.opticEngine,
-      [...await this.opticContext.specRepository.listEvents()],
+      [...(await this.opticContext.specRepository.listEvents())],
       this.samples,
       'example-session',
     );
