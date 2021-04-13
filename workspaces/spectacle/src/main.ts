@@ -19,11 +19,11 @@ async function main() {
 
   const batchCommitResults = await spectacle({
     query: `{
-  batchCommits {
-    createdAt
-    batchId
-  }
-}`,
+      batchCommits {
+        createdAt
+        batchId
+      }
+    }`,
     variables: {}
   });
 
@@ -31,16 +31,16 @@ async function main() {
 
   const endpointChangesResult = await spectacle({
     query: `{
-  endpointChanges(since: "2021-02-23T20:09:41.006Z") {
-    endpoints {
-      change {
-        category
+      endpointChanges(since: "2021-02-23T20:09:41.006Z") {
+        endpoints {
+          change {
+            category
+          }
+          path
+          method
+        }
       }
-      path
-      method
-    }
-  }
-}`,
+    }`,
     variables: {}
   });
 
@@ -48,25 +48,25 @@ async function main() {
 
   const result = await spectacle({
     query: `{
-    requests {
-      id
-      pathId
-      absolutePathPattern
-      method
-      bodies {
-        contentType
-        rootShapeId
-      }
-      responses {
+      requests {
         id
-        statusCode
+        pathId
+        absolutePathPattern
+        method
         bodies {
           contentType
           rootShapeId
         }
+        responses {
+          id
+          statusCode
+          bodies {
+            contentType
+            rootShapeId
+          }
+        }
       }
-    }
-}`,
+    }`,
     variables: {}
   });
 
@@ -75,11 +75,15 @@ async function main() {
   {
     const result = await spectacle({
       query: `{
-    shapeChoices(shapeId: "shape_RvMMDY4eOD") {
-      id
-      jsonType
-    }
-}`,
+        shapeChoices(shapeId: "shape_RvMMDY4eOD") {
+          id
+          jsonType
+          changes(since: "57630124-211a-440d-8bd3-2496ccc97f0c") {
+            added
+            changed
+          }
+        }
+      }`,
       variables: {}
     });
     console.log(JSON.stringify(result, null, 2));

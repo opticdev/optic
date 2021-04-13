@@ -204,3 +204,44 @@ function endpointFromResponse(response: any): Endpoint {
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, path, method };
 }
+
+export function getShapeChanges(
+  shapeQueries: shapes.GraphQueries,
+  shapeId: string,
+  since: string
+): ChangeResult {
+  let sortedBatchCommits = shapeQueries
+    .listNodesByType(shapes.NodeType.BatchCommit)
+    .results
+    .sort((a: any, b: any) => {
+      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
+    });
+  const sinceBatchCommit: any = shapeQueries.findNodeById(since)!;
+  const shape: any = shapeQueries.findNodeById(shapeId)!;
+  const deltaBatchCommits = new Map();
+
+  (since
+    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > sinceBatchCommit!.result.data.createdAt)
+    : sortedBatchCommits)
+    .forEach((batchCommit: any) => {
+      deltaBatchCommits.set(batchCommit.result.id, batchCommit);
+    })
+
+  const results = {
+    added: false,
+    changed: false,
+  }
+
+  for (const batchCommit of shape.batchCommits().results) {
+    if (deltaBatchCommits.has(batchCommit.result.id)) {
+      return { ...results, added: true }
+    }
+  }
+
+  return results;
+}
+
+type ChangeResult = {
+  added: boolean,
+  changed: boolean
+}

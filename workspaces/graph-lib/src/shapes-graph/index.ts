@@ -181,6 +181,13 @@ class ShapeNodeWrapper implements NodeWrapper {
     }
     return coreShapeNode;
   }
+
+  batchCommits(): NodeListWrapper {
+    return this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.BatchCommit,
+    );
+  }
 }
 
 class ShapeParameterNodeWrapper implements NodeWrapper {

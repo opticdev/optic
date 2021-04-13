@@ -68,7 +68,12 @@ type OpticShape {
   jsonType: String
   asObject: ObjectMetadata
   asArray: ArrayMetadata
+  changes(since: String): ChangesResult
   # exampleValue: [JSON]
+}
+type ChangesResult {
+  added: Boolean
+  changed: Boolean
 }
 type EndpointChanges {
   opticUrl: String
