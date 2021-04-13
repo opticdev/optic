@@ -4,8 +4,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
 import GraphQLJSON from 'graphql-type-json';
 import { v4 as uuidv4 } from 'uuid';
-import { buildEndpointChanges, buildEndpointsGraph } from './helpers';
-import { endpoints } from '@useoptic/graph-lib';
+import { buildEndpointChanges, buildEndpointsGraph, buildShapesGraph } from './helpers';
+import { endpoints, shapes } from '@useoptic/graph-lib';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -120,6 +120,7 @@ async function buildProjections(opticContext: IOpticContext) {
   const spec = opticContext.opticEngine.spec_from_events(JSON.stringify(events));
 
   const endpointsQueries = buildEndpointsGraph(spec, opticContext.opticEngine);
+  const shapesQueries = buildShapesGraph(spec, opticContext.opticEngine);
   const shapeViewerProjection = JSON.parse(
     opticContext.opticEngine.get_shape_viewer_projection(spec),
   );
@@ -128,6 +129,7 @@ async function buildProjections(opticContext: IOpticContext) {
     events,
     spec,
     endpointsQueries,
+    shapesQueries,
     shapeViewerProjection,
   };
 }
@@ -135,11 +137,12 @@ async function buildProjections(opticContext: IOpticContext) {
 export async function makeSpectacle(
   opticContext: IOpticContext,
 ) {
-  let endpointsQueries: endpoints.GraphQueries, shapeViewerProjection: any;
+  let endpointsQueries: endpoints.GraphQueries, shapeQueries: shapes.GraphQueries, shapeViewerProjection: any;
 
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
     endpointsQueries = projections.endpointsQueries;
+    shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
   }
 
@@ -193,7 +196,7 @@ export async function makeSpectacle(
         context: any,
         info: any,
       ) => {
-        const endpointChanges = buildEndpointChanges(endpointsQueries, since);
+        const endpointChanges = buildEndpointChanges(endpointsQueries, shapeQueries, since);
         return Promise.resolve(endpointChanges);
       },
       batchCommits: (parent: any, args: any, context: any, info: any) => {
