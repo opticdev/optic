@@ -78,7 +78,7 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId> {
   addNode(node: Node) {
     if (this.nodesById.has(node.id)) {
       throw new Error(
-        `could not add a node with an id that already exists in the graph`
+        `could not add a node with an id that already exists in the graph`,
       );
     }
     this.unsafeAddNode(node);
@@ -126,23 +126,28 @@ export interface NodeListWrapper {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class BodyNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
-  response(): PathNodeWrapper | null {
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Response);
+  response(): ResponseNodeWrapper | null {
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Response,
+    );
     if (neighbors.results.length === 0) {
       return null;
     }
-    return neighbors.results[0] as PathNodeWrapper;
+    return neighbors.results[0] as ResponseNodeWrapper;
   }
 
-  request(): PathNodeWrapper | null {
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Request);
+  request(): RequestNodeWrapper | null {
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Request,
+    );
     if (neighbors.results.length === 0) {
       return null;
     }
-    return neighbors.results[0] as PathNodeWrapper;
+    return neighbors.results[0] as RequestNodeWrapper;
   }
 }
 
@@ -152,7 +157,7 @@ export class RequestNodeWrapper implements NodeWrapper {
   path(): PathNodeWrapper {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,
-      NodeType.Path
+      NodeType.Path,
     );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Request to have a parent Path`);
@@ -163,7 +168,7 @@ export class RequestNodeWrapper implements NodeWrapper {
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Body
+      NodeType.Body,
     );
   }
 }
@@ -174,7 +179,7 @@ export class ResponseNodeWrapper implements NodeWrapper {
   path(): PathNodeWrapper {
     const neighbors = this.queries.listOutgoingNeighborsByType(
       this.result.id,
-      NodeType.Path
+      NodeType.Path,
     );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Response to have a parent Path`);
@@ -185,7 +190,7 @@ export class ResponseNodeWrapper implements NodeWrapper {
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Body
+      NodeType.Body,
     );
   }
 }
@@ -196,14 +201,14 @@ export class PathNodeWrapper implements NodeWrapper {
   requests(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Request
+      NodeType.Request,
     );
   }
 
   responses(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Response
+      NodeType.Response,
     );
   }
 }
@@ -214,14 +219,14 @@ export class BatchCommitNodeWrapper implements NodeWrapper {
   requests(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Request
+      NodeType.Request,
     );
   }
 
   responses(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
-      NodeType.Response
+      NodeType.Response,
     );
   }
 }
@@ -256,7 +261,7 @@ export class GraphQueries {
   //@TODO add singular find* variant
   listOutgoingNeighborsByType(
     id: NodeId,
-    outgoingNeighborType: NodeType
+    outgoingNeighborType: NodeType,
   ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
