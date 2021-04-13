@@ -1,6 +1,5 @@
 import { expose } from 'threads/worker';
 import { opticEngine, RfcCommandContext, JsonHelper } from '@useoptic/domain';
-import { universeFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 
 expose({
   handleCommands,
@@ -12,7 +11,7 @@ function handleCommands(
   batchId: string,
   clientSessionId: string,
   clientId: string,
-  commitMessage: string
+  commitMessage: string,
 ): any[] {
   const {
     universeFromEventsAndAdditionalCommands,
@@ -24,13 +23,13 @@ function handleCommands(
   } = opticEngine.com.useoptic.contexts.rfc.Commands;
 
   const inputCommands = JsonHelper.vectorToJsArray(
-    opticEngine.CommandSerialization.fromJs(commands)
+    opticEngine.CommandSerialization.fromJs(commands),
   );
 
   const commandContext = new RfcCommandContext(
     clientId,
     clientSessionId,
-    batchId
+    batchId,
   );
 
   const {
@@ -43,7 +42,7 @@ function handleCommands(
       StartBatchCommit(batchId, commitMessage),
       ...inputCommands,
       EndBatchCommit(batchId),
-    ]
+    ],
   );
 
   return JSON.parse(eventStore.serializeEvents(rfcId));

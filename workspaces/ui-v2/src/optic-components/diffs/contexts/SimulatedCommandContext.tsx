@@ -13,15 +13,16 @@ type SimulatedCommandContextValue = {
 };
 
 export const SimulatedCommandContext = React.createContext<SimulatedCommandContextValue>(
-  { previewCommands: [] }
+  { previewCommands: [] },
 );
 
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
   const [isProcessing, setIsProcessing] = useState(true);
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
-    undefined
+    undefined,
   );
+  console.log(value.previewCommands);
   useEffect(() => {
     async function task() {
       const simulated = await props.spectacle.fork();
@@ -45,6 +46,7 @@ mutation X($commands: [JSON]) {
 
     task();
   }, [JSON.stringify(props.previewCommands)]);
+
   if (isProcessing) {
     return <div>working...</div>;
   }
@@ -53,7 +55,10 @@ mutation X($commands: [JSON]) {
 
   return (
     <SimulatedCommandContext.Provider value={value}>
-      <SpectacleStore spectacle={spectacleToUse}>
+      <SpectacleStore
+        spectacle={spectacleToUse}
+        key={JSON.stringify(props.previewCommands)}
+      >
         {props.children}
       </SpectacleStore>
     </SimulatedCommandContext.Provider>

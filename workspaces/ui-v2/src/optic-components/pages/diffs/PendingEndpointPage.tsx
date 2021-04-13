@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
 import {
@@ -17,6 +17,12 @@ import { makeStyles } from '@material-ui/styles';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 import { useDiffUndocumentedUrlsPageLink } from '../../navigation/Routes';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
+import { IIgnoreBody } from '../../hooks/diffs/LearnPendingEndpointState';
+import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
+import { IForkableSpectacle } from '../../../../../spectacle';
+import { EndpointDocumentationPane } from './EndpointDocumentationPane';
+import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
+import { useDebounce } from '../../hooks/ui/useDebounceHook';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
@@ -34,11 +40,7 @@ export function PendingEndpointPageSession(props: any) {
     discardEndpoint,
   } = useSharedDiffContext();
 
-  // should only run once
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const endpoint = useMemo(() => getPendingEndpointById(endpointId), [
-    endpointId,
-  ]);
+  const endpoint = getPendingEndpointById(endpointId);
 
   if (!endpoint) {
     return <Redirect to={diffUndocumentedUrlsPageLink.linkTo()} />;
@@ -46,6 +48,7 @@ export function PendingEndpointPageSession(props: any) {
 
   return (
     <ILearnedPendingEndpointStore
+      endpointMachine={endpoint.ref}
       endpoint={endpoint}
       onEndpointStaged={() => {
         stageEndpoint(endpoint.id);
@@ -71,9 +74,22 @@ export function PendingEndpointPage(props: any) {
     includeBody,
     stageEndpoint,
     discardEndpoint,
+    newEndpointCommands,
+    endpointName,
+    changeEndpointName,
+    stagedCommandsIds,
   } = useLearnedPendingEndpointContext();
 
   const classes = useStyles();
+  const spectacle = useContext(SpectacleContext)!;
+
+  const [name, setName] = useState(endpointName);
+  const debouncedName = useDebounce(name, 1000);
+  useEffect(() => {
+    if (debouncedName) {
+      changeEndpointName(debouncedName);
+    }
+  }, [debouncedName]);
 
   return (
     <TwoColumnFullWidth
@@ -105,6 +121,10 @@ export function PendingEndpointPage(props: any) {
                 label="Name this Endpoint"
                 style={{ marginBottom: 20 }}
                 autoFocus
+                value={name}
+                onChange={(e: any) => {
+                  setName(e.target.value);
+                }}
               />
 
               <Typography
@@ -121,9 +141,9 @@ export function PendingEndpointPage(props: any) {
                     <LearnBodyCheckBox
                       key={index}
                       primary="Request Body"
-                      subtext={i.contentType}
+                      subtext={i.contentType || 'no body'}
                       onChange={(ignore) => {
-                        const body = {
+                        const body: IIgnoreBody = {
                           isRequest: true,
                           contentType: i.contentType,
                         };
@@ -144,8 +164,8 @@ export function PendingEndpointPage(props: any) {
                       primary={`${i.statusCode} Response`}
                       subtext={i.contentType}
                       onChange={(ignore) => {
-                        const body = {
-                          inResponse: true,
+                        const body: IIgnoreBody = {
+                          isResponse: true,
                           statusCode: i.statusCode,
                           contentType: i.contentType,
                         };
@@ -156,7 +176,6 @@ export function PendingEndpointPage(props: any) {
                 })}
               </FormControl>
 
-              <Divider style={{ marginTop: 5 }} />
               <div className={classes.buttons}>
                 <Button size="small" color="default" onClick={discardEndpoint}>
                   Discard Endpoint
@@ -175,7 +194,18 @@ export function PendingEndpointPage(props: any) {
           )}
         </>
       }
-      right={<>HELLO WORLD</>}
+      right={
+        <SimulatedCommandStore
+          key={JSON.stringify(newEndpointCommands)}
+          spectacle={spectacle as IForkableSpectacle}
+          previewCommands={newEndpointCommands}
+        >
+          <EndpointDocumentationPane
+            method={stagedCommandsIds.method}
+            pathId={stagedCommandsIds.pathId}
+          />
+        </SimulatedCommandStore>
+      }
     />
   );
 }

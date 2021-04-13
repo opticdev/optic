@@ -12,7 +12,7 @@ import { useSharedDiffContext } from './SharedDiffContext';
 
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 ): { loading: boolean; results: IInterpretation[] } {
   const spectacle = useContext(SpectacleContext)!;
   const { currentSpecContext } = useSharedDiffContext();
@@ -26,7 +26,7 @@ export function useShapeDiffInterpretations(
       diff,
       learnedTrails,
       spectacle,
-      currentSpecContext
+      currentSpecContext,
     );
   }
 
@@ -45,5 +45,5 @@ export function useShapeDiffInterpretations(
 
 export function useNewRegionDiffInterpretations(
   diffs: ParsedDiff[],
-  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+  trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 ) {}

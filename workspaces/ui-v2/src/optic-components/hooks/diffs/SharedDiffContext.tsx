@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
-  IUndocumentedUrl,
   newSharedDiffMachine,
   SharedDiffStateContext,
 } from './SharedDiffState';
@@ -17,6 +16,8 @@ import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
+import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
+import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -56,12 +57,30 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
   };
+
+  const parsedDiffs = useMemo(
+    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
+    [props.diffs],
+  );
+
+  const { allSamples } = useContext(InteractionLoaderContext);
+
+  const trailsLearned = learnTrailsForParsedDiffs(
+    parsedDiffs,
+    currentSpecContext,
+    //@ts-ignore
+    window.events,
+    allSamples,
+  );
+
   //@dev here is where the diff output needs to go
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
       currentSpecContext,
-      props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
+      parsedDiffs,
       props.urls.map((i) => ({ ...i })),
+      trailsLearned,
+      allSamples,
     ),
   );
   const context: SharedDiffStateContext = state.context;

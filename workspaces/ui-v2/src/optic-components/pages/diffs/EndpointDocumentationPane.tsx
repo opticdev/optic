@@ -27,15 +27,13 @@ export function EndpointDocumentationPane({
   highlightedLocation?: IParsedLocation | undefined;
 }) {
   const { endpoints, loading } = useEndpoints();
-  const bodies = useEndpointBody(pathId, method);
   const previewCommands = useSimulatedCommands();
   const { context } = useSharedDiffContext();
+  const bodies = useEndpointBody(pathId, method);
 
-  const thisEndpoint = useMemo(
-    () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
+  const thisEndpoint = endpoints.find(
+    (i) => i.pathId === pathId && i.method === method,
   );
-
   if (loading) {
     return <Loading />;
   }
@@ -53,7 +51,7 @@ export function EndpointDocumentationPane({
           JSON.stringify(
             [...context.simulatedCommands, ...previewCommands],
             null,
-            2
+            2,
           )}
       </pre>
       <EndpointNameContribution

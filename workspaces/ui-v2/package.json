@@ -35,6 +35,7 @@
     "@useoptic/cli-shared": "workspace:workspaces/cli-shared",
     "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm",
     "@useoptic/domain": "10.0.67",
+    "@useoptic/domain-utilities": "10.0.67",
     "@useoptic/spectacle": "workspace:workspaces/spectacle",
     "@xstate/react": "^1.3.1",
     "babel-eslint": "^10.1.0",

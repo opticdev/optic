@@ -9,9 +9,7 @@ import { Loading } from '../optic-components/navigation/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
-import {
-  IForkableSpectacle,
-} from '@useoptic/spectacle';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
 import { IOpticContext } from '@useoptic/spectacle';
@@ -76,7 +74,6 @@ export interface InMemorySpectacleDependencies {
   samples: any[];
 }
 
-
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
 class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
@@ -90,10 +87,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
   }
 
   async fork(): Promise<IBaseSpectacle> {
-    return new InMemorySpectacle(
-      this.opticContext,
-      this.samples,
-    );
+    return new InMemorySpectacle(this.opticContext, this.samples);
   }
 
   async mutate(options: SpectacleInput): Promise<any> {
@@ -109,7 +103,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
 export interface InMemoryBaseSpectacle extends IBaseSpectacle {
   samples: any[];
-  opticContext: IOpticContext
+  opticContext: IOpticContext;
 }
 
 export function useInMemorySpectacle(
@@ -120,6 +114,9 @@ export function useInMemorySpectacle(
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
+      //@ts-ignore
+      //for debugging only. delete me
+      window.events = result.events;
       const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
         result.opticEngine,
         result.events,

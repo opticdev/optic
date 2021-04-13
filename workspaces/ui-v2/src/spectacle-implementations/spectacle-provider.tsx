@@ -4,7 +4,7 @@ import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
 export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
 export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
-  null
+  null,
 );
 
 export const SpectacleStore = (props: {

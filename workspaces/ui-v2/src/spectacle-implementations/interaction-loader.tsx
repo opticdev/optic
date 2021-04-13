@@ -3,12 +3,15 @@ import { AsyncStatus } from './spectacle-provider';
 
 type InteractionLoader = {
   loadInteraction: (pointer: string) => Promise<any | undefined>;
+  // @todo remove -- temp until port complete
+  allSamples: any[];
 };
 
 export const InteractionLoaderContext = React.createContext<InteractionLoader>({
   loadInteraction: async (pointer) => {
     return undefined;
   },
+  allSamples: [],
 });
 
 export const InMemoryInteractionLoaderStore = (props: {
@@ -20,7 +23,9 @@ export const InMemoryInteractionLoaderStore = (props: {
   };
 
   return (
-    <InteractionLoaderContext.Provider value={{ loadInteraction }}>
+    <InteractionLoaderContext.Provider
+      value={{ loadInteraction, allSamples: props.samples }}
+    >
       {props.children}
     </InteractionLoaderContext.Provider>
   );
