@@ -22,21 +22,20 @@ type IBuildSpecPatch = {
   patchChoices: IPatchChoices;
   diffHash: string;
   onPathChoicesUpdated: (pathChoices: IPatchChoices) => void;
-  // onSuggestionSelected: (commands: any[]) => void;
+  approved: () => void;
 };
 
 export function BuildSpecPatch({
   patchChoices,
   onPathChoicesUpdated,
   diffHash,
-}: // onApprove,
-// onSuggestionSelected,
-IBuildSpecPatch) {
+  approved,
+}: IBuildSpecPatch) {
   const classes = useStyles();
   const { addDiffHashIgnore } = useSharedDiffContext();
 
   const [selectedChoices, setSelectedChoices] = useState(
-    deepCopy(patchChoices)
+    deepCopy(patchChoices),
   );
 
   useEffect(() => {
@@ -129,6 +128,7 @@ IBuildSpecPatch) {
               color="primary"
               endIcon={<ArrowRight />}
               style={{ marginRight: 15 }}
+              onClick={approved}
             >
               Save Changes
             </Button>

@@ -51,7 +51,7 @@ type IDiffCardProps = {
   suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
-  approve: (diffHash: string, commands: any[]) => void;
+  approve: () => void;
   handled: boolean;
   specChoices: IPatchChoices;
   updatedSpecChoices: (choices: IPatchChoices) => void;
@@ -76,7 +76,7 @@ export function DiffCard({
   })();
 
   const [previewTab, setPreviewTab] = useState(
-    previewTabs.length ? previewTabs[0].title : undefined
+    previewTabs.length ? previewTabs[0].title : undefined,
   );
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export function DiffCard({
                   jsonTrails={tab.jsonTrailsByInteractions}
                   getJsonBodyToPreview={(interaction: any) => {
                     const body = diffDescription.getJsonBodyToPreview(
-                      interaction
+                      interaction,
                     );
                     return body;
                   }}
@@ -167,6 +167,7 @@ export function DiffCard({
 
       <div className={classes.suggestionRegion}>
         <BuildSpecPatch
+          approved={approve}
           diffHash={diffDescription.diffHash}
           patchChoices={specChoices}
           onPathChoicesUpdated={updatedSpecChoices}
@@ -427,7 +428,7 @@ function IgnoreButton({
                 style={{ color: 'black' }}
                 copy={[
                   plain(
-                    'Discarding these examples will change the suggestions Optic provides.'
+                    'Discarding these examples will change the suggestions Optic provides.',
                   ),
                 ]}
               />

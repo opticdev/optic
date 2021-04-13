@@ -55,10 +55,7 @@ mutation X($commands: [JSON]) {
 
   return (
     <SimulatedCommandContext.Provider value={value}>
-      <SpectacleStore
-        spectacle={spectacleToUse}
-        key={JSON.stringify(props.previewCommands)}
-      >
+      <SpectacleStore spectacle={spectacleToUse}>
         {props.children}
       </SpectacleStore>
     </SimulatedCommandContext.Provider>
