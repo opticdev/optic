@@ -77,6 +77,7 @@ export function PendingEndpointPage(props: any) {
     newEndpointCommands,
     endpointName,
     changeEndpointName,
+    isIgnored,
     stagedCommandsIds,
   } = useLearnedPendingEndpointContext();
 
@@ -86,10 +87,14 @@ export function PendingEndpointPage(props: any) {
   const [name, setName] = useState(endpointName);
   const debouncedName = useDebounce(name, 1000);
   useEffect(() => {
-    if (debouncedName) {
+    if (typeof debouncedName !== 'undefined') {
       changeEndpointName(debouncedName);
     }
   }, [debouncedName]);
+
+  const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
+    Boolean(i.contentType),
+  );
 
   return (
     <TwoColumnFullWidth
@@ -136,17 +141,21 @@ export function PendingEndpointPage(props: any) {
               </Typography>
 
               <FormControl component="fieldset">
-                {learnedBodies!.requests.map((i, index) => {
+                {requestCheckboxes.map((i, index) => {
+                  if (!i.contentType) {
+                    return null;
+                  }
+                  const body: IIgnoreBody = {
+                    isRequest: true,
+                    contentType: i.contentType,
+                  };
                   return (
                     <LearnBodyCheckBox
+                      initialStatus={isIgnored(body)}
                       key={index}
                       primary="Request Body"
                       subtext={i.contentType || 'no body'}
                       onChange={(ignore) => {
-                        const body: IIgnoreBody = {
-                          isRequest: true,
-                          contentType: i.contentType,
-                        };
                         ignore ? ignoreBody(body) : includeBody(body);
                       }}
                     />
@@ -154,21 +163,22 @@ export function PendingEndpointPage(props: any) {
                 })}
               </FormControl>
 
-              {learnedBodies!.requests.length > 0 && <Divider />}
+              {requestCheckboxes.length > 0 && <Divider />}
 
               <FormControl component="fieldset">
                 {learnedBodies!.responses.map((i, index) => {
+                  const body: IIgnoreBody = {
+                    isResponse: true,
+                    statusCode: i.statusCode,
+                    contentType: i.contentType,
+                  };
                   return (
                     <LearnBodyCheckBox
+                      initialStatus={isIgnored(body)}
                       key={index}
                       primary={`${i.statusCode} Response`}
                       subtext={i.contentType}
                       onChange={(ignore) => {
-                        const body: IIgnoreBody = {
-                          isResponse: true,
-                          statusCode: i.statusCode,
-                          contentType: i.contentType,
-                        };
                         ignore ? ignoreBody(body) : includeBody(body);
                       }}
                     />
@@ -214,9 +224,10 @@ interface ILoaderProps {
   primary: string;
   subtext: string;
   onChange: (ignore: boolean) => void;
+  initialStatus: boolean;
 }
 export function LearnBodyCheckBox(props: ILoaderProps) {
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(props.initialStatus);
   return (
     <FormControlLabel
       control={

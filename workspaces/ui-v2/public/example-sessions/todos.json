@@ -175,6 +175,49 @@
         "tags": []
       },
       {
+        "uuid": "fa0def9226-abf8-41a7-ba1f-7fd09c509090",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/api/todos/abcd12efg/profile",
+          "query": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 404,
+          "headers": {
+            "shapeHashV1Base64": null,
+            "asJsonString": null,
+            "asText": null
+          },
+          "body": {
+            "contentType": "text/plain",
+            "value": {
+              "shapeHashV1Base64": null,
+              "asJsonString": null,
+              "asText": "Not Found"
+            }
+          }
+        },
+        "tags": []
+      },
+      {
         "uuid": "1c0b722f-107c-4082-abe7-f3cdd1d92475",
         "request": {
           "host": "localhost",

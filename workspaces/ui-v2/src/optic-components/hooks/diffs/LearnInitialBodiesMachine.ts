@@ -168,6 +168,7 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
         ctx.stagedEndpointName,
       ),
     );
+    debugger;
   }
 
   return commands;

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { IPendingEndpoint } from './SharedDiffState';
 import { useActor, useMachine } from '@xstate/react';
+import equals from 'lodash.isequal';
 import {
   IIgnoreBody,
   newLearnPendingEndpointMachine,
@@ -27,6 +28,7 @@ type ILearnedPendingEndpointContext = {
   };
   endpointName: string;
   changeEndpointName: (name: string) => void;
+  isIgnored: (ignore: IIgnoreBody) => boolean;
 };
 
 export const ILearnedPendingEndpointStore = ({
@@ -57,6 +59,9 @@ export const ILearnedPendingEndpointStore = ({
     },
     includeBody: (ignoreBody: IIgnoreBody) => {
       send({ type: 'USER_INCLUDED_BODY', removeIgnore: ignoreBody });
+    },
+    isIgnored: (ignore: IIgnoreBody) => {
+      return !Boolean(context.ignoredBodies.find((i) => equals(i, ignore)));
     },
     stageEndpoint: onEndpointStaged,
     discardEndpoint: onEndpointDiscarded,

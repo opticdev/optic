@@ -74,7 +74,7 @@ export function EndpointRow({
       className={bgClass}
     >
       <div style={{ flex: 1 }}>
-        <EndpointName method={method} fullPath={fullPath} leftPad={4} />
+        <EndpointName method={method} fullPath={fullPath} leftPad={6} />
       </div>
       <div style={{ paddingRight: 15 }} onClick={(e) => e.stopPropagation()}>
         <EndpointNameMiniContribution

@@ -112,12 +112,19 @@ impl From<BatchCommitEnded> for RfcEvent {
   }
 }
 
+impl From<ContributionAdded> for RfcEvent {
+  fn from(event: ContributionAdded) -> Self {
+    Self::ContributionAdded(event)
+  }
+}
+
 // Conversion from commands
 // ------------------------
 
 impl From<RfcCommand> for RfcEvent {
   fn from(rfc_command: RfcCommand) -> Self {
     match rfc_command {
+      RfcCommand::AddContribution(command) => RfcEvent::from(ContributionAdded::from(command)),
       RfcCommand::StartBatchCommit(command) => RfcEvent::from(BatchCommitStarted::from(command)),
       RfcCommand::EndBatchCommit(command) => RfcEvent::from(BatchCommitEnded::from(command)),
       _ => unimplemented!(
@@ -144,6 +151,17 @@ impl From<rfc_commands::EndBatchCommit> for BatchCommitEnded {
     Self {
       batch_id: command.batch_id,
       event_context: None,
+    }
+  }
+}
+
+impl From<rfc_commands::AddContribution> for ContributionAdded {
+  fn from(command: rfc_commands::AddContribution) -> Self {
+    Self {
+      id: command.id,
+      key: command.key,
+      value: command.value,
+      event_context: None
     }
   }
 }

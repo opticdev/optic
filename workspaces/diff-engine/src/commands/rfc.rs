@@ -45,9 +45,9 @@ impl RfcCommand {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AddContribution {
-  id: String,
-  key: String,
-  value: String,
+  pub id: String,
+  pub key: String,
+  pub value: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -123,6 +123,10 @@ impl AggregateCommand<HistoryProjection> for RfcCommand {
         )?;
 
         vec![RfcEvent::from(rfc_events::BatchCommitEnded::from(command))]
+      }
+
+      RfcCommand::AddContribution(command) => {
+        vec![RfcEvent::from(rfc_events::ContributionAdded::from(command))]
       }
 
       _ => Err(SpecCommandError::Unimplemented(
