@@ -1,5 +1,6 @@
 import { makeSpectacle } from './index';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import {  InMemoryOpticContextBuilder } from './in-memory';
 
 import * as fs from 'fs';
 
@@ -10,16 +11,11 @@ function loadExampleSpec(name: string): any[] {
 }
 
 // TODO: replace examples with snapshot tests
-const _events = loadExampleSpec('add-req-body-field');
+const _events = loadExampleSpec('default');
 
 async function main() {
-  const spectacle = await makeSpectacle(DiffEngine, {
-    specRepository: {
-      listEvents(): Promise<any[]> {
-        return Promise.resolve(_events);
-      }
-    }
-  });
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, _events);
+  const spectacle = await makeSpectacle(opticContext);
 
   const batchCommitResults = await spectacle({
     query: `{
@@ -50,10 +46,8 @@ async function main() {
 
   console.log(JSON.stringify(endpointChangesResult, null, 2));
 
-  return;
-
   const result = await spectacle({
-    query: `{ 
+    query: `{
     requests {
       id
       pathId
@@ -80,7 +74,7 @@ async function main() {
 
   {
     const result = await spectacle({
-      query: `{ 
+      query: `{
     shapeChoices(shapeId: "shape_RvMMDY4eOD") {
       id
       jsonType
@@ -89,7 +83,6 @@ async function main() {
       variables: {}
     });
     console.log(JSON.stringify(result, null, 2));
-
   }
 }
 

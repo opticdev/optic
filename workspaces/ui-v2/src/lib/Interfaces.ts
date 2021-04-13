@@ -12,14 +12,22 @@ export interface IInterpretation {
   suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
   diffDescription?: IDiffDescription;
+  updateSpecChoices: IPatchChoices;
+  toCommands: (choices: IPatchChoices) => any[];
 }
 
-export interface IDiffSuggestionPreview {
-  for: 'shape' | 'region';
-  diffDescription: IDiffDescription;
-  tabs: IInteractionPreviewTab[];
-  suggestions: ISuggestion[];
-  overrideTitle?: ICopy[];
+export interface IShapeUpdateChoice {
+  coreShapeKind: ICoreShapeKinds;
+  isValid: boolean;
+}
+
+export interface IPatchChoices {
+  copy: ICopy[];
+  shapes: IShapeUpdateChoice[];
+  isOptional?: boolean;
+  shouldRemoveField?: boolean;
+  isField?: boolean;
+  isShape?: boolean;
 }
 
 export interface IInteractionPreviewTab {

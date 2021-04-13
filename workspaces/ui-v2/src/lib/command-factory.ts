@@ -13,7 +13,7 @@ RemoveField,
 export function AddShape(
   shapeId: string,
   baseShapeId: string,
-  name: string = ''
+  name: string = '',
 ) {
   return { AddShape: { shapeId, baseShapeId, name } };
 }
@@ -25,7 +25,7 @@ type FieldFromShapeType = {
 
 export function FieldShapeFromShape(
   fieldId: string,
-  shapeId: string
+  shapeId: string,
 ): FieldFromShapeType {
   return { FieldShapeFromShape: { fieldId, shapeId } };
 }
@@ -34,7 +34,7 @@ export function AddField(
   fieldId: string,
   shapeId: string,
   name: string,
-  shapeDescriptor: FieldFromShapeType
+  shapeDescriptor: FieldFromShapeType,
 ) {
   return { AddField: { fieldId, shapeId, name, shapeDescriptor } };
 }
@@ -46,7 +46,7 @@ export function ShapeProvider(shapeId: string) {
 export function ProviderInShape(
   shapeId: string,
   providerDescriptor: any,
-  consumingParameterId: string
+  consumingParameterId: string,
 ) {
   return {
     ProviderInShape: { shapeId, providerDescriptor, consumingParameterId },
@@ -63,11 +63,49 @@ export function SetFieldShape(shapeDescriptor: FieldFromShapeType) {
 export function AddShapeParameter(
   shapeParameterId: string,
   shapeId: string,
-  name: string
+  name: string,
 ) {
   return { AddShapeParameter: { shapeParameterId, shapeId, name } };
 }
 
 export function RemoveField(fieldId: string) {
   return { RemoveField: { fieldId } };
+}
+
+export function AddPathParameter(
+  pathId: string,
+  parentPathId: string,
+  name: string,
+) {
+  return {
+    AddPathParameter: {
+      pathId,
+      parentPathId,
+      name,
+    },
+  };
+}
+
+export function AddPathComponent(
+  pathId: string,
+  parentPathId: string,
+  name: string,
+) {
+  return {
+    AddPathComponent: {
+      pathId,
+      parentPathId,
+      name,
+    },
+  };
+}
+
+export function AddContribution(id: string, key: string, value: string) {
+  return {
+    AddContribution: {
+      id,
+      key,
+      value,
+    },
+  };
 }

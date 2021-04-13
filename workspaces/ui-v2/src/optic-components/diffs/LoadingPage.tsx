@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, Typography, Link} from '@material-ui/core';
 import { CircularDiffLoaderProgress } from './CircularDiffProgress';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 const pJson = require('../../../package.json');
@@ -20,9 +20,12 @@ export function LoadingReview({
 
   if (cursor === total) {
     return (
+      <div>
+        <Link component={Button} href={reviewLink}>review diffs</Link>
       <Button color="primary" endIcon={<ArrowRightIcon />}>
         Review (19) Diffs
       </Button>
+      </div>
     );
   }
 

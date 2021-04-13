@@ -1,260 +1,224 @@
 import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { EventEmitter } from 'events';
+import GraphQLJSON from 'graphql-type-json';
+import { v4 as uuidv4 } from 'uuid';
+import { buildEndpointChanges, buildEndpointsGraph, buildShapesGraph } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-import * as endpointsGraph from '../../graph-lib/build/endpoints-graph';
-import * as shapesGraph from '../../graph-lib/build/shapes-graph';
-import { NodeType } from '../../graph-lib/build/shapes-graph';
+// import { shapes } from '../../graph-lib/build';
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface IOpticEngine {
+  try_apply_commands(arg0: string, arg1: string): any;
+
+  get_shape_viewer_projection(spec: any): string;
+
+  spec_from_events(arg0: string): any;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticSpecRepository {
-  listEvents(): Promise<any[]>
+  listEvents(): Promise<any[]>;
 }
+
+export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
+  appendEvents(events: any[]): Promise<void>;
+
+  notifications: EventEmitter;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface ICapture {
+  captureId: string;
+  startedAt: string;
+}
+
+
+export interface StartDiffResult {
+  notifications: EventEmitter,
+  onComplete: Promise<IOpticDiffService>
+}
+
+export interface IOpticCapturesService {
+  listCaptures(): Promise<ICapture[]>
+
+  startDiff(
+    diffId: string,
+    captureId: string,
+  ): Promise<StartDiffResult>
+}
+
+////////////////////////////////////////////////////////////////////////////////
+export interface IListDiffsResponse {
+  diffs: any[];
+}
+
+export interface IListUnrecognizedUrlsResponse {
+  urls: IUnrecognizedUrl[];
+}
+
+export interface IUnrecognizedUrl {
+  path: string;
+  method: string;
+  count: number;
+}
+
+export interface IOpticDiffService {
+  listDiffs(): Promise<IListDiffsResponse>;
+
+  listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse>;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface IOpticDiffRepository {
+  findById(id: string): Promise<IOpticDiffService>
+
+  add(id: string, diff: IOpticDiffService): Promise<void>
+}
+
+////////////////////////////////////////////////////////////////////////////////
+export interface IOpticConfigRepository {
+  ignoreRequests: string[]
+}
+
+export interface IOpticInteractionsRepository {
+  listById(id: string): Promise<any[]>
+
+  set(id: string, interactions: any[]): Promise<void>
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticContext {
-  specRepository: IOpticSpecRepository;
+  opticEngine: IOpticEngine
+  configRepository: IOpticConfigRepository
+  specRepository: IOpticSpecReadWriteRepository
+  capturesService: IOpticCapturesService
+  diffRepository: IOpticDiffRepository
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
 export interface IBaseSpectacle {
-  query(options: SpectacleInput): Promise<any>
-  mutate(options: SpectacleInput): Promise<any>
+  query(options: SpectacleInput): Promise<any>;
 
+  mutate(options: SpectacleInput): Promise<any>;
 }
+
 export interface IForkableSpectacle extends IBaseSpectacle {
-  fork(): Promise<IBaseSpectacle>
+  fork(): Promise<IBaseSpectacle>;
 }
 
-function buildEndpointsGraph(spec: any, opticEngine: any) {
-  const serializedGraph = JSON.parse(opticEngine.get_endpoints_projection(spec));
-  const {
-    nodes, edges, nodeIndexToId
-  } = serializedGraph;
+////////////////////////////////////////////////////////////////////////////////
 
-  // console.log(JSON.stringify(serializedGraph, null, 2));
-
-  const indexer = new endpoints.GraphIndexer();
-
-  function remapId(arrayIndex: number) {
-    const fallbackId = arrayIndex.toString();
-    const id = nodeIndexToId[fallbackId];
-    if (id !== undefined) {
-      return id;
-    }
-    return fallbackId;
-  }
-
-  nodes.forEach((node: endpoints.Node, index: number) => {
-    const id = remapId(index);
-    indexer.addNode({
-      ...node,
-      id
-    });
-  });
-  edges.forEach((e: [number, number, any]) => {
-    const [sourceIndex, targetIndex, edge] = e;
-    indexer.addEdge(edge, remapId(sourceIndex), remapId(targetIndex));
-  });
-  const queries = new endpoints.GraphQueries(indexer);
-  return queries;
-}
-
-function buildShapesGraph(spec: any, opticEngine: any) {
-  const serializedGraph = JSON.parse(opticEngine.get_shapes_projection(spec));
-  const {
-    nodes, edges, nodeIndexToId
-  } = serializedGraph;
-
-  const indexer = new shapes.GraphIndexer();
-
-  function remapId(arrayIndex: number) {
-    const fallbackId = arrayIndex.toString();
-    const id = nodeIndexToId[fallbackId];
-    if (id !== undefined) {
-      return id;
-    }
-    return fallbackId;
-  }
-
-  nodes.forEach((node: shapes.Node, index: number) => {
-    const id = remapId(index);
-    indexer.addNode({
-      ...node,
-      id
-    });
-  });
-  edges.forEach((e: [number, number, any]) => {
-    const [sourceIndex, targetIndex, edge] = e;
-    indexer.addEdge(edge, remapId(sourceIndex), remapId(targetIndex));
-  });
-  const queries = new shapes.GraphQueries(indexer);
-  return queries;
-}
-
-type EndpointChange = {
-  change: {
-    category: string
-  }
-  path: string
-  method: string
-}
-
-type EndpointChanges = {
-  data: {
-    endpoints: EndpointChange[]
-  }
-}
-
-function buildEndpointChanges(
-  endpointQueries: endpointsGraph.GraphQueries,
-  shapeQueries: shapesGraph.GraphQueries,
-  since?: string
-): EndpointChanges {
-  let sortedBatchCommits = endpointQueries
-    .listNodesByType(endpoints.NodeType.BatchCommit)
-    .results
-    .sort((a: any, b: any) => {
-      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
-    });
-
-  // If there is no `since` date, we want to use every batch commit
-  const deltaBatchCommits = since
-    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
-    : sortedBatchCommits;
-
-  const changes = new Changes();
-
-  deltaBatchCommits.forEach((batchCommit: any) => {
-    batchCommit.requests().results.forEach((request: any) => {
-      changes.captureChange('added', endpointFromRequest(request));
-    });
-
-    batchCommit.responses().results.forEach((response: any) => {
-      changes.captureChange('updated', endpointFromResponse(response))
-    });
-  });
-
-  // Gather batch commit neighbors
-  const batchCommitNeighborIds = new Map();
-  deltaBatchCommits.forEach((batchCommit: any) => {
-    const batchCommitId = batchCommit.result.id;
-    // TODO: create query for neighbors of all types
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
-      .results
-      .forEach((shape: any) => {
-        batchCommitNeighborIds.set(shape.result.id, batchCommitId);
-      });
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
-      .results
-      .forEach((field: any) => {
-        batchCommitNeighborIds.set(field.result.id, batchCommitId);
-      });
-  });
-
-  endpointQueries
-    .listNodesByType(endpoints.NodeType.Body)
-    .results
-    .reduce((results: string[], bodyNode: any) => {
-      const { rootShapeId } = bodyNode.result.data;
-      if (batchCommitNeighborIds.has(rootShapeId)) {
-        results.push(rootShapeId);
-        return results;
-      }
-      for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
-        if (batchCommitNeighborIds.has(descendant.id)) {
-          results.push(rootShapeId);
-          return results;
-        }
-      }
-      return results;
-    }, [])
-    .forEach((changedRootShapeId: any) => {
-      const body: any = endpointQueries.findNodeById(changedRootShapeId);
-      const response = body.response();
-      if (response) {
-        if (changes.captureChange('updated', endpointFromResponse(response))) {
-          return;
-        }
-      }
-      const request = body.request();
-      if (request) {
-        changes.captureChange('updated', endpointFromRequest(request));
-      }
-    });
-
-  return changes.toEndpointChanges();
-}
-
-type Endpoint = {
-  endpointId: string,
-  path: string,
-  method: string
-}
-
-class Changes {
-  public changes: Map<string, EndpointChange>;
-
-  constructor() {
-    this.changes = new Map();
-  }
-
-  captureChange(category: string, endpoint: Endpoint): boolean {
-    if (this.changes.has(endpoint.endpointId)) return false;
-    this.changes.set(endpoint.endpointId, {
-      change: { category },
-      path: endpoint.path,
-      method: endpoint.method
-    });
-    return true;
-  }
-
-  toEndpointChanges(): EndpointChanges {
-    return {
-      data: {
-        endpoints: Array.from(this.changes.values())
-      }
-    }
-  }
-}
-
-function endpointFromRequest(request: any): Endpoint {
-  const pathNode = request.path();
-  const path = pathNode.result.data.absolutePathPattern;
-  const method = request.result.data.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
-  return { endpointId, path, method };
-}
-
-function endpointFromResponse(response: any): Endpoint {
-  const pathNode = response.path();
-  const path = pathNode.result.data.absolutePathPattern;
-  const method = response.result.data.httpMethod;
-  const endpointId = JSON.stringify({ path, method });
-  return { endpointId, path, method };
-}
-
-export async function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
+async function buildProjections(opticContext: IOpticContext) {
   const events = await opticContext.specRepository.listEvents();
-  const spec = opticEngine.spec_from_events(
-    JSON.stringify(events)
+  const spec = opticContext.opticEngine.spec_from_events(JSON.stringify(events));
+
+  const endpointsQueries = buildEndpointsGraph(spec, opticContext.opticEngine);
+  const shapesQueries = buildShapesGraph(spec, opticContext.opticEngine);
+  const shapeViewerProjection = JSON.parse(
+    opticContext.opticEngine.get_shape_viewer_projection(spec),
   );
 
-  const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
-  const shapeQueries = buildShapesGraph(spec, opticEngine);
-  const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
+  return {
+    events,
+    spec,
+    endpointsQueries,
+    shapesQueries,
+    shapeViewerProjection,
+  };
+}
+
+export async function makeSpectacle(
+  opticContext: IOpticContext,
+) {
+  let endpointsQueries: endpoints.GraphQueries, shapeQueries: any, shapeViewerProjection: any;
+
+  async function reload(opticContext: IOpticContext) {
+    const projections = await buildProjections(opticContext);
+    endpointsQueries = projections.endpointsQueries;
+    shapeQueries = projections.shapesQueries;
+    shapeViewerProjection = projections.shapeViewerProjection;
+  }
+
+  await reload(opticContext);
 
   const resolvers = {
+    JSON: GraphQLJSON,
+    Mutation: {
+      applyCommands: async (parent: any, args: any, context: any) => {
+        const batchCommitId = uuidv4();
+        const events = await opticContext.specRepository.listEvents();
+        const newEventsString = opticContext.opticEngine.try_apply_commands(
+          JSON.stringify(args.commands),
+          JSON.stringify(events),
+        );
+        const newEvents = JSON.parse(newEventsString);
+        //@TODO: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
+        await context.opticContext.specRepository.appendEvents(newEvents);
+
+        await reload(context.opticContext);
+
+        return {
+          batchCommitId,
+        };
+      },
+      startDiff: async (parent: any, args: any, context: any) => {
+        const { diffId, captureId } = args;
+        await context.opticContext.capturesService.startDiff(
+          diffId, captureId,
+          context.opticContext.specRepository,
+          context.opticContext.configRepository
+        );
+        return {
+          notificationsUrl: '',
+        };
+      },
+    },
     Query: {
       requests: (parent: any, args: any, context: any, info: any) => {
-        return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.Request).results);
+        return Promise.resolve(
+          context.endpointsQueries
+            .listNodesByType(endpoints.NodeType.Request).results,
+        );
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
       },
-      endpointChanges: (parent: any, { since }: { since?: string }, context: any, info: any) => {
+      endpointChanges: (
+        parent: any,
+        { since }: { since?: string },
+        context: any,
+        info: any,
+      ) => {
         const endpointChanges = buildEndpointChanges(endpointsQueries, shapeQueries, since);
         return Promise.resolve(endpointChanges);
       },
       batchCommits: (parent: any, args: any, context: any, info: any) => {
-        return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.BatchCommit).results);
-      }
+        return Promise.resolve(
+          context.endpointsQueries.listNodesByType(
+            endpoints.NodeType.BatchCommit,
+          ).results,
+        );
+      },
+      diff: async (parent: any, args: any, context: any, info: any) => {
+        const { diffId } = args;
+        return context.opticContext.diffRepository.findById(diffId);
+      },
+    },
+    DiffState: {
+      diffs: async (parent: IOpticDiffService, args: any, context: any) => {
+        return parent.listDiffs();
+      },
+      unrecognizedUrls: async (parent: IOpticDiffService, args: any, context: any) => {
+        return parent.listUnrecognizedUrls();
+      },
     },
     HttpRequest: {
       id: (parent: any) => {
@@ -274,7 +238,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().responses().results);
-      }
+      },
     },
     HttpResponse: {
       id: (parent: any) => {
@@ -285,7 +249,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
-      }
+      },
     },
     HttpBody: {
       contentType: (parent: any) => {
@@ -293,7 +257,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       rootShapeId: (parent: any) => {
         return Promise.resolve(parent.result.data.rootShapeId);
-      }
+      },
     },
     OpticShape: {
       id: (parent: any) => {
@@ -311,12 +275,12 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
         if (parent.jsonType === 'Object') {
           return Promise.resolve(parent);
         }
-      }
+      },
     },
     ArrayMetadata: {
       shapeId: (parent: any) => {
         return Promise.resolve(parent.itemShapeId);
-      }
+      },
     },
     EndpointChanges: {
       opticUrl: (parent: any) => {
@@ -324,7 +288,7 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       endpoints: (parent: any) => {
         return Promise.resolve(parent.data.endpoints);
-      }
+      },
     },
     EndpointChange: {
       change: (parent: any) => {
@@ -335,12 +299,12 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       method: (parent: any) => {
         return Promise.resolve(parent.method);
-      }
+      },
     },
     EndpointChangeMetadata: {
       category: (parent: any) => {
         return Promise.resolve(parent.category);
-      }
+      },
     },
     BatchCommit: {
       createdAt: (parent: any) => {
@@ -348,13 +312,13 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       },
       batchId: (parent: any) => {
         return Promise.resolve(parent.result.data.batchId);
-      }
-    }
+      },
+    },
   };
 
   const executableSchema = makeExecutableSchema({
     typeDefs: schema,
-    resolvers
+    resolvers,
   });
 
   return function(input: SpectacleInput) {
@@ -366,16 +330,16 @@ export async function makeSpectacle(opticEngine: any, opticContext: IOpticContex
       contextValue: {
         opticContext,
         endpointsQueries,
-        shapeViewerProjection
-      }
+        shapeViewerProjection,
+      },
     });
   };
 }
 
 export interface SpectacleInput {
-  query: string,
+  query: string;
   variables: {
-    [key: string]: string
-  },
-  operationName?: string
+    [key: string]: any;
+  };
+  operationName?: string;
 }

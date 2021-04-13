@@ -20,10 +20,10 @@ import { namer } from './quick-namer';
 
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
-  query: any,
+  spectacle: any,
   currentSpecContext: CurrentSpecContext
 ): Promise<Expectation> {
-  const expectations = await shapeTrailParserLastId(shapeTrail, query);
+  const expectations = await shapeTrailParserLastId(shapeTrail, spectacle);
   return new Expectation(expectations, currentSpecContext);
 }
 

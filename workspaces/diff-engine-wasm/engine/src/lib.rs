@@ -2,7 +2,9 @@
 
 use wasm_bindgen::prelude::*;
 
-use optic_diff_engine::{HttpInteraction, InteractionDiffResult, SpecEvent, SpecProjection};
+use optic_diff_engine::{
+  Aggregate, HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
+};
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -45,6 +47,29 @@ pub fn diff_interaction(
     .collect();
 
   Ok(serde_json::to_string(&results).unwrap())
+}
+
+#[wasm_bindgen]
+pub fn try_apply_commands(commands_json: String, events_json: String) -> Result<String, JsValue> {
+  let spec_commands: Vec<SpecCommand> = serde_json::from_str(&commands_json).unwrap();
+  let spec_events: Vec<SpecEvent> = serde_json::from_str(&events_json).unwrap();
+  let spec_projection = SpecProjection::from(spec_events);
+
+  let final_state = spec_commands.into_iter().fold(
+    (spec_projection, vec![]),
+    |(mut projection, mut events), command| {
+      let new_events = projection
+        .execute(command)
+        .expect("expected commands to apply");
+      new_events.into_iter().for_each(|event| {
+        projection.apply(event.clone());
+        events.push(event);
+      });
+      (projection, events)
+    },
+  );
+  let (_, new_events) = final_state;
+  Ok(serde_json::to_string(&new_events).unwrap())
 }
 
 #[wasm_bindgen]

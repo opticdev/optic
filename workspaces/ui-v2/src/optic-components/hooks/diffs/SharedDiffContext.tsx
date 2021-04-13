@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   newSharedDiffMachine,
@@ -13,7 +13,11 @@ import { IEndpoint, useEndpoints } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { IgnoreRule } from '../../../lib/ignore-rule';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
+import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
+import { ParsedDiff } from '../../../lib/parse-diff';
+import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
+import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -21,11 +25,11 @@ type ISharedDiffContext = {
   context: SharedDiffStateContext;
   documentEndpoint: (pattern: string, method: string) => string;
   addPathIgnoreRule: (rule: string) => void;
-  addDiffIgnoreRule: (rule: IgnoreRule) => void;
+  addDiffHashIgnore: (diffHash: string) => void;
   persistWIPPattern: (
     path: string,
     method: string,
-    components: PathComponentAuthoring[]
+    components: PathComponentAuthoring[],
   ) => void;
   getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
@@ -33,42 +37,20 @@ type ISharedDiffContext = {
   discardEndpoint: (id: string) => void;
   approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
   pendingEndpoints: IPendingEndpoint[];
-  resetIgnoreRules: (diffHash: string) => void;
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
-};
-
-export const SharedDiffStoreWithDependencies = (props: any) => {
-  const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
-  const allEndpointsOfBaseSpec = useEndpoints();
-
-  // loaded
-  if (
-    allRequestsAndResponsesOfBaseSpec.data &&
-    allEndpointsOfBaseSpec.endpoints
-  ) {
-    return (
-      <SharedDiffStore
-        endpoints={allEndpointsOfBaseSpec.endpoints}
-        requests={allRequestsAndResponsesOfBaseSpec.data.requests}
-        responses={allRequestsAndResponsesOfBaseSpec.data.responses}
-      >
-        {props.children}
-      </SharedDiffStore>
-    );
-  } else {
-    return <div>LOADING</div>;
-  }
 };
 
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
   requests: IRequestBody[];
   responses: IResponseBody[];
+  diffs: any;
+  urls: IUnrecognizedUrl[];
   children?: any;
 };
 
-const SharedDiffStore = (props: SharedDiffStoreProps) => {
+export const SharedDiffStore = (props: SharedDiffStoreProps) => {
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -76,8 +58,30 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     domainIds: newRandomIdGenerator(),
   };
 
+  const parsedDiffs = useMemo(
+    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
+    [props.diffs],
+  );
+
+  const { allSamples } = useContext(InteractionLoaderContext);
+
+  const trailsLearned = learnTrailsForParsedDiffs(
+    parsedDiffs,
+    currentSpecContext,
+    //@ts-ignore
+    window.events,
+    allSamples,
+  );
+
+  //@dev here is where the diff output needs to go
   const [state, send]: any = useMachine(() =>
-    newSharedDiffMachine(currentSpecContext)
+    newSharedDiffMachine(
+      currentSpecContext,
+      parsedDiffs,
+      props.urls.map((i) => ({ ...i })),
+      trailsLearned,
+      allSamples,
+    ),
   );
   const context: SharedDiffStateContext = state.context;
   const [wipPatterns, setWIPPatterns] = useState<{
@@ -98,26 +102,25 @@ const SharedDiffStore = (props: SharedDiffStoreProps) => {
     addPathIgnoreRule: (rule: string) => {
       send({ type: 'ADD_PATH_IGNORE_RULE', rule });
     },
-    addDiffIgnoreRule: (rule: IgnoreRule) => {
-      send({ type: 'ADD_DIFF_IGNORE_RULE', rule });
-    },
     getPendingEndpointById: (id: string) => {
       return context.pendingEndpoints.find((i) => i.id === id);
     },
     pendingEndpoints: context.pendingEndpoints,
     isDiffHandled: (diffHash: string) => {
-      return context.choices.approvedSuggestions.hasOwnProperty(diffHash);
+      return (
+        context.choices.approvedSuggestions.hasOwnProperty(diffHash) ||
+        context.browserDiffHashIgnoreRules.includes(diffHash)
+      );
     },
     approveCommandsForDiff: (diffHash: string, commands: any[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
-    resetIgnoreRules: (diffHash: string) => {
-      send({ type: 'RESET_IGNORES_FOR_DIFF', diffHash });
-    },
+    addDiffHashIgnore: (diffHash: string) =>
+      send({ type: 'ADD_DIFF_HASH_IGNORE', diffHash }),
     persistWIPPattern: (
       path: string,
       method: string,
-      components: PathComponentAuthoring[]
+      components: PathComponentAuthoring[],
     ) =>
       setWIPPatterns((obj) => ({
         ...obj,

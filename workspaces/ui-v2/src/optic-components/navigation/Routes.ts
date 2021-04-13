@@ -101,3 +101,36 @@ export const useDiffForEndpointLink: () => {
       )}/paths/${pathId}/methods/${method}`,
   };
 };
+
+// changelog pages
+
+export const useChangelogPages: () => {
+  path: string;
+  linkTo: (sinceBatchCommitId: string) => string;
+} = () => {
+  const baseUrl = useBaseUrl();
+  const path = `${baseUrl}/changes-since/:batchId`;
+  return {
+    path: path,
+    linkTo: (sinceBatchCommitId) =>
+      `${baseUrl}/changes-since/${sinceBatchCommitId}`,
+  };
+};
+
+export const useChangelogEndpointPageLink: () => {
+  path: string;
+  linkTo: (
+    sinceBatchCommitId: string,
+    pathId: string,
+    method: string
+  ) => string;
+} = () => {
+  const changelogRoot = useChangelogPages();
+  return {
+    path: `${changelogRoot.path}/paths/:pathId/methods/:method`,
+    linkTo: (sinceBatchCommitId: string, pathId: string, method: string) =>
+      `${changelogRoot.linkTo(
+        sinceBatchCommitId
+      )}/paths/${pathId}/methods/${method}`,
+  };
+};

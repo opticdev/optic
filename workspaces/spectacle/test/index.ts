@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import Tap from 'tap';
 import { makeSpectacle } from '../src';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { InMemoryOpticContextBuilder } from '../src/in-memory';
 
 const specs = [
   {
@@ -56,13 +57,9 @@ const specs = [
 ]
 
 Tap.test('spectacle batchCommits query', async (test) => {
-  const spectacle = await makeSpectacle(OpticEngine, {
-    specRepository: {
-      async listEvents(): Promise<any[]> {
-        return [];
-      }
-    }
-  });
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, [])
+  const spectacle = await makeSpectacle(opticContext);
+
   const results = await spectacle({
     query: `{
         batchCommits {

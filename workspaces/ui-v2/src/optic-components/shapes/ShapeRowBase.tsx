@@ -7,11 +7,11 @@ import {
   IShapeRenderer,
   JsonLike,
 } from './ShapeRenderInterfaces';
-import { ShapePrimitiveRender } from './ShapePrimitive';
+import { ShapePrimitiveRender, UnknownPrimitiveRender } from './ShapePrimitive';
 import { useDepth } from './DepthContext';
 import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
-import { OneOfTabs } from './OneOfTabs';
+import { OneOfTabs, OneOfTabsProps } from './OneOfTabs';
 
 type ShapeRowBaseProps = {
   children: any;
@@ -36,8 +36,8 @@ export const ShapeRowBase = ({
         className={classNames(
           classes.row,
           { [sharedClasses.added]: changelog && changelog.added },
-          { [sharedClasses.removed]: changelog && changelog.removed },
-          { [sharedClasses.changed]: changelog && changelog.changed }
+          { [sharedClasses.removed]: changelog && changelog.removed }
+          // { [sharedClasses.changed]: changelog && changelog.changed }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -51,24 +51,76 @@ export const RenderField = ({
   name,
   shapeChoices,
   required,
+  parentId,
   changelog,
 }: IFieldRenderer) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
 
-  return (
-    <>
+  const { getChoice } = useShapeRenderContext();
+
+  if (shapeChoices.length === 1) {
+    return (
+      <>
+        <ShapeRowBase depth={depth} changelog={changelog}>
+          <span className={sharedClasses.shapeFont}>"{name}"</span>
+          <span className={sharedClasses.symbolFont}>: </span>
+          <RenderFieldLeadingValue
+            parentId={parentId}
+            shapeRenderers={shapeChoices}
+          />
+          {!required && (
+            <span className={sharedClasses.symbolFont}> (optional) </span>
+          )}
+        </ShapeRowBase>
+        <RenderFieldRowValues
+          parentId={parentId}
+          shapeRenderers={shapeChoices}
+        />
+      </>
+    );
+  } else if (shapeChoices.length === 0) {
+    return (
       <ShapeRowBase depth={depth} changelog={changelog}>
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
-        <RenderFieldLeadingValue shapeRenderers={shapeChoices} />
-        {!required && (
-          <span className={sharedClasses.symbolFont}> (optional) </span>
-        )}
+        <UnknownPrimitiveRender />
       </ShapeRowBase>
-      <RenderFieldRowValues shapeRenderers={shapeChoices} />
-    </>
-  );
+    );
+  } else {
+    const tabprops: OneOfTabsProps = {
+      parentShapeId: parentId,
+      choices: shapeChoices.map((i) => ({
+        label: i.jsonType,
+        id: i.shapeId,
+      })),
+    };
+    const current = getChoice(tabprops);
+    const toRenderShape = shapeChoices.find((i) => i.shapeId === current);
+    //one of
+    return (
+      <>
+        <ShapeRowBase depth={depth} changelog={changelog}>
+          <span className={sharedClasses.shapeFont}>"{name}"</span>
+          <span className={sharedClasses.symbolFont}>: </span>
+          {toRenderShape && (
+            <RenderFieldLeadingValue
+              parentId={parentId}
+              shapeRenderers={[toRenderShape]}
+            />
+          )}
+          <div style={{ flex: 1 }} />
+          <OneOfTabs {...tabprops} />
+        </ShapeRowBase>
+        {toRenderShape && (
+          <RenderFieldRowValues
+            parentId={parentId}
+            shapeRenderers={[toRenderShape]}
+          />
+        )}
+      </>
+    );
+  }
 };
 
 export const RenderRootShape = ({
@@ -82,7 +134,7 @@ export const RenderRootShape = ({
   return (
     <>
       <ShapeRowBase depth={depth}>
-        <RenderFieldLeadingValue shapeRenderers={shape} />
+        <RenderFieldLeadingValue shapeRenderers={shape} parentId={'root'} />
         {right ? (
           <>
             <div style={{ flex: 1 }} />
@@ -90,44 +142,48 @@ export const RenderRootShape = ({
           </>
         ) : null}
       </ShapeRowBase>
-      <RenderFieldRowValues shapeRenderers={shape} />
+      <RenderFieldRowValues shapeRenderers={shape} parentId={'root'} />
     </>
   );
 };
 
 type RenderFieldValueProps = {
+  parentId: string;
   shapeRenderers: IShapeRenderer[];
 };
 
 export const RenderFieldLeadingValue = ({
   shapeRenderers,
+  parentId,
 }: RenderFieldValueProps) => {
+  const { Indent, depth } = useDepth();
   const sharedClasses = useSharedStyles();
-  if (shapeRenderers.length === 1) {
-    const shape = shapeRenderers[0];
-    if (shape.jsonType === JsonLike.OBJECT) {
-      return (
-        <>
-          <span className={sharedClasses.symbolFont}>{'{'}</span>
-        </>
-      );
-    }
-    if (shape.jsonType === JsonLike.ARRAY && shape.asArray) {
-      return (
-        <>
-          <span className={sharedClasses.symbolFont}>{'['}</span>
-        </>
-      );
-    }
+  const shape = shapeRenderers[0];
 
+  if (!shape) {
+    return null;
+  }
+
+  if (shape.jsonType === JsonLike.OBJECT) {
     return (
       <>
-        <ShapePrimitiveRender {...shape} />
+        <span className={sharedClasses.symbolFont}>{'{'}</span>
       </>
     );
-  } else {
-    return <span>'invariant, one of'</span>;
   }
+  if (shape.jsonType === JsonLike.ARRAY && shape.asArray) {
+    return (
+      <>
+        <span className={sharedClasses.symbolFont}>{'['}</span>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ShapePrimitiveRender {...shape} />
+    </>
+  );
 };
 
 export const RenderFieldRowValues = ({
@@ -142,7 +198,7 @@ export const RenderFieldRowValues = ({
         <>
           {shape.asObject.fields.map((i, index) => (
             <Indent key={index}>
-              <RenderField {...i} key={i.fieldId} />
+              <RenderField {...i} key={i.fieldId} parentId={shape.shapeId} />
             </Indent>
           ))}
           <ShapeRowBase depth={depth}>
@@ -153,10 +209,8 @@ export const RenderFieldRowValues = ({
     }
 
     if (shape.asArray) {
-
-
       if (shape.asArray.shapeChoices.length === 0) {
-        return <ShapePrimitiveRender {...shape} />
+        return <ShapePrimitiveRender {...shape} />;
       }
 
       const inner =
@@ -209,6 +263,7 @@ export function OneOfRender({
 
   const chosenShapeToRender = choices.find((i) => i.id === getChoice(tabProps));
   if (!chosenShapeToRender) {
+    return null;
     throw new Error(`expected a shape to be chosen for rendering`);
   }
   const shape = shapes.find((i) => chosenShapeToRender.id === i.shapeId);

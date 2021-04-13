@@ -11,47 +11,54 @@ export enum NodeType {
 }
 
 export type Node = {
-  id: NodeId
-} & ({
-  type: NodeType.Path,
-  data: PathNode
-} | {
-  type: NodeType.Request
-  data: RequestNode
-} | {
-  type: NodeType.Response,
-  data: ResponseNode
-} | {
-  type: NodeType.Body,
-  data: BodyNode
-} | {
-  type: NodeType.BatchCommit,
-  data: BatchCommitNode
-})
+  id: NodeId;
+} & (
+  | {
+      type: NodeType.Path;
+      data: PathNode;
+    }
+  | {
+      type: NodeType.Request;
+      data: RequestNode;
+    }
+  | {
+      type: NodeType.Response;
+      data: ResponseNode;
+    }
+  | {
+      type: NodeType.Body;
+      data: BodyNode;
+    }
+  | {
+      type: NodeType.BatchCommit;
+      data: BatchCommitNode;
+    }
+);
 
 export type PathNode = {
-  absolutePathPattern: string
-  pathId: string
-}
+  absolutePathPattern: string;
+  pathId: string;
+};
 export type RequestNode = {
-  requestId: string
-  httpMethod: string
-}
+  requestId: string;
+  httpMethod: string;
+};
 export type ResponseNode = {
-  responseId: string
-  httpMethod: string
-  httpStatusCode: number
-}
+  responseId: string;
+  httpMethod: string;
+  httpStatusCode: number;
+};
 
 export type BodyNode = {
-  httpContentType: string
-  rootShapeId: string
-}
+  httpContentType: string;
+  rootShapeId: string;
+};
 
 export type BatchCommitNode = {
-  createdAt: string
-  batchId: string
-}
+  createdAt: string;
+  batchId: string;
+  commitMessage: string;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +77,9 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId> {
 
   addNode(node: Node) {
     if (this.nodesById.has(node.id)) {
-      throw new Error(`could not add a node with an id that already exists in the graph`);
+      throw new Error(
+        `could not add a node with an id that already exists in the graph`
+      );
     }
     this.unsafeAddNode(node);
   }
@@ -86,11 +95,13 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId> {
       throw new Error(`expected ${targetNodeId} to exist`);
     }
 
-    const outboundNeighbors = this.outboundNeighbors.get(sourceNodeId) || new Map();
+    const outboundNeighbors =
+      this.outboundNeighbors.get(sourceNodeId) || new Map();
     mapAppend(outboundNeighbors, targetNode.type, targetNode);
     this.outboundNeighbors.set(sourceNodeId, outboundNeighbors);
 
-    const inboundNeighbors = this.inboundNeighbors.get(targetNodeId) || new Map();
+    const inboundNeighbors =
+      this.inboundNeighbors.get(targetNodeId) || new Map();
     mapAppend(inboundNeighbors, sourceNode.type, sourceNode);
     this.inboundNeighbors.set(targetNodeId, inboundNeighbors);
   }
@@ -99,7 +110,6 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId> {
     this.nodesById.set(node.id, node);
     mapAppend(this.nodesByType, node.type, node);
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +120,7 @@ export interface NodeWrapper {
 }
 
 export interface NodeListWrapper {
-  results: NodeWrapper[]
+  results: NodeWrapper[];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,11 +147,13 @@ export class BodyNodeWrapper implements NodeWrapper {
 }
 
 export class RequestNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   path(): PathNodeWrapper {
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Path);
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Path
+    );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Request to have a parent Path`);
     }
@@ -149,16 +161,21 @@ export class RequestNodeWrapper implements NodeWrapper {
   }
 
   bodies(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Body);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Body
+    );
   }
 }
 
 export class ResponseNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   path(): PathNodeWrapper {
-    const neighbors = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Path);
+    const neighbors = this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.Path
+    );
     if (neighbors.results.length === 0) {
       throw new Error(`expected Response to have a parent Path`);
     }
@@ -166,41 +183,53 @@ export class ResponseNodeWrapper implements NodeWrapper {
   }
 
   bodies(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Body);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Body
+    );
   }
 }
 
 export class PathNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   requests(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Request);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Request
+    );
   }
 
   responses(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Response);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Response
+    );
   }
 }
 
 export class BatchCommitNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {
-  }
+  constructor(public result: Node, private queries: GraphQueries) {}
 
   requests(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Request);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Request
+    );
   }
 
   responses(): NodeListWrapper {
-    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Response);
+    return this.queries.listIncomingNeighborsByType(
+      this.result.id,
+      NodeType.Response
+    );
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GraphQueries {
-  constructor(private index: GraphIndexer) {
-  }
+  constructor(private index: GraphIndexer) {}
 
   findNodeById(id: NodeId): NodeWrapper | null {
     const node = this.index.nodesById.get(id);
@@ -225,7 +254,10 @@ export class GraphQueries {
   }
 
   //@TODO add singular find* variant
-  listOutgoingNeighborsByType(id: NodeId, outgoingNeighborType: NodeType): NodeListWrapper {
+  listOutgoingNeighborsByType(
+    id: NodeId,
+    outgoingNeighborType: NodeType
+  ): NodeListWrapper {
     const neighbors = this.index.outboundNeighbors.get(id);
     if (!neighbors) {
       return this.wrapList(outgoingNeighborType, []);
@@ -234,10 +266,8 @@ export class GraphQueries {
     return this.wrapList(outgoingNeighborType, neighborsOfType || []);
   }
 
-
-
-  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
-    debugger
+  *descendantsIterator(nodeId: NodeId): Iterator<Node> {
+    debugger;
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
       return;
@@ -269,7 +299,7 @@ export class GraphQueries {
   wrapList(type: NodeType, nodes: Node[]): NodeListWrapper {
     //@TODO add list helpers (map, etc.)
     return {
-      results: nodes.map(node => this.wrap(node))
+      results: nodes.map((node) => this.wrap(node)),
     };
   }
 }

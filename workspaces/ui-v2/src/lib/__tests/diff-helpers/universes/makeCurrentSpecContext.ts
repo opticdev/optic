@@ -3,7 +3,7 @@ import {
   AllEndpointsQuery,
   endpointQueryResultsToJson,
 } from '../../../../optic-components/hooks/useEndpointsHook';
-import { SpectacleInput } from '../../../../../../spectacle';
+import { SpectacleInput } from '@useoptic/spectacle/build';
 import {
   AllRequestsAndResponsesQuery,
   queryResultToAllRequestsResponses,

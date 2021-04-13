@@ -6,7 +6,8 @@ export function useShapeDescriptor(
   rootShapeId: string,
   renderChangesSince: string | undefined
 ): IShapeRenderer[] {
-  const spectacle = useContext(SpectacleContext);
+  const spectacle = useContext(SpectacleContext)!;
+
   const query = `
   query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {
@@ -26,7 +27,7 @@ export function useShapeDescriptor(
 }`;
 
   async function accumulateShapes(rootShapeId: string) {
-    const result = await spectacle.query({
+    const result = await spectacle!.query({
       variables: {
         shapeId: rootShapeId,
       },
@@ -51,9 +52,9 @@ export function useShapeDescriptor(
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
-                field.shapeChoices = shapeChoices.filter(
-                  (i: any) => i.jsonType !== JsonLike.UNDEFINED
-                ); // don't include optional
+                field.shapeChoices = shapeChoices
+                  .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
+                  .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
                 return field;
               })
             );
@@ -81,8 +82,7 @@ export function useShapeDescriptor(
 
     task();
     // should only run once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [spectacle]);
 
   return x;
 }

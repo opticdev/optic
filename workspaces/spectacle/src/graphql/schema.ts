@@ -1,12 +1,31 @@
 export const schema = `
+scalar JSON
 schema {
   query: Query
+  mutation: Mutation
+}
+type Mutation {
+  applyCommands(commands: [JSON]): AppliedCommandsResult
+  startDiff(diffId: ID, captureId: ID): StartDiffResult
+}
+type AppliedCommandsResult {
+  batchCommitId: ID
+}
+type StartDiffResult {
+  notificationsUrl: String
+  listDiffsQuery: String
+  listUnrecognizedUrlsQuery: String
 }
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
   endpointChanges(since: String): EndpointChanges
   batchCommits: [BatchCommit]
+  diff(diffId: ID): DiffState
+}
+type DiffState {
+  diffs: JSON
+  unrecognizedUrls: JSON
 }
 type HttpBody {
   contentType: String
@@ -66,5 +85,6 @@ type EndpointChangeMetadata {
 type BatchCommit {
   createdAt: String
   batchId: String
+  commitMessage: String
 }
 `;

@@ -1,14 +1,14 @@
-import { AsyncStatus, Spectacle } from './public-examples';
 import React, { useContext, useEffect, useState } from 'react';
-import { SpectacleInput } from '@useoptic/spectacle';
+import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+//@TODO find some better way to represent this kind of thing with Typescript
+export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
 
-export const SpectacleContext = React.createContext<Spectacle>({
-  query: null,
-  samples: [],
-});
+export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
+  null,
+);
 
 export const SpectacleStore = (props: {
-  spectacle: Spectacle;
+  spectacle: IBaseSpectacle;
   children: any;
 }) => {
   return (
@@ -19,27 +19,48 @@ export const SpectacleStore = (props: {
 };
 
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
-  const { query } = useContext(SpectacleContext);
+  const spectacle = useContext(SpectacleContext)!;
+
   const [result, setResult] = useState({ loading: true });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
-      const result = await query(input);
+      const result = await spectacle.query(input);
       if (result.errors) {
         console.error(result.errors);
+        debugger;
         result.error = new Error(result.errors);
       }
       setResult(result);
     }
+
+    task();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stringInput, spectacle]);
+
+  return result;
+}
+export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
+  const spectacle = useContext(SpectacleContext)!;
+
+  const [result, setResult] = useState({ loading: true });
+
+  const stringInput = JSON.stringify(input);
+  useEffect(() => {
+    async function task() {
+      const result = await spectacle.mutate(input);
+      if (result.errors) {
+        console.error(result.errors);
+        debugger;
+        result.error = new Error(result.errors);
+      }
+      setResult(result);
+    }
+
     task();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stringInput]);
 
   return result;
-}
-
-export function useSpectacleRawQuery() {
-  const { query } = useContext(SpectacleContext);
-  return query;
 }

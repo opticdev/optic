@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { IPendingEndpoint } from './SharedDiffState';
-import { useMachine } from '@xstate/react';
+import { useActor, useMachine } from '@xstate/react';
 import {
   IIgnoreBody,
   newLearnPendingEndpointMachine,
 } from './LearnPendingEndpointState';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { InitialBodiesContext } from './LearnInitialBodiesMachine';
 
 export const LearnedPendingEndpointContext = React.createContext({});
 
@@ -19,28 +20,35 @@ type ILearnedPendingEndpointContext = {
   includeBody: (ignoreBody: IIgnoreBody) => void;
   stageEndpoint: () => void;
   discardEndpoint: () => void;
+  newEndpointCommands: any[];
+  stagedCommandsIds: {
+    pathId: string;
+    method: string;
+  };
+  endpointName: string;
+  changeEndpointName: (name: string) => void;
 };
 
 export const ILearnedPendingEndpointStore = ({
   endpoint,
+  endpointMachine,
   children,
   onEndpointStaged,
   onEndpointDiscarded,
 }: {
   children: any;
+  endpointMachine: any;
   endpoint: IPendingEndpoint;
   onEndpointStaged: () => void;
   onEndpointDiscarded: () => void;
 }) => {
-  const [state, send]: any = useMachine(() =>
-    newLearnPendingEndpointMachine(endpoint, () => {})
-  );
+  const [state, send]: any = useActor(endpoint.ref);
 
-  const context: ILearnedPendingEndpointContext = state.context;
+  const context: InitialBodiesContext = state.context;
 
   const value: ILearnedPendingEndpointContext = {
     endpoint,
-    isLoading: state.matches('loading'),
+    isLoading: !state.matches('ready'),
     isReady: state.matches('ready'),
     learnedBodies: context.learnedBodies,
     ignoredBodies: context.ignoredBodies,
@@ -52,6 +60,15 @@ export const ILearnedPendingEndpointStore = ({
     },
     stageEndpoint: onEndpointStaged,
     discardEndpoint: onEndpointDiscarded,
+    newEndpointCommands: context.allCommands,
+    stagedCommandsIds: {
+      pathId: context.pathId,
+      method: endpoint.method,
+    },
+    endpointName: context.stagedEndpointName,
+    changeEndpointName: (name: string) => {
+      send({ type: 'STAGED_ENDPOINT_NAME_UPDATED', name });
+    },
   };
   return (
     <LearnedPendingEndpointContext.Provider value={value}>
@@ -62,6 +79,6 @@ export const ILearnedPendingEndpointStore = ({
 
 export function useLearnedPendingEndpointContext() {
   return useContext(
-    LearnedPendingEndpointContext
+    LearnedPendingEndpointContext,
   ) as ILearnedPendingEndpointContext;
 }
