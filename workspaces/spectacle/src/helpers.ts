@@ -208,7 +208,7 @@ function endpointFromResponse(response: any): Endpoint {
 export function getShapeChanges(
   shapeQueries: shapes.GraphQueries,
   shapeId: string,
-  since: string
+  since?: string
 ): ChangeResult {
   let sortedBatchCommits = shapeQueries
     .listNodesByType(shapes.NodeType.BatchCommit)
