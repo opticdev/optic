@@ -36,19 +36,15 @@ export interface ICapture {
   startedAt: string;
 }
 
-
 export interface StartDiffResult {
-  notifications: EventEmitter,
-  onComplete: Promise<IOpticDiffService>
+  notifications: EventEmitter;
+  onComplete: Promise<IOpticDiffService>;
 }
 
 export interface IOpticCapturesService {
-  listCaptures(): Promise<ICapture[]>
+  listCaptures(): Promise<ICapture[]>;
 
-  startDiff(
-    diffId: string,
-    captureId: string,
-  ): Promise<StartDiffResult>
+  startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,30 +71,30 @@ export interface IOpticDiffService {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticDiffRepository {
-  findById(id: string): Promise<IOpticDiffService>
+  findById(id: string): Promise<IOpticDiffService>;
 
-  add(id: string, diff: IOpticDiffService): Promise<void>
+  add(id: string, diff: IOpticDiffService): Promise<void>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface IOpticConfigRepository {
-  ignoreRequests: string[]
+  ignoreRequests: string[];
 }
 
 export interface IOpticInteractionsRepository {
-  listById(id: string): Promise<any[]>
+  listById(id: string): Promise<any[]>;
 
-  set(id: string, interactions: any[]): Promise<void>
+  set(id: string, interactions: any[]): Promise<void>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticContext {
-  opticEngine: IOpticEngine
-  configRepository: IOpticConfigRepository
-  specRepository: IOpticSpecReadWriteRepository
-  capturesService: IOpticCapturesService
-  diffRepository: IOpticDiffRepository
+  opticEngine: IOpticEngine;
+  configRepository: IOpticConfigRepository;
+  specRepository: IOpticSpecReadWriteRepository;
+  capturesService: IOpticCapturesService;
+  diffRepository: IOpticDiffRepository;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +113,9 @@ export interface IForkableSpectacle extends IBaseSpectacle {
 
 async function buildProjections(opticContext: IOpticContext) {
   const events = await opticContext.specRepository.listEvents();
-  const spec = opticContext.opticEngine.spec_from_events(JSON.stringify(events));
+  const spec = opticContext.opticEngine.spec_from_events(
+    JSON.stringify(events),
+  );
 
   const endpointsQueries = buildEndpointsGraph(spec, opticContext.opticEngine);
   const shapesQueries = buildShapesGraph(spec, opticContext.opticEngine);
@@ -134,10 +132,10 @@ async function buildProjections(opticContext: IOpticContext) {
   };
 }
 
-export async function makeSpectacle(
-  opticContext: IOpticContext,
-) {
-  let endpointsQueries: endpoints.GraphQueries, shapeQueries: shapes.GraphQueries, shapeViewerProjection: any;
+export async function makeSpectacle(opticContext: IOpticContext) {
+  let endpointsQueries: endpoints.GraphQueries,
+    shapeQueries: shapes.GraphQueries,
+    shapeViewerProjection: any;
 
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
@@ -171,9 +169,10 @@ export async function makeSpectacle(
       startDiff: async (parent: any, args: any, context: any) => {
         const { diffId, captureId } = args;
         await context.opticContext.capturesService.startDiff(
-          diffId, captureId,
+          diffId,
+          captureId,
           context.opticContext.specRepository,
-          context.opticContext.configRepository
+          context.opticContext.configRepository,
         );
         return {
           notificationsUrl: '',
@@ -183,8 +182,8 @@ export async function makeSpectacle(
     Query: {
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
-          context.endpointsQueries
-            .listNodesByType(endpoints.NodeType.Request).results,
+          context.endpointsQueries.listNodesByType(endpoints.NodeType.Request)
+            .results,
         );
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
@@ -196,7 +195,11 @@ export async function makeSpectacle(
         context: any,
         info: any,
       ) => {
-        const endpointChanges = buildEndpointChanges(endpointsQueries, shapeQueries, since);
+        const endpointChanges = buildEndpointChanges(
+          endpointsQueries,
+          shapeQueries,
+          since,
+        );
         return Promise.resolve(endpointChanges);
       },
       batchCommits: (parent: any, args: any, context: any, info: any) => {
@@ -215,7 +218,11 @@ export async function makeSpectacle(
       diffs: async (parent: IOpticDiffService, args: any, context: any) => {
         return parent.listDiffs();
       },
-      unrecognizedUrls: async (parent: IOpticDiffService, args: any, context: any) => {
+      unrecognizedUrls: async (
+        parent: IOpticDiffService,
+        args: any,
+        context: any,
+      ) => {
         return parent.listUnrecognizedUrls();
       },
     },
@@ -315,6 +322,9 @@ export async function makeSpectacle(
       batchId: (parent: any) => {
         return Promise.resolve(parent.result.data.batchId);
       },
+      commitMessage: (parent: any) => {
+        return Promise.resolve(parent.result.data.commitMessage);
+      },
     },
   };
 
@@ -323,7 +333,7 @@ export async function makeSpectacle(
     resolvers,
   });
 
-  return function(input: SpectacleInput) {
+  return function (input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,
