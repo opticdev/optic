@@ -19,6 +19,7 @@ import {
   useDiffForEndpointLink,
   useDiffUndocumentedUrlsPageLink,
 } from '../navigation/Routes';
+import AskForCommitMessage from './render/AskForCommitMessage';
 
 type DiffAccessoryNavigationProps = {
   onUrlsPage?: boolean;
@@ -42,10 +43,10 @@ export function DiffAccessoryNavigation({
     ? 0
     : 1 +
       diffsGroupedByEndpoints.findIndex(
-        (i) => i.pathId === pathId && method === i.method
+        (i) => i.pathId === pathId && method === i.method,
       );
 
-  const hasChanges = false;
+  const hasChanges = true;
 
   const handleChangeToUndocumentedUrlPage = () => {
     history.push(diffUndocumentedUrlsPageLink.linkTo());
@@ -54,7 +55,7 @@ export function DiffAccessoryNavigation({
   const handleChangeToEndpointPage = (
     pathId: string,
     method: string,
-    tabIndex: number
+    tabIndex: number,
   ) => () => {
     history.push(diffForEndpointLink.linkTo(pathId, method));
   };
@@ -85,7 +86,7 @@ export function DiffAccessoryNavigation({
               onClick={handleChangeToEndpointPage(
                 i.pathId,
                 i.method,
-                index + 1
+                index + 1,
               )}
               value={index + 1}
               method={i.method}
@@ -99,16 +100,7 @@ export function DiffAccessoryNavigation({
         </Tabs>
       </div>
       <div className={classes.finishedButtons}>
-        {hasChanges && (
-          <Button
-            variant="contained"
-            size="small"
-            color="primary"
-            style={{ fontSize: 10 }}
-          >
-            Save Changes
-          </Button>
-        )}
+        {hasChanges && <AskForCommitMessage />}
         <ExtraDiffOptions />
       </div>
     </div>

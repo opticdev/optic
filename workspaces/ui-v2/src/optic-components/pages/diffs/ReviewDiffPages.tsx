@@ -11,7 +11,7 @@ import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { DiffEnvsPage } from './DiffEnvsPage';
@@ -77,6 +77,7 @@ export function DiffReviewPages(props: any) {
             <DiffAccessoryNavigation onUrlsPage={true} />
           )}
         />
+        <Redirect to={diffUndocumentedUrlsPageLink.linkTo()} />
       </ContributionEditingStore>
     </SharedDiffStore>
   );

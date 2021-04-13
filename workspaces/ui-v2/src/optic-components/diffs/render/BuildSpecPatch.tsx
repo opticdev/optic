@@ -127,7 +127,8 @@ export function BuildSpecPatch({
               variant="contained"
               color="primary"
               endIcon={<ArrowRight />}
-              style={{ marginRight: 15 }}
+              // size="small"
+              style={{ marginRight: 15, fontSize: 10 }}
               onClick={approved}
             >
               Save Changes

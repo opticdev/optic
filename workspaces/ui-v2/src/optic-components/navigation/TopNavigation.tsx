@@ -9,14 +9,14 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useApiName } from '../hooks/useApiNameHook';
-import { useDiffEnvironmentsRoot, useDocumentationPageLink } from './Routes';
+import { useDiffReviewPageLink, useDocumentationPageLink } from './Routes';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
   const apiName = useApiName();
 
   const documentationPage = useDocumentationPageLink();
-  const diffsPage = useDiffEnvironmentsRoot();
+  const diffsPage = useDiffReviewPageLink();
 
   const { AccessoryNavigation } = props;
   return (
@@ -42,7 +42,7 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
               {/*@aidan: this needs to change*/}
               <NavButton
                 title="Diffs"
-                to={diffsPage.linkTo('local', '123') + '/urls'}
+                to={diffsPage.linkTo()}
                 Icon={ChangeHistoryIcon}
               />
               {/*<NavButton title="Team" Icon={ImportExportIcon} />*/}
