@@ -6,7 +6,6 @@ import GraphQLJSON from 'graphql-type-json';
 import { v4 as uuidv4 } from 'uuid';
 import { buildEndpointChanges, buildEndpointsGraph, buildShapesGraph } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
-// import { shapes } from '../../graph-lib/build';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -138,7 +137,7 @@ async function buildProjections(opticContext: IOpticContext) {
 export async function makeSpectacle(
   opticContext: IOpticContext,
 ) {
-  let endpointsQueries: endpoints.GraphQueries, shapeQueries: any, shapeViewerProjection: any;
+  let endpointsQueries: endpoints.GraphQueries, shapeQueries: shapes.GraphQueries, shapeViewerProjection: any;
 
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
