@@ -296,6 +296,20 @@ export function getArrayChanges(
     sinceBatchCommitId,
   );
 
+  return checkForArrayChanges(
+    shapeQueries,
+    deltaBatchCommits,
+    results,
+    shapeId,
+  );
+}
+
+function checkForArrayChanges(
+  shapeQueries: shapes.GraphQueries,
+  deltaBatchCommits: any,
+  results: ChangeResult,
+  shapeId: string,
+): ChangeResult {
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       shapeId,
@@ -313,44 +327,6 @@ export function getArrayChanges(
     ).results) {
       if (node.result.id === batchCommitId)
         return { ...results, changed: true };
-    }
-  }
-
-  return checkForArrayChanges(
-    shapeQueries,
-    deltaBatchCommits,
-    results,
-    shapeId,
-  );
-}
-
-function checkForArrayChanges(
-  shapeQueries: shapes.GraphQueries,
-  deltaBatchCommits: any,
-  results: ChangeResult,
-  shapeId: string,
-): ChangeResult {
-  for (const node of shapeQueries.listOutgoingNeighborsByType(
-    shapeId,
-    shapes.NodeType.ShapeParameter,
-  ).results) {
-    for (const shape of shapeQueries.listIncomingNeighborsByType(
-      node.result.id,
-      shapes.NodeType.Shape,
-    ).results) {
-      for (const batchCommit of (shape as any).batchCommits().results) {
-        if (deltaBatchCommits.has(batchCommit.result.id))
-          return { ...results, changed: true };
-      }
-    }
-  }
-
-  // If the shape itself has been added, we can mark the field as added?
-  for (const batchCommit of (shapeQueries.findNodeById(
-    shapeId,
-  ) as any).batchCommits().results) {
-    if (deltaBatchCommits.has(batchCommit.result.id)) {
-      return { added: true, changed: false };
     }
   }
 
