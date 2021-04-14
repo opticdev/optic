@@ -3,7 +3,7 @@ import { NodeType } from '../../graph-lib/build/shapes-graph';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
-    opticEngine.get_endpoints_projection(spec)
+    opticEngine.get_endpoints_projection(spec),
   );
   const { nodes, edges, nodeIndexToId } = serializedGraph;
 
@@ -22,7 +22,7 @@ export function buildEndpointsGraph(spec: any, opticEngine: any) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id
+      id,
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -52,7 +52,7 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id
+      id,
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -65,33 +65,34 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
 
 type EndpointChange = {
   change: {
-    category: string
-  }
-  path: string
-  method: string
-}
+    category: string;
+  };
+  path: string;
+  method: string;
+};
 
 type EndpointChanges = {
   data: {
-    endpoints: EndpointChange[]
-  }
-}
+    endpoints: EndpointChange[];
+  };
+};
 
 export function buildEndpointChanges(
   endpointQueries: endpoints.GraphQueries,
   shapeQueries: shapes.GraphQueries,
-  since?: string
+  since?: string,
 ): EndpointChanges {
   let sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
-    .results
-    .sort((a: any, b: any) => {
-      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
     });
 
   // If there is no `since` date, we want to use every batch commit
   const deltaBatchCommits = since
-    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) => batchCommit.result.data.createdAt > since,
+      )
     : sortedBatchCommits;
 
   const changes = new Changes();
@@ -102,7 +103,7 @@ export function buildEndpointChanges(
     });
 
     batchCommit.responses().results.forEach((response: any) => {
-      changes.captureChange('updated', endpointFromResponse(response))
+      changes.captureChange('updated', endpointFromResponse(response));
     });
   });
 
@@ -111,22 +112,21 @@ export function buildEndpointChanges(
   deltaBatchCommits.forEach((batchCommit: any) => {
     const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
-      .results
-      .forEach((shape: any) => {
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results.forEach((shape: any) => {
         batchCommitNeighborIds.set(shape.result.id, batchCommitId);
       });
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
-      .results
-      .forEach((field: any) => {
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results.forEach((field: any) => {
         batchCommitNeighborIds.set(field.result.id, batchCommitId);
       });
   });
 
   endpointQueries
     .listNodesByType(endpoints.NodeType.Body)
-    .results
-    .reduce((results: string[], bodyNode: any) => {
+    .results.reduce((results: string[], bodyNode: any) => {
       const { rootShapeId } = bodyNode.result.data;
       if (batchCommitNeighborIds.has(rootShapeId)) {
         results.push(rootShapeId);
@@ -158,10 +158,10 @@ export function buildEndpointChanges(
 }
 
 type Endpoint = {
-  endpointId: string,
-  path: string,
-  method: string
-}
+  endpointId: string;
+  path: string;
+  method: string;
+};
 
 class Changes {
   public changes: Map<string, EndpointChange>;
@@ -175,7 +175,7 @@ class Changes {
     this.changes.set(endpoint.endpointId, {
       change: { category },
       path: endpoint.path,
-      method: endpoint.method
+      method: endpoint.method,
     });
     return true;
   }
@@ -183,9 +183,9 @@ class Changes {
   toEndpointChanges(): EndpointChanges {
     return {
       data: {
-        endpoints: Array.from(this.changes.values())
-      }
-    }
+        endpoints: Array.from(this.changes.values()),
+      },
+    };
   }
 }
 
@@ -208,33 +208,75 @@ function endpointFromResponse(response: any): Endpoint {
 export function getShapeChanges(
   shapeQueries: shapes.GraphQueries,
   shapeId: string,
-  sinceBatchCommitId?: string
+  sinceBatchCommitId?: string,
 ): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  // TODO: figure out why shapeId is undefined
+  if (!shapeId) return results;
+
   let sortedBatchCommits = shapeQueries
     .listNodesByType(shapes.NodeType.BatchCommit)
-    .results
-    .sort((a: any, b: any) => {
-      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
     });
   const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
   const shape: any = shapeQueries.findNodeById(shapeId)!;
   const deltaBatchCommits = new Map();
-
   (sinceBatchCommitId
-    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > sinceBatchCommit!.result.data.createdAt)
-    : sortedBatchCommits)
-    .forEach((batchCommit: any) => {
-      deltaBatchCommits.set(batchCommit.result.id, batchCommit);
-    })
-
-  const results = {
-    added: false,
-    changed: false,
-  }
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) =>
+          batchCommit.result.data.createdAt >
+          sinceBatchCommit!.result.data.createdAt,
+      )
+    : sortedBatchCommits
+  ).forEach((batchCommit: any) => {
+    deltaBatchCommits.set(batchCommit.result.id, batchCommit);
+  });
 
   for (const batchCommit of shape.batchCommits().results) {
     if (deltaBatchCommits.has(batchCommit.result.id)) {
-      return { ...results, added: true }
+      return { ...results, added: true };
+    }
+  }
+
+  return results;
+}
+
+export function getFieldChanges(
+  shapeQueries: shapes.GraphQueries,
+  fieldId: string,
+  shapeId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.findIncomingNeighborsByEdgeType(
+      batchCommitId,
+      shapes.EdgeType.CreatedIn,
+    ).results) {
+      if (node.result.id === fieldId) return { ...results, added: true };
+    }
+  }
+
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.findIncomingNeighborsByEdgeType(
+      batchCommitId,
+      shapes.EdgeType.UpdatedIn,
+    ).results) {
+      if (node.result.id === fieldId) return { ...results, changed: true };
     }
   }
 
@@ -242,6 +284,31 @@ export function getShapeChanges(
 }
 
 type ChangeResult = {
-  added: boolean,
-  changed: boolean
+  added: boolean;
+  changed: boolean;
+};
+
+// TODO: set correct result type
+function getDeltaBatchCommits(
+  shapeQueries: shapes.GraphQueries,
+  sinceBatchCommitId?: string,
+): any {
+  let sortedBatchCommits = shapeQueries
+    .listNodesByType(shapes.NodeType.BatchCommit)
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
+    });
+  const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
+  const deltaBatchCommits = new Map();
+  (sinceBatchCommitId
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) =>
+          batchCommit.result.data.createdAt >
+          sinceBatchCommit!.result.data.createdAt,
+      )
+    : sortedBatchCommits
+  ).forEach((batchCommit: any) => {
+    deltaBatchCommits.set(batchCommit.result.id, batchCommit);
+  });
+  return deltaBatchCommits;
 }

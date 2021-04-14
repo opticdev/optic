@@ -9,6 +9,7 @@ import {
   buildEndpointsGraph,
   buildShapesGraph,
   getShapeChanges,
+  getFieldChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
@@ -300,6 +301,18 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     ArrayMetadata: {
       shapeId: (parent: any) => {
         return Promise.resolve(parent.itemShapeId);
+      },
+    },
+    ObjectFieldMetadata: {
+      changes: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          getFieldChanges(
+            context.shapeQueries,
+            parent.fieldId,
+            parent.shapeId,
+            args.sinceBatchCommitId,
+          ),
+        );
       },
     },
     EndpointChanges: {

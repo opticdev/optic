@@ -1,20 +1,25 @@
 import { makeSpectacle } from './index';
 import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
-import {  InMemoryOpticContextBuilder } from './in-memory';
+import { InMemoryOpticContextBuilder } from './in-memory';
 
 import * as fs from 'fs';
 
 function loadExampleSpec(name: string): any[] {
   return JSON.parse(
-    fs.readFileSync(`./workspaces/spectacle/examples/${name}.json`)
-      .toString('utf-8'))
+    fs
+      .readFileSync(`./workspaces/spectacle/examples/${name}.json`)
+      .toString('utf-8'),
+  );
 }
 
 // TODO: replace examples with snapshot tests
-const _events = loadExampleSpec('default');
+const _events = loadExampleSpec('make-optional');
 
 async function main() {
-  const opticContext = await InMemoryOpticContextBuilder.fromEvents(OpticEngine, _events);
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
+    _events,
+  );
   const spectacle = await makeSpectacle(opticContext);
 
   const batchCommitResults = await spectacle({
@@ -24,7 +29,7 @@ async function main() {
         batchId
       }
     }`,
-    variables: {}
+    variables: {},
   });
 
   // console.log(JSON.stringify(batchCommitResults, null, 2));
@@ -41,7 +46,7 @@ async function main() {
         }
       }
     }`,
-    variables: {}
+    variables: {},
   });
 
   console.log(JSON.stringify(endpointChangesResult, null, 2));
@@ -67,7 +72,7 @@ async function main() {
         }
       }
     }`,
-    variables: {}
+    variables: {},
   });
 
   console.log(JSON.stringify(result, null, 2));
@@ -75,16 +80,27 @@ async function main() {
   {
     const result = await spectacle({
       query: `{
-        shapeChoices(shapeId: "shape_RvMMDY4eOD") {
+        shapeChoices(shapeId: "shape_9EcKj9sZHD") {
           id
           jsonType
-          changes(sinceBatchCommitId: "57630124-211a-440d-8bd3-2496ccc97f0c") {
+          changes {
             added
             changed
           }
+          asObject {
+            fields {
+              shapeId
+              fieldId
+              name
+              changes(sinceBatchCommitId: "f5e550ad-8890-4545-af44-c49081c9ec62") {
+                added
+                changed
+              }
+            }
+          }
         }
       }`,
-      variables: {}
+      variables: {},
     });
     console.log(JSON.stringify(result, null, 2));
   }
