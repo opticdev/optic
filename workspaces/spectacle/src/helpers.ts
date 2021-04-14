@@ -392,6 +392,64 @@ export function getRequestChanges(
   return results;
 }
 
+export function getResponseChanges(
+  endpointQueries: endpoints.GraphQueries,
+  shapeQueries: shapes.GraphQueries,
+  responseId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommitsForEndpoints(
+    endpointQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommit of endpointQueries.listOutgoingNeighborsByType(
+    responseId,
+    endpoints.NodeType.BatchCommit,
+  ).results) {
+    if (deltaBatchCommits.has(batchCommit.result.id))
+      return { ...results, added: true };
+  }
+
+  const response: any = endpointQueries.findNodeById(responseId);
+
+  // Gather batch commit neighbors
+  const batchCommitNeighborIds = new Map();
+  for (const batchCommit of deltaBatchCommits.values()) {
+    const batchCommitId = batchCommit.result.id;
+    // TODO: create query for neighbors of all types
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results.forEach((shape: any) => {
+        batchCommitNeighborIds.set(shape.result.id, batchCommitId);
+      });
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results.forEach((field: any) => {
+        batchCommitNeighborIds.set(field.result.id, batchCommitId);
+      });
+  }
+
+  for (const body of response.bodies().results) {
+    const { rootShapeId } = body.result.data;
+    if (batchCommitNeighborIds.has(rootShapeId)) {
+      return { ...results, changed: true };
+    }
+    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+      if (batchCommitNeighborIds.has(descendant.id)) {
+        return { ...results, changed: true };
+      }
+    }
+  }
+
+  return results;
+}
+
 type ChangeResult = {
   added: boolean;
   changed: boolean;

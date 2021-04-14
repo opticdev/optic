@@ -12,6 +12,7 @@ import {
   getFieldChanges,
   getArrayChanges,
   getRequestChanges,
+  getResponseChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
@@ -273,6 +274,16 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
+      },
+      changes: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          getResponseChanges(
+            context.endpointsQueries,
+            context.shapeQueries,
+            parent.result.id,
+            args.sinceBatchCommitId,
+          ),
+        );
       },
     },
     HttpBody: {
