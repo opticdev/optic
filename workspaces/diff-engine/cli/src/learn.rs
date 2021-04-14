@@ -1,7 +1,7 @@
 use super::events_from_chunks;
 
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
-use futures::{try_join, Stream, StreamExt, TryStreamExt};
+use futures::{try_join, SinkExt, Stream, StreamExt, TryStreamExt};
 use nanoid::nanoid;
 use serde::Serialize;
 use serde_json;
@@ -47,7 +47,7 @@ pub fn create_subcommand<'a, 'b>() -> App<'a, 'b> {
     )
     .group(
       ArgGroup::with_name("subject")
-        .args(&["undocumented-bodies", "shape-diffs"])
+        .args(&["undocumented-bodies", "shape-diffs-affordances"])
         .multiple(false)
         .required(true),
     )
@@ -66,7 +66,7 @@ pub async fn main<'a>(
     let sink = stdout();
 
     learn_undocumented_bodies(spec_events, input_queue_size, interaction_lines, sink).await;
-  } else if command_matches.is_present("shape-diffs") {
+  } else if command_matches.is_present("shape-diffs-affordances") {
     let diffs_path = command_matches
       .value_of("tagged-diff-results")
       .expect("tagged-diff-results is required for shape-diffs learning subject");
@@ -79,7 +79,6 @@ pub async fn main<'a>(
     let sink = stdout();
 
     learn_diff_trail_affordances(diffs, input_queue_size, interaction_lines, sink).await;
-    todo!("shape diffs learning is yet to be implemented");
   } else {
     unreachable!("subject is required");
   }
@@ -264,6 +263,15 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
             .or_insert_with(|| InteractionDiffTrailAffordances::default());
 
           affordances.push((trail_values, tags));
+        }
+      }
+
+      let mut json_lines_sink =
+        streams::into_json_lines::<_, (String, InteractionDiffTrailAffordances)>(sink);
+
+      for (fingerprint, affordances) in affordances_by_diff_fingerprint {
+        if let Err(err) = json_lines_sink.send((fingerprint, affordances)).await {
+          panic!("Could not write result to stdout: {}", err);
         }
       }
     })
