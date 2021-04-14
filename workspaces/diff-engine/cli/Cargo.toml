@@ -20,3 +20,6 @@ tokio = { version = "~1.1.1", features = ["full"] }
 tokio-stream = "0.1.2"
 tokio-util = { version = "0.6.3", features = ["codec"] }
 uuid = { version = "0.8.2", features = ["v4"] }
+
+[dev-dependencies]
+path-absolutize = "3.0.7"

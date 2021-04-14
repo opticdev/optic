@@ -551,7 +551,10 @@ impl InteractionsAffordances {
 #[cfg(test)]
 mod test {
   use super::*;
+  use path_absolutize::*;
   use serde_json::json;
+  use std::path::Path;
+  use tokio::fs;
 
   #[tokio::main]
   #[test]
@@ -566,5 +569,28 @@ mod test {
     let sink = tokio::io::sink();
 
     learn_undocumented_bodies(spec_events, 1, interaction_lines, sink).await;
+  }
+
+  #[tokio::main]
+  #[test]
+  async fn can_learn_shape_diffs_affordances_from_interactions() {
+    let diffs_path = Path::new("../tests/fixtures/ergast-captures/diff-results.jsonl")
+      .absolutize()
+      .unwrap()
+      .to_path_buf();
+    let interactions_path =
+      Path::new("../tests/fixtures/ergast-captures/ergast-simulated-traffic.jsonl")
+        .absolutize()
+        .unwrap()
+        .to_path_buf();
+
+    let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
+      .await
+      .expect("should be able to read test diffs fixture");
+
+    let interaction_lines =
+      streams::http_interaction::json_lines(fs::File::open(interactions_path).await.unwrap());
+
+    learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;
   }
 }
