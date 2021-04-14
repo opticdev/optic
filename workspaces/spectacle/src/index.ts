@@ -302,6 +302,16 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       shapeId: (parent: any) => {
         return Promise.resolve(parent.itemShapeId);
       },
+      changes: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          getFieldChanges(
+            context.shapeQueries,
+            parent.fieldId,
+            parent.shapeId,
+            args.sinceBatchCommitId,
+          ),
+        );
+      },
     },
     ObjectFieldMetadata: {
       changes: (parent: any, args: any, context: any) => {

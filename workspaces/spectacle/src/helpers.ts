@@ -36,6 +36,7 @@ export function buildEndpointsGraph(spec: any, opticEngine: any) {
 export function buildShapesGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(opticEngine.get_shapes_projection(spec));
   const { nodes, edges, nodeIndexToId } = serializedGraph;
+  // console.log('nodes', nodes);
 
   const indexer = new shapes.GraphIndexer();
 
@@ -271,12 +272,30 @@ export function getFieldChanges(
     }
   }
 
+  // This will not deal with array item changes
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       fieldId,
       shapes.EdgeType.UpdatedIn,
     ).results) {
       if (node.result.id === batchCommitId) return { ...results, added: true };
+    }
+  }
+
+  // Any shape parameter that has a neighbor shape that has been added to a
+  // delta batch commit means the field has changed
+  for (const node of shapeQueries.listOutgoingNeighborsByType(
+    shapeId,
+    shapes.NodeType.ShapeParameter,
+  ).results) {
+    for (const shape of shapeQueries.listIncomingNeighborsByType(
+      node.result.id,
+      shapes.NodeType.Shape,
+    ).results) {
+      for (const batchCommit of (shape as any).batchCommits().results) {
+        if (deltaBatchCommits.has(batchCommit.result.id))
+          return { ...results, changed: true };
+      }
     }
   }
 

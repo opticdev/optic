@@ -13,7 +13,7 @@ function loadExampleSpec(name: string): any[] {
 }
 
 // TODO: replace examples with snapshot tests
-const _events = loadExampleSpec('make-optional');
+const _events = loadExampleSpec('array-changes');
 
 async function main() {
   const opticContext = await InMemoryOpticContextBuilder.fromEvents(
@@ -49,7 +49,7 @@ async function main() {
     variables: {},
   });
 
-  console.log(JSON.stringify(endpointChangesResult, null, 2));
+  // console.log(JSON.stringify(endpointChangesResult, null, 2));
 
   const result = await spectacle({
     query: `{
@@ -75,12 +75,12 @@ async function main() {
     variables: {},
   });
 
-  console.log(JSON.stringify(result, null, 2));
+  // console.log(JSON.stringify(result, null, 2));
 
   {
     const result = await spectacle({
       query: `{
-        shapeChoices(shapeId: "shape_9EcKj9sZHD") {
+        shapeChoices(shapeId: "shape_jSAthS01Bb") {
           id
           jsonType
           changes {
@@ -92,7 +92,7 @@ async function main() {
               shapeId
               fieldId
               name
-              changes(sinceBatchCommitId: "f5e550ad-8890-4545-af44-c49081c9ec62") {
+              changes(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
                 added
                 changed
               }
