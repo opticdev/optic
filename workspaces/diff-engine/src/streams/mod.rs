@@ -1,5 +1,6 @@
 use bytes::{BufMut, Bytes, BytesMut};
 use futures::{sink::Sink, SinkExt, Stream};
+use serde::de::{self, Deserializer, IgnoredAny, SeqAccess, Visitor};
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::{collections::HashSet, io};
@@ -92,7 +93,7 @@ pub enum JsonLineReaderError {
   },
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct TaggedInput<T>(pub T, pub Tags);
 pub type Tags = HashSet<String>;
 
@@ -105,6 +106,57 @@ impl<T> TaggedInput<T> {
     (&self.0, &self.1)
   }
 }
+
+// Custom implementation of Deserialize, to allow ignoring additional items in the tuple,
+// making it significantly easier to pipe results back in as inputs.
+impl<'de, T> Deserialize<'de> for TaggedInput<T>
+where
+  T: Deserialize<'de>,
+{
+  fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+  where
+    D: Deserializer<'de>,
+  {
+    struct TaggedInputVisitor<T> {
+      marker: std::marker::PhantomData<T>,
+    };
+
+    impl<'de, T> Visitor<'de> for TaggedInputVisitor<T>
+    where
+      T: Deserialize<'de>,
+    {
+      type Value = TaggedInput<T>;
+
+      fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("struct TaggedInput")
+      }
+
+      fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
+      where
+        V: SeqAccess<'de>,
+      {
+        let s = seq
+          .next_element()?
+          .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+        let n = seq
+          .next_element()?
+          .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+
+        // we must visit the rest of the elements in the sequence to prevent panics
+        while let Some(IgnoredAny) = seq.next_element()? {
+          // but we can just ignore them
+        }
+
+        Ok(TaggedInput(s, n))
+      }
+    }
+
+    deserializer.deserialize_seq(TaggedInputVisitor {
+      marker: std::marker::PhantomData,
+    })
+  }
+}
+
 // pub struct TaggedInputIterator<T> {
 //   inner: Option<TaggedInput<T>>,
 // }
