@@ -150,7 +150,9 @@ export class LocalCliDiffService implements IDiffService {
       rfcService.listEvents(rfcId)
     );
     const url = `${this.captureService.baseUrl}/trail-values`;
+    const diffId = this.diffId();
     return await JsonHttpClient.postJson(url, {
+      diffId,
       events,
       pathId,
       method,
