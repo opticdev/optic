@@ -288,11 +288,26 @@ export class GraphQueries {
     return this.wrap(neighborsOfType[0]);
   }
 
-  findIncomingNeighborsByEdgeType(
+  listIncomingNeighborsByEdgeType(
     id: NodeId,
     edgeType: EdgeType,
   ): NodeListWrapper {
     const neighbors = this.index.inboundNeighborsByEdgeType.get(id);
+
+    if (!neighbors) {
+      return this.wrapList(null, []);
+    }
+
+    const neighborsOfType = neighbors.get(edgeType);
+
+    return this.wrapList(null, neighborsOfType || []);
+  }
+
+  listOutgoingNeighborsByEdgeType(
+    id: NodeId,
+    edgeType: EdgeType,
+  ): NodeListWrapper {
+    const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
 
     if (!neighbors) {
       return this.wrapList(null, []);
@@ -319,6 +334,7 @@ export class GraphQueries {
     throw new Error(`unexpected node.type`);
   }
 
+  //@TODO move away from null here
   wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper {
     //@TODO add list helpers (map, etc.)
     return {

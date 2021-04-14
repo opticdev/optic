@@ -263,20 +263,20 @@ export function getFieldChanges(
   );
 
   for (const batchCommitId of deltaBatchCommits.keys()) {
-    for (const node of shapeQueries.findIncomingNeighborsByEdgeType(
-      batchCommitId,
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      fieldId,
       shapes.EdgeType.CreatedIn,
     ).results) {
-      if (node.result.id === fieldId) return { ...results, added: true };
+      if (node.result.id === batchCommitId) return { ...results, added: true };
     }
   }
 
   for (const batchCommitId of deltaBatchCommits.keys()) {
-    for (const node of shapeQueries.findIncomingNeighborsByEdgeType(
-      batchCommitId,
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      fieldId,
       shapes.EdgeType.UpdatedIn,
     ).results) {
-      if (node.result.id === fieldId) return { ...results, changed: true };
+      if (node.result.id === batchCommitId) return { ...results, added: true };
     }
   }
 
