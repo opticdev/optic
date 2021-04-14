@@ -11,6 +11,7 @@ import {
   getShapeChanges,
   getFieldChanges,
   getArrayChanges,
+  getRequestChanges,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 
@@ -251,6 +252,16 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().responses().results);
+      },
+      changes: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          getRequestChanges(
+            context.endpointsQueries,
+            context.shapeQueries,
+            parent.result.id,
+            args.sinceBatchCommitId,
+          ),
+        );
       },
     },
     HttpResponse: {

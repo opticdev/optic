@@ -55,6 +55,10 @@ async function main() {
     query: `{
       requests {
         id
+        changes(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
+          added
+          changed
+        }
         pathId
         absolutePathPattern
         method
@@ -75,7 +79,7 @@ async function main() {
     variables: {},
   });
 
-  // console.log(JSON.stringify(result, null, 2));
+  console.log(JSON.stringify(result, null, 2));
 
   {
     // array shape_Dw5kY43tt1

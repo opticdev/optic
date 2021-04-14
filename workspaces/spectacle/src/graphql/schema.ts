@@ -39,6 +39,7 @@ type HttpRequest {
   method: String
   bodies: [HttpBody]
   responses: [HttpResponse]
+  changes(sinceBatchCommitId: String): ChangesResult
 }
 type PathComponent {
   id: ID
@@ -49,6 +50,7 @@ type HttpResponse {
   id: ID
   statusCode: Int
   bodies: [HttpBody]
+  changes(sinceBatchCommitId: String): ChangesResult
 }
 type ObjectFieldMetadata {
   name: String
