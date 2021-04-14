@@ -148,6 +148,48 @@ function learnUndocumentedBodies(interactions, { specPath }) {
   return output;
 }
 
+function learnShapeDiffAffordances(
+  interactions,
+  { diffResultsPath, specPath }
+) {
+  if (!interactions || typeof interactions[Symbol.asyncIterator] !== 'function')
+    throw new Error(
+      'interactionsStream must be AsyncIterator to learn undocumented bodies'
+    );
+
+  const input = Readable.from(HttpInteractions.intoJSONL(interactions));
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  const learnProcess = Execa(
+    binPath,
+    [
+      specPath,
+      '-f',
+      'learn',
+      '--shape-diff-affordances',
+      '--tagged-diff-results',
+      diffResultsPath,
+    ],
+    {
+      stdio: ['pipe', 'pipe', 'inherit'],
+    }
+  );
+
+  input.pipe(learnProcess.stdin);
+  learnProcess.stdout.pipe(output);
+
+  learnProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+
+  return output;
+}
+
 function getBinPath() {
   const binaryName = Config.binaryName;
   const supportedPlatform = getSupportedPlatform();
@@ -320,6 +362,7 @@ class DiffEngineError extends Error {
 exports.spawn = spawn;
 exports.readSpec = readSpec;
 exports.commit = commit;
+exports.learnShapeDiffAffordances = learnShapeDiffAffordances;
 exports.learnUndocumentedBodies = learnUndocumentedBodies;
 exports.install = install;
 exports.uninstall = uninstall;
