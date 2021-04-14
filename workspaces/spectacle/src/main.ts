@@ -78,21 +78,25 @@ async function main() {
   // console.log(JSON.stringify(result, null, 2));
 
   {
+    // array shape_Dw5kY43tt1
+    // object shape_jSAthS01Bb
     const result = await spectacle({
       query: `{
         shapeChoices(shapeId: "shape_jSAthS01Bb") {
           id
           jsonType
-          changes {
-            added
-            changed
+          asArray {
+            changes(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
+              added
+              changed
+            }
           }
           asObject {
             fields {
               shapeId
               fieldId
               name
-              changes(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
+              changes {
                 added
                 changed
               }

@@ -70,7 +70,7 @@ type OpticShape {
   jsonType: String
   asObject: ObjectMetadata
   asArray: ArrayMetadata
-  changes(sinceBatchCommitId: String): ChangesResult
+  # changes(sinceBatchCommitId: String): ChangesResult
   # exampleValue: [JSON]
 }
 type ChangesResult {

@@ -219,24 +219,12 @@ export function getShapeChanges(
   // TODO: figure out why shapeId is undefined
   if (!shapeId) return results;
 
-  let sortedBatchCommits = shapeQueries
-    .listNodesByType(shapes.NodeType.BatchCommit)
-    .results.sort((a: any, b: any) => {
-      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
-    });
   const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
   const shape: any = shapeQueries.findNodeById(shapeId)!;
-  const deltaBatchCommits = new Map();
-  (sinceBatchCommitId
-    ? sortedBatchCommits.filter(
-        (batchCommit: any) =>
-          batchCommit.result.data.createdAt >
-          sinceBatchCommit!.result.data.createdAt,
-      )
-    : sortedBatchCommits
-  ).forEach((batchCommit: any) => {
-    deltaBatchCommits.set(batchCommit.result.id, batchCommit);
-  });
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommit.result.Id,
+  );
 
   for (const batchCommit of shape.batchCommits().results) {
     if (deltaBatchCommits.has(batchCommit.result.id)) {
@@ -282,8 +270,66 @@ export function getFieldChanges(
     }
   }
 
-  // Any shape parameter that has a neighbor shape that has been added to a
-  // delta batch commit means the field has changed
+  // If a field is an array, there may be changes related to the shape but not
+  // the field itself.
+  return checkForArrayChanges(
+    shapeQueries,
+    deltaBatchCommits,
+    results,
+    shapeId,
+  );
+}
+
+export function getArrayChanges(
+  shapeQueries: shapes.GraphQueries,
+  fieldId: string,
+  shapeId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      shapeId,
+      shapes.EdgeType.CreatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId) return { ...results, added: true };
+    }
+  }
+
+  // This will not deal with array item changes
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      shapeId,
+      shapes.EdgeType.UpdatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId)
+        return { ...results, changed: true };
+    }
+  }
+
+  return checkForArrayChanges(
+    shapeQueries,
+    deltaBatchCommits,
+    results,
+    shapeId,
+  );
+}
+
+function checkForArrayChanges(
+  shapeQueries: shapes.GraphQueries,
+  deltaBatchCommits: any,
+  results: ChangeResult,
+  shapeId: string,
+): ChangeResult {
   for (const node of shapeQueries.listOutgoingNeighborsByType(
     shapeId,
     shapes.NodeType.ShapeParameter,
@@ -296,6 +342,15 @@ export function getFieldChanges(
         if (deltaBatchCommits.has(batchCommit.result.id))
           return { ...results, changed: true };
       }
+    }
+  }
+
+  // If the shape itself has been added, we can mark the field as added?
+  for (const batchCommit of (shapeQueries.findNodeById(
+    shapeId,
+  ) as any).batchCommits().results) {
+    if (deltaBatchCommits.has(batchCommit.result.id)) {
+      return { added: true, changed: false };
     }
   }
 
