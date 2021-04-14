@@ -197,7 +197,6 @@ export function ReviewEndpointDiffPage(props: any) {
               handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
               previewTabs={renderedDiff.previewTabs}
               changeType={renderedDiff.diffDescription!.changeType}
-              suggestions={renderedDiff.suggestions}
               specChoices={renderedDiff.updateSpecChoices}
               approve={() => {
                 approveCommandsForDiff(

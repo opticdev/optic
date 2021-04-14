@@ -9,7 +9,6 @@ import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
 
 export interface IInterpretation {
-  suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
   diffDescription?: IDiffDescription;
   updateSpecChoices: IPatchChoices;

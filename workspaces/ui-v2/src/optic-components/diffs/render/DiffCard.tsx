@@ -48,7 +48,6 @@ import { BuildSpecPatch } from './BuildSpecPatch';
 
 type IDiffCardProps = {
   changeType: IChangeType;
-  suggestions: ISuggestion[];
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   approve: () => void;
@@ -386,76 +385,3 @@ const DiffTab = withStyles((theme) => {
     />
   );
 });
-
-function IgnoreButton({
-  selectedPreviewTab,
-  previewTabs,
-  addDiffIgnoreRule,
-}: {
-  selectedPreviewTab: IInteractionPreviewTab;
-  previewTabs: IInteractionPreviewTab[];
-  addDiffIgnoreRule: (rule: IgnoreRule) => void;
-}) {
-  const classes = useStyles();
-  if (!selectedPreviewTab) {
-    return null;
-  }
-
-  const lastOne =
-    previewTabs.filter((i) => i.invalid).length === 1 &&
-    selectedPreviewTab.invalid;
-
-  return (
-    <LightTooltip
-      style={{ padding: 0 }}
-      title={
-        <ListItemText
-          style={{ maxWidth: 350 }}
-          primary={
-            <ICopyRender
-              variant="caption"
-              copy={[
-                plain('mark examples that are'),
-                code(selectedPreviewTab && selectedPreviewTab.title),
-                plain('incorrect'),
-              ]}
-            />
-          }
-          secondary={
-            <>
-              <ICopyRenderMultiline
-                variant="caption"
-                style={{ color: 'black' }}
-                copy={[
-                  plain(
-                    'Discarding these examples will change the suggestions Optic provides.',
-                  ),
-                ]}
-              />
-              {lastOne && (
-                <Typography variant="caption" color="textPrimary">
-                  This is the last example that produces this diff. The diff
-                  will be marked as handled if you choose to ignore it.
-                </Typography>
-              )}
-            </>
-          }
-        />
-      }
-    >
-      <Button
-        onClick={() => {
-          if (selectedPreviewTab) {
-            addDiffIgnoreRule(selectedPreviewTab.ignoreRule);
-          }
-        }}
-        disabled={!selectedPreviewTab && selectedPreviewTab!.ignoreRule}
-        className={classes.ignoreButton}
-        size="small"
-        endIcon={<BlockIcon style={{ width: 10, height: 10 }} />}
-      >
-        discard
-      </Button>
-    </LightTooltip>
-  );
-}

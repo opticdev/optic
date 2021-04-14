@@ -36,7 +36,7 @@ export const ShapeRowBase = ({
         className={classNames(
           classes.row,
           { [sharedClasses.added]: changelog && changelog.added },
-          { [sharedClasses.removed]: changelog && changelog.removed }
+          { [sharedClasses.removed]: changelog && changelog.removed },
           // { [sharedClasses.changed]: changelog && changelog.changed }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
@@ -210,7 +210,14 @@ export const RenderFieldRowValues = ({
 
     if (shape.asArray) {
       if (shape.asArray.shapeChoices.length === 0) {
-        return <ShapePrimitiveRender {...shape} />;
+        return (
+          <>
+            <ShapePrimitiveRender {...shape} />
+            <ShapeRowBase depth={depth}>
+              <span className={sharedClasses.symbolFont}>{']'}</span>
+            </ShapeRowBase>
+          </>
+        );
       }
 
       const inner =

@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 
 export function useShapeDescriptor(
   rootShapeId: string,
-  renderChangesSince: string | undefined
+  renderChangesSinceBatchCommitId: string | undefined,
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
 
@@ -50,13 +50,13 @@ export function useShapeDescriptor(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(field.shapeId);
                 field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED
+                  (i: any) => i.jsonType === JsonLike.UNDEFINED,
                 ); // is required
                 field.shapeChoices = shapeChoices
                   .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
                   .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
                 return field;
-              })
+              }),
             );
             choice.asObject.fields = newFields;
             return choice;
@@ -69,7 +69,7 @@ export function useShapeDescriptor(
           default:
             return choice;
         }
-      })
+      }),
     );
   }
 

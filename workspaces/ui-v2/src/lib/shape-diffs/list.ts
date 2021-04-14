@@ -1,80 +1,94 @@
-// import { BodyShapeDiff } from '../../parse-diff';
-// import { Actual, Expectation } from '../shape-diff-dsl';
-// import { DiffSessionConfig } from '../../interfaces/session';
-// import {
-//   code,
-//   IChangeType,
-//   ICopy,
-//   IInteractionPreviewTab,
-//   IInterpretation,
-//   ISuggestion,
-//   plain,
-// } from '../../interfaces/interpretors';
-// import invariant from 'invariant';
-// import {
-//   ICoreShapeInnerParameterNames,
-//   ICoreShapeKinds,
-// } from '../../interfaces/interfaces';
-// import { setEquals } from '../../set-ops';
-// import { targetKindSuggestion } from '../target-shape-kind';
-// import {
-//   IShapeChange,
-//   reduceShapeChangesToCommandsAndMappings,
-//   serializeCommands,
-// } from '../spec-change-dsl';
-// import sortBy from 'lodash.sortby';
-// import { opticEngine } from '@useoptic/domain';
-//
-// const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
-//
-// export function listItemShapeDiffInterpreter(
-//   shapeDiff: BodyShapeDiff,
-//   actual: Actual,
-//   expected: Expectation,
-//   services: DiffSessionConfig
-// ): IInterpretation {
-//   const { shapeTrail, jsonTrail } = shapeDiff;
-//   const isUnmatched = shapeDiff.isUnmatched;
-//   const isUnspecified = shapeDiff.isUnspecified;
-//
-//   const suggestions = [];
-//
-//   if (isUnmatched) {
-//     const withUnion = targetKindSuggestion(true, expected, actual);
-//     const withoutUnion = targetKindSuggestion(false, expected, actual);
-//     suggestions.push(suggestionFor(withUnion, expected, actual, services));
-//     if (!setEquals(withoutUnion.targetFinal, withoutUnion.targetFinal)) {
-//       suggestions.push(suggestionFor(withoutUnion, expected, actual, services));
-//     }
-//   }
-//
-//   ////////////////
-//   const expectedShapes = expected.expectedShapes();
-//   const previews: IInteractionPreviewTab[] = [];
-//   actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
-//     if (i.kind !== ICoreShapeKinds.OptionalKind) {
-//       previews.push({
-//         title: i.label,
-//         invalid: !expectedShapes.has(i.kind),
-//         allowsExpand: true,
-//         interactionPointers: i.interactions,
-//         ignoreRule: {
-//           diffHash: shapeDiff.diffHash(),
-//           examplesOfCoreShapeKinds: i.kind,
-//         },
-//         assertion: [plain('expected'), code(expected.shapeName())],
-//         jsonTrailsByInteractions: i.jsonTrailsByInteractions,
-//       });
-//     }
-//   });
-//   ////////////////
-//
-//   return {
-//     suggestions: suggestions,
-//     previewTabs: sortBy(previews, (i) => !i.invalid),
-//     // overrideTitle?: ICopy[];
-//   };
-// }
+import sortBy from 'lodash.sortby';
+import { opticEngine } from '@useoptic/domain';
+import { BodyShapeDiff } from '../parse-diff';
+import { Actual, Expectation } from '../shape-diff-dsl-rust';
+import {
+  CurrentSpecContext,
+  ICoreShapeKinds,
+  IDiffDescription,
+  IInteractionPreviewTab,
+  IInterpretation,
+  IPatchChoices,
+} from '../Interfaces';
+import { IShapeChange, targetKindSuggestion } from './target-shape-kind';
+import { setEquals } from '../set-ops';
+import {
+  code,
+  ICopy,
+  plain,
+} from '../../optic-components/diffs/render/ICopyRender';
+import { builderInnerShapeFromChoices } from './build-inner-shape';
+
+const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
+
+export function listItemShapeDiffInterpreter(
+  shapeDiff: BodyShapeDiff,
+  actual: Actual,
+  expected: Expectation,
+  diffDescription: IDiffDescription,
+  currentSpecContext: CurrentSpecContext,
+): IInterpretation {
+  const { shapeTrail, jsonTrail } = shapeDiff;
+  const isUnmatched = shapeDiff.isUnmatched;
+  const isUnspecified = shapeDiff.isUnspecified;
+
+  let updateSpecChoices: IPatchChoices = {
+    copy: [],
+    shapes: [],
+    isField: false,
+  };
+
+  if (isUnmatched) {
+    const unexpectedShapesObserved = expected.diffActual(actual);
+    const allShapes = expected.unionWithActual(actual);
+    const observedShapeDidNotMatch = unexpectedShapesObserved.length > 0;
+
+    updateSpecChoices.shapes = Array.from(allShapes).map((i) => {
+      return {
+        coreShapeKind: i,
+        isValid: true,
+      };
+    });
+  }
+
+  ////////////////
+  const expectedShapes = expected.expectedShapes();
+  const previews: IInteractionPreviewTab[] = [];
+  actual.interactionsGroupedByCoreShapeKind().forEach((i) => {
+    if (i.kind !== ICoreShapeKinds.OptionalKind) {
+      previews.push({
+        title: i.label,
+        invalid: !expectedShapes.has(i.kind),
+        allowsExpand: true,
+        interactionPointers: i.interactions,
+        ignoreRule: {
+          diffHash: shapeDiff.diffHash(),
+          examplesOfCoreShapeKinds: i.kind,
+        },
+        assertion: [plain('expected'), code(expected.shapeName())],
+        jsonTrailsByInteractions: i.jsonTrailsByInteractions,
+      });
+    }
+  });
+  ////////////////
+  return {
+    diffDescription: diffDescription,
+    toCommands(choices: IPatchChoices): any[] {
+      const innerShape = builderInnerShapeFromChoices(
+        choices,
+        expected,
+        actual,
+        currentSpecContext,
+      );
+
+      debugger;
+      return [];
+    },
+    updateSpecChoices,
+    previewTabs: sortBy(previews, (i) => !i.invalid),
+    // overrideTitle?: ICopy[];
+  };
+}
 //
 // function suggestionFor(
 //   {

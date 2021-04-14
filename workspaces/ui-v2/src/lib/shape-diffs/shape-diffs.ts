@@ -13,6 +13,7 @@ import {
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';
+import { listItemShapeDiffInterpreter } from './list';
 
 export async function interpretShapeDiffs(
   diff: BodyShapeDiff,
@@ -53,18 +54,19 @@ export async function interpretShapeDiffs(
 
   // Route to list item
   /////////////////////////////////////////////////////////////////////
-  /*  if (expected.isListItemShape()) {
+  if (expected.isListItemShape()) {
     return listItemShapeDiffInterpreter(
-      asShapeDiff,
+      diff,
       actual,
       expected,
-      services
+      diffDescription,
+      currentSpecContext,
     );
   }
 
   // Route to Root
   /////////////////////////////////////////////////////////////////////
-
+  /*
   if (expected.rootShapeId() && normalizedShapeTrail.path.length === 0) {
     return rootShapeDiffInterpreter(asShapeDiff, actual, expected, services);
   }*/
