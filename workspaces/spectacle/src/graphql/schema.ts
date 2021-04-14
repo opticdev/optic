@@ -39,6 +39,7 @@ type HttpRequest {
   method: String
   bodies: [HttpBody]
   responses: [HttpResponse]
+  changes(sinceBatchCommitId: String): ChangesResult
 }
 type PathComponent {
   id: ID
@@ -49,11 +50,13 @@ type HttpResponse {
   id: ID
   statusCode: Int
   bodies: [HttpBody]
+  changes(sinceBatchCommitId: String): ChangesResult
 }
 type ObjectFieldMetadata {
   name: String
   fieldId: ID
   # query shapeChoices(shapeId) to recurse
+  changes(sinceBatchCommitId: String): ChangesResult
   shapeId: ID
 }
 type ObjectMetadata {
@@ -61,6 +64,7 @@ type ObjectMetadata {
 }
 type ArrayMetadata {
   # query shapeChoices(shapeId) to recurse
+  changes(sinceBatchCommitId: String): ChangesResult
   shapeId: ID
 }
 type OpticShape {
@@ -68,7 +72,12 @@ type OpticShape {
   jsonType: String
   asObject: ObjectMetadata
   asArray: ArrayMetadata
+  # changes(sinceBatchCommitId: String): ChangesResult
   # exampleValue: [JSON]
+}
+type ChangesResult {
+  added: Boolean
+  changed: Boolean
 }
 type EndpointChanges {
   opticUrl: String

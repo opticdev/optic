@@ -60,6 +60,8 @@ export enum EdgeType {
   BelongsTo = 'BelongsTo',
   IsDescendantOf = 'IsDescendantOf',
   HasBinding = 'HasBinding',
+  CreatedIn = 'CreatedIn',
+  UpdatedIn = 'UpdatedIn',
 }
 
 export type Edge =
@@ -77,6 +79,12 @@ export type Edge =
     }
   | {
       type: EdgeType.IsParameterOf;
+    }
+  | {
+      type: EdgeType.CreatedIn;
+    }
+  | {
+      type: EdgeType.UpdatedIn;
     };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -181,6 +189,13 @@ class ShapeNodeWrapper implements NodeWrapper {
     }
     return coreShapeNode;
   }
+
+  batchCommits(): NodeListWrapper {
+    return this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.BatchCommit,
+    );
+  }
 }
 
 class ShapeParameterNodeWrapper implements NodeWrapper {
@@ -189,6 +204,13 @@ class ShapeParameterNodeWrapper implements NodeWrapper {
 
 class FieldNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {}
+
+  batchCommits(): NodeListWrapper {
+    return this.queries.listOutgoingNeighborsByType(
+      this.result.id,
+      NodeType.BatchCommit,
+    );
+  }
 }
 
 export class BatchCommitNodeWrapper implements NodeWrapper {
@@ -266,6 +288,36 @@ export class GraphQueries {
     return this.wrap(neighborsOfType[0]);
   }
 
+  listIncomingNeighborsByEdgeType(
+    id: NodeId,
+    edgeType: EdgeType,
+  ): NodeListWrapper {
+    const neighbors = this.index.inboundNeighborsByEdgeType.get(id);
+
+    if (!neighbors) {
+      return this.wrapList(null, []);
+    }
+
+    const neighborsOfType = neighbors.get(edgeType);
+
+    return this.wrapList(null, neighborsOfType || []);
+  }
+
+  listOutgoingNeighborsByEdgeType(
+    id: NodeId,
+    edgeType: EdgeType,
+  ): NodeListWrapper {
+    const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
+
+    if (!neighbors) {
+      return this.wrapList(null, []);
+    }
+
+    const neighborsOfType = neighbors.get(edgeType);
+
+    return this.wrapList(null, neighborsOfType || []);
+  }
+
   //@TODO wrap() and wrapList() should be injected?
   wrap(node: Node): NodeWrapper {
     if (node.type === NodeType.CoreShape) {
@@ -282,7 +334,8 @@ export class GraphQueries {
     throw new Error(`unexpected node.type`);
   }
 
-  wrapList(type: NodeType, nodes: Node[]): NodeListWrapper {
+  //@TODO move away from null here
+  wrapList(type: NodeType | null, nodes: Node[]): NodeListWrapper {
     //@TODO add list helpers (map, etc.)
     return {
       results: nodes.map((node) => this.wrap(node)),

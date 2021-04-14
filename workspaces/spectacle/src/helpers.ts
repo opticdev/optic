@@ -3,7 +3,7 @@ import { NodeType } from '../../graph-lib/build/shapes-graph';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
-    opticEngine.get_endpoints_projection(spec)
+    opticEngine.get_endpoints_projection(spec),
   );
   const { nodes, edges, nodeIndexToId } = serializedGraph;
 
@@ -22,7 +22,7 @@ export function buildEndpointsGraph(spec: any, opticEngine: any) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id
+      id,
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -36,6 +36,7 @@ export function buildEndpointsGraph(spec: any, opticEngine: any) {
 export function buildShapesGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(opticEngine.get_shapes_projection(spec));
   const { nodes, edges, nodeIndexToId } = serializedGraph;
+  // console.log('nodes', nodes);
 
   const indexer = new shapes.GraphIndexer();
 
@@ -52,7 +53,7 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
     const id = remapId(index);
     indexer.addNode({
       ...node,
-      id
+      id,
     });
   });
   edges.forEach((e: [number, number, any]) => {
@@ -65,33 +66,34 @@ export function buildShapesGraph(spec: any, opticEngine: any) {
 
 type EndpointChange = {
   change: {
-    category: string
-  }
-  path: string
-  method: string
-}
+    category: string;
+  };
+  path: string;
+  method: string;
+};
 
 type EndpointChanges = {
   data: {
-    endpoints: EndpointChange[]
-  }
-}
+    endpoints: EndpointChange[];
+  };
+};
 
 export function buildEndpointChanges(
   endpointQueries: endpoints.GraphQueries,
   shapeQueries: shapes.GraphQueries,
-  since?: string
+  since?: string,
 ): EndpointChanges {
   let sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
-    .results
-    .sort((a: any, b: any) => {
-      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1;
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
     });
 
   // If there is no `since` date, we want to use every batch commit
   const deltaBatchCommits = since
-    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) => batchCommit.result.data.createdAt > since,
+      )
     : sortedBatchCommits;
 
   const changes = new Changes();
@@ -102,7 +104,7 @@ export function buildEndpointChanges(
     });
 
     batchCommit.responses().results.forEach((response: any) => {
-      changes.captureChange('updated', endpointFromResponse(response))
+      changes.captureChange('updated', endpointFromResponse(response));
     });
   });
 
@@ -111,22 +113,21 @@ export function buildEndpointChanges(
   deltaBatchCommits.forEach((batchCommit: any) => {
     const batchCommitId = batchCommit.result.id;
     // TODO: create query for neighbors of all types
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
-      .results
-      .forEach((shape: any) => {
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results.forEach((shape: any) => {
         batchCommitNeighborIds.set(shape.result.id, batchCommitId);
       });
-    shapeQueries.listIncomingNeighborsByType(batchCommitId, NodeType.Field)
-      .results
-      .forEach((field: any) => {
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results.forEach((field: any) => {
         batchCommitNeighborIds.set(field.result.id, batchCommitId);
       });
   });
 
   endpointQueries
     .listNodesByType(endpoints.NodeType.Body)
-    .results
-    .reduce((results: string[], bodyNode: any) => {
+    .results.reduce((results: string[], bodyNode: any) => {
       const { rootShapeId } = bodyNode.result.data;
       if (batchCommitNeighborIds.has(rootShapeId)) {
         results.push(rootShapeId);
@@ -158,10 +159,10 @@ export function buildEndpointChanges(
 }
 
 type Endpoint = {
-  endpointId: string,
-  path: string,
-  method: string
-}
+  endpointId: string;
+  path: string;
+  method: string;
+};
 
 class Changes {
   public changes: Map<string, EndpointChange>;
@@ -175,7 +176,7 @@ class Changes {
     this.changes.set(endpoint.endpointId, {
       change: { category },
       path: endpoint.path,
-      method: endpoint.method
+      method: endpoint.method,
     });
     return true;
   }
@@ -183,9 +184,9 @@ class Changes {
   toEndpointChanges(): EndpointChanges {
     return {
       data: {
-        endpoints: Array.from(this.changes.values())
-      }
-    }
+        endpoints: Array.from(this.changes.values()),
+      },
+    };
   }
 }
 
@@ -203,4 +204,303 @@ function endpointFromResponse(response: any): Endpoint {
   const method = response.result.data.httpMethod;
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, path, method };
+}
+
+//@TODO remove if not needed after testing
+export function getShapeChanges(
+  shapeQueries: shapes.GraphQueries,
+  shapeId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  // TODO: figure out why shapeId is undefined
+  if (!shapeId) return results;
+
+  const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
+  const shape: any = shapeQueries.findNodeById(shapeId)!;
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommit.result.Id,
+  );
+
+  for (const batchCommit of shape.batchCommits().results) {
+    if (deltaBatchCommits.has(batchCommit.result.id)) {
+      return { ...results, added: true };
+    }
+  }
+
+  return results;
+}
+
+export function getFieldChanges(
+  shapeQueries: shapes.GraphQueries,
+  fieldId: string,
+  shapeId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      fieldId,
+      shapes.EdgeType.CreatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId) return { ...results, added: true };
+    }
+  }
+
+  // This will not deal with array item changes
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      fieldId,
+      shapes.EdgeType.UpdatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId) return { ...results, added: true };
+    }
+  }
+
+  // If a field is an array, there may be changes related to the shape but not
+  // the field itself.
+  return checkForArrayChanges(
+    shapeQueries,
+    deltaBatchCommits,
+    results,
+    shapeId,
+  );
+}
+
+export function getArrayChanges(
+  shapeQueries: shapes.GraphQueries,
+  shapeId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommits(
+    shapeQueries,
+    sinceBatchCommitId,
+  );
+
+  return checkForArrayChanges(
+    shapeQueries,
+    deltaBatchCommits,
+    results,
+    shapeId,
+  );
+}
+
+function checkForArrayChanges(
+  shapeQueries: shapes.GraphQueries,
+  deltaBatchCommits: any,
+  results: ChangeResult,
+  shapeId: string,
+): ChangeResult {
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      shapeId,
+      shapes.EdgeType.CreatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId) return { ...results, added: true };
+    }
+  }
+
+  // This will not deal with array item changes
+  for (const batchCommitId of deltaBatchCommits.keys()) {
+    for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
+      shapeId,
+      shapes.EdgeType.UpdatedIn,
+    ).results) {
+      if (node.result.id === batchCommitId)
+        return { ...results, changed: true };
+    }
+  }
+
+  return results;
+}
+
+export function getRequestChanges(
+  endpointQueries: endpoints.GraphQueries,
+  shapeQueries: shapes.GraphQueries,
+  requestId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommitsForEndpoints(
+    endpointQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommit of endpointQueries.listOutgoingNeighborsByType(
+    requestId,
+    endpoints.NodeType.BatchCommit,
+  ).results) {
+    if (deltaBatchCommits.has(batchCommit.result.id))
+      return { ...results, added: true };
+  }
+
+  const request: any = endpointQueries.findNodeById(requestId);
+
+  // TODO: this is really all neighbors and descendants
+  const batchCommitNeighborIds = new Map();
+  for (const batchCommit of deltaBatchCommits.values()) {
+    const batchCommitId = batchCommit.result.id;
+    // TODO: create query for neighbors of all types
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results.forEach((shape: any) => {
+        batchCommitNeighborIds.set(shape.result.id, batchCommitId);
+      });
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results.forEach((field: any) => {
+        batchCommitNeighborIds.set(field.result.id, batchCommitId);
+      });
+  }
+
+  for (const body of request.bodies().results) {
+    const { rootShapeId } = body.result.data;
+    if (batchCommitNeighborIds.has(rootShapeId)) {
+      return { ...results, changed: true };
+    }
+    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+      if (batchCommitNeighborIds.has(descendant.id)) {
+        return { ...results, changed: true };
+      }
+    }
+  }
+
+  return results;
+}
+
+export function getResponseChanges(
+  endpointQueries: endpoints.GraphQueries,
+  shapeQueries: shapes.GraphQueries,
+  responseId: string,
+  sinceBatchCommitId?: string,
+): ChangeResult {
+  const results = {
+    added: false,
+    changed: false,
+  };
+
+  const deltaBatchCommits = getDeltaBatchCommitsForEndpoints(
+    endpointQueries,
+    sinceBatchCommitId,
+  );
+
+  for (const batchCommit of endpointQueries.listOutgoingNeighborsByType(
+    responseId,
+    endpoints.NodeType.BatchCommit,
+  ).results) {
+    if (deltaBatchCommits.has(batchCommit.result.id))
+      return { ...results, added: true };
+  }
+
+  const response: any = endpointQueries.findNodeById(responseId);
+
+  // TODO: this is really all neighbors and descendants
+  const batchCommitNeighborIds = new Map();
+  for (const batchCommit of deltaBatchCommits.values()) {
+    const batchCommitId = batchCommit.result.id;
+    // TODO: create query for neighbors of all types
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Shape)
+      .results.forEach((shape: any) => {
+        batchCommitNeighborIds.set(shape.result.id, batchCommitId);
+      });
+    shapeQueries
+      .listIncomingNeighborsByType(batchCommitId, NodeType.Field)
+      .results.forEach((field: any) => {
+        batchCommitNeighborIds.set(field.result.id, batchCommitId);
+      });
+  }
+
+  for (const body of response.bodies().results) {
+    const { rootShapeId } = body.result.data;
+    if (batchCommitNeighborIds.has(rootShapeId)) {
+      return { ...results, changed: true };
+    }
+    for (const descendant of shapeQueries.descendantsIterator(rootShapeId)) {
+      if (batchCommitNeighborIds.has(descendant.id)) {
+        return { ...results, changed: true };
+      }
+    }
+  }
+
+  return results;
+}
+
+type ChangeResult = {
+  added: boolean;
+  changed: boolean;
+};
+
+// TODO: use the endpointQueries one below
+function getDeltaBatchCommits(
+  shapeQueries: shapes.GraphQueries,
+  sinceBatchCommitId?: string,
+): any {
+  let sortedBatchCommits = shapeQueries
+    .listNodesByType(shapes.NodeType.BatchCommit)
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
+    });
+  const sinceBatchCommit: any = shapeQueries.findNodeById(sinceBatchCommitId!)!;
+  const deltaBatchCommits = new Map();
+  (sinceBatchCommitId
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) =>
+          batchCommit.result.data.createdAt >
+          sinceBatchCommit!.result.data.createdAt,
+      )
+    : sortedBatchCommits
+  ).forEach((batchCommit: any) => {
+    deltaBatchCommits.set(batchCommit.result.id, batchCommit);
+  });
+  return deltaBatchCommits;
+}
+
+function getDeltaBatchCommitsForEndpoints(
+  endpointsQueries: endpoints.GraphQueries,
+  sinceBatchCommitId?: string,
+): any {
+  let sortedBatchCommits = endpointsQueries
+    .listNodesByType(endpoints.NodeType.BatchCommit)
+    .results.sort((a: any, b: any) => {
+      return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
+    });
+  const sinceBatchCommit: any = endpointsQueries.findNodeById(
+    sinceBatchCommitId!,
+  )!;
+  const deltaBatchCommits = new Map();
+  (sinceBatchCommitId
+    ? sortedBatchCommits.filter(
+        (batchCommit: any) =>
+          batchCommit.result.data.createdAt >
+          sinceBatchCommit!.result.data.createdAt,
+      )
+    : sortedBatchCommits
+  ).forEach((batchCommit: any) => {
+    deltaBatchCommits.set(batchCommit.result.id, batchCommit);
+  });
+  return deltaBatchCommits;
 }
