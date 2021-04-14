@@ -283,7 +283,6 @@ export function getFieldChanges(
 
 export function getArrayChanges(
   shapeQueries: shapes.GraphQueries,
-  fieldId: string,
   shapeId: string,
   sinceBatchCommitId?: string,
 ): ChangeResult {
@@ -360,7 +359,7 @@ export function getRequestChanges(
 
   const request: any = endpointQueries.findNodeById(requestId);
 
-  // Gather batch commit neighbors
+  // TODO: this is really all neighbors and descendants
   const batchCommitNeighborIds = new Map();
   for (const batchCommit of deltaBatchCommits.values()) {
     const batchCommitId = batchCommit.result.id;
@@ -418,7 +417,7 @@ export function getResponseChanges(
 
   const response: any = endpointQueries.findNodeById(responseId);
 
-  // Gather batch commit neighbors
+  // TODO: this is really all neighbors and descendants
   const batchCommitNeighborIds = new Map();
   for (const batchCommit of deltaBatchCommits.values()) {
     const batchCommitId = batchCommit.result.id;
@@ -455,8 +454,7 @@ type ChangeResult = {
   changed: boolean;
 };
 
-// TODO: set correct result type
-// TODO: rename to be fore shapes
+// TODO: use the endpointQueries one below
 function getDeltaBatchCommits(
   shapeQueries: shapes.GraphQueries,
   sinceBatchCommitId?: string,

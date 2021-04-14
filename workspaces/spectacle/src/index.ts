@@ -8,7 +8,6 @@ import {
   buildEndpointChanges,
   buildEndpointsGraph,
   buildShapesGraph,
-  getShapeChanges,
   getFieldChanges,
   getArrayChanges,
   getRequestChanges,
@@ -320,7 +319,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(
           getArrayChanges(
             context.shapeQueries,
-            parent.fieldId,
             parent.shapeId,
             args.sinceBatchCommitId,
           ),
@@ -348,6 +346,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     EndpointChange: {
+      // TODO: considering converting into ChangeResult
       change: (parent: any) => {
         return Promise.resolve(parent.change);
       },
