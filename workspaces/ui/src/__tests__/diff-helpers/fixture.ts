@@ -1,6 +1,8 @@
 import { makeUniverse } from './universes/makeUniverse';
 import { DiffSet } from '../../engine/diff-set';
 import { ParsedDiff } from '../../engine/parse-diff';
+import sha1 from 'node-sha1';
+import jsonStringify from 'json-stable-stringify';
 import path from 'path';
 import colors from 'colors';
 import { DiffPreviewer, Queries, toOption } from '@useoptic/domain';
@@ -65,7 +67,11 @@ export async function loadsDiffsFromUniverse(
 
   const diffs = new DiffSet(
     diffsRaw.map(([diff, interactions]) => {
-      const diffParsed = new ParsedDiff(diff, interactions);
+      const diffParsed = new ParsedDiff(
+        diff,
+        interactions,
+        sha1(jsonStringify(diff))
+      );
       return diffParsed;
     }),
     rfcBaseState
