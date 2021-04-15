@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
 import { learnUndocumentedBodies } from '@useoptic/diff-engine';
 import { Streams } from '@useoptic/diff-engine-wasm';
-import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results';
+import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/undocumented-endpoint-bodies';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export interface InitialBodiesWorkerConfig {
@@ -48,7 +48,7 @@ export class InitialBodiesWorkerRust {
       }
     })(interactionIterator);
 
-    let learningResults = Streams.LearningResults.fromJSONL()(
+    let learningResults = Streams.LearningResults.UndocumentedEndpointBodies.fromJSONL()(
       learnUndocumentedBodies(interactions, {
         specPath: outputPaths.events,
       })
