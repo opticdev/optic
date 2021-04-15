@@ -305,6 +305,7 @@ impl Default for ShapeProjection {
     add_core_shape_to_projection(&mut projection, ShapeKind::NumberKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::BooleanKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::ListKind);
+    //@TODO: incomplete
     add_core_shape_to_projection(&mut projection, ShapeKind::ObjectKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::NullableKind);
     add_core_shape_to_projection(&mut projection, ShapeKind::UnknownKind);

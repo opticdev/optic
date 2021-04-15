@@ -94,6 +94,10 @@ impl ItemsDescriptor {
   pub fn into_unique(self) -> impl Iterator<Item = (BodyDescriptor, Vec<usize>)> {
     self.unique_items.into_iter()
   }
+
+  pub fn unique_items_count(&self) -> usize {
+    self.unique_items.len()
+  }
 }
 
 impl From<shapehash::ShapeDescriptor> for BodyDescriptor {

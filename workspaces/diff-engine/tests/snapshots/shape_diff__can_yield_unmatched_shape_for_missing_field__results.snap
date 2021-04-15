@@ -1,11 +1,16 @@
 ---
-source: tests/shape_diff.rs
+source: workspaces/diff-engine/tests/shape_diff.rs
 expression: results
 ---
 [
     UnmatchedShape {
         json_trail: JsonTrail {
             path: [
+                JsonObjectKey {
+                    key: "age",
+                },
+            ],
+            normalized: [
                 JsonObjectKey {
                     key: "age",
                 },

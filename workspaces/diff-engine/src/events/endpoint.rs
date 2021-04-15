@@ -1,4 +1,4 @@
-use super::EventContext;
+use super::{EventContext, WithEventContext};
 use cqrs_core::Event;
 use endpoint_commands::RemovePathParameter;
 use serde::{Deserialize, Serialize};
@@ -264,6 +264,45 @@ impl Event for EndpointEvent {
       EndpointEvent::ResponseBodyUnset(evt) => evt.event_type(),
       EndpointEvent::ResponseRemoved(evt) => evt.event_type(),
     }
+  }
+}
+
+impl WithEventContext for EndpointEvent {
+  fn with_event_context(&mut self, event_context: EventContext) {
+    match self {
+      EndpointEvent::PathComponentAdded(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::PathComponentRenamed(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::PathComponentRemoved(evt) => evt.event_context.replace(event_context),
+
+      // path parameters
+      EndpointEvent::PathParameterAdded(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::PathParameterShapeSet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::PathParameterRenamed(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::PathParameterRemoved(evt) => evt.event_context.replace(event_context),
+
+      // request parameters
+      EndpointEvent::RequestParameterAddedByPathAndMethod(evt) => {
+        evt.event_context.replace(event_context)
+      }
+      EndpointEvent::RequestParameterRenamed(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestParameterShapeSet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestParameterShapeUnset(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestParameterRemoved(evt) => evt.event_context.replace(event_context),
+
+      // Request events
+      EndpointEvent::RequestAdded(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestContentTypeSet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestBodySet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::RequestBodyUnset(evt) => evt.event_context.replace(event_context),
+
+      // Response events
+      EndpointEvent::ResponseAddedByPathAndMethod(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::ResponseStatusCodeSet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::ResponseContentTypeSet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::ResponseBodySet(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::ResponseBodyUnset(evt) => evt.event_context.replace(event_context),
+      EndpointEvent::ResponseRemoved(evt) => evt.event_context.replace(event_context),
+    };
   }
 }
 

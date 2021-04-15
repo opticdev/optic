@@ -31,6 +31,17 @@ expression: results
                             key: "coordinates",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "location",
+                        },
+                        JsonObjectKey {
+                            key: "principality",
+                        },
+                        JsonObjectKey {
+                            key: "coordinates",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",
@@ -73,6 +84,17 @@ expression: results
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
+                        JsonObjectKey {
+                            key: "location",
+                        },
+                        JsonObjectKey {
+                            key: "principality",
+                        },
+                        JsonObjectKey {
+                            key: "coordinates",
+                        },
+                    ],
+                    normalized: [
                         JsonObjectKey {
                             key: "location",
                         },

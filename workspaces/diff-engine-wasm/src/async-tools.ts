@@ -1,5 +1,6 @@
 export * from 'axax/esnext';
 import _ from 'axax/esnext';
+import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import { reduce } from 'axax/esnext/reduce';
 export { reduce };
 import { Subject } from 'axax/esnext';
@@ -39,6 +40,26 @@ export function lastBy<T>(
 export function fromReadable<T>(stream: Readable): () => AsyncIterable<T> {
   return async function* () {
     for await (const chunk of stream) {
+      yield chunk;
+    }
+  };
+}
+
+export function fromReadableJSONL<T>(): (stream: Readable) => AsyncIterable<T> {
+  return async function* (source: Readable) {
+    let parseResults = source.pipe(jsonlParser());
+    for await (let parseResult of parseResults) {
+      yield parseResult.value;
+    }
+  };
+}
+
+export function tap<T>(
+  predicate: (subject: T) => void
+): (source: AsyncIterable<T>) => AsyncIterable<T> {
+  return async function* (source: AsyncIterable<T>) {
+    for await (let chunk of source) {
+      predicate(chunk);
       yield chunk;
     }
   };

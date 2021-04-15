@@ -1,9 +1,12 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+use chrono::Utc;
+use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use optic_diff_engine::{
-  Aggregate, HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
+  Aggregate, CommandContext, EndpointQueries, HttpInteraction, InteractionDiffResult, SpecCommand,
+  SpecEvent, SpecProjection,
 };
 
 #[wasm_bindgen(start)]
@@ -50,26 +53,35 @@ pub fn diff_interaction(
 }
 
 #[wasm_bindgen]
-pub fn try_apply_commands(commands_json: String, events_json: String) -> Result<String, JsValue> {
+pub fn try_apply_commands(
+  commands_json: String,
+  events_json: String,
+  batch_id: String,
+  commit_message: String,
+) -> Result<String, JsValue> {
   let spec_commands: Vec<SpecCommand> = serde_json::from_str(&commands_json).unwrap();
   let spec_events: Vec<SpecEvent> = serde_json::from_str(&events_json).unwrap();
   let spec_projection = SpecProjection::from(spec_events);
-
-  let final_state = spec_commands.into_iter().fold(
-    (spec_projection, vec![]),
-    |(mut projection, mut events), command| {
-      let new_events = projection
-        .execute(command)
-        .expect("expected commands to apply");
-      new_events.into_iter().for_each(|event| {
-        projection.apply(event.clone());
-        events.push(event);
-      });
-      (projection, events)
-    },
+  let batch_command_context = CommandContext::new(
+    batch_id.clone(),
+    String::from("diff-engine-wasm-user"),
+    String::from("diff-engine-wasm-session"),
+    Utc::now(),
   );
-  let (_, new_events) = final_state;
-  Ok(serde_json::to_string(&new_events).unwrap())
+
+  let mut batch =
+    optic_diff_engine::append_batch_to_spec(spec_projection, commit_message, batch_command_context);
+
+  for command in spec_commands {
+    batch
+      .with_command(command)
+      .map_err(|err| format!("command could not be applied: {:?}", err))?;
+  }
+
+  let new_events = batch.commit();
+
+  serde_json::to_string(&new_events)
+    .map_err(|err| JsValue::from(format!("new events could not be serialized: {:?}", err)))
 }
 
 #[wasm_bindgen]
@@ -93,6 +105,10 @@ impl WasmSpecProjection {
     let serialized = serde_json::to_string(&self.projection.shape().to_choice_mapping());
     Ok(serialized.unwrap())
   }
+
+  pub fn endpoint_queries(&self) -> EndpointQueries {
+    EndpointQueries::new(self.projection.endpoint())
+  }
 }
 
 impl From<SpecProjection> for WasmSpecProjection {
@@ -109,4 +125,46 @@ impl From<InteractionDiffResult> for ResultContainer<InteractionDiffResult> {
     let fingerprint = result.fingerprint();
     Self(result, fingerprint)
   }
+}
+
+// Commit batch
+// ------------
+
+#[wasm_bindgen]
+pub fn append_batch_to_spec(
+  spec: WasmSpecProjection,
+  commands: String,
+  commit_message: String,
+) -> Result<String, JsValue> {
+  let commands: Vec<SpecCommand> = serde_json::from_str(&commands).unwrap();
+  let batch_id = Uuid::new_v4().to_hyphenated().to_string();
+  let batch_command_context = CommandContext::new(
+    batch_id.clone(),
+    String::from("diff-engine-wasm-user"),
+    String::from("diff-engine-wasm-session"),
+    Utc::now(),
+  );
+
+  let mut batch =
+    optic_diff_engine::append_batch_to_spec(spec.projection, commit_message, batch_command_context);
+
+  for command in commands {
+    batch
+      .with_command(command)
+      .map_err(|err| format!("command could not be applied: {:?}", err))?;
+  }
+
+  let new_events = batch.commit();
+
+  serde_json::to_string(&new_events)
+    .map_err(|err| JsValue::from(format!("new events could not be serialized: {:?}", err)))
+}
+
+// Spec Queries
+// ------------
+#[wasm_bindgen]
+pub fn spec_resolve_path_id(spec: &WasmSpecProjection, path: String) -> Option<String> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  endpoint_queries.resolve_path(&path).map(String::from)
 }

@@ -18,11 +18,11 @@ import { endpoints, shapes } from '@useoptic/graph-lib';
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
-  try_apply_commands(arg0: string, arg1: string): any;
+  try_apply_commands(commandsJson: string, eventsJson: string, batchId: string, commitMessage: string): any;
 
   get_shape_viewer_projection(spec: any): string;
 
-  spec_from_events(arg0: string): any;
+  spec_from_events(eventsJson: string): any;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -160,13 +160,21 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       applyCommands: async (parent: any, args: any, context: any) => {
         const batchCommitId = uuidv4();
         const events = await opticContext.specRepository.listEvents();
-        const newEventsString = opticContext.opticEngine.try_apply_commands(
-          JSON.stringify(args.commands),
-          JSON.stringify(events),
-        );
-        const newEvents = JSON.parse(newEventsString);
+        try {
+          const newEventsString = opticContext.opticEngine.try_apply_commands(
+            JSON.stringify(args.commands),
+            JSON.stringify(events),
+            batchCommitId,
+            'proposed changes',
+          );
+          const newEvents = JSON.parse(newEventsString);
+
+          await context.opticContext.specRepository.appendEvents(newEvents);
+        } catch (e) {
+          console.error(e);
+          debugger;
+        }
         //@TODO: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
-        await context.opticContext.specRepository.appendEvents(newEvents);
 
         await reload(context.opticContext);
 
@@ -380,7 +388,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     resolvers,
   });
 
-  return function (input: SpectacleInput) {
+  return function(input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,

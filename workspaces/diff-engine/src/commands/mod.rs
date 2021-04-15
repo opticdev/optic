@@ -1,5 +1,9 @@
-use cqrs_core::{Aggregate, AggregateCommand};
-pub use serde::Deserialize;
+use chrono::{DateTime, TimeZone, Utc};
+use std::process::Command;
+use uuid::Uuid;
+
+use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
+pub use serde::{Deserialize, Serialize};
 
 pub mod endpoint;
 pub mod rfc;
@@ -12,11 +16,14 @@ pub use shape::ShapeCommand;
 
 use crate::events::rfc as rfc_events;
 use crate::events::shape as shape_events;
-use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
+use crate::events::{
+  EndpointEvent, EventContext, RfcEvent, ShapeEvent, SpecEvent, WithEventContext,
+};
 use crate::projections::SpecProjection;
 use crate::queries::history::HistoryQueries;
+use crate::state::shape::ShapeKind;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum SpecCommand {
   EndpointCommand(EndpointCommand),
@@ -63,16 +70,104 @@ impl std::error::Error for SpecCommandError {}
 // CommandContext
 // --------------
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CommandContext {
   pub client_id: String,
   pub client_session_id: String,
   pub client_command_batch_id: String,
+  pub created_at: DateTime<Utc>,
+}
+
+impl CommandContext {
+  pub fn new(
+    batch_id: String,
+    client_id: String,
+    client_session_id: String,
+    created_at: DateTime<impl TimeZone>,
+  ) -> Self {
+    Self {
+      client_id,
+      client_command_batch_id: batch_id,
+      client_session_id,
+      created_at: created_at.with_timezone(&Utc),
+    }
+  }
+}
+
+impl Default for CommandContext {
+  fn default() -> Self {
+    Self {
+      client_id: String::from("anonymous"),
+      client_session_id: String::from("unknown-session"),
+      client_command_batch_id: String::from("unknown-batch"),
+      created_at: Utc.timestamp(0, 0),
+    }
+  }
+}
+
+// SpecCommandHandler
+// ------------------
+
+#[derive(Debug, Default)]
+pub struct SpecCommandHandler {
+  command_context: CommandContext,
+  spec_projection: SpecProjection,
+}
+
+impl SpecCommandHandler {
+  pub fn new(command_context: CommandContext, spec_projection: SpecProjection) -> Self {
+    Self {
+      command_context,
+      spec_projection,
+    }
+  }
+
+  pub fn with_command_context(&mut self, command_context: CommandContext) {
+    self.command_context = command_context
+  }
+}
+
+impl Aggregate for SpecCommandHandler {
+  fn aggregate_type() -> &'static str {
+    "spec-command-handler"
+  }
+}
+
+impl AggregateEvent<SpecCommandHandler> for SpecEvent {
+  fn apply_to(self, command_handler: &mut SpecCommandHandler) {
+    command_handler.spec_projection.apply(self)
+  }
+}
+
+impl<I> From<I> for SpecCommandHandler
+where
+  I: IntoIterator,
+  I::Item: AggregateEvent<SpecProjection>,
+{
+  fn from(events: I) -> Self {
+    let spec_projection = SpecProjection::from(events);
+    Self::new(CommandContext::default(), spec_projection)
+  }
 }
 
 // Command handling
 // ----------------
+
+impl AggregateCommand<SpecCommandHandler> for SpecCommand {
+  type Error = SpecCommandError;
+  type Event = SpecEvent;
+  type Events = Vec<SpecEvent>;
+
+  fn execute_on(self, command_handler: &SpecCommandHandler) -> Result<Self::Events, Self::Error> {
+    let mut events = command_handler.spec_projection.execute(self)?;
+    let event_context = EventContext::from(command_handler.command_context.clone());
+    for event in &mut events {
+      event.with_event_context(event_context.clone());
+    }
+    Ok(events)
+  }
+}
 
 impl AggregateCommand<SpecProjection> for SpecCommand {
   type Error = SpecCommandError;
@@ -95,7 +190,8 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         };
 
         let shape_added_event = ShapeEvent::from(ShapeCommand::add_shape(
-          String::from("$string"),
+          Uuid::new_v4().to_hyphenated().to_string(),
+          ShapeKind::StringKind,
           String::from(""),
         ));
 
@@ -186,6 +282,7 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
 #[cfg(test)]
 mod test {
   use super::*;
+  use chrono::Local;
   use insta::assert_debug_snapshot;
   use serde_json::json;
 
@@ -374,5 +471,62 @@ mod test {
     for event in new_events {
       projection.apply(event); // verify this doesn't panic goes a long way to verifying the events
     }
+  }
+
+  #[test]
+  pub fn spec_handler_provides_event_context_from_capture_context() {
+    let initial_events: Vec<SpecEvent> = serde_json::from_value(json!([
+      {"PathComponentAdded": {"pathId": "path_1","parentPathId": "root","name": "todos"}},
+    ]))
+    .expect("initial events should be valid spec events");
+
+    let mut command_handler = SpecCommandHandler::from(initial_events);
+
+    let command_context = CommandContext::new(
+      String::from("test-batch-1"),
+      String::from("test-client-id"),
+      String::from("test-client-session-id"),
+      Utc.timestamp(0, 0),
+    );
+
+    command_handler.with_command_context(command_context.clone());
+
+    let valid_command: SpecCommand = serde_json::from_value(json!(
+      {"AddPathComponent": {"pathId": "path_2","parentPathId": "path_1","name": "completed"}}
+    ))
+    .expect("example command should be a valid command");
+
+    let new_events = command_handler
+      .execute(valid_command)
+      .expect("valid command should yield new events");
+
+    let new_event = match new_events.get(0) {
+      Some(SpecEvent::EndpointEvent(EndpointEvent::PathComponentAdded(event))) => event,
+      _ => unreachable!(
+        "PathComponentAdded event should have been generated from AddPathComponent command"
+      ),
+    };
+
+    assert!(new_event.event_context.is_some());
+    let event_context = new_event.event_context.clone().unwrap();
+
+    assert_eq!(event_context.client_id, command_context.client_id);
+    assert_eq!(
+      event_context.client_session_id,
+      command_context.client_session_id
+    );
+    assert_eq!(
+      event_context.client_command_batch_id,
+      command_context.client_command_batch_id
+    );
+    assert_eq!(
+      event_context.created_at,
+      command_context.created_at.to_rfc3339()
+    );
+
+    assert_debug_snapshot!(
+      "spec_handler_provides_event_context_from_capture_context",
+      &new_event
+    );
   }
 }

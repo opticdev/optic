@@ -43,6 +43,29 @@ expression: results
                             key: "Time",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Time",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_GMtxDoA6QP",
@@ -120,6 +143,29 @@ expression: results
                             key: "FastestLap",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "FastestLap",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_GMtxDoA6QP",
@@ -186,6 +232,29 @@ expression: results
                         },
                         JsonArrayItem {
                             index: 16,
+                        },
+                        JsonObjectKey {
+                            key: "Results",
+                        },
+                        JsonArrayItem {
+                            index: 0,
+                        },
+                        JsonObjectKey {
+                            key: "Time",
+                        },
+                    ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "MRData",
+                        },
+                        JsonObjectKey {
+                            key: "RaceTable",
+                        },
+                        JsonObjectKey {
+                            key: "Races",
+                        },
+                        JsonArrayItem {
+                            index: 0,
                         },
                         JsonObjectKey {
                             key: "Results",

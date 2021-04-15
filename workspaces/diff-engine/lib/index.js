@@ -8,7 +8,7 @@ const Bent = require('bent');
 const Tar = require('tar');
 
 const {
-  Streams: { Commands },
+  Streams: { Commands, HttpInteractions },
 } = require('@useoptic/diff-engine-wasm');
 const Config = require('./config');
 
@@ -63,39 +63,82 @@ function readSpec({ specDirPath }) {
   return output;
 }
 
-function commit(commands, { commitMessage, specDirPath, appendToRoot }) {
+function commit(
+  commands,
+  { commitMessage, specDirPath, appendToRoot, clientSessionId, clientId }
+) {
   if (typeof commands[Symbol.asyncIterator] !== 'function')
-    new Error('commandStream must be AsyncIterator to commit commands');
+    throw new Error('commandStream must be AsyncIterator to commit commands');
   if (typeof commitMessage !== 'string')
-    new Error('commitMessage must be a string to commit commands');
+    throw new Error('commitMessage must be a string to commit commands');
+  if (clientSessionId && typeof clientSessionId !== 'string') {
+    throw new Error(
+      'when defined, clientSessionId must be a string to commit commands'
+    );
+  }
+  if (clientId && typeof clientId !== 'string') {
+    throw new Error(
+      'when defined, clientId must be a string to commit commands'
+    );
+  }
 
   const input = Readable.from(Commands.intoJSONL(commands));
   const output = new PassThrough();
 
   const binPath = getBinPath();
 
-  // Execa requires escaping of spaces for arguments, but nothing else
-  let messageArgument = commitMessage.replaceAll(/(\s)/g, '\\$1');
+  const args = Object.entries({
+    '-m': commitMessage,
+    '--append-to-root': appendToRoot,
+    '--client-id': clientId,
+    '--client-session-id': clientSessionId,
+  })
+    .filter(([key, value]) => !!value)
+    .flatMap(([key, value]) =>
+      typeof value === 'string' ? [key, value] : [key]
+    );
 
-  const commitProcess = Execa(
-    binPath,
-    [
-      specDirPath,
-      'commit',
-      '-m',
-      messageArgument,
-      ...(appendToRoot ? ['--append-to-root'] : []),
-    ],
-    {
-      stdio: ['pipe', 'pipe', 'inherit'],
-    }
-  );
+  const commitProcess = Execa(binPath, [specDirPath, 'commit', ...args], {
+    stdio: ['pipe', 'pipe', 'inherit'],
+  });
 
   input.pipe(commitProcess.stdin);
   commitProcess.stdout.pipe(output);
 
   // get a clean result promise, so we stay in control of the exact API we're exposing
   commitProcess.then(
+    (childResult) => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+
+  return output;
+}
+
+function learnUndocumentedBodies(interactions, { specPath }) {
+  if (!interactions || typeof interactions[Symbol.asyncIterator] !== 'function')
+    throw new Error(
+      'interactionsStream must be AsyncIterator to learn undocumented bodies'
+    );
+
+  const input = Readable.from(HttpInteractions.intoJSONL(interactions));
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  const learnProcess = Execa(
+    binPath,
+    [specPath, '-f', 'learn', '--undocumented-bodies'],
+    {
+      stdio: ['pipe', 'pipe', 'inherit'],
+    }
+  );
+
+  input.pipe(learnProcess.stdin);
+  learnProcess.stdout.pipe(output);
+
+  learnProcess.then(
     (childResult) => {},
     (childResult) => {
       output.emit('error', new DiffEngineError(childResult));
@@ -277,6 +320,7 @@ class DiffEngineError extends Error {
 exports.spawn = spawn;
 exports.readSpec = readSpec;
 exports.commit = commit;
+exports.learnUndocumentedBodies = learnUndocumentedBodies;
 exports.install = install;
 exports.uninstall = uninstall;
 exports.DiffEngineError = DiffEngineError;

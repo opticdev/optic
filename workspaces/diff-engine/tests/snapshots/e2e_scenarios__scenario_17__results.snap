@@ -25,6 +25,11 @@ expression: results
                             key: "stats",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "stats",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

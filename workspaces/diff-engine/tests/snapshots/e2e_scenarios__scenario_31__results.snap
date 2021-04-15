@@ -25,6 +25,11 @@ expression: results
                             key: "rivals",
                         },
                     ],
+                    normalized: [
+                        JsonObjectKey {
+                            key: "rivals",
+                        },
+                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

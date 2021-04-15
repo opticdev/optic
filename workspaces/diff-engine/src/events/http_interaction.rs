@@ -5,14 +5,14 @@ use avro_rs;
 use base64;
 use cqrs_core::Event;
 use protobuf;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io;
 use std::iter::FromIterator;
 
 // TODO: consider whether these aren't actually Events and the Traverser not an Aggregator
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct HttpInteraction {
   pub uuid: String,
   pub request: Request,
@@ -20,23 +20,24 @@ pub struct HttpInteraction {
   pub tags: Vec<HttpInteractionTag>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct HttpInteractionTag {
   name: String,
   value: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Request {
   pub host: String,
   pub method: String,
   pub path: String,
+  pub headers: ArbitraryData,
   // #[serde(skip)]
   pub query: ArbitraryData,
   pub body: Body,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
   pub status_code: u16,
@@ -45,7 +46,7 @@ pub struct Response {
   pub body: Body,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Body {
   pub content_type: Option<String>,
@@ -53,12 +54,12 @@ pub struct Body {
   pub value: ArbitraryData,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArbitraryData {
-  shape_hash_v1_base64: Option<String>,
-  as_json_string: Option<String>,
-  as_text: Option<String>,
+  pub shape_hash_v1_base64: Option<String>,
+  pub as_json_string: Option<String>,
+  pub as_text: Option<String>,
 }
 
 impl From<&ArbitraryData> for Option<serde_json::value::Value> {

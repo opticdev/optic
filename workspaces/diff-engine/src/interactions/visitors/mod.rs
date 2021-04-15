@@ -1,8 +1,8 @@
 pub mod diff;
 
-use super::HttpInteraction;
 use crate::projections::endpoint::{RequestBodyDescriptor, ResponseBodyDescriptor};
 use crate::state::endpoint::{PathComponentId, PathComponentIdRef, RequestId, ResponseId};
+use crate::HttpInteraction;
 
 pub trait InteractionVisitors<R> {
   type Path: PathVisitor<R>;

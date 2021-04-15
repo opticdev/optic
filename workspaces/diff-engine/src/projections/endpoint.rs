@@ -362,9 +362,8 @@ impl AggregateEvent<EndpointProjection> for EndpointEvent {
         );
       }
       _ => eprintln!(
-        "Ignoring applying event of type '{}' for '{}'",
-        self.event_type(),
-        EndpointProjection::aggregate_type()
+        "Ignoring applying event of type '{}' for EndpointProjection",
+        self.event_type()
       ),
     }
   }

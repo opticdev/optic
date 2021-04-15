@@ -1,11 +1,12 @@
 ---
-source: tests/shape_diff.rs
+source: workspaces/diff-engine/tests/shape_diff.rs
 expression: results
 ---
 [
     UnmatchedShape {
         json_trail: JsonTrail {
             path: [],
+            normalized: [],
         },
         shape_trail: ShapeTrail {
             root_shape_id: "example_shape_1",

@@ -48,7 +48,6 @@ export function useEndpoints(
   }
 
   if (data) {
-    debugger;
     return { endpoints: endpointQueryResultsToJson(data) };
   } else {
     return { endpoints: [], loading: true };

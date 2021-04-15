@@ -169,7 +169,7 @@ impl AggregateEvent<EndpointsProjection> for RfcEvent {
         e.event_context
           .expect("why is event_context optional again?")
           .created_at,
-        e.commit_message
+        e.commit_message,
       ),
       _ => eprintln!(
         "Ignoring applying event of type '{}' for '{}'",
@@ -360,11 +360,16 @@ impl EndpointsProjection {
       .add_edge(node_index, response_index, Edge::IsChildOf);
   }
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  pub fn with_batch_commit(&mut self, batch_id: String, created_at: String, commit_message: String) {
+  pub fn with_batch_commit(
+    &mut self,
+    batch_id: String,
+    created_at: String,
+    commit_message: String,
+  ) {
     let node = Node::BatchCommit(BatchCommitNode {
       batch_id: batch_id.clone(),
       created_at: created_at.clone(),
-      commit_message: commit_message.clone()
+      commit_message: commit_message.clone(),
     });
     let node_index = self.graph.add_node(node);
     self.domain_id_to_index.insert(batch_id, node_index);

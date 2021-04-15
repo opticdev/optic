@@ -6,18 +6,18 @@ use num_cpus;
 use optic_diff_engine::diff_interaction;
 use optic_diff_engine::errors;
 use optic_diff_engine::streams;
-use optic_diff_engine::Aggregate;
 use optic_diff_engine::HttpInteraction;
 use optic_diff_engine::InteractionDiffResult;
 use optic_diff_engine::SpecProjection;
-use optic_diff_engine::{RfcCommand, SpecCommand};
-use optic_diff_engine::{RfcEvent, SpecChunkEvent, SpecEvent};
+use optic_diff_engine::{SpecChunkEvent, SpecEvent};
 use std::cmp;
-use std::path::Path;
 use std::process;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc;
+
+mod commit;
+mod learn;
 
 fn main() {
   let cli = App::new("Optic Engine CLI")
@@ -63,27 +63,8 @@ fn main() {
       SubCommand::with_name("assemble")
         .about("Assembles a directory of API spec files into a single events stream"),
     )
-    .subcommand(
-      SubCommand::with_name("commit")
-        .about("Commits results of commands received over stdin as a new batch commit")
-        .arg(
-          Arg::with_name("commit-message")
-            .short("m")
-            .required(true)
-            .value_name("COMMIT_MESSAGE")
-            .takes_value(true)
-            .help("The commit message describing the commands as a whole"),
-        )
-        .arg(
-          Arg::with_name("append-to-root")
-            .long("append-to-root")
-            .required(false)
-            .takes_value(false)
-            .help(
-              "Append new batch commit to the root spec file, instead of a new spec change file",
-            ),
-        ),
-    )
+    .subcommand(commit::create_subcommand())
+    .subcommand(learn::create_subcommand())
     .subcommand(
       SubCommand::with_name("diff")
         .about("Detects differences between API spec and captured interactions (default)"),
@@ -124,6 +105,11 @@ fn main() {
 
   let runtime = runtime_builder.build().unwrap();
 
+  let input_queue_size = cmp::min(
+    num_cpus::get(),
+    core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
+  ) * 4;
+
   runtime.block_on(async {
     let spec_chunks = match spec_path_type {
       SpecPathType::FILE => streams::spec_chunks::from_root_api_file(&spec_path)
@@ -148,42 +134,20 @@ fn main() {
 
     match matches.subcommand() {
       ("assemble", Some(_)) => {
-        eprintln!("assembling spec folder into spec");
+        // eprintln!("assembling spec folder into spec");
         assemble(spec_chunks).await;
       }
-      ("commit", Some(subcommand_matches)) => {
-        let commit_message = subcommand_matches
-          .value_of("commit-message")
-          .expect("commit-message is required");
-
-        let append_to_root = subcommand_matches.is_present("append-to-root");
-
-        if append_to_root
-          && !spec_chunks
-            .iter()
-            .all(|chunk| matches!(chunk, SpecChunkEvent::Root(_)))
-        {
-          eprintln!("Commits cannot be appended to the root when non-root chunks exist");
-          process::exit(1);
-        }
-
-        commit(
-          events_from_chunks(spec_chunks).await,
-          &spec_path,
-          commit_message,
-          append_to_root,
-        )
-        .await;
+      (commit::SUBCOMMAND_NAME, Some(subcommand_matches)) => {
+        commit::main(subcommand_matches, spec_chunks, spec_path).await
+      }
+      (learn::SUBCOMMAND_NAME, Some(subcommand_matches)) => {
+        learn::main(subcommand_matches, spec_chunks, input_queue_size).await
       }
       _ => {
         eprintln!("diffing interations against a spec");
-        let diff_queue_size = cmp::min(
-          num_cpus::get(),
-          core_threads_count.unwrap_or(num_cpus::get() as u16) as usize,
-        ) * 4;
-        eprintln!("using diff size {}", diff_queue_size);
+        eprintln!("using input queue size {}", input_queue_size);
 
-        diff(events_from_chunks(spec_chunks).await, diff_queue_size).await;
+        diff(events_from_chunks(spec_chunks).await, input_queue_size).await;
       }
     };
   });
@@ -279,92 +243,6 @@ async fn assemble(spec_chunks: Vec<SpecChunkEvent>) {
   streams::spec_events::write_to_json_array(stdout, &spec_events)
     .await
     .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err));
-}
-
-async fn commit(
-  spec_events: Vec<SpecEvent>,
-  spec_dir_path: impl AsRef<Path>,
-  commit_message: &str,
-  append_to_root: bool,
-) {
-  let mut spec_projection = SpecProjection::from(spec_events.clone());
-
-  let stdin = stdin(); // TODO: deal with std in never having been attached
-
-  let input_commands = streams::spec_events::from_json_lines(stdin);
-
-  let append_batch = SpecCommand::from(RfcCommand::append_batch_commit(String::from(
-    commit_message,
-  )));
-
-  // Start event
-  let start_event = spec_projection
-    .execute(append_batch)
-    .expect("should be able to append new batch commit to spec")
-    .remove(0);
-  let batch_id = match &start_event {
-    SpecEvent::RfcEvent(RfcEvent::BatchCommitStarted(event)) => Some(event.batch_id.clone()),
-    _ => None,
-  }
-  .expect("BatchCommitStarted with batch id to have been created");
-
-  spec_projection.apply(start_event.clone());
-
-  // input events
-  let mut input_events: Vec<SpecEvent> = input_commands
-    .map(|command_json_result| -> Vec<SpecEvent> {
-      // TODO: provide more useful error messages, like forwarding command validation errors
-      let command_json = command_json_result.expect("can read input commands as jsonl from stdin");
-      let command: SpecCommand =
-        serde_json::from_str(&command_json).expect("could not parse command");
-      let events = spec_projection
-        .execute(command)
-        .expect("could not execute command");
-
-      for event in &events {
-        spec_projection.apply(event.clone());
-      }
-
-      events
-    })
-    .collect::<Vec<_>>()
-    .await
-    .into_iter()
-    .flatten()
-    .collect();
-
-  // end events
-  let end_event = spec_projection
-    .execute(SpecCommand::from(RfcCommand::end_batch_commit(
-      batch_id.clone(),
-    )))
-    .expect("should be able to append new batch commit to spec")
-    .remove(0);
-  spec_projection.apply(end_event.clone());
-
-  let mut new_events = Vec::with_capacity(input_events.len() + 2);
-  new_events.push(start_event);
-  new_events.append(&mut input_events);
-  new_events.push(end_event);
-
-  let spec_chunk_event = if append_to_root {
-    let mut all_events = spec_events;
-    all_events.append(&mut new_events);
-    SpecChunkEvent::root_from_events(all_events)
-  } else {
-    SpecChunkEvent::batch_from_events(batch_id, new_events)
-      .expect("valid batch chunk should have been created")
-  };
-
-  streams::spec_chunks::to_api_dir(std::iter::once(&spec_chunk_event), spec_dir_path)
-    .await
-    .unwrap_or_else(|err| {
-      panic!("could not write new spec batch chunk to api dir: {:?}", err);
-    });
-
-  streams::spec_events::write_to_json_array(stdout(), spec_chunk_event.events())
-    .await
-    .unwrap_or_else(|err| panic!("could not write new events to stdout: {}", err))
 }
 
 enum SpecPathType {

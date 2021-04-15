@@ -1,6 +1,7 @@
 /// <reference types="node" />
 
 import { Duplex, Readable } from 'stream';
+import { Streams } from '@useoptic/diff-engine-wasm';
 
 export function spawn({
   specPath: string,
@@ -17,9 +18,19 @@ export interface CommitOptions {
   specDirPath: String;
   commitMessage: String;
   appendToRoot?: boolean;
+  clientSessionId: String;
+  clientId: String;
 }
 
-export function commit<T>(commands: AsyncIterable<T>, CommitOptions): Readable;
+export function commit(
+  commands: AsyncIterable<Streams.Commands.Command>,
+  CommitOptions
+): Readable;
+
+export function learnUndocumentedBodies(
+  commands: AsyncIterable<Streams.HttpInteractions.HttpInteraction>,
+  { specPath: string }
+): Readable;
 
 export interface DiffEngineError extends Error {
   // The numeric exit code of the diff engine process that was run.
