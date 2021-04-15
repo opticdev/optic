@@ -33,7 +33,7 @@ impl Hash for ShapeDiffResult {
         shape_trail,
       } => {
         Hash::hash(&core::mem::discriminant(self), hash_state);
-        Hash::hash(json_trail, hash_state);
+        Hash::hash(&json_trail.normalized(), hash_state);
         Hash::hash(shape_trail, hash_state);
       }
       ShapeDiffResult::UnmatchedShape {
@@ -41,7 +41,7 @@ impl Hash for ShapeDiffResult {
         shape_trail,
       } => {
         Hash::hash(&core::mem::discriminant(self), hash_state);
-        Hash::hash(json_trail, hash_state);
+        Hash::hash(&json_trail.normalized(), hash_state);
         Hash::hash(shape_trail, hash_state);
       }
     }
