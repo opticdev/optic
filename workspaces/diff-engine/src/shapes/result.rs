@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Deserialize, Serialize, Hash)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum ShapeDiffResult {
   #[serde(rename_all = "camelCase")]
   UnspecifiedShape {
@@ -22,6 +22,29 @@ impl ShapeDiffResult {
     let mut hash_state = DefaultHasher::new();
     Hash::hash(self, &mut hash_state);
     format!("{:x}", hash_state.finish())
+  }
+}
+
+impl Hash for ShapeDiffResult {
+  fn hash<H: Hasher>(&self, hash_state: &mut H) {
+    match self {
+      ShapeDiffResult::UnspecifiedShape {
+        json_trail,
+        shape_trail,
+      } => {
+        Hash::hash(&core::mem::discriminant(self), hash_state);
+        Hash::hash(json_trail, hash_state);
+        Hash::hash(shape_trail, hash_state);
+      }
+      ShapeDiffResult::UnmatchedShape {
+        json_trail,
+        shape_trail,
+      } => {
+        Hash::hash(&core::mem::discriminant(self), hash_state);
+        Hash::hash(json_trail, hash_state);
+        Hash::hash(shape_trail, hash_state);
+      }
+    }
   }
 }
 
