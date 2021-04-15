@@ -168,7 +168,7 @@ function learnShapeDiffAffordances(
       specPath,
       '-f',
       'learn',
-      '--shape-diff-affordances',
+      '--shape-diffs-affordances',
       '--tagged-diff-results',
       diffResultsPath,
     ],

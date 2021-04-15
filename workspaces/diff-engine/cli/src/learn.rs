@@ -270,7 +270,7 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
         streams::into_json_lines::<_, (String, InteractionDiffTrailAffordances)>(sink);
 
       for (fingerprint, affordances) in affordances_by_diff_fingerprint {
-        if let Err(err) = json_lines_sink.send((fingerprint, affordances)).await {
+        if let Err(err) = json_lines_sink.send((affordances, fingerprint)).await {
           panic!("Could not write result to stdout: {}", err);
         }
       }
