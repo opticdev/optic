@@ -58,8 +58,8 @@ export function DocsPageAccessoryNavigation(props: any) {
   );
 }
 
-export function DocumentationRootPage(props: any) {
-  const { endpoints, loading } = useEndpoints();
+export function DocumentationRootPage(props: { changelogBatchId?: string }) {
+  const { endpoints, loading } = useEndpoints(props.changelogBatchId);
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
@@ -91,8 +91,8 @@ export function DocumentationRootPage(props: any) {
                       history.push(
                         endpointPageLink.linkTo(
                           endpoint.pathId,
-                          endpoint.method
-                        )
+                          endpoint.method,
+                        ),
                       )
                     }
                     fullPath={endpoint.fullPath}
@@ -122,7 +122,7 @@ export function EndpointRootPage(props: any) {
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints]
+    [pathId, method, endpoints],
   );
 
   if (loading) {
