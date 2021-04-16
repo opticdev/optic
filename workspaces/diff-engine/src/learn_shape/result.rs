@@ -239,6 +239,7 @@ impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
 pub type FieldSet = HashSet<String>;
 
 #[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TrailValues {
   pub trail: JsonTrail,
   pub was_string: bool,
@@ -248,6 +249,8 @@ pub struct TrailValues {
   pub was_array: bool,
   pub was_object: bool,
   pub was_empty_array: bool,
+
+  #[serde(rename = "fieldSet")]
   pub field_sets: Vec<FieldSet>,
 }
 
