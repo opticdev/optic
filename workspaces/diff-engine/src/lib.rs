@@ -22,7 +22,7 @@ pub use events::{
 };
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
-pub use interactions::{analyze_diff_affordances, analyze_undocumented_bodies};
+pub use interactions::{analyze_diff_shape_affordances, analyze_undocumented_bodies};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
   EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,

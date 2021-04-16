@@ -115,7 +115,7 @@ pub fn analyze_undocumented_bodies(
   })
 }
 
-pub fn analyze_diff_affordances(
+pub fn analyze_diff_shape_affordances(
   diff_result: &InteractionDiffResult,
   interaction: &HttpInteraction,
 ) -> Option<TrailValues> {

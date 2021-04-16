@@ -1,3 +1,4 @@
+use crate::events::http_interaction::HttpInteraction;
 use crate::learn_shape::TrailObservationsResult;
 use crate::shapes::{JsonTrail, ShapeDiffResult};
 use crate::state::endpoint::{PathComponentId, RequestId, ResponseId, ShapeId};
@@ -26,6 +27,30 @@ impl InteractionDiffResult {
     let mut hash_state = DefaultHasher::new();
     Hash::hash(self, &mut hash_state);
     format!("{:x}", hash_state.finish())
+  }
+
+  pub fn interaction_trail(&self) -> &InteractionTrail {
+    match self {
+      InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => &diff.interaction_trail,
+      InteractionDiffResult::UnmatchedResponseBodyShape(diff) => &diff.interaction_trail,
+      InteractionDiffResult::MatchedRequestBodyContentType(diff) => &diff.interaction_trail,
+      InteractionDiffResult::MatchedResponseBodyContentType(diff) => &diff.interaction_trail,
+    }
+  }
+
+  pub fn requests_trail(&self) -> &RequestSpecTrail {
+    match self {
+      InteractionDiffResult::UnmatchedRequestUrl(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedRequestBodyShape(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => &diff.requests_trail,
+      InteractionDiffResult::UnmatchedResponseBodyShape(diff) => &diff.requests_trail,
+      InteractionDiffResult::MatchedRequestBodyContentType(diff) => &diff.requests_trail,
+      InteractionDiffResult::MatchedResponseBodyContentType(diff) => &diff.requests_trail,
+    }
   }
 }
 
@@ -356,6 +381,62 @@ impl InteractionTrail {
       InteractionTrailPathComponent::ResponseBody { status_code, .. } => Some(*status_code),
       _ => None,
     })
+  }
+
+  pub fn matches_interaction(&self, interaction: &HttpInteraction) -> bool {
+    #[derive(Default, Debug)]
+    struct InteractionIdentifiers<'a> {
+      path: Option<&'a String>,
+      method: Option<&'a String>,
+      request_content_type: Option<&'a String>,
+      response_content_type: Option<&'a String>,
+      response_status_code: Option<u16>,
+    }
+
+    impl<'a> From<&'a InteractionTrail> for InteractionIdentifiers<'a> {
+      fn from(trail: &'a InteractionTrail) -> Self {
+        trail.path.iter().fold(
+          InteractionIdentifiers::default(),
+          |mut identifiers, component| {
+            match component {
+              InteractionTrailPathComponent::Url { path } => {
+                identifiers.path.replace(path);
+              }
+              InteractionTrailPathComponent::Method { method } => {
+                identifiers.method.replace(method);
+              }
+              InteractionTrailPathComponent::RequestBody { content_type } => {
+                identifiers.request_content_type.replace(content_type);
+              }
+              InteractionTrailPathComponent::ResponseStatusCode { status_code } => {
+                identifiers.response_status_code.replace(*status_code);
+              }
+              InteractionTrailPathComponent::ResponseBody {
+                content_type,
+                status_code,
+              } => {
+                identifiers.response_status_code.replace(*status_code);
+                identifiers.response_content_type.replace(content_type);
+              }
+            };
+            identifiers
+          },
+        )
+      }
+    }
+
+    let identifiers = InteractionIdentifiers::from(self);
+
+    let conditions = [
+      matches!(identifiers.path, Some(path) if path == &interaction.request.path),
+      matches!(identifiers.method, Some(method) if method == &interaction.request.method),
+      matches!(identifiers.response_status_code, Some(status_code) if status_code == interaction.response.status_code),
+      identifiers.request_content_type == interaction.request.body.content_type.as_ref(),
+      identifiers.response_content_type == interaction.response.body.content_type.as_ref(),
+    ];
+    // dbg!(&identifiers, &conditions);
+
+    conditions.iter().all(|c| *c)
   }
 }
 ////////////////////////////////////////////////////////////////////////////////

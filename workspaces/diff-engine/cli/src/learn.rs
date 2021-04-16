@@ -13,7 +13,7 @@ use tokio_stream::wrappers::ReceiverStream;
 
 use optic_diff_engine::streams::{TaggedInput, Tags};
 use optic_diff_engine::{
-  analyze_diff_affordances, analyze_undocumented_bodies, streams, EndpointCommand,
+  analyze_diff_shape_affordances, analyze_undocumented_bodies, streams, EndpointCommand,
   InteractionDiffResult, SpecCommand,
 };
 use optic_diff_engine::{
@@ -185,7 +185,18 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
   sink: S,
 ) {
-  let tagged_diffs = Arc::new(tagged_diffs);
+  let tagged_diffs = Arc::new(
+    tagged_diffs
+      .into_iter()
+      .filter(|diff| {
+        matches!(
+          diff.input_part(),
+          InteractionDiffResult::UnmatchedRequestBodyShape(_)
+            | InteractionDiffResult::UnmatchedResponseBodyShape(_)
+        )
+      })
+      .collect::<Vec<_>>(),
+  );
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
@@ -210,7 +221,9 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
               let interaction_diffs = tagged_diffs.iter().filter_map(|tagged_diff| {
                 let (diff, diff_tags) = tagged_diff.parts();
 
-                if diff_tags.is_disjoint(&interaction_tags) {
+                if diff_tags.is_disjoint(&interaction_tags)
+                  && !diff.interaction_trail().matches_interaction(&interaction)
+                {
                   None
                 } else {
                   Some(diff)
