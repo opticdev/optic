@@ -28,14 +28,6 @@ expression: results
                             index: 1,
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "cities",
-                        },
-                        JsonArrayItem {
-                            index: 0,
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "baseline-shape_8",
