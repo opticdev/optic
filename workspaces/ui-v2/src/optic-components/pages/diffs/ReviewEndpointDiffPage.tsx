@@ -32,6 +32,7 @@ import { EndpointName } from '../../documentation/EndpointName';
 import { useEndpoint } from '../../hooks/useEndpointsHook';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IForkableSpectacle } from '@useoptic/spectacle';
+import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
@@ -42,6 +43,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const spectacle = useContext(SpectacleContext)!;
 
   const nextLink = useNextEndpointLink();
+  const lastBatchCommitId = useLastBatchCommitId();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
   const {
@@ -214,6 +216,7 @@ export function ReviewEndpointDiffPage(props: any) {
           previewCommands={previewCommands}
         >
           <EndpointDocumentationPane
+            // lastBatchCommit={lastBatchCommitId}
             highlightedLocation={renderedDiff?.diffDescription?.location}
             method={method}
             pathId={pathId}

@@ -26,6 +26,7 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../navigation/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
+import { useSpectacleQuery } from '../../../spectacle-implementations/spectacle-provider';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();

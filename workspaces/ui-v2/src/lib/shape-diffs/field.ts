@@ -14,7 +14,11 @@ import { IJsonTrail } from '../../../../cli-shared/build/diffs/json-trail';
 import { IValueAffordanceSerializationWithCounter } from '../../../../cli-shared/build/diffs/initial-types';
 import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
 import { builderInnerShapeFromChoices } from './build-inner-shape';
-import { FieldShapeFromShape, SetFieldShape } from '../command-factory';
+import {
+  AddField,
+  FieldShapeFromShape,
+  SetFieldShape,
+} from '../command-factory';
 
 export function fieldShapeDiffInterpretor(
   shapeDiff: BodyShapeDiff,
@@ -72,7 +76,7 @@ export function fieldShapeDiffInterpretor(
         expected.unionWithActual(actual).map((i) => {
           return {
             coreShapeKind: i,
-            isValid: expected.expectedShapes().has(i),
+            isValid: true,
           };
         }),
         'isValid',
@@ -87,7 +91,7 @@ export function fieldShapeDiffInterpretor(
       Array.from(actual.observedCoreShapeKinds()).map((i) => {
         return {
           coreShapeKind: i,
-          isValid: expected.expectedShapes().has(i),
+          isValid: true,
         };
       }),
       'isValid',
@@ -111,6 +115,25 @@ export function fieldShapeDiffInterpretor(
           SetFieldShape(FieldShapeFromShape(expected.fieldId()!, rootShapeId)),
         ];
       } else if (isUnspecified) {
+        const fieldId = currentSpecContext.domainIds.newFieldId();
+        const { commands, rootShapeId } = builderInnerShapeFromChoices(
+          choices,
+          expected,
+          actual,
+          currentSpecContext,
+        );
+
+        return [
+          ...commands,
+          AddField(
+            fieldId,
+            expected.lastObject(),
+            actual.fieldKey()!,
+            FieldShapeFromShape(fieldId, rootShapeId),
+          ),
+        ];
+
+        return [];
       }
       return [];
     },

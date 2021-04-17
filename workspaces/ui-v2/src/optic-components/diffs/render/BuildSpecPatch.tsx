@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { OpticBlueReadable, SubtleBlueBackground } from '../../theme';
-import { namer } from '../../../lib/quick-namer';
+import { namer, namerForOptions } from '../../../lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
@@ -78,7 +78,7 @@ export function BuildSpecPatch({
               }
               label={
                 <Typography variant="body1" className={classes.checkboxLabel}>
-                  {namer([shape.coreShapeKind]).toLowerCase()}
+                  {namerForOptions([shape.coreShapeKind]).toLowerCase()}
                 </Typography>
               }
             />
@@ -127,8 +127,8 @@ export function BuildSpecPatch({
               variant="contained"
               color="primary"
               endIcon={<ArrowRight />}
-              // size="small"
-              style={{ marginRight: 15, fontSize: 10 }}
+              size="small"
+              style={{ marginRight: 15 }}
               onClick={approved}
             >
               Save Changes

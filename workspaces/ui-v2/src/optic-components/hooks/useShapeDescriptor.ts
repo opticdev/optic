@@ -2,13 +2,7 @@ import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
 
-export function useShapeDescriptor(
-  rootShapeId: string,
-  renderChangesSinceBatchCommitId: string | undefined,
-): IShapeRenderer[] {
-  const spectacle = useContext(SpectacleContext)!;
-
-  const query = `
+const shapeQuery = `
   query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {
       id
@@ -26,13 +20,56 @@ export function useShapeDescriptor(
     }
 }`;
 
+const changesSinceShapeQuery = `
+  query X($shapeId: ID $sinceBatchCommitId: String) {
+    shapeChoices(shapeId: $shapeId) {
+      id
+      jsonType
+      asObject {
+        fields {
+          name
+          fieldId
+          shapeId
+          changes(sinceBatchCommitId: $sinceBatchCommitId) {
+            added
+            changed
+          }
+        }
+      }
+      asArray {
+        shapeId
+        changes(sinceBatchCommitId: $sinceBatchCommitId) {
+            added
+            changed
+        }
+      }
+    }
+}`;
+
+export function useShapeDescriptor(
+  rootShapeId: string,
+  renderChangesSinceBatchCommitId: string | undefined,
+): IShapeRenderer[] {
+  const spectacle = useContext(SpectacleContext)!;
+
   async function accumulateShapes(rootShapeId: string) {
-    const result = await spectacle!.query({
-      variables: {
-        shapeId: rootShapeId,
-      },
-      query,
-    });
+    const input =
+      typeof renderChangesSinceBatchCommitId !== 'undefined'
+        ? {
+            query: changesSinceShapeQuery,
+            variables: {
+              sinceBatchCommitId: renderChangesSinceBatchCommitId,
+              shapeId: rootShapeId,
+            },
+          }
+        : {
+            query: shapeQuery,
+            variables: {
+              shapeId: rootShapeId,
+            },
+          };
+
+    const result = await spectacle!.query(input);
 
     if (result.errors) {
       console.error(result.errors);

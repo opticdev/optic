@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { EndpointName } from '../../documentation/EndpointName';
 import { FullWidth } from '../../layouts/FullWidth';
@@ -20,16 +19,20 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 export function EndpointDocumentationPane({
   method,
   pathId,
+  lastBatchCommit,
   highlightedLocation,
+  highlightBodyChanges,
 }: {
   method: string;
   pathId: string;
+  lastBatchCommit?: string;
+  highlightBodyChanges?: boolean;
   highlightedLocation?: IParsedLocation | undefined;
 }) {
   const { endpoints, loading } = useEndpoints();
   const previewCommands = useSimulatedCommands();
   const { context } = useSharedDiffContext();
-  const bodies = useEndpointBody(pathId, method);
+  const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
     (i) => i.pathId === pathId && i.method === method,
@@ -46,14 +49,7 @@ export function EndpointDocumentationPane({
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
-      {/*<pre>*/}
-      {/*  {'simulated ' +*/}
-      {/*    JSON.stringify(*/}
-      {/*      [...context.simulatedCommands, ...previewCommands],*/}
-      {/*      null,*/}
-      {/*      2,*/}
-      {/*    )}*/}
-      {/*</pre>*/}
+      <pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"
@@ -99,6 +95,8 @@ export function EndpointDocumentationPane({
             >
               <OneColumnBody
                 key={index}
+                changes={highlightBodyChanges ? i.changes : undefined}
+                changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.requestId}
                 location={'Request Body Parameters'}
@@ -119,6 +117,8 @@ export function EndpointDocumentationPane({
             >
               <OneColumnBody
                 key={index}
+                changes={highlightBodyChanges ? i.changes : undefined}
+                changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
                 location={`${i.statusCode} Response`}

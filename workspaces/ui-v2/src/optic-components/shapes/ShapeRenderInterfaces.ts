@@ -1,3 +1,5 @@
+import { IChanges } from '../changelog/IChanges';
+
 export interface IFieldRenderer {
   fieldId: string;
   name: string;
@@ -5,7 +7,7 @@ export interface IFieldRenderer {
   shapeChoices: IShapeRenderer[];
   required: boolean;
   description?: string;
-  changelog?: IChangeLog;
+  changes?: IChanges;
 }
 
 export interface IShapeRenderer {
@@ -14,7 +16,7 @@ export interface IShapeRenderer {
   asArray?: IArrayRender;
   asObject?: IObjectRender;
   value: any;
-  changelog?: IChangeLog;
+  changes?: IChanges;
 }
 
 export interface IArrayRender {
@@ -33,13 +35,4 @@ export enum JsonLike {
   NUMBER = 'Number',
   BOOLEAN = 'Boolean',
   UNDEFINED = 'Undefined',
-}
-
-/// Changelog Types
-export interface IChangeLog {
-  added?: boolean;
-  removed?: boolean;
-  changed?: {
-    previousType: JsonLike;
-  };
 }

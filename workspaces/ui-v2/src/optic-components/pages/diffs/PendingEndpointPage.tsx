@@ -6,6 +6,7 @@ import {
   useLearnedPendingEndpointContext,
 } from '../../hooks/diffs/LearnedPendingEndpointContext';
 import { Redirect, useHistory } from 'react-router-dom';
+import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
 import { EndpointName } from '../../documentation/EndpointName';
@@ -83,6 +84,7 @@ export function PendingEndpointPage(props: any) {
 
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
+  const lastBatchId = useLastBatchCommitId();
 
   const [name, setName] = useState(endpointName);
   const debouncedName = useDebounce(name, 1000);
@@ -211,6 +213,7 @@ export function PendingEndpointPage(props: any) {
           previewCommands={newEndpointCommands}
         >
           <EndpointDocumentationPane
+            lastBatchCommit={lastBatchId}
             method={stagedCommandsIds.method}
             pathId={stagedCommandsIds.pathId}
           />

@@ -9,7 +9,7 @@ import { ICoreShapeKinds } from './Interfaces';
 export function namer(kinds: ICoreShapeKinds[]): string {
   const kindsFiltered = kinds.filter(
     (i) =>
-      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i)
+      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i),
   );
 
   const result = (() => {
@@ -27,6 +27,27 @@ export function namer(kinds: ICoreShapeKinds[]): string {
   return `${result}${
     kinds.includes(ICoreShapeKinds.OptionalKind) ? ' (optional)' : ''
   }${kinds.includes(ICoreShapeKinds.NullableKind) ? ' (nullable)' : ''}`;
+}
+
+export function namerForOptions(kinds: ICoreShapeKinds[]): string {
+  const kindsFiltered = kinds.filter(
+    (i) =>
+      ![ICoreShapeKinds.NullableKind, ICoreShapeKinds.OptionalKind].includes(i),
+  );
+
+  return (() => {
+    if (kinds.includes(ICoreShapeKinds.NullableKind)) {
+      return 'Null';
+    } else if (kindsFiltered.length === 0) {
+      return 'Unknown';
+    } else if (kindsFiltered.length === 1) {
+      return nameForCoreShapeKind(kindsFiltered[0]);
+    } else {
+      return namerForOneOf(kindsFiltered)
+        .map((i) => i.text)
+        .join(' ');
+    }
+  })();
 }
 
 export function nameForCoreShapeKind(kind: ICoreShapeKinds): string {
@@ -56,12 +77,12 @@ export function namerForOneOf(kinds: ICoreShapeKinds[]): ICopy[] {
       before: ICopy[],
       value: ICoreShapeKinds,
       i: number,
-      array: ICoreShapeKinds[]
+      array: ICoreShapeKinds[],
     ) => [
       ...before,
       plain(before.length ? (i < array.length - 1 ? ',' : 'or') : ''),
       code(nameForCoreShapeKind(value)),
     ],
-    []
+    [],
   );
 }

@@ -21,10 +21,10 @@ import { namer } from './quick-namer';
 export async function getExpectationsForShapeTrail(
   shapeTrail: IShapeTrail,
   spectacle: any,
-  currentSpecContext: CurrentSpecContext
+  currentSpecContext: CurrentSpecContext,
 ): Promise<Expectation> {
   const expectations = await shapeTrailParserLastId(shapeTrail, spectacle);
-  return new Expectation(expectations, currentSpecContext);
+  return new Expectation(expectations, currentSpecContext, shapeTrail);
 }
 
 export class Expectation {
@@ -33,7 +33,8 @@ export class Expectation {
 
   constructor(
     expectationsFromSpec: IExpectationHelper,
-    currentSpecContext: CurrentSpecContext
+    currentSpecContext: CurrentSpecContext,
+    private shapeTrail: IShapeTrail,
   ) {
     this.expectationsFromSpec = expectationsFromSpec;
     this.currentSpecContext = currentSpecContext;
@@ -66,7 +67,7 @@ export class Expectation {
   lastObject(): string {
     invariant(
       this.expectationsFromSpec.lastObject,
-      'parent object shapeId not found'
+      'parent object shapeId not found',
     );
     return this.expectationsFromSpec.lastObject;
   }
@@ -98,8 +99,8 @@ export class Expectation {
   expectedShapes(): Set<ICoreShapeKinds> {
     return new Set(
       this.expectationsFromSpec.allowedCoreShapes.map(
-        (i) => i as ICoreShapeKinds
-      )
+        (i) => i as ICoreShapeKinds,
+      ),
     );
   }
 
@@ -134,7 +135,7 @@ export class Actual {
   constructor(
     public learnedTrails: IValueAffordanceSerializationWithCounter,
     private shapeTrail: IShapeTrail,
-    public jsonTrail: IJsonTrail
+    public jsonTrail: IJsonTrail,
   ) {
     this.trailAffordances = learnedTrails.affordances.filter((i) => {
       const compared = equals(normalize(i.trail), normalize(jsonTrail));

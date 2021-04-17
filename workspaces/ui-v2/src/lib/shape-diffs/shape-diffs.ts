@@ -1,9 +1,4 @@
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
-
-// import { fieldShapeDiffInterpretor } from './field';
-//
-// import { listItemShapeDiffInterpreter } from './list';
-// import { rootShapeDiffInterpreter } from './root';
 import { BodyShapeDiff } from '../parse-diff';
 import {
   CurrentSpecContext,
@@ -14,6 +9,7 @@ import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
 import { fieldShapeDiffInterpretor } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';
 import { listItemShapeDiffInterpreter } from './list';
+import { rootShapeDiffInterpreter } from './root';
 
 export async function interpretShapeDiffs(
   diff: BodyShapeDiff,
@@ -42,7 +38,7 @@ export async function interpretShapeDiffs(
   // Route to field interpreter
   /////////////////////////////////////////////////////////////////////
   const isUnspecifiedField = isUnspecified && actual.isField(); //this needs to use lastObject + key
-  if (expected.isField() || isUnspecifiedField) {
+  if (expected.isField() || actual.isField() || isUnspecifiedField) {
     return fieldShapeDiffInterpretor(
       diff,
       actual,
@@ -66,10 +62,15 @@ export async function interpretShapeDiffs(
 
   // Route to Root
   /////////////////////////////////////////////////////////////////////
-  /*
   if (expected.rootShapeId() && normalizedShapeTrail.path.length === 0) {
-    return rootShapeDiffInterpreter(asShapeDiff, actual, expected, services);
-  }*/
+    return rootShapeDiffInterpreter(
+      diff,
+      diffDescription,
+      actual,
+      expected,
+      currentSpecContext,
+    );
+  }
 
   throw new Error('No interpreter');
 

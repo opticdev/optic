@@ -235,7 +235,6 @@ export class GraphQueries {
   }
 
   *descendantsIterator(nodeId: NodeId): Generator<Node> {
-    debugger;
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
       return;

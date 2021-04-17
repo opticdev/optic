@@ -272,7 +272,6 @@ export class GraphQueries {
   }
 
   *descendantsIterator(nodeId: NodeId): Iterator<Node> {
-    debugger;
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
       return;

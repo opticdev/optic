@@ -64,14 +64,15 @@ export function CodeBlock({ header, children, headerText }: CodeBlockProps) {
 const useStyles = makeStyles((theme) => ({
   wrapper: {
     overflow: 'hidden',
-    backgroundColor: '#f8fafc',
     width: '100%',
   },
   headerRegion: {
     display: 'flex',
+    backgroundColor: '#f8fafc',
     flexDirection: 'row',
   },
   content: {
+    backgroundColor: '#f8fafc',
     paddingTop: 8,
     paddingBottom: 8,
     borderTop: 'none',

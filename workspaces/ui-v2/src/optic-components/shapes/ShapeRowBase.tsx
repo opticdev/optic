@@ -2,7 +2,6 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useSharedStyles, IndentSpaces } from './SharedStyles';
 import {
-  IChangeLog,
   IFieldRenderer,
   IShapeRenderer,
   JsonLike,
@@ -12,18 +11,19 @@ import { useDepth } from './DepthContext';
 import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
 import { OneOfTabs, OneOfTabsProps } from './OneOfTabs';
+import { IChanges } from '../changelog/IChanges';
 
 type ShapeRowBaseProps = {
   children: any;
   depth: number;
   style?: any;
-  changelog?: IChangeLog;
+  changes?: IChanges;
 };
 export const ShapeRowBase = ({
   children,
   depth = 0,
   style,
-  changelog,
+  changes,
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
@@ -35,9 +35,9 @@ export const ShapeRowBase = ({
       <div
         className={classNames(
           classes.row,
-          { [sharedClasses.added]: changelog && changelog.added },
-          { [sharedClasses.removed]: changelog && changelog.removed },
-          // { [sharedClasses.changed]: changelog && changelog.changed }
+          { [sharedClasses.added]: changes && changes.added },
+          // { [sharedClasses.removed]: changes && changes.removed },
+          { [sharedClasses.changed]: changes && changes.changed },
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -52,7 +52,7 @@ export const RenderField = ({
   shapeChoices,
   required,
   parentId,
-  changelog,
+  changes,
 }: IFieldRenderer) => {
   const sharedClasses = useSharedStyles();
   const { depth } = useDepth();
@@ -62,7 +62,7 @@ export const RenderField = ({
   if (shapeChoices.length === 1) {
     return (
       <>
-        <ShapeRowBase depth={depth} changelog={changelog}>
+        <ShapeRowBase depth={depth} changes={changes}>
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
           <RenderFieldLeadingValue
@@ -81,7 +81,7 @@ export const RenderField = ({
     );
   } else if (shapeChoices.length === 0) {
     return (
-      <ShapeRowBase depth={depth} changelog={changelog}>
+      <ShapeRowBase depth={depth} changes={changes}>
         <span className={sharedClasses.shapeFont}>"{name}"</span>
         <span className={sharedClasses.symbolFont}>: </span>
         <UnknownPrimitiveRender />
@@ -96,11 +96,12 @@ export const RenderField = ({
       })),
     };
     const current = getChoice(tabprops);
-    const toRenderShape = shapeChoices.find((i) => i.shapeId === current);
+    const toRenderShape =
+      shapeChoices.find((i) => i.shapeId === current) || shapeChoices[0];
     //one of
     return (
       <>
-        <ShapeRowBase depth={depth} changelog={changelog}>
+        <ShapeRowBase depth={depth} changes={changes}>
           <span className={sharedClasses.shapeFont}>"{name}"</span>
           <span className={sharedClasses.symbolFont}>: </span>
           {toRenderShape && (
@@ -108,6 +109,9 @@ export const RenderField = ({
               parentId={parentId}
               shapeRenderers={[toRenderShape]}
             />
+          )}
+          {!required && (
+            <span className={sharedClasses.symbolFont}> (optional) </span>
           )}
           <div style={{ flex: 1 }} />
           <OneOfTabs {...tabprops} />

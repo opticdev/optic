@@ -28,6 +28,20 @@ export function useBatchCommits(): BatchCommit[] {
   }, [data, data && data.batchCommits.length]);
 }
 
+export function useLastBatchCommitId(): string | undefined {
+  //@todo should be use batch commit of Diff -- usually equal
+  const commits = useBatchCommits();
+  if (commits) {
+    if (commits.length === 0) {
+      return '';
+    } else {
+      return commits[0]?.batchId;
+    }
+  } else {
+    return undefined;
+  }
+}
+
 export interface BatchCommit {
   commitMessage: string;
   batchId: string;

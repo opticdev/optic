@@ -1,12 +1,15 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
+import { IChanges } from '../changelog/IChanges';
 
 export function useEndpointBody(
   pathId: string,
   method: string,
-  renderChangesSince?: string
+  renderChangesSince?: string,
 ): { requests: IRequestBody[]; responses: IResponseBody[] } {
-  const { data, error } = useSpectacleQuery({
-    query: `{
+  const spectacleInput =
+    typeof renderChangesSince === 'undefined'
+      ? {
+          query: `{
     requests {
       id
       pathId
@@ -25,8 +28,42 @@ export function useEndpointBody(
       }
     }
     }`,
-    variables: {},
-  });
+          variables: {},
+        }
+      : {
+          query: `query X($sinceBatchCommitId: String) {
+    requests {
+      id
+      pathId
+      method
+      changes(sinceBatchCommitId: $sinceBatchCommitId) {
+        added
+        changed
+      }
+      bodies {
+        contentType
+        rootShapeId
+      }
+      responses {
+        id
+        statusCode
+        changes(sinceBatchCommitId: $sinceBatchCommitId) {
+          added
+          changed
+        }
+        bodies {
+          contentType
+          rootShapeId
+        }
+      }
+    }
+    }`,
+          variables: {
+            sinceBatchCommitId: renderChangesSince,
+          },
+        };
+
+  const { data, error } = useSpectacleQuery(spectacleInput);
   if (error) {
     console.error(error);
     debugger;
@@ -35,7 +72,7 @@ export function useEndpointBody(
     return { requests: [], responses: [] };
   } else {
     const request = data.requests.find(
-      (i: any) => i.pathId === pathId && i.method === method
+      (i: any) => i.pathId === pathId && i.method === method,
     );
     if (!request) {
       return { requests: [], responses: [] };
@@ -47,6 +84,7 @@ export function useEndpointBody(
         rootShapeId: body.rootShapeId,
         pathId: request.pathId,
         method: request.method,
+        changes: request.changes,
       };
     });
     const responses: IResponseBody[] = request.responses.flatMap(
@@ -59,9 +97,10 @@ export function useEndpointBody(
             rootShapeId: body.rootShapeId,
             pathId: request.pathId,
             method: request.method,
+            changes: response.changes,
           };
         });
-      }
+      },
     );
 
     return { requests, responses };
@@ -74,11 +113,7 @@ export interface IRequestBody {
   rootShapeId: string;
   pathId: string;
   method: string;
-  changelog?: {
-    added: boolean;
-    removed: boolean;
-    changed: boolean;
-  };
+  changes?: IChanges;
 }
 
 export interface IResponseBody {
@@ -88,9 +123,5 @@ export interface IResponseBody {
   rootShapeId: string;
   pathId: string;
   method: string;
-  changelog?: {
-    added: boolean;
-    removed: boolean;
-    changed: boolean;
-  };
+  changes?: IChanges;
 }

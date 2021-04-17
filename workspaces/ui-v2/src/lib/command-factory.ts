@@ -109,3 +109,33 @@ export function AddContribution(id: string, key: string, value: string) {
     },
   };
 }
+
+export function ShapedBodyDescriptor(
+  httpContentType: string,
+  shapeId: string,
+  isRemoved: boolean = false,
+) {
+  return {
+    ShapedBodyDescriptor: {
+      httpContentType,
+      shapeId,
+      isRemoved,
+    },
+  };
+}
+export function SetResponseBodyShape(responseId: string, bodyDescriptor: any) {
+  return {
+    SetResponseBodyShape: {
+      responseId,
+      bodyDescriptor,
+    },
+  };
+}
+export function SetRequestBodyShape(requestId: string, bodyDescriptor: any) {
+  return {
+    SetRequestBodyShape: {
+      requestId,
+      bodyDescriptor,
+    },
+  };
+}

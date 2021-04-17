@@ -1,6 +1,7 @@
 import {
   IListItemTrail,
   IListTrail,
+  INullableTrail,
   IObjectFieldTrail,
   IObjectTrail,
   IOneOfItemTrail,
@@ -27,7 +28,7 @@ export interface IExpectationHelper {
 
 export async function shapeTrailParserLastId(
   shapeTrail: IShapeTrail,
-  spectacle: any
+  spectacle: any,
 ): Promise<IExpectationHelper> {
   const lastTrail: IShapeTrailComponent =
     shapeTrail.path[shapeTrail.path.length - 1];
@@ -37,7 +38,7 @@ export async function shapeTrailParserLastId(
       const shapeId = (lastTrail as IObjectTrail).ObjectTrail.shapeId;
       const choices = await getChoices(shapeId, spectacle);
       const lastObjectOption = Object.entries(
-        choices.allowedCoreShapeKindsByShapeId
+        choices.allowedCoreShapeKindsByShapeId,
       ).find(([key, value]) => value === ICoreShapeKinds.ObjectKind);
 
       return {
@@ -61,7 +62,7 @@ export async function shapeTrailParserLastId(
         shapeTrail.rootShapeId,
         fieldTrail.fieldId,
 
-        spectacle
+        spectacle,
       );
       const choices = await getChoices(fieldTrail.fieldShapeId, spectacle);
       return {
@@ -69,7 +70,7 @@ export async function shapeTrailParserLastId(
         lastFieldShapeId: fieldTrail.fieldShapeId,
         lastFieldKey: field.name,
         fieldIsOptional: choices.allowedCoreShapes.includes(
-          ICoreShapeKinds.OptionalKind
+          ICoreShapeKinds.OptionalKind,
         ),
         ...choices,
       };
@@ -95,13 +96,24 @@ export async function shapeTrailParserLastId(
       };
     }
     //
-    // if (lastTrail.hasOwnProperty('NullableTrail')) {
-    //   const shapeId = (lastTrail as INullableTrail).NullableTrail.shapeId;
-    //   const choices = await getChoices(shapeId, query);
-    //   return {
-    //     ...choices,
-    //   };
-    // }
+    if (lastTrail.hasOwnProperty('NullableTrail')) {
+      const shapeId = (lastTrail as INullableTrail).NullableTrail.shapeId;
+      const choices = await getChoices(shapeId, spectacle);
+      const lastItems = await shapeTrailParserLastId(
+        {
+          ...shapeTrail,
+          path: [...shapeTrail.path.slice(0, shapeTrail.path.length - 1)],
+        },
+        spectacle,
+      );
+      return {
+        lastObject: lastItems.lastObject,
+        lastField: lastItems.lastField,
+        lastFieldKey: lastItems.lastFieldKey,
+        lastFieldShapeId: lastItems.lastFieldShapeId,
+        ...choices,
+      };
+    }
     //
     // if (lastTrail.hasOwnProperty('OptionalItemTrail')) {
     //   const shapeId = (lastTrail as IOptionalItemTrail).OptionalItemTrail
@@ -136,8 +148,15 @@ export async function shapeTrailParserLastId(
     invariant(true, 'shape trail could not be parsed');
   } else {
     const choices = await getChoices(shapeTrail.rootShapeId, spectacle);
+    const lastObject = Object.entries(
+      choices.allowedCoreShapeKindsByShapeId,
+    ).find(([id, kind]) => {
+      return kind === ICoreShapeKinds.ObjectKind;
+    })?.[0];
+
     return {
       ...choices,
+      lastObject,
       rootShapeId: shapeTrail.rootShapeId,
     };
   }
@@ -151,7 +170,7 @@ export async function shapeTrailParserLastId(
 
 async function getChoices(
   shapeId: string,
-  spectacle: any
+  spectacle: any,
 ): Promise<{
   allowedCoreShapes: string[];
   allowedCoreShapeKindsByShapeId: { [key: string]: ICoreShapeKinds };
@@ -175,13 +194,13 @@ async function getChoices(
     const shapeChoices: {
       id: string;
       coreShapeKind: ICoreShapeKinds;
-    }[] = JsonLikeToCoreShapeKinds(result.data.shapeChoices);
+    }[] = JsonLikeToCoreShapeKinds(result.data.shapeChoices, shapeId);
 
     const allowedCoreShapeKindsByShapeId: {
       [key: string]: ICoreShapeKinds;
     } = {};
     shapeChoices.forEach(
-      (i) => (allowedCoreShapeKindsByShapeId[i.id] = i.coreShapeKind)
+      (i) => (allowedCoreShapeKindsByShapeId[i.id] = i.coreShapeKind),
     );
 
     return {
@@ -197,7 +216,7 @@ async function getChoices(
 async function getFieldFromRootShapeId(
   rootShapeId: string,
   fieldId: string,
-  spectacle: any
+  spectacle: any,
 ): Promise<{ fieldId: string; shapeId: string; name: string }> {
   const query = `
   query X($shapeId: ID) {
@@ -249,13 +268,13 @@ async function getFieldFromRootShapeId(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(field.shapeId);
                 field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED
+                  (i: any) => i.jsonType === JsonLike.UNDEFINED,
                 ); // is required
                 field.shapeChoices = shapeChoices.filter(
-                  (i: any) => i.jsonType !== JsonLike.UNDEFINED
+                  (i: any) => i.jsonType !== JsonLike.UNDEFINED,
                 ); // don't include optional
                 return field;
-              })
+              }),
             );
             choice.asObject.fields = newFields;
             //store fields in dictionary
@@ -271,7 +290,7 @@ async function getFieldFromRootShapeId(
           default:
             return choice;
         }
-      })
+      }),
     );
   }
 
@@ -281,7 +300,8 @@ async function getFieldFromRootShapeId(
 }
 
 export function JsonLikeToCoreShapeKinds(
-  jsonLikes: { id: string; jsonType: JsonLike }[]
+  jsonLikes: { id: string; jsonType: JsonLike }[],
+  rootShapeId: string,
 ): { id: string; coreShapeKind: ICoreShapeKinds }[] {
   //@todo talk about how we will handle todos
   if (jsonLikes.length === 0) {
@@ -308,6 +328,9 @@ export function JsonLikeToCoreShapeKinds(
   }
 
   return jsonLikes.map((i) => {
-    return { id: i.id, coreShapeKind: toCoreShapeKind(i.jsonType) };
+    return {
+      id: i.id || rootShapeId,
+      coreShapeKind: toCoreShapeKind(i.jsonType),
+    };
   });
 }
