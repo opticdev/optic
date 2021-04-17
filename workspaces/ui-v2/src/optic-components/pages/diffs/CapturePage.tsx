@@ -3,8 +3,10 @@ import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { makeStyles } from '@material-ui/styles';
 
 import {
+  Box,
   Button,
   Divider,
+  Grid,
   List,
   ListItem,
   ListItemSecondaryAction,
@@ -161,6 +163,61 @@ export function CapturePage() {
       </Paper>
 
       <Divider style={{ marginTop: 200, marginBottom: 20 }} />
+
+      <Typography variant="h6" style={{ fontSize: 18 }}>
+        Real Environments [Beta]
+      </Typography>
+
+      <Typography variant="body2">
+        Optic can securely monitor your API in real environments. Once deployed,
+        Optic verifies your API meets its contract, alert you when it behaves
+        unexpectedly, and help you understand what parts of your API each
+        consumer relies upon.
+      </Typography>
+
+      <Grid container spacing={3} style={{ marginTop: 5 }}>
+        <Grid xs={4} item style={{ opacity: 0.4 }}>
+          <RealEnvColumn
+            name={'development'}
+            examples={[
+              { buildN: 19, diffs: '1 diff', requests: '1.1k' },
+              { buildN: 18, diffs: '4 diffs', requests: '6.1k' },
+            ]}
+          />
+        </Grid>
+        <Grid xs={4} item style={{ opacity: 0.4 }}>
+          <RealEnvColumn
+            name={'staging'}
+            examples={[
+              { buildN: 13, diffs: '3 diffs', requests: '12.2k' },
+              { buildN: 12, diffs: '12 diffs', requests: '7.2k' },
+            ]}
+          />
+        </Grid>
+        <Grid
+          xs={4}
+          item
+          alignContent="center"
+          justifyContent="center"
+          display="flex"
+          flexDirection="column"
+          component={Box}
+        >
+          <Typography
+            variant="body2"
+            style={{
+              fontFamily: 'Ubuntu Mono',
+              marginBottom: 5,
+              marginTop: -15,
+            }}
+          >
+            Ready to put Optic into a real environment?
+          </Typography>
+          <Button color="secondary" variant="contained">
+            Join Beta
+          </Button>
+        </Grid>
+      </Grid>
     </CenteredColumn>
   );
 }

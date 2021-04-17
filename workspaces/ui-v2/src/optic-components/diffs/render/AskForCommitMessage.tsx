@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,8 +11,9 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const [open, setOpen] = React.useState(false);
 
-  const { pendingEndpoints } = useSharedDiffContext();
+  const { pendingEndpoints, context } = useSharedDiffContext();
 
+  const [commitMessage, setCommitMessage] = useState<string | null>('');
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -24,7 +25,11 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
 
   const handleSave = () => {
-    // setOpen(false);
+    //@todo decide if every endpoint (changes/pending) gets a batch commit id.
+    const commands = context.simulatedCommands;
+    //@todo save them with spectacle
+    // saveChanges(commitMessage!);
+    //@todo redirect to /changes-since/{batchCommitId-whenDiffWasRun}
   };
 
   return (
@@ -52,6 +57,8 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
             endpoints.
           </DialogContentText>
           <TextField
+            value={commitMessage}
+            onChange={(e: any) => setCommitMessage(e.target.value)}
             placeholder="what changes have you made? why?"
             autoFocus
             margin="dense"
