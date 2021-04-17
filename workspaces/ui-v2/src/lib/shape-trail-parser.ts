@@ -61,11 +61,12 @@ export async function shapeTrailParserLastId(
       const field = await getFieldFromRootShapeId(
         shapeTrail.rootShapeId,
         fieldTrail.fieldId,
-
         spectacle,
       );
+
       const choices = await getChoices(fieldTrail.fieldShapeId, spectacle);
       return {
+        lastObject: field.parentObjectId,
         lastField: fieldTrail.fieldId,
         lastFieldShapeId: fieldTrail.fieldShapeId,
         lastFieldKey: field.name,
@@ -217,7 +218,12 @@ async function getFieldFromRootShapeId(
   rootShapeId: string,
   fieldId: string,
   spectacle: any,
-): Promise<{ fieldId: string; shapeId: string; name: string }> {
+): Promise<{
+  fieldId: string;
+  shapeId: string;
+  parentObjectId: string;
+  name: string;
+}> {
   const query = `
   query X($shapeId: ID) {
     shapeChoices(shapeId: $shapeId) {
@@ -237,7 +243,12 @@ async function getFieldFromRootShapeId(
 }`;
 
   const fields: {
-    [key: string]: { fieldId: string; shapeId: string; name: string };
+    [key: string]: {
+      fieldId: string;
+      shapeId: string;
+      parentObjectId: string;
+      name: string;
+    };
   } = {};
 
   async function accumulateShapes(rootShapeId: string) {
@@ -264,9 +275,11 @@ async function getFieldFromRootShapeId(
               fieldId: string;
               name: string;
               shapeId: string;
+              parentObjectId: string;
             }[] = await Promise.all(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(field.shapeId);
+                field.parentShapeId = choice.id;
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED,
                 ); // is required
@@ -296,7 +309,9 @@ async function getFieldFromRootShapeId(
 
   await accumulateShapes(rootShapeId);
 
-  return fields[fieldId]!;
+  const a = fields[fieldId]!;
+  debugger;
+  return a;
 }
 
 export function JsonLikeToCoreShapeKinds(

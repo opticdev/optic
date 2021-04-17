@@ -123,11 +123,14 @@ export function fieldShapeDiffInterpretor(
           currentSpecContext,
         );
 
+        debugger;
+        const lastObject = expected.lastObject();
+
         return [
           ...commands,
           AddField(
             fieldId,
-            expected.lastObject(),
+            lastObject,
             actual.fieldKey()!,
             FieldShapeFromShape(fieldId, rootShapeId),
           ),
