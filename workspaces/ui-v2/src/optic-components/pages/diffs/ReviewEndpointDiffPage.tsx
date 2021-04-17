@@ -27,12 +27,12 @@ import {
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
-import { useNextEndpointLink } from '../../hooks/diffs/useNextEndpointWithDiffLink';
 import { EndpointName } from '../../documentation/EndpointName';
 import { useEndpoint } from '../../hooks/useEndpointsHook';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
+import { useDiffReviewCapturePageLink } from '../../navigation/Routes';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
@@ -42,7 +42,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const history = useHistory();
   const spectacle = useContext(SpectacleContext)!;
 
-  const nextLink = useNextEndpointLink();
+  const diffReviewPage = useDiffReviewCapturePageLink();
   const lastBatchCommitId = useLastBatchCommitId();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
@@ -78,7 +78,7 @@ export function ReviewEndpointDiffPage(props: any) {
         isDiffHandled(i.diffDescription?.diffHash!),
       )
     ) {
-      history.push(nextLink);
+      history.push(diffReviewPage.linkTo());
     }
   }, [filteredShapeDiffs.length]);
 

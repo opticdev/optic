@@ -309,9 +309,7 @@ async function getFieldFromRootShapeId(
 
   await accumulateShapes(rootShapeId);
 
-  const a = fields[fieldId]!;
-  debugger;
-  return a;
+  return fields[fieldId]!;
 }
 
 export function JsonLikeToCoreShapeKinds(

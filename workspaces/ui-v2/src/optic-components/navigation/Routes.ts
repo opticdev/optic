@@ -82,6 +82,22 @@ export const useDiffUndocumentedUrlsPageLink: () => {
   };
 };
 
+export const useDiffReviewCapturePageLink: () => {
+  path: string;
+  linkTo: () => string;
+} = () => {
+  const parentUrl = useDiffEnvironmentsRoot();
+  const url = `${parentUrl.path}/review`;
+  const { environment, boundaryId } = useParams<{
+    environment: string;
+    boundaryId: string;
+  }>();
+  return {
+    path: url,
+    linkTo: () => `${parentUrl.linkTo(environment, boundaryId)}/review`,
+  };
+};
+
 export const useDiffForEndpointLink: () => {
   path: string;
   linkTo: (pathId: string, method: string) => string;
@@ -97,7 +113,7 @@ export const useDiffForEndpointLink: () => {
     linkTo: (pathId: string, method: string) =>
       `${parentUrl.linkTo(
         environment,
-        boundaryId
+        boundaryId,
       )}/paths/${pathId}/methods/${method}`,
   };
 };
@@ -122,7 +138,7 @@ export const useChangelogEndpointPageLink: () => {
   linkTo: (
     sinceBatchCommitId: string,
     pathId: string,
-    method: string
+    method: string,
   ) => string;
 } = () => {
   const changelogRoot = useChangelogPages();
@@ -130,7 +146,7 @@ export const useChangelogEndpointPageLink: () => {
     path: `${changelogRoot.path}/paths/:pathId/methods/:method`,
     linkTo: (sinceBatchCommitId: string, pathId: string, method: string) =>
       `${changelogRoot.linkTo(
-        sinceBatchCommitId
+        sinceBatchCommitId,
       )}/paths/${pathId}/methods/${method}`,
   };
 };

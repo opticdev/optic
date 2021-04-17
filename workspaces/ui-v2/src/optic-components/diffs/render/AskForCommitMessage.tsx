@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
-export default function AskForCommitMessage() {
+export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const [open, setOpen] = React.useState(false);
 
   const { pendingEndpoints } = useSharedDiffContext();
@@ -30,11 +30,10 @@ export default function AskForCommitMessage() {
   return (
     <>
       <Button
-        variant="contained"
+        disabled={!props.hasChanges}
         onClick={handleClickOpen}
         size="small"
         color="primary"
-        style={{ fontSize: 10, marginRight: 5 }}
       >
         Save Changes
       </Button>

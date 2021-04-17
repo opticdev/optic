@@ -39,6 +39,8 @@ type ISharedDiffContext = {
   pendingEndpoints: IPendingEndpoint[];
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
+  reset: () => void;
+  handledCount: [number, number];
 };
 
 type SharedDiffStoreProps = {
@@ -62,7 +64,6 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
     [props.diffs],
   );
-
   const { allSamples } = useContext(InteractionLoaderContext);
 
   const trailsLearned = learnTrailsForParsedDiffs(
@@ -83,7 +84,31 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       allSamples,
     ),
   );
+
   const context: SharedDiffStateContext = state.context;
+
+  const isDiffHandled = (diffHash: string) => {
+    return (
+      context.choices.approvedSuggestions.hasOwnProperty(diffHash) ||
+      context.browserDiffHashIgnoreRules.includes(diffHash)
+    );
+  };
+
+  const [handled, total] = useMemo(() => {
+    return context.results.diffsGroupedByEndpoint.reduce(
+      (current, grouping) => {
+        const handledCount = grouping.shapeDiffs.filter((i) =>
+          isDiffHandled(i.diffHash()),
+        ).length;
+        const total =
+          grouping.shapeDiffs.length + grouping.newRegionDiffs.length;
+
+        return [current[0] + handledCount, current[1] + total];
+      },
+      [0, 0],
+    );
+  }, [JSON.stringify(Object.keys(state.context.choices.approvedSuggestions))]);
+
   const [wipPatterns, setWIPPatterns] = useState<{
     [key: string]: PathComponentAuthoring[];
   }>({});
@@ -106,12 +131,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       return context.pendingEndpoints.find((i) => i.id === id);
     },
     pendingEndpoints: context.pendingEndpoints,
-    isDiffHandled: (diffHash: string) => {
-      return (
-        context.choices.approvedSuggestions.hasOwnProperty(diffHash) ||
-        context.browserDiffHashIgnoreRules.includes(diffHash)
-      );
-    },
+    isDiffHandled,
     approveCommandsForDiff: (diffHash: string, commands: any[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
@@ -128,6 +148,8 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       })),
     wipPatterns,
     currentSpecContext,
+    reset: () => send({ type: 'RESET' }),
+    handledCount: [handled, total],
   };
 
   return (

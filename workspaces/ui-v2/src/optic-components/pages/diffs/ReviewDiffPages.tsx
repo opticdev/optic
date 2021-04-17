@@ -3,6 +3,7 @@ import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
+  useDiffReviewCapturePageLink,
   useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
@@ -14,12 +15,13 @@ import { DiffUrlsPage } from './AddEndpointsPage';
 import { Route, Redirect } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
-import { DiffEnvsPage } from './DiffEnvsPage';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
+import { useCaptures } from '../../hooks/useCapturesHook';
+import { CapturePage } from './CapturePage';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -37,6 +39,7 @@ export function DiffReviewPages(props: any) {
   // DiffContext.Provider value={{...}}
 
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
+  const diffReviewCapturePageLink = useDiffReviewCapturePageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
 
@@ -59,6 +62,13 @@ export function DiffReviewPages(props: any) {
     >
       <ContributionEditingStore initialIsEditingState={true}>
         <NavigationRoute
+          path={diffReviewCapturePageLink.path}
+          Component={CapturePage}
+          AccessoryNavigation={() => (
+            <DiffAccessoryNavigation onUrlsPage={false} />
+          )}
+        />
+        <NavigationRoute
           path={diffUndocumentedUrlsPageLink.path}
           Component={DiffUrlsPage}
           AccessoryNavigation={() => (
@@ -77,7 +87,7 @@ export function DiffReviewPages(props: any) {
             <DiffAccessoryNavigation onUrlsPage={true} />
           )}
         />
-        <Redirect to={diffUndocumentedUrlsPageLink.linkTo()} />
+        <Redirect to={diffReviewCapturePageLink.linkTo()} />
       </ContributionEditingStore>
     </SharedDiffStore>
   );
@@ -86,14 +96,28 @@ export function DiffReviewPages(props: any) {
 export function DiffReviewEnvironments(props: any) {
   const diffRoot = useDiffReviewPageLink();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
+
+  const capturesState = useCaptures();
+
+  if (capturesState.loading) {
+    return <div>LOADING</div>;
+  }
+
+  const noCaptures = capturesState.captures.length === 0;
+
+  if (noCaptures) {
+    return <div>NO CAPTURES EXPERIENCE</div>;
+  }
+
   return (
     <>
-      <NavigationRoute
-        path={diffRoot.path}
-        Component={DiffEnvsPage}
-        AccessoryNavigation={null}
-      />
       <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
+      <Redirect
+        to={diffEnvironmentsRoot.linkTo(
+          'local',
+          capturesState.captures[0].captureId,
+        )}
+      />
     </>
   );
 }
