@@ -77,7 +77,13 @@ impl Default for EndpointsProjection {
       domain_id_to_index,
     };
 
-    projection.with_path_component_node(String::from(ROOT_PATH_ID), String::from("/"));
+    projection.with_path_component_node(
+      String::from(ROOT_PATH_ID),
+      None,
+      String::from("/"),
+      String::from(""),
+      false,
+    );
     projection
   }
 }
@@ -204,7 +210,7 @@ impl EndpointsProjection {
     path_name: String,
   ) {
     // build absolute path pattern inductively
-    let parent_node_index = self
+    let parent_node_index = *self
       .domain_id_to_index
       .get(&parent_path_id)
       .expect("expected parent_path_id to exist in graph");
@@ -213,7 +219,7 @@ impl EndpointsProjection {
     } else {
       let parent_node = self
         .graph
-        .node_weight(*parent_node_index)
+        .node_weight(parent_node_index)
         .expect("expected parent_path_id to exist in graph");
       match parent_node {
         Node::Path(n) => format!("{}/{}", n.absolute_path_pattern, path_name),
@@ -221,7 +227,13 @@ impl EndpointsProjection {
       }
     };
 
-    self.with_path_component_node(path_id.clone(), absolute_path_string);
+    self.with_path_component_node(
+      path_id.clone(),
+      Some(parent_node_index),
+      absolute_path_string,
+      path_name.clone(),
+      false,
+    );
   }
 
   pub fn with_path_parameter(
@@ -231,7 +243,7 @@ impl EndpointsProjection {
     path_name: String,
   ) {
     // build absolute path pattern inductively
-    let parent_node_index = self
+    let parent_node_index = *self
       .domain_id_to_index
       .get(&parent_path_id)
       .expect("expected parent_path_id to exist in graph");
@@ -240,26 +252,43 @@ impl EndpointsProjection {
     } else {
       let parent_node = self
         .graph
-        .node_weight(*parent_node_index)
+        .node_weight(parent_node_index)
         .expect("expected parent_path_id to exist in graph");
       match parent_node {
         Node::Path(n) => format!("{}/{{}}", n.absolute_path_pattern),
         _ => panic!("expected parent_node to be a Path"),
       }
     };
-    self.with_path_component_node(path_id.clone(), absolute_path_string);
+    self.with_path_component_node(
+      path_id.clone(),
+      Some(parent_node_index),
+      absolute_path_string,
+      path_name.clone(),
+      true,
+    );
   }
 
   pub fn with_path_component_node(
     &mut self,
     path_id: PathComponentId,
+    parent_node_index_option: Option<petgraph::prelude::NodeIndex<u32>>,
     absolute_path_string: AbsolutePathPattern,
+    path_name: String,
+    is_parameterized: bool,
   ) {
     let node_index = self.graph.add_node(Node::Path(PathNode {
       absolute_path_pattern: absolute_path_string,
       path_id: path_id.clone(),
+      name: path_name,
+      is_parameterized,
     }));
     self.domain_id_to_index.insert(path_id, node_index);
+
+    if let Some(parent_node_index) = parent_node_index_option {
+      self
+        .graph
+        .add_edge(node_index, parent_node_index, Edge::IsChildOf);
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -434,6 +463,8 @@ pub struct BatchCommitNode {
 #[serde(rename_all = "camelCase")]
 pub struct PathNode {
   absolute_path_pattern: AbsolutePathPattern,
+  is_parameterized: bool,
+  name: String,
   path_id: PathComponentId,
 }
 

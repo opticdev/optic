@@ -243,19 +243,30 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     HttpRequest: {
-      id: (parent: any) => {
-        return Promise.resolve(parent.result.data.requestId);
+      id: (parent: endpoints.RequestNodeWrapper) => {
+        return Promise.resolve(parent.value.requestId);
       },
-      pathId: (parent: any) => {
-        return Promise.resolve(parent.path().result.data.pathId);
+      pathId: (parent: endpoints.RequestNodeWrapper) => {
+        return Promise.resolve(parent.path().value.pathId);
       },
-      absolutePathPattern: (parent: any) => {
-        return Promise.resolve(parent.path().result.data.absolutePathPattern);
+      absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
+        return Promise.resolve(parent.path().value.absolutePathPattern);
       },
-      method: (parent: any) => {
-        return Promise.resolve(parent.result.data.httpMethod);
+      pathComponents: (parent: endpoints.RequestNodeWrapper) => {
+        let path = parent.path();
+        let parentPath = path.parentPath();
+        const components = [path.value];
+        while (parentPath !== null) {
+          components.push(parentPath.value);
+          path = parentPath;
+          parentPath = path.parentPath();
+        }
+        return Promise.resolve(components.reverse());
       },
-      bodies: (parent: any) => {
+      method: (parent: endpoints.RequestNodeWrapper) => {
+        return Promise.resolve(parent.value.httpMethod);
+      },
+      bodies: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.bodies().results);
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
@@ -291,6 +302,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             args.sinceBatchCommitId,
           ),
         );
+      },
+    },
+    PathComponent: {
+      id(parent: endpoints.PathNode) {
+        return Promise.resolve(parent.pathId);
       },
     },
     HttpBody: {

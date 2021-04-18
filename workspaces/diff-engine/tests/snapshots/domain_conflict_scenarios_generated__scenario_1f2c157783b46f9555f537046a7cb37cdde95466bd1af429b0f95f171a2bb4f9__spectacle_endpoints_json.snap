@@ -8,6 +8,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "Path",
       "data": {
         "absolutePathPattern": "/",
+        "isParameterized": false,
+        "name": "",
         "pathId": "root"
       }
     },
@@ -23,6 +25,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "Path",
       "data": {
         "absolutePathPattern": "/posts",
+        "isParameterized": false,
+        "name": "posts",
         "pathId": "path_8fRaIiFWPP"
       }
     },
@@ -30,6 +34,8 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
       "type": "Path",
       "data": {
         "absolutePathPattern": "/posts/1",
+        "isParameterized": false,
+        "name": "1",
         "pathId": "path_p6kbd9Kkg7"
       }
     },
@@ -91,9 +97,23 @@ expression: "&spec_projection.spectacle_endpoints_serializable()"
   "edges": [
     [
       2,
+      0,
+      {
+        "type": "IsChildOf"
+      }
+    ],
+    [
+      2,
       1,
       {
         "type": "CreatedIn"
+      }
+    ],
+    [
+      3,
+      2,
+      {
+        "type": "IsChildOf"
       }
     ],
     [

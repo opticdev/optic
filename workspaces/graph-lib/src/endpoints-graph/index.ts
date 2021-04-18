@@ -14,26 +14,26 @@ export type Node = {
   id: NodeId;
 } & (
   | {
-      type: NodeType.Path;
-      data: PathNode;
-    }
+  type: NodeType.Path;
+  data: PathNode;
+}
   | {
-      type: NodeType.Request;
-      data: RequestNode;
-    }
+  type: NodeType.Request;
+  data: RequestNode;
+}
   | {
-      type: NodeType.Response;
-      data: ResponseNode;
-    }
+  type: NodeType.Response;
+  data: ResponseNode;
+}
   | {
-      type: NodeType.Body;
-      data: BodyNode;
-    }
+  type: NodeType.Body;
+  data: BodyNode;
+}
   | {
-      type: NodeType.BatchCommit;
-      data: BatchCommitNode;
-    }
-);
+  type: NodeType.BatchCommit;
+  data: BatchCommitNode;
+}
+  );
 
 export type PathNode = {
   absolutePathPattern: string;
@@ -126,7 +126,8 @@ export interface NodeListWrapper {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class BodyNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
 
   response(): ResponseNodeWrapper | null {
     const neighbors = this.queries.listOutgoingNeighborsByType(
@@ -152,7 +153,12 @@ export class BodyNodeWrapper implements NodeWrapper {
 }
 
 export class RequestNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+
+  get value(): RequestNode {
+    return this.result.data as RequestNode;
+  }
 
   path(): PathNodeWrapper {
     const neighbors = this.queries.listOutgoingNeighborsByType(
@@ -174,7 +180,12 @@ export class RequestNodeWrapper implements NodeWrapper {
 }
 
 export class ResponseNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+
+  get value(): ResponseNode {
+    return this.result.data as ResponseNode;
+  }
 
   path(): PathNodeWrapper {
     const neighbors = this.queries.listOutgoingNeighborsByType(
@@ -196,7 +207,21 @@ export class ResponseNodeWrapper implements NodeWrapper {
 }
 
 export class PathNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+
+  get value(): PathNode {
+    return this.result.data as PathNode;
+  }
+
+  parentPath(): PathNodeWrapper | null {
+    const parentPaths = this.queries.listOutgoingNeighborsByType(this.result.id, NodeType.Path);
+    if (parentPaths.results.length === 0) {
+      return null;
+    }
+    const [parentPath] = parentPaths.results;
+    return parentPath as PathNodeWrapper;
+  }
 
   requests(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
@@ -214,7 +239,8 @@ export class PathNodeWrapper implements NodeWrapper {
 }
 
 export class BatchCommitNodeWrapper implements NodeWrapper {
-  constructor(public result: Node, private queries: GraphQueries) {}
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
 
   requests(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
@@ -234,7 +260,8 @@ export class BatchCommitNodeWrapper implements NodeWrapper {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GraphQueries {
-  constructor(private index: GraphIndexer) {}
+  constructor(private index: GraphIndexer) {
+  }
 
   findNodeById(id: NodeId): NodeWrapper | null {
     const node = this.index.nodesById.get(id);
@@ -271,7 +298,7 @@ export class GraphQueries {
     return this.wrapList(outgoingNeighborType, neighborsOfType || []);
   }
 
-  *descendantsIterator(nodeId: NodeId): Iterator<Node> {
+  * descendantsIterator(nodeId: NodeId): Iterator<Node> {
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
       return;
@@ -284,6 +311,7 @@ export class GraphQueries {
       }
     }
   }
+
   //@TODO wrap() and wrapList() should be injected?
   wrap(node: Node): NodeWrapper {
     if (node.type === NodeType.Request) {

@@ -5,6 +5,11 @@ export const AllEndpointsQuery = `{
       id
       pathId
       absolutePathPattern
+      pathComponents {
+        id
+        name
+        isParameterized
+      }
       method
     }
     }`;
@@ -15,6 +20,11 @@ export const AllEndpointsQueryWithChanges = `
       id
       pathId
       absolutePathPattern
+      pathComponents {
+        id
+        name
+        isParameterized
+      }
       changes(sinceBatchCommitId: $sinceBatchCommitId) {
         added
         changed
