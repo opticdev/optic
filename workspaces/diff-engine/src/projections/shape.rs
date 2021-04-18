@@ -133,6 +133,7 @@ pub struct ObjectFieldChoice {
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ObjectChoice {
+  shape_id: ShapeId,
   json_type: JsonType,
   fields: Vec<ObjectFieldChoice>,
 }
@@ -195,6 +196,7 @@ impl From<&ShapeProjection> for ShapeChoiceMapping {
                   .collect();
 
                 let output = ObjectChoice {
+                  shape_id: choice.shape_id.clone(),
                   json_type: JsonType::Object,
                   fields,
                 };
