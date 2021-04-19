@@ -115,30 +115,39 @@ pub fn analyze_undocumented_bodies(
   })
 }
 
-pub fn analyze_diff_shape_affordances(
-  diff_result: &InteractionDiffResult,
-  interaction: &HttpInteraction,
-) -> Option<TrailValues> {
-  let (mut trail_observations, shape_diff_result) = match diff_result {
-    InteractionDiffResult::UnmatchedRequestBodyShape(diff) => {
+pub fn analyze_documented_bodies(
+  spec_projection: &SpecProjection,
+  interaction: HttpInteraction,
+) -> impl Iterator<Item = BodyAnalysisResult> {
+  let endpoint_rpojection = spec_projection.endpoint();
+  let endpoint_queries = EndpointQueries::new(endpoint_rpojection);
+
+  let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
+  let mut diff_visitors = visitors::diff::DiffVisitors::new();
+
+  interaction_traverser.traverse(&interaction, &mut diff_visitors);
+
+  let results = diff_visitors.take_results().unwrap();
+
+  results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::MatchedRequestBodyContentType(diff) => {
       let body = &interaction.request.body;
       let trail_observations = observe_body_trails(&body.value);
 
-      Some((trail_observations, &diff.shape_diff_result))
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
     }
-    InteractionDiffResult::UnmatchedResponseBodyShape(diff) => {
+    InteractionDiffResult::MatchedResponseBodyContentType(diff) => {
       let body = &interaction.response.body;
       let trail_observations = observe_body_trails(&body.value);
 
-      Some((trail_observations, &diff.shape_diff_result))
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
     }
     _ => None,
-  }?;
-
-  let diff_trail = match shape_diff_result {
-    ShapeDiffResult::UnmatchedShape { json_trail, .. } => json_trail,
-    ShapeDiffResult::UnspecifiedShape { json_trail, .. } => json_trail,
-  };
-
-  trail_observations.remove(diff_trail)
+  })
 }

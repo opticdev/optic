@@ -13,7 +13,7 @@ use tokio_stream::wrappers::ReceiverStream;
 
 use optic_diff_engine::streams::{TaggedInput, Tags};
 use optic_diff_engine::{
-  analyze_diff_shape_affordances, analyze_undocumented_bodies, streams, EndpointCommand,
+  analyze_documented_bodies, analyze_undocumented_bodies, streams, EndpointCommand,
   InteractionDiffResult, SpecCommand,
 };
 use optic_diff_engine::{
@@ -78,7 +78,14 @@ pub async fn main<'a>(
       .expect("could not read diffs");
     let sink = stdout();
 
-    learn_diff_trail_affordances(diffs, input_queue_size, interaction_lines, sink).await;
+    learn_diff_trail_affordances(
+      spec_events,
+      diffs,
+      input_queue_size,
+      interaction_lines,
+      sink,
+    )
+    .await;
   } else {
     unreachable!("subject is required");
   }
@@ -154,12 +161,13 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
       let endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
 
       let (path_id, method) = match body_location {
-        BodyAnalysisLocation::Request {
+        BodyAnalysisLocation::UnmatchedRequest {
           path_id, method, ..
         } => (path_id, method),
-        BodyAnalysisLocation::Response {
+        BodyAnalysisLocation::UnmatchedResponse {
           path_id, method, ..
         } => (path_id, method),
+        _ => unreachable!("analyzing undocumented bodies should only yield unmatched results"),
       };
 
       let endpoint_bodies = endpoints_by_endpoint
@@ -180,35 +188,53 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
 }
 
 async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
+  spec_events: Vec<SpecEvent>,
   tagged_diffs: Vec<TaggedInput<InteractionDiffResult>>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
   sink: S,
 ) {
-  let tagged_diffs = Arc::new(
-    tagged_diffs
-      .into_iter()
-      .filter(|diff| {
-        matches!(
-          diff.input_part(),
-          InteractionDiffResult::UnmatchedRequestBodyShape(_)
-            | InteractionDiffResult::UnmatchedResponseBodyShape(_)
-        )
-      })
-      .collect::<Vec<_>>(),
-  );
+  let spec_projection = Arc::new(SpecProjection::from(spec_events));
+  let diffs_by_spec_id = Arc::new({
+    let mut diffs_by_spec_id = HashMap::new();
+    for tagged_diff in tagged_diffs {
+      let (diff, _diff_tags) = tagged_diff.into_parts();
+      let spec_id = match &diff {
+        InteractionDiffResult::UnmatchedRequestBodyShape(diff) => diff
+          .requests_trail
+          .get_request_id()
+          .expect("UnmatchedRequestBodyShape should have a request id in the requests trail"),
+        InteractionDiffResult::UnmatchedResponseBodyShape(diff) => diff
+          .requests_trail
+          .get_response_id()
+          .expect("UnmatchedResponseBodyShape should have a response id in the requests trail"),
+        _ => continue, // filter out diffs we don't care about
+      }
+      .clone();
+
+      diffs_by_spec_id
+        .entry(spec_id)
+        .or_insert_with(|| vec![])
+        .push(diff);
+    }
+    diffs_by_spec_id
+  });
+
+  // dbg!(&diffs_by_spec_id);
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
   let analyzing_bodies = {
-    let tagged_diffs = tagged_diffs.clone();
+    let diffs_by_spec_id = diffs_by_spec_id.clone();
+    let spec_projection = spec_projection.clone();
 
     async move {
       let analyze_results = interaction_lines
         .map(Ok)
         .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
           let analysis_sender = analysis_sender.clone();
-          let tagged_diffs = tagged_diffs.clone();
+          let diffs_by_spec_id = diffs_by_spec_id.clone();
+          let spec_projection = spec_projection.clone();
 
           let analyze_task = tokio::spawn(async move {
             let analyze_comp = tokio::task::spawn_blocking(move || {
@@ -218,23 +244,36 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
               let TaggedInput(interaction, interaction_tags): TaggedInput<HttpInteraction> =
                 serde_json::from_str(&interaction_json).expect("could not parse interaction json");
 
-              let interaction_diffs = tagged_diffs.iter().filter_map(|tagged_diff| {
-                let (diff, diff_tags) = tagged_diff.parts();
+              let analysis_results = analyze_documented_bodies(&spec_projection, interaction);
 
-                if diff_tags.is_disjoint(&interaction_tags)
-                  && !diff.interaction_trail().matches_interaction(&interaction)
-                {
-                  None
-                } else {
-                  Some(diff)
-                }
-              });
+              analysis_results
+                .filter_map(|analysis_result| {
+                  let spec_id = match analysis_result.body_location {
+                    BodyAnalysisLocation::MatchedRequest { request_id, .. } => Some(request_id),
+                    BodyAnalysisLocation::MatchedResponse { response_id, .. } => Some(response_id),
+                    _ => None,
+                  }?;
 
-              interaction_diffs
-                .map(|diff| {
-                  let result = analyze_diff_affordances(diff, &interaction);
-                  (diff.fingerprint(), result, interaction_tags.clone())
+                  // dbg!(&spec_id);
+
+                  let interaction_diffs = diffs_by_spec_id.get(&spec_id)?;
+
+                  let mut results = vec![]; // imperative loops as nested filter maps cause ownership issues
+                  for diff in interaction_diffs {
+                    let json_trail = diff.json_trail().unwrap();
+
+                    let trail_result = analysis_result
+                      .trail_observations
+                      .get(json_trail)
+                      .cloned()
+                      .unwrap_or_else(|| TrailValues::new(json_trail));
+
+                    results.push((diff.fingerprint(), trail_result, interaction_tags.clone()))
+                  }
+
+                  Some(results)
                 })
+                .flatten()
                 .collect::<Vec<_>>()
             });
 
@@ -268,15 +307,14 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
     tokio::spawn(async move {
       let mut affordances_by_diff_fingerprint = HashMap::new();
       while let Some(analysis) = analysiss.next().await {
+        //   dbg!(&analysis.0, &analysis.1, &analysis.2);
         let (diff_fingerprint, trail_values, tags) = analysis;
 
-        if let Some(trail_values) = trail_values {
-          let affordances = affordances_by_diff_fingerprint
-            .entry(diff_fingerprint)
-            .or_insert_with(|| InteractionDiffTrailAffordances::default());
+        let affordances = affordances_by_diff_fingerprint
+          .entry(diff_fingerprint)
+          .or_insert_with(|| InteractionDiffTrailAffordances::default());
 
-          affordances.push((trail_values, tags));
-        }
+        affordances.push((trail_values, tags));
       }
 
       let mut json_lines_sink =
@@ -400,7 +438,7 @@ impl EndpointBody {
     };
 
     let mut body = match body_location {
-      BodyAnalysisLocation::Request {
+      BodyAnalysisLocation::UnmatchedRequest {
         path_id, method, ..
       } => EndpointBody::Request(EndpointRequestBody {
         body_descriptor,
@@ -408,7 +446,7 @@ impl EndpointBody {
         method: method.clone(),
         commands: body_commands.into_iter().collect(),
       }),
-      BodyAnalysisLocation::Response {
+      BodyAnalysisLocation::UnmatchedResponse {
         status_code,
         path_id,
         method,
@@ -420,6 +458,7 @@ impl EndpointBody {
         commands: body_commands.into_iter().collect(),
         status_code: *status_code,
       }),
+      _ => panic!("EndpointBody should only be created for unmatched responses and requests"),
     };
 
     body.append_endpoint_commands();
@@ -604,6 +643,6 @@ mod test {
     let interaction_lines =
       streams::http_interaction::json_lines(fs::File::open(interactions_path).await.unwrap());
 
-    learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;
+    // learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;
   }
 }

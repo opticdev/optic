@@ -32,6 +32,10 @@ impl TrailObservationsResult {
     self.values_by_trail.values()
   }
 
+  pub fn get(&self, trail: &JsonTrail) -> Option<&TrailValues> {
+    self.values_by_trail.get(trail)
+  }
+
   pub fn remove(&mut self, trail: &JsonTrail) -> Option<TrailValues> {
     self.values_by_trail.remove(trail)
   }

@@ -52,6 +52,19 @@ impl InteractionDiffResult {
       InteractionDiffResult::MatchedResponseBodyContentType(diff) => &diff.requests_trail,
     }
   }
+
+  pub fn json_trail(&self) -> Option<&JsonTrail> {
+    let shape_diff_result = match self {
+      InteractionDiffResult::UnmatchedRequestBodyShape(diff) => Some(&diff.shape_diff_result),
+      InteractionDiffResult::UnmatchedResponseBodyShape(diff) => Some(&diff.shape_diff_result),
+      _ => None,
+    }?;
+
+    match shape_diff_result {
+      ShapeDiffResult::UnmatchedShape { json_trail, .. } => Some(json_trail),
+      ShapeDiffResult::UnspecifiedShape { json_trail, .. } => Some(json_trail),
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -211,14 +224,23 @@ pub struct BodyAnalysisResult {
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub enum BodyAnalysisLocation {
-  Request {
+  UnmatchedRequest {
     path_id: PathComponentId,
     method: String,
     content_type: Option<String>,
   },
-  Response {
+  UnmatchedResponse {
     path_id: PathComponentId,
     method: String,
+    content_type: Option<String>,
+    status_code: u16,
+  },
+  MatchedRequest {
+    request_id: RequestId,
+    content_type: Option<String>,
+  },
+  MatchedResponse {
+    response_id: ResponseId,
     content_type: Option<String>,
     status_code: u16,
   },
@@ -227,8 +249,10 @@ pub enum BodyAnalysisLocation {
 impl BodyAnalysisLocation {
   pub fn content_type(&self) -> Option<&String> {
     match self {
-      BodyAnalysisLocation::Request { content_type, .. } => content_type.as_ref(),
-      BodyAnalysisLocation::Response { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::UnmatchedRequest { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::UnmatchedResponse { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::MatchedRequest { content_type, .. } => content_type.as_ref(),
+      BodyAnalysisLocation::MatchedResponse { content_type, .. } => content_type.as_ref(),
     }
   }
 }
@@ -237,7 +261,7 @@ impl From<UnmatchedRequestBodyContentType> for BodyAnalysisLocation {
   fn from(diff: UnmatchedRequestBodyContentType) -> Self {
     let interaction_trail = diff.interaction_trail;
 
-    Self::Request {
+    Self::UnmatchedRequest {
       path_id: diff
         .requests_trail
         .get_path_id()
@@ -256,7 +280,7 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
   fn from(diff: UnmatchedResponseBodyContentType) -> Self {
     let interaction_trail = diff.interaction_trail;
 
-    Self::Response {
+    Self::UnmatchedResponse {
       path_id: diff
         .requests_trail
         .get_path_id()
@@ -274,43 +298,35 @@ impl From<UnmatchedResponseBodyContentType> for BodyAnalysisLocation {
   }
 }
 
-impl From<UnmatchedRequestBodyShape> for BodyAnalysisLocation {
-  fn from(diff: UnmatchedRequestBodyShape) -> Self {
+impl From<MatchedRequestBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: MatchedRequestBodyContentType) -> Self {
     let interaction_trail = diff.interaction_trail;
 
-    Self::Request {
-      path_id: diff
+    Self::MatchedRequest {
+      request_id: diff
         .requests_trail
-        .get_path_id()
-        .expect("UnmatchedRequestBodyShape implies response to have a known path")
-        .clone(),
-      method: interaction_trail
-        .get_method()
-        .expect("UnmatchedRequestBodyShape implies response to have a known method")
+        .get_request_id()
+        .expect("MatchedRequestBodyContentType implies request to have a known request id")
         .clone(),
       content_type: interaction_trail.get_request_content_type().cloned(),
     }
   }
 }
 
-impl From<UnmatchedResponseBodyShape> for BodyAnalysisLocation {
-  fn from(diff: UnmatchedResponseBodyShape) -> Self {
+impl From<MatchedResponseBodyContentType> for BodyAnalysisLocation {
+  fn from(diff: MatchedResponseBodyContentType) -> Self {
     let interaction_trail = diff.interaction_trail;
 
-    Self::Response {
-      path_id: diff
+    Self::MatchedResponse {
+      response_id: diff
         .requests_trail
-        .get_path_id()
-        .expect("UnmatchedResponseBodyShape implies response to have a known path")
-        .clone(),
-      method: interaction_trail
-        .get_method()
-        .expect("UnmatchedResponseBodyShape implies response to have a known method")
+        .get_response_id()
+        .expect("MatchedResponseBodyContentType implies response to have a known response id")
         .clone(),
       content_type: interaction_trail.get_response_content_type().cloned(),
       status_code: interaction_trail
         .get_response_status_code()
-        .expect("UnmatchedResponseBodyShape implies response to have a status code"),
+        .expect("MatchedResponseBodyContentType implies response to have a status code"),
     }
   }
 }
@@ -454,6 +470,22 @@ impl RequestSpecTrail {
   pub fn get_path_id(&self) -> Option<&String> {
     match self {
       RequestSpecTrail::SpecPath(spec_path) => Some(&spec_path.path_id),
+      _ => None,
+    }
+  }
+
+  pub fn get_request_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecRequestBody(spec_body) => Some(&spec_body.request_id),
+      RequestSpecTrail::SpecRequestRoot(spec_body) => Some(&spec_body.request_id),
+      _ => None,
+    }
+  }
+
+  pub fn get_response_id(&self) -> Option<&String> {
+    match self {
+      RequestSpecTrail::SpecResponseBody(spec_body) => Some(&spec_body.response_id),
+      RequestSpecTrail::SpecResponseRoot(spec_body) => Some(&spec_body.response_id),
       _ => None,
     }
   }
