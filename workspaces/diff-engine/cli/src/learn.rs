@@ -307,7 +307,7 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
     tokio::spawn(async move {
       let mut affordances_by_diff_fingerprint = HashMap::new();
       while let Some(analysis) = analysiss.next().await {
-        //   dbg!(&analysis.0, &analysis.1, &analysis.2);
+        // dbg!(&analysis.0, &analysis.1, &analysis.2);
         let (diff_fingerprint, trail_values, tags) = analysis;
 
         let affordances = affordances_by_diff_fingerprint
@@ -537,13 +537,13 @@ struct InteractionsAffordances {
   was_array: InteractionPointers,
   was_object: InteractionPointers,
   was_missing: InteractionPointers,
-  was_string_trails: HashMap<String, JsonTrail>,
-  was_number_trails: HashMap<String, JsonTrail>,
-  was_boolean_trails: HashMap<String, JsonTrail>,
-  was_null_trails: HashMap<String, JsonTrail>,
-  was_array_trails: HashMap<String, JsonTrail>,
-  was_object_trails: HashMap<String, JsonTrail>,
-  was_missing_trails: HashMap<String, JsonTrail>,
+  was_string_trails: HashMap<String, Vec<JsonTrail>>,
+  was_number_trails: HashMap<String, Vec<JsonTrail>>,
+  was_boolean_trails: HashMap<String, Vec<JsonTrail>>,
+  was_null_trails: HashMap<String, Vec<JsonTrail>>,
+  was_array_trails: HashMap<String, Vec<JsonTrail>>,
+  was_object_trails: HashMap<String, Vec<JsonTrail>>,
+  was_missing_trails: HashMap<String, Vec<JsonTrail>>,
 }
 
 impl InteractionDiffTrailAffordances {
@@ -569,7 +569,7 @@ impl InteractionsAffordances {
     let json_trails_by_pointer_iter = || {
       pointers
         .iter()
-        .map(|pointer| (pointer.clone(), json_trail.clone()))
+        .map(|pointer| (pointer.clone(), vec![json_trail.clone()]))
     };
     if trail_values.was_string {
       self.was_string.extend(pointers.clone());
