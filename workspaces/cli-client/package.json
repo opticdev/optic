@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-client",
-  "version": "9.0.13",
+  "version": "10.0.1",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
@@ -14,9 +14,9 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "workspace:workspaces/analytics",
-    "@useoptic/cli-config": "workspace:workspaces/cli-config",
-    "@useoptic/client-utilities": "workspace:workspaces/client-utilities",
+    "@useoptic/analytics": "10.0.1",
+    "@useoptic/cli-config": "10.0.1",
+    "@useoptic/client-utilities": "10.0.1",
     "bottleneck": "^2.19.5",
     "cross-fetch": "^3.0.4"
   },

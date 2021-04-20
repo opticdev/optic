@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-scripts",
-  "version": "9.0.13",
+  "version": "10.0.1",
   "scripts": {
     "ws:test": "echo scripts",
     "ws:build": "tsc -b --verbose",
@@ -16,8 +16,8 @@
   "dependencies": {
     "@sentry/node": "^5.28.0",
     "@sentry/tracing": "^5.28.0",
-    "@useoptic/cli-config": "workspace:workspaces/cli-config",
-    "@useoptic/cli-shared": "workspace:workspaces/cli-shared",
+    "@useoptic/cli-config": "10.0.1",
+    "@useoptic/cli-shared": "10.0.1",
     "analytics-node": "^3.4.0-beta.1",
     "dotenv": "^8.2.0",
     "node-notifier": "^7.0.0"

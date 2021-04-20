@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/changelog",
-  "version": "9.0.13",
+  "version": "10.0.1",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
@@ -20,9 +20,9 @@
   ],
   "dependencies": {
     "@graphql-tools/schema": "^7.1.3",
-    "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm",
-    "@useoptic/graph-lib": "workspace:workspaces/graph-lib",
-    "@useoptic/spectacle": "workspace:workspaces/spectacle",
+    "@useoptic/diff-engine-wasm": "10.0.1",
+    "@useoptic/graph-lib": "10.0.1",
+    "@useoptic/spectacle": "10.0.1",
     "graphql": "^15.5.0"
   },
   "devDependencies": {
