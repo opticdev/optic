@@ -14,7 +14,6 @@ export function TwoColumnFullWidth(props: TwoColumnFullWidthProps) {
   return (
     <Container
       maxWidth={false}
-      fullWidth
       className={classes.wrapper}
       style={props.style}
     >

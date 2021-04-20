@@ -820,7 +820,6 @@ function objectRows(
     .map((diff: any) => diff[diff.length - 1]);
 
   const objectKeys = _uniq([...Object.keys(objectShape), ...keysWithDiffs]);
-  let collapsedCount = 0;
   const collapseAt = 9;
 
   const shouldCollapse =
@@ -861,7 +860,6 @@ function objectRows(
             trail: fieldTrail,
           });
         } else {
-          collapsedCount++;
         }
       } else {
         shapeRows(value, nestedDiffs, rows, collapsedTrails, indent + 1, {

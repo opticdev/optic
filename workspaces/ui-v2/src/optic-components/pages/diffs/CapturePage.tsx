@@ -15,7 +15,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
-// @ts-ignore
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import {
@@ -191,7 +190,6 @@ export function CapturePage() {
         <Grid
           xs={4}
           item
-          alignContent="center"
           justifyContent="center"
           display="flex"
           flexDirection="column"

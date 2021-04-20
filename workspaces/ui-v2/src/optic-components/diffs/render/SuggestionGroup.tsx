@@ -77,7 +77,7 @@ export function SuggestionGroup({
                         if (e.keyCode === 13) onEnter();
                       }}
                       onClick={onEnter}
-                      endIcon={<KeyboardArrowRightIcon size="small" />}
+                      endIcon={<KeyboardArrowRightIcon />}
                     >
                       Apply
                     </Button>

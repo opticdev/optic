@@ -108,6 +108,7 @@ export function UndocumentedUrl({
       divider
       disableGutters
       style={{ display: 'flex', ...style }}
+      button
       // onClick={onClick}
     >
       <div style={{ flex: 1 }}>

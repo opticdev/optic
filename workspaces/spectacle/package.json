@@ -30,6 +30,6 @@
     "@types/tap": "^14.10.1",
     "@types/uuid": "^8",
     "tap": "^14.11.0",
-    "typescript": "^4.2.4"
+    "typescript": "3.9"
   }
 }

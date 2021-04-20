@@ -29,7 +29,7 @@ export function ICopyRender({
   variant,
 }: {
   style?: any;
-  variant: string;
+  variant: any;
   copy: ICopy[];
 }) {
   return (
@@ -41,7 +41,7 @@ export function ICopyRender({
               {
                 <Typography
                   component="span"
-                  variant={variant}
+                  // @Aidan fix: variant={variant}
                   style={{
                     ...style,
                     fontWeight: 400,
@@ -59,7 +59,7 @@ export function ICopyRender({
               {
                 <Typography
                   component="span"
-                  variant={variant}
+                  // @Aidan fix: variant={variant}
                   style={{
                     ...style,
                     fontWeight: 800,
@@ -74,7 +74,7 @@ export function ICopyRender({
         } else if (i.style === ICopyStyle.Code) {
           return (
             <Code
-              variant={variant}
+              // @Aidan fix: variant={variant}
               key={index}
               style={{ whiteSpace: 'pre-wrap' }}
             >
@@ -106,7 +106,7 @@ export function ICopyRenderSpan({
               {
                 <Typography
                   component="span"
-                  variant={variant}
+                  // @Aidan fix: variant={variant}
                   style={{ ...style, fontWeight: 400 }}
                 >
                   {i.text}
@@ -146,7 +146,7 @@ export function ICopyRenderMultiline({
               {
                 <Typography
                   component="span"
-                  variant={variant}
+                  // @Aidan fix: variant={variant}
                   style={{
                     ...style,
                     fontWeight: 400,
@@ -184,14 +184,14 @@ export const Code = ({
   variant,
 }: {
   style?: any;
-  variant: string;
+  variant?: string;
   children: any;
 }) => {
   const classes = codeStyles();
   return (
     <Typography
       component="span"
-      variant={variant}
+      // @Aidan fix: variant={variant}
       className={classes.codeInline}
       style={style}
     >
