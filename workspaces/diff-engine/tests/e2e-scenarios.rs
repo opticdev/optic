@@ -521,7 +521,7 @@ fn scenario_1() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_1__shape_choice_mapping",
+    "scenario_1__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -907,7 +907,7 @@ fn scenario_2() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_2__shape_choice_mapping",
+    "scenario_2__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -1143,7 +1143,7 @@ fn scenario_3() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_3__shape_choice_mapping",
+    "scenario_3__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -1645,7 +1645,7 @@ fn scenario_4() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_4__shape_choice_mapping",
+    "scenario_4__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -2073,7 +2073,7 @@ fn scenario_5() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_5__shape_choice_mapping",
+    "scenario_5__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -2459,7 +2459,7 @@ fn scenario_6() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_6__shape_choice_mapping",
+    "scenario_6__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -2808,7 +2808,7 @@ fn scenario_7() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_7__shape_choice_mapping",
+    "scenario_7__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -3194,7 +3194,7 @@ fn scenario_8() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_8__shape_choice_mapping",
+    "scenario_8__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -3696,7 +3696,7 @@ fn scenario_9() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_9__shape_choice_mapping",
+    "scenario_9__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -4222,7 +4222,7 @@ fn scenario_10() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_10__shape_choice_mapping",
+    "scenario_10__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -4650,7 +4650,7 @@ fn scenario_11() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_11__shape_choice_mapping",
+    "scenario_11__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -5036,7 +5036,7 @@ fn scenario_12() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_12__shape_choice_mapping",
+    "scenario_12__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -5538,7 +5538,7 @@ fn scenario_13() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_13__shape_choice_mapping",
+    "scenario_13__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -5774,7 +5774,7 @@ fn scenario_14() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_14__shape_choice_mapping",
+    "scenario_14__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -6202,7 +6202,7 @@ fn scenario_15() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_15__shape_choice_mapping",
+    "scenario_15__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -6704,7 +6704,7 @@ fn scenario_16() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_16__shape_choice_mapping",
+    "scenario_16__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -7206,7 +7206,7 @@ fn scenario_17() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_17__shape_choice_mapping",
+    "scenario_17__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -7634,7 +7634,7 @@ fn scenario_18() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_18__shape_choice_mapping",
+    "scenario_18__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -7870,7 +7870,7 @@ fn scenario_19() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_19__shape_choice_mapping",
+    "scenario_19__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -8372,7 +8372,7 @@ fn scenario_20() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_20__shape_choice_mapping",
+    "scenario_20__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -8800,7 +8800,7 @@ fn scenario_21() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_21__shape_choice_mapping",
+    "scenario_21__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -9228,7 +9228,7 @@ fn scenario_22() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_22__shape_choice_mapping",
+    "scenario_22__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -9754,7 +9754,7 @@ fn scenario_23() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_23__shape_choice_mapping",
+    "scenario_23__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -10280,7 +10280,7 @@ fn scenario_24() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_24__shape_choice_mapping",
+    "scenario_24__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -10806,7 +10806,7 @@ fn scenario_25() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_25__shape_choice_mapping",
+    "scenario_25__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -13401,7 +13401,7 @@ fn scenario_26() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_26__shape_choice_mapping",
+    "scenario_26__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -13927,7 +13927,7 @@ fn scenario_27() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_27__shape_choice_mapping",
+    "scenario_27__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -14313,7 +14313,7 @@ fn scenario_28() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_28__shape_choice_mapping",
+    "scenario_28__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -14839,7 +14839,7 @@ fn scenario_29() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_29__shape_choice_mapping",
+    "scenario_29__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -15267,7 +15267,7 @@ fn scenario_30() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_30__shape_choice_mapping",
+    "scenario_30__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
@@ -15769,7 +15769,7 @@ fn scenario_31() {
     &spec_projection.shape().to_choice_mapping()
   );
   assert_json_snapshot!(
-    "scenario_31__shape_choice_mapping",
+    "scenario_31__shape_choice_mapping_json",
     &spec_projection.shape().to_choice_mapping()
   );
 
