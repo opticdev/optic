@@ -36,7 +36,7 @@ async function main() {
 
   const endpointChangesResult = await spectacle({
     query: `{
-      endpointChanges(since: "2021-02-23T20:09:41.006Z") {
+      endpointChanges(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
         endpoints {
           change {
             category
@@ -49,7 +49,7 @@ async function main() {
     variables: {},
   });
 
-  // console.log(JSON.stringify(endpointChangesResult, null, 2));
+  console.log(JSON.stringify(endpointChangesResult, null, 2));
 
   const result = await spectacle({
     query: `{

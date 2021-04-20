@@ -81,20 +81,28 @@ type EndpointChanges = {
 export function buildEndpointChanges(
   endpointQueries: endpoints.GraphQueries,
   shapeQueries: shapes.GraphQueries,
-  since?: string,
+  sinceBatchCommitId?: string,
 ): EndpointChanges {
-  let sortedBatchCommits = endpointQueries
+  const sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
     .results.sort((a: any, b: any) => {
       return a.result.data.createdAt < b.result.data.createdAt ? 1 : -1;
     });
 
-  // If there is no `since` date, we want to use every batch commit
-  const deltaBatchCommits = since
-    ? sortedBatchCommits.filter(
-        (batchCommit: any) => batchCommit.result.data.createdAt > since,
-      )
-    : sortedBatchCommits;
+  let deltaBatchCommits;
+
+  if (sinceBatchCommitId) {
+    const sinceBatchCommit: any = endpointQueries.findNodeById(
+      sinceBatchCommitId!,
+    );
+    deltaBatchCommits = sortedBatchCommits.filter(
+      (batchCommit: any) =>
+        batchCommit.result.data.createdAt >
+        sinceBatchCommit!.result.data.createdAt,
+    );
+  } else {
+    deltaBatchCommits = sortedBatchCommits;
+  }
 
   const changes = new Changes();
 

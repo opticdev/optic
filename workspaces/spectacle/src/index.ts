@@ -18,7 +18,12 @@ import { endpoints, shapes } from '@useoptic/graph-lib';
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
-  try_apply_commands(commandsJson: string, eventsJson: string, batchId: string, commitMessage: string): any;
+  try_apply_commands(
+    commandsJson: string,
+    eventsJson: string,
+    batchId: string,
+    commitMessage: string,
+  ): any;
 
   get_shape_viewer_projection(spec: any): string;
 
@@ -207,14 +212,14 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       endpointChanges: (
         parent: any,
-        { since }: { since?: string },
+        { sinceBatchCommitId }: { sinceBatchCommitId?: string },
         context: any,
         info: any,
       ) => {
         const endpointChanges = buildEndpointChanges(
           endpointsQueries,
           shapeQueries,
-          since,
+          sinceBatchCommitId,
         );
         return Promise.resolve(endpointChanges);
       },
@@ -404,7 +409,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     resolvers,
   });
 
-  return function(input: SpectacleInput) {
+  return function (input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,

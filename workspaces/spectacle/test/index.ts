@@ -85,7 +85,7 @@ specs.forEach(async (spec) => {
     const spectacle = await makeSpectacle(opticContext);
     const query = spec.sinceCreatedAt
       ? `{
-        endpointChanges(since: "${spec.sinceCreatedAt}") {
+        endpointChanges(sinceBatchCommitId: "${spec.sinceBatchCommitId}") {
           endpoints {
             change {
               category
