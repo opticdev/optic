@@ -16,5 +16,6 @@
   "files": [
     "/build",
     "/.env"
-  ]
+  ],
+  "dependencies": {}
 }
