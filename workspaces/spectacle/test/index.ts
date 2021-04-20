@@ -110,3 +110,40 @@ specs.forEach(async (spec) => {
     test.matchSnapshot(results);
   });
 });
+
+specs.forEach(async (spec) => {
+  Tap.test(`spectacle shapeChoices query ${spec.name}`, async (test) => {
+    const events = JSON.parse(fs.readFileSync(spec.file).toString('utf-8'));
+    const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+      OpticEngine,
+      events,
+    );
+    const spectacle = await makeSpectacle(opticContext);
+    const shapeId = 'shape_jSAthS01Bb';
+    const query = `{
+      shapeChoices(shapeId: "${shapeId}") {
+        id
+        jsonType
+        asArray {
+          changes(sinceBatchCommitId: "${spec.sinceBatchCommitId}") {
+            added
+            changed
+          }
+        }
+        asObject {
+          fields {
+            shapeId
+            fieldId
+            name
+            changes(sinceBatchCommitId: "${spec.sinceBatchCommitId}") {
+              added
+              changed
+            }
+          }
+        }
+      }
+    }`;
+    const results = await spectacle({ query, variables: {} });
+    test.matchSnapshot(results);
+  });
+});

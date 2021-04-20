@@ -155,3 +155,263 @@ Object {
   },
 }
 `
+
+exports[`test/index.ts TAP spectacle shapeChoices query add endpoint to existing spec > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_ITEgMzZBoj",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add new endpoint > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add optional response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": true,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_I5A5eab4Wu",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add required response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": true,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add response status code > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_ITEgMzZBoj",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query complex changes > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_ITEgMzZBoj",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query no changes > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_ITEgMzZBoj",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query update optional response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": true,
+                "changed": false,
+              },
+              "fieldId": "field_9E8tMaN7pT",
+              "name": "age",
+              "shapeId": "shape_ITEgMzZBoj",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_4aBRTBkk3X",
+              "name": "name",
+              "shapeId": "shape_XPEuTDdxkf",
+            },
+          ],
+        },
+        "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`

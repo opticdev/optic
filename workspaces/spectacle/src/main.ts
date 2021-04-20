@@ -64,10 +64,6 @@ async function main() {
         }
         responses {
           id
-          changes(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
-            added
-            changed
-          }
           statusCode
           bodies {
             contentType
