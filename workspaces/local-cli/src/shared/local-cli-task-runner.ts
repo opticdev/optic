@@ -61,6 +61,7 @@ export const runCommandFlags = {
   'exit-on-diff': flags.boolean({
     default: false,
     required: false,
+    description: "When a capture session ends, if a diff is detected Optic will exit with exit code 1. This takes priority over pass-exit-code."
   }),
   'transparent-proxy': flags.boolean({
     default: false,
@@ -69,6 +70,7 @@ export const runCommandFlags = {
   'pass-exit-code': flags.boolean({
     default: false,
     required: false,
+    description: "Passes through the exit code from your task (or dependent task). exit-on-diff overrides this when a diff is detected."
   }),
 };
 interface LocalCliTaskFlags {
