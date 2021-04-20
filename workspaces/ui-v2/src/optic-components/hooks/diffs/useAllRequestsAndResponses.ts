@@ -1,4 +1,3 @@
-import { useSharedDiffContext } from './SharedDiffContext';
 import { useSpectacleQuery } from '../../../spectacle-implementations/spectacle-provider';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { useMemo, useState } from 'react';
@@ -55,7 +54,7 @@ export function useAllRequestsAndResponses(): {
 }
 
 export function queryResultToAllRequestsResponses(
-  data: any
+  data: any,
 ): { requests: IRequestBody[]; responses: IResponseBody[] } {
   const { requests } = data;
 
@@ -85,7 +84,7 @@ export function queryResultToAllRequestsResponses(
             pathId: request.pathId,
           };
         });
-      }
+      },
     );
     allResponses.push(...endpointResponses);
   });

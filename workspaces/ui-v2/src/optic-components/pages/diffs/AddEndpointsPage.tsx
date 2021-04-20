@@ -45,7 +45,7 @@ export function DiffUrlsPage(props: any) {
 
   useEffect(() => {
     setFilteredUrls(urls);
-  }, [pendingEndpoints.length]);
+  }, [pendingEndpoints.length, urls]);
 
   const [bulkMode, setBulkMode] = useState<boolean>(false);
 

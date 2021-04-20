@@ -20,7 +20,7 @@ import {
   SetFieldShape,
 } from '../command-factory';
 
-export function fieldShapeDiffInterpretor(
+export function fieldShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
   expected: Expectation,
@@ -123,7 +123,6 @@ export function fieldShapeDiffInterpretor(
           currentSpecContext,
         );
 
-        debugger;
         const lastObject = expected.lastObject();
 
         return [
@@ -135,8 +134,6 @@ export function fieldShapeDiffInterpretor(
             FieldShapeFromShape(fieldId, rootShapeId),
           ),
         ];
-
-        return [];
       }
       return [];
     },
@@ -190,9 +187,6 @@ class FieldShapeInterpretationHelper {
     return orderTabs(false, previews);
   }
 }
-
-const targetFinalNotNullable = (target: Set<ICoreShapeKinds>) =>
-  !(target.has(ICoreShapeKinds.NullableKind) && target.size === 1);
 
 function orderTabs(newField: boolean, tabs: IInteractionPreviewTab[]) {
   const ordering = {

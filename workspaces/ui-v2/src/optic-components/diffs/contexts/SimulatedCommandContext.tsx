@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { IForkableSpectacle, IBaseSpectacle } from '@useoptic/spectacle';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '../../../spectacle-implementations/spectacle-provider';
 
 type SimulatedCommandStoreProps = {
@@ -45,6 +45,7 @@ mutation X($commands: [JSON]) {
     }
 
     task();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(props.previewCommands)]);
 
   if (isProcessing) {

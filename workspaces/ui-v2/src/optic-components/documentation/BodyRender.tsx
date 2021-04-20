@@ -4,7 +4,6 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import { RenderRootShape } from '../shapes/ShapeRowBase';
 import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
-import { ChoiceTabs } from '../shapes/OneOfTabs';
 
 export type BodyRenderProps = {
   shape: IShapeRenderer[];
@@ -14,7 +13,7 @@ export type BodyRenderProps = {
 
 export function BodyRender(props: BodyRenderProps) {
   const classes = useStyles();
-  const [showExample, setValue] = useState('example');
+  const [showExample] = useState('example');
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

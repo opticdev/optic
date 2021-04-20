@@ -9,7 +9,6 @@ import {
 } from '../theme';
 import { IChanges } from './IChanges';
 import classNames from 'classnames';
-import { IndentSpaces } from '../shapes/SharedStyles';
 
 export function ChangeLogBG(props: { changes?: IChanges; children: any }) {
   const classes = useStyles();

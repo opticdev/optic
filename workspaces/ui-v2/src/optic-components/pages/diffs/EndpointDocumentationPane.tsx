@@ -14,7 +14,6 @@ import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
 import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 export function EndpointDocumentationPane({
   method,
@@ -31,7 +30,6 @@ export function EndpointDocumentationPane({
 }) {
   const { endpoints, loading } = useEndpoints();
   const previewCommands = useSimulatedCommands();
-  const { context } = useSharedDiffContext();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(

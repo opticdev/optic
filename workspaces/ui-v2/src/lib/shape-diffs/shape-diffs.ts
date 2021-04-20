@@ -1,12 +1,8 @@
 import { IValueAffordanceSerializationWithCounter } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { BodyShapeDiff } from '../parse-diff';
-import {
-  CurrentSpecContext,
-  IInterpretation,
-  IPatchChoices,
-} from '../Interfaces';
+import { CurrentSpecContext, IInterpretation } from '../Interfaces';
 import { Actual, getExpectationsForShapeTrail } from '../shape-diff-dsl-rust';
-import { fieldShapeDiffInterpretor } from './field';
+import { fieldShapeDiffInterpreter } from './field';
 import { descriptionForShapeDiff } from '../diff-description-interpreter';
 import { listItemShapeDiffInterpreter } from './list';
 import { rootShapeDiffInterpreter } from './root';
@@ -39,7 +35,7 @@ export async function interpretShapeDiffs(
   /////////////////////////////////////////////////////////////////////
   const isUnspecifiedField = isUnspecified && actual.isField(); //this needs to use lastObject + key
   if (expected.isField() || actual.isField() || isUnspecifiedField) {
-    return fieldShapeDiffInterpretor(
+    return fieldShapeDiffInterpreter(
       diff,
       actual,
       expected,

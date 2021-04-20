@@ -1,9 +1,5 @@
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import {
-  IgnoreRule,
-  transformAffordanceMappingByIgnoreRules,
-} from '../../../lib/ignore-rule';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { interpretShapeDiffs } from '../../../lib/shape-diffs/shape-diffs';
 import { useContext, useEffect, useState } from 'react';
@@ -36,6 +32,7 @@ export function useShapeDiffInterpretations(
       setResults(diffs);
       setLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [diffs]);
 
   return { results, loading };

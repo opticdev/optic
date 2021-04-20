@@ -7,7 +7,6 @@ import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { IgnoreRule } from '../../../lib/ignore-rule';
 import { AssembleCommands } from '../../../lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
 

@@ -10,17 +10,10 @@ import {
   RequestTrailConstants,
 } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
 
-function getNormalizedBodyDescriptor(value: any) {
-  if (value && value.ShapedBodyDescriptor) {
-    return value.ShapedBodyDescriptor;
-  }
-  return {};
-}
-
 export function locationForTrails(
   trail: IRequestSpecTrail,
   interactionTrail: IInteractionTrail,
-  currentSpecContext: CurrentSpecContext
+  currentSpecContext: CurrentSpecContext,
 ):
   | {
       pathId: string;
@@ -80,7 +73,7 @@ export function locationForTrails(
       RequestTrailConstants.SpecResponseBody
     ];
     const { pathId, method, statusCode, contentType } = responseById(
-      responseId
+      responseId,
     );
     return {
       pathId: pathId,
@@ -97,7 +90,7 @@ export function locationForTrails(
       RequestTrailConstants.SpecResponseRoot
     ];
     const { pathId, method, statusCode, contentType } = responseById(
-      responseId
+      responseId,
     );
 
     return {
@@ -131,7 +124,7 @@ export function locationForTrails(
 }
 
 export function methodForInteractionTrail(
-  interactionTrail: IInteractionTrail
+  interactionTrail: IInteractionTrail,
 ): string | undefined {
   //@ts-ignore
   const Method: IMethod | undefined = interactionTrail.path.find((i) => {
@@ -144,7 +137,7 @@ export function methodForInteractionTrail(
 }
 
 export function inResponseForInteractionTrail(
-  interactionTrail: IInteractionTrail
+  interactionTrail: IInteractionTrail,
 ): { statusCode: number; contentType?: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
   if ((last as any)['ResponseBody']) {
@@ -160,7 +153,7 @@ export function inResponseForInteractionTrail(
 }
 
 export function inRequestForInteractionTrail(
-  interactionTrail: IInteractionTrail
+  interactionTrail: IInteractionTrail,
 ): { contentType: string } | undefined {
   const last = interactionTrail.path[interactionTrail.path.length - 1];
   if ((last as any)['RequestBody']) {

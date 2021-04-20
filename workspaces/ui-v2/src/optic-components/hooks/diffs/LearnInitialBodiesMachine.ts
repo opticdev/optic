@@ -1,6 +1,4 @@
 import { assign, Machine } from 'xstate';
-// @ts-ignore
-import * as niceTry from 'nice-try';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import {
   ILearnedBodies,

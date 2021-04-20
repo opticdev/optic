@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { OpticBlueReadable, SubtleBlueBackground } from '../../theme';
-import { namer, namerForOptions } from '../../../lib/quick-namer';
+import { namerForOptions } from '../../../lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
@@ -40,7 +40,7 @@ export function BuildSpecPatch({
 
   useEffect(() => {
     onPathChoicesUpdated(selectedChoices);
-  }, [selectedChoices]);
+  }, [selectedChoices, onPathChoicesUpdated]);
 
   const updateShapeChoice = (coreShape: ICoreShapeKinds, valid: boolean) => {
     const copied = deepCopy(selectedChoices);

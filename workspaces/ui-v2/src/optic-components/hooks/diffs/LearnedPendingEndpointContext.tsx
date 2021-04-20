@@ -1,11 +1,8 @@
 import React, { useContext } from 'react';
 import { IPendingEndpoint } from './SharedDiffState';
-import { useActor, useMachine } from '@xstate/react';
+import { useActor } from '@xstate/react';
 import equals from 'lodash.isequal';
-import {
-  IIgnoreBody,
-  newLearnPendingEndpointMachine,
-} from './LearnPendingEndpointState';
+import { IIgnoreBody } from './LearnPendingEndpointState';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { InitialBodiesContext } from './LearnInitialBodiesMachine';
 

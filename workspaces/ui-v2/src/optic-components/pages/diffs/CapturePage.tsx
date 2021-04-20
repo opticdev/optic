@@ -16,9 +16,6 @@ import {
 } from '@material-ui/core';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 // @ts-ignore
-import TimeAgo from 'javascript-time-ago';
-// @ts-ignore
-import en from 'javascript-time-ago/locale/en';
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import {
@@ -29,9 +26,6 @@ import { EndpointName } from '../../documentation/EndpointName';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import AskForCommitMessage from '../../diffs/render/AskForCommitMessage';
-
-TimeAgo.addLocale(en);
-const timeAgo = new TimeAgo('en-US');
 
 export function CapturePage() {
   const classes = useStyles();

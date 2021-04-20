@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { OpticBlueReadable } from '../theme';
 import { Button, LinearProgress, Typography } from '@material-ui/core';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
@@ -19,10 +19,7 @@ export function DiffAccessoryNavigation({
 
   const { context, handledCount } = useSharedDiffContext();
   const diffReviewCapturePage = useDiffReviewCapturePageLink();
-  const params = useParams<{ pathId?: string; method?: string }>();
   const history = useHistory();
-
-  const { pathId, method } = params;
   const [handled, total] = handledCount;
 
   const hasChanges =

@@ -1,7 +1,7 @@
 import React, { useCallback, useReducer } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
-import { useColor, useShapeViewerStyles, SymbolColor } from './SharedStyles';
+import { SymbolColor, useColor, useShapeViewerStyles } from './SharedStyles';
 import _isEqual from 'lodash.isequal';
 import _get from 'lodash.get';
 import _uniq from 'lodash.uniq';
@@ -49,7 +49,7 @@ export default function InteractionBodyViewerAllJS({
   const [{ rows }, dispatch] = useReducer(
     updateState,
     { body, jsonTrails, description },
-    createInitialState
+    createInitialState,
   );
 
   const diffDetails = description && {
@@ -104,7 +104,7 @@ export function Row(props: any) {
         dispatch({ type: 'unfold-fields', payload: index });
       }
     },
-    [index, type, dispatch]
+    [index, type, dispatch, collapsed],
   );
 
   const indentPadding = ' '.repeat(indent * 2);
@@ -175,7 +175,7 @@ function RowValue({
         className={classNames(
           generalClasses.symbols,
           classes.symbolContent,
-          'fs-exclude'
+          'fs-exclude',
         )}
       >
         {'null'}
@@ -631,7 +631,7 @@ function updateState(state: any, action: any) {
       return unfoldObjectRows(state, index);
     default:
       throw new Error(
-        `State cannot be updated through action of type '${action.type}'`
+        `State cannot be updated through action of type '${action.type}'`,
       );
   }
 }
@@ -654,7 +654,7 @@ function unfoldRows(currentState: any, index: number) {
     [],
     [],
     row.indent,
-    rowField
+    rowField,
   );
   const updatedRows = [...currentState.rows];
   updatedRows.splice(index, 1, ...replacementRows);
@@ -676,7 +676,7 @@ function unfoldObjectRows(currentState: any, index: number) {
   const updatedRows = [...currentState.rows];
 
   const startIndex = updatedRows.findIndex(
-    (i) => i.type === 'object_open' && _isEqual(i.trail, row.trail)
+    (i) => i.type === 'object_open' && _isEqual(i.trail, row.trail),
   );
 
   const open = updatedRows[startIndex];
@@ -695,7 +695,7 @@ function unfoldObjectRows(currentState: any, index: number) {
     [],
     row.indent - 1,
     rowField,
-    row.trail
+    row.trail,
   );
 
   const endIndex =
@@ -703,7 +703,7 @@ function unfoldObjectRows(currentState: any, index: number) {
       (i, index) =>
         i.type === 'object_close' &&
         index > startIndex &&
-        _isEqual(i.trail, row.trail)
+        _isEqual(i.trail, row.trail),
     ) + 1;
 
   const offset = endIndex - startIndex;
@@ -739,7 +739,7 @@ function shapeRows(
     seqIndex: undefined,
     trail: [],
   },
-  expandObjectWithTrail?: any
+  expandObjectWithTrail?: any,
 ) {
   const typeString = Object.prototype.toString.call(shape);
 
@@ -753,7 +753,7 @@ function shapeRows(
         collapsedTrails,
         indent,
         field,
-        expandObjectWithTrail
+        expandObjectWithTrail,
       );
       break;
     case '[object Array]':
@@ -770,7 +770,7 @@ function shapeRows(
           fieldValue: field ? field.fieldValue : shape,
           indent,
         },
-        { diffTrails }
+        { diffTrails },
       );
       rows.push(createRow(row));
       break;
@@ -786,7 +786,7 @@ function objectRows(
   collapsedTrails: any[],
   indent: number,
   field: any,
-  expandObjectWithTrail: any
+  expandObjectWithTrail: any,
 ) {
   const { trail } = field;
 
@@ -799,19 +799,19 @@ function objectRows(
         trail,
         indent,
       },
-      { diffTrails }
-    )
+      { diffTrails },
+    ),
   );
 
   const nestedDiffs = diffTrails.filter((diffTrail: any) =>
     trail.every(
-      (trailComponent: any, n: any) => trailComponent === diffTrail[n]
-    )
+      (trailComponent: any, n: any) => trailComponent === diffTrail[n],
+    ),
   );
 
   function hasNestedDiff(trail: any) {
     return nestedDiffs.some((i: any) =>
-      _isEqual(i.slice(0, trail.length), trail)
+      _isEqual(i.slice(0, trail.length), trail),
     );
   }
 
@@ -838,10 +838,10 @@ function objectRows(
         indent: indent + 1,
         fieldsHidden: objectKeys.filter(
           (key: string) =>
-            !(keysWithDiffs.includes(key) || hasNestedDiff([...trail, key]))
+            !(keysWithDiffs.includes(key) || hasNestedDiff([...trail, key])),
         ).length,
         trail: trail,
-      })
+      }),
     );
   }
 
@@ -895,7 +895,7 @@ function listRows(
   rows: any[],
   collapsedTrails: any[],
   indent: number,
-  field: any
+  field: any,
 ) {
   const { trail } = field;
 
@@ -908,16 +908,16 @@ function listRows(
         seqIndex: field.seqIndex,
         trail,
       },
-      { diffTrails }
-    )
+      { diffTrails },
+    ),
   );
 
   const nestedDiffs = diffTrails.filter(
     (diffTrail) =>
       diffTrail.length > trail.length &&
       trail.every(
-        (trailComponent: any, n: number) => trailComponent === diffTrail[n]
-      )
+        (trailComponent: any, n: number) => trailComponent === diffTrail[n],
+      ),
   );
 
   const indexesWithDiffs = list
@@ -952,7 +952,7 @@ function listRows(
           seqIndex: index,
           indent: itemIndent,
           trail: itemTrail,
-        })
+        }),
       );
       collapsedTrails.push(itemTrail);
     }
@@ -980,7 +980,7 @@ function getFieldType(fieldValue: any): string {
     default:
       debugger;
       throw new Error(
-        `Can not return field type for fieldValue with type string '${jsTypeString}'`
+        `Can not return field type for fieldValue with type string '${jsTypeString}'`,
       );
   }
 }

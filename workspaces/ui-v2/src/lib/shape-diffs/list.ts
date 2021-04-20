@@ -1,5 +1,4 @@
 import sortBy from 'lodash.sortby';
-import { opticEngine } from '@useoptic/domain';
 import { BodyShapeDiff } from '../parse-diff';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
@@ -19,8 +18,6 @@ import {
   ShapeProvider,
 } from '../command-factory';
 
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
-
 export function listItemShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
   actual: Actual,
@@ -28,9 +25,7 @@ export function listItemShapeDiffInterpreter(
   diffDescription: IDiffDescription,
   currentSpecContext: CurrentSpecContext,
 ): IInterpretation {
-  const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
-  const isUnspecified = shapeDiff.isUnspecified;
 
   let updateSpecChoices: IPatchChoices = {
     copy: [],
@@ -39,9 +34,7 @@ export function listItemShapeDiffInterpreter(
   };
 
   if (isUnmatched) {
-    const unexpectedShapesObserved = expected.diffActual(actual);
     const allShapes = expected.unionWithActual(actual);
-    const observedShapeDidNotMatch = unexpectedShapesObserved.length > 0;
 
     updateSpecChoices.shapes = Array.from(allShapes).map((i) => {
       return {

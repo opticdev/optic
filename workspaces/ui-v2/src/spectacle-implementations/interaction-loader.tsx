@@ -39,7 +39,7 @@ export function useInteraction(pointer: string): AsyncStatus<any> {
     loadInteraction(pointer).then((i) => {
       setResult({ loading: false, data: i });
     });
-  }, [pointer]);
+  }, [pointer, loadInteraction]);
 
   return result;
 }

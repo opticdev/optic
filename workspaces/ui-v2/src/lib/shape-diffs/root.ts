@@ -1,5 +1,4 @@
 import { BodyShapeDiff } from '../parse-diff';
-import { opticEngine } from '@useoptic/domain';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
 import {
   CurrentSpecContext,

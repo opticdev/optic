@@ -53,13 +53,13 @@ export function DiffCard({
     if (previewTabs.length) {
       setPreviewTab(previewTabs[0].title);
     }
-  }, [previewTabs.length]);
+  }, [previewTabs.length, setPreviewTab, previewTabs]);
 
   useEffect(() => {
     if (previewTabs.length) {
       setPreviewTab(previewTabs[0].title);
     }
-  }, [diffDescription.diffHash]);
+  }, [diffDescription.diffHash, setPreviewTab, previewTabs]);
 
   return (
     <>
@@ -167,7 +167,7 @@ function RenderExampleBody({
     } else {
       return undefined;
     }
-  }, [data]);
+  }, [data, getJsonBodyToPreview]);
 
   if (actualBody) {
     return (

@@ -1,10 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import { ToggleButton } from '@material-ui/lab';
 import { Box, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import MenuItem from '@material-ui/core/MenuItem';
 // @ts-ignore
@@ -21,7 +20,6 @@ const timeAgo = new TimeAgo('en-US');
 
 export function CaptureSelectDropdown(props: any) {
   const classes = useStyles();
-  const history = useHistory();
   const captures = useCaptures();
 
   const { boundaryId } = useParams<{ boundaryId?: string }>();

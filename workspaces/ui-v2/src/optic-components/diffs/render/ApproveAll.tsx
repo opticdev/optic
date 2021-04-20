@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -12,16 +11,12 @@ import { useShapeDiffInterpretations } from '../../hooks/diffs/useDiffInterpreta
 export default function ApproveAll() {
   const [open, setOpen] = React.useState(false);
 
-  const {
-    context,
-    isDiffHandled,
-    approveCommandsForDiff,
-  } = useSharedDiffContext();
+  const { context, approveCommandsForDiff } = useSharedDiffContext();
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
 
   const allShapeDiffs = useMemo(
     () => diffsGroupedByEndpoints.flatMap((i) => i.shapeDiffs),
-    [context.results.diffsGroupedByEndpoint],
+    [diffsGroupedByEndpoints],
   );
 
   const shapeDiffs = useShapeDiffInterpretations(

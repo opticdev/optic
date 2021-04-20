@@ -27,6 +27,7 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const handleSave = () => {
     //@todo decide if every endpoint (changes/pending) gets a batch commit id.
     const commands = context.simulatedCommands;
+    console.log(commands);
     //@todo save them with spectacle
     // saveChanges(commitMessage!);
     //@todo redirect to /changes-since/{batchCommitId-whenDiffWasRun}

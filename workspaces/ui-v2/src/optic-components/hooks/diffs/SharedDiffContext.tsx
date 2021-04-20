@@ -8,10 +8,8 @@ import {
 import * as shortId from 'shortid';
 import { useMachine } from '@xstate/react';
 import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
-import { useAllRequestsAndResponses } from './useAllRequestsAndResponses';
-import { IEndpoint, useEndpoints } from '../useEndpointsHook';
+import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
-import { IgnoreRule } from '../../../lib/ignore-rule';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
@@ -107,6 +105,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       },
       [0, 0],
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(Object.keys(state.context.choices.approvedSuggestions))]);
 
   const [wipPatterns, setWIPPatterns] = useState<{

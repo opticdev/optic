@@ -4,7 +4,7 @@ import { OpticBlueReadable, SubtleBlueBackground } from '../../theme';
 //@ts-ignore
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
-type HighlightedLocation = {
+type IHighlightedLocation = {
   targetLocation?: IParsedLocation;
   statusCode?: number | undefined;
   contentType?: string | undefined;
@@ -12,6 +12,7 @@ type HighlightedLocation = {
   inResponse?: boolean | undefined;
   children: any;
 };
+
 export function HighlightedLocation({
   targetLocation,
   contentType,
@@ -19,7 +20,7 @@ export function HighlightedLocation({
   inResponse,
   inRequest,
   children,
-}: HighlightedLocation) {
+}: IHighlightedLocation) {
   const matches: boolean = (() => {
     if (targetLocation && targetLocation.inRequest && inRequest) {
       return (

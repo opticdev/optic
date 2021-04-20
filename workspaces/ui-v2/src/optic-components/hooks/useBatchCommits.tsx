@@ -15,6 +15,10 @@ export function useBatchCommits(): BatchCommit[] {
     variables: {},
   });
 
+  if (error) {
+    debugger;
+  }
+
   return useMemo(() => {
     if (!data) {
       return [];
@@ -25,7 +29,7 @@ export function useBatchCommits(): BatchCommit[] {
       batchId: i.batchId,
       createdAt: i.createdAt,
     }));
-  }, [data, data && data.batchCommits.length]);
+  }, [data]);
 }
 
 export function useLastBatchCommitId(): string | undefined {

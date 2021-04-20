@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Collapse, IconButton, ListItem } from '@material-ui/core';
-import { methodColorsDark, OpticBlueReadable, primary } from '../theme';
+import { IconButton, ListItem } from '@material-ui/core';
+import { methodColorsDark, primary } from '../theme';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
@@ -11,7 +11,6 @@ import ClearIcon from '@material-ui/icons/Clear';
 import isEqual from 'lodash.isequal';
 // @ts-ignore
 import equals from 'deep-equal';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useDebounce } from '../hooks/ui/useDebounceHook';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
 
@@ -96,6 +95,7 @@ export function UndocumentedUrl({
     if (components && isDifferent && !isEditing) {
       persistWIPPattern(path, method, components);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(debouncedComponents), debouncedIsEditing]);
 
   if (hide) {
@@ -205,7 +205,7 @@ function PathComponentRender({
   const classes = useStyles();
   const [name, setName] = useState(pathComponent.name);
 
-  const originalName = pathComponent.originalName;
+  // const originalName = pathComponent.originalName;
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -218,11 +218,13 @@ function PathComponentRender({
         onChange({ ...pathComponent, isParameter: true, name: defaultValue });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathComponent.isParameter]);
 
   //share edit state with parent
   useEffect(() => {
     parentSetIsEditing(isEditing);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
 
   useEffect(() => {
