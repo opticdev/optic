@@ -51,21 +51,22 @@ impl<'a> ShapeQueries<'a> {
 
     let result: Vec<ChoiceOutput> = core_shape_nodes
       .unwrap()
-      .map(|CoreShapeNode(core_shape_id, core_shape_descriptor)| {
+      .map(|core_shape_node| {
         let shape_id = match self.shape_projection.graph.node_weight(*current_node_index) {
-          Some(Node::Shape(ShapeNode(shape_id, _))) => shape_id,
+          Some(Node::Shape(shape_node)) => shape_node.shape_id.clone(),
           _ => unreachable!("expected to be a core shape node"),
         };
-        let trails: Vec<ChoiceOutput> = match core_shape_descriptor.kind {
+        let trails: Vec<ChoiceOutput> = match core_shape_node.descriptor.kind {
           ShapeKind::UnknownKind => vec![],
           ShapeKind::NullableKind => {
-            let nullable_parameter_id = core_shape_descriptor
+            let nullable_parameter_id = core_shape_node
+              .descriptor
               .kind
               .get_parameter_descriptor()
               .unwrap()
               .shape_parameter_id;
             let item_shape_id =
-              self.resolve_parameter_to_shape(shape_id, &String::from(nullable_parameter_id));
+              self.resolve_parameter_to_shape(&shape_id, &String::from(nullable_parameter_id));
             let trail = shape_trail
               .with_component(ShapeTrailPathComponent::NullableTrail {
                 shape_id: shape_id.clone(),
@@ -81,19 +82,20 @@ impl<'a> ShapeQueries<'a> {
                 shape_id: shape_id.clone(),
               }],
               shape_id: shape_id.clone(),
-              core_shape_kind: core_shape_descriptor.kind.clone(),
+              core_shape_kind: core_shape_node.descriptor.kind.clone(),
             }];
             output.append(&mut self.list_trail_choices(&trail));
             output
           }
           ShapeKind::OptionalKind => {
-            let optional_parameter_id = core_shape_descriptor
+            let optional_parameter_id = core_shape_node
+              .descriptor
               .kind
               .get_parameter_descriptor()
               .unwrap()
               .shape_parameter_id;
             let item_shape_id =
-              self.resolve_parameter_to_shape(shape_id, &String::from(optional_parameter_id));
+              self.resolve_parameter_to_shape(&shape_id, &String::from(optional_parameter_id));
             let trail = shape_trail
               .with_component(ShapeTrailPathComponent::OptionalTrail {
                 shape_id: shape_id.clone(),
@@ -108,13 +110,13 @@ impl<'a> ShapeQueries<'a> {
                 shape_id: shape_id.clone(),
               }],
               shape_id: shape_id.clone(),
-              core_shape_kind: core_shape_descriptor.kind.clone(),
+              core_shape_kind: core_shape_node.descriptor.kind.clone(),
             }];
             output.append(&mut self.list_trail_choices(&trail));
             output
           }
           ShapeKind::OneOfKind => self
-            .resolve_parameters_to_shapes(shape_id)
+            .resolve_parameters_to_shapes(&shape_id)
             .into_iter()
             .map(|i| {
               let (item_parameter_id, item_shape_id) = i;
@@ -135,7 +137,7 @@ impl<'a> ShapeQueries<'a> {
             parent_trail: shape_trail.clone(),
             additional_components: vec![],
             shape_id: shape_id.clone(),
-            core_shape_kind: core_shape_descriptor.kind.clone(),
+            core_shape_kind: core_shape_node.descriptor.kind.clone(),
           }],
         };
         trails
@@ -165,7 +167,7 @@ impl<'a> ShapeQueries<'a> {
       .graph
       .node_weight(core_shape_node_index)
     {
-      Some(Node::CoreShape(core_shape_node)) => &core_shape_node.1.kind,
+      Some(Node::CoreShape(core_shape_node)) => &core_shape_node.descriptor.kind,
       _ => unreachable!("all shapes should resolve to a core shape"),
     }
   }
@@ -330,7 +332,7 @@ impl<'a> ShapeQueries<'a> {
               .unwrap();
             match neighbor {
               Node::ShapeParameter(parameter_node) => {
-                Some((parameter_node.0.clone(), b.shape_id.clone()))
+                Some((parameter_node.parameter_id.clone(), b.shape_id.clone()))
               }
               _ => unreachable!("expected HasBinding edge to point to a ShapeParameter"),
             }
@@ -355,7 +357,10 @@ impl<'a> ShapeQueries<'a> {
         Edge::IsFieldOf => match projection.graph.node_weight(edge.source()) {
           Some(Node::Field(ref field_node)) => {
             // eprintln!("resolve_field_id item {:?}", field_node);
-            let FieldNode(field_id, descriptor) = field_node;
+            let FieldNode {
+              field_id,
+              descriptor,
+            } = field_node;
             if descriptor.name == *field_name {
               Some(field_id.clone())
             } else {
@@ -393,10 +398,7 @@ impl<'a> ShapeQueries<'a> {
       .edges_directed(field_node_index, petgraph::Direction::Incoming)
       .find_map(|edge| match edge.weight() {
         Edge::BelongsTo => match projection.graph.node_weight(edge.source()) {
-          Some(Node::Shape(ref shape_node)) => {
-            let ShapeNode(shape_id, _) = shape_node;
-            Some(shape_id.clone())
-          }
+          Some(Node::Shape(ref shape_node)) => Some(shape_node.shape_id.clone()),
           _ => None,
         },
         _ => None,
@@ -417,7 +419,10 @@ impl<'a> ShapeQueries<'a> {
       .get_shape_field_nodes(object_node_index)
       .unwrap()
       .map(|field_node| {
-        let FieldNode(field_id, descriptor) = field_node;
+        let FieldNode {
+          field_id,
+          descriptor,
+        } = field_node;
         (field_id, &descriptor.name)
       })
   }

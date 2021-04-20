@@ -7,23 +7,23 @@ import {
   ITaskIdentifier,
   ITaskSpecification,
   TaskIdentifier,
-  TaskType,
+  TaskType
 } from './tasks';
 import {
   EventsToRfcStateTaskOutput,
-  EventsToRfcStateTaskSpecification,
+  EventsToRfcStateTaskSpecification
 } from './tasks/EventsToRfcState';
 import {
   EventsFileToJsTaskOutput,
-  EventsFileToJsTaskSpecification,
+  EventsFileToJsTaskSpecification
 } from './tasks/EventsFileToJsTaskSpecification';
 import {
   InteractionsFileToJsTaskOutput,
-  InteractionsFileToJsTaskSpecification,
+  InteractionsFileToJsTaskSpecification
 } from './tasks/InteractionsFileToJs';
 import {
   RfcStateAndInteractionsToDiffsTaskOutput,
-  RfcStateAndInteractionsToDiffsTaskSpecification,
+  RfcStateAndInteractionsToDiffsTaskSpecification
 } from './tasks/RfcStateAndInteractionsToDiffs';
 import DataLoader from 'dataloader';
 
@@ -49,7 +49,7 @@ async function* FileSystemInputIterator(
         const scenario = {
           universe,
           eventsScenario,
-          interactionsScenario,
+          interactionsScenario
         };
         console.log({ scenario });
         yield scenario;
@@ -59,7 +59,6 @@ async function* FileSystemInputIterator(
 }
 
 import crypto from 'crypto';
-import { opticEngine } from '@useoptic/domain';
 
 function getOutputFilePrefix(id: TaskIdentifier) {
   const hash = crypto.createHash('sha256');
@@ -70,14 +69,14 @@ function getOutputFilePrefix(id: TaskIdentifier) {
 function WrapError(e: Error) {
   return {
     type: 'error',
-    value: e.message,
+    value: e.message
   };
 }
 
 function WrapSuccess(result: any) {
   return {
     type: 'success',
-    value: result,
+    value: result
   };
 }
 
@@ -88,33 +87,33 @@ function TaskSpecificationsForContext(
   const eventsFileToJs: EventsFileToJsTaskSpecification = {
     type: TaskType.EventsFileToJsTaskSpecification,
     context,
-    inputs: {},
+    inputs: {}
   };
   const eventsToRfcState: EventsToRfcStateTaskSpecification = {
     type: TaskType.EventsToRfcStateTaskSpecification,
     context,
     inputs: {
-      eventsFromFile: eventsFileToJs,
-    },
+      eventsFromFile: eventsFileToJs
+    }
   };
   const interactionsFileToJs: InteractionsFileToJsTaskSpecification = {
     type: TaskType.InteractionsFileToJsTaskSpecification,
     context,
-    inputs: {},
+    inputs: {}
   };
-  const rfcStateAndInteractionsToDiffs: RfcStateAndInteractionsToDiffsTaskSpecification = {
+  const eventsAndInteractionsToDiffs: RfcStateAndInteractionsToDiffsTaskSpecification = {
     type: TaskType.RfcStateAndInteractionsToDiffs,
     context,
     inputs: {
       interactionsFromFile: interactionsFileToJs,
-      rfcStateFromEvents: eventsToRfcState,
-    },
+      eventsFromFile: eventsFileToJs
+    }
   };
   return [
     eventsFileToJs,
     interactionsFileToJs,
     eventsToRfcState,
-    rfcStateAndInteractionsToDiffs,
+    eventsAndInteractionsToDiffs
   ];
 }
 
@@ -138,18 +137,18 @@ const outputSerializers: {
     return JSON.stringify(output.events, null, 2);
   },
   [TaskType.EventsToRfcStateTaskSpecification](output) {
-    return output.rfcState.toString();
+    return JSON.stringify(output.shapesProjection, null, 2);
   },
   [TaskType.InteractionsFileToJsTaskSpecification](output) {
     return JSON.stringify(output.interactions, null, 2);
   },
   [TaskType.RfcStateAndInteractionsToDiffs](output) {
     return JSON.stringify(
-      opticEngine.DiffJsonSerializer.toJs(output.diffs),
+      output.diffs,
       null,
       2
     );
-  },
+  }
 };
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -229,7 +228,7 @@ async function serializeResult(
 
 ////////////////////////////////////////////////////////////////////////////////
 async function main() {
-  const taskSpecificationToTaskId: ITaskIdentifier = function (
+  const taskSpecificationToTaskId: ITaskIdentifier = function(
     taskSpecification: ITaskSpecification
   ): string {
     return JSON.stringify(taskSpecification);
@@ -253,7 +252,7 @@ async function main() {
     }>(),
     [TaskType.RfcStateAndInteractionsToDiffs]: new TypedEventEmitter<{
       [key: string]: RfcStateAndInteractionsToDiffsTaskOutput;
-    }>(),
+    }>()
   };
 
   inputQueue.on('added', async ({ taskSpecification }) => {
@@ -267,7 +266,7 @@ async function main() {
           const [key, value] = entry;
           return {
             key,
-            value,
+            value
           };
         }
       );
@@ -301,11 +300,9 @@ async function main() {
       serializeFailure(id, taskSpecification, e);
     }
   });
-  const results: DataLoader<ITaskSpecification, any> = new DataLoader<
-    ITaskSpecification,
+  const results: DataLoader<ITaskSpecification, any> = new DataLoader<ITaskSpecification,
     any,
-    string
-  >(
+    string>(
     (batch) => {
       console.log({ batch });
       const promises = batch.map((x) => {
@@ -324,7 +321,7 @@ async function main() {
     },
     {
       cacheKeyFn: taskSpecificationToTaskId,
-      maxBatchSize: 1,
+      maxBatchSize: 1
     }
   );
   const inputIterator = FileSystemInputIterator('./inputs');

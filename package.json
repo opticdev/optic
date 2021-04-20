@@ -8,7 +8,6 @@
     "build-ui": "cd workspaces/ui && yarn run build-local",
     "build-demo": "cd workspaces/ui && yarn run build-demo",
     "build-spec": "cd workspaces/ui && yarn run build-spec",
-    "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
     "postpull": "printf 'Run these commands:\n$ source sourceme.sh\n$ optic_build\n'",
     "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
     "registry:start": "cd docker/private-npm-registry && docker-compose up &",
@@ -22,20 +21,21 @@
     "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
   },
   "workspaces": [
-    "workspaces/analytics",
-    "workspaces/saas-types",
     "workspaces/diff-engine",
     "workspaces/diff-engine-wasm",
+    "workspaces/analytics",
+    "workspaces/saas-types",
+    "workspaces/graph-lib",
+    "workspaces/spectacle",
+    "workspaces/changelog",
     "workspaces/cli-config",
     "workspaces/cli-shared",
     "workspaces/client-utilities",
     "workspaces/cli-client",
-    "workspaces/ui",
+    "workspaces/ui-v2",
     "workspaces/cli-scripts",
     "workspaces/cli-server",
     "workspaces/local-cli",
-    "workspaces/agent-cli",
-    "workspaces/ci-cli",
     "workspaces/snapshot-tests"
   ],
   "devDependencies": {
@@ -43,7 +43,7 @@
     "all-contributors-cli": "^6.20.0",
     "prettier": "^2.0.4",
     "semver": "^7.3.2",
-    "typescript": "^3.8",
+    "typescript": "3.9",
     "wait-on": "^4.0.0",
     "wsrun": "^5.2.0"
   },

@@ -15,7 +15,7 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
-import { basePath } from '@useoptic/ui';
+import { basePath } from '@useoptic/ui-v2';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEvents, trackWithApiName } from './analytics';
@@ -208,11 +208,13 @@ class CliServer {
     // testing service proxy
     app.use(
       '/api/testing',
+      //@ts-ignore
       createProxyMiddleware({
         changeOrigin: true,
         followRedirects: true,
         target: this.config.cloudApiBaseUrl,
         pathRewrite(input, req) {
+          //@ts-ignore
           return input.substring(req.baseUrl.length);
         },
       })

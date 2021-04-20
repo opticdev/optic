@@ -1,16 +1,14 @@
 {
   "name": "@useoptic/saas-types",
   "description": "interfaces and types for Optic SaaS surface area",
-  "version": "9.0.19",
+  "version": "9.0.13",
   "main": "build/index.js",
   "files": [
     "build"
   ],
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
+    "ws:clean": "rm -rf build",
     "ws:test": "echo \"saas-types\""
-  },
-  "dependencies": {},
-  "devDependencies": {}
+  }
 }

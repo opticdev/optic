@@ -16,9 +16,6 @@ includes:
     taskfile: taskfiles/release/Taskfile.yml
   release:side-channel:
     taskfile: taskfiles/release/side-channel/Taskfile.yml
-  ui:
-    taskfile: workspaces/ui/Taskfile.yml
-    dir: workspaces/ui
   utility:
     taskfile: taskfiles/utility/Taskfile.yml
   verdaccio:

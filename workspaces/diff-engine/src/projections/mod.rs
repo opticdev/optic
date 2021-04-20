@@ -3,12 +3,14 @@ pub mod endpoint;
 pub mod history;
 pub mod shape;
 pub mod spec_events;
+pub mod spectacle;
 
 pub use conflicts::ConflictsProjection;
 pub use endpoint::EndpointProjection;
 pub use history::{CommitId, HistoryProjection};
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
+pub use spectacle::endpoints::EndpointsProjection;
 
 use crate::events::{EndpointEvent, RfcEvent, ShapeEvent, SpecEvent};
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent, CommandError};
@@ -20,6 +22,7 @@ pub struct SpecProjection {
   history: history::HistoryProjection,
   shape: shape::ShapeProjection,
   conflicts: conflicts::ConflictsProjection,
+  spectacle_endpoints: spectacle::endpoints::EndpointsProjection,
 }
 
 impl Default for SpecProjection {
@@ -29,6 +32,7 @@ impl Default for SpecProjection {
       history: HistoryProjection::default(),
       shape: ShapeProjection::default(),
       conflicts: ConflictsProjection::default(),
+      spectacle_endpoints: EndpointsProjection::default(),
     }
   }
 }
@@ -48,6 +52,17 @@ impl SpecProjection {
   pub fn conflicts(&self) -> &ConflictsProjection {
     &self.conflicts
   }
+  pub fn spectacle_endpoints(&self) -> &EndpointsProjection {
+    &self.spectacle_endpoints
+  }
+  pub fn shapes_serializable(&self) -> crate::projections::shape::SerializableGraph {
+    self.shape.to_serializable_graph()
+  }
+  pub fn spectacle_endpoints_serializable(
+    &self,
+  ) -> crate::projections::spectacle::endpoints::SerializableGraph {
+    self.spectacle_endpoints.to_serializable_graph()
+  }
 }
 
 impl Aggregate for SpecProjection {
@@ -64,13 +79,18 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
     match self {
       SpecEvent::EndpointEvent(event) => {
         projection.endpoint.apply(event.clone());
+        projection.spectacle_endpoints.apply(event.clone());
         projection.conflicts.apply(event);
       }
       SpecEvent::ShapeEvent(event) => {
         projection.shape.apply(event.clone());
         projection.conflicts.apply(event);
       }
-      SpecEvent::RfcEvent(event) => projection.history.apply(event),
+      SpecEvent::RfcEvent(event) => {
+        projection.history.apply(event.clone());
+        projection.shape.apply(event.clone());
+        projection.spectacle_endpoints.apply(event.clone());
+      }
     }
   }
 }

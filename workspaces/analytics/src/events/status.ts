@@ -1,7 +1,6 @@
 import { DescribeEvent, RegisteredEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 
 const StatusRunSchema = Joi.object({
@@ -10,6 +9,7 @@ const StatusRunSchema = Joi.object({
   diffCount: Joi.number(),
   timeMs: Joi.number()
 });
+// @ts-ignore
 type StatusRunProperties = Joi.extractType<
   typeof StatusRunSchema
 >;

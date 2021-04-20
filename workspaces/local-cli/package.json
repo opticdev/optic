@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "API CLI from Optic. Document and test your APIs as you build them.",
-  "version": "9.0.19",
+  "version": "9.0.13",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -13,18 +13,20 @@
   },
   "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
-    "@oclif/command": "^1",
-    "@oclif/config": "^1",
-    "@oclif/plugin-help": "^2",
-    "@oclif/plugin-not-found": "^1.2.4",
-    "@useoptic/analytics": "9.0.19",
-    "@useoptic/cli-client": "9.0.19",
-    "@useoptic/cli-config": "9.0.19",
-    "@useoptic/cli-scripts": "9.0.19",
-    "@useoptic/cli-server": "9.0.19",
-    "@useoptic/cli-shared": "9.0.19",
-    "@useoptic/domain": "10.0.67",
-    "analytics-node": "^4.0.1",
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/errors": "^1.3.4",
+    "@oclif/plugin-help": "^3.2.2",
+    "@useoptic/analytics": "workspace:workspaces/analytics",
+    "@useoptic/cli-client": "workspace:workspaces/cli-client",
+    "@useoptic/cli-config": "workspace:workspaces/cli-config",
+    "@useoptic/cli-scripts": "workspace:workspaces/cli-scripts",
+    "@useoptic/cli-server": "workspace:workspaces/cli-server",
+    "@useoptic/cli-shared": "workspace:workspaces/cli-shared",
+    "@useoptic/client-utilities": "workspace:workspaces/client-utilities",
+    "@useoptic/domain": "10.0.64",
+    "@useoptic/domain-utilities": "10.0.64",
+    "analytics-node": "^3.4.0-beta.1",
     "assert": "^2.0.0",
     "cli-table3": "^0.6.0",
     "cli-ux": "^5.4.1",
@@ -33,14 +35,16 @@
     "eventsource": "^1.0.7",
     "find-process": "^1.4.3",
     "fs-extra": "^9.0.0",
+    "get-port": "^5.1.1",
     "git-rev-sync": "^3.0.1",
+    "global-request-logger": "^0.1.1",
     "jsesc": "^3.0.1",
     "jwt-decode": "^2.2.0",
     "listr": "^0.14.3",
     "lodash.sortby": "^4.7.0",
     "nice-try": "^2.0.1",
     "pad-left": "^2.1.0",
-    "react-dev-utils": "^11.0.4",
+    "react-dev-utils": "^10.0.0",
     "slugify": "^1.4.0",
     "strip-ansi": "^6.0.0",
     "tslib": "^1",
@@ -52,13 +56,22 @@
   "devDependencies": {
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
+    "@types/body-parser": "^1.19.0",
     "@types/chai": "^4",
+    "@types/cors": "^2.8.10",
+    "@types/eventsource": "^1.1.5",
+    "@types/express": "^4.17.11",
     "@types/find-process": "^1.2.0",
+    "@types/fs-extra": "^9.0.8",
+    "@types/get-port": "^4.2.0",
+    "@types/js-yaml": "^4.0.0",
+    "@types/lodash.sortby": "^4.7.6",
     "@types/mocha": "^5",
     "@types/node": "^10",
     "@types/react-dev-utils": "^9.0.2",
     "@types/url-join": "^4.0.0",
     "@types/uuid": "^7.0.3",
+    "@types/wait-on": "^5.2.0",
     "chai": "^4",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
@@ -66,7 +79,7 @@
     "mocha": "^7.1.2",
     "nyc": "^14",
     "ts-node": "^8",
-    "typescript": "^3.8"
+    "typescript": "3.9"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -89,8 +102,7 @@
     "commands": "./lib/commands",
     "bin": "api",
     "plugins": [
-      "@oclif/plugin-help",
-      "@oclif/plugin-not-found"
+      "@oclif/plugin-help"
     ]
   },
   "scripts": {
@@ -100,7 +112,7 @@
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf lib/*",
+    "ws:clean": "rm -rf lib",
     "ws:test": "echo local-cli",
     "postinstall": "api daemon:stop || exit 0"
   },

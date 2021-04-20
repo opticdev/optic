@@ -1,64 +1,297 @@
 use crate::events::{ShapeEvent, SpecEvent};
+use crate::projections::shape::ShapeChoice::Primitive;
+use crate::queries::shape::{ChoiceOutput, ShapeQueries};
+use crate::shapes::traverser::ShapeTrailPathComponent::ObjectFieldTrail;
+use crate::shapes::ShapeTrail;
 use crate::state::shape::{
   FieldId, FieldShapeDescriptor, ParameterShapeDescriptor, ProviderDescriptor, ShapeId, ShapeIdRef,
   ShapeKind, ShapeKindDescriptor, ShapeParameterId, ShapeParameterIdRef, ShapeParametersDescriptor,
 };
-use cqrs_core::{Aggregate, AggregateEvent};
+use crate::RfcEvent;
+use cqrs_core::{Aggregate, AggregateEvent, Event};
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, HashMap};
+use std::iter::FromIterator;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type", content = "data")]
 pub enum Node {
   CoreShape(CoreShapeNode),
   Shape(ShapeNode),
   Field(FieldNode),
   ShapeParameter(ShapeParameterNode),
+  BatchCommit(BatchCommitNode),
 }
 
-#[derive(Debug)]
-pub struct ShapeNode(pub ShapeId, pub ShapeNodeDescriptor);
-#[derive(Debug)]
-pub struct CoreShapeNode(pub ShapeId, pub CoreShapeNodeDescriptor);
-#[derive(Debug)]
-pub struct FieldNode(pub FieldId, pub FieldNodeDescriptor);
-#[derive(Debug)]
-pub struct ShapeParameterNode(pub ShapeParameterId, pub ShapeParameterNodeDescriptor);
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShapeNode {
+  pub shape_id: ShapeId,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CoreShapeNode {
+  pub shape_id: ShapeId,
+  pub descriptor: CoreShapeNodeDescriptor,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FieldNode {
+  pub field_id: FieldId,
+  pub descriptor: FieldNodeDescriptor,
+}
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShapeParameterNode {
+  pub parameter_id: ShapeParameterId,
+  pub descriptor: ShapeParameterNodeDescriptor,
+}
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BatchCommitNode {
+  batch_id: String,
+  created_at: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type", content = "data")]
 pub enum Edge {
   BelongsTo,
   IsDescendantOf,
   IsFieldOf,
   IsParameterOf,
   HasBinding(ShapeParameterBinding),
+  CreatedIn,
+  UpdatedIn,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ShapeParameterBinding {
   pub shape_id: ShapeId,
 }
 
 pub type NodeId = String;
 
-#[derive(Debug)]
-pub struct ShapeNodeDescriptor {}
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CoreShapeNodeDescriptor {
   pub kind: ShapeKind,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ShapeParameterNodeDescriptor {}
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct FieldNodeDescriptor {
   pub name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ShapeProjection {
   pub graph: Graph<Node, Edge>,
   pub node_id_to_index: HashMap<NodeId, petgraph::graph::NodeIndex>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct GraphNodesAndEdges<N, E> {
+  nodes: Vec<N>,
+  edges: Vec<(usize, usize, E)>,
+  node_index_to_id: BTreeMap<String, String>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub enum JsonType {
+  String,
+  Number,
+  Boolean,
+  Array,
+  Object,
+  Null,
+  Undefined,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct PrimitiveChoice {
+  shape_id: ShapeId,
+  json_type: JsonType,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ObjectFieldChoice {
+  name: String,
+  field_id: FieldId,
+  shape_id: ShapeId,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ObjectChoice {
+  shape_id: ShapeId,
+  json_type: JsonType,
+  fields: Vec<ObjectFieldChoice>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ArrayChoice {
+  json_type: JsonType,
+  shape_id: ShapeId,
+  item_shape_id: ShapeId,
+}
+
+#[derive(Debug, Serialize, Clone)]
+#[serde(tag = "type")]
+pub enum ShapeChoice {
+  Primitive(PrimitiveChoice),
+  Object(ObjectChoice),
+  Array(ArrayChoice),
+  Any,
+  Unknown,
+}
+pub type ShapeChoiceMapping = BTreeMap<ShapeId, Vec<ShapeChoice>>;
+impl From<&ShapeProjection> for ShapeChoiceMapping {
+  fn from(shape_projection: &ShapeProjection) -> Self {
+    let queries = ShapeQueries::new(shape_projection);
+    let shape_choices = shape_projection
+      .graph
+      .node_indices()
+      .filter_map(|i| {
+        let node = shape_projection
+          .graph
+          .node_weight(i)
+          .expect("node should exist");
+        match node {
+          Node::Shape(shape_node) => Some(shape_node),
+          _ => None,
+        }
+      })
+      .map(|shape_node| {
+        let trail = ShapeTrail::new(shape_node.shape_id.clone());
+        let trail_choices = queries.list_trail_choices(&trail);
+        let choices = trail_choices
+          .iter()
+          .filter_map(|choice| {
+            let x = match choice.core_shape_kind {
+              ShapeKind::ObjectKind => {
+                let object_fields = queries.resolve_shape_field_id_and_names(&choice.shape_id);
+                let fields = object_fields
+                  .map(|(field_id, name)| {
+                    let field_shape_id = queries
+                      .resolve_field_shape_node(field_id)
+                      .expect("expected field shape to resolve");
+
+                    ObjectFieldChoice {
+                      field_id: field_id.clone(),
+                      shape_id: field_shape_id,
+                      name: name.clone(),
+                    }
+                  })
+                  .collect();
+
+                let output = ObjectChoice {
+                  shape_id: choice.shape_id.clone(),
+                  json_type: JsonType::Object,
+                  fields,
+                };
+                ShapeChoice::Object(output)
+              }
+              ShapeKind::ListKind => {
+                let shape_parameter_id = &String::from(
+                  choice
+                    .core_shape_kind
+                    .get_parameter_descriptor()
+                    .expect("expected $list to have a parameter descriptor")
+                    .shape_parameter_id,
+                );
+                let list_item_shape_id =
+                  queries.resolve_parameter_to_shape(&choice.shape_id, shape_parameter_id);
+                let output = ArrayChoice {
+                  shape_id: choice.shape_id.clone(),
+                  json_type: JsonType::Array,
+                  item_shape_id: list_item_shape_id,
+                };
+                ShapeChoice::Array(output)
+              }
+              ShapeKind::MapKind => unimplemented!(),
+              ShapeKind::OneOfKind => unreachable!(),
+              ShapeKind::AnyKind => ShapeChoice::Any,
+              ShapeKind::UnknownKind => ShapeChoice::Unknown,
+              ShapeKind::StringKind => Primitive(PrimitiveChoice {
+                shape_id: choice.shape_id.clone(),
+                json_type: JsonType::String,
+              }),
+              ShapeKind::NumberKind => Primitive(PrimitiveChoice {
+                shape_id: choice.shape_id.clone(),
+                json_type: JsonType::Number,
+              }),
+              ShapeKind::BooleanKind => Primitive(PrimitiveChoice {
+                shape_id: choice.shape_id.clone(),
+                json_type: JsonType::Boolean,
+              }),
+              ShapeKind::NullableKind => Primitive(PrimitiveChoice {
+                shape_id: choice.shape_id.clone(),
+                json_type: JsonType::Null,
+              }),
+              ShapeKind::IdentifierKind => unimplemented!(),
+              ShapeKind::ReferenceKind => unimplemented!(),
+              ShapeKind::OptionalKind => Primitive(PrimitiveChoice {
+                shape_id: choice.shape_id.clone(),
+                json_type: JsonType::Undefined,
+              }),
+            };
+            Some(x)
+          })
+          .collect();
+        (shape_node.shape_id.clone(), choices)
+      });
+    BTreeMap::from_iter(shape_choices)
+  }
+}
+
+// duplicated in [projections/spectacle/endpoints.rs]
+pub type SerializableGraph = GraphNodesAndEdges<Node, Edge>;
+impl From<ShapeProjection> for SerializableGraph {
+  fn from(shape_projection: ShapeProjection) -> Self {
+    let (graph_nodes, graph_edges) = shape_projection.graph.into_nodes_edges();
+    let nodes = graph_nodes.into_iter().map(|x| x.weight).collect();
+    let edges = graph_edges
+      .into_iter()
+      .map(|x| (x.source().index(), x.target().index(), x.weight))
+      .collect();
+    let value: GraphNodesAndEdges<Node, Edge> = GraphNodesAndEdges {
+      nodes,
+      edges,
+      node_index_to_id: BTreeMap::from_iter(
+        shape_projection
+          .node_id_to_index
+          .into_iter()
+          .map(|(k, v)| (v.index().to_string(), k)),
+      ),
+    };
+    value
+  }
+}
+
+impl ShapeProjection {
+  pub fn to_json_string(&self) -> String {
+    serde_json::to_string(&self.to_serializable_graph()).expect("graph should serialize")
+  }
+
+  pub fn to_serializable_graph(&self) -> SerializableGraph {
+    let copy = self.clone();
+    copy.into()
+  }
+
+  pub fn to_choice_mapping(&self) -> ShapeChoiceMapping {
+    self.into()
+  }
 }
 
 impl Default for ShapeProjection {
@@ -86,21 +319,21 @@ impl Default for ShapeProjection {
 
 fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_kind: ShapeKind) {
   let descriptor = shape_kind.get_descriptor();
-  let shape_node = Node::CoreShape(CoreShapeNode(
-    ShapeId::from(descriptor.base_shape_id),
-    CoreShapeNodeDescriptor {
+  let shape_node = Node::CoreShape(CoreShapeNode {
+    shape_id: ShapeId::from(descriptor.base_shape_id),
+    descriptor: CoreShapeNodeDescriptor {
       kind: shape_kind.clone(),
     },
-  ));
+  });
   let shape_node_index = shape_projection.graph.add_node(shape_node);
   shape_projection
     .node_id_to_index
     .insert(String::from(descriptor.base_shape_id), shape_node_index);
   if let Some(shape_parameter_descriptor) = shape_kind.get_parameter_descriptor() {
-    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
-      String::from(shape_parameter_descriptor.shape_parameter_id),
-      ShapeParameterNodeDescriptor {},
-    ));
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode {
+      parameter_id: String::from(shape_parameter_descriptor.shape_parameter_id),
+      descriptor: ShapeParameterNodeDescriptor {},
+    });
     let shape_parameter_node_index = shape_projection.graph.add_node(shape_parameter_node);
     shape_projection.node_id_to_index.insert(
       String::from(shape_parameter_descriptor.shape_parameter_id),
@@ -115,12 +348,54 @@ fn add_core_shape_to_projection(shape_projection: &mut ShapeProjection, shape_ki
 }
 
 impl ShapeProjection {
+  ////////////////////////////////////////////////////////////////////////////////
+  pub fn with_batch_commit(&mut self, batch_id: String, created_at: String) {
+    let node = Node::BatchCommit(BatchCommitNode {
+      batch_id: batch_id.clone(),
+      created_at: created_at.clone(),
+    });
+    let node_index = self.graph.add_node(node);
+    self.node_id_to_index.insert(batch_id, node_index);
+  }
+  pub fn with_creation_history(&mut self, batch_id: &str, created_node_id: &str) {
+    let created_node_index = self
+      .node_id_to_index
+      .get(created_node_id)
+      .expect("expected created_node_id to exist");
+
+    let batch_node_index_option = self.node_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*created_node_index, *batch_node_index, Edge::CreatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  pub fn with_update_history(&mut self, batch_id: &str, updated_node_id: &str) {
+    let updated_node_index = self
+      .node_id_to_index
+      .get(updated_node_id)
+      .expect("expected updated_node_id to exist");
+
+    let batch_node_index_option = self.node_id_to_index.get(batch_id);
+
+    if let Some(batch_node_index) = batch_node_index_option {
+      self
+        .graph
+        .add_edge(*updated_node_index, *batch_node_index, Edge::UpdatedIn);
+    } else {
+      eprintln!("bad implicit batch id {}", &batch_id);
+    }
+  }
+  ////////////////////////////////////////////////////////////////////////////////
   pub fn with_shape_parameter(&mut self, shape_parameter_id: ShapeParameterId, shape_id: ShapeId) {
     let shape_node_index = *self.get_shape_node_index(&shape_id).unwrap();
-    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode(
-      shape_parameter_id.clone(),
-      ShapeParameterNodeDescriptor {},
-    ));
+    let shape_parameter_node = Node::ShapeParameter(ShapeParameterNode {
+      parameter_id: shape_parameter_id.clone(),
+      descriptor: ShapeParameterNodeDescriptor {},
+    });
     let shape_parameter_node_index = self.graph.add_node(shape_parameter_node);
     self
       .node_id_to_index
@@ -139,7 +414,9 @@ impl ShapeProjection {
     parameters: ShapeParametersDescriptor,
     name: String,
   ) {
-    let shape_node = Node::Shape(ShapeNode(shape_id.clone(), ShapeNodeDescriptor {}));
+    let shape_node = Node::Shape(ShapeNode {
+      shape_id: shape_id.clone(),
+    });
     let shape_node_index = self.graph.add_node(shape_node);
     self.node_id_to_index.insert(shape_id, shape_node_index);
 
@@ -317,7 +594,10 @@ impl ShapeProjection {
       _ => panic!("expected specs to only use FieldShapeDescriptor::FieldShapeFromShape"),
     };
 
-    let field_node = Node::Field(FieldNode(field_id.clone(), FieldNodeDescriptor { name }));
+    let field_node = Node::Field(FieldNode {
+      field_id: field_id.clone(),
+      descriptor: FieldNodeDescriptor { name },
+    });
     let field_node_index = self.graph.add_node(field_node);
     self
       .node_id_to_index
@@ -385,8 +665,8 @@ impl ShapeProjection {
       .edges_directed(*parent_node_index, petgraph::Direction::Incoming);
     let child_edge = edges.find(|edge| match edge.weight() {
       Edge::IsDescendantOf => match self.graph.node_weight(edge.source()) {
-        Some(Node::Shape(ShapeNode(neighbour_id, _)))
-        | Some(Node::CoreShape(CoreShapeNode(neighbour_id, _))) => *child_id == *neighbour_id,
+        Some(Node::Shape(neighbor)) => *child_id == neighbor.shape_id,
+        Some(Node::CoreShape(neighbor)) => *child_id == neighbor.shape_id,
         _ => false,
       },
       _ => false,
@@ -448,23 +728,30 @@ impl ShapeProjection {
   ) -> Option<impl Iterator<Item = &ShapeKind>> {
     let core_shape_nodes = self.get_core_shape_nodes(node_index)?;
 
-    Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.1.kind))
+    Some(core_shape_nodes.map(|core_shape_node| &core_shape_node.descriptor.kind))
   }
 }
-
-// struct Example {
-//     inside: Vec<u8>,
-// }
-
-// impl Example {
-//     pub fn inside_iter<T>(&self) -> impl Iterator<Item = &u8> {
-//         self.inside.iter()
-//     }
-// }
 
 impl Aggregate for ShapeProjection {
   fn aggregate_type() -> &'static str {
     "shape_projection"
+  }
+}
+impl AggregateEvent<ShapeProjection> for RfcEvent {
+  fn apply_to(self, projection: &mut ShapeProjection) {
+    match self {
+      RfcEvent::BatchCommitStarted(e) => projection.with_batch_commit(
+        e.batch_id,
+        e.event_context
+          .expect("why is event_context optional again?")
+          .created_at,
+      ),
+      _ => eprintln!(
+        "Ignoring applying event of type '{}' for '{}'",
+        self.event_type(),
+        ShapeProjection::aggregate_type()
+      ),
+    }
   }
 }
 
@@ -472,22 +759,47 @@ impl AggregateEvent<ShapeProjection> for ShapeEvent {
   fn apply_to(self, projection: &mut ShapeProjection) {
     match self {
       ShapeEvent::ShapeAdded(e) => {
-        projection.with_shape(e.shape_id, e.base_shape_id, e.parameters, e.name)
+        projection.with_shape(e.shape_id.clone(), e.base_shape_id, e.parameters, e.name);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.shape_id);
+        }
       }
       ShapeEvent::ShapeParameterAdded(e) => {
-        projection.with_shape_parameter(e.shape_parameter_id, e.shape_id)
+        projection.with_shape_parameter(e.shape_parameter_id.clone(), e.shape_id);
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.shape_parameter_id);
+        }
       }
       ShapeEvent::ShapeParameterShapeSet(e) => {
-        projection.with_shape_parameter_shape(e.shape_descriptor)
+        projection.with_shape_parameter_shape(e.shape_descriptor.clone());
+        if let Some(c) = e.event_context {
+          if let ParameterShapeDescriptor::ProviderInShape(d) = &e.shape_descriptor {
+            projection.with_update_history(&c.client_command_batch_id, &d.shape_id);
+          }
+        }
       }
       ShapeEvent::FieldAdded(e) => {
-        projection.with_field(e.field_id, e.shape_id, e.shape_descriptor, e.name)
+        projection.with_field(e.field_id.clone(), e.shape_id, e.shape_descriptor, e.name);
+
+        if let Some(c) = e.event_context {
+          projection.with_creation_history(&c.client_command_batch_id, &e.field_id);
+        }
       }
       ShapeEvent::FieldShapeSet(e) => {
-        projection.with_field_shape(e.shape_descriptor);
+        projection.with_field_shape(e.shape_descriptor.clone());
+
+        if let Some(c) = e.event_context {
+          if let FieldShapeDescriptor::FieldShapeFromShape(d) = &e.shape_descriptor {
+            projection.with_update_history(&c.client_command_batch_id, &d.field_id);
+          }
+        }
       }
       ShapeEvent::BaseShapeSet(e) => {
-        projection.with_base_shape(e.shape_id, e.base_shape_id);
+        projection.with_base_shape(e.shape_id.clone(), e.base_shape_id);
+
+        if let Some(c) = e.event_context {
+          projection.with_update_history(&c.client_command_batch_id, &e.shape_id);
+        }
       }
       x => {
         //dbg!("skipping ShapeEvent in ShapeProjection. warning?");

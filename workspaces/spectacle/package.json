@@ -1,0 +1,35 @@
+{
+  "name": "@useoptic/spectacle",
+  "version": "9.0.13",
+  "scripts": {
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build",
+    "ws:test": "tap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/spectacle"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "/build",
+    "/.env"
+  ],
+  "dependencies": {
+    "@graphql-tools/schema": "^7.1.3",
+    "@useoptic/diff-engine-wasm": "workspace:workspaces/diff-engine-wasm",
+    "@useoptic/graph-lib": "workspace:workspaces/graph-lib",
+    "graphql": "^15.5.0",
+    "graphql-type-json": "^0.3.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.6",
+    "@types/tap": "^14.10.1",
+    "@types/uuid": "^8",
+    "tap": "^14.11.0",
+    "typescript": "^4.2.4"
+  }
+}

@@ -1,1 +1,1243 @@
-RfcState(RequestsState(Map(path_4DpQAqvkOA -> PathComponent(path_4DpQAqvkOA,ParameterizedPathComponentDescriptor(path_jNlbaVZ0Ar,todoId,ShapedRequestParameterShapeDescriptor(shape_4bul4hj0a1,false)),false), root -> PathComponent(root,BasicPathComponentDescriptor(null,),false), path_KfgfQ24ALA -> PathComponent(path_KfgfQ24ALA,BasicPathComponentDescriptor(root,nested),false), path_u2SxMpeXl7 -> PathComponent(path_u2SxMpeXl7,BasicPathComponentDescriptor(root,complex-types),false), path_jNlbaVZ0Ar -> PathComponent(path_jNlbaVZ0Ar,BasicPathComponentDescriptor(root,todos),false)),Map(request_sQzzwQ8hQB -> HttpRequest(request_sQzzwQ8hQB,RequestDescriptor(path_jNlbaVZ0Ar,GET,UnsetBodyDescriptor()),false), request_58N3sKJep4 -> HttpRequest(request_58N3sKJep4,RequestDescriptor(path_4DpQAqvkOA,PUT,ShapedBodyDescriptor(application/json,cmbM7N_0,false)),false), request_jYQPxI5cV3 -> HttpRequest(request_jYQPxI5cV3,RequestDescriptor(path_u2SxMpeXl7,GET,UnsetBodyDescriptor()),false), request_BEvbtW01Fz -> HttpRequest(request_BEvbtW01Fz,RequestDescriptor(path_KfgfQ24ALA,GET,UnsetBodyDescriptor()),false)),Map(parameter_IHN2kDSLbI -> HttpRequestParameter(parameter_IHN2kDSLbI,RequestParameterDescriptor(path_jNlbaVZ0Ar,GET,query,queryString,ShapedRequestParameterShapeDescriptor(shape_W0JK7E2Z3Z,false)),false), parameter_fqtP8Twvv9 -> HttpRequestParameter(parameter_fqtP8Twvv9,RequestParameterDescriptor(path_4DpQAqvkOA,PUT,query,queryString,ShapedRequestParameterShapeDescriptor(shape_IvrrBkWGV6,false)),false), parameter_B3H70aHhh9 -> HttpRequestParameter(parameter_B3H70aHhh9,RequestParameterDescriptor(path_u2SxMpeXl7,GET,query,queryString,ShapedRequestParameterShapeDescriptor(shape_TbDgP5sQHV,false)),false), parameter_NMR5ysKFyz -> HttpRequestParameter(parameter_NMR5ysKFyz,RequestParameterDescriptor(path_KfgfQ24ALA,GET,query,queryString,ShapedRequestParameterShapeDescriptor(shape_bad2uCMKoj,false)),false)),Map(response_ruRhRU7VwB -> HttpResponse(response_ruRhRU7VwB,ResponseDescriptor(path_jNlbaVZ0Ar,GET,200,ShapedBodyDescriptor(application/json,JR1dZS_0,false)),false), response_LmNq2E73PM -> HttpResponse(response_LmNq2E73PM,ResponseDescriptor(path_4DpQAqvkOA,PUT,200,ShapedBodyDescriptor(application/json,Yen51t_0,false)),false), response_bPAj16GQlK -> HttpResponse(response_bPAj16GQlK,ResponseDescriptor(path_u2SxMpeXl7,GET,200,ShapedBodyDescriptor(application/json,nKP46f_0,false)),false), response_0Oko7f6vUK -> HttpResponse(response_0Oko7f6vUK,ResponseDescriptor(path_KfgfQ24ALA,GET,200,ShapedBodyDescriptor(application/json,GLquYH_0,false)),false)),Map(path_jNlbaVZ0Ar -> root, path_4DpQAqvkOA -> path_jNlbaVZ0Ar, path_u2SxMpeXl7 -> root, path_KfgfQ24ALA -> root)),ShapesState(Map(shape_jjqKM2kZXa -> ShapeEntity(shape_jjqKM2kZXa,ShapeValue(true,$optional,DynamicParameterList(List()),List(),),false), $list -> ShapeEntity($list,ShapeValue(false,$list,StaticParameterList(List($listItem)),List(),List),false), shape_sPlWNbwI8x -> ShapeEntity(shape_sPlWNbwI8x,ShapeValue(true,$nullable,DynamicParameterList(List()),List(),),false), $unknown -> ShapeEntity($unknown,ShapeValue(false,$unknown,NoParameterList(),List(),unknown),false), GLquYH_12 -> ShapeEntity(GLquYH_12,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), shape_IvrrBkWGV6 -> ShapeEntity(shape_IvrrBkWGV6,ShapeValue(true,$object,DynamicParameterList(List()),List(),),false), $any -> ShapeEntity($any,ShapeValue(false,$any,NoParameterList(),List(),Any),false), cmbM7N_0 -> ShapeEntity(cmbM7N_0,ShapeValue(true,$object,DynamicParameterList(List()),List(cmbM7N_1, cmbM7N_3, cmbM7N_5),),false), nKP46f_5 -> ShapeEntity(nKP46f_5,ShapeValue(true,$number,DynamicParameterList(List()),List(),),false), $string -> ShapeEntity($string,ShapeValue(false,$string,NoParameterList(),List(),string),false), shape_NUMCe9K2lO -> ShapeEntity(shape_NUMCe9K2lO,ShapeValue(true,$optional,DynamicParameterList(List()),List(),),false), JR1dZS_4 -> ShapeEntity(JR1dZS_4,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), nKP46f_4 -> ShapeEntity(nKP46f_4,ShapeValue(true,$list,DynamicParameterList(List()),List(),),false), Yen51t_4 -> ShapeEntity(Yen51t_4,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), nKP46f_0 -> ShapeEntity(nKP46f_0,ShapeValue(true,$object,DynamicParameterList(List()),List(nKP46f_1, nKP46f_3, nKP46f_6),),false), Yen51t_0 -> ShapeEntity(Yen51t_0,ShapeValue(true,$object,DynamicParameterList(List()),List(Yen51t_1, Yen51t_3, Yen51t_5),),false), GLquYH_4 -> ShapeEntity(GLquYH_4,ShapeValue(true,$object,DynamicParameterList(List()),List(GLquYH_5),),false), shape_srPrzEF1RL -> ShapeEntity(shape_srPrzEF1RL,ShapeValue(true,$optional,DynamicParameterList(List()),List(),),false), shape_TbDgP5sQHV -> ShapeEntity(shape_TbDgP5sQHV,ShapeValue(true,$object,DynamicParameterList(List()),List(),),false), shape_W0JK7E2Z3Z -> ShapeEntity(shape_W0JK7E2Z3Z,ShapeValue(true,$object,DynamicParameterList(List()),List(),),false), JR1dZS_0 -> ShapeEntity(JR1dZS_0,ShapeValue(true,$object,DynamicParameterList(List()),List(JR1dZS_1, JR1dZS_3, field_i0RPTArMFH),),false), $number -> ShapeEntity($number,ShapeValue(false,$number,NoParameterList(),List(),number),false), $optional -> ShapeEntity($optional,ShapeValue(false,$optional,StaticParameterList(List($optionalInner)),List(),Optional),false), nKP46f_9 -> ShapeEntity(nKP46f_9,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), $boolean -> ShapeEntity($boolean,ShapeValue(false,$boolean,NoParameterList(),List(),bool),false), $nullable -> ShapeEntity($nullable,ShapeValue(false,$nullable,StaticParameterList(List($nullableInner)),List(),Nullable),false), GLquYH_10 -> ShapeEntity(GLquYH_10,ShapeValue(true,$object,DynamicParameterList(List()),List(GLquYH_11),),false), $oneOf -> ShapeEntity($oneOf,ShapeValue(false,$oneOf,DynamicParameterList(List()),List(),OneOf),false), cmbM7N_2 -> ShapeEntity(cmbM7N_2,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), $identifier -> ShapeEntity($identifier,ShapeValue(false,$identifier,StaticParameterList(List($identifierInner)),List(),Identifier),false), GQWbmO_0 -> ShapeEntity(GQWbmO_0,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), cmbM7N_6 -> ShapeEntity(cmbM7N_6,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), GLquYH_8 -> ShapeEntity(GLquYH_8,ShapeValue(true,$number,DynamicParameterList(List()),List(),),false), $map -> ShapeEntity($map,ShapeValue(false,$map,StaticParameterList(List($mapKey, $mapValue)),List(),Map),false), $reference -> ShapeEntity($reference,ShapeValue(false,$reference,StaticParameterList(List($referenceInner)),List(),Reference),false), GLquYH_0 -> ShapeEntity(GLquYH_0,ShapeValue(true,$object,DynamicParameterList(List()),List(GLquYH_1, GLquYH_3, GLquYH_9),),false), nKP46f_2 -> ShapeEntity(nKP46f_2,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), Yen51t_2 -> ShapeEntity(Yen51t_2,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), shape_4bul4hj0a1 -> ShapeEntity(shape_4bul4hj0a1,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), cmbM7N_4 -> ShapeEntity(cmbM7N_4,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), JR1dZS_2 -> ShapeEntity(JR1dZS_2,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), ESOkbg_0 -> ShapeEntity(ESOkbg_0,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), Yen51t_6 -> ShapeEntity(Yen51t_6,ShapeValue(true,$string,DynamicParameterList(List()),List(),),false), shape_yjMgmK8Hld -> ShapeEntity(shape_yjMgmK8Hld,ShapeValue(true,$oneOf,DynamicParameterList(List(shape-parameter_P7tMyb2otE, shape-parameter_Kib0iEn99p)),List(),),false), GLquYH_6 -> ShapeEntity(GLquYH_6,ShapeValue(true,$object,DynamicParameterList(List()),List(GLquYH_7),),false), nKP46f_7 -> ShapeEntity(nKP46f_7,ShapeValue(true,$object,DynamicParameterList(List()),List(nKP46f_8),),false), GLquYH_2 -> ShapeEntity(GLquYH_2,ShapeValue(true,$boolean,DynamicParameterList(List()),List(),),false), $object -> ShapeEntity($object,ShapeValue(false,$object,DynamicParameterList(List()),List(),Object),false), shape_bad2uCMKoj -> ShapeEntity(shape_bad2uCMKoj,ShapeValue(true,$object,DynamicParameterList(List()),List(),),false)),Map(shape_jjqKM2kZXa -> Map($optionalInner -> ShapeProvider(ESOkbg_0)), shape_sPlWNbwI8x -> Map($nullableInner -> ShapeProvider(nKP46f_2)), shape_NUMCe9K2lO -> Map($optionalInner -> ShapeProvider(GLquYH_10)), nKP46f_4 -> Map($listItem -> ShapeProvider(nKP46f_5)), shape_srPrzEF1RL -> Map($optionalInner -> ShapeProvider(GLquYH_2)), shape_yjMgmK8Hld -> Map(shape-parameter_Kib0iEn99p -> ShapeProvider(GQWbmO_0), shape-parameter_P7tMyb2otE -> ShapeProvider(GLquYH_6))),Map($identifierInner -> ShapeParameterEntity($identifierInner,ShapeParameterValue($identifier,ProviderInShape($identifier,NoProvider(),$identifierInner),T),false), $optionalInner -> ShapeParameterEntity($optionalInner,ShapeParameterValue($optional,ProviderInShape($optional,NoProvider(),$optionalInner),T),false), $nullableInner -> ShapeParameterEntity($nullableInner,ShapeParameterValue($nullable,ProviderInShape($nullable,NoProvider(),$nullableInner),T),false), $referenceInner -> ShapeParameterEntity($referenceInner,ShapeParameterValue($reference,ProviderInShape($reference,NoProvider(),$referenceInner),T),false), shape-parameter_P7tMyb2otE -> ShapeParameterEntity(shape-parameter_P7tMyb2otE,ShapeParameterValue(shape_yjMgmK8Hld,ProviderInShape(shape_yjMgmK8Hld,NoProvider(),shape-parameter_P7tMyb2otE),),false), $mapValue -> ShapeParameterEntity($mapValue,ShapeParameterValue($map,ProviderInShape($map,NoProvider(),$mapValue),V),false), shape-parameter_Kib0iEn99p -> ShapeParameterEntity(shape-parameter_Kib0iEn99p,ShapeParameterValue(shape_yjMgmK8Hld,ProviderInShape(shape_yjMgmK8Hld,NoProvider(),shape-parameter_Kib0iEn99p),),false), $mapKey -> ShapeParameterEntity($mapKey,ShapeParameterValue($map,ProviderInShape($map,NoProvider(),$mapKey),K),false), $listItem -> ShapeParameterEntity($listItem,ShapeParameterValue($list,ProviderInShape($list,NoProvider(),$listItem),T),false)),ListMap(JR1dZS_1 -> FieldEntity(JR1dZS_1,FieldValue(JR1dZS_0,FieldShapeFromShape(JR1dZS_1,JR1dZS_2),isDone),false), JR1dZS_3 -> FieldEntity(JR1dZS_3,FieldValue(JR1dZS_0,FieldShapeFromShape(JR1dZS_3,JR1dZS_4),task),false), cmbM7N_1 -> FieldEntity(cmbM7N_1,FieldValue(cmbM7N_0,FieldShapeFromShape(cmbM7N_1,cmbM7N_2),dueData),false), cmbM7N_3 -> FieldEntity(cmbM7N_3,FieldValue(cmbM7N_0,FieldShapeFromShape(cmbM7N_3,cmbM7N_4),isDone),false), cmbM7N_5 -> FieldEntity(cmbM7N_5,FieldValue(cmbM7N_0,FieldShapeFromShape(cmbM7N_5,cmbM7N_6),task),false), Yen51t_1 -> FieldEntity(Yen51t_1,FieldValue(Yen51t_0,FieldShapeFromShape(Yen51t_1,Yen51t_2),dueData),false), Yen51t_3 -> FieldEntity(Yen51t_3,FieldValue(Yen51t_0,FieldShapeFromShape(Yen51t_3,Yen51t_4),isDone),false), Yen51t_5 -> FieldEntity(Yen51t_5,FieldValue(Yen51t_0,FieldShapeFromShape(Yen51t_5,Yen51t_6),task),false), field_i0RPTArMFH -> FieldEntity(field_i0RPTArMFH,FieldValue(JR1dZS_0,FieldShapeFromShape(field_i0RPTArMFH,shape_jjqKM2kZXa),dueData),false), nKP46f_3 -> FieldEntity(nKP46f_3,FieldValue(nKP46f_0,FieldShapeFromShape(nKP46f_3,nKP46f_4),color),false), nKP46f_8 -> FieldEntity(nKP46f_8,FieldValue(nKP46f_7,FieldShapeFromShape(nKP46f_8,nKP46f_9),hello),false), nKP46f_6 -> FieldEntity(nKP46f_6,FieldValue(nKP46f_0,FieldShapeFromShape(nKP46f_6,nKP46f_7),nested),false), nKP46f_1 -> FieldEntity(nKP46f_1,FieldValue(nKP46f_0,FieldShapeFromShape(nKP46f_1,shape_sPlWNbwI8x),america),false), GLquYH_7 -> FieldEntity(GLquYH_7,FieldValue(GLquYH_6,FieldShapeFromShape(GLquYH_7,GLquYH_8),n),false), GLquYH_3 -> FieldEntity(GLquYH_3,FieldValue(GLquYH_0,FieldShapeFromShape(GLquYH_3,GLquYH_4),fieldA),false), GLquYH_11 -> FieldEntity(GLquYH_11,FieldValue(GLquYH_10,FieldShapeFromShape(GLquYH_11,GLquYH_12),nested),false), GLquYH_1 -> FieldEntity(GLquYH_1,FieldValue(GLquYH_0,FieldShapeFromShape(GLquYH_1,shape_srPrzEF1RL),abc),false), GLquYH_9 -> FieldEntity(GLquYH_9,FieldValue(GLquYH_0,FieldShapeFromShape(GLquYH_9,shape_NUMCe9K2lO),fieldB),false), GLquYH_5 -> FieldEntity(GLquYH_5,FieldValue(GLquYH_4,FieldShapeFromShape(GLquYH_5,shape_yjMgmK8Hld),hello),false)),Map()),ScmState(Map()))
+{
+  "nodes": [
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$string",
+        "descriptor": {
+          "kind": "StringKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$number",
+        "descriptor": {
+          "kind": "NumberKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$boolean",
+        "descriptor": {
+          "kind": "BooleanKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$list",
+        "descriptor": {
+          "kind": "ListKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$listItem",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$object",
+        "descriptor": {
+          "kind": "ObjectKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$nullable",
+        "descriptor": {
+          "kind": "NullableKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$nullableInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$unknown",
+        "descriptor": {
+          "kind": "UnknownKind"
+        }
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$optional",
+        "descriptor": {
+          "kind": "OptionalKind"
+        }
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "$optionalInner",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "CoreShape",
+      "data": {
+        "shapeId": "$oneOf",
+        "descriptor": {
+          "kind": "OneOfKind"
+        }
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "4852cc8a-83cd-4803-b237-d7bf77b0933b",
+        "createdAt": "2020-04-02T18:52:35.863Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_W0JK7E2Z3Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "JR1dZS_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "JR1dZS_2"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "JR1dZS_1",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "JR1dZS_4"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "JR1dZS_3",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "ESOkbg_0"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "field_i0RPTArMFH",
+        "descriptor": {
+          "name": "dueData"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_4bul4hj0a1"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "0566e48d-ac86-4a91-b148-3dccda573c09",
+        "createdAt": "2020-04-07T13:07:41.103Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_IvrrBkWGV6"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "cmbM7N_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "cmbM7N_2"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "cmbM7N_1",
+        "descriptor": {
+          "name": "dueData"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "cmbM7N_4"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "cmbM7N_3",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "cmbM7N_6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "cmbM7N_5",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "Yen51t_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "Yen51t_2"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "Yen51t_1",
+        "descriptor": {
+          "name": "dueData"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "Yen51t_4"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "Yen51t_3",
+        "descriptor": {
+          "name": "isDone"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "Yen51t_6"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "Yen51t_5",
+        "descriptor": {
+          "name": "task"
+        }
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "0a6d3edd-4ebe-4f2b-84fe-81fbf6e71e25",
+        "createdAt": "2020-04-07T13:07:53.653Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_jjqKM2kZXa"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "bc4d0fe2-0113-4674-80f4-c43d7e1c1344",
+        "createdAt": "2020-04-17T23:06:44.972Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_TbDgP5sQHV"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_2"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "nKP46f_1",
+        "descriptor": {
+          "name": "america"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_4"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_5"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "nKP46f_3",
+        "descriptor": {
+          "name": "color"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_7"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "nKP46f_9"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "nKP46f_8",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "nKP46f_6",
+        "descriptor": {
+          "name": "nested"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_sPlWNbwI8x"
+      }
+    },
+    {
+      "type": "BatchCommit",
+      "data": {
+        "batchId": "e10ee301-6e56-4167-b3f2-0ec15fffaee2",
+        "createdAt": "2020-04-17T23:07:08.964Z"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_bad2uCMKoj"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_2"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_1",
+        "descriptor": {
+          "name": "abc"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_4"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_6"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_8"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_7",
+        "descriptor": {
+          "name": "n"
+        }
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_5",
+        "descriptor": {
+          "name": "hello"
+        }
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_3",
+        "descriptor": {
+          "name": "fieldA"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_10"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GLquYH_12"
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_11",
+        "descriptor": {
+          "name": "nested"
+        }
+      }
+    },
+    {
+      "type": "Field",
+      "data": {
+        "fieldId": "GLquYH_9",
+        "descriptor": {
+          "name": "fieldB"
+        }
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_srPrzEF1RL"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_NUMCe9K2lO"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "GQWbmO_0"
+      }
+    },
+    {
+      "type": "Shape",
+      "data": {
+        "shapeId": "shape_yjMgmK8Hld"
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "shape-parameter_P7tMyb2otE",
+        "descriptor": {}
+      }
+    },
+    {
+      "type": "ShapeParameter",
+      "data": {
+        "parameterId": "shape-parameter_Kib0iEn99p",
+        "descriptor": {}
+      }
+    }
+  ],
+  "edges": [
+    [
+      4,
+      3,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      7,
+      6,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      10,
+      9,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      13,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      14,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      15,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      15,
+      16,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      16,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      17,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      17,
+      18,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      18,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      19,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      39,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "ESOkbg_0"
+        }
+      }
+    ],
+    [
+      20,
+      14,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      21,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      23,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      24,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      25,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      25,
+      26,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      26,
+      24,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      27,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      27,
+      28,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      28,
+      24,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      29,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      29,
+      30,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      30,
+      24,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      31,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      32,
+      33,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      33,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      34,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      34,
+      35,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      35,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      36,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      36,
+      37,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      37,
+      31,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      39,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      39,
+      20,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      41,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      42,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      43,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      52,
+      7,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "nKP46f_2"
+        }
+      }
+    ],
+    [
+      44,
+      42,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      45,
+      3,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      46,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      45,
+      47,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      47,
+      42,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      48,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      49,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      49,
+      50,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      50,
+      48,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      48,
+      51,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      51,
+      42,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      45,
+      4,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "nKP46f_5"
+        }
+      }
+    ],
+    [
+      52,
+      6,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      52,
+      44,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      54,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      55,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      56,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      68,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "GLquYH_2"
+        }
+      }
+    ],
+    [
+      57,
+      55,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      58,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      59,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      60,
+      1,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      60,
+      61,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      61,
+      59,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      71,
+      72,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "GLquYH_6"
+        }
+      }
+    ],
+    [
+      62,
+      58,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      58,
+      63,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      63,
+      55,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      64,
+      5,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      65,
+      2,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      65,
+      66,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      66,
+      64,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      69,
+      10,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "GLquYH_10"
+        }
+      }
+    ],
+    [
+      67,
+      55,
+      {
+        "type": "IsFieldOf"
+      }
+    ],
+    [
+      68,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      68,
+      57,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      69,
+      9,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      69,
+      67,
+      {
+        "type": "BelongsTo"
+      }
+    ],
+    [
+      70,
+      0,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      71,
+      11,
+      {
+        "type": "IsDescendantOf"
+      }
+    ],
+    [
+      72,
+      71,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      73,
+      71,
+      {
+        "type": "IsParameterOf"
+      }
+    ],
+    [
+      71,
+      73,
+      {
+        "type": "HasBinding",
+        "data": {
+          "shapeId": "GQWbmO_0"
+        }
+      }
+    ],
+    [
+      71,
+      62,
+      {
+        "type": "BelongsTo"
+      }
+    ]
+  ],
+  "nodeIndexToId": {
+    "0": "$string",
+    "1": "$number",
+    "2": "$boolean",
+    "3": "$list",
+    "4": "$listItem",
+    "5": "$object",
+    "6": "$nullable",
+    "7": "$nullableInner",
+    "8": "$unknown",
+    "9": "$optional",
+    "10": "$optionalInner",
+    "11": "$oneOf",
+    "12": "4852cc8a-83cd-4803-b237-d7bf77b0933b",
+    "13": "shape_W0JK7E2Z3Z",
+    "14": "JR1dZS_0",
+    "15": "JR1dZS_2",
+    "16": "JR1dZS_1",
+    "17": "JR1dZS_4",
+    "18": "JR1dZS_3",
+    "19": "ESOkbg_0",
+    "20": "field_i0RPTArMFH",
+    "21": "shape_4bul4hj0a1",
+    "22": "0566e48d-ac86-4a91-b148-3dccda573c09",
+    "23": "shape_IvrrBkWGV6",
+    "24": "cmbM7N_0",
+    "25": "cmbM7N_2",
+    "26": "cmbM7N_1",
+    "27": "cmbM7N_4",
+    "28": "cmbM7N_3",
+    "29": "cmbM7N_6",
+    "30": "cmbM7N_5",
+    "31": "Yen51t_0",
+    "32": "Yen51t_2",
+    "33": "Yen51t_1",
+    "34": "Yen51t_4",
+    "35": "Yen51t_3",
+    "36": "Yen51t_6",
+    "37": "Yen51t_5",
+    "38": "0a6d3edd-4ebe-4f2b-84fe-81fbf6e71e25",
+    "39": "shape_jjqKM2kZXa",
+    "40": "bc4d0fe2-0113-4674-80f4-c43d7e1c1344",
+    "41": "shape_TbDgP5sQHV",
+    "42": "nKP46f_0",
+    "43": "nKP46f_2",
+    "44": "nKP46f_1",
+    "45": "nKP46f_4",
+    "46": "nKP46f_5",
+    "47": "nKP46f_3",
+    "48": "nKP46f_7",
+    "49": "nKP46f_9",
+    "50": "nKP46f_8",
+    "51": "nKP46f_6",
+    "52": "shape_sPlWNbwI8x",
+    "53": "e10ee301-6e56-4167-b3f2-0ec15fffaee2",
+    "54": "shape_bad2uCMKoj",
+    "55": "GLquYH_0",
+    "56": "GLquYH_2",
+    "57": "GLquYH_1",
+    "58": "GLquYH_4",
+    "59": "GLquYH_6",
+    "60": "GLquYH_8",
+    "61": "GLquYH_7",
+    "62": "GLquYH_5",
+    "63": "GLquYH_3",
+    "64": "GLquYH_10",
+    "65": "GLquYH_12",
+    "66": "GLquYH_11",
+    "67": "GLquYH_9",
+    "68": "shape_srPrzEF1RL",
+    "69": "shape_NUMCe9K2lO",
+    "70": "GQWbmO_0",
+    "71": "shape_yjMgmK8Hld",
+    "72": "shape-parameter_P7tMyb2otE",
+    "73": "shape-parameter_Kib0iEn99p"
+  }
+}
