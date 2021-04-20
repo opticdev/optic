@@ -119,7 +119,7 @@ export function useShapeDescriptor(
 
     task();
     // should only run once
-  }, [spectacle]);
+  }, [spectacle, rootShapeId, accumulateShapes]);
 
   return x;
 }

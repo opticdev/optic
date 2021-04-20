@@ -77,15 +77,6 @@ export interface ISuggestion {
   changeType: IChangeType;
 }
 
-interface SerializedDiff {
-  [key: string]: {
-    interactionTrail: {
-      path: any[];
-    };
-    requestsTrail: any;
-  };
-}
-
 export enum ICoreShapeKinds {
   ObjectKind = '$object',
   ListKind = '$list',

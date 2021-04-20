@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
   useDiffReviewCapturePageLink,
-  useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
@@ -12,11 +12,10 @@ import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
-import { Route, Redirect } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
-import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
@@ -25,7 +24,7 @@ import { CapturePage } from './CapturePage';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
-  const { environment, boundaryId } = match.params;
+  const { boundaryId } = match.params;
   const [diffId] = useState(uuidv4());
 
   //dependencies
@@ -94,7 +93,7 @@ export function DiffReviewPages(props: any) {
 }
 
 export function DiffReviewEnvironments(props: any) {
-  const diffRoot = useDiffReviewPageLink();
+  // const diffRoot = useDiffReviewPageLink();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
 
   const capturesState = useCaptures();

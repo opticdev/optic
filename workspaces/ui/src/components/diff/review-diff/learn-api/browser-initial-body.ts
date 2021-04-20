@@ -15,22 +15,22 @@ export function localInitialBodyLearner(
   pathId: string,
   method: string,
   interactions: any[],
-  domainIds: any
+  domainIds: any,
 ): ILearnedBodies {
   const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
-    rfcState
+    rfcState,
   );
 
   const shapeBuilderMap = LearnAPIHelper.newShapeBuilderMap(
     pathId,
     method,
-    domainIds
+    domainIds,
   );
 
   function filterByEndpoint(endpoint: { pathId: string; method: string }) {
     return function (interaction: IHttpInteraction) {
       const pathId = ScalaJSHelpers.getOrUndefined(
-        undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
+        undocumentedUrlHelpers.tryResolvePathId(interaction.request.path),
       );
       return (
         endpoint.method === interaction.request.method &&

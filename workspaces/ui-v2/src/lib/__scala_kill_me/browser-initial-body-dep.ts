@@ -7,10 +7,7 @@ import {
   ScalaJSHelpers,
 } from '@useoptic/domain';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import {
-  universeFromEvents,
-  universeFromEventsAndAdditionalCommands,
-} from '@useoptic/domain-utilities';
+import { universeFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 
 const LearnAPIHelper = opticEngine.com.useoptic.diff.interactions.interpreters.LearnAPIHelper();
 const OpticIdsHelper = opticEngine.com.useoptic.OpticIdsJsHelper();

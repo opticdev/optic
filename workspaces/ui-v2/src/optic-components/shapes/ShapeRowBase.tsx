@@ -1,6 +1,6 @@
 import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { useSharedStyles, IndentSpaces } from './SharedStyles';
+import { IndentSpaces, useSharedStyles } from './SharedStyles';
 import {
   IFieldRenderer,
   IShapeRenderer,
@@ -160,7 +160,6 @@ export const RenderFieldLeadingValue = ({
   shapeRenderers,
   parentId,
 }: RenderFieldValueProps) => {
-  const { Indent, depth } = useDepth();
   const sharedClasses = useSharedStyles();
   const shape = shapeRenderers[0];
 
@@ -275,7 +274,6 @@ export function OneOfRender({
   const chosenShapeToRender = choices.find((i) => i.id === getChoice(tabProps));
   if (!chosenShapeToRender) {
     return null;
-    throw new Error(`expected a shape to be chosen for rendering`);
   }
   const shape = shapes.find((i) => chosenShapeToRender.id === i.shapeId);
   if (!shape) {

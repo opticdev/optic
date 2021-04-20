@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
 import {
@@ -92,7 +92,7 @@ export function PendingEndpointPage(props: any) {
     if (typeof debouncedName !== 'undefined') {
       changeEndpointName(debouncedName);
     }
-  }, [debouncedName]);
+  }, [debouncedName, changeEndpointName]);
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType),

@@ -19,7 +19,7 @@ export async function interpretShapeDiffs(
 ): Promise<IInterpretation> {
   const { normalizedShapeTrail, jsonTrail } = diff;
 
-  const isUnmatched = diff.isUnmatched;
+  // const isUnmatched = diff.isUnmatched;
   const isUnspecified = diff.isUnspecified;
 
   const diffDescription = await descriptionForShapeDiff(

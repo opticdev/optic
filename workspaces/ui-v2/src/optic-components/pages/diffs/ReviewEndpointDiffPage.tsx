@@ -43,14 +43,13 @@ export function ReviewEndpointDiffPage(props: any) {
   const spectacle = useContext(SpectacleContext)!;
 
   const diffReviewPage = useDiffReviewCapturePageLink();
-  const lastBatchCommitId = useLastBatchCommitId();
+  // const lastBatchCommitId = useLastBatchCommitId();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
   const {
     context,
     approveCommandsForDiff,
     isDiffHandled,
-    addDiffHashIgnore,
   } = useSharedDiffContext();
 
   const shapeDiffs = useShapeDiffInterpretations(

@@ -1,26 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useHistory, useParams } from 'react-router-dom';
-import { EndpointName } from '../documentation/EndpointName';
-import { AddedDarkGreen, OpticBlueReadable } from '../theme';
-import {
-  Button,
-  IconButton,
-  LinearProgress,
-  Menu,
-  MenuItem,
-  Typography,
-} from '@material-ui/core';
+import { OpticBlueReadable } from '../theme';
+import { Button, LinearProgress, Typography } from '@material-ui/core';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
-import {
-  useDiffForEndpointLink,
-  useDiffReviewCapturePageLink,
-  useDiffUndocumentedUrlsPageLink,
-} from '../navigation/Routes';
+import { useDiffReviewCapturePageLink } from '../navigation/Routes';
 import AskForCommitMessage from './render/AskForCommitMessage';
 
 type DiffAccessoryNavigationProps = {

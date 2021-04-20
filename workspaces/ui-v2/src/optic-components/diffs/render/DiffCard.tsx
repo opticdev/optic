@@ -1,35 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   AddedGreen,
-  ChangedYellow,
   OpticBlue,
   OpticBlueLightened,
   OpticBlueReadable,
-  primary,
-  RemovedRed,
   secondary,
 } from '../../theme';
 import { makeStyles } from '@material-ui/styles';
 import { Skeleton } from '@material-ui/lab';
-import {
-  code,
-  ICopy,
-  ICopyRender,
-  ICopyRenderMultiline,
-  plain,
-} from './ICopyRender';
-import BlockIcon from '@material-ui/icons/Block';
+import { ICopyRender } from './ICopyRender';
 import WarningIcon from '@material-ui/icons/Warning';
 import CheckIcon from '@material-ui/icons/Check';
 
-import {
-  Button,
-  ListItemText,
-  Tab,
-  Tabs,
-  Typography,
-  withStyles,
-} from '@material-ui/core';
+import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
 import InteractionBodyViewerAllJS from './IDiffExampleViewer';
 import {
   BodyPreview,
@@ -37,13 +20,9 @@ import {
   IDiffDescription,
   IInteractionPreviewTab,
   IPatchChoices,
-  ISuggestion,
 } from '../../../lib/Interfaces';
-import { SuggestionGroup } from './SuggestionGroup';
 import { IJsonTrail } from '../../../../../cli-shared/build/diffs/json-trail';
 import { useInteraction } from '../../../spectacle-implementations/interaction-loader';
-import { LightTooltip } from '../../navigation/LightToolTip';
-import { IgnoreRule } from '../../../lib/ignore-rule';
 import { BuildSpecPatch } from './BuildSpecPatch';
 
 type IDiffCardProps = {
@@ -61,18 +40,10 @@ export function DiffCard({
   previewTabs,
   diffDescription,
   approve,
-  handled,
   specChoices,
   updatedSpecChoices,
 }: IDiffCardProps) {
   const classes = useStyles();
-
-  const color = (() => {
-    if (changeType === 0) return AddedGreen;
-    if (changeType === 1) return ChangedYellow;
-    if (changeType === 2) return RemovedRed;
-    return AddedGreen;
-  })();
 
   const [previewTab, setPreviewTab] = useState(
     previewTabs.length ? previewTabs[0].title : undefined,
@@ -83,8 +54,6 @@ export function DiffCard({
       setPreviewTab(previewTabs[0].title);
     }
   }, [previewTabs.length]);
-
-  const selectedPreviewTab = previewTabs.find((i) => i.title === previewTab)!;
 
   useEffect(() => {
     if (previewTabs.length) {
@@ -191,7 +160,7 @@ function RenderExampleBody({
   description: any;
   assertion: any;
 }) {
-  const { loading, data } = useInteraction(interactionPointer);
+  const { data } = useInteraction(interactionPointer);
   const actualBody = useMemo<any | undefined>(() => {
     if (data) {
       return getJsonBodyToPreview(data);

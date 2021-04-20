@@ -9,8 +9,6 @@ import {
   IParsedLocation,
   IPatchChoices,
 } from '../Interfaces';
-import { targetKindSuggestion } from './target-shape-kind';
-import { setEquals } from '../set-ops';
 import sortBy from 'lodash.sortby';
 import { code, plain } from '../../optic-components/diffs/render/ICopyRender';
 import invariant from 'invariant';
@@ -21,8 +19,6 @@ import {
   ShapedBodyDescriptor,
 } from '../command-factory';
 
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
-
 export function rootShapeDiffInterpreter(
   shapeDiff: BodyShapeDiff,
   diffDescription: IDiffDescription,
@@ -30,7 +26,6 @@ export function rootShapeDiffInterpreter(
   expected: Expectation,
   currentSpecContext: CurrentSpecContext,
 ): IInterpretation {
-  const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
   const isUnspecified = shapeDiff.isUnspecified;
 
@@ -43,7 +38,6 @@ export function rootShapeDiffInterpreter(
   };
 
   if (isUnmatched) {
-    const unexpectedShapesObserved = expected.diffActual(actual);
     const allShapes = expected.unionWithActual(actual);
 
     updateSpecChoices.shapes = Array.from(allShapes).map((i) => {

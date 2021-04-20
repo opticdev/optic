@@ -19,7 +19,7 @@ export function learnTrailsForParsedDiffs(
 
   let allResults = {};
 
-  groupings.map((i) => {
+  groupings.forEach((i) => {
     const { diffs, pathId, method } = i;
     new DiffSet(diffs, currentSpecContext)
       .groupedByEndpointAndShapeTrail()

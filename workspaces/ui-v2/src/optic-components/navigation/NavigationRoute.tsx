@@ -2,7 +2,6 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Route } from 'react-router-dom';
 import { TopNavigation } from './TopNavigation';
-import { useEffect, useState } from 'react';
 
 export type NavigationRouteProps = {
   path: string;
