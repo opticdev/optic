@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/graph-lib",
-  "version": "9.0.13",
+  "version": "10.0.1",
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
