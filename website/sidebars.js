@@ -19,6 +19,9 @@ module.exports = {
       'using/troubleshooting',
       'using/cli-commands',
     ],
+    'Optic in Real Environments': [
+      'deploy/overview'
+    ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [
       'integrations/integrations',
