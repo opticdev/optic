@@ -49,8 +49,7 @@ class CommandSession {
       return new Promise((resolve) => {
         treeKill(pid, (e) => {
           if (e) {
-            console.error(e);
-            return resolve();
+            developerDebugLogger(`Issue killing child process: ${e}`);
           }
           this.events.emit('stopped', { state: 'terminated' });
           resolve();
