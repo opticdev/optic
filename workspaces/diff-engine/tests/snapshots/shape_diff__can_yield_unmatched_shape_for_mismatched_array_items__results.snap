@@ -10,11 +10,6 @@ expression: results
                     index: 0,
                 },
             ],
-            normalized: [
-                JsonArrayItem {
-                    index: 0,
-                },
-            ],
         },
         shape_trail: ShapeTrail {
             root_shape_id: "list_1",
@@ -31,11 +26,6 @@ expression: results
             path: [
                 JsonArrayItem {
                     index: 2,
-                },
-            ],
-            normalized: [
-                JsonArrayItem {
-                    index: 0,
                 },
             ],
         },

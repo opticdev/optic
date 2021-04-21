@@ -34,20 +34,6 @@ expression: results
                             key: "format",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "location",
-                        },
-                        JsonObjectKey {
-                            key: "principality",
-                        },
-                        JsonObjectKey {
-                            key: "coordinates",
-                        },
-                        JsonObjectKey {
-                            key: "format",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

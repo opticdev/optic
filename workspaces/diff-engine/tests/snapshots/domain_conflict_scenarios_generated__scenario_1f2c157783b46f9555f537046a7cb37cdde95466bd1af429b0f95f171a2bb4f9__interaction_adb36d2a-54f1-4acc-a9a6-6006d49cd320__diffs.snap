@@ -25,11 +25,6 @@ expression: diffs
                             key: "cars",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "cars",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",
@@ -61,11 +56,6 @@ expression: diffs
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "color",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "color",
                         },
@@ -105,11 +95,6 @@ expression: diffs
                             key: "rank",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rank",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",
@@ -141,11 +126,6 @@ expression: diffs
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "color",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "color",
                         },

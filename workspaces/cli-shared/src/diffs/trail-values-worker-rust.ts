@@ -1,30 +1,37 @@
 import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
+import Path from 'path';
 import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
-import { learnUndocumentedBodies } from '@useoptic/diff-engine';
+import { learnShapeDiffAffordances } from '@useoptic/diff-engine';
 import { Streams } from '@useoptic/diff-engine-wasm';
-import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/undocumented-endpoint-bodies';
+import { ShapeDiffAffordances } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/shape-diff-affordances';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import { getDiffOutputPaths } from './diff-worker-rust';
 
-export interface InitialBodiesWorkerConfig {
+export interface ShapeDiffAffordancesConfig {
   pathId: string;
   method: string;
   captureId: string;
+  diffId: string;
   events: any;
   captureBaseDirectory: string;
 }
 
-export { LearnedBodies };
+export { ShapeDiffAffordances };
 
-export class InitialBodiesWorkerRust {
-  constructor(private config: InitialBodiesWorkerConfig) {}
+export class ShapeDiffAffordancesWorker {
+  constructor(private config: ShapeDiffAffordancesConfig) {}
 
-  async run(): Promise<LearnedBodies> {
+  async run(): Promise<{ [fingerprint: string]: ShapeDiffAffordances }> {
     const outputPaths = getInitialBodiesOutputPaths(this.config);
     await fs.ensureDir(outputPaths.base);
     await fs.writeJson(outputPaths.events, this.config.events);
 
+    // diffs
+    const diffResultsPath = getDiffOutputPaths(this.config).diffsStream;
+
+    // interactions
     const interactionFilter = await createEndpointFilter(
       this.config.events,
       this.config.pathId,
@@ -39,26 +46,26 @@ export class InitialBodiesWorkerRust {
       interactionFilter
     );
 
-    const interactions = (async function* (interactionItems) {
+    const taggedInteractions = (async function* (interactionItems) {
       for await (let item of interactionItems) {
         if (!item.hasMoreInteractions) break;
         if (!item.interaction) continue;
 
-        yield item.interaction.value;
+        let pointer = `${item.interaction.context.batchId}-${item.interaction.context.index}`;
+        yield [item.interaction.value, [pointer]];
       }
     })(interactionIterator);
 
-    let learningResults = Streams.LearningResults.UndocumentedEndpointBodies.fromJSONL()(
-      learnUndocumentedBodies(interactions, {
+    let learningResults = Streams.LearningResults.ShapeDiffAffordances.fromJSONL()(
+      learnShapeDiffAffordances(taggedInteractions, {
+        diffResultsPath,
         specPath: outputPaths.events,
       })
     );
 
-    for await (let result of learningResults) {
-      return result;
-    }
-
-    throw new Error('expected to receive a learning result');
+    return await Streams.LearningResults.ShapeDiffAffordances.affordancesByFingerprint()(
+      learningResults
+    );
   }
 }
 

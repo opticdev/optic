@@ -25,11 +25,6 @@ expression: diffs
                             key: "color",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "color",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",
@@ -61,11 +56,6 @@ expression: diffs
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "cars",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "cars",
                         },
@@ -105,11 +95,6 @@ expression: diffs
                             key: "rank",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rank",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",
@@ -141,11 +126,6 @@ expression: diffs
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "title",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "title",
                         },
@@ -185,11 +165,6 @@ expression: diffs
                             key: "id",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "id",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",
@@ -221,11 +196,6 @@ expression: diffs
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "author",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "author",
                         },

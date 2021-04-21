@@ -1,7 +1,14 @@
 import { lastBy } from '../async-tools';
+import { fromReadableJSONL } from '../async-tools';
+import { Readable } from 'stream';
 
-// TODO: more strictly type the interaction diff result
+// TODO: more strictly type the interaction diff result. Move them over from
+// workspaces/cli-shared/diffs/diffs to the diff-engine-wasm
 export type DiffResult = [any, string[], string];
+
+export function fromJSONL(): (source: Readable) => AsyncIterable<DiffResult> {
+  return fromReadableJSONL();
+}
 
 export async function* normalize(
   diffResults: AsyncIterable<DiffResult>

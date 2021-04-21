@@ -28,14 +28,6 @@ expression: results
                             key: "rank",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "stats",
-                        },
-                        JsonObjectKey {
-                            key: "rank",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

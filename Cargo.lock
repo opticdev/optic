@@ -550,6 +550,7 @@ dependencies = [
  "nanoid",
  "num_cpus",
  "optic_diff_engine",
+ "path-absolutize",
  "serde",
  "serde_json",
  "tokio",
@@ -607,6 +608,24 @@ dependencies = [
  "redox_syscall",
  "smallvec",
  "winapi",
+]
+
+[[package]]
+name = "path-absolutize"
+version = "3.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7bf455a55d762f9ad0385747ba7fda9bd3dee9b40469bfb1c64c3aa6b073ee9"
+dependencies = [
+ "path-dedot",
+]
+
+[[package]]
+name = "path-dedot"
+version = "3.0.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7794b94034e62eef81e8b9ea0690b31f522fd38394ca51e7997d499d0372fb5"
+dependencies = [
+ "once_cell",
 ]
 
 [[package]]
