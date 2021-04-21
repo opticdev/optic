@@ -4,7 +4,7 @@
   "scripts": {
     "ws:build": "tsc -b --verbose",
     "ws:clean": "rm -rf build",
-    "ws:test": "echo 'no tests'",
+    "ws:test": "tap",
     "test": "echo 'no tests'"
   },
   "repository": {
@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.6",
+    "@types/tap": "^14.10.1",
+    "tap": "^14.11.0",
     "typescript": "3.9"
   }
 }
