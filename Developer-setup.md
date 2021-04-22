@@ -29,12 +29,12 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
 - Navigate to the Optic repository. You should be on the `develop` branch by default.
 - Install dependencies with `yarn install`. Yarn will install dependencies for all of the workspaces present in the project.
 - Navigate to the project root, and run `source sourceme.sh`. This provides aliases for managing the development lifecycle of Optic. Note, this must be run for every terminal instance, and you may find it convenient to add this to your `.profile` or equivalent so future terminal invocations will be ready to go.
-- Run `optic-build`. This will take care of the build process and get your environment ready for contributions.
+- Run `optic_build`. This will take care of the build process and get your environment ready for contributions.
 
 ## Validate Setup to Contribute to Optic's User Interface
 
 - Navigate to a workspace to validate it can be built. For example, try `workspaces/ui`.
-- Run `watch-optic`.
+- Run `optic_watch`.
 - Run `yarn start-local` to start the workspace. For the UI, this should automatically launch a browser instance to view the started server. Your browser will land on the splash page at [http://localhost:3000](http://localhost:3000/development/diff-test-cases/documentation).
 - Validate you can load a mocked test route from one of the example sessions under `public/example-sessions` such as [http://localhost:3000/development/diff-test-cases](http://localhost:3000/development/diff-test-cases/documentation).
 
@@ -42,9 +42,9 @@ If you're using an IDE (like IntelliJ), some of these steps may be handled by yo
 
 - If you haven't added the `[sourceme.sh](http://sourceme.sh)` to your `.profile` or equivalent yet and invoked a new terminal, you may want to navigate to the project root and run `source sourceme.sh` to assure you have the local development aliases created. Amongst other aliases it creates  `apidev`, which takes the place of `api` against your local development build.
 - Determine a visible change to make to the workspace. For example, when `api start` is run in a directory without an `optic.yml` file, you'll get an error message telling you the project is not found.
-- Run `watch-optic`.
+- Run `optic_watch`.
 - Confirm the current behavior of the code by running the `apidev` command (in this case, `apidev start`).
-- Run `optic-watch` (an alias created by the `[sourceme.sh](http://sourceme.sh)` script) to watch and rebuild your workspace as you make changes.
+- Run `optic_watch` (an alias created by the `[sourceme.sh](http://sourceme.sh)` script) to watch and rebuild your workspace as you make changes.
 - Navigate to the target workspace, and make a visible change.
     - For example, in `workspaces\cli-shared\index.ts`, you can change the start failure messages.
     - Search for "*No Optic project found in this directory.*" which is the start of the error message you get when no `optic.yml` file is present.
@@ -72,7 +72,7 @@ This error may be seen when running `npm start` to build and run a UI workspace.
 - Assure you have a proper build already set up:
     - Navigate to the project root and re-run `yarn install`
     - Re-run `source sourceme.sh`
-    - Re-run `optic-build`
+    - Re-run `optic_build`
 - If you run into further problems, please let us know the tools you are using, and the errors you are seeing, for reference. While we can't support every environment, it can be helpful to know where problems exist. In the mean time...
 - If you still see workspace-specific module resolution issues, run `yarn install` in the target workspace. Include this output in your issue report for reference.
 - Running `yarn run ws:build` in all workspaces should resolve the issue for the entire project:
