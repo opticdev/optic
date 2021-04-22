@@ -19,7 +19,7 @@ type StartDiffResult {
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
-  endpointChanges(since: String): EndpointChanges
+  endpointChanges(sinceBatchCommitId: String): EndpointChanges
   batchCommits: [BatchCommit]
   diff(diffId: ID): DiffState
 }

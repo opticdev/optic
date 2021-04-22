@@ -109,7 +109,7 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
   addNode(node: Node) {
     if (this.nodesById.has(node.id)) {
       throw new Error(
-        `could not add a node with an id that already exists in the graph`,
+        `could not add a node with an id that already exists in the graph`
       );
     }
     this.unsafeAddNode(node);
@@ -136,7 +136,7 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
     mapAppend(outboundNeighborsByEdgeType, edge.type, targetNode);
     this.outboundNeighborsByEdgeType.set(
       sourceNodeId,
-      outboundNeighborsByEdgeType,
+      outboundNeighborsByEdgeType
     );
 
     const inboundNeighbors =
@@ -149,7 +149,7 @@ export class GraphIndexer implements GraphCommandHandler<Node, NodeId, Edge> {
     mapAppend(inboundNeighborsByEdgeType, edge.type, sourceNode);
     this.inboundNeighborsByEdgeType.set(
       targetNodeId,
-      inboundNeighborsByEdgeType,
+      inboundNeighborsByEdgeType
     );
   }
 
@@ -182,7 +182,7 @@ class ShapeNodeWrapper implements NodeWrapper {
   coreShape(): NodeWrapper {
     const coreShapeNode = this.queries.findOutgoingNeighborByEdgeType(
       this.result.id,
-      EdgeType.IsDescendantOf,
+      EdgeType.IsDescendantOf
     );
     if (!coreShapeNode) {
       throw new Error(`expected node to have a core shape node`);
@@ -193,7 +193,7 @@ class ShapeNodeWrapper implements NodeWrapper {
   batchCommits(): NodeListWrapper {
     return this.queries.listOutgoingNeighborsByType(
       this.result.id,
-      NodeType.BatchCommit,
+      NodeType.BatchCommit
     );
   }
 }
@@ -208,7 +208,7 @@ class FieldNodeWrapper implements NodeWrapper {
   batchCommits(): NodeListWrapper {
     return this.queries.listOutgoingNeighborsByType(
       this.result.id,
-      NodeType.BatchCommit,
+      NodeType.BatchCommit
     );
   }
 }
@@ -234,16 +234,22 @@ export class GraphQueries {
     return this.wrapList(type, this.index.nodesByType.get(type) || []);
   }
 
-  *descendantsIterator(nodeId: NodeId): Generator<Node> {
+  *descendantsIterator(
+    nodeId: NodeId,
+    seenSet: Set<NodeId> = new Set()
+  ): Generator<Node> {
     const inboundNeighbors = this.index.inboundNeighbors.get(nodeId);
     if (!inboundNeighbors) {
       return;
     }
+    if (seenSet.has(nodeId)) {
+      return;
+    }
+    seenSet.add(nodeId);
     for (const neighborsByNodeType of inboundNeighbors.values()) {
       for (const neighborNode of neighborsByNodeType) {
         yield neighborNode;
-        // @ts-ignore
-        yield* this.descendantsIterator(neighborNode.id);
+        yield* this.descendantsIterator(neighborNode.id, seenSet);
       }
     }
   }
@@ -261,7 +267,7 @@ export class GraphQueries {
   //@TODO add singular find* variant
   listOutgoingNeighborsByType(
     id: NodeId,
-    outgoingNeighborType: NodeType,
+    outgoingNeighborType: NodeType
   ): NodeListWrapper {
     debugger;
     const neighbors = this.index.outboundNeighbors.get(id);
@@ -274,7 +280,7 @@ export class GraphQueries {
 
   findOutgoingNeighborByEdgeType(
     id: NodeId,
-    edgeType: EdgeType,
+    edgeType: EdgeType
   ): NodeWrapper | null {
     const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
     if (!neighbors) {
@@ -289,7 +295,7 @@ export class GraphQueries {
 
   listIncomingNeighborsByEdgeType(
     id: NodeId,
-    edgeType: EdgeType,
+    edgeType: EdgeType
   ): NodeListWrapper {
     const neighbors = this.index.inboundNeighborsByEdgeType.get(id);
 
@@ -304,7 +310,7 @@ export class GraphQueries {
 
   listOutgoingNeighborsByEdgeType(
     id: NodeId,
-    edgeType: EdgeType,
+    edgeType: EdgeType
   ): NodeListWrapper {
     const neighbors = this.index.outboundNeighborsByEdgeType.get(id);
 
