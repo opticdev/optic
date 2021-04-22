@@ -4,7 +4,6 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField, Typography } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
-import { useDebounce } from '../hooks/ui/useDebounceHook';
 import { useContributionEditing } from '../hooks/edit/Contributions';
 import { OpticBlueReadable } from '../theme';
 
@@ -15,6 +14,27 @@ export type FieldOrParameterContributionProps = {
   depth: number;
 };
 
+const useValueWithStagedContributions = (
+  id: string,
+  contributionKey: string
+) => {
+  const {
+    lookupContribution,
+    stagePendingContribution,
+  } = useContributionEditing();
+
+  const initialValue = lookupContribution(id, contributionKey);
+  const [value, setValue] = useState<string>(initialValue || '');
+  useEffect(() => {
+    stagePendingContribution(id, contributionKey, value);
+  }, [id, contributionKey, value, stagePendingContribution]);
+
+  return {
+    value,
+    setValue,
+  };
+};
+
 export function FieldOrParameterContribution({
   name,
   id,
@@ -23,22 +43,12 @@ export function FieldOrParameterContribution({
 }: FieldOrParameterContributionProps) {
   const classes = useStyles();
   const contributionKey = 'description';
-  const {
-    isEditing,
-    lookupContribution,
-    stagePendingContribution,
-  } = useContributionEditing();
+  const { isEditing } = useContributionEditing();
 
-  const value = lookupContribution(id, contributionKey);
-  const [description, setDescription] = useState(value || '');
-  const debouncedDescription = useDebounce(description, 500);
-
-  useEffect(() => {
-    if (debouncedDescription) {
-      stagePendingContribution(id, contributionKey, debouncedDescription);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedDescription]);
+  const { value, setValue } = useValueWithStagedContributions(
+    id,
+    contributionKey
+  );
 
   return (
     <div className={classes.container} style={{ paddingLeft: depth * 14 }}>
@@ -52,13 +62,13 @@ export function FieldOrParameterContribution({
           fullWidth
           placeholder={`What is ${name}? How is it used?`}
           multiline
-          value={description}
+          value={value}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setDescription(e.target.value);
+            setValue(e.target.value);
           }}
         />
       ) : (
-        <div className={classes.description}>{description}</div>
+        <div className={classes.description}>{value}</div>
       )}
     </div>
   );
@@ -76,27 +86,14 @@ export function EndpointNameContribution({
   contributionKey,
   defaultText,
 }: EndpointNameContributionProps) {
-  const {
-    lookupContribution,
-    isEditing,
-    stagePendingContribution,
-    setEditing,
-  } = useContributionEditing();
-  const value = lookupContribution(id, contributionKey);
+  const { isEditing, setEditing } = useContributionEditing();
+  const { value, setValue } = useValueWithStagedContributions(
+    id,
+    contributionKey
+  );
   const classes = useStyles();
 
-  const [stagedValue, setStagedValue] = useState(value || '');
-
-  const debouncedChanges = useDebounce(stagedValue, 1000);
-
-  useEffect(() => {
-    if (debouncedChanges && stagedValue !== value) {
-      stagePendingContribution(id, contributionKey, debouncedChanges);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedChanges]);
-
-  const isEmpty = !Boolean(stagedValue.trim());
+  const isEmpty = !Boolean(value.trim());
 
   const inner = isEditing ? (
     <TextField
@@ -107,9 +104,9 @@ export function EndpointNameContribution({
       }
       fullWidth
       placeholder={defaultText}
-      value={stagedValue}
+      value={value}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setStagedValue(e.target.value);
+        setValue(e.target.value);
       }}
     />
   ) : (
@@ -128,7 +125,7 @@ export function EndpointNameContribution({
   return (
     <>
       <Helmet>
-        <title>{stagedValue || 'Unnamed Endpoint'}</title>
+        <title>{value || 'Unnamed Endpoint'}</title>
       </Helmet>
       {inner}
     </>
@@ -140,27 +137,15 @@ export function EndpointNameMiniContribution({
   contributionKey,
   defaultText,
 }: EndpointNameContributionProps) {
-  const {
-    lookupContribution,
-    isEditing,
-    stagePendingContribution,
-    setEditing,
-  } = useContributionEditing();
-  const value = lookupContribution(id, contributionKey);
+  const { isEditing, setEditing } = useContributionEditing();
   const classes = useStyles();
 
-  const [stagedValue, setStagedValue] = useState(value || '');
+  const { value, setValue } = useValueWithStagedContributions(
+    id,
+    contributionKey
+  );
 
-  const debouncedChanges = useDebounce(stagedValue, 1000);
-
-  useEffect(() => {
-    if (debouncedChanges && stagedValue !== value) {
-      stagePendingContribution(id, contributionKey, debouncedChanges);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedChanges]);
-
-  const isEmpty = !Boolean(stagedValue.trim());
+  const isEmpty = !Boolean(value.trim());
 
   const inner = isEditing ? (
     <TextField
@@ -169,9 +154,9 @@ export function EndpointNameMiniContribution({
       fullWidth
       style={{ minWidth: 300 }}
       placeholder={defaultText}
-      value={stagedValue}
+      value={value}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setStagedValue(e.target.value);
+        setValue(e.target.value);
       }}
     />
   ) : (
