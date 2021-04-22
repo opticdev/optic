@@ -636,11 +636,11 @@ mod test {
         .unwrap()
         .to_path_buf();
 
-    let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
+    let _diffs = streams::diff::tagged_from_json_line_file(diffs_path)
       .await
       .expect("should be able to read test diffs fixture");
 
-    let interaction_lines =
+    let _interaction_lines =
       streams::http_interaction::json_lines(fs::File::open(interactions_path).await.unwrap());
 
     // learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;

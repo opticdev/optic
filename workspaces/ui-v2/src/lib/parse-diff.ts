@@ -37,7 +37,7 @@ export class ParsedDiff {
   constructor(
     private serialized_diff: IDiff,
     public interactions: string[],
-    fingerprint
+    fingerprint: string
   ) {
     const keys = Object.keys(this.serialized_diff);
     const typeKey = keys[0]!;
@@ -87,7 +87,6 @@ export class ParsedDiff {
   }
 
   location(currentSpecContext: CurrentSpecContext): IParsedLocation {
-
     const location = locationForTrails(
       this.requestsTrail(),
       this.interactionTrail(),

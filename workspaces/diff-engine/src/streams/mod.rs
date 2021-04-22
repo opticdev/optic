@@ -119,7 +119,7 @@ where
   {
     struct TaggedInputVisitor<T> {
       marker: std::marker::PhantomData<T>,
-    };
+    }
 
     impl<'de, T> Visitor<'de> for TaggedInputVisitor<T>
     where

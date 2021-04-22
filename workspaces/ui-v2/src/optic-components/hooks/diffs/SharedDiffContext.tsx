@@ -27,7 +27,7 @@ type ISharedDiffContext = {
   persistWIPPattern: (
     path: string,
     method: string,
-    components: PathComponentAuthoring[],
+    components: PathComponentAuthoring[]
   ) => void;
   getPendingEndpointById: (id: string) => IPendingEndpoint | undefined;
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
@@ -59,8 +59,11 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
   };
 
   const parsedDiffs = useMemo(
-    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1])),
-    [props.diffs],
+    () =>
+      props.diffs.map((i: any) => {
+        return new ParsedDiff(i[0], i[1], i[2]);
+      }), //@aidan please verify correctness and clean up if necessary
+    [props.diffs]
   );
   const { allSamples } = useContext(InteractionLoaderContext);
 
@@ -69,7 +72,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     currentSpecContext,
     //@ts-ignore
     window.events,
-    allSamples,
+    allSamples
   );
 
   //@dev here is where the diff output needs to go
@@ -79,8 +82,8 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       parsedDiffs,
       props.urls.map((i) => ({ ...i })),
       trailsLearned,
-      allSamples,
-    ),
+      allSamples
+    )
   );
 
   const context: SharedDiffStateContext = state.context;
@@ -96,14 +99,14 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     return context.results.diffsGroupedByEndpoint.reduce(
       (current, grouping) => {
         const handledCount = grouping.shapeDiffs.filter((i) =>
-          isDiffHandled(i.diffHash()),
+          isDiffHandled(i.diffHash())
         ).length;
         const total =
           grouping.shapeDiffs.length + grouping.newRegionDiffs.length;
 
         return [current[0] + handledCount, current[1] + total];
       },
-      [0, 0],
+      [0, 0]
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(Object.keys(state.context.choices.approvedSuggestions))]);
@@ -139,7 +142,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     persistWIPPattern: (
       path: string,
       method: string,
-      components: PathComponentAuthoring[],
+      components: PathComponentAuthoring[]
     ) =>
       setWIPPatterns((obj) => ({
         ...obj,
