@@ -10,7 +10,7 @@ export default function TopLevelRoutes() {
       <Route
         strict
         //@TODO: centralize this path pattern
-        path="/public_specs/:specId"
+        path="/public-specs/:specId"
         component={CloudViewer}
       />
 
