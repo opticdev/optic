@@ -200,6 +200,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query mark request nested field optional > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "method": "POST",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query no changes > must match snapshot 1`] = `
 Object {
   "data": Null Object {
@@ -561,7 +579,52 @@ Object {
             },
             Null Object {
               "changes": Null Object {
-                "added": true,
+                "added": false,
+                "changed": true,
+              },
+              "fieldId": "field_Uo8THxvA3Q",
+              "name": "name",
+              "shapeId": "shape_asZ4dzA9x3",
+            },
+          ],
+        },
+        "id": "shape_Uepabr07Dx",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query mark request nested field optional > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_mUYKwMbnjm",
+              "name": "address",
+              "shapeId": "shape_D8Wv86lkdr",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_qTPFUl6rR7",
+              "name": "age",
+              "shapeId": "shape_KSUYvkm6ox",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
                 "changed": false,
               },
               "fieldId": "field_Uo8THxvA3Q",
@@ -624,8 +687,8 @@ Object {
           "fields": Array [
             Null Object {
               "changes": Null Object {
-                "added": true,
-                "changed": false,
+                "added": false,
+                "changed": true,
               },
               "fieldId": "field_9E8tMaN7pT",
               "name": "age",
@@ -660,8 +723,8 @@ Object {
           "fields": Array [
             Null Object {
               "changes": Null Object {
-                "added": true,
-                "changed": false,
+                "added": false,
+                "changed": true,
               },
               "fieldId": "field_qTPFUl6rR7",
               "name": "age",

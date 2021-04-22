@@ -10,7 +10,7 @@ import { InMemoryOpticContextBuilder } from '../src/in-memory';
 function fromPreviousBatchCommitId(
   name: string,
   file: string,
-  extra: any = {},
+  extra: any = {}
 ) {
   const events: any = loadEvents(file);
 
@@ -50,27 +50,27 @@ const specs = [
   fromPreviousBatchCommitId(
     'add optional response field',
     './test/specs/add-optional-res-field.json',
-    { shapeId: shapeId1 },
+    { shapeId: shapeId1 }
   ),
   fromPreviousBatchCommitId(
     'add required response field',
     './test/specs/add-required-res-field.json',
-    { shapeId: shapeId1 },
+    { shapeId: shapeId1 }
   ),
   fromPreviousBatchCommitId(
     'add response status code',
     './test/specs/add-res-status-code.json',
-    { shapeId: shapeId1 },
+    { shapeId: shapeId1 }
   ),
   fromPreviousBatchCommitId(
     'update optional response field',
     './test/specs/update-optional-res-field.json',
-    { shapeId: shapeId1 },
+    { shapeId: shapeId1 }
   ),
   fromPreviousBatchCommitId(
     'add endpoint to existing spec',
     './test/specs/add-endpoint-to-existing-spec.json',
-    { shapeId: shapeId1 },
+    { shapeId: shapeId1 }
   ),
   // Use an existing spec but pick last batch commit
   {
@@ -85,40 +85,39 @@ const specs = [
   fromPreviousBatchCommitId(
     'add request and response',
     './test/specs/add-req-and-res.json',
-    { shapeId: shapeId2 },
+    { shapeId: shapeId2 }
   ),
   fromPreviousBatchCommitId(
     'add request field',
     './test/specs/add-req-field.json',
-    { shapeId: shapeId2 },
+    { shapeId: shapeId2 }
   ),
   fromPreviousBatchCommitId(
     'add request nested field',
     './test/specs/add-req-nested-field.json',
-    { shapeId: shapeId2 },
+    { shapeId: shapeId2 }
   ),
   fromPreviousBatchCommitId(
     'update request field type',
     './test/specs/update-req-field-type.json',
-    { shapeId: shapeId2 },
+    { shapeId: shapeId2 }
   ),
   fromPreviousBatchCommitId(
     'mark request field optional',
     './test/specs/mark-req-field-optional.json',
-    { shapeId: shapeId2 },
+    { shapeId: shapeId2 }
   ),
-  // Maximum call stack exceeded
-  // fromPreviousBatchCommitId(
-  //   'mark request nested field optional',
-  //   './test/specs/mark-req-nested-field-optional.json',
-  //   { shapeId: shapeId2 },
-  // ),
+  fromPreviousBatchCommitId(
+    'mark request nested field optional',
+    './test/specs/mark-req-nested-field-optional.json',
+    { shapeId: shapeId2 }
+  ),
 ];
 
 Tap.test('spectacle batchCommits query', async (test) => {
   const opticContext = await InMemoryOpticContextBuilder.fromEvents(
     OpticEngine,
-    [],
+    []
   );
   const spectacle = await makeSpectacle(opticContext);
 
@@ -137,7 +136,7 @@ Tap.test('spectacle batchCommits query', async (test) => {
 specs.forEach(async (spec) => {
   const opticContext = await InMemoryOpticContextBuilder.fromEvents(
     OpticEngine,
-    spec.events,
+    spec.events
   );
   const spectacle = await makeSpectacle(opticContext);
 

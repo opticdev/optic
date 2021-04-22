@@ -3,7 +3,7 @@ import { NodeType } from '../../graph-lib/build/shapes-graph';
 
 export function buildEndpointsGraph(spec: any, opticEngine: any) {
   const serializedGraph = JSON.parse(
-    opticEngine.get_endpoints_projection(spec),
+    opticEngine.get_endpoints_projection(spec)
   );
   const { nodes, edges, nodeIndexToId } = serializedGraph;
 
@@ -81,7 +81,7 @@ type EndpointChanges = {
 export function buildEndpointChanges(
   endpointQueries: endpoints.GraphQueries,
   shapeQueries: shapes.GraphQueries,
-  sinceBatchCommitId?: string,
+  sinceBatchCommitId?: string
 ): EndpointChanges {
   const sortedBatchCommits = endpointQueries
     .listNodesByType(endpoints.NodeType.BatchCommit)
@@ -93,12 +93,12 @@ export function buildEndpointChanges(
 
   if (sinceBatchCommitId) {
     const sinceBatchCommit: any = endpointQueries.findNodeById(
-      sinceBatchCommitId!,
+      sinceBatchCommitId!
     );
     deltaBatchCommits = sortedBatchCommits.filter(
       (batchCommit: any) =>
         batchCommit.result.data.createdAt >
-        sinceBatchCommit!.result.data.createdAt,
+        sinceBatchCommit!.result.data.createdAt
     );
   } else {
     deltaBatchCommits = sortedBatchCommits;
@@ -218,7 +218,7 @@ function endpointFromResponse(response: any): Endpoint {
 export function getShapeChanges(
   shapeQueries: shapes.GraphQueries,
   shapeId: string,
-  sinceBatchCommitId?: string,
+  sinceBatchCommitId?: string
 ): ChangeResult {
   const results = {
     added: false,
@@ -232,7 +232,7 @@ export function getShapeChanges(
   const shape: any = shapeQueries.findNodeById(shapeId)!;
   const deltaBatchCommits = getDeltaBatchCommits(
     shapeQueries,
-    sinceBatchCommit.result.Id,
+    sinceBatchCommit.result.Id
   );
 
   for (const batchCommit of shape.batchCommits().results) {
@@ -248,7 +248,7 @@ export function getFieldChanges(
   shapeQueries: shapes.GraphQueries,
   fieldId: string,
   shapeId: string,
-  sinceBatchCommitId?: string,
+  sinceBatchCommitId?: string
 ): ChangeResult {
   const results = {
     added: false,
@@ -257,13 +257,13 @@ export function getFieldChanges(
 
   const deltaBatchCommits = getDeltaBatchCommits(
     shapeQueries,
-    sinceBatchCommitId,
+    sinceBatchCommitId
   );
 
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       fieldId,
-      shapes.EdgeType.CreatedIn,
+      shapes.EdgeType.CreatedIn
     ).results) {
       if (node.result.id === batchCommitId) return { ...results, added: true };
     }
@@ -273,9 +273,10 @@ export function getFieldChanges(
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       fieldId,
-      shapes.EdgeType.UpdatedIn,
+      shapes.EdgeType.UpdatedIn
     ).results) {
-      if (node.result.id === batchCommitId) return { ...results, added: true };
+      if (node.result.id === batchCommitId)
+        return { ...results, changed: true };
     }
   }
 
@@ -285,14 +286,14 @@ export function getFieldChanges(
     shapeQueries,
     deltaBatchCommits,
     results,
-    shapeId,
+    shapeId
   );
 }
 
 export function getArrayChanges(
   shapeQueries: shapes.GraphQueries,
   shapeId: string,
-  sinceBatchCommitId?: string,
+  sinceBatchCommitId?: string
 ): ChangeResult {
   const results = {
     added: false,
@@ -301,14 +302,14 @@ export function getArrayChanges(
 
   const deltaBatchCommits = getDeltaBatchCommits(
     shapeQueries,
-    sinceBatchCommitId,
+    sinceBatchCommitId
   );
 
   return checkForArrayChanges(
     shapeQueries,
     deltaBatchCommits,
     results,
-    shapeId,
+    shapeId
   );
 }
 
@@ -316,12 +317,12 @@ function checkForArrayChanges(
   shapeQueries: shapes.GraphQueries,
   deltaBatchCommits: any,
   results: ChangeResult,
-  shapeId: string,
+  shapeId: string
 ): ChangeResult {
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       shapeId,
-      shapes.EdgeType.CreatedIn,
+      shapes.EdgeType.CreatedIn
     ).results) {
       if (node.result.id === batchCommitId) return { ...results, added: true };
     }
@@ -331,7 +332,7 @@ function checkForArrayChanges(
   for (const batchCommitId of deltaBatchCommits.keys()) {
     for (const node of shapeQueries.listOutgoingNeighborsByEdgeType(
       shapeId,
-      shapes.EdgeType.UpdatedIn,
+      shapes.EdgeType.UpdatedIn
     ).results) {
       if (node.result.id === batchCommitId)
         return { ...results, changed: true };
@@ -349,7 +350,7 @@ type ChangeResult = {
 // TODO: use the endpointQueries one below
 function getDeltaBatchCommits(
   shapeQueries: shapes.GraphQueries,
-  sinceBatchCommitId?: string,
+  sinceBatchCommitId?: string
 ): any {
   let sortedBatchCommits = shapeQueries
     .listNodesByType(shapes.NodeType.BatchCommit)
@@ -362,7 +363,7 @@ function getDeltaBatchCommits(
     ? sortedBatchCommits.filter(
         (batchCommit: any) =>
           batchCommit.result.data.createdAt >
-          sinceBatchCommit!.result.data.createdAt,
+          sinceBatchCommit!.result.data.createdAt
       )
     : sortedBatchCommits
   ).forEach((batchCommit: any) => {
