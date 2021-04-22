@@ -20,7 +20,14 @@ module.exports = {
       'using/cli-commands',
     ],
     'Optic in Real Environments': [
-      'deploy/overview'
+      'deploy/overview',
+      'deploy/azure-app-gateway',
+      'deploy/azure-api-management',
+      'deploy/envoy-proxy',
+      'deploy/nginx',
+      'deploy/cloudflare-worker',
+      'deploy/kubernetes',
+      'deploy/aws-api-gateway',
     ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [

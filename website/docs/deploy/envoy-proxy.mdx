@@ -1,0 +1,50 @@
+---
+title: Envoy Proxy
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic integrates with Envoy as a HTTP filter.
+
+1. We'll provide you the latest beta plugin release to download.
+
+1. Add Optic as a HTTP filter in your `envoy.yaml` and update the lines setting the Optic Token, Source ID and Source Tags.
+
+1. Add the Optic API in a `clusters` config:
+
+    ```yaml
+    clusters:
+        - name: optic-api
+        connect_timeout: 0.25s
+        type: logical_dns
+        http2_protocol_options: {}
+        lb_policy: round_robin
+        load_assignment:
+            cluster_name: optic-api
+            endpoints:
+            - lb_endpoints:
+            - endpoint:
+                address:
+                    socket_address:
+                    address: api.useoptic.com
+                    port_value: 443
+        transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+            sni: api.useoptic.com
+            common_tls_context: 
+                validation_context:
+                match_subject_alt_names:
+                - exact: "api.useoptic.com"
+                trusted_ca:
+                    filename: /etc/ssl/certs/ca-certificates.crt
+    ```
+
+1. Restart Envoy.
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />

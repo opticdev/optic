@@ -19,6 +19,7 @@ API Logging has always been a hard problem, how do you send enough data to detec
 Want to rapidly document an existing API with Optic in a few hours? How about every API at your company? Putting Optic into real environments will help you establish an accurate API specification for each service, and start understanding the dependency graph/s between them.
 
 **2. Live Contract Testing**
+
 When Optic runs in Staging + QA environments, it provides a coverage report + diff report for every single build. Since Optic is monitoring these environments, all the usual testing activities that happen in these environments become API contract tests: UI tests, automated API tests, integrations tests, and even developers using the service while developing).
 
 Optic will provide a list of diffs (unexpected API behavior), a list of any new undocumented endpoints, and a coverage report helping you understand what surface area has been tested.
@@ -33,17 +34,15 @@ By watching how all your services interact, Optic can build a dependency graph b
 
 
 ## Supported Integrations
-- Azure Application Gateway + Azure API Management
-- Envoy Proxy
-- nginx
-- Cloudflare Worker
-- K8s
-- AWS API Gateway
+- Azure
+  - [Azure Application Gateway + Azure API Management](azure-app-gateway)
+  - [Azure API Management](azure-api-management)
+- [Envoy Proxy](envoy-proxy)
+- [nginx](nginx)
+- [Cloudflare Worker](cloudflare-worker)
+- [Kubernetes](kubernetes)
+- [AWS API Gateway](aws-api-gateway)
 
-### Request or Sponsor an Integration
-Need us to support another Gateway, Load Balancer, Service Mesh or Cloud provider? Reach out to aidan@useoptic.com to talk about sponsoring an integration and sharing it back to the Optic community.
+import BetaFooter from './Beta-Footer.mdx'
 
-
----
-
-## Ready to give it a try? [Join the Beta](https://4babutyltxb.typeform.com/to/qd6PHfHI)
+<BetaFooter />

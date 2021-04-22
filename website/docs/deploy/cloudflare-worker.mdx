@@ -1,0 +1,29 @@
+---
+title: Cloudflare Worker
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+1. We'll provide you with the latest copy of our beta Optic Cloudflare Worker integration and instructions to complete the setup.
+
+1. Make sure that you define the Optic configuration variables:
+
+    ```jsx
+    INSTALL_OPTIONS = {
+     
+        "opticToken": "Your Optic Token",
+
+        "opticSourceID": "A unique identifier for this source of data",
+
+        "opticSourceLabels": "A comma separated list of other labels to send to Optic"
+    };
+    INSTALL_TYPE = 'custom';
+    ```
+
+1. Set up a worker route matching the requests you want Optic to see.
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />
