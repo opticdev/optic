@@ -50,6 +50,11 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+let entrypoints = {
+  cloud: "src/entry-points/cloud/index",
+  local: "src/entry-points/local/index"
+}
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
@@ -57,7 +62,7 @@ module.exports = {
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/entry-points/local/index'), //@TODO: parameterize this
+  appIndexJs: resolveModule(resolveApp, entrypoints[process.env.OPTIC_ENTRYPOINT || "local"]),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),

@@ -10,6 +10,9 @@ env:
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
+  ui-v2:
+    taskfile: workspaces/ui-v2/Taskfile.yml
+    dir: workspaces/ui-v2
   regression:
     taskfile: taskfiles/regression-tests/Taskfile.yml
   release:
@@ -77,6 +80,7 @@ tasks:
     cmds:
       - yarn wsrun --report --fast-exit --exclude-missing ws:clean
 
+  # UI v1 apidocs
   spec:build:
     dir: workspaces/ui
     env:
@@ -84,6 +88,14 @@ tasks:
       CI: "false"
     cmds:
       - yarn build-spec
+
+  # UI v2 cloud spec viewer
+  spec_viewer:build:
+    dir: workspaces/ui-v2
+    env:
+      PUBLIC_URL: "https://specs.useoptic.com"
+    cmds:
+      - yarn build:cloud_spec_viewer
 
   npm:publish:
     deps:
