@@ -25,7 +25,8 @@ pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, Interac
 pub use interactions::{analyze_documented_bodies, analyze_undocumented_bodies};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
-  EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
+  EndpointProjection, LearnedUndocumentedBodiesProjection, ShapeProjection,
+  SpecAssemblerProjection, SpecProjection,
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
