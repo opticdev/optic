@@ -25,11 +25,6 @@ expression: diffs
                             key: "rank",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rank",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_UzxFqwGJ8h",

@@ -27,6 +27,11 @@ export function commit(
   CommitOptions
 ): Readable;
 
+export function learnShapeDiffAffordances(
+  commands: AsyncIterable<Streams.HttpInteractions.HttpInteraction>,
+  { diffResultsPath: string, specPath: string }
+): Readable;
+
 export function learnUndocumentedBodies(
   commands: AsyncIterable<Streams.HttpInteractions.HttpInteraction>,
   { specPath: string }

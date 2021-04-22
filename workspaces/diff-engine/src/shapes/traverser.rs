@@ -4,7 +4,7 @@ use super::visitors::{
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
@@ -223,7 +223,7 @@ impl<'a> Traverser<'a> {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash)]
 pub enum ShapeTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   ObjectTrail { shape_id: ShapeId },
@@ -265,7 +265,7 @@ pub enum ShapeTrailPathComponent {
   UnknownTrail {},
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
   pub root_shape_id: ShapeId,
@@ -286,7 +286,7 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -298,32 +298,17 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
-
-  #[serde(skip)]
-  normalized: Vec<JsonTrailPathComponent>,
 }
 impl JsonTrail {
   pub fn empty() -> Self {
-    JsonTrail {
-      path: vec![],
-      normalized: vec![],
-    }
+    JsonTrail { path: vec![] }
   }
   pub fn with_component(&self, component: JsonTrailPathComponent) -> Self {
     let mut new_trail = self.clone();
-    let normalized_component = match component {
-      JsonTrailPathComponent::JsonArrayItem { index } => {
-        JsonTrailPathComponent::JsonArrayItem { index: 0 }
-      }
-      _ => component.clone(),
-    };
-
     new_trail.path.push(component);
-    new_trail.normalized.push(normalized_component);
-
     new_trail
   }
 
@@ -342,11 +327,26 @@ impl JsonTrail {
   pub fn with_object_key(&self, key: String) -> Self {
     self.with_component(JsonTrailPathComponent::JsonObjectKey { key })
   }
+
+  pub fn normalized(&self) -> Self {
+    Self {
+      path: self
+        .path
+        .iter()
+        .map(|component| match component {
+          JsonTrailPathComponent::JsonArrayItem { index } => {
+            JsonTrailPathComponent::JsonArrayItem { index: 0 }
+          }
+          _ => component.clone(),
+        })
+        .collect(),
+    }
+  }
 }
 
 impl PartialEq for JsonTrail {
   fn eq(&self, other: &Self) -> bool {
-    self.normalized == other.normalized
+    self.path == other.path
   }
 }
 
@@ -354,7 +354,7 @@ impl Eq for JsonTrail {}
 
 impl Ord for JsonTrail {
   fn cmp(&self, other: &Self) -> Ordering {
-    self.normalized.cmp(&other.normalized)
+    self.path.cmp(&other.path)
   }
 }
 
@@ -366,7 +366,7 @@ impl PartialOrd for JsonTrail {
 
 impl Hash for JsonTrail {
   fn hash<H: Hasher>(&self, hash_state: &mut H) {
-    self.normalized.hash(hash_state);
+    self.path.hash(hash_state);
   }
 }
 

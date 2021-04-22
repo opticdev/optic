@@ -22,3 +22,26 @@ export async function spawnProcess(
     });
   });
 }
+
+export async function spawnProcessReturnExitCode(
+  command: string,
+  env: any = {}
+): Promise<number> {
+  const taskOptions: SpawnOptions = {
+    env: {
+      ...process.env,
+      ...env,
+    },
+    shell: true,
+    cwd: process.cwd(),
+    stdio: 'inherit',
+  };
+
+  const child = spawn(command, taskOptions);
+
+  return await new Promise((resolve) => {
+    child.on('exit', (code) => {
+      resolve(code || 0);
+    });
+  });
+}

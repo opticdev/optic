@@ -25,11 +25,6 @@ expression: results
                             key: "rating",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rating",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_xjqKoYgnH6",

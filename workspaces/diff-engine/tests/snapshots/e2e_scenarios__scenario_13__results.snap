@@ -28,14 +28,6 @@ expression: results
                             index: 0,
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rivals",
-                        },
-                        JsonArrayItem {
-                            index: 0,
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_10",

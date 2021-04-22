@@ -4,6 +4,7 @@ use crate::shapes::JsonTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::state::SpecIdGenerator;
 use crate::BodyDescriptor;
+use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug, Default)]
@@ -29,6 +30,14 @@ impl TrailObservationsResult {
 
   pub fn values(&self) -> impl Iterator<Item = &TrailValues> {
     self.values_by_trail.values()
+  }
+
+  pub fn get(&self, trail: &JsonTrail) -> Option<&TrailValues> {
+    self.values_by_trail.get(trail)
+  }
+
+  pub fn remove(&mut self, trail: &JsonTrail) -> Option<TrailValues> {
+    self.values_by_trail.remove(trail)
   }
 
   pub fn into_commands(
@@ -233,7 +242,8 @@ impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
 
 pub type FieldSet = HashSet<String>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TrailValues {
   pub trail: JsonTrail,
   pub was_string: bool,
@@ -243,6 +253,8 @@ pub struct TrailValues {
   pub was_array: bool,
   pub was_object: bool,
   pub was_empty_array: bool,
+
+  #[serde(rename = "fieldSet")]
   pub field_sets: Vec<FieldSet>,
 }
 
@@ -279,6 +291,15 @@ impl TrailValues {
     for new_field_set in new_values.field_sets {
       self.insert_field_set(new_field_set);
     }
+  }
+
+  pub fn was_unknown(&self) -> bool {
+    !self.was_string
+      && !self.was_number
+      && !self.was_boolean
+      && !self.was_null
+      && !self.was_array
+      && !self.was_empty_array
   }
 
   pub fn insert_field_set(&mut self, field_set: FieldSet) {

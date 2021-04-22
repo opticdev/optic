@@ -6,7 +6,6 @@ expression: results
     UnmatchedShape {
         json_trail: JsonTrail {
             path: [],
-            normalized: [],
         },
         shape_trail: ShapeTrail {
             root_shape_id: "shape_1",

@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { fromReadableJSONL } from '../async-tools';
+import { fromReadableJSONL } from '../../async-tools';
 
 export interface LearnedBodies {
   pathId: string;

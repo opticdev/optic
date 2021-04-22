@@ -28,14 +28,6 @@ expression: results
                             key: "price",
                         },
                     ],
-                    normalized: [
-                        JsonArrayItem {
-                            index: 0,
-                        },
-                        JsonObjectKey {
-                            key: "price",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "baseline-shape_9",

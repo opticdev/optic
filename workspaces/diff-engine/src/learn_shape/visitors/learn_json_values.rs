@@ -101,12 +101,13 @@ impl BodyVisitor<TrailValues> for LearnPrimitiveVisitor {
 
 impl BodyPrimitiveVisitor<TrailValues> for LearnPrimitiveVisitor {
   fn visit(&mut self, body: BodyDescriptor, json_trail: JsonTrail) {
-    if let None = self.get(&json_trail) {
-      let value = TrailValues::new(&json_trail);
-      self.insert(json_trail.clone(), value);
+    let normalized_trail = json_trail.normalized();
+    if let None = self.get(&normalized_trail) {
+      let value = TrailValues::new(&normalized_trail);
+      self.insert(normalized_trail.clone(), value);
     }
     let trail_values = self
-      .get(&json_trail)
+      .get(&normalized_trail)
       .expect("expected map to contain a value at the json_trail");
 
     match body {
@@ -142,7 +143,8 @@ impl BodyVisitor<TrailValues> for LearnArrayVisitor {
 
 impl BodyArrayVisitor<TrailValues> for LearnArrayVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
-    let trail_values = self.get_or_insert(json_trail);
+    let normalized_trail = json_trail.normalized();
+    let trail_values = self.get_or_insert(&normalized_trail);
     trail_values.was_array = true;
 
     let items = match body {
@@ -177,7 +179,8 @@ impl BodyVisitor<TrailValues> for LearnObjectVisitor {
 
 impl BodyObjectVisitor<TrailValues> for LearnObjectVisitor {
   fn visit(&mut self, body: &BodyDescriptor, json_trail: &JsonTrail) {
-    let trail_values = self.get_or_insert(json_trail);
+    let normalized_trail = json_trail.normalized();
+    let trail_values = self.get_or_insert(&normalized_trail);
 
     if let BodyDescriptor::Object(object_description) = &body {
       trail_values.was_object = true;

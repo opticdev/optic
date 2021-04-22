@@ -1,23 +1,37 @@
 // import { makeUniverse } from './universes/makeUniverse';
+// import { DiffSet } from '../../engine/diff-set';
+// import { ParsedDiff } from '../../engine/parse-diff';
+// import sha1 from 'node-sha1';
+// import jsonStringify from 'json-stable-stringify';
 // import path from 'path';
-// // @ts-ignore
 // import colors from 'colors';
+// import { DiffPreviewer, Queries, toOption } from '@useoptic/domain';
+// import { DiffRfcBaseState } from '../../engine/interfaces/diff-rfc-base-state';
+// import { IShapeTrail } from '../../engine/interfaces/shape-trail';
+// import {
+//   prepareNewRegionDiffSuggestionPreview,
+//   prepareShapeDiffSuggestionPreview,
+// } from '../../engine/interpreter/prepare-diff-previews';
+// import {
+//   IChangeType,
+//   ICopy,
+//   ICopyStyle,
+//   IDiffSuggestionPreview,
+//   ISuggestion,
+// } from '../../engine/interfaces/interpretors';
 // import { spawn, Thread, Worker } from 'threads';
+// import { JsonHelper, opticEngine, RfcCommandContext } from '@useoptic/domain';
+// import { ILoadInteractionResponse } from '../../services/diff';
 // import {
 //   ILearnedBodies,
 //   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 // } from '@useoptic/cli-shared/build/diffs/initial-types';
-// import { DiffSet } from '../../diff-set';
-// import { IDiff } from '../../../../../cli-shared/build/diffs/diffs';
-// import { ParsedDiff } from '../../parse-diff';
-// import { IShapeTrail } from '../../../../../cli-shared/build/diffs/shape-trail';
-// import { CurrentSpecContext, IDiffSuggestionPreview } from '../../Interfaces';
-//
-// export interface ILoadInteractionResponse {
-//   interaction: any;
-// }
-//
+// import { IDiff } from '../../engine/interfaces/diffs';
+// import { universeFromEvents } from '@useoptic/domain-utilities';
+// import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+
 // interface ITestUniverse {
+//   rfcBaseState: DiffRfcBaseState;
 //   rawEvents: any;
 //   rawSamples: any;
 //   diffs: DiffSet;
@@ -33,7 +47,7 @@
 //     diffs: { [key: string]: IDiff }
 //   ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 // }
-//
+
 // export async function loadsDiffsFromUniverse(
 //   path: string
 // ): Promise<ITestUniverse> {
@@ -50,15 +64,19 @@
 //     captureId,
 //   } = await universePromise;
 //   const diffsRaw = rawDiffs;
-//
+
 //   const diffs = new DiffSet(
 //     diffsRaw.map(([diff, interactions]) => {
-//       const diffParsed = new ParsedDiff(diff, interactions);
+//       const diffParsed = new ParsedDiff(
+//         diff,
+//         interactions,
+//         sha1(jsonStringify(diff))
+//       );
 //       return diffParsed;
 //     }),
 //     rfcBaseState
 //   );
-//
+
 //   return {
 //     diffs,
 //     rawEvents,
@@ -69,7 +87,7 @@
 //     learnTrailValues,
 //   };
 // }
-//
+
 // export const testCase = (basePath: string) => async (
 //   name: string
 // ): Promise<ITestUniverse> => {
@@ -77,7 +95,7 @@
 //     path.join(__dirname + '/universes', basePath, name + '.json')
 //   );
 // };
-//
+
 // export async function shapeDiffPreview(
 //   input: {
 //     shapeDiffGroupingHash: string;
@@ -87,7 +105,7 @@
 //   universe: ITestUniverse
 // ): Promise<IDiffSuggestionPreview> {
 //   const { pathId, method } = input.diffs[0].location(universe.rfcBaseState);
-//
+
 //   const trailValues = await universe.learnTrailValues(pathId, method, {
 //     [input.diffs[0]!.diffHash]: input.diffs[0]!.raw(),
 //   });
@@ -98,7 +116,7 @@
 //     []
 //   );
 // }
-//
+
 // export async function canApplySuggestions(
 //   suggestions: ISuggestion[],
 //   universe: ITestUniverse
@@ -107,22 +125,22 @@
 //     const {
 //       universeFromEventsAndAdditionalCommands,
 //     } = require('@useoptic/domain-utilities');
-//
+
 //     const {
 //       StartBatchCommit,
 //       EndBatchCommit,
 //     } = opticEngine.com.useoptic.contexts.rfc.Commands;
-//
+
 //     const inputCommands = JsonHelper.vectorToJsArray(
 //       opticEngine.CommandSerialization.fromJs(commands)
 //     );
-//
+
 //     const commandContext = new RfcCommandContext(
 //       'clientId',
 //       'clientSessionId',
 //       'batchId'
 //     );
-//
+
 //     const {
 //       rfcId,
 //       eventStore,
@@ -135,15 +153,15 @@
 //         EndBatchCommit('batchId'),
 //       ]
 //     );
-//
+
 //     const serializedEvents = JSON.parse(eventStore.serializeEvents(rfcId));
-//
+
 //     // console.log(JSON.stringify(serializedEvents));
-//
+
 //     const firstResponseSetShapeId = serializedEvents.find(
 //       (i) => i['ResponseBodySet']
 //     )['ResponseBodySet'].bodyDescriptor.shapeId;
-//
+
 //     function shapeCanRender() {
 //       //medium confidence in this test, since it's a scalajs vestige
 //       const { rfcState, eventStore, rfcService, rfcId } = universeFromEvents(
@@ -151,17 +169,17 @@
 //       );
 //       const queries = Queries(eventStore, rfcService, rfcId);
 //       const shapesResolvers = queries.shapesResolvers();
-//
+
 //       const previewer = new DiffPreviewer(shapesResolvers, rfcState);
 //       const bodyOption = toOption(firstResponseSetShapeId);
 //       const result = previewer.previewShape(bodyOption);
 //     }
-//
+
 //     function newEventStreamHasIntegrity() {
 //       const spec = DiffEngine.spec_from_events(
 //         JSON.stringify(serializedEvents)
 //       );
-//
+
 //       for (let interaction of universe.rawSamples) {
 //         let results = DiffEngine.diff_interaction(
 //           JSON.stringify(interaction),
@@ -169,17 +187,17 @@
 //         );
 //       }
 //     }
-//
+
 //     shapeCanRender();
 //     newEventStreamHasIntegrity();
-//
+
 //     return serializedEvents;
 //   }
-//
+
 //   const events = universe.rfcBaseState.eventStore.serializeEvents(
 //     universe.rfcBaseState.rfcId
 //   );
-//
+
 //   return Promise.all(
 //     suggestions.map(async (i) => {
 //       const commands = i.commands;
@@ -201,19 +219,19 @@
 //     })
 //   );
 // }
-//
+
 // export async function newRegionPreview(
 //   diff: ParsedDiff,
 //   universe: ITestUniverse
 // ): Promise<IDiffSuggestionPreview> {
 //   const { pathId, method } = diff.location(universe.rfcBaseState);
-//
+
 //   const initial = await universe.learnInitial(
 //     pathId,
 //     method,
 //     universe.rfcBaseState.domainIdGenerator
 //   );
-//
+
 //   return await prepareNewRegionDiffSuggestionPreview(
 //     diff,
 //     universe,
@@ -221,7 +239,7 @@
 //     []
 //   );
 // }
-//
+
 // export function ICopyToConsole(i: ICopy[]): string {
 //   return i
 //     .map((i) =>
@@ -229,16 +247,16 @@
 //     )
 //     .join(' ');
 // }
-//
+
 // export async function logResult(preview: IDiffSuggestionPreview) {
 //   const toLog = [];
-//
+
 //   toLog.push(
 //     `TITLE: ${colors.underline(
 //       ICopyToConsole(preview.overrideTitle || preview.diffDescription.title)
 //     )}`
 //   );
-//
+
 //   toLog.push(
 //     `ASSERTION: ${colors.underline(
 //       ICopyToConsole(preview.diffDescription.assertion)
@@ -249,7 +267,7 @@
 //       IChangeType[preview.diffDescription.changeType]
 //     )}`
 //   );
-//
+
 //   preview.suggestions.map((i, index) => {
 //     toLog.push(
 //       `SUGGESTION ${index}: ${colors.underline(
@@ -259,6 +277,6 @@
 //     toLog.push(JSON.stringify(i.commands, null, 2));
 //     toLog.push('-----------------');
 //   });
-//
+
 //   console.log(toLog.join('\n'));
 // }

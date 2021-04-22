@@ -24,11 +24,6 @@ expression: results
                             key: "rating",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "rating",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "shape_eaAktz66rY",
@@ -55,11 +50,6 @@ expression: results
             shape_diff_result: UnmatchedShape {
                 json_trail: JsonTrail {
                     path: [
-                        JsonObjectKey {
-                            key: "rating",
-                        },
-                    ],
-                    normalized: [
                         JsonObjectKey {
                             key: "rating",
                         },

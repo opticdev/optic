@@ -42,7 +42,7 @@ import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/
 import { EventEmitter } from 'events';
 import { Config } from '../config';
 import { printCoverage } from './coverage';
-import { spawnProcess } from './spawn-process';
+import {spawnProcess, spawnProcessReturnExitCode} from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';
 import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
@@ -61,10 +61,16 @@ export const runCommandFlags = {
   'exit-on-diff': flags.boolean({
     default: false,
     required: false,
+    description: "When a capture session ends, if a diff is detected Optic will exit with exit code 1. This takes priority over pass-exit-code."
   }),
   'transparent-proxy': flags.boolean({
     default: false,
     required: false,
+  }),
+  'pass-exit-code': flags.boolean({
+    default: false,
+    required: false,
+    description: "Passes through the exit code from your task (or dependent task). exit-on-diff overrides this when a diff is detected."
   }),
 };
 interface LocalCliTaskFlags {
@@ -72,6 +78,7 @@ interface LocalCliTaskFlags {
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
   'transparent-proxy'?: boolean;
+  'pass-exit-code'?: boolean
 }
 
 export async function LocalTaskSessionWrapper(
@@ -106,9 +113,9 @@ export async function LocalTaskSessionWrapper(
     shouldCollectDiffs: flags['collect-diffs'] !== false,
     shouldExitOnDiff: flags['exit-on-diff'] !== false,
     shouldTransparentProxy: flags['transparent-proxy'] !== false,
+    shouldPassThroughExitCode: flags['pass-exit-code'] !== false,
   });
   const session = new CliTaskSession(runner);
-
   const task = config.tasks[taskName];
 
   if (!task) {
@@ -146,11 +153,12 @@ export async function LocalTaskSessionWrapper(
     return await cleanupAndExit(1);
   }
 
-  return await cleanupAndExit();
+  return await cleanupAndExit( flags['pass-exit-code'] !== false ? runner.exitWithCode : 0);
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
   public foundDiff: boolean = false;
+  public exitWithCode: number | undefined;
 
   constructor(
     private captureId: string,
@@ -161,6 +169,7 @@ export class LocalCliTaskRunner implements IOpticTaskRunner {
       shouldCollectDiffs: boolean;
       shouldExitOnDiff: boolean;
       shouldTransparentProxy: boolean;
+      shouldPassThroughExitCode: boolean;
     }
   ) {}
 
@@ -255,6 +264,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       ? 'yes'
       : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
 
+
     const testCommand = commandToRunWhenStarted
       ? async () => {
           console.log(
@@ -264,12 +274,15 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
             )
           );
 
-          await spawnProcess(commandToRunWhenStarted!, {
+        const exitCodeOfTestProcess = await spawnProcessReturnExitCode(commandToRunWhenStarted!, {
             OPTIC_PROXY_PORT: taskConfig.proxyConfig.port.toString(),
             OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
             OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
           });
-          // return new Promise((resolve) => setTimeout(resolve, 500)); // needs time to finish saving
+
+        if (this.options.shouldPassThroughExitCode) {
+          this.exitWithCode = exitCodeOfTestProcess
+        }
         }
       : undefined;
 
@@ -279,6 +292,10 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     );
 
     await sessionManager.run(persistenceManager);
+
+    if (!commandToRunWhenStarted && this.options.shouldPassThroughExitCode) {
+      this.exitWithCode = sessionManager.getExitCodeOfProcess()
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId);

@@ -49,6 +49,7 @@ Run has a few flags that can modify the default behavior:
 
 - `--collect-coverage` will report the [coverage](/docs/get-started/testing#api-coverage) of observed traffic over the API specification when the process is stopped.
 - `--exit-on-diff` returns an exit code of `1` if unexpected API behavior is returned, such as an undocumented route or a change in behavior on a documented route. Normally, Optic returns `0` on successful termination regardless of the behavior observed. This is primarily used in CI/CD scenarios, such as in [GitHub Actions](/docs/github-actions), to fail builds when undocumented behavior is detected.
+- `--pass-exit-code` returns the exit code of your task. If you are using a [dependent task](/docs/get-started/testing), the exit code of the dependent command (not the base command) will be passed through. This flag is overridden by `--exit-on-diff` which will always exit a capture session with exit code 1 when a diff was detected. 
 - `--transparent-proxy` configures Optic to [transparently forward](/docs/using/advanced-configuration#transparent-proxy-mode) all traffic, which may be necessary for certain application configurations.
 
 ### `spec`

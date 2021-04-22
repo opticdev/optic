@@ -25,11 +25,6 @@ expression: results
                             key: "age",
                         },
                     ],
-                    normalized: [
-                        JsonObjectKey {
-                            key: "age",
-                        },
-                    ],
                 },
                 shape_trail: ShapeTrail {
                     root_shape_id: "baseline-shape_8",

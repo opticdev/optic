@@ -20,6 +20,7 @@ import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
 import { Diff } from '../diffs';
 import { OnDemandTrailValues } from '../tasks/on-demand-trail-values';
+import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -168,38 +169,69 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  router.post(
-    '/trail-values',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const { captureId } = req.params;
-      const { events, pathId, method, serializedDiffs } = req.body;
+  if (isEnvTrue(process.env.OPTIC_RUST_SHAPE_DIFF_AFFORDANCES_LEARNER)) {
+    router.post(
+      '/trail-values',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method, diffId } = req.body;
 
-      const onDemandTrailValues = new OnDemandTrailValues({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        events: events,
-        captureId,
-        pathId,
-        serializedDiffs,
-        method,
-      });
-
-      const result = onDemandTrailValues.run();
-
-      result.then(
-        (
-          learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
-        ) => {
-          res.json(learnedTrails);
-        }
-      );
-      result.catch((e) => {
-        res.status(500).json({
-          message: e.message,
+        const onDemandTrailValues = new OnDemandShapeDiffAffordancesRust({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          diffId,
+          events: events,
+          captureId,
+          pathId,
+          method,
         });
-      });
-    }
-  );
+
+        const result = onDemandTrailValues.run();
+
+        result.then((shapeDiffAffordancesByFingerprint) => {
+          res.json(shapeDiffAffordancesByFingerprint);
+        });
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  } else {
+    router.post(
+      '/trail-values',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method, serializedDiffs } = req.body;
+
+        const onDemandTrailValues = new OnDemandTrailValues({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          events: events,
+          captureId,
+          pathId,
+          serializedDiffs,
+          method,
+        });
+
+        const result = onDemandTrailValues.run();
+
+        result.then(
+          (
+            learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+          ) => {
+            res.json(learnedTrails);
+          }
+        );
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
 
