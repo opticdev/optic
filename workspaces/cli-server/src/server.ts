@@ -202,23 +202,8 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = makeRouter(sessions);
+    const specRouter = await makeRouter(sessions);
     app.use('/api/specs/:specId', specRouter);
-
-    // testing service proxy
-    app.use(
-      '/api/testing',
-      //@ts-ignore
-      createProxyMiddleware({
-        changeOrigin: true,
-        followRedirects: true,
-        target: this.config.cloudApiBaseUrl,
-        pathRewrite(input, req) {
-          //@ts-ignore
-          return input.substring(req.baseUrl.length);
-        },
-      })
-    );
 
     // ui
     this.addUiServer(app);

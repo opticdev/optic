@@ -177,6 +177,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
     contributionsProjection = projections.contributionsProjection;
+    return projections;
   }
 
   await reload(opticContext);
@@ -185,6 +186,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     JSON: GraphQLJSON,
     Mutation: {
       applyCommands: async (parent: any, args: any, context: any) => {
+        //@jaap we need to encapsulate this so it can work with the inmemory and localcli implementations
+        //@jaap: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
         const batchCommitId = uuidv4();
         const events = await opticContext.specRepository.listEvents();
         try {
@@ -201,7 +204,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           console.error(e);
           debugger;
         }
-        //@TODO: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
 
         await reload(context.opticContext);
 
@@ -449,8 +451,15 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     typeDefs: schema,
     resolvers,
   });
-
-  return function (input: SpectacleInput) {
+  const graphqlContext = {
+    opticContext,
+    // @ts-ignore
+    endpointsQueries,
+    // @ts-ignore
+    shapeQueries,
+    shapeViewerProjection,
+  };
+  const queryWrapper = function (input: SpectacleInput) {
     return graphql({
       schema: executableSchema,
       source: input.query,
@@ -464,6 +473,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         contributionsProjection,
       },
     });
+  };
+  return {
+    executableSchema,
+    graphqlContext,
+    queryWrapper,
+    reload,
   };
 }
 

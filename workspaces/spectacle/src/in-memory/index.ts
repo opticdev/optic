@@ -126,7 +126,7 @@ export class InMemoryConfigRepository implements IOpticConfigRepository {
 interface InMemoryDiffServiceDependencies {
   diff: InMemoryDiff;
 }
-
+//@jaap: we need to make sure this and InMemoryDiff are up-to-date relative to the latest changes
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
 

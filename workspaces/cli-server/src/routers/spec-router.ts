@@ -1,7 +1,6 @@
 import {
   getPathsRelativeToCwd,
   IOpticTaskRunnerConfig,
-  parseIgnore,
   parseRule,
   readApiConfig,
   readTestingConfig,
@@ -10,13 +9,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
-import { ICliServerSession } from '../server';
+
 import sortBy from 'lodash.sortby';
 import {
   DefaultIdGenerator,
   developerDebugLogger,
-  FileSystemAvroCaptureLoader,
-  ICaptureLoader,
   isEnvTrue,
 } from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
@@ -27,7 +24,12 @@ import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
 import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
+
+import { makeSpectacle } from '@useoptic/spectacle';
+import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
+import { graphqlHTTP } from 'express-graphql';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -168,13 +170,7 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export function makeRouter(sessions: SessionsManager) {
-  function prepareEvents(events: any): string {
-    return `[
-${events.map((x: any) => JSON.stringify(x)).join('\n,')}
-]`;
-  }
-
+export async function makeRouter(sessions: SessionsManager) {
   async function ensureValidSpecId(
     req: express.Request,
     res: express.Response,
@@ -267,14 +263,25 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.json([]);
     }
   });
-  router.put(
-    '/events',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const events = req.body;
-      await fs.writeFile(req.optic.paths.specStorePath, prepareEvents(events));
-      res.sendStatus(204);
-    }
+
+  // spectacle
+  //@jaap: here's where we need to use the LocalCliOpticContextBuilder.fromDirectory() or whatever we decide
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
+    await fs.readJson(
+      './workspaces/spectacle/test/specs/mark-req-nested-field-optional.json'
+    )
+  );
+  const spectacle = await makeSpectacle(opticContext);
+  router.use(
+    '/spectacle',
+    graphqlHTTP({
+      //@ts-ignore
+      schema: spectacle.executableSchema,
+      graphiql: true,
+      //@jaap: we need to figure out how to make sure the context is always valid
+      context: spectacle.graphqlContext,
+    })
   );
 
   // example requests router
@@ -317,10 +324,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
             ? i.metadata.lastInteraction.observedAt
             : i.metadata.startedAt,
           links: [
-            {
-              rel: 'samples',
-              href: `${req.baseUrl}/captures/${i.captureId}/samples`,
-            },
             {
               rel: 'status',
               href: `${req.baseUrl}/captures/${i.captureId}/status`,
@@ -401,28 +404,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       captureBaseDirectory: string;
     }) => new LocalCaptureInteractionPointerConverter(config),
   });
+
   router.use('/captures/:captureId', captureRouter);
-
-  router.get('/captures/:captureId/samples', async (req, res) => {
-    const { captureId } = req.params;
-
-    const loader: ICaptureLoader = new FileSystemAvroCaptureLoader({
-      captureId,
-      captureBaseDirectory: req.optic.paths.capturesPath,
-    });
-    try {
-      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
-      const capture = await loader.loadWithFilter(filter);
-      res.json({
-        metadata: {},
-        samples: capture.samples,
-        links: [{ rel: 'next', href: '' }],
-      });
-    } catch (e) {
-      console.error(e);
-      res.sendStatus(500);
-    }
-  });
 
   router.get('/testing-credentials', async (req, res) => {
     const { paths } = req.optic;
