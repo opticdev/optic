@@ -1,14 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "build-workspace": "node ./workspaces/scripts/build/build.js",
-    "build-domain": "cd ./core && ./scripts/package.sh",
-    "build-domain-optimized": "cd ./core && ./scripts/package-optimized.sh",
-    "copy-domain": "echo copied",
-    "build-ui": "cd workspaces/ui && yarn run build-local",
-    "build-demo": "cd workspaces/ui && yarn run build-demo",
-    "build-spec": "cd workspaces/ui && yarn run build-spec",
-    "build:cloud_spec_viewer": "cd workspaces/ui-v2 && yarn run build:cloud",
     "postpull": "printf 'Run these commands:\n$ source sourceme.sh\n$ optic_build\n'",
     "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
     "registry:start": "cd docker/private-npm-registry && docker-compose up &",

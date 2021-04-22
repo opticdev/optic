@@ -5,6 +5,7 @@ on:
     branches:
       - release
       - develop
+      - feature/cloud_spec_viewer
     paths-ignore:
       - website/**
       - .github/**
@@ -28,11 +29,9 @@ jobs:
           fi
       - run: |
           if [ "$BRANCH" = "release" ]; then
-            echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
-            echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
+            REACT_APP_API_URL=https://api.useoptic.com
           else
-            echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
-            echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
+            REACT_APP_API_URL=https://api.o3c.info
           fi
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\

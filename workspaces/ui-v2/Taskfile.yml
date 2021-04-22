@@ -46,7 +46,6 @@ tasks:
       - task: :workspaces:build
       - >
         BUILD_PATH=build-cloud_spec_viewer
-        REACT_APP_API_URL=https://api.useoptic.com
         yarn build:cloud
     sources:
       - src/**

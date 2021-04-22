@@ -62,7 +62,7 @@ module.exports = {
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, entrypoints[process.env.OPTIC_ENTRYPOINT || "local"]),
+  appIndexJs: resolveModule(resolveApp, entrypoints[process.env.OPTIC_WEBPACK_ENTRYPOINT || "local"]),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),
