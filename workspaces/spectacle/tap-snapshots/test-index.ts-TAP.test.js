@@ -106,28 +106,18 @@ Object {
 exports[`test/index.ts TAP spectacle changelog query add request nested field > must match snapshot 1`] = `
 Object {
   "data": Null Object {
-    "endpointChanges": null,
-  },
-  "errors": Array [
-    Maximum call stack size exceeded
-
-GraphQL request:2:7
-1 | {
-2 |       endpointChanges(sinceBatchCommitId: "cd16e405-d8c4-40f6-8462-f211a1688cd4") {
-  |       ^
-3 |         endpoints { {
-      "locations": Array [
-        Object {
-          "column": 7,
-          "line": 2,
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "method": "POST",
+          "path": "/user",
         },
       ],
-      "message": "Maximum call stack size exceeded",
-      "path": Array [
-        "endpointChanges",
-      ],
     },
-  ],
+  },
 }
 `
 
@@ -207,34 +197,6 @@ Object {
       ],
     },
   },
-}
-`
-
-exports[`test/index.ts TAP spectacle changelog query mark request nested field optional > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "endpointChanges": null,
-  },
-  "errors": Array [
-    Maximum call stack size exceeded
-
-GraphQL request:2:7
-1 | {
-2 |       endpointChanges(sinceBatchCommitId: "9e6b2339-ede1-4eaf-9347-28a9854849bb") {
-  |       ^
-3 |         endpoints { {
-      "locations": Array [
-        Object {
-          "column": 7,
-          "line": 2,
-        },
-      ],
-      "message": "Maximum call stack size exceeded",
-      "path": Array [
-        "endpointChanges",
-      ],
-    },
-  ],
 }
 `
 
@@ -600,51 +562,6 @@ Object {
             Null Object {
               "changes": Null Object {
                 "added": true,
-                "changed": false,
-              },
-              "fieldId": "field_Uo8THxvA3Q",
-              "name": "name",
-              "shapeId": "shape_asZ4dzA9x3",
-            },
-          ],
-        },
-        "id": "shape_Uepabr07Dx",
-        "jsonType": "Object",
-      },
-    ],
-  },
-}
-`
-
-exports[`test/index.ts TAP spectacle shapeChoices query mark request nested field optional > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "shapeChoices": Array [
-      Null Object {
-        "asArray": null,
-        "asObject": Null Object {
-          "fields": Array [
-            Null Object {
-              "changes": Null Object {
-                "added": false,
-                "changed": false,
-              },
-              "fieldId": "field_mUYKwMbnjm",
-              "name": "address",
-              "shapeId": "shape_D8Wv86lkdr",
-            },
-            Null Object {
-              "changes": Null Object {
-                "added": false,
-                "changed": false,
-              },
-              "fieldId": "field_qTPFUl6rR7",
-              "name": "age",
-              "shapeId": "shape_KSUYvkm6ox",
-            },
-            Null Object {
-              "changes": Null Object {
-                "added": false,
                 "changed": false,
               },
               "fieldId": "field_Uo8THxvA3Q",
