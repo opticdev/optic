@@ -8,7 +8,7 @@ function loadExampleSpec(name: string): any[] {
   return JSON.parse(
     fs
       .readFileSync(`./workspaces/spectacle/examples/${name}.json`)
-      .toString('utf-8'),
+      .toString('utf-8')
   );
 }
 
@@ -18,9 +18,9 @@ const _events = loadExampleSpec('array-changes');
 async function main() {
   const opticContext = await InMemoryOpticContextBuilder.fromEvents(
     OpticEngine,
-    _events,
+    _events
   );
-  const spectacle = await makeSpectacle(opticContext);
+  const spectacle = (await makeSpectacle(opticContext)).queryWrapper;
 
   const batchCommitResults = await spectacle({
     query: `{
