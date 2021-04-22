@@ -9,6 +9,7 @@ import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '../../../lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
+import { IOpticDiffService } from '@useoptic/spectacle';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
@@ -16,6 +17,7 @@ export const newSharedDiffMachine = (
   undocumentedUrls: IUndocumentedUrl[],
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
   allSamples: any[],
+  diffService: IOpticDiffService
 ) => {
   return Machine<
     SharedDiffStateContext,
@@ -39,7 +41,7 @@ export const newSharedDiffMachine = (
         trailValues,
         diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
           currentSpecContext,
-          parsedDiffs,
+          parsedDiffs
         ),
       },
       pendingEndpoints: [],
@@ -73,7 +75,8 @@ export const newSharedDiffMachine = (
                           event.method,
                           () => {},
                           allSamples,
-                        ),
+                          diffService
+                        )
                       ),
                       matchesPattern: (url: string, method: string) => {
                         const matchesPath = niceTry(() => regex.exec(url));
@@ -109,7 +112,7 @@ export const newSharedDiffMachine = (
               assign({
                 pendingEndpoints: (ctx, event) => {
                   return [...ctx.pendingEndpoints].filter(
-                    (i) => i.id !== event.id,
+                    (i) => i.id !== event.id
                   );
                 },
               }),
@@ -169,7 +172,7 @@ export const newSharedDiffMachine = (
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints,
+                    ctx.pendingEndpoints
                   ),
               }),
             ],
@@ -182,14 +185,14 @@ export const newSharedDiffMachine = (
 
 ///service
 function updateUrlResults(
-  ctx: SharedDiffStateContext,
+  ctx: SharedDiffStateContext
 ): SharedDiffStateContext['results'] {
   return {
     undocumentedUrls: ctx.results.undocumentedUrls,
     displayedUndocumentedUrls: filterDisplayedUndocumentedUrls(
       ctx.results.undocumentedUrls,
       ctx.pendingEndpoints,
-      ctx.browserAppliedIgnoreRules,
+      ctx.browserAppliedIgnoreRules
     ),
     parsedDiffs: ctx.results.parsedDiffs,
     trailValues: ctx.results.trailValues,
@@ -207,7 +210,7 @@ export interface EndpointDiffGrouping {
 
 function groupDiffsByTheirEndpoints(
   currentSpecContext: CurrentSpecContext,
-  parsedDiffs: ParsedDiff[],
+  parsedDiffs: ParsedDiff[]
   // endpoint id method+pathId -> hashes
 ): EndpointDiffGrouping[] {
   const set = new DiffSet(parsedDiffs, currentSpecContext);
@@ -222,7 +225,7 @@ function groupDiffsByTheirEndpoints(
       .map((i) => i.diffs[0].asShapeDiff(currentSpecContext)!);
 
     const fullPath = currentSpecContext.currentSpecEndpoints.find(
-      (e) => e.pathId === i.pathId && e.method === i.method,
+      (e) => e.pathId === i.pathId && e.method === i.method
     )!.fullPath;
 
     return {
@@ -238,7 +241,7 @@ function groupDiffsByTheirEndpoints(
 function filterDisplayedUndocumentedUrls(
   all: IUndocumentedUrl[],
   pending: IPendingEndpoint[],
-  ignoreRules: string[],
+  ignoreRules: string[]
 ): IUndocumentedUrl[] {
   const allIgnores = parseIgnore(ignoreRules);
 

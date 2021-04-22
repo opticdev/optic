@@ -21,6 +21,7 @@ import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndR
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { useCaptures } from '../../hooks/useCapturesHook';
 import { CapturePage } from './CapturePage';
+import { useDiffTrailValues } from '../../hooks/diffs/useDiffTrailValues';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -32,18 +33,15 @@ export function DiffReviewPages(props: any) {
   const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
   const allEndpointsOfBaseSpec = useEndpoints();
 
-  //@dev: useCapture(boundaryId)
-  //@dev: useDiff(diffId, boundaryId)
-  // returns loading until diff is done
-  // DiffContext.Provider value={{...}}
-
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const diffReviewCapturePageLink = useDiffReviewCapturePageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+  const diffTrails = useDiffTrailValues();
 
   const isLoading =
     diff.loading ||
+    diffTrails.loading ||
     allEndpointsOfBaseSpec.loading ||
     allRequestsAndResponsesOfBaseSpec.loading;
 
@@ -54,6 +52,7 @@ export function DiffReviewPages(props: any) {
   return (
     <SharedDiffStore
       diffs={diff.diffs}
+      diffTrails={diffTrails.trails!}
       urls={diff.urls}
       endpoints={allEndpointsOfBaseSpec.endpoints}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
@@ -114,7 +113,7 @@ export function DiffReviewEnvironments(props: any) {
       <Redirect
         to={diffEnvironmentsRoot.linkTo(
           'local',
-          capturesState.captures[0].captureId,
+          capturesState.captures[0].captureId
         )}
       />
     </>

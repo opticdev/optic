@@ -11,6 +11,7 @@ import {
   AddPathParameter,
 } from '../../../lib/command-factory';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
+import { IOpticDiffService } from '@useoptic/spectacle';
 
 export const newInitialBodiesMachine = (
   currentSpecContext: CurrentSpecContext,
@@ -18,6 +19,7 @@ export const newInitialBodiesMachine = (
   method: string,
   onCommandsChanged: (commands: any[]) => void,
   allSamples: any[],
+  diffService: IOpticDiffService
 ) => {
   return Machine<InitialBodiesContext, InitialBodiesSchema, InitialBodiesEvent>(
     {
@@ -87,8 +89,10 @@ export const newInitialBodiesMachine = (
             src: async (context, event) => {
               const { commands, pathId } = pathToCommands(
                 pathPattern,
-                currentSpecContext,
+                currentSpecContext
               );
+
+              ///diffService.learnBody...
 
               const learner = await localInitialBodyLearner(
                 //@ts-ignore
@@ -96,7 +100,7 @@ export const newInitialBodiesMachine = (
                 commands,
                 pathId,
                 method,
-                allSamples,
+                allSamples
               );
 
               return new Promise((resolve) => {
@@ -125,7 +129,7 @@ export const newInitialBodiesMachine = (
           },
         },
       },
-    },
+    }
   );
 };
 
@@ -141,7 +145,7 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
             i.contentType === body.contentType &&
             i.statusCode === body.statusCode)
         );
-      }),
+      })
     );
   }
 
@@ -163,8 +167,8 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
       AddContribution(
         getEndpointId({ method: ctx.method, pathId: ctx.pathId }),
         'PURPOSE',
-        ctx.stagedEndpointName,
-      ),
+        ctx.stagedEndpointName
+      )
     );
     debugger;
   }
@@ -215,7 +219,7 @@ export type IIgnoreBody = {
 
 function pathToCommands(
   pathPattern: string,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): { pathId: string; commands: any[] } {
   const components = pathStringToPathComponents(pathPattern);
 
@@ -229,13 +233,13 @@ function pathToCommands(
       return AddPathParameter(
         lastId,
         thisParentId,
-        cleanupPathComponentName(i.name),
+        cleanupPathComponentName(i.name)
       );
     } else {
       return AddPathComponent(
         lastId,
         thisParentId,
-        cleanupPathComponentName(i.name),
+        cleanupPathComponentName(i.name)
       );
     }
   });
@@ -243,7 +247,7 @@ function pathToCommands(
   return { pathId: lastId, commands };
 }
 export function pathStringToPathComponents(
-  pathString: string,
+  pathString: string
 ): { name: string; isParameter: boolean }[] {
   const components = pathString.split('/').map((name) => {
     const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{';
