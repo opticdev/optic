@@ -35,12 +35,13 @@ export function BuildSpecPatch({
   const { addDiffHashIgnore } = useSharedDiffContext();
 
   const [selectedChoices, setSelectedChoices] = useState(
-    deepCopy(patchChoices),
+    deepCopy(patchChoices)
   );
 
   useEffect(() => {
     onPathChoicesUpdated(selectedChoices);
-  }, [selectedChoices, onPathChoicesUpdated]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChoices]);
 
   const updateShapeChoice = (coreShape: ICoreShapeKinds, valid: boolean) => {
     const copied = deepCopy(selectedChoices);

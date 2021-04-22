@@ -20,7 +20,7 @@ import { useDiffUndocumentedUrlsPageLink } from '../../navigation/Routes';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { IIgnoreBody } from '../../hooks/diffs/LearnPendingEndpointState';
 import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
-import { IForkableSpectacle } from '../../../../../spectacle';
+import { IForkableSpectacle } from '@useoptic/spectacle';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { useDebounce } from '../../hooks/ui/useDebounceHook';
@@ -92,10 +92,11 @@ export function PendingEndpointPage(props: any) {
     if (typeof debouncedName !== 'undefined') {
       changeEndpointName(debouncedName);
     }
-  }, [debouncedName, changeEndpointName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedName]);
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
-    Boolean(i.contentType),
+    Boolean(i.contentType)
   );
 
   return (

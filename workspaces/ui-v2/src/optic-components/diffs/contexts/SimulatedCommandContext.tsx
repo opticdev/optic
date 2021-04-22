@@ -13,16 +13,15 @@ type SimulatedCommandContextValue = {
 };
 
 export const SimulatedCommandContext = React.createContext<SimulatedCommandContextValue>(
-  { previewCommands: [] },
+  { previewCommands: [] }
 );
 
 export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   const value = { previewCommands: props.previewCommands };
   const [isProcessing, setIsProcessing] = useState(true);
   const [simulated, setSimulated] = useState<IForkableSpectacle | undefined>(
-    undefined,
+    undefined
   );
-  console.log(value.previewCommands);
   useEffect(() => {
     async function task() {
       const simulated = await props.spectacle.fork();

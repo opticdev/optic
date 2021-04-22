@@ -53,7 +53,7 @@ export function ReviewEndpointDiffPage(props: any) {
 
   const shapeDiffs = useShapeDiffInterpretations(
     endpointDiffs.shapeDiffs,
-    context.results.trailValues,
+    context.results.trailValues
   );
 
   const filteredShapeDiffs = shapeDiffs.results?.filter((i: any) => {
@@ -63,7 +63,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const [showToc, setShowToc] = useState(false);
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
   const [selectedDiff, setSelectedDiffHash] = useState<string | undefined>(
-    undefined,
+    undefined
   );
 
   useEffect(() => {
@@ -73,30 +73,24 @@ export function ReviewEndpointDiffPage(props: any) {
     } else if (
       shapeDiffs.results.length > 0 &&
       shapeDiffs.results.every((i) =>
-        isDiffHandled(i.diffDescription?.diffHash!),
+        isDiffHandled(i.diffDescription?.diffHash!)
       )
     ) {
       history.push(diffReviewPage.linkTo());
     }
-  }, [
-    filteredShapeDiffs.length,
-    diffReviewPage,
-    filteredShapeDiffs,
-    history,
-    isDiffHandled,
-    shapeDiffs.results,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredShapeDiffs.length]);
 
   const renderedDiff: IInterpretation | undefined = useMemo(() => {
     if (selectedDiff) {
       return shapeDiffs.results.find(
-        (i) => i.diffDescription!.diffHash === selectedDiff,
+        (i) => i.diffDescription!.diffHash === selectedDiff
       );
     }
   }, [selectedDiff, shapeDiffs]);
 
   const currentIndex = shapeDiffs.results.findIndex(
-    (i) => i.diffDescription?.diffHash === selectedDiff,
+    (i) => i.diffDescription?.diffHash === selectedDiff
   );
   const nextHash =
     shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
@@ -208,7 +202,7 @@ export function ReviewEndpointDiffPage(props: any) {
               approve={() => {
                 approveCommandsForDiff(
                   renderedDiff!.diffDescription!.diffHash,
-                  previewCommands,
+                  previewCommands
                 );
               }}
             />
@@ -253,12 +247,12 @@ function DiffLinks({
       shapeDiffs
         .filter((i) => i.diffDescription?.location!.inRequest)
         .map((i) => i.diffDescription?.location.inRequest!),
-      'contentType',
+      'contentType'
     );
 
     inRequests.forEach((req) => {
       const alreadyAdded = sections.find(
-        (i) => i.requestId && i.requestId === req.requestId,
+        (i) => i.requestId && i.requestId === req.requestId
       );
       if (!alreadyAdded) {
         sections.push({
@@ -272,12 +266,12 @@ function DiffLinks({
       shapeDiffs
         .filter((i) => i.diffDescription?.location!.inResponse)
         .map((i) => i.diffDescription?.location.inResponse!),
-      'statusCode',
+      'statusCode'
     );
 
     inResponses.forEach((res) => {
       const alreadyAdded = sections.find(
-        (i) => i.responseId && i.responseId === res.responseId,
+        (i) => i.responseId && i.responseId === res.responseId
       );
       if (!alreadyAdded) {
         sections.push({
