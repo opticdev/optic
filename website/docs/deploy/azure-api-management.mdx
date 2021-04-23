@@ -81,18 +81,6 @@ Optic integrates with APIM as an Azure EventHub consumer.
             </log-to-eventhub>
         </outbound>
     </policies>
-
-    <log-to-eventhub logger-id="logger-id">
-        @{
-            return new JObject(
-                new JProperty("EventTime", DateTime.UtcNow.ToString()),
-                new JProperty("ServiceName", context.Deployment.ServiceName),
-                new JProperty("RequestId", context.RequestId),
-                new JProperty("RequestIp", context.Request.IpAddress),
-                new JProperty("OperationName", context.Operation.Name)
-            ).ToString();
-        }
-    </log-to-eventhub>
     ```
 
 1. **Give Optic Access to EventHub**
