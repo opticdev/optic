@@ -289,6 +289,10 @@ mod test {
   #[tokio::main]
   #[test]
   async fn can_learn_shape_diffs_affordances_from_interactions() {
+    let spec_events_path = Path::new("../tests/fixtures/ergast-example-spec.json")
+      .absolutize()
+      .unwrap()
+      .to_path_buf();
     let diffs_path = Path::new("../tests/fixtures/ergast-captures/diff-results.jsonl")
       .absolutize()
       .unwrap()
@@ -299,15 +303,19 @@ mod test {
         .unwrap()
         .to_path_buf();
 
-    let _diffs = streams::diff::tagged_from_json_line_file(diffs_path)
+    let spec_events = streams::spec_events::from_file(spec_events_path)
+      .await
+      .expect("should be able to read test spec fixture");
+
+    let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
       .await
       .expect("should be able to read test diffs fixture")
       .into_iter()
       .map(TaggedInput::into_input);
 
-    let _interaction_lines =
+    let interaction_lines =
       streams::http_interaction::json_lines(fs::File::open(interactions_path).await.unwrap());
 
-    // learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;
+    learn_shape_diff_affordances(spec_events, diffs, 1, interaction_lines, tokio::io::sink()).await;
   }
 }
