@@ -92,6 +92,7 @@ export function ReviewEndpointDiffPage(props: any) {
   const currentIndex = shapeDiffs.results.findIndex(
     (i) => i.diffDescription?.diffHash === selectedDiff
   );
+
   const nextHash =
     shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
   const previousHash =

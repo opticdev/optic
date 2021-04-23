@@ -11,7 +11,11 @@ import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { IUnrecognizedUrl, IListDiffsResponse, IListUnrecognizedUrlsResponse } from '@useoptic/spectacle';
+import {
+  IListDiffsResponse,
+  IListUnrecognizedUrlsResponse,
+  IUnrecognizedUrl,
+} from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
 import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
@@ -64,6 +68,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1], i[2])),
     [props.diffs]
   );
+
   const { allSamples } = useContext(InteractionLoaderContext);
 
   const trailsLearned = learnTrailsForParsedDiffs(

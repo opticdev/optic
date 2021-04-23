@@ -20,7 +20,7 @@ export interface IOpticEngine {
     commandsJson: string,
     eventsJson: string,
     batchId: string,
-    commitMessage: string,
+    commitMessage: string
   ): any;
 
   get_shape_viewer_projection(spec: any): string;
@@ -125,13 +125,13 @@ export interface IForkableSpectacle extends IBaseSpectacle {
 async function buildProjections(opticContext: IOpticContext) {
   const events = await opticContext.specRepository.listEvents();
   const spec = opticContext.opticEngine.spec_from_events(
-    JSON.stringify(events),
+    JSON.stringify(events)
   );
 
   const endpointsQueries = buildEndpointsGraph(spec, opticContext.opticEngine);
   const shapesQueries = buildShapesGraph(spec, opticContext.opticEngine);
   const shapeViewerProjection = JSON.parse(
-    opticContext.opticEngine.get_shape_viewer_projection(spec),
+    opticContext.opticEngine.get_shape_viewer_projection(spec)
   );
 
   return {
@@ -168,7 +168,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             JSON.stringify(args.commands),
             JSON.stringify(events),
             batchCommitId,
-            'proposed changes',
+            'proposed changes'
           );
           const newEvents = JSON.parse(newEventsString);
 
@@ -191,7 +191,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           diffId,
           captureId,
           context.opticContext.specRepository,
-          context.opticContext.configRepository,
+          context.opticContext.configRepository
         );
         return {
           notificationsUrl: '',
@@ -202,7 +202,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       requests: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context.endpointsQueries.listNodesByType(endpoints.NodeType.Request)
-            .results,
+            .results
         );
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
@@ -212,20 +212,20 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         parent: any,
         { sinceBatchCommitId }: { sinceBatchCommitId?: string },
         context: any,
-        info: any,
+        info: any
       ) => {
         const endpointChanges = buildEndpointChanges(
           endpointsQueries,
           shapeQueries,
-          sinceBatchCommitId,
+          sinceBatchCommitId
         );
         return Promise.resolve(endpointChanges);
       },
       batchCommits: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(
           context.endpointsQueries.listNodesByType(
-            endpoints.NodeType.BatchCommit,
-          ).results,
+            endpoints.NodeType.BatchCommit
+          ).results
         );
       },
       diff: async (parent: any, args: any, context: any, info: any) => {
@@ -240,7 +240,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       unrecognizedUrls: async (
         parent: IOpticDiffService,
         args: any,
-        context: any,
+        context: any
       ) => {
         return parent.listUnrecognizedUrls();
       },
@@ -327,8 +327,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           getArrayChanges(
             context.shapeQueries,
             parent.shapeId,
-            args.sinceBatchCommitId,
-          ),
+            args.sinceBatchCommitId
+          )
         );
       },
     },
@@ -339,8 +339,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             context.shapeQueries,
             parent.fieldId,
             parent.shapeId,
-            args.sinceBatchCommitId,
-          ),
+            args.sinceBatchCommitId
+          )
         );
       },
     },

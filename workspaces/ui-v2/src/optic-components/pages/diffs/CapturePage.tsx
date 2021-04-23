@@ -86,7 +86,7 @@ export function CapturePage() {
           {diffsGroupedByEndpoints.map((i, index) => {
             const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
             const diffCompletedCount = i.shapeDiffs.filter((i) =>
-              isDiffHandled(i.diffHash()),
+              isDiffHandled(i.diffHash())
             ).length;
 
             const remaining = diffCount - diffCompletedCount;
@@ -126,7 +126,9 @@ export function CapturePage() {
           })}
           {hasUndocumented && (
             <>
-              <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+              {diffsGroupedByEndpoints.length > 0 && (
+                <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+              )}
               <ListItem
                 disableRipple
                 button
@@ -141,7 +143,16 @@ export function CapturePage() {
                       fontWeight: 400,
                     },
                   }}
-                  primary={`Optic observed ${context.results.displayedUndocumentedUrls.length} undocumented urls. Click here to document new endpoints`}
+                  primary={
+                    <>
+                      Optic observed{' '}
+                      <b>
+                        {context.results.displayedUndocumentedUrls.length}{' '}
+                        undocumented urls.
+                      </b>{' '}
+                      Click here to document new endpoints
+                    </>
+                  }
                 />
                 <ListItemSecondaryAction>
                   <div className={classes.text}>

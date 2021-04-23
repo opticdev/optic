@@ -25,7 +25,7 @@ export function fieldShapeDiffInterpreter(
   actual: Actual,
   expected: Expectation,
   diffDescription: IDiffDescription,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): IInterpretation {
   const { shapeTrail, jsonTrail } = shapeDiff;
   const isUnmatched = shapeDiff.isUnmatched;
@@ -38,7 +38,7 @@ export function fieldShapeDiffInterpreter(
     actual.learnedTrails,
     actual,
     expected,
-    diffDescription,
+    diffDescription
   );
 
   let updateSpecChoices: IPatchChoices = {
@@ -65,7 +65,7 @@ export function fieldShapeDiffInterpreter(
             isValid: expected.expectedShapes().has(i),
           };
         }),
-        'isValid',
+        'isValid'
       );
       // present.askMakeOptional();
       // present.askRemoveField();
@@ -79,7 +79,7 @@ export function fieldShapeDiffInterpreter(
             isValid: true,
           };
         }),
-        'isValid',
+        'isValid'
       );
 
       // present.addAdditionalCoreShapeKinds(unexpectedShapesObserved);
@@ -94,7 +94,7 @@ export function fieldShapeDiffInterpreter(
           isValid: true,
         };
       }),
-      'isValid',
+      'isValid'
     );
   }
 
@@ -107,7 +107,7 @@ export function fieldShapeDiffInterpreter(
           choices,
           expected,
           actual,
-          currentSpecContext,
+          currentSpecContext
         );
 
         return [
@@ -120,7 +120,7 @@ export function fieldShapeDiffInterpreter(
           choices,
           expected,
           actual,
-          currentSpecContext,
+          currentSpecContext
         );
 
         const lastObject = expected.lastObject();
@@ -131,7 +131,7 @@ export function fieldShapeDiffInterpreter(
             fieldId,
             lastObject,
             actual.fieldKey()!,
-            FieldShapeFromShape(fieldId, rootShapeId),
+            FieldShapeFromShape(fieldId, rootShapeId)
           ),
         ];
       }
@@ -152,7 +152,7 @@ class FieldShapeInterpretationHelper {
     private learnedTrails: IValueAffordanceSerializationWithCounter,
     private actual: Actual,
     private expected: Expectation,
-    private diffDescription: IDiffDescription,
+    private diffDescription: IDiffDescription
   ) {}
 
   ///////////////////////////////////////////////////////////////////

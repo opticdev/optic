@@ -11,7 +11,7 @@ interface DiffState {
 
 export function useDiffsForCapture(
   captureId: string,
-  diffId: string,
+  diffId: string
 ): DiffState {
   const capturesService = useContext(CapturesServiceContext)!;
   const [diffState, setDiffState] = useState<DiffState>({
@@ -23,7 +23,7 @@ export function useDiffsForCapture(
     async function task() {
       const startDiffResult = await capturesService.startDiff(
         diffId,
-        captureId,
+        captureId
       );
       const diffsService = await startDiffResult.onComplete;
       const diffs = await diffsService.listDiffs();
