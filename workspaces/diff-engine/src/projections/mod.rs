@@ -9,7 +9,10 @@ pub mod spectacle;
 pub use conflicts::ConflictsProjection;
 pub use endpoint::EndpointProjection;
 pub use history::{CommitId, HistoryProjection};
-pub use learners::undocumented_bodies::LearnedUndocumentedBodiesProjection;
+pub use learners::{
+  shape_diff_affordances::LearnedShapeDiffAffordancesProjection,
+  undocumented_bodies::LearnedUndocumentedBodiesProjection,
+};
 pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 pub use spectacle::endpoints::EndpointsProjection;

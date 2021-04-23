@@ -25,14 +25,14 @@ pub use interactions::result::{BodyAnalysisLocation, BodyAnalysisResult, Interac
 pub use interactions::{analyze_documented_bodies, analyze_undocumented_bodies};
 pub use learn_shape::{TrailObservationsResult, TrailValues};
 pub use projections::{
-  EndpointProjection, LearnedUndocumentedBodiesProjection, ShapeProjection,
-  SpecAssemblerProjection, SpecProjection,
+  EndpointProjection, LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
+  ShapeProjection, SpecAssemblerProjection, SpecProjection,
 };
 pub use protos::shapehash;
 pub use queries::endpoint::EndpointQueries;
 pub use shapes::{diff as diff_shape, JsonTrail};
 pub use spec::append_batch as append_batch_to_spec;
-pub use state::{body::BodyDescriptor, SpecIdGenerator};
+pub use state::{body::BodyDescriptor, SpecIdGenerator, TaggedInput, Tags};
 
 pub mod errors {
   pub use super::events::EventLoadingError;
