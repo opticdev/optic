@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField, Typography } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
-import { useContributionEditing } from '../hooks/edit/Contributions';
+import { useContributionEditing, useValueWithStagedContributions } from '../hooks/edit/Contributions';
 import { OpticBlueReadable } from '../theme';
 
 export type FieldOrParameterContributionProps = {
@@ -12,27 +12,6 @@ export type FieldOrParameterContributionProps = {
   id: string;
   name: string;
   depth: number;
-};
-
-const useValueWithStagedContributions = (
-  id: string,
-  contributionKey: string
-) => {
-  const {
-    lookupContribution,
-    stagePendingContribution,
-  } = useContributionEditing();
-
-  const initialValue = lookupContribution(id, contributionKey);
-  const [value, setValue] = useState<string>(initialValue || '');
-  useEffect(() => {
-    stagePendingContribution(id, contributionKey, value);
-  }, [id, contributionKey, value, stagePendingContribution]);
-
-  return {
-    value,
-    setValue,
-  };
 };
 
 export function FieldOrParameterContribution({

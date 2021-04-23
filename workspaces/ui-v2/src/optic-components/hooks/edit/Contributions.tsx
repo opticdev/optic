@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -28,6 +28,27 @@ interface IContribution {
 type ContributionEditingStoreProps = {
   initialIsEditingState?: boolean;
   children?: any;
+};
+
+export const useValueWithStagedContributions = (
+  id: string,
+  contributionKey: string
+) => {
+  const {
+    lookupContribution,
+    stagePendingContribution,
+  } = useContributionEditing();
+
+  const initialValue = lookupContribution(id, contributionKey);
+  const [value, setValue] = useState<string>(initialValue || '');
+  useEffect(() => {
+    stagePendingContribution(id, contributionKey, value);
+  }, [id, contributionKey, value, stagePendingContribution]);
+
+  return {
+    value,
+    setValue,
+  };
 };
 
 export const ContributionEditingStore = (
@@ -67,7 +88,6 @@ export const ContributionEditingStore = (
     },
     []
   );
-  console.log(pendingContributions);
 
   const value: ContributionEditContextValue = {
     isEditing,
