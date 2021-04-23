@@ -12,6 +12,27 @@ Optic integrates with Envoy as a HTTP filter.
 
 1. Add Optic as a HTTP filter in your `envoy.yaml` and update the lines setting the Optic Token, Source ID and Source Tags.
 
+    ```
+    http_filters:
+    - name: envoy.filters.http.lua
+    typed_config:
+        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+        inline_code: |
+        local optic = require("optic-envoy")
+
+        optic.set_optic_token("Your Optic Token")
+        optic.set_source_id("A unique identifier for this source of data")
+        optic.set_optic_token("A comma separated list of other labels to send to Optic")
+
+        function envoy_on_request(request_handle)
+            optic.process_request(request_handle)
+        end
+
+        function envoy_on_response(response_handle)
+            optic.process_response(response_handle)
+        end
+    ```
+
 1. Add the Optic API in a `clusters` config:
 
     ```yaml
