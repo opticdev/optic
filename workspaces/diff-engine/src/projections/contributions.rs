@@ -9,6 +9,10 @@ pub struct ContributionsProjection {
 }
 
 impl ContributionsProjection {
+  pub fn to_json_string(&self) -> String {
+    serde_json::to_string(&self.hash_map).expect("hash map should be serializable")
+  }
+
   pub fn with_contribution(&mut self, id: String, contribution_key: String, value: String) {
     self
       .hash_map
@@ -47,7 +51,6 @@ where
 }
 
 // Events
-
 impl AggregateEvent<ContributionsProjection> for RfcEvent {
   fn apply_to(self, projection: &mut ContributionsProjection) {
     match self {

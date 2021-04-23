@@ -35,8 +35,10 @@ pub fn get_shapes_projection(spec: &WasmSpecProjection) -> Result<String, JsValu
 pub fn get_shape_viewer_projection(spec: &WasmSpecProjection) -> Result<String, JsValue> {
   spec.spectacle_shape_viewer_projection()
 }
-
-// TODO add in to expose wasm
+#[wasm_bindgen]
+pub fn get_contributions_projection(spec: &WasmSpecProjection) -> Result<String, JsValue> {
+  spec.spectacle_contributions_projection()
+}
 
 #[wasm_bindgen]
 pub fn diff_interaction(
@@ -106,6 +108,10 @@ impl WasmSpecProjection {
   pub fn spectacle_shape_viewer_projection(&self) -> Result<String, JsValue> {
     let serialized = serde_json::to_string(&self.projection.shape().to_choice_mapping());
     Ok(serialized.unwrap())
+  }
+  pub fn spectacle_contributions_projection(&self) -> Result<String, JsValue> {
+    let serialized = self.projection.contributions().to_json_string();
+    Ok(serialized)
   }
 
   pub fn endpoint_queries(&self) -> EndpointQueries {

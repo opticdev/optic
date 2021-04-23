@@ -1,10 +1,10 @@
 pub mod conflicts;
+pub mod contributions;
 pub mod endpoint;
 pub mod history;
 pub mod shape;
 pub mod spec_events;
 pub mod spectacle;
-pub mod contributions;
 
 pub use conflicts::ConflictsProjection;
 pub use contributions::ContributionsProjection;
@@ -55,6 +55,9 @@ impl SpecProjection {
   }
   pub fn conflicts(&self) -> &ConflictsProjection {
     &self.conflicts
+  }
+  pub fn contributions(&self) -> &ContributionsProjection {
+    &self.contributions
   }
   pub fn spectacle_endpoints(&self) -> &EndpointsProjection {
     &self.spectacle_endpoints
