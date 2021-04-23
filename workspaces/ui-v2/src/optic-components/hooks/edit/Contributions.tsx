@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
+import { AddContribution } from '../../../lib/command-factory';
+import { useContributions } from '../useContributions';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -54,6 +57,7 @@ export const useValueWithStagedContributions = (
 export const ContributionEditingStore = (
   props: ContributionEditingStoreProps
 ) => {
+  const spectacleMutator = useSpectacleCommand();
   const [isEditing, setIsEditing] = useState(
     props.initialIsEditingState || false
   );
@@ -91,13 +95,33 @@ export const ContributionEditingStore = (
 
   const value: ContributionEditContextValue = {
     isEditing,
-    save: () => {
+    save: async () => {
+      if (pendingContributions.length > 0) {
+        const commands = pendingContributions.map((contribution) =>
+          AddContribution(
+            contribution.id,
+            contribution.contributionKey.toUpperCase(), // TODO validate that this should be uppercase?
+            contribution.value
+          )
+        );
+
+        // TODO error handling
+        await spectacleMutator({
+          query: `
+          mutation X($commands: [JSON]) {
+            applyCommands(commands: $commands) {
+              batchCommitId
+            }
+          }
+          `,
+          variables: {
+            commands,
+          },
+        });
+
+        setPendingContributions([]);
+      }
       setIsEditing(false);
-      // @nic TODO - implement at spectacle
-      // TODO mutate this into the correct mutation for spectacle
-      console.log(pendingContributions);
-      alert(JSON.stringify(pendingContributions));
-      setPendingContributions([]);
     },
     pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),

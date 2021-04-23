@@ -1,15 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
-//@TODO find some better way to represent this kind of thing with Typescript
-export type AsyncStatus<T> = { loading: boolean; error?: Error; data?: T };
+
+export type AsyncStatus<T> =
+  | {
+      loading: true;
+      error: false;
+      data: null;
+    }
+  | {
+      loading: false;
+      error: true;
+      data: null;
+    }
+  | { loading: false; error: false; data: T };
 
 export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
-  null,
+  null
 );
 
 export const SpectacleStore = (props: {
   spectacle: IBaseSpectacle;
-  children: any;
+  children: React.ReactNode;
 }) => {
   return (
     <SpectacleContext.Provider value={props.spectacle}>
@@ -21,7 +32,11 @@ export const SpectacleStore = (props: {
 export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   const spectacle = useContext(SpectacleContext)!;
 
-  const [result, setResult] = useState({ loading: true });
+  const [result, setResult] = useState<AsyncStatus<any>>({
+    loading: true,
+    error: false,
+    data: null,
+  });
 
   const stringInput = JSON.stringify(input);
   useEffect(() => {
@@ -41,26 +56,15 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
 
   return result;
 }
-export function useSpectacleCommand(input: SpectacleInput): AsyncStatus<any> {
+
+export function useSpectacleCommand(): (input: SpectacleInput) => Promise<any> {
   const spectacle = useContext(SpectacleContext)!;
 
-  const [result, setResult] = useState({ loading: true });
-
-  const stringInput = JSON.stringify(input);
-  useEffect(() => {
-    async function task() {
-      const result = await spectacle.mutate(input);
-      if (result.errors) {
-        console.error(result.errors);
-        debugger;
-        result.error = new Error(result.errors);
-      }
-      setResult(result);
-    }
-
-    task();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stringInput]);
-
-  return result;
+  return useCallback(
+    (input: SpectacleInput) => {
+      // @nic TODO error handling
+      return spectacle.mutate(input);
+    },
+    [spectacle]
+  );
 }
