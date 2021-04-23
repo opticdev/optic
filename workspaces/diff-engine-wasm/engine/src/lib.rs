@@ -6,9 +6,10 @@ use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use optic_diff_engine::{
-  analyze_undocumented_bodies, Aggregate, BodyAnalysisResult, CommandContext, EndpointQueries,
-  HttpInteraction, InteractionDiffResult, LearnedUndocumentedBodiesProjection, SpecCommand,
-  SpecEvent, SpecIdGenerator, SpecProjection,
+  analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
+  EndpointQueries, HttpInteraction, InteractionDiffResult, LearnedShapeDiffAffordancesProjection,
+  LearnedUndocumentedBodiesProjection, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
+  TaggedInput,
 };
 
 #[wasm_bindgen(start)]
@@ -124,9 +125,39 @@ pub fn learn_undocumented_bodies(
 pub fn learn_shape_diff_affordances(
   spec: &WasmSpecProjection,
   diff_results_json: String,
-  interactions_json: String,
-) {
-  unimplemented!();
+  tagged_interactions_json: String,
+) -> Result<String, JsValue> {
+  let diff_results = serde_json::from_str::<Vec<InteractionDiffResult>>(&diff_results_json)
+    .map_err(|err| JsValue::from(format!("could not parse diff results: {}", err)))?;
+  let interactions = serde_json::Deserializer::from_str(&tagged_interactions_json).into_iter();
+
+  let mut learned_shape_diff_affordances =
+    LearnedShapeDiffAffordancesProjection::from(diff_results);
+
+  for interaction_parse_result in interactions {
+    let TaggedInput(interaction, interaction_pointers): TaggedInput<HttpInteraction> =
+      interaction_parse_result
+        .map_err(|err| JsValue::from(format!("could not parse interaction json: {}", err)))?;
+
+    let results = spec
+      .analyze_documented_bodies(interaction)
+      .map(|result| TaggedInput(result, interaction_pointers.clone()));
+
+    for result in results {
+      learned_shape_diff_affordances.apply(result)
+    }
+  }
+
+  let shape_diff_affordances = learned_shape_diff_affordances
+    .into_iter()
+    .collect::<Vec<_>>();
+
+  serde_json::to_string(&shape_diff_affordances).map_err(|err| {
+    JsValue::from(format!(
+      "shape diff affordances could not be serialized: {}",
+      err
+    ))
+  })
 }
 
 #[wasm_bindgen]
@@ -138,11 +169,18 @@ impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
     optic_diff_engine::diff_interaction(&self.projection, interaction)
   }
-  pub fn analyze_undocumented_bodies(
+  fn analyze_undocumented_bodies(
     &self,
     interaction: HttpInteraction,
   ) -> impl Iterator<Item = BodyAnalysisResult> {
     optic_diff_engine::analyze_undocumented_bodies(&self.projection, interaction)
+  }
+
+  fn analyze_documented_bodies(
+    &self,
+    interaction: HttpInteraction,
+  ) -> impl Iterator<Item = BodyAnalysisResult> {
+    optic_diff_engine::analyze_documented_bodies(&self.projection, interaction)
   }
 
   pub fn spectacle_endpoints_projection(&self) -> Result<String, JsValue> {

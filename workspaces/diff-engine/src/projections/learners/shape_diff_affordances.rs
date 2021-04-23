@@ -82,6 +82,12 @@ impl FromIterator<InteractionDiffResult> for LearnedShapeDiffAffordancesProjecti
   }
 }
 
+impl From<Vec<InteractionDiffResult>> for LearnedShapeDiffAffordancesProjection {
+  fn from(diff_results: Vec<InteractionDiffResult>) -> Self {
+    diff_results.into_iter().collect()
+  }
+}
+
 // easy consuming of the results in a for loop
 impl IntoIterator for LearnedShapeDiffAffordancesProjection {
   type Item = (String, ShapeDiffAffordances);
