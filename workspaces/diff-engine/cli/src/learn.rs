@@ -3,9 +3,7 @@ use super::events_from_chunks;
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, SinkExt, Stream, StreamExt, TryStreamExt};
 use nanoid::nanoid;
-use serde::Serialize;
 use serde_json;
-use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
@@ -14,12 +12,11 @@ use tokio_stream::wrappers::ReceiverStream;
 use optic_diff_engine::streams;
 use optic_diff_engine::Aggregate;
 use optic_diff_engine::{
-  analyze_documented_bodies, analyze_undocumented_bodies, EndpointCommand, InteractionDiffResult,
-  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection, SpecCommand,
+  analyze_documented_bodies, analyze_undocumented_bodies, InteractionDiffResult,
+  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
 };
 use optic_diff_engine::{
-  BodyAnalysisLocation, HttpInteraction, JsonTrail, SpecChunkEvent, SpecEvent, SpecIdGenerator,
-  SpecProjection, TaggedInput, Tags, TrailObservationsResult, TrailValues,
+  HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
