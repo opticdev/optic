@@ -4,8 +4,10 @@ pub mod history;
 pub mod shape;
 pub mod spec_events;
 pub mod spectacle;
+pub mod contributions;
 
 pub use conflicts::ConflictsProjection;
+pub use contributions::ContributionsProjection;
 pub use endpoint::EndpointProjection;
 pub use history::{CommitId, HistoryProjection};
 pub use shape::ShapeProjection;
@@ -23,6 +25,7 @@ pub struct SpecProjection {
   shape: shape::ShapeProjection,
   conflicts: conflicts::ConflictsProjection,
   spectacle_endpoints: spectacle::endpoints::EndpointsProjection,
+  contributions: contributions::ContributionsProjection,
 }
 
 impl Default for SpecProjection {
@@ -33,6 +36,7 @@ impl Default for SpecProjection {
       shape: ShapeProjection::default(),
       conflicts: ConflictsProjection::default(),
       spectacle_endpoints: EndpointsProjection::default(),
+      contributions: ContributionsProjection::default(),
     }
   }
 }
@@ -90,6 +94,7 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
         projection.history.apply(event.clone());
         projection.shape.apply(event.clone());
         projection.spectacle_endpoints.apply(event.clone());
+        projection.contributions.apply(event.clone());
       }
     }
   }

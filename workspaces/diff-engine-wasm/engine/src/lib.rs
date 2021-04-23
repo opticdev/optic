@@ -36,6 +36,8 @@ pub fn get_shape_viewer_projection(spec: &WasmSpecProjection) -> Result<String, 
   spec.spectacle_shape_viewer_projection()
 }
 
+// TODO add in to expose wasm
+
 #[wasm_bindgen]
 pub fn diff_interaction(
   interaction_json: String,
