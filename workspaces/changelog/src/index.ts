@@ -4,7 +4,7 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 
 export async function generateEndpointChanges(
   initialEvents: any[] = [],
-  currentEvents: any[],
+  currentEvents: any[]
 ): Promise<any> {
   let query;
 
@@ -12,11 +12,11 @@ export async function generateEndpointChanges(
   if (initialEvents.length) {
     const initialOpticContext = await InMemoryOpticContextBuilder.fromEvents(
       OpticEngine,
-      initialEvents,
+      initialEvents
     );
     const initialSpectacle = await makeSpectacle(initialOpticContext);
 
-    const batchCommitResults = await initialSpectacle({
+    const batchCommitResults = await initialSpectacle.queryWrapper({
       query: `{
         batchCommits {
           createdAt
@@ -30,7 +30,7 @@ export async function generateEndpointChanges(
     const latestBatchCommit = batchCommitResults.data!.batchCommits!.reduce(
       (result: any, batchCommit: any) => {
         return batchCommit.createdAt > result.createdAt ? batchCommit : result;
-      },
+      }
     );
 
     query = `{
@@ -60,11 +60,11 @@ export async function generateEndpointChanges(
 
   const currentOpticContext = await InMemoryOpticContextBuilder.fromEvents(
     OpticEngine,
-    currentEvents,
+    currentEvents
   );
   const currentSpectacle = await makeSpectacle(currentOpticContext);
 
-  return await currentSpectacle({
+  return await currentSpectacle.queryWrapper({
     query,
     variables: {},
   });

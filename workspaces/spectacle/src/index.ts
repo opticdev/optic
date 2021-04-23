@@ -171,7 +171,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             JSON.stringify(args.commands),
             JSON.stringify(events),
             batchCommitId,
-            'proposed changes'
+            'proposed changes' //@jaap this will need to come from the mutation args
           );
           const newEvents = JSON.parse(newEventsString);
 

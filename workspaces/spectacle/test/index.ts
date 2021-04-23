@@ -121,7 +121,7 @@ Tap.test('spectacle batchCommits query', async (test) => {
   );
   const spectacle = await makeSpectacle(opticContext);
 
-  const results = await spectacle({
+  const results = await spectacle.queryWrapper({
     query: `{
         batchCommits {
           createdAt
@@ -153,7 +153,7 @@ specs.forEach(async (spec) => {
       }
     }`;
 
-    const results = await spectacle({ query, variables: {} });
+    const results = await spectacle.queryWrapper({ query, variables: {} });
     test.matchSnapshot(results);
   });
 
@@ -181,7 +181,7 @@ specs.forEach(async (spec) => {
         }
       }
     }`;
-    const results = await spectacle({ query, variables: {} });
+    const results = await spectacle.queryWrapper({ query, variables: {} });
     test.matchSnapshot(results);
   });
 });

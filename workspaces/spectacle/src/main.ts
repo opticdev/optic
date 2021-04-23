@@ -20,9 +20,9 @@ async function main() {
     OpticEngine,
     _events
   );
-  const spectacle = (await makeSpectacle(opticContext)).queryWrapper;
+  const spectacle = await makeSpectacle(opticContext);
 
-  const batchCommitResults = await spectacle({
+  const batchCommitResults = await spectacle.queryWrapper({
     query: `{
       batchCommits {
         createdAt
@@ -34,7 +34,7 @@ async function main() {
 
   // console.log(JSON.stringify(batchCommitResults, null, 2));
 
-  const endpointChangesResult = await spectacle({
+  const endpointChangesResult = await spectacle.queryWrapper({
     query: `{
       endpointChanges(sinceBatchCommitId: "645a4137-d59d-4d9f-a474-d2bca67ba1cc") {
         endpoints {
@@ -51,7 +51,7 @@ async function main() {
 
   console.log(JSON.stringify(endpointChangesResult, null, 2));
 
-  const result = await spectacle({
+  const result = await spectacle.queryWrapper({
     query: `{
       requests {
         id
@@ -80,7 +80,7 @@ async function main() {
   {
     // array shape_Dw5kY43tt1
     // object shape_jSAthS01Bb
-    const result = await spectacle({
+    const result = await spectacle.queryWrapper({
       query: `{
         shapeChoices(shapeId: "shape_jSAthS01Bb") {
           id

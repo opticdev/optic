@@ -83,7 +83,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
   constructor(
     public readonly opticContext: IOpticContext,
-    public samples: any[],
+    public samples: any[]
   ) {
     this.spectaclePromise = makeSpectacle(opticContext);
   }
@@ -93,19 +93,19 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
       this.opticContext.opticEngine,
       [...(await this.opticContext.specRepository.listEvents())],
       this.samples,
-      'example-session',
+      'example-session'
     );
     return new InMemorySpectacle(opticContext, [...this.samples]);
   }
 
   async mutate(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 
   async query(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 }
 
@@ -115,7 +115,7 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 }
 
 export function useInMemorySpectacle(
-  loadDependencies: InMemorySpectacleDependenciesLoader,
+  loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
   const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
 
@@ -129,11 +129,11 @@ export function useInMemorySpectacle(
         result.opticEngine,
         result.events,
         result.samples,
-        'example-session',
+        'example-session'
       );
       const inMemorySpectacle = new InMemorySpectacle(
         opticContext,
-        result.samples,
+        result.samples
       );
       setSpectacle(inMemorySpectacle);
     }
