@@ -21,7 +21,16 @@ export default function CloudViewer() {
   const { specId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
     const loadExample = async () => {
-      const apiBase = process.env.REACT_APP_API_URL;
+      let apiBase = process.env.REACT_APP_API_URL;
+
+      if(!apiBase){
+        if(window.location.hostname.indexOf("useoptic.com")){
+          apiBase = process.env.REACT_APP_PROD_API_BASE;
+        } else {
+          apiBase = process.env.REACT_APP_STAGING_API_BASE;
+        }
+      }
+
       const response = await fetch(`${apiBase}/api/specs/${specId}`, {
         headers: { accept: 'application/json' },
       });
