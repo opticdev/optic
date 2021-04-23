@@ -19,13 +19,16 @@ type ContributionEditContextValue = {
   ) => string | undefined;
 };
 
+interface IContribution {
+  id: string;
+  contributionKey: string;
+  value: string;
+}
+
 type ContributionEditingStoreProps = {
   initialIsEditingState?: boolean;
   children?: any;
 };
-
-// Keyed by id -> contributionKey -> value
-type PendingContributions = Map<string, Map<string, string>>;
 
 export const ContributionEditingStore = (
   props: ContributionEditingStoreProps
@@ -34,38 +37,37 @@ export const ContributionEditingStore = (
     props.initialIsEditingState || false
   );
 
-  const [pendingContributions, setPendingContributions] = useState<PendingContributions>(new Map());
+  const [pendingContributions, setPendingContributions] = useState<
+    IContribution[]
+  >([]);
 
   const stagePendingContribution = useCallback(
-    (
-      newId: string,
-      newContributionKey: string,
-      newValue: string
-    ) => {
-      setPendingContributions((previousState) => {
-        const newState: PendingContributions = new Map(previousState);
-        if (previousState.has(newId)) {
-          const contributionsMap = previousState.get(newId)!;
-          const contributionsToSave = [...contributionsMap].filter(([k, _]) => {
-            const isCurrentContribution = k === newContributionKey;
-            // @nic TODO filter out if this is the old state that's saved in our BE
-            // i.e. we should only issue commands when something has actually changed
-            return !isCurrentContribution
-          }).concat([[
-            newContributionKey, newValue
-          ]]);
+    (newId: string, newContributionKey: string, newValue: string) => {
+      // @nic TODO change this to look at query diff vs user input
+      const newContribution =
+        newValue !== ''
+          ? [
+              {
+                id: newId,
+                contributionKey: newContributionKey,
+                value: newValue,
+              },
+            ]
+          : [];
 
-          if (contributionsToSave.length > 0) {
-            newState.set(newId, new Map(contributionsToSave))
-          }
-        } else {
-          newState.set(newId, new Map([[newContributionKey, newValue]]))
-        }
-
-        return newState;
-      });
-    }, []
+      setPendingContributions((previousState) => [
+        ...previousState.filter((previousItem) => {
+          const isCurrentContribution =
+            previousItem.id === newId &&
+            previousItem.contributionKey === newContributionKey;
+          return !isCurrentContribution;
+        }),
+        ...newContribution,
+      ]);
+    },
+    []
   );
+  console.log(pendingContributions);
 
   const value: ContributionEditContextValue = {
     isEditing,
@@ -73,11 +75,11 @@ export const ContributionEditingStore = (
       setIsEditing(false);
       // @nic TODO - implement at spectacle
       // TODO mutate this into the correct mutation for spectacle
-      console.log(pendingContributions)
+      console.log(pendingContributions);
       alert(JSON.stringify(pendingContributions));
-      setPendingContributions(() => new Map());
+      setPendingContributions([]);
     },
-    pendingCount: [...pendingContributions].reduce((acc, [, map]) => acc + map.size, 0),
+    pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),
     stagePendingContribution,
     lookupContribution: (id, contributionKey) => {
