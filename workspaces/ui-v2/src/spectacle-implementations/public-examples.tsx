@@ -125,12 +125,12 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
   async mutate(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 
   async query(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 }
 
