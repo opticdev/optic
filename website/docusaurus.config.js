@@ -10,7 +10,7 @@ module.exports = {
   projectName: 'optic', // Usually your repo name.
   themeConfig: {
     googleAnalytics: {
-      trackingID: 'G-Y7T04R4QF5',
+      trackingID: 'UA-137236875-1',
     },
     hideableSidebar: true,
     colorMode: {
