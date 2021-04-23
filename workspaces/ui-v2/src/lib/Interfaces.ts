@@ -11,8 +11,8 @@ import { DomainIdGenerator } from './domain-id-generator';
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
   diffDescription?: IDiffDescription;
-  updateSpecChoices: IPatchChoices;
-  toCommands: (choices: IPatchChoices) => any[];
+  updateSpecChoices?: IPatchChoices;
+  toCommands: (choices?: IPatchChoices) => any[];
 }
 
 export interface IShapeUpdateChoice {

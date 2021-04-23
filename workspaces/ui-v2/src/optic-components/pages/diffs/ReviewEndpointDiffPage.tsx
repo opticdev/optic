@@ -55,6 +55,10 @@ export function ReviewEndpointDiffPage(props: any) {
     endpointDiffs.shapeDiffs,
     context.results.trailValues
   );
+  //
+  // const newBodyDiffs = useNewBodyDiffInterpretations(
+  //   endpointDiffs.newRegionDiffs,
+  // );
 
   const filteredShapeDiffs = shapeDiffs.results?.filter((i: any) => {
     return !isDiffHandled(i.diffDescription.diffHash);

@@ -219,6 +219,7 @@ function groupDiffsByTheirEndpoints(
     const newRegionDiffs = new DiffSet(i.diffs, currentSpecContext)
       .newRegions()
       .iterator();
+
     const shapeDiffs = new DiffSet(i.diffs, currentSpecContext)
       .shapeDiffs()
       .groupedByEndpointAndShapeTrail()

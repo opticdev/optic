@@ -23,7 +23,7 @@ export function listItemShapeDiffInterpreter(
   actual: Actual,
   expected: Expectation,
   diffDescription: IDiffDescription,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): IInterpretation {
   const isUnmatched = shapeDiff.isUnmatched;
 
@@ -66,13 +66,16 @@ export function listItemShapeDiffInterpreter(
   ////////////////
   return {
     diffDescription: diffDescription,
-    toCommands(choices: IPatchChoices): any[] {
+    toCommands(choices?: IPatchChoices): any[] {
+      if (!choices) {
+        return [];
+      }
       if (isUnmatched) {
         const { commands, rootShapeId } = builderInnerShapeFromChoices(
           choices,
           expected,
           actual,
-          currentSpecContext,
+          currentSpecContext
         );
 
         const lastList = expected.lastList();
@@ -82,8 +85,8 @@ export function listItemShapeDiffInterpreter(
             ProviderInShape(
               lastList,
               ShapeProvider(rootShapeId),
-              ICoreShapeInnerParameterNames.ListInner,
-            ),
+              ICoreShapeInnerParameterNames.ListInner
+            )
           ),
         ];
       }

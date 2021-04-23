@@ -101,7 +101,11 @@ export function fieldShapeDiffInterpreter(
   return {
     previewTabs: present.createPreviews().reverse(),
     diffDescription,
-    toCommands(choices: IPatchChoices): any[] {
+    toCommands(choices?: IPatchChoices): any[] {
+      if (!choices) {
+        return [];
+      }
+
       if (isUnmatched) {
         const { commands, rootShapeId } = builderInnerShapeFromChoices(
           choices,
