@@ -12,6 +12,7 @@ use tokio_util::codec::{Encoder, FramedWrite};
 
 pub mod diff;
 pub mod http_interaction;
+pub mod shape_diff_affordances;
 pub mod spec_chunks;
 pub mod spec_events;
 

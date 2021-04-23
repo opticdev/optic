@@ -11,7 +11,7 @@ use crate::state::{TaggedInput, Tags};
 #[derive(Default, Debug)]
 pub struct LearnedShapeDiffAffordancesProjection {
   diffs_by_spec_id: HashMap<String, Vec<InteractionDiffResult>>,
-  affordances_by_diff_fingerprint: HashMap<String, InteractionDiffTrailAffordances>,
+  affordances_by_diff_fingerprint: HashMap<String, ShapeDiffAffordances>,
 }
 
 impl LearnedShapeDiffAffordancesProjection {
@@ -44,7 +44,7 @@ impl LearnedShapeDiffAffordancesProjection {
 
       let affordances = affordances_by_diff_fingerprint
         .entry(fingerprint)
-        .or_insert_with(|| InteractionDiffTrailAffordances::default());
+        .or_insert_with(|| ShapeDiffAffordances::default());
 
       affordances.push((trail_result, interaction_pointers.clone()));
     }
@@ -84,8 +84,8 @@ impl FromIterator<InteractionDiffResult> for LearnedShapeDiffAffordancesProjecti
 
 // easy consuming of the results in a for loop
 impl IntoIterator for LearnedShapeDiffAffordancesProjection {
-  type Item = (String, InteractionDiffTrailAffordances);
-  type IntoIter = std::collections::hash_map::IntoIter<String, InteractionDiffTrailAffordances>;
+  type Item = (String, ShapeDiffAffordances);
+  type IntoIter = std::collections::hash_map::IntoIter<String, ShapeDiffAffordances>;
 
   fn into_iter(self) -> Self::IntoIter {
     self.affordances_by_diff_fingerprint.into_iter()
@@ -115,7 +115,7 @@ impl AggregateEvent<LearnedShapeDiffAffordancesProjection> for TaggedInput<BodyA
 // ------------
 
 #[derive(Default, Debug, Serialize)]
-pub struct InteractionDiffTrailAffordances {
+pub struct ShapeDiffAffordances {
   affordances: Vec<TrailValues>,
   interactions: InteractionsAffordances,
 }
@@ -140,7 +140,7 @@ pub struct InteractionsAffordances {
   was_missing_trails: HashMap<String, Vec<JsonTrail>>,
 }
 
-impl InteractionDiffTrailAffordances {
+impl ShapeDiffAffordances {
   pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
     self.interactions.push((&trail_values, pointers));
 
