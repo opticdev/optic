@@ -11,7 +11,7 @@ import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { IUnrecognizedUrl } from '@useoptic/spectacle';
+import { IUnrecognizedUrl, IListDiffsResponse, IListUnrecognizedUrlsResponse } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
 import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
