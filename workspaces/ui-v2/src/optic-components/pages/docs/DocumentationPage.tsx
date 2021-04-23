@@ -10,7 +10,7 @@ import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, Typography } from '@material-ui/core';
 import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
+import { ContributionEditingStore, useContributionEditing } from '../../hooks/edit/Contributions';
 import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
@@ -26,6 +26,7 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../navigation/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
+import { PromptNavigateAway } from '../../PromptNavigateAway';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -50,8 +51,14 @@ export function DocumentationPages(props: any) {
 }
 
 export function DocsPageAccessoryNavigation(props: any) {
+  const {
+    isEditing,
+    pendingCount,
+  } = useContributionEditing();
+
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+      <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
       <ChangesSinceDropdown />
       <EditContributionsButton />
     </div>
