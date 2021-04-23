@@ -20,7 +20,7 @@ module.exports = {
       'using/cli-commands',
     ],
     'Optic in Real Environments': [
-      'deploy/overview',
+      'deploy/live',
       'deploy/azure-app-gateway',
       'deploy/azure-api-management',
       'deploy/envoy-proxy',
