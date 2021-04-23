@@ -8,20 +8,20 @@ category: Release
 ---
 
 :::note **Beta Alert:**
-Starting today, you can now run Optic in Real API Environments, [sign up here](https://4babutyltxb.typeform.com/to/qd6PHfHI)
+Starting today, you can now run Optic in Real API Environments. [Sign up here](https://4babutyltxb.typeform.com/to/qd6PHfHI)!
 :::
 
 ![alt](/img/blog-content/lhc.jpg)
 
-Once our APIs are deployed in a real environment like staging or production, traffic races in from all directions and starts interacting with the API in the ways we expect, and in ways we could never anticipate. These 'surprises' can teach us things and help us build better designed and more robust APIs.
+Once our APIs are deployed in a real environment like staging or production, traffic races in from all directions, interacting with the API in the ways we expect, and in ways we could never anticipate. These 'surprises' can teach us things and help us build better designed and more robust APIs.
 
-Physicists smash particles smash into one another in giant particle accelerators looking for surprising patterns, and for new information that questions their assumptions.
+Physicists smash particles into one another in giant particle accelerators looking for surprising patterns, and for new information that questions their assumptions about reality.
 
-When we put our APIs in the path of real traffic, reality smashes into our API specifications, our well-landscaped-happy-paths, and assumptions. And we learn, revise, and improve our work -- hopefully.
+When we put our APIs in the path of real traffic, reality smashes into our API specifications, our well-landscaped-happy-paths, and our assumptions. We learn, revise, and improve our work -- hopefully.
 
 There is so much to be learned from looking at our API's actual behavior and usage in the real-world. But are we really looking? Can we tell if our APIs are working as expected from the logs we collect today?
 
-Users have long asked for options to run Optic in real-environments to get more observability into their API's real behavior. We have even observed teams using the local-cli in their real environments without official tooling or support from the main project. Now you can join [the beta and start monitoring your deployed APIs with Optic](https://4babutyltxb.typeform.com/to/qd6PHfHI). You can also check out [the docs to learn more about how the integrations work](/docs/deploy/live).
+Users have long asked for options to run Optic in real environments to get more observability into their API's real behavior. We have even observed teams using the local-cli in their real environments without official tooling or support from the main project. Now you can join [the beta and start monitoring your deployed APIs with Optic](https://4babutyltxb.typeform.com/to/qd6PHfHI). You can also check out [the docs to learn more about how the integrations work](/docs/deploy/live).
 
 ![alt](/img/blog-content/optic-contract-testing-diagram.svg)
 
@@ -42,7 +42,7 @@ We need a new standard for API logs, something privacy/security friendly by defa
 
 Optic built and open sourced the [`shape-hash`](https://github.com/opticdev/shape-hash) which logs only the schema/shape of your API bodies, but not the actual user data. If you have sent the Optic contributors a [Debug Capture](/docs/using/troubleshooting) you have already used `shape-hash`.
 
-Now we're doubling down and collaborating with a team of Cloud Provider/APM/Logging veterans to develop the next version of our API logging format. A much more powerful and secure open logging format for APIs that we hope the industry can adopt as a standard. *Stay tuned for more information*
+Now we're doubling down and collaborating with a team of Cloud Provider/APM/Logging veterans to develop the next version of our API logging format. It's a much more powerful and secure open logging format for APIs that we hope the industry can adopt as a standard. *Stay tuned for more information*
 
 <div style={{maxWidth: 400}}>
 
@@ -60,7 +60,7 @@ Once the API is documented, Optic will keep monitoring the API behavior to ensur
 ![alt](/img/blog-content/document-your-api.png)
 
 ### Use Real Traffic for Contract Testing
-When Optic runs in Staging or QA environments, it reports on the API behavior of every deployment. All the traffic from these environments is monitored and help test your API contract. It's like running the `api status` command, but for all the traffic captured in the real environment.
+When Optic runs in Staging or QA environments, it reports on the API behavior of every deployment. All the traffic from these environments is monitored and helps test your API contract. It's like running the `api status` command, but for all the traffic captured in the real environment.
 
 Everything your team already does in these environments now becomes part of how your API is tested: manual tests, automated tests, integration tests, and even the traffic from developers using the service while programming.
 
@@ -75,13 +75,13 @@ By watching how all your services interact, Optic can map the dependencies betwe
 Imagine if this information was available to you when you were designing APIs or talking about changes to existing services?
 
 - Will anyone be affected by changing an endpoint? Who?
-- Which APIs are longer used? Safe to delete?
+- Which APIs are no longer used? Are they safe to delete?
 - What request parameters do users send? What request parameters are no longer used?
 
-Future versions of Optic's GitBot will make these insights available at design time and when talking about API changes in code review: ie "This will be a breaking change for teams x,y,z's usage pattern!".
+Future versions of Optic's GitBot will make these insights available at design time and when talking about API changes in code review: _i.e._ "This will be a breaking change for teams x,y,z's usage pattern!".
 
 ### \[Insert your Magical Use Case\]
-What questions do you have about how your APIs + consumers? What tools, alerts or reports would you build if your logs had better API observability?
+What questions do you have about how your APIs are consumed? What tools, alerts or reports would you build if your logs had better API observability?
 
 We want to hear from you. [Feel free to start a discussion on Optic's GitHub](https://github.com/opticdev/optic/discussions/new)
 
