@@ -29,9 +29,9 @@ jobs:
           fi
       - run: |
           if [ "$BRANCH" = "release" ]; then
-            REACT_APP_API_URL=https://api.useoptic.com
+            echo "REACT_APP_API_URL=https://api.useoptic.com" >> $GITHUB_ENV
           else
-            REACT_APP_API_URL=https://api.o3c.info
+            echo "REACT_APP_API_URL=https://api.o3c.info" >> $GITHUB_ENV
           fi
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
