@@ -25,7 +25,7 @@ export function ChangelogPages(props: any) {
             const { params } = match;
             const { batchId } = params;
             const validBatchId = allBatchCommits.some(
-              (i) => i.batchId === batchId,
+              (i) => i.batchId === batchId
             );
 
             if (validBatchId) {

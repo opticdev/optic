@@ -9,7 +9,7 @@ import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { Loading } from '../../navigation/Loading';
+import { Loading } from '../../loaders/Loading';
 import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
@@ -33,7 +33,7 @@ export function EndpointDocumentationPane({
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
-    (i) => i.pathId === pathId && i.method === method,
+    (i) => i.pathId === pathId && i.method === method
   );
   if (loading) {
     return <Loading />;

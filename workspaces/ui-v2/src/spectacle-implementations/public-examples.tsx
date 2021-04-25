@@ -1,22 +1,27 @@
 import * as React from 'react';
-import { useRouteMatch, useParams, Switch } from 'react-router-dom';
-import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
+import { Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
+import {
+  IBaseSpectacle,
+  IForkableSpectacle,
+  IOpticContext,
+  makeSpectacle,
+  SpectacleInput,
+} from '@useoptic/spectacle';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
-import { Loading } from '../optic-components/navigation/Loading';
+import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
-import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
-import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
-import { IOpticContext } from '@useoptic/spectacle';
 import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
+import { useDocumentationPageLink } from '../optic-components/navigation/Routes';
 
 export default function PublicExamples() {
   const match = useRouteMatch();
+  const docsRoot = useDocumentationPageLink();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
@@ -61,6 +66,7 @@ export default function PublicExamples() {
                 <DiffReviewEnvironments />
                 <DocumentationPages />
                 <ChangelogPages />
+                {/*<Redirect to={match.url + docsRoot.linkTo()} />*/}
               </>
             </Switch>
           </BaseUrlProvider>
@@ -83,7 +89,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
   constructor(
     public readonly opticContext: IOpticContext,
-    public samples: any[],
+    public samples: any[]
   ) {
     this.spectaclePromise = makeSpectacle(opticContext);
   }
@@ -93,7 +99,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
       this.opticContext.opticEngine,
       [...(await this.opticContext.specRepository.listEvents())],
       this.samples,
-      'example-session',
+      'example-session'
     );
     return new InMemorySpectacle(opticContext, [...this.samples]);
   }
@@ -115,7 +121,7 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 }
 
 export function useInMemorySpectacle(
-  loadDependencies: InMemorySpectacleDependenciesLoader,
+  loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
   const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
 
@@ -129,11 +135,11 @@ export function useInMemorySpectacle(
         result.opticEngine,
         result.events,
         result.samples,
-        'example-session',
+        'example-session'
       );
       const inMemorySpectacle = new InMemorySpectacle(
         opticContext,
-        result.samples,
+        result.samples
       );
       setSpectacle(inMemorySpectacle);
     }

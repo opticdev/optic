@@ -5,6 +5,7 @@ import {
   useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
   useDiffReviewCapturePageLink,
+  useDiffReviewPageLink,
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
@@ -12,16 +13,17 @@ import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { useCaptures } from '../../hooks/useCapturesHook';
 import { CapturePage } from './CapturePage';
 import { useDiffTrailValues } from '../../hooks/diffs/useDiffTrailValues';
+import { LoadingPage } from '../../loaders/Loading';
+import { LoadingReview } from '../../diffs/LoadingDiff';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -46,7 +48,11 @@ export function DiffReviewPages(props: any) {
     allRequestsAndResponsesOfBaseSpec.loading;
 
   if (isLoading) {
-    return <div>LOADING</div>;
+    return (
+      <LoadingPage>
+        <LoadingReview cursor={19} total={100} />
+      </LoadingPage>
+    );
   }
 
   return (
@@ -61,7 +67,7 @@ export function DiffReviewPages(props: any) {
       <ContributionEditingStore initialIsEditingState={true}>
         <NavigationRoute
           path={diffReviewCapturePageLink.path}
-          Component={CapturePage}
+          Component={() => <CapturePage showDiff={true} />}
           AccessoryNavigation={() => (
             <DiffAccessoryNavigation onUrlsPage={false} />
           )}
@@ -92,30 +98,25 @@ export function DiffReviewPages(props: any) {
 }
 
 export function DiffReviewEnvironments(props: any) {
-  // const diffRoot = useDiffReviewPageLink();
+  const diffRoot = useDiffReviewPageLink();
   const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
 
-  const capturesState = useCaptures();
-
-  if (capturesState.loading) {
-    return <div>LOADING</div>;
-  }
-
-  const noCaptures = capturesState.captures.length === 0;
-
-  if (noCaptures) {
-    return <div>NO CAPTURES EXPERIENCE</div>;
-  }
-
   return (
-    <>
-      <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
-      <Redirect
-        to={diffEnvironmentsRoot.linkTo(
-          'local',
-          capturesState.captures[0].captureId
-        )}
-      />
-    </>
+    <Switch>
+      <>
+        <NavigationRoute
+          path={diffRoot.path}
+          Component={CapturePage}
+          AccessoryNavigation={() => null}
+        />
+        <Route path={diffEnvironmentsRoot.path} component={DiffReviewPages} />
+        {/*<Redirect*/}
+        {/*  to={diffEnvironmentsRoot.linkTo(*/}
+        {/*    'local',*/}
+        {/*    capturesState.captures[0].captureId*/}
+        {/*  )}*/}
+        {/*/>*/}
+      </>
+    </Switch>
   );
 }

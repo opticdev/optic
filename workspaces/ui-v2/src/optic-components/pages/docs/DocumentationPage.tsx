@@ -24,7 +24,7 @@ import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
 import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { Loading } from '../../navigation/Loading';
+import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 
 export function DocumentationPages(props: any) {
@@ -91,8 +91,8 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                       history.push(
                         endpointPageLink.linkTo(
                           endpoint.pathId,
-                          endpoint.method,
-                        ),
+                          endpoint.method
+                        )
                       )
                     }
                     fullPath={endpoint.fullPath}
@@ -122,7 +122,7 @@ export function EndpointRootPage(props: any) {
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints],
+    [pathId, method, endpoints]
   );
 
   if (loading) {
