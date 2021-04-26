@@ -21,7 +21,7 @@ import { useDocumentationPageLink } from '../optic-components/navigation/Routes'
 
 export default function PublicExamples() {
   const match = useRouteMatch();
-  const docsRoot = useDocumentationPageLink();
+  // const docsRoot = useDocumentationPageLink();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {

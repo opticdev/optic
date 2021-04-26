@@ -50,10 +50,22 @@ export const newSharedDiffMachine = (
     },
     initial: 'ready',
     states: {
-      loadingDiffs: {},
       error: {},
       ready: {
         on: {
+          USER_FINISHED_REVIEW: {
+            actions: [
+              assign({
+                simulatedCommands: (ctx) => {
+                  console.log('flushing commands before saving');
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  );
+                },
+              }),
+            ],
+          },
           DOCUMENT_ENDPOINT: {
             actions: [
               assign({
@@ -104,6 +116,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -118,6 +135,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -153,6 +175,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -261,7 +288,6 @@ function filterDisplayedUndocumentedUrls(
 ////////////////////////////////Machine Types
 export interface SharedDiffStateSchema {
   states: {
-    loadingDiffs: {};
     error: {};
     ready: {};
   };
@@ -298,6 +324,9 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'RESET';
+    }
+  | {
+      type: 'USER_FINISHED_REVIEW';
     };
 
 // The context (extended state) of the machine

@@ -11,11 +11,16 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const [open, setOpen] = React.useState(false);
 
-  const { pendingEndpoints, context } = useSharedDiffContext();
+  const {
+    pendingEndpoints,
+    context,
+    startedFinalizing,
+  } = useSharedDiffContext();
 
   const [commitMessage, setCommitMessage] = useState<string | null>('');
   const handleClickOpen = () => {
     setOpen(true);
+    startedFinalizing();
   };
 
   const handleClose = () => {
@@ -27,6 +32,7 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const handleSave = () => {
     //@todo decide if every endpoint (changes/pending) gets a batch commit id.
     const commands = context.simulatedCommands;
+    debugger;
     console.log(commands);
     //@todo save them with spectacle
     // saveChanges(commitMessage!);

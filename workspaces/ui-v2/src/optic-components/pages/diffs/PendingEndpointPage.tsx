@@ -18,12 +18,12 @@ import { makeStyles } from '@material-ui/styles';
 import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 import { useDiffUndocumentedUrlsPageLink } from '../../navigation/Routes';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-import { IIgnoreBody } from '../../hooks/diffs/LearnPendingEndpointState';
 import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { useDebounce } from '../../hooks/ui/useDebounceHook';
+import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
@@ -84,7 +84,7 @@ export function PendingEndpointPage(props: any) {
 
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
-  const lastBatchId = useLastBatchCommitId();
+  // const lastBatchId = useLastBatchCommitId();
 
   const [name, setName] = useState(endpointName);
   const debouncedName = useDebounce(name, 1000);
@@ -214,7 +214,7 @@ export function PendingEndpointPage(props: any) {
           previewCommands={newEndpointCommands}
         >
           <EndpointDocumentationPane
-            lastBatchCommit={lastBatchId}
+            // lastBatchCommit={lastBatchId}
             method={stagedCommandsIds.method}
             pathId={stagedCommandsIds.pathId}
           />

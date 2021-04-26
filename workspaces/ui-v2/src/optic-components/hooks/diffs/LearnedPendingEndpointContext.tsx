@@ -2,9 +2,8 @@ import React, { useContext } from 'react';
 import { IPendingEndpoint } from './SharedDiffState';
 import { useActor } from '@xstate/react';
 import equals from 'lodash.isequal';
-import { IIgnoreBody } from './LearnPendingEndpointState';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { InitialBodiesContext } from './LearnInitialBodiesMachine';
+import { IIgnoreBody, InitialBodiesContext } from './LearnInitialBodiesMachine';
 
 export const LearnedPendingEndpointContext = React.createContext({});
 
@@ -81,6 +80,6 @@ export const ILearnedPendingEndpointStore = ({
 
 export function useLearnedPendingEndpointContext() {
   return useContext(
-    LearnedPendingEndpointContext,
+    LearnedPendingEndpointContext
   ) as ILearnedPendingEndpointContext;
 }

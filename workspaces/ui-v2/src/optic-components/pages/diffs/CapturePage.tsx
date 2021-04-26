@@ -42,7 +42,6 @@ export function CapturePage(props: { showDiff?: boolean }) {
       !props.showDiff &&
       capturesState.captures[0]
     ) {
-      debugger;
       history.push(
         diffEnvironmentsRoot.linkTo(
           'local',
@@ -50,7 +49,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
         )
       );
     }
-  }, [capturesState]);
+  }, [capturesState, history, props.showDiff]);
 
   return (
     <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>

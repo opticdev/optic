@@ -44,6 +44,7 @@ type ISharedDiffContext = {
   currentSpecContext: CurrentSpecContext;
   reset: () => void;
   handledCount: [number, number];
+  startedFinalizing: () => void;
 };
 
 type SharedDiffStoreProps = {
@@ -98,6 +99,8 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     )
   );
 
+  console.log('look at me');
+  console.log(state.value);
   const context: SharedDiffStateContext = state.context;
 
   const isDiffHandled = (diffHash: string) => {
@@ -164,6 +167,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     currentSpecContext,
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
+    startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
   };
 
   return (

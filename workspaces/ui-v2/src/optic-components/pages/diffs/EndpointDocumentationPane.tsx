@@ -29,7 +29,7 @@ export function EndpointDocumentationPane({
   highlightedLocation?: IParsedLocation | undefined;
 }) {
   const { endpoints, loading } = useEndpoints();
-  const previewCommands = useSimulatedCommands();
+  // const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
@@ -47,7 +47,7 @@ export function EndpointDocumentationPane({
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
-      <pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>
+      {/*<pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>*/}
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"
