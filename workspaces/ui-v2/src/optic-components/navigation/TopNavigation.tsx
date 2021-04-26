@@ -10,10 +10,12 @@ import { NavButton } from './NavButton';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { useApiName } from '../hooks/useApiNameHook';
 import { useDiffReviewPageLink, useDocumentationPageLink } from './Routes';
+import { useAppConfig } from '../hooks/config/AppConfiguration';
 
 export function TopNavigation(props: { AccessoryNavigation: any }) {
   const classes = useStyles();
   const apiName = useApiName();
+  const appConfig = useAppConfig();
 
   const documentationPage = useDocumentationPageLink();
   const diffsPage = useDiffReviewPageLink();
@@ -40,12 +42,13 @@ export function TopNavigation(props: { AccessoryNavigation: any }) {
                 Icon={SubjectIcon}
               />
               {/*@aidan: this needs to change*/}
-              <NavButton
-                title="Diffs"
-                to={diffsPage.linkTo()}
-                Icon={ChangeHistoryIcon}
-              />
-              {/*<NavButton title="Team" Icon={ImportExportIcon} />*/}
+              {appConfig.navigation.showDiff && (
+                <NavButton
+                  title="Diffs"
+                  to={diffsPage.linkTo()}
+                  Icon={ChangeHistoryIcon}
+                />
+              )}
             </div>
             <div className={classes.spacer} />
             <div>{AccessoryNavigation && <AccessoryNavigation />}</div>
