@@ -17,7 +17,7 @@ Blogging is still totally a thing, right? That people do? You know what, don't a
 
 ## Initialize Optic and Generate an Initial Specification
 
-The first step to documentation is to define the expected behavior of my blog's API. Optic does a great job of watching me test my work and building a specification as I go along. Optic's CLI is available for [download and install](https://app.useoptic.com/) through various package managers such as `yarn`, `npm`, and `brew`.
+The first step to documentation is to define the expected behavior of my blog's API. Optic does a great job of watching me test my work and building a specification as I go along. Optic's CLI is available for [download and install](/docs/) through various package managers such as `yarn`, `npm`, and `brew`.
 
 After running `api init`, Optic guides me through setup. It recommends configurations for my framework of choice, and helps me validate my configurations with automated checks. Of course, no integration plan ever survives contact with a project, or something to that effect. If I run into issues, the failed checks provide verbose information on the nature of the issue and suggestions for remediation.
 
@@ -131,9 +131,9 @@ I'm ready to have this new route go to the main branch and be documented on Bump
 
 If you're developing an API project on Ruby, you should give Optic and Bump a try today. It's a great way to build and maintain your API specification and documentation with minimal effort, and also gives you immediate feedback in your local development work. The best time to catch an unintended change is when you make it. If you have further questions or want to customize how your configurations or GitHub Actions, I'm happy to chat! Please reach out at `lou@useoptic.com`. I'd be happy to get more specific, and if you don't mind, share the results in a future blog post.
 
-Please feel free to [get started](https://app.useoptic.com/) on your own as well, and [reach out to us](https://calendly.com/optic-onboarding/setup-help) for a chat if you have some time.
+Please feel free to [get started](/docs/) on your own as well, and [reach out to us](https://calendly.com/optic-onboarding/setup-help) for a chat if you have some time.
 
 ## Resources
 
-- [Optic installation](https://app.useoptic.com/)
+- [Optic installation](/docs/)
 - [Bump installation guide](https://help.bump.sh/bump-cli)

@@ -18,17 +18,25 @@ impl<'a> EndpointQueries<'a> {
     }
   }
 
-  fn extract_normalized_path(interaction: &HttpInteraction) -> &str {
-    if interaction.request.path.eq("/") {
-      &interaction.request.path
-    } else if interaction.request.path.ends_with("/") {
-      &interaction.request.path[..interaction.request.path.len() - 1]
+  fn extract_normalized_path(path: &str) -> &str {
+    if path.eq("/") {
+      path
+    } else if path.ends_with("/") {
+      &path[..path.len() - 1]
     } else {
-      &interaction.request.path
+      path
     }
   }
-  pub fn resolve_path(&self, interaction: &HttpInteraction) -> Option<PathComponentIdRef> {
-    let path = Self::extract_normalized_path(interaction);
+
+  pub fn resolve_interaction_path(
+    &self,
+    interaction: &HttpInteraction,
+  ) -> Option<PathComponentIdRef> {
+    self.resolve_path(&interaction.request.path)
+  }
+
+  pub fn resolve_path(&self, path: &str) -> Option<PathComponentIdRef> {
+    let path = Self::extract_normalized_path(path);
     // eprintln!("{}", path);
     let mut path_components = path.split('/');
     // skip leading empty
@@ -36,7 +44,9 @@ impl<'a> EndpointQueries<'a> {
     let mut last_resolved_path_id = Some(ROOT_PATH_ID);
     while let Some(s) = path_components.next() {
       // eprintln!("trying to match segment {}", s);
-      let node_index = self.graph_get_index(last_resolved_path_id.unwrap());
+      let node_index = self
+        .graph_get_index(last_resolved_path_id.unwrap())
+        .expect("expected a node with node_id to exist");
 
       last_resolved_path_id = None;
 
@@ -90,7 +100,17 @@ impl<'a> EndpointQueries<'a> {
     interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
   ) -> impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)> {
-    let path_node_index = self.graph_get_index(path_id);
+    self
+      .resolve_requests(path_id, &interaction.request.method)
+      .expect("expected a operations to exist")
+  }
+
+  pub fn resolve_requests(
+    &self,
+    path_id: PathComponentIdRef,
+    method: &'a String,
+  ) -> Option<impl Iterator<Item = (&RequestId, &RequestBodyDescriptor)>> {
+    let path_node_index = self.graph_get_index(path_id)?;
     let children = self
       .endpoint_projection
       .graph
@@ -99,7 +119,7 @@ impl<'a> EndpointQueries<'a> {
       .filter(move |i| {
         let node = self.endpoint_projection.graph.node_weight(*i).unwrap();
         match node {
-          Node::HttpMethod(http_method) => interaction.request.method == *http_method,
+          Node::HttpMethod(http_method) => method == http_method,
           _ => false,
         }
       })
@@ -118,7 +138,7 @@ impl<'a> EndpointQueries<'a> {
         });
         operations
       });
-    matching_method
+    Some(matching_method)
   }
 
   pub fn resolve_responses(
@@ -126,7 +146,9 @@ impl<'a> EndpointQueries<'a> {
     interaction: &'a HttpInteraction,
     path_id: PathComponentIdRef,
   ) -> impl Iterator<Item = (&ResponseId, &ResponseBodyDescriptor)> {
-    let path_node_index = self.graph_get_index(path_id);
+    let path_node_index = self
+      .graph_get_index(path_id)
+      .expect("expected a node with node_id to exist");
     let children = self
       .endpoint_projection
       .graph
@@ -184,19 +206,19 @@ impl<'a> EndpointQueries<'a> {
     matching_status_code
   }
 
-  fn graph_get_index(&self, node_id: &str) -> &petgraph::graph::NodeIndex {
-    return self
-      .endpoint_projection
-      .node_id_to_index
-      .get(node_id)
-      .expect("expected a node with node_id to exist");
+  fn graph_get_index(&self, node_id: &str) -> Option<&petgraph::graph::NodeIndex> {
+    self.endpoint_projection.node_id_to_index.get(node_id)
   }
 
   fn graph_get_node(&self, node_id: &str) -> &Node {
     self
       .endpoint_projection
       .graph
-      .node_weight(*self.graph_get_index(node_id))
+      .node_weight(
+        *self
+          .graph_get_index(node_id)
+          .expect("expected a node with node_id to exist"),
+      )
       .expect("expected node with node_id to exist")
   }
 
@@ -267,20 +289,20 @@ mod test {
   #[test]
   pub fn can_ignore_trailing_slash() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c/"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/a/b/c")
   }
 
   #[test]
   pub fn can_handle_no_trailing_slash() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/a/b/c"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/a/b/c")
   }
   #[test]
   pub fn can_handle_root_path() {
     let interaction: HttpInteraction = interaction_with_path(String::from("/"));
-    let normalized_path = EndpointQueries::extract_normalized_path(&interaction);
+    let normalized_path = EndpointQueries::extract_normalized_path(&interaction.request.path);
     assert_eq!(normalized_path, "/")
   }
 }

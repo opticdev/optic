@@ -19,7 +19,7 @@ import { IToDocument } from '../interfaces/interfaces';
 import { InteractiveEndpointSessionContext } from '../interactive-endpoint';
 import { ISuggestion } from '../interfaces/interpretors';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
-import {setEquals} from "../set-ops";
+import { setEquals } from '../set-ops';
 
 export function useDiffSessionMachine(
   diffId: string,
@@ -40,7 +40,7 @@ export function useDiffSessionMachine(
   function createActions() {
     return {
       signalDiffCompleted(
-        rawDiffs: [IDiff, string[]][],
+        rawDiffs: [IDiff, string[], string][],
         unrecognizedUrls: IUnrecognizedUrl[]
       ) {
         console.log('signaling diff completed!!!');
@@ -48,7 +48,8 @@ export function useDiffSessionMachine(
           type: 'COMPLETED_DIFF',
           urls: unrecognizedUrls,
           diffs: rawDiffs.map(
-            ([diff, interactions]) => new ParsedDiff(diff, interactions)
+            ([diff, interactions, fingerprint]) =>
+              new ParsedDiff(diff, interactions, fingerprint)
           ),
         });
       },
@@ -91,11 +92,12 @@ export function useDiffSessionMachine(
         total: number
       ) => {
         const existing = state.context.unrecognizedUrlsToDocument;
-        const newExpressions = !setEquals(new Set([...existing.urls.map(i => i.pathExpression)]), new Set([...toDocument.map(i => i.pathExpression)]))
-        const shouldUpdate = existing.handled !== handled || newExpressions
-        if (
-          shouldUpdate
-        ) {
+        const newExpressions = !setEquals(
+          new Set([...existing.urls.map((i) => i.pathExpression)]),
+          new Set([...toDocument.map((i) => i.pathExpression)])
+        );
+        const shouldUpdate = existing.handled !== handled || newExpressions;
+        if (shouldUpdate) {
           send({
             type: 'UPDATED_TO_DOCUMENT',
             toDocument,

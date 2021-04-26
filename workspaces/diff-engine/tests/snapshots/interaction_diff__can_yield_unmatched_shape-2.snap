@@ -1,5 +1,5 @@
 ---
-source: tests/interaction_diff.rs
+source: workspaces/diff-engine/tests/interaction_diff.rs
 expression: results
 ---
 [

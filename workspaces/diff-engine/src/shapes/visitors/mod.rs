@@ -98,19 +98,19 @@ pub struct VisitorResults<R> {
 }
 
 impl<R> VisitorResults<R> {
-  fn new() -> Self {
+  pub fn new() -> Self {
     VisitorResults {
       results: Some(vec![]),
     }
   }
 
-  fn push(&mut self, result: R) {
+  pub fn push(&mut self, result: R) {
     if let Some(results) = &mut self.results {
       results.push(result);
     }
   }
 
-  fn take_results(&mut self) -> Option<Vec<R>> {
+  pub fn take_results(&mut self) -> Option<Vec<R>> {
     let flushed_results = self.results.take();
     self.results = Some(vec![]);
     flushed_results

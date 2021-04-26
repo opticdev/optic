@@ -4,8 +4,9 @@ use super::visitors::{
 use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::body::BodyDescriptor;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
+use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 
 pub struct Traverser<'a> {
@@ -222,7 +223,7 @@ impl<'a> Traverser<'a> {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash)]
 pub enum ShapeTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   ObjectTrail { shape_id: ShapeId },
@@ -264,7 +265,7 @@ pub enum ShapeTrailPathComponent {
   UnknownTrail {},
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash)]
 #[serde(rename_all = "camelCase")]
 pub struct ShapeTrail {
   pub root_shape_id: ShapeId,
@@ -285,7 +286,7 @@ impl ShapeTrail {
   }
 }
 
-#[derive(Debug, Serialize, Clone, Hash)]
+#[derive(Debug, Deserialize, Serialize, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub enum JsonTrailPathComponent {
   #[serde(rename_all = "camelCase")]
   JsonObject {},
@@ -297,12 +298,12 @@ pub enum JsonTrailPathComponent {
   JsonArrayItem { index: u32 },
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct JsonTrail {
   path: Vec<JsonTrailPathComponent>,
 }
 impl JsonTrail {
-  fn empty() -> Self {
+  pub fn empty() -> Self {
     JsonTrail { path: vec![] }
   }
   pub fn with_component(&self, component: JsonTrailPathComponent) -> Self {
@@ -310,22 +311,110 @@ impl JsonTrail {
     new_trail.path.push(component);
     new_trail
   }
+
+  pub fn with_array(&self) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonArray {})
+  }
+
+  pub fn with_array_item(&self, index: u32) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonArrayItem { index })
+  }
+
+  pub fn with_object(&self) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonObject {})
+  }
+
+  pub fn with_object_key(&self, key: String) -> Self {
+    self.with_component(JsonTrailPathComponent::JsonObjectKey { key })
+  }
+
+  pub fn normalized(&self) -> Self {
+    Self {
+      path: self
+        .path
+        .iter()
+        .map(|component| match component {
+          JsonTrailPathComponent::JsonArrayItem { index } => {
+            JsonTrailPathComponent::JsonArrayItem { index: 0 }
+          }
+          _ => component.clone(),
+        })
+        .collect(),
+    }
+  }
+}
+
+impl PartialEq for JsonTrail {
+  fn eq(&self, other: &Self) -> bool {
+    self.path == other.path
+  }
+}
+
+impl Eq for JsonTrail {}
+
+impl Ord for JsonTrail {
+  fn cmp(&self, other: &Self) -> Ordering {
+    self.path.cmp(&other.path)
+  }
+}
+
+impl PartialOrd for JsonTrail {
+  fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    Some(self.cmp(other))
+  }
 }
 
 impl Hash for JsonTrail {
   fn hash<H: Hasher>(&self, hash_state: &mut H) {
-    let components = self
-      .path
-      .clone()
-      .into_iter()
-      .map(|component| match component {
-        JsonTrailPathComponent::JsonArrayItem { index } => {
-          JsonTrailPathComponent::JsonArrayItem { index: 0 }
-        }
-        _ => component,
-      })
-      .collect::<Vec<_>>();
+    self.path.hash(hash_state);
+  }
+}
 
-    components.hash(hash_state);
+#[cfg(test)]
+mod test {
+  use super::*;
+  use insta::assert_json_snapshot;
+
+  #[test]
+  pub fn json_trails_order_root_to_leaf() {
+    let mut trails = vec![
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        })
+        .with_component(JsonTrailPathComponent::JsonArray {})
+        .with_component(JsonTrailPathComponent::JsonArrayItem { index: 0 }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("b"),
+        }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("b"),
+        })
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("foo"),
+        }),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        }),
+      JsonTrail::empty().with_component(JsonTrailPathComponent::JsonObject {}),
+      JsonTrail::empty()
+        .with_component(JsonTrailPathComponent::JsonObject {})
+        .with_component(JsonTrailPathComponent::JsonObjectKey {
+          key: String::from("a"),
+        })
+        .with_component(JsonTrailPathComponent::JsonArray {}),
+    ];
+
+    trails.sort();
+
+    assert_json_snapshot!("json_trails_order_root_to_leaf__sorted", trails);
   }
 }

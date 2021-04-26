@@ -1,14 +1,25 @@
+use crate::events::http_interaction::{Body, HttpInteraction};
+use crate::learn_shape::{observe_body_trails, TrailObservationsResult, TrailValues};
+use crate::projections::{EndpointProjection, SpecProjection};
+use crate::protos::shapehash::ShapeDescriptor;
+use crate::queries::endpoint::EndpointQueries;
+use crate::shapes::diff as diff_shape;
+use crate::shapes::ShapeDiffResult;
+use crate::state::body::BodyDescriptor;
+
 pub mod result;
 mod traverser;
 mod visitors;
-pub use crate::events::http_interaction::HttpInteraction;
-pub use crate::projections::endpoint::EndpointProjection;
-pub use crate::projections::SpecProjection;
-pub use crate::queries::endpoint::EndpointQueries;
-use crate::shapes::diff as diff_shape;
-pub use result::InteractionDiffResult;
+
+use result::InteractionTrail;
+pub use result::{BodyAnalysisLocation, BodyAnalysisResult, InteractionDiffResult};
 use visitors::{InteractionVisitors, PathVisitor};
 
+/// Compute diffs based on a spec and an interaction.
+///
+/// Will first try to match the interaction to a Request + Response pair from the spec. From there
+/// will either produce unmatched results or proceed to diff bodies of the Request and Response
+/// respectively.
 pub fn diff(
   spec_projection: &SpecProjection,
   http_interaction: HttpInteraction,
@@ -61,10 +72,82 @@ pub fn diff(
     .collect()
 }
 
-#[cfg(test)]
-mod test {
-  #[test]
-  pub fn try_diff() {
-    assert_eq!(true, true);
-  }
+/// Analysises the shapes of interactions that have request or response bodies with previously
+/// unseen content types. From the result, observed types per json trail, commands can be generated
+/// applyable to the spec that would make the interaction compliant. Results can also be merged with
+/// each other, creating a union. In effect, this allows a spec to be learned from interactions.
+///
+/// A diff is performed to find a matching Request / Response, but with missing content types
+/// respectively. When found, a normalized description of the shape of the interaction is traversed.
+pub fn analyze_undocumented_bodies(
+  spec_projection: &SpecProjection,
+  interaction: HttpInteraction,
+) -> impl Iterator<Item = BodyAnalysisResult> {
+  let endpoint_projection = spec_projection.endpoint();
+  let endpoint_queries = EndpointQueries::new(endpoint_projection);
+  let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
+  let mut diff_visitors = visitors::diff::DiffVisitors::new();
+
+  interaction_traverser.traverse(&interaction, &mut diff_visitors);
+
+  let results = diff_visitors.take_results().unwrap();
+
+  results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::UnmatchedRequestBodyContentType(diff) => {
+      let body = &interaction.request.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+    InteractionDiffResult::UnmatchedResponseBodyContentType(diff) => {
+      let body = &interaction.response.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+    _ => None,
+  })
+}
+
+pub fn analyze_documented_bodies(
+  spec_projection: &SpecProjection,
+  interaction: HttpInteraction,
+) -> impl Iterator<Item = BodyAnalysisResult> {
+  let endpoint_rpojection = spec_projection.endpoint();
+  let endpoint_queries = EndpointQueries::new(endpoint_rpojection);
+
+  let interaction_traverser = traverser::Traverser::new(&endpoint_queries);
+  let mut diff_visitors = visitors::diff::DiffVisitors::new();
+
+  interaction_traverser.traverse(&interaction, &mut diff_visitors);
+
+  let results = diff_visitors.take_results().unwrap();
+
+  results.into_iter().filter_map(move |result| match result {
+    InteractionDiffResult::MatchedRequestBodyContentType(diff) => {
+      let body = &interaction.request.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+    InteractionDiffResult::MatchedResponseBodyContentType(diff) => {
+      let body = &interaction.response.body;
+      let trail_observations = observe_body_trails(&body.value);
+
+      Some(BodyAnalysisResult {
+        body_location: BodyAnalysisLocation::from(diff),
+        trail_observations,
+      })
+    }
+    _ => None,
+  })
 }

@@ -80,25 +80,9 @@ pub async fn to_api_dir(
     let file = fs::File::create(file_path).await?;
 
     // TODO: use spec_events::write_to_json_array instead of doing this manually
-    let mut sink = spec_events::into_json_array_items(file);
-
-    sink
-      .get_mut()
-      .write_all(b"[\n")
+    super::write_to_json_array(file, events)
       .await
-      .expect("could not write array start to file");
-
-    for event in events {
-      sink.send(event).await?;
-    }
-
-    sink
-      .get_mut()
-      .write_all(b"\n]")
-      .await
-      .expect("could not write array end to file");
-
-    sink.get_mut().flush().await?;
+      .expect("could not write events to file");
 
     count += 1;
   }

@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { IdGenerator } from '@useoptic/cli-shared';
+import { IdGenerator, isEnvTrue } from '@useoptic/cli-shared';
 import { CaptureId } from '@useoptic/saas-types';
 import {
   IInteractionPointerConverter,
@@ -17,8 +17,10 @@ import {
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
 import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
+import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
 import { Diff } from '../diffs';
 import { OnDemandTrailValues } from '../tasks/on-demand-trail-values';
+import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -104,69 +106,132 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   );
 
   ////////////////////////////////////////////////////////////////////////////////
-  router.post(
-    '/initial-bodies',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const { captureId } = req.params;
-      const { events, pathId, method } = req.body;
+  if (isEnvTrue(process.env.OPTIC_RUST_INITIAL_BODY_LEARNER)) {
+    router.post(
+      '/initial-bodies',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method } = req.body;
 
-      const initialBodyGenerator = new OnDemandInitialBody({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        events: events,
-        captureId,
-        pathId,
-        method,
-      });
-
-      console.time('learn ' + pathId + method);
-      const result = initialBodyGenerator.run();
-      result.then((learnedBodies: ILearnedBodies) => {
-        console.timeEnd('learn ' + pathId + method);
-        res.json(learnedBodies);
-      });
-      result.catch((e) => {
-        res.status(500).json({
-          message: e.message,
+        const initialBodyGenerator = new OnDemandInitialBodyRust({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          events: events,
+          captureId,
+          pathId,
+          method,
         });
-      });
-    }
-  );
+
+        console.time('learn ' + pathId + method);
+        // TODO: pass results stream straight through instead of buffering into memory
+        const result = initialBodyGenerator.run();
+        result.then((learnedBodies: ILearnedBodies) => {
+          console.timeEnd('learn ' + pathId + method);
+          res.json(learnedBodies);
+        });
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  } else {
+    router.post(
+      '/initial-bodies',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method } = req.body;
+
+        const initialBodyGenerator = new OnDemandInitialBody({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          events: events,
+          captureId,
+          pathId,
+          method,
+        });
+
+        console.time('learn ' + pathId + method);
+        const result = initialBodyGenerator.run();
+        result.then((learnedBodies: ILearnedBodies) => {
+          console.timeEnd('learn ' + pathId + method);
+          res.json(learnedBodies);
+        });
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  router.post(
-    '/trail-values',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const { captureId } = req.params;
-      const { events, pathId, method, serializedDiffs } = req.body;
+  if (isEnvTrue(process.env.OPTIC_RUST_SHAPE_DIFF_AFFORDANCES_LEARNER)) {
+    router.post(
+      '/trail-values',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method, diffId } = req.body;
 
-      const onDemandTrailValues = new OnDemandTrailValues({
-        captureBaseDirectory: req.optic.paths.capturesPath,
-        events: events,
-        captureId,
-        pathId,
-        serializedDiffs,
-        method,
-      });
-
-      const result = onDemandTrailValues.run();
-
-      result.then(
-        (
-          learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
-        ) => {
-          res.json(learnedTrails);
-        }
-      );
-      result.catch((e) => {
-        res.status(500).json({
-          message: e.message,
+        const onDemandTrailValues = new OnDemandShapeDiffAffordancesRust({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          diffId,
+          events: events,
+          captureId,
+          pathId,
+          method,
         });
-      });
-    }
-  );
+
+        const result = onDemandTrailValues.run();
+
+        result.then((shapeDiffAffordancesByFingerprint) => {
+          res.json(shapeDiffAffordancesByFingerprint);
+        });
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  } else {
+    router.post(
+      '/trail-values',
+      bodyParser.json({ limit: '100mb' }),
+      async (req, res) => {
+        const { captureId } = req.params;
+        const { events, pathId, method, serializedDiffs } = req.body;
+
+        const onDemandTrailValues = new OnDemandTrailValues({
+          captureBaseDirectory: req.optic.paths.capturesPath,
+          events: events,
+          captureId,
+          pathId,
+          serializedDiffs,
+          method,
+        });
+
+        const result = onDemandTrailValues.run();
+
+        result.then(
+          (
+            learnedTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash
+          ) => {
+            res.json(learnedTrails);
+          }
+        );
+        result.catch((e) => {
+          res.status(500).json({
+            message: e.message,
+          });
+        });
+      }
+    );
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
 

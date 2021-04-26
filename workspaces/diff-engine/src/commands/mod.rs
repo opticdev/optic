@@ -1,8 +1,9 @@
 use chrono::{DateTime, TimeZone, Utc};
 use std::process::Command;
+use uuid::Uuid;
 
 use cqrs_core::{Aggregate, AggregateCommand, AggregateEvent};
-pub use serde::Deserialize;
+pub use serde::{Deserialize, Serialize};
 
 pub mod endpoint;
 pub mod rfc;
@@ -20,8 +21,9 @@ use crate::events::{
 };
 use crate::projections::SpecProjection;
 use crate::queries::history::HistoryQueries;
+use crate::state::shape::ShapeKind;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum SpecCommand {
   EndpointCommand(EndpointCommand),
@@ -188,7 +190,8 @@ impl AggregateCommand<SpecProjection> for SpecCommand {
         };
 
         let shape_added_event = ShapeEvent::from(ShapeCommand::add_shape(
-          String::from("$string"),
+          Uuid::new_v4().to_hyphenated().to_string(),
+          ShapeKind::StringKind,
           String::from(""),
         ));
 

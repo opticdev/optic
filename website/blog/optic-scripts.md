@@ -10,7 +10,7 @@ Optic helps teams write and maintain their first OpenAPI specifications. You don
 
 ## Optic Scripts
 
-We're proud to announce a new capability in Optic, [Scripts](/docs/apiops/scripts), which makes it easy to use the OpenAPI spec Optic gives you with a variety of other tools. Scripts help you share the information Optic knows about your APIs with other systems. Script definitions live inside your `optic.yml` file and are invoked with the `api scripts` command. The Optic Scripts feature is included when you [add Optic to your API](https://app.useoptic.com).
+We're proud to announce a new capability in Optic, [Scripts](/docs/apiops/scripts), which makes it easy to use the OpenAPI spec Optic gives you with a variety of other tools. Scripts help you share the information Optic knows about your APIs with other systems. Script definitions live inside your `optic.yml` file and are invoked with the `api scripts` command. The Optic Scripts feature is included when you [add Optic to your API](/docs/).
 
 <!--truncate-->
 
@@ -130,4 +130,4 @@ Another practical observation: Both the `example-generate-client` and `example-g
 
 ## Get started with Optic!
 
-You can start documenting your API today by [setting up Optic](https://app.useoptic.com/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).
+You can start documenting your API today by [setting up Optic](/docs/) with your project. We can help you integrate with your existing documentation tools during our [office hours](https://useoptic.com/docs/community), and would be happy to take [feedback on GitHub](https://github.com/opticdev/optic/issues/new).

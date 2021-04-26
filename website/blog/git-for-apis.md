@@ -174,7 +174,7 @@ You can try the new engine in the @beta channel -- it's been there ~3 weeks, and
 
 Early on we realized that modeling how an API changes over time is a really important part of the story — think API specifications, but with a time axis. API change management is all about the changes — it’s right there in the name. However, it’s not easy to compare any two versions of a spec to determine what’s actually changed. It's also hard to represent both the API's actual behavior, and the proposed changes a team is building towards in the same specification. How do you distinguish the current state of the API from the 'designed' (but not implemented) state?
 
-To address these issues we built the Changelog spec, a CQRS/ES inspired ledger of every change that has ever been made to the API. It has some [cool properties worthy of an entirely separate post](https://useoptic.com/blog/chanelog-specs-part1) and a [live demo](https://opticdev.github.io/changelog-spec-demo/). Look out for other vendors and OSS projects that are working to improve + adopt it next year.
+To address these issues we built the Changelog spec, a CQRS/ES inspired ledger of every change that has ever been made to the API. It has some [cool properties worthy of an entirely separate post](https://useoptic.com/blog/changelog-specs-part1) and a [live demo](https://opticdev.github.io/changelog-spec-demo/). Look out for other vendors and OSS projects that are working to improve + adopt it next year.
 
 ---
 

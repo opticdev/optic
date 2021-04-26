@@ -42,56 +42,23 @@ pub fn into_json_lines<S>(sink: S) -> impl Sink<SpecEvent>
 where
   S: AsyncWrite,
 {
-  let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b"\n");
-  FramedWrite::new(writer, codec)
+  super::into_json_lines::<S, SpecEvent>(sink)
 }
 
-pub fn into_json_array_items<S>(sink: S) -> FramedWrite<BufWriter<S>, JsonLineEncoder>
+pub fn into_json_array_items<S>(sink: S) -> impl Sink<SpecEvent>
 where
   S: AsyncWrite,
 {
-  let writer = BufWriter::new(sink);
-  let codec = JsonLineEncoder::new(b"\n,");
-  FramedWrite::new(writer, codec)
+  super::into_json_array_items(sink)
 }
 
-// TODO: return a proper error, so downstream can distinguish between IO, serde, etc
-// TODO: make this work with impl Stream instead
 pub async fn write_to_json_array<S>(
   sink: S,
   spec_events: impl IntoIterator<Item = &SpecEvent>,
-) -> Result<(), &'static str>
+) -> Result<(), super::JsonLineEncoderError>
 where
   S: AsyncWrite,
   S: Unpin,
-  // E: Stream<Item = SpecEvent>,
-  // E: Unpin,
 {
-  let mut framed_write = into_json_array_items(sink);
-
-  framed_write
-    .get_mut()
-    .write_u8(b'[')
-    .await
-    .map_err(|_| "could not write array start")?;
-
-  for spec_event in spec_events {
-    if let Err(_) = framed_write.send(spec_event).await {
-      panic!("could not stream event result to stdout"); // TODO: Find way to actually write error info
-    }
-  }
-  framed_write
-    .get_mut()
-    .write_u8(b']')
-    .await
-    .map_err(|_| "could not write array start to stdout")?;
-
-  framed_write
-    .get_mut()
-    .flush()
-    .await
-    .map_err(|_| "could not flush stdout")?;
-
-  Ok(())
+  super::write_to_json_array(sink, spec_events).await
 }

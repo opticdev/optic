@@ -5,7 +5,8 @@ use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use optic_diff_engine::{
-  CommandContext, HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent, SpecProjection,
+  CommandContext, EndpointQueries, HttpInteraction, InteractionDiffResult, SpecCommand, SpecEvent,
+  SpecProjection,
 };
 
 #[wasm_bindgen(start)]
@@ -46,6 +47,10 @@ pub struct WasmSpecProjection {
 impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
     optic_diff_engine::diff_interaction(&self.projection, interaction)
+  }
+
+  pub fn endpoint_queries(&self) -> EndpointQueries {
+    EndpointQueries::new(self.projection.endpoint())
   }
 }
 
@@ -96,4 +101,13 @@ pub fn append_batch_to_spec(
 
   serde_json::to_string(&new_events)
     .map_err(|err| JsValue::from(format!("new events could not be serialized: {:?}", err)))
+}
+
+// Spec Queries
+// ------------
+#[wasm_bindgen]
+pub fn spec_resolve_path_id(spec: &WasmSpecProjection, path: String) -> Option<String> {
+  let endpoint_queries = spec.endpoint_queries();
+
+  endpoint_queries.resolve_path(&path).map(String::from)
 }

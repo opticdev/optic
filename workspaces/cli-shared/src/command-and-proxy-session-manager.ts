@@ -18,8 +18,17 @@ class CommandAndProxySessionManager {
     private onStarted?: () => void
   ) {}
 
+  private commandSession: CommandSession | undefined
+
+  public getExitCodeOfProcess(): number | undefined {
+    if (this.commandSession) {
+      return this.commandSession?.exitCode || undefined
+    }
+  }
+
   async run(persistenceManager: ICaptureSaver) {
-    const commandSession = new CommandSession();
+    this.commandSession = new CommandSession();
+    const commandSession = this.commandSession!
     const inboundProxy = new HttpToolkitCapturingProxy();
     const servicePort = this.config.serviceConfig.port;
     const serviceHost = this.config.serviceConfig.host;

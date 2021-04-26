@@ -9,7 +9,8 @@ test('accurate spec trail for all diffs', async () => {
   const { rawDiffs, rfcBaseState } = await universePromise;
 
   const parsedDiffs = rawDiffs.map(
-    ([diff, interactions]) => new ParsedDiff(diff, interactions)
+    ([diff, interactions, fingerprint]) =>
+      new ParsedDiff(diff, interactions, fingerprint)
   );
 
   parsedDiffs.forEach((i) => {

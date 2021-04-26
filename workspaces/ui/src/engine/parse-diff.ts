@@ -31,7 +31,11 @@ export class ParsedDiff {
   diffType: string;
   diffHash: string;
 
-  constructor(private serialized_diff: IDiff, public interactions: string[]) {
+  constructor(
+    private serialized_diff: IDiff,
+    public interactions: string[],
+    fingerprint
+  ) {
     const keys = Object.keys(this.serialized_diff);
     const typeKey = keys[0]!;
     invariant(
@@ -39,7 +43,7 @@ export class ParsedDiff {
       'Serialized diffs should only have one root key'
     );
 
-    this.diffHash = sha1(jsonStringify(this.serialized_diff));
+    this.diffHash = fingerprint;
 
     this.diffType = typeKey!;
   }
@@ -141,8 +145,13 @@ export class ParsedDiff {
   }
 }
 
-export function parseDiffsArray(array: [IDiff, string[]][]): ParsedDiff[] {
-  return array.map(([rawDiff, pointers]) => new ParsedDiff(rawDiff, pointers));
+export function parseDiffsArray(
+  array: [IDiff, string[], string][]
+): ParsedDiff[] {
+  return array.map(
+    ([rawDiff, pointers, fingerprint]) =>
+      new ParsedDiff(rawDiff, pointers, fingerprint)
+  );
 }
 
 export class BodyShapeDiff {
