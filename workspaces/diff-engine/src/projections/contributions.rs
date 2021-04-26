@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 pub struct ContributionsProjection {
-  // TODO check whether this is best ds to use
+  // @nic TODO check whether this is best ds to use
   pub hash_map: HashMap<String, HashMap<String, String>>,
 }
 

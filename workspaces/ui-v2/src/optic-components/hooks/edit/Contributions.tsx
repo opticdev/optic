@@ -92,7 +92,6 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
   const value: ContributionEditContextValue = {
     isEditing,
     save: async () => {
-      console.log(pendingContributions);
       if (pendingContributions.length > 0) {
         const commands = pendingContributions.map((contribution) =>
           AddContribution(
@@ -102,7 +101,6 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
           )
         );
 
-        // TODO error handling
         await spectacleMutator({
           query: `
           mutation X($commands: [JSON]) {

@@ -57,13 +57,19 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 
-export function useSpectacleCommand(): (input: SpectacleInput) => Promise<any> {
+export function useSpectacleCommand(): (input: SpectacleInput) => Promise<AsyncStatus<any>> {
   const spectacle = useContext(SpectacleContext)!;
 
   return useCallback(
-    (input: SpectacleInput) => {
-      // @nic TODO error handling
-      return spectacle.mutate(input);
+    async (input: SpectacleInput) => {
+      const result = await spectacle.mutate(input);
+      if (result.errors) {
+        console.error(result.errors);
+        debugger;
+        result.error = new Error(result.errors);
+      }
+
+      return result;
     },
     [spectacle]
   );

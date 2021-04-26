@@ -114,10 +114,23 @@ export interface IOpticContext {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export interface IBaseSpectacle {
-  query(options: SpectacleInput): Promise<any>;
+export type AsyncStatus<T> =
+  | {
+      loading: true;
+      error: false;
+      data: null;
+    }
+  | {
+      loading: false;
+      error: true;
+      data: null;
+    }
+  | { loading: false; error: false; data: T };
 
-  mutate(options: SpectacleInput): Promise<any>;
+export interface IBaseSpectacle {
+  query(options: SpectacleInput): Promise<AsyncStatus<any>>;
+
+  mutate(options: SpectacleInput): Promise<AsyncStatus<any>>;
 }
 
 export interface IForkableSpectacle extends IBaseSpectacle {
