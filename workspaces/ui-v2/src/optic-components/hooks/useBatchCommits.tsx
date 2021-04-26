@@ -24,11 +24,13 @@ export function useBatchCommits(): BatchCommit[] {
       return [];
     }
 
-    return data.batchCommits.map((i: any) => ({
-      commitMessage: i.commitMessage,
-      batchId: i.batchId,
-      createdAt: i.createdAt,
-    }));
+    return data.batchCommits
+      .map((i: any) => ({
+        commitMessage: i.commitMessage,
+        batchId: i.batchId,
+        createdAt: i.createdAt,
+      }))
+      .reverse();
   }, [data]);
 }
 

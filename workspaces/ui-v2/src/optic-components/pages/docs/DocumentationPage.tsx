@@ -27,6 +27,7 @@ import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
+import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -88,6 +89,9 @@ export function DocumentationRootPage(props: {
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+
+  const changes = useEndpointsChangelog(props.changelogBatchId);
+  console.log(props.changelogBatchId, changes);
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
