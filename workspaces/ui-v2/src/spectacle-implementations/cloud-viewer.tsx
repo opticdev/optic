@@ -21,7 +21,7 @@ export default function CloudViewer() {
   const { specId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
     const loadExample = async () => {
-      let apiBase = process.env.REACT_APP_API_URL;
+      let apiBase = process.env.REACT_APP_API_BASE;
 
       if(!apiBase){
         if(window.location.hostname.indexOf("useoptic.com")){
@@ -52,13 +52,13 @@ export default function CloudViewer() {
       let spec = await contentReq.json();
       return spec;
     };
-    const [example, opticEngine] = await Promise.all([
+    const [events, opticEngine] = await Promise.all([
       loadExample(),
       import('@useoptic/diff-engine-wasm/engine/browser'),
     ]);
     return {
-      events: example.events,
-      samples: example.session.samples,
+      events,
+      samples: [],
       opticEngine,
     };
   };
@@ -111,11 +111,9 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
   }
 
   async fork(): Promise<IBaseSpectacle> {
-    const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+    const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticContext.opticEngine,
-      [...(await this.opticContext.specRepository.listEvents())],
-      this.samples,
-      'example-session',
+      [...(await this.opticContext.specRepository.listEvents())]
     );
     return new InMemorySpectacle(opticContext, [...this.samples]);
   }
