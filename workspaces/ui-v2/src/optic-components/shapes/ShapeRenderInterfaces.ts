@@ -6,8 +6,8 @@ export interface IFieldRenderer {
   parentId: string;
   shapeChoices: IShapeRenderer[];
   required: boolean;
-  description?: string;
   changes?: IChanges;
+  contributions: Record<string, string>;
 }
 
 export interface IShapeRenderer {

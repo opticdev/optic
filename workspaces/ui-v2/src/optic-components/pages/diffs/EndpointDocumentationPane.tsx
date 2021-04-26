@@ -33,7 +33,7 @@ export function EndpointDocumentationPane({
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
-    (i) => i.pathId === pathId && i.method === method,
+    (i) => i.pathId === pathId && i.method === method
   );
   if (loading) {
     return <Loading />;
@@ -52,6 +52,8 @@ export function EndpointDocumentationPane({
         id={endpointId}
         contributionKey="purpose"
         defaultText="What does this endpoint do?"
+        // @nic todo
+        initialValue=""
       />
 
       <div style={{ height: 20 }} />
@@ -98,6 +100,8 @@ export function EndpointDocumentationPane({
                 rootShapeId={i.rootShapeId}
                 bodyId={i.requestId}
                 location={'Request Body Parameters'}
+                // @nic todo
+                description=""
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />
@@ -120,6 +124,8 @@ export function EndpointDocumentationPane({
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
                 location={`${i.statusCode} Response`}
+                // @nic todo
+                description=""
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />

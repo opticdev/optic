@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { AddContribution } from '../../../lib/command-factory';
-import { useContributions } from '../useContributions';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -14,12 +13,9 @@ type ContributionEditContextValue = {
   stagePendingContribution: (
     id: string,
     contributionKey: string,
-    value: string
+    value: string,
+    initialValue: string
   ) => void;
-  lookupContribution: (
-    id: string,
-    contributionKey: string
-  ) => string | undefined;
 };
 
 interface IContribution {
@@ -30,23 +26,19 @@ interface IContribution {
 
 type ContributionEditingStoreProps = {
   initialIsEditingState?: boolean;
-  children?: any;
 };
 
 export const useValueWithStagedContributions = (
   id: string,
-  contributionKey: string
+  contributionKey: string,
+  initialValue: string
 ) => {
-  const {
-    lookupContribution,
-    stagePendingContribution,
-  } = useContributionEditing();
+  const { stagePendingContribution } = useContributionEditing();
 
-  const initialValue = lookupContribution(id, contributionKey);
   const [value, setValue] = useState<string>(initialValue || '');
   useEffect(() => {
-    stagePendingContribution(id, contributionKey, value);
-  }, [id, contributionKey, value, stagePendingContribution]);
+    stagePendingContribution(id, contributionKey, value, initialValue);
+  }, [id, contributionKey, value, stagePendingContribution, initialValue]);
 
   return {
     value,
@@ -54,8 +46,8 @@ export const useValueWithStagedContributions = (
   };
 };
 
-export const ContributionEditingStore = (
-  props: ContributionEditingStoreProps
+export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
+  props
 ) => {
   const spectacleMutator = useSpectacleCommand();
   const [isEditing, setIsEditing] = useState(
@@ -67,10 +59,14 @@ export const ContributionEditingStore = (
   >([]);
 
   const stagePendingContribution = useCallback(
-    (newId: string, newContributionKey: string, newValue: string) => {
-      // @nic TODO change this to look at query diff vs user input
+    (
+      newId: string,
+      newContributionKey: string,
+      newValue: string,
+      initialValue: string
+    ) => {
       const newContribution =
-        newValue !== ''
+        newValue !== initialValue
           ? [
               {
                 id: newId,
@@ -96,11 +92,12 @@ export const ContributionEditingStore = (
   const value: ContributionEditContextValue = {
     isEditing,
     save: async () => {
+      console.log(pendingContributions);
       if (pendingContributions.length > 0) {
         const commands = pendingContributions.map((contribution) =>
           AddContribution(
             contribution.id,
-            contribution.contributionKey.toUpperCase(), // TODO validate that this should be uppercase?
+            contribution.contributionKey,
             contribution.value
           )
         );
@@ -126,11 +123,6 @@ export const ContributionEditingStore = (
     pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),
     stagePendingContribution,
-    lookupContribution: (id, contributionKey) => {
-      // @nic TODO implement fetch for store to load this information
-      // TODO handle loading state when this isn't loaded
-      return undefined;
-    },
   };
 
   return (

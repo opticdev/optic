@@ -3,7 +3,10 @@ import { ChangeEvent } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField } from '@material-ui/core';
 import classNames from 'classnames';
-import { useContributionEditing, useValueWithStagedContributions } from '../hooks/edit/Contributions';
+import {
+  useContributionEditing,
+  useValueWithStagedContributions,
+} from '../hooks/edit/Contributions';
 import { OpticBlueReadable } from '../theme';
 import ReactMarkdown from 'react-markdown';
 
@@ -11,19 +14,23 @@ export type MarkdownBodyContributionProps = {
   id: string;
   contributionKey: string;
   defaultText: string;
+  initialValue: string;
 };
 
 export function MarkdownBodyContribution({
   id,
   contributionKey,
   defaultText,
+  initialValue,
 }: MarkdownBodyContributionProps) {
-  const {
-    isEditing,
-  } = useContributionEditing();
+  const { isEditing } = useContributionEditing();
 
   const classes = useStyles();
-  const { value, setValue } = useValueWithStagedContributions(id, contributionKey);
+  const { value, setValue } = useValueWithStagedContributions(
+    id,
+    contributionKey,
+    initialValue
+  );
 
   const inner = isEditing ? (
     <TextField

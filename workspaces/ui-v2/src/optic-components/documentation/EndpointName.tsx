@@ -81,6 +81,8 @@ export function EndpointRow({
           id={endpointId}
           defaultText="name for this endpoint"
           contributionKey="purpose"
+          // @nic TODO set this correctly
+          initialValue=""
         />
       </div>
     </ListItem>

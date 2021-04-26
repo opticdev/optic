@@ -10,7 +10,10 @@ import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, Typography } from '@material-ui/core';
 import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
-import { ContributionEditingStore, useContributionEditing } from '../../hooks/edit/Contributions';
+import {
+  ContributionEditingStore,
+  useContributionEditing,
+} from '../../hooks/edit/Contributions';
 import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
@@ -51,10 +54,7 @@ export function DocumentationPages(props: any) {
 }
 
 export function DocsPageAccessoryNavigation(props: any) {
-  const {
-    isEditing,
-    pendingCount,
-  } = useContributionEditing();
+  const { isEditing, pendingCount } = useContributionEditing();
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
@@ -98,8 +98,8 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                       history.push(
                         endpointPageLink.linkTo(
                           endpoint.pathId,
-                          endpoint.method,
-                        ),
+                          endpoint.method
+                        )
                       )
                     }
                     fullPath={endpoint.fullPath}
@@ -129,7 +129,7 @@ export function EndpointRootPage(props: any) {
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints],
+    [pathId, method, endpoints]
   );
 
   if (loading) {
@@ -147,6 +147,7 @@ export function EndpointRootPage(props: any) {
         id={endpointId}
         contributionKey="purpose"
         defaultText="What does this endpoint do?"
+        initialValue={thisEndpoint.purpose}
       />
       <EndpointName
         fontSize={19}
@@ -161,6 +162,7 @@ export function EndpointRootPage(props: any) {
             id={endpointId}
             contributionKey={'description'}
             defaultText={'Describe this endpoint'}
+            initialValue={thisEndpoint.description}
           />
         }
         right={
@@ -198,6 +200,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body Parameters'}
+            description={i.description}
           />
         );
       })}
@@ -208,6 +211,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}
+            description={i.description}
           />
         );
       })}

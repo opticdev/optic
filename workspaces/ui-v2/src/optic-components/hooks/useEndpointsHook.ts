@@ -11,6 +11,7 @@ export const AllEndpointsQuery = `{
         isParameterized
       }
       method
+      pathContributions
     }
     }`;
 
@@ -30,6 +31,7 @@ export const AllEndpointsQueryWithChanges = `
         changed
       }
       method
+      pathContributions
     }
   }`;
 
@@ -94,6 +96,8 @@ export function endpointQueryResultsToJson(data: any): IEndpoint[] {
         .substring(commonStart.length)
         .split('/')[0],
       pathParameters: [],
+      description: request.pathContributions.description || '',
+      purpose: request.pathContributions.purpose || '',
     } as IEndpoint;
   });
 
@@ -103,8 +107,8 @@ export function endpointQueryResultsToJson(data: any): IEndpoint[] {
 export interface IEndpoint {
   pathId: string;
   method: string;
-  purpose?: string;
-  description?: string;
+  purpose: string;
+  description: string;
   fullPath: string;
   pathParameters: IPathParameter[];
   group: string;

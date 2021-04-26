@@ -4,7 +4,10 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { TextField, Typography } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
-import { useContributionEditing, useValueWithStagedContributions } from '../hooks/edit/Contributions';
+import {
+  useContributionEditing,
+  useValueWithStagedContributions,
+} from '../hooks/edit/Contributions';
 import { OpticBlueReadable } from '../theme';
 
 export type FieldOrParameterContributionProps = {
@@ -12,6 +15,7 @@ export type FieldOrParameterContributionProps = {
   id: string;
   name: string;
   depth: number;
+  initialValue: string;
 };
 
 export function FieldOrParameterContribution({
@@ -19,6 +23,7 @@ export function FieldOrParameterContribution({
   id,
   shapes,
   depth,
+  initialValue,
 }: FieldOrParameterContributionProps) {
   const classes = useStyles();
   const contributionKey = 'description';
@@ -26,7 +31,8 @@ export function FieldOrParameterContribution({
 
   const { value, setValue } = useValueWithStagedContributions(
     id,
-    contributionKey
+    contributionKey,
+    initialValue
   );
 
   return (
@@ -58,17 +64,20 @@ export type EndpointNameContributionProps = {
   contributionKey: string;
   defaultText: string;
   requiredError?: string;
+  initialValue: string;
 };
 
 export function EndpointNameContribution({
   id,
   contributionKey,
   defaultText,
+  initialValue,
 }: EndpointNameContributionProps) {
   const { isEditing, setEditing } = useContributionEditing();
   const { value, setValue } = useValueWithStagedContributions(
     id,
-    contributionKey
+    contributionKey,
+    initialValue
   );
   const classes = useStyles();
 
@@ -115,13 +124,15 @@ export function EndpointNameMiniContribution({
   id,
   contributionKey,
   defaultText,
+  initialValue,
 }: EndpointNameContributionProps) {
   const { isEditing, setEditing } = useContributionEditing();
   const classes = useStyles();
 
   const { value, setValue } = useValueWithStagedContributions(
     id,
-    contributionKey
+    contributionKey,
+    initialValue
   );
 
   const isEmpty = !Boolean(value.trim());

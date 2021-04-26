@@ -1785,6 +1785,94 @@
           "createdAt": "2020-10-20T20:52:31.794Z"
         }
       }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "c3a65eff-ebfc-4d73-8d1c-fb04cf3a9071",
+        "commitMessage": "Added contributions",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-10-20T20:52:31.789Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "path_xhUZ8irdJO.GET",
+        "key": "description",
+        "value": "gets all the completed todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.794Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_SqY61Qc9Mi",
+        "key": "description",
+        "value": "request body param",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.794Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "field_KqnBpTROYU",
+        "key": "description",
+        "value": "the task",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.794Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "response_RkkvxIt2RG",
+        "key": "description",
+        "value": "response body",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.794Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "field_WAgxB3TCIX",
+        "key": "description",
+        "value": "is the task done",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-11-20T20:52:31.794Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "c3a65eff-ebfc-4d73-8d1c-fb04cf3a9071",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "ec3dd58b-bdf3-42b0-88a8-7e8f85f49e74",
+          "clientCommandBatchId": "b8aa13c5-a333-4cb2-90d0-ef1c6ba79865",
+          "createdAt": "2020-10-20T20:52:31.789Z"
+        }
+      }
     }
   ],
   "session": {

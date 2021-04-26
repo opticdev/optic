@@ -14,12 +14,13 @@ export type TwoColumnBodyProps = {
   changesSinceBatchCommitId?: string;
   bodyId: string; //@aidan make sure this name/value makes sense
   rootShapeId: string;
+  description: string;
 };
 
 export function TwoColumnBody(props: TwoColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,
-    props.changesSinceBatchCommitId,
+    props.changesSinceBatchCommitId
   );
   return (
     <TwoColumn
@@ -33,6 +34,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
               id={props.bodyId}
               contributionKey={'description'}
               defaultText={'Add a description'}
+              initialValue={props.description}
             />
           </div>
           <ContributionGroup rootShape={shapeChoices} />
@@ -52,7 +54,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
 export function OneColumnBody(props: TwoColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,
-    props.changesSinceBatchCommitId,
+    props.changesSinceBatchCommitId
   );
 
   return (
