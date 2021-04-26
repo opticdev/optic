@@ -45,6 +45,7 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
         disabled={!props.hasChanges}
         onClick={handleClickOpen}
         size="small"
+        variant="contained"
         color="primary"
       >
         Save Changes

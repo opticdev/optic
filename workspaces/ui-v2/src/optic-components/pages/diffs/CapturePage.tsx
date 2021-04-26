@@ -155,33 +155,25 @@ function DiffCaptureResults() {
     history.push(diffUndocumentedUrlsPageLink.linkTo());
   };
 
+  const canApplyAll =
+    handled < total && context.results.diffsGroupedByEndpoint.length > 0;
+
+  const canReset = handled > 0 || context.pendingEndpoints.length > 0;
+
   return (
     <>
-      {Boolean(handled === total) && (
-        <div
-          style={{
-            marginBottom: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="h5">
-            All diffs handled. Ready to save changes and review changelog?
-          </Typography>
-          <div style={{ paddingTop: 4, marginLeft: 10 }}>
-            <AskForCommitMessage hasChanges={true} />
-          </div>
-        </div>
-      )}
-
       <div className={classes.leading}>
         <CaptureSelectDropdown />
         <div style={{ flex: 1 }} />
-        <Button size="small" color="primary" onClick={reset}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={reset}
+          disabled={!canReset}
+        >
           Reset
         </Button>
-        <ApproveAll />
+        <ApproveAll disabled={!canApplyAll} />
       </div>
 
       <Paper elevation={1}>

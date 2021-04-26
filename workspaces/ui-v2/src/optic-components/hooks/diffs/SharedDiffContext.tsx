@@ -99,8 +99,6 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     )
   );
 
-  console.log('look at me');
-  console.log(state.value);
   const context: SharedDiffStateContext = state.context;
 
   const isDiffHandled = (diffHash: string) => {

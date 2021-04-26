@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { useShapeDiffInterpretations } from '../../hooks/diffs/useDiffInterpretations';
 
-export default function ApproveAll() {
+export default function ApproveAll(props: { disabled?: boolean }) {
   const [open, setOpen] = React.useState(false);
 
   const { context, approveCommandsForDiff } = useSharedDiffContext();
@@ -16,12 +16,12 @@ export default function ApproveAll() {
 
   const allShapeDiffs = useMemo(
     () => diffsGroupedByEndpoints.flatMap((i) => i.shapeDiffs),
-    [diffsGroupedByEndpoints],
+    [diffsGroupedByEndpoints]
   );
 
   const shapeDiffs = useShapeDiffInterpretations(
     allShapeDiffs,
-    context.results.trailValues,
+    context.results.trailValues
   );
 
   const handleClickOpen = () => {
@@ -36,7 +36,7 @@ export default function ApproveAll() {
     shapeDiffs.results.forEach((i) => {
       approveCommandsForDiff(
         i.diffDescription?.diffHash!,
-        i.toCommands(i.updateSpecChoices),
+        i.toCommands(i.updateSpecChoices)
       );
     });
     setOpen(false);
@@ -44,7 +44,12 @@ export default function ApproveAll() {
 
   return (
     <>
-      <Button onClick={handleClickOpen} size="small" color="primary">
+      <Button
+        onClick={handleClickOpen}
+        size="small"
+        color="primary"
+        disabled={props.disabled}
+      >
         Approve All
       </Button>
       <Dialog

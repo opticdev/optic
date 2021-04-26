@@ -16,7 +16,7 @@ import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../../documentation/TwoColumn';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { PathParametersViewEdit } from '../../documentation/PathParameters';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
@@ -26,23 +26,37 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
+import { useBaseUrl } from '../../hooks/useBaseUrl';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
   const history = useHistory();
+  const baseUrl = useBaseUrl();
+
+  const onEndpointClicked = (pathId: string, method: string) => {
+    history.push(endpointPageLink.linkTo(pathId, method));
+  };
 
   return (
     <ContributionEditingStore>
       <>
         <NavigationRoute
+          path={baseUrl}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={onEndpointClicked}
+            />
+          )}
+          AccessoryNavigation={DocsPageAccessoryNavigation}
+        />
+        <NavigationRoute
           path={documentationPageLink.path}
           Component={(props: any) => (
             <DocumentationRootPage
               {...props}
-              onEndpointClicked={(pathId, method) => {
-                history.push(endpointPageLink.linkTo(pathId, method));
-              }}
+              onEndpointClicked={onEndpointClicked}
             />
           )}
           AccessoryNavigation={DocsPageAccessoryNavigation}

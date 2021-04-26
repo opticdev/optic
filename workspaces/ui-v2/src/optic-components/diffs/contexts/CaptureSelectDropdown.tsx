@@ -81,7 +81,9 @@ export function CaptureSelectDropdown(props: any) {
             capture={i}
             key={index}
             onClick={() => {
-              history.push(diffEnvironmentsRoot.linkTo('local', i.captureId));
+              history.push(
+                diffEnvironmentsRoot.linkTo('local', i.captureId) + '/review'
+              );
             }}
           />
         ))}

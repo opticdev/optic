@@ -68,16 +68,12 @@ export function DiffReviewPages(props: any) {
         <NavigationRoute
           path={diffReviewCapturePageLink.path}
           Component={() => <CapturePage showDiff={true} />}
-          AccessoryNavigation={() => (
-            <DiffAccessoryNavigation onUrlsPage={false} />
-          )}
+          AccessoryNavigation={() => <DiffAccessoryNavigation />}
         />
         <NavigationRoute
           path={diffUndocumentedUrlsPageLink.path}
           Component={DiffUrlsPage}
-          AccessoryNavigation={() => (
-            <DiffAccessoryNavigation onUrlsPage={true} />
-          )}
+          AccessoryNavigation={() => <DiffAccessoryNavigation />}
         />
         <NavigationRoute
           path={diffForEndpointLink.path}
@@ -87,9 +83,7 @@ export function DiffReviewPages(props: any) {
         <NavigationRoute
           path={diffReviewPagePendingEndpoint.path}
           Component={PendingEndpointPageSession}
-          AccessoryNavigation={() => (
-            <DiffAccessoryNavigation onUrlsPage={true} />
-          )}
+          AccessoryNavigation={() => <DiffAccessoryNavigation />}
         />
         <Redirect to={diffReviewCapturePageLink.linkTo()} />
       </ContributionEditingStore>

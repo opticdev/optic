@@ -26,7 +26,6 @@ import { useInteraction } from '../../../spectacle-implementations/interaction-l
 import { BuildSpecPatch } from './BuildSpecPatch';
 
 type IDiffCardProps = {
-  changeType: IChangeType;
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   approve: () => void;
@@ -36,7 +35,6 @@ type IDiffCardProps = {
 };
 
 export function DiffCard({
-  changeType,
   previewTabs,
   diffDescription,
   approve,

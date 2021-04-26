@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Switch, useParams, useRouteMatch, Redirect } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import {
   IBaseSpectacle,
@@ -21,7 +21,7 @@ import { useDocumentationPageLink } from '../optic-components/navigation/Routes'
 
 export default function PublicExamples() {
   const match = useRouteMatch();
-  // const docsRoot = useDocumentationPageLink();
+  const docsRoot = useDocumentationPageLink();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
@@ -63,10 +63,9 @@ export default function PublicExamples() {
           <BaseUrlProvider value={{ url: match.url }}>
             <Switch>
               <>
-                <DiffReviewEnvironments />
                 <DocumentationPages />
+                <DiffReviewEnvironments />
                 <ChangelogPages />
-                {/*<Redirect to={match.url + docsRoot.linkTo()} />*/}
               </>
             </Switch>
           </BaseUrlProvider>
