@@ -30,13 +30,21 @@ import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
+  const history = useHistory();
 
   return (
     <ContributionEditingStore>
       <>
         <NavigationRoute
           path={documentationPageLink.path}
-          Component={DocumentationRootPage}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={(pathId, method) => {
+                history.push(endpointPageLink.linkTo(pathId, method));
+              }}
+            />
+          )}
           AccessoryNavigation={DocsPageAccessoryNavigation}
         />
         <NavigationRoute
@@ -58,7 +66,10 @@ export function DocsPageAccessoryNavigation(props: any) {
   );
 }
 
-export function DocumentationRootPage(props: { changelogBatchId?: string }) {
+export function DocumentationRootPage(props: {
+  onEndpointClicked: (pathId: string, method: string) => void;
+  changelogBatchId?: string;
+}) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
@@ -88,12 +99,7 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                   <EndpointRow
                     key={index}
                     onClick={() =>
-                      history.push(
-                        endpointPageLink.linkTo(
-                          endpoint.pathId,
-                          endpoint.method
-                        )
-                      )
+                      props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}
