@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 
 interface IFeatureFlags {}
 
@@ -24,7 +24,7 @@ const AppConfigurationContext = React.createContext<OpticAppConfig | null>(
 
 export const AppConfigurationStore = (props: {
   config: OpticAppConfig;
-  children: any;
+  children: ReactNode;
 }) => {
   return (
     <AppConfigurationContext.Provider value={props.config}>
