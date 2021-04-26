@@ -3,22 +3,20 @@ use super::events_from_chunks;
 use clap::{App, Arg, ArgGroup, ArgMatches, SubCommand};
 use futures::{try_join, SinkExt, Stream, StreamExt, TryStreamExt};
 use nanoid::nanoid;
-use serde::Serialize;
 use serde_json;
-use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::io::{stdin, stdout, AsyncWrite};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 
-use optic_diff_engine::streams::{TaggedInput, Tags};
+use optic_diff_engine::streams;
+use optic_diff_engine::Aggregate;
 use optic_diff_engine::{
-  analyze_documented_bodies, analyze_undocumented_bodies, streams, EndpointCommand,
-  InteractionDiffResult, SpecCommand,
+  analyze_documented_bodies, analyze_undocumented_bodies, InteractionDiffResult,
+  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection,
 };
 use optic_diff_engine::{
-  BodyAnalysisLocation, HttpInteraction, JsonTrail, SpecChunkEvent, SpecEvent, SpecIdGenerator,
-  SpecProjection, TrailObservationsResult, TrailValues,
+  HttpInteraction, SpecChunkEvent, SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput,
 };
 
 pub const SUBCOMMAND_NAME: &'static str = "learn";
@@ -75,10 +73,13 @@ pub async fn main<'a>(
     let interaction_lines = streams::http_interaction::json_lines(stdin);
     let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
       .await
-      .expect("could not read diffs");
+      .expect("could not read diffs")
+      .into_iter()
+      .map(TaggedInput::into_input);
+
     let sink = stdout();
 
-    learn_diff_trail_affordances(
+    learn_shape_diff_affordances(
       spec_events,
       diffs,
       input_queue_size,
@@ -146,40 +147,17 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
     let mut analysiss = ReceiverStream::new(analysis_receiver);
     let mut id_generator = IdGenerator::default();
 
-    let mut observations_by_body_location = HashMap::new();
+    let mut learned_undocumented_bodies = LearnedUndocumentedBodiesProjection::default();
+
     while let Some(analysis) = analysiss.next().await {
-      let existing_observations = observations_by_body_location
-        .entry(analysis.body_location)
-        .or_insert_with(|| TrailObservationsResult::default());
-
-      existing_observations.union(analysis.trail_observations);
+      learned_undocumented_bodies.apply(analysis);
     }
 
-    let mut endpoints_by_endpoint = HashMap::new();
-    for (body_location, observations) in observations_by_body_location {
-      let (root_shape_id, body_commands) = observations.into_commands(&mut id_generator);
-      let endpoint_body = EndpointBody::new(&body_location, root_shape_id, body_commands);
+    let endpoint_bodies = learned_undocumented_bodies
+      .into_endpoint_bodies(&mut id_generator)
+      .collect::<Vec<_>>();
 
-      let (path_id, method) = match body_location {
-        BodyAnalysisLocation::UnmatchedRequest {
-          path_id, method, ..
-        } => (path_id, method),
-        BodyAnalysisLocation::UnmatchedResponse {
-          path_id, method, ..
-        } => (path_id, method),
-        _ => unreachable!("analyzing undocumented bodies should only yield unmatched results"),
-      };
-
-      let endpoint_bodies = endpoints_by_endpoint
-        .entry((path_id, method))
-        .or_insert_with_key(|(path_id, method)| {
-          EndpointBodies::new(path_id.clone(), method.clone())
-        });
-
-      endpoint_bodies.push(endpoint_body);
-    }
-
-    streams::write_to_json_lines(sink, endpoints_by_endpoint.values())
+    streams::write_to_json_lines(sink, endpoint_bodies.iter())
       .await
       .expect("could not write endpoint bodies to stdout");
   });
@@ -187,45 +165,19 @@ async fn learn_undocumented_bodies<S: 'static + AsyncWrite + Unpin + Send>(
   try_join!(analyzing_bodies, aggregating_results).expect("essential worker task panicked");
 }
 
-async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
+async fn learn_shape_diff_affordances<S: 'static + AsyncWrite + Unpin + Send>(
   spec_events: Vec<SpecEvent>,
-  tagged_diffs: Vec<TaggedInput<InteractionDiffResult>>,
+  diffs: impl Iterator<Item = InteractionDiffResult>,
   input_queue_size: usize,
   interaction_lines: impl Stream<Item = Result<String, std::io::Error>>,
   sink: S,
 ) {
   let spec_projection = Arc::new(SpecProjection::from(spec_events));
-  let diffs_by_spec_id = Arc::new({
-    let mut diffs_by_spec_id = HashMap::new();
-    for tagged_diff in tagged_diffs {
-      let (diff, _diff_tags) = tagged_diff.into_parts();
-      let spec_id = match &diff {
-        InteractionDiffResult::UnmatchedRequestBodyShape(diff) => diff
-          .requests_trail
-          .get_request_id()
-          .expect("UnmatchedRequestBodyShape should have a request id in the requests trail"),
-        InteractionDiffResult::UnmatchedResponseBodyShape(diff) => diff
-          .requests_trail
-          .get_response_id()
-          .expect("UnmatchedResponseBodyShape should have a response id in the requests trail"),
-        _ => continue, // filter out diffs we don't care about
-      }
-      .clone();
-
-      diffs_by_spec_id
-        .entry(spec_id)
-        .or_insert_with(|| vec![])
-        .push(diff);
-    }
-    diffs_by_spec_id
-  });
-
-  // dbg!(&diffs_by_spec_id);
+  let mut learned_shape_diff_affordances: LearnedShapeDiffAffordancesProjection = diffs.collect();
 
   let (analysis_sender, analysis_receiver) = mpsc::channel(32);
 
   let analyzing_bodies = {
-    let diffs_by_spec_id = diffs_by_spec_id.clone();
     let spec_projection = spec_projection.clone();
 
     async move {
@@ -233,7 +185,6 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
         .map(Ok)
         .try_for_each_concurrent(input_queue_size, |interaction_json_result| {
           let analysis_sender = analysis_sender.clone();
-          let diffs_by_spec_id = diffs_by_spec_id.clone();
           let spec_projection = spec_projection.clone();
 
           let analyze_task = tokio::spawn(async move {
@@ -244,44 +195,18 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
               let TaggedInput(interaction, interaction_tags): TaggedInput<HttpInteraction> =
                 serde_json::from_str(&interaction_json).expect("could not parse interaction json");
 
-              let analysis_results = analyze_documented_bodies(&spec_projection, interaction);
-
-              analysis_results
-                .filter_map(|analysis_result| {
-                  let spec_id = match analysis_result.body_location {
-                    BodyAnalysisLocation::MatchedRequest { request_id, .. } => Some(request_id),
-                    BodyAnalysisLocation::MatchedResponse { response_id, .. } => Some(response_id),
-                    _ => None,
-                  }?;
-
-                  // dbg!(&spec_id);
-
-                  let interaction_diffs = diffs_by_spec_id.get(&spec_id)?;
-
-                  let mut results = vec![]; // imperative loops as nested filter maps cause ownership issues
-                  for diff in interaction_diffs {
-                    let json_trail = diff.json_trail().unwrap();
-
-                    let trail_result = analysis_result
-                      .trail_observations
-                      .get(json_trail)
-                      .cloned()
-                      .unwrap_or_else(|| TrailValues::new(json_trail));
-
-                    results.push((diff.fingerprint(), trail_result, interaction_tags.clone()))
-                  }
-
-                  Some(results)
-                })
-                .flatten()
-                .collect::<Vec<_>>()
+              (
+                analyze_documented_bodies(&spec_projection, interaction),
+                interaction_tags,
+              )
             });
 
             match analyze_comp.await {
-              Ok(results) => {
+              Ok((results, interaction_tags)) => {
                 for result in results {
+                  let tagged = TaggedInput(result, interaction_tags.clone());
                   analysis_sender
-                    .send(result)
+                    .send(tagged)
                     .await
                     .expect("could not send analysis result to aggregation channel")
                 }
@@ -305,22 +230,13 @@ async fn learn_diff_trail_affordances<S: 'static + AsyncWrite + Unpin + Send>(
     let mut analysiss = ReceiverStream::new(analysis_receiver);
 
     tokio::spawn(async move {
-      let mut affordances_by_diff_fingerprint = HashMap::new();
-      while let Some(analysis) = analysiss.next().await {
-        // dbg!(&analysis.0, &analysis.1, &analysis.2);
-        let (diff_fingerprint, trail_values, tags) = analysis;
-
-        let affordances = affordances_by_diff_fingerprint
-          .entry(diff_fingerprint)
-          .or_insert_with(|| InteractionDiffTrailAffordances::default());
-
-        affordances.push((trail_values, tags));
+      while let Some(tagged_analysis) = analysiss.next().await {
+        learned_shape_diff_affordances.apply(tagged_analysis);
       }
 
-      let mut json_lines_sink =
-        streams::into_json_lines::<_, (String, InteractionDiffTrailAffordances)>(sink);
+      let mut json_lines_sink = streams::shape_diff_affordances::into_json_lines(sink);
 
-      for (fingerprint, affordances) in affordances_by_diff_fingerprint {
+      for (fingerprint, affordances) in learned_shape_diff_affordances {
         if let Err(err) = json_lines_sink.send((affordances, fingerprint)).await {
           panic!("Could not write result to stdout: {}", err);
         }
@@ -341,262 +257,6 @@ impl SpecIdGenerator for IdGenerator {
     // - 17 years for a 1% chance of at least one global collision assuming
     //   writing 1000 ids per hour (https://zelark.github.io/nano-id-cc/)
     format!("{}{}", prefix, nanoid!(10))
-  }
-}
-
-// Output types: undocumented bodies
-// ---------------------------------
-
-#[derive(Default, Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct EndpointBodies {
-  path_id: String,
-  method: String,
-  requests: Vec<EndpointRequestBody>,
-  responses: Vec<EndpointResponseBody>,
-}
-
-impl EndpointBodies {
-  pub fn new(path_id: String, method: String) -> Self {
-    Self {
-      path_id,
-      method,
-      requests: vec![],
-      responses: vec![],
-    }
-  }
-
-  pub fn push(&mut self, endpoint: EndpointBody) {
-    match endpoint {
-      EndpointBody::Request(endpoint_request) => {
-        self.requests.push(endpoint_request);
-      }
-      EndpointBody::Response(endpoint_response) => {
-        self.responses.push(endpoint_response);
-      }
-    }
-  }
-}
-
-#[derive(Debug)]
-enum EndpointBody {
-  Request(EndpointRequestBody),
-  Response(EndpointResponseBody),
-}
-
-#[derive(Default, Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct EndpointRequestBody {
-  commands: Vec<SpecCommand>,
-
-  #[serde(skip)]
-  path_id: String,
-  #[serde(skip)]
-  method: String,
-
-  #[serde(flatten)]
-  body_descriptor: Option<EndpointBodyDescriptor>,
-}
-
-#[derive(Default, Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct EndpointResponseBody {
-  commands: Vec<SpecCommand>,
-  status_code: u16,
-
-  #[serde(skip)]
-  path_id: String,
-  #[serde(skip)]
-  method: String,
-
-  #[serde(flatten)]
-  body_descriptor: Option<EndpointBodyDescriptor>,
-}
-
-#[derive(Default, Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct EndpointBodyDescriptor {
-  content_type: String,
-  root_shape_id: String,
-}
-
-impl EndpointBody {
-  fn new(
-    body_location: &BodyAnalysisLocation,
-    root_shape_id: Option<String>,
-    body_commands: impl IntoIterator<Item = SpecCommand>,
-  ) -> Self {
-    let body_descriptor = match root_shape_id {
-      Some(root_shape_id) => Some(EndpointBodyDescriptor {
-        content_type: body_location
-          .content_type()
-          .expect("root shape id implies a content type to be present")
-          .clone(),
-        root_shape_id,
-      }),
-      None => None,
-    };
-
-    let mut body = match body_location {
-      BodyAnalysisLocation::UnmatchedRequest {
-        path_id, method, ..
-      } => EndpointBody::Request(EndpointRequestBody {
-        body_descriptor,
-        path_id: path_id.clone(),
-        method: method.clone(),
-        commands: body_commands.into_iter().collect(),
-      }),
-      BodyAnalysisLocation::UnmatchedResponse {
-        status_code,
-        path_id,
-        method,
-        ..
-      } => EndpointBody::Response(EndpointResponseBody {
-        body_descriptor,
-        path_id: path_id.clone(),
-        method: method.clone(),
-        commands: body_commands.into_iter().collect(),
-        status_code: *status_code,
-      }),
-      _ => panic!("EndpointBody should only be created for unmatched responses and requests"),
-    };
-
-    body.append_endpoint_commands();
-
-    body
-  }
-
-  fn append_endpoint_commands(&mut self) {
-    let mut ids = IdGenerator::default();
-
-    match self {
-      EndpointBody::Request(request_body) => {
-        let request_id = ids.request();
-        request_body
-          .commands
-          .push(SpecCommand::from(EndpointCommand::add_request(
-            request_id.clone(),
-            request_body.path_id.clone(),
-            request_body.method.clone(),
-          )));
-
-        if let Some(body_descriptor) = &request_body.body_descriptor {
-          request_body
-            .commands
-            .push(SpecCommand::from(EndpointCommand::set_request_body_shape(
-              request_id,
-              body_descriptor.root_shape_id.clone(),
-              body_descriptor.content_type.clone(),
-              false,
-            )));
-        }
-      }
-      EndpointBody::Response(response_body) => {
-        let response_id = ids.response();
-        response_body.commands.push(SpecCommand::from(
-          EndpointCommand::add_response_by_path_and_method(
-            response_id.clone(),
-            response_body.path_id.clone(),
-            response_body.method.clone(),
-            response_body.status_code.clone(),
-          ),
-        ));
-
-        if let Some(body_descriptor) = &response_body.body_descriptor {
-          response_body
-            .commands
-            .push(SpecCommand::from(EndpointCommand::set_response_body_shape(
-              response_id,
-              body_descriptor.root_shape_id.clone(),
-              body_descriptor.content_type.clone(),
-              false,
-            )));
-        }
-      }
-    };
-  }
-}
-
-// Output types: shape diff affordances
-// ------------------------------------
-
-#[derive(Default, Debug, Serialize)]
-struct InteractionDiffTrailAffordances {
-  affordances: Vec<TrailValues>,
-  interactions: InteractionsAffordances,
-}
-type InteractionPointers = Tags;
-
-#[derive(Debug, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct InteractionsAffordances {
-  was_string: InteractionPointers,
-  was_number: InteractionPointers,
-  was_boolean: InteractionPointers,
-  was_null: InteractionPointers,
-  was_array: InteractionPointers,
-  was_object: InteractionPointers,
-  was_missing: InteractionPointers,
-  was_string_trails: HashMap<String, Vec<JsonTrail>>,
-  was_number_trails: HashMap<String, Vec<JsonTrail>>,
-  was_boolean_trails: HashMap<String, Vec<JsonTrail>>,
-  was_null_trails: HashMap<String, Vec<JsonTrail>>,
-  was_array_trails: HashMap<String, Vec<JsonTrail>>,
-  was_object_trails: HashMap<String, Vec<JsonTrail>>,
-  was_missing_trails: HashMap<String, Vec<JsonTrail>>,
-}
-
-impl InteractionDiffTrailAffordances {
-  pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
-    self.interactions.push((&trail_values, pointers));
-
-    // TODO: find alternative way of serializing to an array of affordances, even though
-    // logic tells us there will only ever be one (supposed to be per JsonTrail, but
-    // both TrailValues en InteractionDiffResult use normalized trails, so would always
-    // just be one).
-    if self.affordances.len() > 0 {
-      let current_affordances = &mut self.affordances[0];
-      current_affordances.union(trail_values);
-    } else {
-      self.affordances.push(trail_values);
-    }
-  }
-}
-
-impl InteractionsAffordances {
-  pub fn push(&mut self, (trail_values, pointers): (&TrailValues, InteractionPointers)) {
-    let json_trail = trail_values.trail.clone();
-    let json_trails_by_pointer_iter = || {
-      pointers
-        .iter()
-        .map(|pointer| (pointer.clone(), vec![json_trail.clone()]))
-    };
-    if trail_values.was_string {
-      self.was_string.extend(pointers.clone());
-      self.was_string_trails.extend(json_trails_by_pointer_iter());
-    }
-    if trail_values.was_number {
-      self.was_number.extend(pointers.clone());
-      self.was_number_trails.extend(json_trails_by_pointer_iter());
-    }
-    if trail_values.was_null {
-      self.was_null.extend(pointers.clone());
-      self.was_null_trails.extend(json_trails_by_pointer_iter());
-    }
-    if trail_values.was_array {
-      self.was_array.extend(pointers.clone());
-      self.was_array_trails.extend(json_trails_by_pointer_iter());
-    }
-    if trail_values.was_object {
-      self.was_object.extend(pointers.clone());
-      self.was_object_trails.extend(json_trails_by_pointer_iter());
-    }
-    if trail_values.was_unknown() {
-      self.was_missing.extend(pointers.clone());
-      self
-        .was_missing_trails
-        .extend(json_trails_by_pointer_iter());
-    }
   }
 }
 
@@ -626,6 +286,10 @@ mod test {
   #[tokio::main]
   #[test]
   async fn can_learn_shape_diffs_affordances_from_interactions() {
+    let spec_events_path = Path::new("../tests/fixtures/ergast-example-spec.json")
+      .absolutize()
+      .unwrap()
+      .to_path_buf();
     let diffs_path = Path::new("../tests/fixtures/ergast-captures/diff-results.jsonl")
       .absolutize()
       .unwrap()
@@ -636,13 +300,19 @@ mod test {
         .unwrap()
         .to_path_buf();
 
-    let _diffs = streams::diff::tagged_from_json_line_file(diffs_path)
+    let spec_events = streams::spec_events::from_file(spec_events_path)
       .await
-      .expect("should be able to read test diffs fixture");
+      .expect("should be able to read test spec fixture");
 
-    let _interaction_lines =
+    let diffs = streams::diff::tagged_from_json_line_file(diffs_path)
+      .await
+      .expect("should be able to read test diffs fixture")
+      .into_iter()
+      .map(TaggedInput::into_input);
+
+    let interaction_lines =
       streams::http_interaction::json_lines(fs::File::open(interactions_path).await.unwrap());
 
-    // learn_diff_trail_affordances(diffs, 1, interaction_lines, tokio::io::sink()).await;
+    learn_shape_diff_affordances(spec_events, diffs, 1, interaction_lines, tokio::io::sink()).await;
   }
 }

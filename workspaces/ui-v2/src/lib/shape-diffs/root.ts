@@ -23,7 +23,7 @@ export function rootShapeDiffInterpreter(
   diffDescription: IDiffDescription,
   actual: Actual,
   expected: Expectation,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): IInterpretation {
   const isUnmatched = shapeDiff.isUnmatched;
   const isUnspecified = shapeDiff.isUnspecified;
@@ -49,7 +49,7 @@ export function rootShapeDiffInterpreter(
 
   invariant(
     !isUnspecified,
-    'root object should never produce an unspecified diff',
+    'root object should never produce an unspecified diff'
   );
 
   ////////////////
@@ -74,12 +74,15 @@ export function rootShapeDiffInterpreter(
   return {
     diffDescription,
     updateSpecChoices,
-    toCommands: (choices: IPatchChoices) => {
+    toCommands: (choices?: IPatchChoices) => {
+      if (!choices) {
+        return [];
+      }
       const { commands, rootShapeId } = builderInnerShapeFromChoices(
         choices,
         expected,
         actual,
-        currentSpecContext,
+        currentSpecContext
       );
 
       return [...commands, resetBaseShape(location, rootShapeId)];
@@ -93,12 +96,12 @@ function resetBaseShape(location: IParsedLocation, newShapeId: string) {
   if (location.inRequest) {
     return SetRequestBodyShape(
       location.inRequest.requestId!,
-      ShapedBodyDescriptor(location.inRequest.contentType!, newShapeId, false),
+      ShapedBodyDescriptor(location.inRequest.contentType!, newShapeId, false)
     );
   } else if (location.inResponse) {
     return SetResponseBodyShape(
       location.inResponse.responseId!,
-      ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false),
+      ShapedBodyDescriptor(location.inResponse.contentType!, newShapeId, false)
     );
   }
 }

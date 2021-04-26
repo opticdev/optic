@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { makeStyles } from '@material-ui/styles';
 
@@ -18,6 +18,7 @@ import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import {
+  useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
@@ -25,137 +26,52 @@ import { EndpointName } from '../../documentation/EndpointName';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import AskForCommitMessage from '../../diffs/render/AskForCommitMessage';
+import { useCaptures } from '../../hooks/useCapturesHook';
 
-export function CapturePage() {
-  const classes = useStyles();
-
-  const {
-    context,
-    isDiffHandled,
-    reset,
-    handledCount,
-  } = useSharedDiffContext();
+export function CapturePage(props: { showDiff?: boolean }) {
+  const capturesState = useCaptures();
   const history = useHistory();
-  const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
-  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
-  const diffForEndpointLink = useDiffForEndpointLink();
-  const hasUndocumented = context.results.displayedUndocumentedUrls.length > 0;
+  const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
 
-  const [handled, total] = handledCount;
+  const noCaptures =
+    !capturesState.loading && capturesState.captures.length === 0;
 
-  // const history = useHistory();
-
-  const handleChangeToEndpointPage = (pathId: string, method: string) => () => {
-    history.push(diffForEndpointLink.linkTo(pathId, method));
-  };
-  const handleChangeToUndocumentedUrlPage = () => {
-    history.push(diffUndocumentedUrlsPageLink.linkTo());
-  };
+  useEffect(() => {
+    if (
+      !capturesState.loading &&
+      !props.showDiff &&
+      capturesState.captures[0]
+    ) {
+      history.push(
+        diffEnvironmentsRoot.linkTo(
+          'local',
+          capturesState.captures[0].captureId
+        )
+      );
+    }
+  }, [capturesState, history, props.showDiff]);
 
   return (
     <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>
-      {Boolean(handled === total) && (
-        <div
-          style={{
-            marginBottom: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="h5">
-            All diffs handled. Ready to save changes and review changelog?
-          </Typography>
-          <div style={{ paddingTop: 4, marginLeft: 10 }}>
-            <AskForCommitMessage hasChanges={true} />
-          </div>
-        </div>
+      {noCaptures && (
+        <Typography variant="h6">
+          No Captured Traffic to Diff. Learn how to collect traffic below.
+        </Typography>
       )}
 
-      <div className={classes.leading}>
-        <CaptureSelectDropdown />
-        <div style={{ flex: 1 }} />
-        <Button size="small" color="primary" onClick={reset}>
-          Reset
-        </Button>
-        <ApproveAll />
-      </div>
-
-      <Paper elevation={1}>
-        <List dense>
-          {diffsGroupedByEndpoints.map((i, index) => {
-            const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
-            const diffCompletedCount = i.shapeDiffs.filter((i) =>
-              isDiffHandled(i.diffHash()),
-            ).length;
-
-            const remaining = diffCount - diffCompletedCount;
-            const done = remaining === 0;
-
-            return (
-              <ListItem
-                disableRipple
-                button
-                key={index}
-                onClick={handleChangeToEndpointPage(i.pathId, i.method)}
-              >
-                <EndpointName
-                  leftPad={3}
-                  method={i.method}
-                  fullPath={i.fullPath}
-                  fontSize={14}
-                />
-                <ListItemSecondaryAction>
-                  <div>
-                    {done ? (
-                      <div
-                        className={classes.text}
-                        style={{ color: AddedDarkGreen }}
-                      >
-                        Done ✓
-                      </div>
-                    ) : (
-                      <div className={classes.text}>
-                        {diffCompletedCount}/{diffCount} reviewed
-                      </div>
-                    )}
-                  </div>
-                </ListItemSecondaryAction>
-              </ListItem>
-            );
-          })}
-          {hasUndocumented && (
-            <>
-              <Divider style={{ marginTop: 5, marginBottom: 5 }} />
-              <ListItem
-                disableRipple
-                button
-                key={'undocumented'}
-                onClick={handleChangeToUndocumentedUrlPage}
-              >
-                <ListItemText
-                  primaryTypographyProps={{
-                    style: {
-                      fontSize: 14,
-                      color: '#697386',
-                      fontWeight: 400,
-                    },
-                  }}
-                  primary={`Optic observed ${context.results.displayedUndocumentedUrls.length} undocumented urls. Click here to document new endpoints`}
-                />
-                <ListItemSecondaryAction>
-                  <div className={classes.text}>
-                    {context.pendingEndpoints.filter((i) => i.staged).length}{' '}
-                    endpoints added
-                  </div>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </>
-          )}
-        </List>
-      </Paper>
+      {props.showDiff && <DiffCaptureResults />}
 
       <Divider style={{ marginTop: 200, marginBottom: 20 }} />
+
+      <Typography variant="h6" style={{ fontSize: 18 }}>
+        Capture Traffic From Local Environments
+      </Typography>
+
+      <Typography variant="body2">
+        links to all the options....tasks, sdks, etc
+      </Typography>
+
+      <Divider style={{ marginTop: 30, marginBottom: 20 }} />
 
       <Typography variant="h6" style={{ fontSize: 18 }}>
         Real Environments [Beta]
@@ -211,6 +127,140 @@ export function CapturePage() {
         </Grid>
       </Grid>
     </CenteredColumn>
+  );
+}
+
+function DiffCaptureResults() {
+  const classes = useStyles();
+  const {
+    context,
+    isDiffHandled,
+    reset,
+    handledCount,
+  } = useSharedDiffContext();
+  const history = useHistory();
+  const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
+  const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
+  const diffForEndpointLink = useDiffForEndpointLink();
+  const hasUndocumented = context.results.displayedUndocumentedUrls.length > 0;
+
+  const [handled, total] = handledCount;
+
+  // const history = useHistory();
+
+  const handleChangeToEndpointPage = (pathId: string, method: string) => () => {
+    history.push(diffForEndpointLink.linkTo(pathId, method));
+  };
+  const handleChangeToUndocumentedUrlPage = () => {
+    history.push(diffUndocumentedUrlsPageLink.linkTo());
+  };
+
+  const canApplyAll =
+    handled < total && context.results.diffsGroupedByEndpoint.length > 0;
+
+  const canReset = handled > 0 || context.pendingEndpoints.length > 0;
+
+  return (
+    <>
+      <div className={classes.leading}>
+        <CaptureSelectDropdown />
+        <div style={{ flex: 1 }} />
+        <Button
+          size="small"
+          color="primary"
+          onClick={reset}
+          disabled={!canReset}
+        >
+          Reset
+        </Button>
+        <ApproveAll disabled={!canApplyAll} />
+      </div>
+
+      <Paper elevation={1}>
+        <List dense>
+          {diffsGroupedByEndpoints.map((i, index) => {
+            const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
+            const diffCompletedCount = i.shapeDiffs.filter((i) =>
+              isDiffHandled(i.diffHash())
+            ).length;
+
+            const remaining = diffCount - diffCompletedCount;
+            const done = remaining === 0;
+
+            return (
+              <ListItem
+                disableRipple
+                button
+                key={index}
+                onClick={handleChangeToEndpointPage(i.pathId, i.method)}
+              >
+                <EndpointName
+                  leftPad={3}
+                  method={i.method}
+                  fullPath={i.fullPath}
+                  fontSize={14}
+                />
+                <ListItemSecondaryAction>
+                  <div>
+                    {done ? (
+                      <div
+                        className={classes.text}
+                        style={{ color: AddedDarkGreen }}
+                      >
+                        Done ✓
+                      </div>
+                    ) : (
+                      <div className={classes.text}>
+                        {diffCompletedCount}/{diffCount} reviewed
+                      </div>
+                    )}
+                  </div>
+                </ListItemSecondaryAction>
+              </ListItem>
+            );
+          })}
+          {hasUndocumented && (
+            <>
+              {diffsGroupedByEndpoints.length > 0 && (
+                <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+              )}
+              <ListItem
+                disableRipple
+                button
+                key={'undocumented'}
+                onClick={handleChangeToUndocumentedUrlPage}
+              >
+                <ListItemText
+                  primaryTypographyProps={{
+                    style: {
+                      fontSize: 14,
+                      color: '#697386',
+                      fontWeight: 400,
+                    },
+                  }}
+                  primary={
+                    <>
+                      Optic observed{' '}
+                      <b>
+                        {context.results.displayedUndocumentedUrls.length}{' '}
+                        undocumented urls.
+                      </b>{' '}
+                      Click here to document new endpoints
+                    </>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  <div className={classes.text}>
+                    {context.pendingEndpoints.filter((i) => i.staged).length}{' '}
+                    endpoints added
+                  </div>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </>
+          )}
+        </List>
+      </Paper>
+    </>
   );
 }
 

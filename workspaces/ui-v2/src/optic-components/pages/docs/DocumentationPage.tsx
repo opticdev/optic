@@ -27,20 +27,42 @@ import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
 import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { Loading } from '../../navigation/Loading';
+import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { PromptNavigateAway } from '../../PromptNavigateAway';
+import { useBaseUrl } from '../../hooks/useBaseUrl';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
+  const history = useHistory();
+  const baseUrl = useBaseUrl();
+
+  const onEndpointClicked = (pathId: string, method: string) => {
+    history.push(endpointPageLink.linkTo(pathId, method));
+  };
 
   return (
     <ContributionEditingStore>
       <>
         <NavigationRoute
+          path={baseUrl}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={onEndpointClicked}
+            />
+          )}
+          AccessoryNavigation={DocsPageAccessoryNavigation}
+        />
+        <NavigationRoute
           path={documentationPageLink.path}
-          Component={DocumentationRootPage}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={onEndpointClicked}
+            />
+          )}
           AccessoryNavigation={DocsPageAccessoryNavigation}
         />
         <NavigationRoute
@@ -65,7 +87,10 @@ export function DocsPageAccessoryNavigation(props: any) {
   );
 }
 
-export function DocumentationRootPage(props: { changelogBatchId?: string }) {
+export function DocumentationRootPage(props: {
+  onEndpointClicked: (pathId: string, method: string) => void;
+  changelogBatchId?: string;
+}) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
@@ -95,12 +120,7 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
                   <EndpointRow
                     key={index}
                     onClick={() =>
-                      history.push(
-                        endpointPageLink.linkTo(
-                          endpoint.pathId,
-                          endpoint.method
-                        )
-                      )
+                      props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}

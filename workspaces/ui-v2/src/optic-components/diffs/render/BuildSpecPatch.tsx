@@ -19,9 +19,9 @@ import { ArrowRight } from '@material-ui/icons';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 type IBuildSpecPatch = {
-  patchChoices: IPatchChoices;
+  patchChoices?: IPatchChoices;
   diffHash: string;
-  onPathChoicesUpdated: (pathChoices: IPatchChoices) => void;
+  onPathChoicesUpdated: (pathChoices?: IPatchChoices) => void;
   approved: () => void;
 };
 
@@ -44,99 +44,105 @@ export function BuildSpecPatch({
   }, [selectedChoices]);
 
   const updateShapeChoice = (coreShape: ICoreShapeKinds, valid: boolean) => {
-    const copied = deepCopy(selectedChoices);
-    copied.shapes.forEach((i) => {
-      if (i.coreShapeKind === coreShape) i.isValid = valid;
-    });
+    if (selectedChoices) {
+      const copied = deepCopy(selectedChoices);
+      copied.shapes.forEach((i) => {
+        if (i.coreShapeKind === coreShape) i.isValid = valid;
+      });
 
-    setSelectedChoices(copied);
+      setSelectedChoices(copied);
+    }
   };
 
   return (
     <FormControl component="fieldset" style={{ width: '100%', paddingLeft: 5 }}>
-      <Typography variant="body1" className={classes.heading}>
-        <ICopyRender
-          variant="body1"
-          style={{ fontFamily: 'Ubuntu Mono', color: OpticBlueReadable }}
-          copy={patchChoices.copy}
-        />
-      </Typography>
+      {patchChoices && (
+        <Typography variant="body1" className={classes.heading}>
+          <ICopyRender
+            variant="body1"
+            style={{ fontFamily: 'Ubuntu Mono', color: OpticBlueReadable }}
+            copy={patchChoices.copy}
+          />
+        </Typography>
+      )}
 
-      <FormGroup>
-        {selectedChoices.shapes.map((shape, index) => {
-          return (
+      {selectedChoices && (
+        <FormGroup>
+          {selectedChoices.shapes.map((shape, index) => {
+            return (
+              <FormControlLabel
+                key={index}
+                labelPlacement="end"
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={shape.isValid}
+                    onChange={(event, checked) =>
+                      updateShapeChoice(shape.coreShapeKind, checked)
+                    }
+                  />
+                }
+                label={
+                  <Typography variant="body1" className={classes.checkboxLabel}>
+                    {namerForOptions([shape.coreShapeKind]).toLowerCase()}
+                  </Typography>
+                }
+              />
+            );
+          })}
+          {patchChoices && patchChoices.isField && (
             <FormControlLabel
-              key={index}
+              label={
+                <Typography variant="body1" className={classes.checkboxLabel}>
+                  this field is optional
+                </Typography>
+              }
               labelPlacement="end"
               control={
                 <Checkbox
                   size="small"
-                  checked={shape.isValid}
-                  onChange={(event, checked) =>
-                    updateShapeChoice(shape.coreShapeKind, checked)
-                  }
+                  checked={selectedChoices.isOptional}
+                  onChange={(event, checked) => {
+                    const copied = deepCopy(selectedChoices);
+                    copied.isOptional = checked;
+                    setSelectedChoices(copied);
+                  }}
                 />
               }
-              label={
-                <Typography variant="body1" className={classes.checkboxLabel}>
-                  {namerForOptions([shape.coreShapeKind]).toLowerCase()}
-                </Typography>
-              }
             />
-          );
-        })}
-        {patchChoices.isField && (
-          <FormControlLabel
-            label={
-              <Typography variant="body1" className={classes.checkboxLabel}>
-                this field is optional
-              </Typography>
-            }
-            labelPlacement="end"
-            control={
-              <Checkbox
+          )}
+
+          <Divider style={{ marginTop: 10, marginBottom: 12 }} />
+
+          <div style={{ marginBottom: 5 }}>
+            <Box display="flex" justifyContent="center">
+              <Button
                 size="small"
-                checked={selectedChoices.isOptional}
-                onChange={(event, checked) => {
-                  const copied = deepCopy(selectedChoices);
-                  copied.isOptional = checked;
-                  setSelectedChoices(copied);
+                style={{ color: OpticBlueReadable }}
+                onClick={() => {
+                  addDiffHashIgnore(diffHash);
                 }}
-              />
-            }
-          />
-        )}
-
-        <Divider style={{ marginTop: 10, marginBottom: 12 }} />
-
-        <div style={{ marginBottom: 5 }}>
-          <Box display="flex" justifyContent="center">
-            <Button
-              size="small"
-              style={{ color: OpticBlueReadable }}
-              onClick={() => {
-                addDiffHashIgnore(diffHash);
-              }}
-            >
-              Ignore Diff
-            </Button>
-            <Button size="small" style={{ color: OpticBlueReadable }}>
-              Create Bug Report
-            </Button>
-            <div style={{ flex: 1 }} />
-            <Button
-              variant="contained"
-              color="primary"
-              endIcon={<ArrowRight />}
-              size="small"
-              style={{ marginRight: 15 }}
-              onClick={approved}
-            >
-              Save Changes
-            </Button>
-          </Box>
-        </div>
-      </FormGroup>
+              >
+                Ignore Diff
+              </Button>
+              <Button size="small" style={{ color: OpticBlueReadable }}>
+                Create Bug Report
+              </Button>
+              <div style={{ flex: 1 }} />
+              <Button
+                variant="contained"
+                color="primary"
+                endIcon={<ArrowRight />}
+                size="small"
+                style={{ marginRight: 15 }}
+                onClick={approved}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </div>
+        </FormGroup>
+      )}
     </FormControl>
   );
 }

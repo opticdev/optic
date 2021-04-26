@@ -25,7 +25,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { Loading } from '../../navigation/Loading';
+import { Loading } from '../../loaders/Loading';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { EndpointRow } from '../../documentation/EndpointName';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
@@ -168,7 +168,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                     changelog={{ added: true }}
                     onClick={() =>
                       history.push(
-                        diffReviewPagePendingEndpoint.linkTo(endpoint.id),
+                        diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
                     fullPath={endpoint.pathPattern}
@@ -179,7 +179,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                     })}
                   />
                 );
-              },
+              }
             )}
             <Divider style={{ marginTop: 15 }} />
           </div>
@@ -201,8 +201,8 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       history.push(
                         endpointPageLink.linkTo(
                           endpoint.pathId,
-                          endpoint.method,
-                        ),
+                          endpoint.method
+                        )
                       )
                     }
                     fullPath={endpoint.fullPath}

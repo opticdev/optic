@@ -1,15 +1,20 @@
 import { EventEmitter } from 'events';
 import {
   ICapture,
-  IListDiffsResponse, IListUnrecognizedUrlsResponse,
-  IOpticCapturesService, IOpticConfigRepository,
-  IOpticContext, IOpticDiffRepository,
+  IListDiffsResponse,
+  IListUnrecognizedUrlsResponse,
+  IOpticCapturesService,
+  IOpticConfigRepository,
+  IOpticContext,
+  IOpticDiffRepository,
   IOpticDiffService,
-  IOpticEngine, IOpticInteractionsRepository,
-  IOpticSpecReadWriteRepository, IOpticSpecRepository, StartDiffResult,
+  IOpticEngine,
+  IOpticInteractionsRepository,
+  IOpticSpecReadWriteRepository,
+  IOpticSpecRepository,
+  StartDiffResult,
 } from '../index';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +29,7 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
 
   constructor(
     public notifications: EventEmitter,
-    private initialState: InMemorySpecState,
+    private initialState: InMemorySpecState
   ) {
     this.events.push(...initialState.events);
   }
@@ -60,17 +65,18 @@ class InMemoryInteractionsRepository implements IOpticInteractionsRepository {
 ////////////////////////////////////////////////////////////////////////////////
 
 interface InMemoryCapturesServiceDependencies {
-  diffRepository: IOpticDiffRepository
-  opticEngine: IOpticEngine
-  interactionsRepository: InMemoryInteractionsRepository,
-  specRepository: IOpticSpecRepository,
-  configRepository: IOpticConfigRepository,
+  diffRepository: IOpticDiffRepository;
+  opticEngine: IOpticEngine;
+  interactionsRepository: InMemoryInteractionsRepository;
+  specRepository: IOpticSpecRepository;
+  configRepository: IOpticConfigRepository;
 }
 
-
 export class InMemoryCapturesService implements IOpticCapturesService {
-  constructor(private dependencies: InMemoryCapturesServiceDependencies, private captures: ICapture[]) {
-  }
+  constructor(
+    private dependencies: InMemoryCapturesServiceDependencies,
+    private captures: ICapture[]
+  ) {}
 
   async listCaptures(): Promise<ICapture[]> {
     return this.captures;
@@ -80,10 +86,7 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     return this.dependencies.interactionsRepository.listById(captureId);
   }
 
-  async startDiff(
-    diffId: string,
-    captureId: string,
-  ): Promise<StartDiffResult> {
+  async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
     const notifications = new EventEmitter();
 
     const events = await this.dependencies.specRepository.listEvents();
@@ -121,18 +124,17 @@ export class InMemoryConfigRepository implements IOpticConfigRepository {
 ////////////////////////////////////////////////////////////////////////////////
 
 interface InMemoryDiffServiceDependencies {
-  diff: InMemoryDiff
+  diff: InMemoryDiff;
 }
 
 export class InMemoryDiffService implements IOpticDiffService {
-  constructor(private dependencies: InMemoryDiffServiceDependencies) {
-  }
+  constructor(private dependencies: InMemoryDiffServiceDependencies) {}
 
   async listDiffs(): Promise<IListDiffsResponse> {
     const diffs = (await this.dependencies.diff.getNormalizedDiffs()).map(
-      ([diff, tags]) => {
-        return [diff, tags];
-      },
+      ([diff, tags, fingerprint]) => {
+        return [diff, tags, fingerprint];
+      }
     );
 
     return { diffs };
@@ -142,47 +144,45 @@ export class InMemoryDiffService implements IOpticDiffService {
     const urls = (await this.dependencies.diff.getUnrecognizedUrls()).map(
       ({ fingerprint, ...rest }) => {
         return rest;
-      },
+      }
     );
     return { urls };
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 interface InMemoryDiffDependencies {
-  opticEngine: IOpticEngine,
-  configRepository: InMemoryConfigRepository
-  notifications: EventEmitter
+  opticEngine: IOpticEngine;
+  configRepository: InMemoryConfigRepository;
+  notifications: EventEmitter;
 }
 
 export class InMemoryDiff {
   private diffing?: Promise<any[]>;
 
-  constructor(private dependencies: InMemoryDiffDependencies) {
-  }
+  constructor(private dependencies: InMemoryDiffDependencies) {}
 
   start(events: any[], interactions: any[]) {
-    const spec = this.dependencies.opticEngine.spec_from_events(JSON.stringify(events));
+    const spec = this.dependencies.opticEngine.spec_from_events(
+      JSON.stringify(events)
+    );
 
-    const diffingStream = (async function* (opticEngine: any): AsyncIterable<Streams.DiffResults.DiffResult> {
+    const diffingStream = (async function* (
+      opticEngine: any
+    ): AsyncIterable<Streams.DiffResults.DiffResult> {
       for (let interaction of interactions) {
         let results = opticEngine.diff_interaction(
           JSON.stringify(interaction),
-          spec,
+          spec
         );
 
         let parsedResults = JSON.parse(results);
         let taggedResults = (parsedResults = parsedResults.map(
           (item: [any, any]) => {
             const [diffResult, fingerprint] = item;
-            return [
-              diffResult,
-              [interaction.uuid],
-              fingerprint,
-            ];
-          },
+            return [diffResult, [interaction.uuid], fingerprint];
+          }
         ));
 
         for (let result of taggedResults) {
@@ -218,7 +218,7 @@ export class InMemoryDiff {
     const diffResults = AsyncTools.from(await this.diffing!);
 
     const undocumentedUrls = Streams.UndocumentedUrls.fromDiffResults(
-      diffResults,
+      diffResults
     );
     const lastUnique = Streams.UndocumentedUrls.lastUnique(undocumentedUrls);
 
@@ -240,47 +240,64 @@ export class InMemoryDiffRepository implements IOpticDiffRepository {
     }
     return diffService;
   }
-
 }
 
 export class InMemoryOpticContextBuilder {
-  static async fromEvents(opticEngine: IOpticEngine, events: any[]): Promise<IOpticContext> {
+  static async fromEvents(
+    opticEngine: IOpticEngine,
+    events: any[]
+  ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
     const configRepository = new InMemoryConfigRepository();
-    const specRepository = new InMemorySpecRepository(notifications, { events });
+    const specRepository = new InMemorySpecRepository(notifications, {
+      events,
+    });
     return {
       opticEngine,
-      capturesService: new InMemoryCapturesService({
-        diffRepository,
-        opticEngine,
-        interactionsRepository,
-        configRepository,
-        specRepository,
-      }, []),
+      capturesService: new InMemoryCapturesService(
+        {
+          diffRepository,
+          opticEngine,
+          interactionsRepository,
+          configRepository,
+          specRepository,
+        },
+        []
+      ),
       diffRepository,
       configRepository,
       specRepository,
     };
   }
 
-  static async fromEventsAndInteractions(opticEngine: IOpticEngine, events: any[], interactions: any[], captureId: string): Promise<IOpticContext> {
+  static async fromEventsAndInteractions(
+    opticEngine: IOpticEngine,
+    events: any[],
+    interactions: any[],
+    captureId: string
+  ): Promise<IOpticContext> {
     const notifications = new EventEmitter();
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
     await interactionsRepository.set(captureId, interactions);
     const configRepository = new InMemoryConfigRepository();
-    const specRepository = new InMemorySpecRepository(notifications, { events });
+    const specRepository = new InMemorySpecRepository(notifications, {
+      events,
+    });
     return {
       opticEngine,
-      capturesService: new InMemoryCapturesService({
-        diffRepository,
-        opticEngine,
-        interactionsRepository,
-        specRepository,
-        configRepository,
-      }, [{captureId, startedAt: new Date().toISOString()}]),
+      capturesService: new InMemoryCapturesService(
+        {
+          diffRepository,
+          opticEngine,
+          interactionsRepository,
+          specRepository,
+          configRepository,
+        },
+        [{ captureId, startedAt: new Date().toISOString() }]
+      ),
       diffRepository,
       configRepository,
       specRepository,

@@ -160,7 +160,7 @@
           }
         },
         "response": {
-          "statusCode": 200,
+          "statusCode": 201,
           "headers": {
             "asJsonString": null,
             "asText": null,
@@ -203,7 +203,7 @@
           }
         },
         "response": {
-          "statusCode": 200,
+          "statusCode": 401,
           "headers": {
             "asJsonString": null,
             "asText": null,

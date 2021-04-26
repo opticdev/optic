@@ -26,17 +26,15 @@ import { useInteraction } from '../../../spectacle-implementations/interaction-l
 import { BuildSpecPatch } from './BuildSpecPatch';
 
 type IDiffCardProps = {
-  changeType: IChangeType;
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   approve: () => void;
   handled: boolean;
-  specChoices: IPatchChoices;
-  updatedSpecChoices: (choices: IPatchChoices) => void;
+  specChoices?: IPatchChoices;
+  updatedSpecChoices: (choices?: IPatchChoices) => void;
 };
 
 export function DiffCard({
-  changeType,
   previewTabs,
   diffDescription,
   approve,
@@ -46,7 +44,7 @@ export function DiffCard({
   const classes = useStyles();
 
   const [previewTab, setPreviewTab] = useState(
-    previewTabs.length ? previewTabs[0].title : undefined,
+    previewTabs.length ? previewTabs[0].title : undefined
   );
 
   useEffect(() => {
@@ -113,7 +111,7 @@ export function DiffCard({
                   jsonTrails={tab.jsonTrailsByInteractions}
                   getJsonBodyToPreview={(interaction: any) => {
                     const body = diffDescription.getJsonBodyToPreview(
-                      interaction,
+                      interaction
                     );
                     return body;
                   }}

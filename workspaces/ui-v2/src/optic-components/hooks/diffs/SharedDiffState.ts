@@ -9,6 +9,7 @@ import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '../../../lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
+import { IOpticDiffService } from '@useoptic/spectacle';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
@@ -16,6 +17,7 @@ export const newSharedDiffMachine = (
   undocumentedUrls: IUndocumentedUrl[],
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
   allSamples: any[],
+  diffService: IOpticDiffService
 ) => {
   return Machine<
     SharedDiffStateContext,
@@ -39,7 +41,7 @@ export const newSharedDiffMachine = (
         trailValues,
         diffsGroupedByEndpoint: groupDiffsByTheirEndpoints(
           currentSpecContext,
-          parsedDiffs,
+          parsedDiffs
         ),
       },
       pendingEndpoints: [],
@@ -48,10 +50,22 @@ export const newSharedDiffMachine = (
     },
     initial: 'ready',
     states: {
-      loadingDiffs: {},
       error: {},
       ready: {
         on: {
+          USER_FINISHED_REVIEW: {
+            actions: [
+              assign({
+                simulatedCommands: (ctx) => {
+                  console.log('flushing commands before saving');
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  );
+                },
+              }),
+            ],
+          },
           DOCUMENT_ENDPOINT: {
             actions: [
               assign({
@@ -73,7 +87,8 @@ export const newSharedDiffMachine = (
                           event.method,
                           () => {},
                           allSamples,
-                        ),
+                          diffService
+                        )
                       ),
                       matchesPattern: (url: string, method: string) => {
                         const matchesPath = niceTry(() => regex.exec(url));
@@ -101,6 +116,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -109,12 +129,17 @@ export const newSharedDiffMachine = (
               assign({
                 pendingEndpoints: (ctx, event) => {
                   return [...ctx.pendingEndpoints].filter(
-                    (i) => i.id !== event.id,
+                    (i) => i.id !== event.id
                   );
                 },
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -150,6 +175,11 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints
+                  ),
               }),
             ],
           },
@@ -169,7 +199,7 @@ export const newSharedDiffMachine = (
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints,
+                    ctx.pendingEndpoints
                   ),
               }),
             ],
@@ -182,14 +212,14 @@ export const newSharedDiffMachine = (
 
 ///service
 function updateUrlResults(
-  ctx: SharedDiffStateContext,
+  ctx: SharedDiffStateContext
 ): SharedDiffStateContext['results'] {
   return {
     undocumentedUrls: ctx.results.undocumentedUrls,
     displayedUndocumentedUrls: filterDisplayedUndocumentedUrls(
       ctx.results.undocumentedUrls,
       ctx.pendingEndpoints,
-      ctx.browserAppliedIgnoreRules,
+      ctx.browserAppliedIgnoreRules
     ),
     parsedDiffs: ctx.results.parsedDiffs,
     trailValues: ctx.results.trailValues,
@@ -207,7 +237,7 @@ export interface EndpointDiffGrouping {
 
 function groupDiffsByTheirEndpoints(
   currentSpecContext: CurrentSpecContext,
-  parsedDiffs: ParsedDiff[],
+  parsedDiffs: ParsedDiff[]
   // endpoint id method+pathId -> hashes
 ): EndpointDiffGrouping[] {
   const set = new DiffSet(parsedDiffs, currentSpecContext);
@@ -216,13 +246,14 @@ function groupDiffsByTheirEndpoints(
     const newRegionDiffs = new DiffSet(i.diffs, currentSpecContext)
       .newRegions()
       .iterator();
+
     const shapeDiffs = new DiffSet(i.diffs, currentSpecContext)
       .shapeDiffs()
       .groupedByEndpointAndShapeTrail()
       .map((i) => i.diffs[0].asShapeDiff(currentSpecContext)!);
 
     const fullPath = currentSpecContext.currentSpecEndpoints.find(
-      (e) => e.pathId === i.pathId && e.method === i.method,
+      (e) => e.pathId === i.pathId && e.method === i.method
     )!.fullPath;
 
     return {
@@ -238,7 +269,7 @@ function groupDiffsByTheirEndpoints(
 function filterDisplayedUndocumentedUrls(
   all: IUndocumentedUrl[],
   pending: IPendingEndpoint[],
-  ignoreRules: string[],
+  ignoreRules: string[]
 ): IUndocumentedUrl[] {
   const allIgnores = parseIgnore(ignoreRules);
 
@@ -257,7 +288,6 @@ function filterDisplayedUndocumentedUrls(
 ////////////////////////////////Machine Types
 export interface SharedDiffStateSchema {
   states: {
-    loadingDiffs: {};
     error: {};
     ready: {};
   };
@@ -294,6 +324,9 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'RESET';
+    }
+  | {
+      type: 'USER_FINISHED_REVIEW';
     };
 
 // The context (extended state) of the machine

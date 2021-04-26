@@ -11,11 +11,16 @@ import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import { IUnrecognizedUrl } from '@useoptic/spectacle';
+import {
+  IListDiffsResponse,
+  IListUnrecognizedUrlsResponse,
+  IUnrecognizedUrl,
+} from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
 import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
 import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
+import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -39,6 +44,7 @@ type ISharedDiffContext = {
   currentSpecContext: CurrentSpecContext;
   reset: () => void;
   handledCount: [number, number];
+  startedFinalizing: () => void;
 };
 
 type SharedDiffStoreProps = {
@@ -46,6 +52,7 @@ type SharedDiffStoreProps = {
   requests: IRequestBody[];
   responses: IResponseBody[];
   diffs: any;
+  diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
   urls: IUnrecognizedUrl[];
   children?: any;
 };
@@ -59,12 +66,10 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
   };
 
   const parsedDiffs = useMemo(
-    () =>
-      props.diffs.map((i: any) => {
-        return new ParsedDiff(i[0], i[1], i[2]);
-      }), //@aidan please verify correctness and clean up if necessary
+    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1], i[2])),
     [props.diffs]
   );
+
   const { allSamples } = useContext(InteractionLoaderContext);
 
   const trailsLearned = learnTrailsForParsedDiffs(
@@ -81,8 +86,16 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
       currentSpecContext,
       parsedDiffs,
       props.urls.map((i) => ({ ...i })),
-      trailsLearned,
-      allSamples
+      trailsLearned, //props.diffTrails
+      allSamples,
+      {
+        listDiffs(): Promise<IListDiffsResponse> {
+          return Promise.resolve({ diffs: [] });
+        },
+        listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
+          return Promise.resolve({ urls: [] });
+        },
+      }
     )
   );
 
@@ -152,6 +165,7 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     currentSpecContext,
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
+    startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
   };
 
   return (
