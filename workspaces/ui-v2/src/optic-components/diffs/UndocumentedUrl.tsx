@@ -41,7 +41,7 @@ export function UndocumentedUrl({
   const [components, setComponents] = useState<PathComponentAuthoring[]>(
     wipPatterns[path + method]
       ? wipPatterns[path + method]
-      : urlStringToPathComponents(path),
+      : urlStringToPathComponents(path)
   );
 
   function initialNameForComponent(newIndex: number): string {
@@ -140,40 +140,22 @@ export function UndocumentedUrl({
         </div>
       </div>
       <div style={{ paddingRight: 5 }}>
-        {/*<LightTooltip title="Show Recorded Example" enterDelay={1000}>*/}
-        {/*  <IconButton*/}
-        {/*    size="small"*/}
-        {/*    color="primary"*/}
-        {/*    style={{ color: OpticBlueReadable }}*/}
-        {/*    onClick={() => alert('coming soon')}*/}
-        {/*  >*/}
-        {/*    <VisibilityIcon style={{ width: 17, height: 17 }} />*/}
-        {/*  </IconButton>*/}
-        {/*</LightTooltip>*/}
-        {bulkMode ? (
-          <LightTooltip title="Add to API Documentation" enterDelay={1000}>
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={() => onFinish(makePattern(components), method, true)}
-            >
-              <AddIcon />
-            </IconButton>
-          </LightTooltip>
-        ) : (
-          <LightTooltip
-            title="Review Endpoint and add to API Documentation"
-            enterDelay={1000}
+        <LightTooltip
+          title={
+            bulkMode
+              ? 'Review Endpoint and add to API Documentation'
+              : 'Add to API Documentation'
+          }
+          enterDelay={1000}
+        >
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() => onFinish(makePattern(components), method, bulkMode)}
           >
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={() => onFinish(makePattern(components), method, false)}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          </LightTooltip>
-        )}
+            <AddIcon />
+          </IconButton>
+        </LightTooltip>
       </div>
     </ListItem>
   );
@@ -250,7 +232,7 @@ function PathComponentRender({
       <div
         className={classNames(
           classes.pathComponent,
-          classes.pathComponentButton,
+          classes.pathComponentButton
         )}
         onClick={() => {
           if (pathComponent.isParameter) {
@@ -304,7 +286,7 @@ function PathComponentRender({
           }}
           className={classNames(
             classes.pathComponent,
-            classes.pathComponentInput,
+            classes.pathComponentInput
           )}
         />
         <IconButton
@@ -336,7 +318,7 @@ function PathComponentRender({
         }
         className={classNames(
           classes.pathComponent,
-          classes.pathComponentButton,
+          classes.pathComponentButton
         )}
       >
         {pathComponent.originalName}
@@ -413,7 +395,7 @@ export type PathComponentAuthoring = {
 };
 
 export function urlStringToPathComponents(
-  url: string,
+  url: string
 ): PathComponentAuthoring[] {
   const components: PathComponentAuthoring[] = url
     .split('/')

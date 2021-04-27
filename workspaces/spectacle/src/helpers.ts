@@ -68,6 +68,7 @@ type EndpointChange = {
   change: {
     category: string;
   };
+  pathId: string;
   path: string;
   method: string;
 };
@@ -168,6 +169,7 @@ export function buildEndpointChanges(
 
 type Endpoint = {
   endpointId: string;
+  pathId: string;
   path: string;
   method: string;
 };
@@ -183,6 +185,7 @@ class Changes {
     if (this.changes.has(endpoint.endpointId)) return false;
     this.changes.set(endpoint.endpointId, {
       change: { category },
+      pathId: endpoint.pathId,
       path: endpoint.path,
       method: endpoint.method,
     });
@@ -200,18 +203,20 @@ class Changes {
 
 function endpointFromRequest(request: any): Endpoint {
   const pathNode = request.path();
+  const pathId = pathNode.result.data.pathId;
   const path = pathNode.result.data.absolutePathPattern;
   const method = request.result.data.httpMethod;
   const endpointId = JSON.stringify({ path, method });
-  return { endpointId, path, method };
+  return { endpointId, pathId, path, method };
 }
 
 function endpointFromResponse(response: any): Endpoint {
   const pathNode = response.path();
+  const pathId = pathNode.result.data.pathId;
   const path = pathNode.result.data.absolutePathPattern;
   const method = response.result.data.httpMethod;
   const endpointId = JSON.stringify({ path, method });
-  return { endpointId, path, method };
+  return { endpointId, pathId, path, method };
 }
 
 //@TODO remove if not needed after testing
