@@ -360,6 +360,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       path: (parent: any) => {
         return Promise.resolve(parent.path);
       },
+      pathId: (parent: any) => {
+        return Promise.resolve(parent.pathId);
+      },
       method: (parent: any) => {
         return Promise.resolve(parent.method);
       },
