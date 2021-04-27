@@ -31,6 +31,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query add nested response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "method": "GET",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query add new endpoint > must match snapshot 1`] = `
 Object {
   "data": Null Object {
@@ -228,6 +246,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query update nested response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "method": "GET",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query update optional response field > must match snapshot 1`] = `
 Object {
   "data": Null Object {
@@ -293,6 +329,33 @@ Object {
           ],
         },
         "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add nested response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": true,
+                "changed": false,
+              },
+              "fieldId": "field_IssIgRCXER",
+              "name": "value",
+              "shapeId": "shape_5iIJpuVfvT",
+            },
+          ],
+        },
+        "id": "shape_JMawGfOvqm",
         "jsonType": "Object",
       },
     ],
@@ -670,6 +733,33 @@ Object {
           ],
         },
         "id": "shape_jSAthS01Bb",
+        "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query update nested response field > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": null,
+        "asObject": Null Object {
+          "fields": Array [
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": true,
+              },
+              "fieldId": "field_IssIgRCXER",
+              "name": "value",
+              "shapeId": "shape_23Xx7wgrkn",
+            },
+          ],
+        },
+        "id": "shape_JMawGfOvqm",
         "jsonType": "Object",
       },
     ],

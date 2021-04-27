@@ -83,6 +83,16 @@ const specs = [
     shapeId: shapeId1,
   }),
   fromPreviousBatchCommitId(
+    'add nested response field',
+    './test/specs/add-res-nested-field.json',
+    { shapeId: 'shape_JMawGfOvqm' }
+  ),
+  fromPreviousBatchCommitId(
+    'update nested response field',
+    './test/specs/update-res-nested-field.json',
+    { shapeId: 'shape_JMawGfOvqm' }
+  ),
+  fromPreviousBatchCommitId(
     'add request and response',
     './test/specs/add-req-and-res.json',
     { shapeId: shapeId2 }
