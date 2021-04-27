@@ -1,4 +1,5 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
+import { useEndpointsChangelog } from './useEndpointsChangelog';
 
 export const AllEndpointsQuery = `{
     requests {
@@ -14,43 +15,17 @@ export const AllEndpointsQuery = `{
     }
     }`;
 
-export const AllEndpointsQueryWithChanges = `
-  query X($sinceBatchCommitId: String) {
-    requests {
-      id
-      pathId
-      absolutePathPattern
-      pathComponents {
-        id
-        name
-        isParameterized
-      }
-      changes(sinceBatchCommitId: $sinceBatchCommitId) {
-        added
-        changed
-      }
-      method
-    }
-  }`;
-
 export function useEndpoints(
   renderChangesSince?: string
 ): { endpoints: IEndpoint[]; loading?: boolean } {
   //@TODO
 
-  const queryInput =
-    //renderChangesSince
-    // ? {
-    //     query: AllEndpointsQueryWithChanges,
-    //     variables: {
-    //       sinceBatchCommitId: renderChangesSince,
-    //     },
-    //   }
-    // : {
-    {
-      query: AllEndpointsQuery,
-      variables: {},
-    };
+  const endpointsChangelog = useEndpointsChangelog(renderChangesSince);
+
+  const queryInput = {
+    query: AllEndpointsQuery,
+    variables: {},
+  };
 
   const { data, error } = useSpectacleQuery(queryInput);
 
@@ -60,7 +35,7 @@ export function useEndpoints(
   }
 
   if (data) {
-    return { endpoints: endpointQueryResultsToJson(data) };
+    return { endpoints: endpointQueryResultsToJson(data, endpointsChangelog) };
   } else {
     return { endpoints: [], loading: true };
   }
@@ -80,10 +55,15 @@ export function useEndpoint(
   }
 }
 
-export function endpointQueryResultsToJson(data: any): IEndpoint[] {
+export function endpointQueryResultsToJson(
+  data: any,
+  endpointsChangelog: any[] = []
+): IEndpoint[] {
   const commonStart = sharedStart(
     data.requests.map((req: any) => req.absolutePathPattern)
   );
+
+  debugger;
 
   const endpoints = data.requests.map((request: any) => {
     return {
@@ -94,6 +74,11 @@ export function endpointQueryResultsToJson(data: any): IEndpoint[] {
         .substring(commonStart.length)
         .split('/')[0],
       pathParameters: [],
+      changelog: {
+        added: false,
+        changed: false,
+        removed: false,
+      },
     } as IEndpoint;
   });
 

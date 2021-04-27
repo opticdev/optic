@@ -24,6 +24,11 @@ export function useEndpointsChangelog(sinceBatchCommitId?: string): any[] {
 
   useEffect(() => {
     async function task() {
+      if (!sinceBatchCommitId) {
+        setResult([]);
+        return;
+      }
+
       const result = await spectacle.query({
         query: endpointChangeQuery,
         variables: {
@@ -31,12 +36,14 @@ export function useEndpointsChangelog(sinceBatchCommitId?: string): any[] {
         },
       });
 
-      console.log('rerunning with', sinceBatchCommitId);
+      if (result.data) {
+        setResult(result.data.endpointChanges.endpoints);
+      }
+
       if (result.errors) {
         console.error(result.errors);
         result.error = new Error(result.errors);
       }
-      setResult(result);
     }
 
     task();

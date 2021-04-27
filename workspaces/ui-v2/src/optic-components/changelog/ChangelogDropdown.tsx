@@ -118,7 +118,7 @@ function BatchCommitMenuItem({
             color: OpticBlue,
           }}
         >
-          {name}
+          {name || 'Changes from'}
         </Typography>
         <Typography
           component="span"

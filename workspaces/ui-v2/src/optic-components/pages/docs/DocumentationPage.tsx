@@ -90,11 +90,8 @@ export function DocumentationRootPage(props: {
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
 
-  const changes = useEndpointsChangelog(props.changelogBatchId);
-  console.log(props.changelogBatchId, changes);
-
-  const history = useHistory();
-  const endpointPageLink = useEndpointPageLink();
+  // const history = useHistory();
+  // const endpointPageLink = useEndpointPageLink();
 
   if (loading) {
     return <Loading />;
