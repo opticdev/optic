@@ -29,9 +29,10 @@ import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { Loading } from '../../loaders/Loading';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { EndpointName } from '../../common';
-import { DiffEndpointNameMiniContribution } from "../../diffs/DiffContributions";
+import { DiffEndpointNameMiniContribution } from '../../diffs/DiffContributions';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
+import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -143,6 +144,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+  const changelogStyles = useChangelogStyles();
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
@@ -176,6 +178,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
+                    className={changelogStyles.added}
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName
