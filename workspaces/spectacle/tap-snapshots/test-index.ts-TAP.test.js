@@ -175,6 +175,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query add response as an array > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "method": "GET",
+          "path": "/items",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query add response status code > must match snapshot 1`] = `
 Object {
   "data": Null Object {
@@ -311,6 +329,24 @@ Object {
           },
           "method": "POST",
           "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle changelog query updated response as an array > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "method": "GET",
+          "path": "/items",
         },
       ],
     },
@@ -579,17 +615,55 @@ Object {
           "fields": Array [
             Null Object {
               "changes": Null Object {
+                "added": true,
+                "changed": false,
+              },
+              "fieldId": "field_xk15eeYH4w",
+              "name": "tags",
+              "shapeId": "shape_megfFuiPyy",
+            },
+            Null Object {
+              "changes": Null Object {
                 "added": false,
                 "changed": false,
               },
-              "fieldId": "field_IssIgRCXER",
-              "name": "value",
-              "shapeId": "shape_23Xx7wgrkn",
+              "fieldId": "field_4OLWrfuNYd",
+              "name": "nested",
+              "shapeId": "shape_JMawGfOvqm",
+            },
+            Null Object {
+              "changes": Null Object {
+                "added": false,
+                "changed": false,
+              },
+              "fieldId": "field_dcFiUByTEC",
+              "name": "name",
+              "shapeId": "shape_OzJqDlruot",
             },
           ],
         },
-        "id": "shape_JMawGfOvqm",
+        "id": "shape_Fp2ke8xB9K",
         "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add response as an array > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": Null Object {
+          "changes": Null Object {
+            "added": true,
+            "changed": false,
+          },
+        },
+        "asObject": null,
+        "id": "shape_Sn2bnZvvoM",
+        "jsonType": "Array",
       },
     ],
   },
@@ -878,6 +952,26 @@ Object {
         },
         "id": "shape_Uepabr07Dx",
         "jsonType": "Object",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query updated response as an array > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": Null Object {
+          "changes": Null Object {
+            "added": false,
+            "changed": true,
+          },
+        },
+        "asObject": null,
+        "id": "shape_Sn2bnZvvoM",
+        "jsonType": "Array",
       },
     ],
   },

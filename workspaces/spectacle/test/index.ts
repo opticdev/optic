@@ -95,7 +95,17 @@ const specs = [
   fromPreviousBatchCommitId(
     'add response array field',
     './test/specs/add-res-array-field.json',
-    { shapeId: 'shape_JMawGfOvqm' }
+    { shapeId: 'shape_Fp2ke8xB9K' }
+  ),
+  fromPreviousBatchCommitId(
+    'add response as an array',
+    './test/specs/add-res-as-array.json',
+    { shapeId: 'shape_Sn2bnZvvoM' }
+  ),
+  fromPreviousBatchCommitId(
+    'updated response as an array',
+    './test/specs/update-res-as-array.json',
+    { shapeId: 'shape_Sn2bnZvvoM' }
   ),
   fromPreviousBatchCommitId(
     'add request and response',
