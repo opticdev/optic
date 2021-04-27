@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { EndpointName } from '../../common';
+import { EndpointName } from '../../documentation/EndpointName';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { PathParametersViewEdit } from '../../documentation/PathParameters';

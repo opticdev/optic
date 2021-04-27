@@ -1,23 +1,22 @@
 use crate::RfcEvent;
 use cqrs_core::{Aggregate, AggregateEvent, Event};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Debug, Clone)]
 pub struct ContributionsProjection {
-  // @nic TODO check whether this is best ds to use
-  pub hash_map: HashMap<String, HashMap<String, String>>,
+  pub ids_to_keys_to_values: BTreeMap<String, BTreeMap<String, String>>,
 }
 
 impl ContributionsProjection {
   pub fn to_json_string(&self) -> String {
-    serde_json::to_string(&self.hash_map).expect("hash map should be serializable")
+    serde_json::to_string(&self.ids_to_keys_to_values).expect("btree should be serializable")
   }
 
   pub fn with_contribution(&mut self, id: String, contribution_key: String, value: String) {
     self
-      .hash_map
+      .ids_to_keys_to_values
       .entry(id)
-      .or_insert_with(|| HashMap::new())
+      .or_insert_with(|| BTreeMap::new())
       .insert(contribution_key, value);
   }
 }
@@ -25,7 +24,7 @@ impl ContributionsProjection {
 impl Default for ContributionsProjection {
   fn default() -> Self {
     ContributionsProjection {
-      hash_map: HashMap::new(),
+      ids_to_keys_to_values: BTreeMap::new(),
     }
   }
 }

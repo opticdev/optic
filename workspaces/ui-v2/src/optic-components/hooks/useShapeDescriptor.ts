@@ -1,6 +1,7 @@
 import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
+import sortBy from 'lodash.sortby';
 
 const shapeQuery = `
   query X($shapeId: ID) {
@@ -94,6 +95,11 @@ export function useShapeDescriptor(
                 field.shapeChoices = shapeChoices
                   .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
                   .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
+
+                field.shapeChoices = sortBy(
+                  field.shapeChoices,
+                  (e) => e.jsonType === JsonLike.NULL
+                );
                 return field;
               })
             );

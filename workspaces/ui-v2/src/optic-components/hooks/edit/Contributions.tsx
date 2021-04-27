@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useContext, useState } from 'react';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { AddContribution } from '../../../lib/command-factory';
 
@@ -36,13 +36,17 @@ export const useValueWithStagedContributions = (
   const { stagePendingContribution } = useContributionEditing();
 
   const [value, setValue] = useState<string>(initialValue || '');
-  useEffect(() => {
-    stagePendingContribution(id, contributionKey, value, initialValue);
-  }, [id, contributionKey, value, stagePendingContribution, initialValue]);
+  const setValueWithPendingContribution = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      stagePendingContribution(id, contributionKey, newValue, initialValue);
+    },
+    [id, contributionKey, stagePendingContribution, initialValue]
+  );
 
   return {
     value,
-    setValue,
+    setValue: setValueWithPendingContribution,
   };
 };
 

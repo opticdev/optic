@@ -17,11 +17,27 @@ import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
 import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
-import { useDocumentationPageLink } from '../optic-components/navigation/Routes';
+import {
+  AppConfigurationStore,
+  OpticAppConfig,
+} from '../optic-components/hooks/config/AppConfiguration';
+
+const appConfig: OpticAppConfig = {
+  featureFlags: {},
+  config: {
+    navigation: {
+      showChangelog: true,
+      showDiff: true,
+      showDocs: true,
+    },
+    documentation: {
+      allowDescriptionEditing: true,
+    },
+  },
+};
 
 export default function PublicExamples() {
   const match = useRouteMatch();
-  const docsRoot = useDocumentationPageLink();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = async () => {
@@ -57,21 +73,25 @@ export default function PublicExamples() {
   }
 
   return (
-    <SpectacleStore spectacle={data}>
-      <CapturesServiceStore capturesService={data.opticContext.capturesService}>
-        <InMemoryInteractionLoaderStore samples={data.samples}>
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DocumentationPages />
-                <DiffReviewEnvironments />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </InMemoryInteractionLoaderStore>
-      </CapturesServiceStore>
-    </SpectacleStore>
+    <AppConfigurationStore config={appConfig}>
+      <SpectacleStore spectacle={data}>
+        <CapturesServiceStore
+          capturesService={data.opticContext.capturesService}
+        >
+          <InMemoryInteractionLoaderStore samples={data.samples}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DocumentationPages />
+                  <DiffReviewEnvironments />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </InMemoryInteractionLoaderStore>
+        </CapturesServiceStore>
+      </SpectacleStore>
+    </AppConfigurationStore>
   );
 }
 

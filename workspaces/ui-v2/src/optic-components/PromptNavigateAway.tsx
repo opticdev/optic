@@ -6,6 +6,11 @@ type PromptNavigateAwayProps = {
   shouldPrompt: boolean;
 };
 
+/**
+ * Note that this includes a destructive useEffect for onbeforeunload which means
+ * that this component can only be used once (on unmount / update useEffect, the mount/unmount will
+ * tear down other onbeforeunloads)
+ */
 export const PromptNavigateAway: FC<PromptNavigateAwayProps> = ({
   shouldPrompt,
 }) => {
@@ -16,6 +21,7 @@ export const PromptNavigateAway: FC<PromptNavigateAwayProps> = ({
       window.onbeforeunload = null;
     };
   }, [shouldPrompt]);
+
   return (
     <Prompt
       when={shouldPrompt}

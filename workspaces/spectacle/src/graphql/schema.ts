@@ -89,6 +89,7 @@ type EndpointChanges {
 }
 type EndpointChange {
   change: EndpointChangeMetadata
+  pathId: String
   path: String
   method: String
 }
