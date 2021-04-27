@@ -4,9 +4,9 @@ interface IFeatureFlags {}
 
 interface IAppConfigurations {
   navigation: {
-    showDocs?: boolean;
-    showChangelog?: boolean;
-    showDiff?: boolean;
+    showDocs: boolean;
+    showChangelog: boolean;
+    showDiff: boolean;
   };
   documentation: {
     allowDescriptionEditing: boolean;
@@ -34,9 +34,9 @@ export const AppConfigurationStore = (props: {
 };
 
 export function useFeatureFlags() {
-  return useContext(AppConfigurationContext)?.featureFlags!;
+  return useContext(AppConfigurationContext)!.featureFlags;
 }
 
 export function useAppConfig() {
-  return useContext(AppConfigurationContext)?.config!;
+  return useContext(AppConfigurationContext)!.config;
 }
