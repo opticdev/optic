@@ -1,5 +1,8 @@
-import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
-import { useMemo } from 'react';
+import {
+  SpectacleContext,
+  useSpectacleQuery,
+} from '../../spectacle-implementations/spectacle-provider';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 //@todo not working as expected -- never any changes
 export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
@@ -8,28 +11,44 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
         change {
           category
         }
-        path
+        pathId
         method
       }
     }
 }`;
 
 export function useEndpointsChangelog(sinceBatchCommitId?: string): any[] {
-  const { data, error } = useSpectacleQuery({
-    query: endpointChangeQuery,
-    variables: {
-      sinceBatchCommitId,
-    },
-  });
+  const spectacle = useContext(SpectacleContext)!;
 
-  if (error) {
-    debugger;
-  }
+  const [result, setResult] = useState<any[]>([]);
 
-  return useMemo(() => {
-    if (!data) {
-      return [];
+  useEffect(() => {
+    async function task() {
+      if (!sinceBatchCommitId) {
+        setResult([]);
+        return;
+      }
+
+      const result = await spectacle.query({
+        query: endpointChangeQuery,
+        variables: {
+          sinceBatchCommitId,
+        },
+      });
+
+      if (result.data) {
+        setResult(result.data.endpointChanges.endpoints);
+      }
+
+      if (result.errors) {
+        console.error(result.errors);
+        result.error = new Error(result.errors);
+      }
     }
-    return [];
-  }, [data]);
+
+    task();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sinceBatchCommitId, spectacle]);
+
+  return result;
 }

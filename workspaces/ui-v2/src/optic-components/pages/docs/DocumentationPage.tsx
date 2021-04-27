@@ -31,6 +31,8 @@ import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { PromptNavigateAway } from '../../PromptNavigateAway';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
+import { useAppConfig } from '../../hooks/config/AppConfiguration';
+import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -76,13 +78,16 @@ export function DocumentationPages(props: any) {
 }
 
 export function DocsPageAccessoryNavigation(props: any) {
+  const appConfig = useAppConfig();
   const { isEditing, pendingCount } = useContributionEditing();
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
       <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
-      <ChangesSinceDropdown />
-      <EditContributionsButton />
+      {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
+      {appConfig.documentation.allowDescriptionEditing && (
+        <EditContributionsButton />
+      )}
     </div>
   );
 }
@@ -96,8 +101,8 @@ export function DocumentationRootPage(props: {
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
 
-  const history = useHistory();
-  const endpointPageLink = useEndpointPageLink();
+  // const history = useHistory();
+  // const endpointPageLink = useEndpointPageLink();
 
   if (loading) {
     return <Loading />;
@@ -124,6 +129,7 @@ export function DocumentationRootPage(props: {
                     }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}
+                    changelog={endpoint.changelog}
                     endpointId={getEndpointId({
                       method: endpoint.method,
                       pathId: endpoint.pathId,

@@ -9,8 +9,11 @@ export const BatchCommitsQuery = `{
     }
 }`;
 
-export function useBatchCommits(): BatchCommit[] {
-  const { data, error } = useSpectacleQuery({
+export function useBatchCommits(): {
+  loading: boolean;
+  batchCommits: BatchCommit[];
+} {
+  const { data, loading, error } = useSpectacleQuery({
     query: BatchCommitsQuery,
     variables: {},
   });
@@ -19,27 +22,31 @@ export function useBatchCommits(): BatchCommit[] {
     debugger;
   }
 
-  return useMemo(() => {
+  const batchCommits = useMemo(() => {
     if (!data) {
       return [];
     }
 
-    return data.batchCommits.map((i: any) => ({
-      commitMessage: i.commitMessage,
-      batchId: i.batchId,
-      createdAt: i.createdAt,
-    }));
+    return data.batchCommits
+      .map((i: any) => ({
+        commitMessage: i.commitMessage,
+        batchId: i.batchId,
+        createdAt: i.createdAt,
+      }))
+      .reverse();
   }, [data]);
+
+  return { loading, batchCommits };
 }
 
 export function useLastBatchCommitId(): string | undefined {
   //@todo should be use batch commit of Diff -- usually equal
   const commits = useBatchCommits();
   if (commits) {
-    if (commits.length === 0) {
+    if (commits.batchCommits.length === 0 && !commits.loading) {
       return '';
-    } else {
-      return commits[0]?.batchId;
+    } else if (commits.batchCommits.length > 0) {
+      return commits.batchCommits[0].batchId;
     }
   } else {
     return undefined;
