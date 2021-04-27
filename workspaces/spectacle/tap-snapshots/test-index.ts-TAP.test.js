@@ -174,7 +174,7 @@ Object {
             "category": "added",
           },
           "method": "GET",
-          "path": "/test1/{}",
+          "path": "/test1/{id}",
         },
       ],
     },

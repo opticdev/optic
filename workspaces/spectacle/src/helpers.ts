@@ -202,18 +202,18 @@ class Changes {
 }
 
 function endpointFromRequest(request: any): Endpoint {
-  const pathNode = request.path();
+  let pathNode = request.path();
   const pathId = pathNode.result.data.pathId;
-  const path = pathNode.result.data.absolutePathPattern;
+  const path = pathNode.absolutePathPatternWithParameterNames;
   const method = request.result.data.httpMethod;
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };
 }
 
 function endpointFromResponse(response: any): Endpoint {
-  const pathNode = response.path();
+  let pathNode = response.path();
   const pathId = pathNode.result.data.pathId;
-  const path = pathNode.result.data.absolutePathPattern;
+  const path = pathNode.absolutePathPatternWithParameterNames;
   const method = response.result.data.httpMethod;
   const endpointId = JSON.stringify({ path, method });
   return { endpointId, pathId, path, method };

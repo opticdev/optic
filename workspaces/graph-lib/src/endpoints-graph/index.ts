@@ -38,6 +38,8 @@ export type Node = {
 export type PathNode = {
   absolutePathPattern: string;
   pathId: string;
+  name: string;
+  isParameterized: boolean;
 };
 export type RequestNode = {
   requestId: string;
@@ -169,6 +171,19 @@ export class RequestNodeWrapper implements NodeWrapper {
     return neighbors.results[0] as PathNodeWrapper;
   }
 
+  // pathComponents(): PathNodeWrapper[] {
+  //   let pathNode = this.path();
+  //   let parentPath = pathNode.parentPath();
+  //   const components = [pathNode];
+  //   while (parentPath !== null) {
+  //     components.push(parentPath);
+  //     pathNode = parentPath;
+  //     parentPath = pathNode.parentPath();
+  //   }
+  //
+  //   return components.reverse();
+  // }
+
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
@@ -194,6 +209,19 @@ export class ResponseNodeWrapper implements NodeWrapper {
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
+
+  // pathComponents(): PathNodeWrapper[] {
+  //   let pathNode = this.path();
+  //   let parentPath = pathNode.parentPath();
+  //   const components = [pathNode];
+  //   while (parentPath !== null) {
+  //     components.push(parentPath);
+  //     pathNode = parentPath;
+  //     parentPath = pathNode.parentPath();
+  //   }
+  //
+  //   return components.reverse();
+  // }
 
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
@@ -234,6 +262,34 @@ export class PathNodeWrapper implements NodeWrapper {
       this.result.id,
       NodeType.Response
     );
+  }
+
+  components(): PathNodeWrapper[] {
+    let pathNode = this as PathNodeWrapper;
+    let parentPath = pathNode.parentPath();
+    const components = [pathNode];
+    while (parentPath !== null) {
+      components.push(parentPath);
+      pathNode = parentPath;
+      parentPath = pathNode.parentPath();
+    }
+
+    return components.reverse();
+  }
+
+  get absolutePathPatternWithParameterNames(): string {
+    let path = '';
+
+    for (const component of this.components()) {
+      if (component.value.pathId === 'root') continue;
+      if (component.value.isParameterized) {
+        path = `${path}/{${component.value.name}}`;
+      } else {
+        path = `${path}/${component.value.name}`;
+      }
+    }
+
+    return path;
   }
 }
 
