@@ -27,6 +27,7 @@ import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
+import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
 
 export function DocumentationPages(props: any) {
@@ -73,10 +74,14 @@ export function DocumentationPages(props: any) {
 }
 
 export function DocsPageAccessoryNavigation(props: any) {
+  const appConfig = useAppConfig();
+
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
-      <ChangesSinceDropdown />
-      <EditContributionsButton />
+      {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
+      {appConfig.documentation.allowDescriptionEditing && (
+        <EditContributionsButton />
+      )}
     </div>
   );
 }
