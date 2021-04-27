@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext } from 'react';
-
+import invariant from 'invariant';
 interface IFeatureFlags {}
 
 interface IAppConfigurations {
@@ -34,9 +34,13 @@ export const AppConfigurationStore = (props: {
 };
 
 export function useFeatureFlags() {
-  return useContext(AppConfigurationContext)!.featureFlags;
+  const value = useContext(AppConfigurationContext);
+  invariant(!value, 'useFeatureFlags could not find AppConfigurationContext');
+  return value!.featureFlags;
 }
 
 export function useAppConfig() {
-  return useContext(AppConfigurationContext)!.config;
+  const value = useContext(AppConfigurationContext);
+  invariant(!value, 'useFeatureFlags could not find AppConfigurationContext');
+  return value!.config;
 }
