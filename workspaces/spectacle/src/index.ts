@@ -128,9 +128,9 @@ export type AsyncStatus<T> =
   | { loading: false; error: false; data: T };
 
 export interface IBaseSpectacle {
-  query(options: SpectacleInput): Promise<AsyncStatus<any>>;
+  query(options: SpectacleInput): Promise<any>;
 
-  mutate(options: SpectacleInput): Promise<AsyncStatus<any>>;
+  mutate(options: SpectacleInput): Promise<any>;
 }
 
 export interface IForkableSpectacle extends IBaseSpectacle {
