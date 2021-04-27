@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { PathParametersViewEdit } from '../../documentation/PathParameters';
@@ -100,8 +100,6 @@ export function EndpointDocumentationPane({
                 rootShapeId={i.rootShapeId}
                 bodyId={i.requestId}
                 location={'Request Body Parameters'}
-                // @nic todo
-                description=""
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />
@@ -124,8 +122,6 @@ export function EndpointDocumentationPane({
                 rootShapeId={i.rootShapeId}
                 bodyId={i.responseId}
                 location={`${i.statusCode} Response`}
-                // @nic todo
-                description=""
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />

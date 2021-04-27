@@ -41,6 +41,7 @@ export type EndpointRowProps = {
   method: string;
   endpointId: string;
   fullPath: string;
+  purpose: string;
   onClick: () => void;
   changelog?: {
     added?: boolean;
@@ -55,6 +56,7 @@ export function EndpointRow({
   endpointId,
   onClick,
   changelog,
+  purpose,
 }: EndpointRowProps) {
   const changelogStyles = useChangelogStyles();
 
@@ -81,8 +83,7 @@ export function EndpointRow({
           id={endpointId}
           defaultText="name for this endpoint"
           contributionKey="purpose"
-          // @nic TODO set this correctly
-          initialValue=""
+          initialValue={purpose}
         />
       </div>
     </ListItem>

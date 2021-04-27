@@ -119,7 +119,7 @@ export function DocumentationRootPage(props: {
                 return (
                   <EndpointRow
                     key={index}
-                    onClick={() =>
+                    onClick={() => 
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
                     fullPath={endpoint.fullPath}
@@ -128,6 +128,7 @@ export function DocumentationRootPage(props: {
                       method: endpoint.method,
                       pathId: endpoint.pathId,
                     })}
+                    purpose={endpoint.purpose}
                   />
                 );
               })}

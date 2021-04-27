@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import { TwoColumn } from './TwoColumn';
 import { BodyRender } from './BodyRender';
@@ -8,12 +8,17 @@ import { useShapeDescriptor } from '../hooks/useShapeDescriptor';
 import { IChanges } from '../changelog/IChanges';
 import { ChangeLogBG } from '../changelog/ChangeLogBG';
 
-export type TwoColumnBodyProps = {
+type SharedProps = {
   location: string;
   changes?: IChanges;
   changesSinceBatchCommitId?: string;
   bodyId: string; //@aidan make sure this name/value makes sense
   rootShapeId: string;
+}
+
+type OneColumnBodyProps = SharedProps;
+
+export type TwoColumnBodyProps = SharedProps & {
   description: string;
 };
 
@@ -51,7 +56,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
   );
 }
 
-export function OneColumnBody(props: TwoColumnBodyProps) {
+export function OneColumnBody(props: OneColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,
     props.changesSinceBatchCommitId
