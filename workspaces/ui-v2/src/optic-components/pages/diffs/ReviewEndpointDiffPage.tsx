@@ -66,15 +66,10 @@ export function ReviewEndpointDiffPage(props: any) {
 
   const [showToc, setShowToc] = useState(false);
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
-  const [selectedDiff, setSelectedDiffHash] = useState<string | undefined>(
-    undefined
-  );
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (filteredShapeDiffs[0]) {
-      setPreviewCommands([]);
-      setSelectedDiffHash(filteredShapeDiffs[0]!.diffDescription!.diffHash);
-    } else if (
+    if (
       shapeDiffs.results.length > 0 &&
       shapeDiffs.results.every((i) =>
         isDiffHandled(i.diffDescription?.diffHash!)
@@ -82,26 +77,10 @@ export function ReviewEndpointDiffPage(props: any) {
     ) {
       history.push(diffReviewPage.linkTo());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredShapeDiffs.length]);
+  }, [shapeDiffs, diffReviewPage, history, isDiffHandled]);
 
-  const renderedDiff: IInterpretation | undefined = useMemo(() => {
-    if (selectedDiff) {
-      return shapeDiffs.results.find(
-        (i) => i.diffDescription!.diffHash === selectedDiff
-      );
-    }
-  }, [selectedDiff, shapeDiffs]);
-
-  const currentIndex = shapeDiffs.results.findIndex(
-    (i) => i.diffDescription?.diffHash === selectedDiff
-  );
-
-  const nextHash =
-    shapeDiffs.results[currentIndex + 1]?.diffDescription?.diffHash;
-  const previousHash =
-    shapeDiffs.results[currentIndex - 1]?.diffDescription?.diffHash;
-
+  // If shapeDiffs.length is 0, the allDiffsHandled view will be rendered
+  const renderedDiff = shapeDiffs.results[currentIndex];
   const allDiffsHandled = filteredShapeDiffs.length === 0;
 
   if (allDiffsHandled) {
@@ -158,7 +137,11 @@ export function ReviewEndpointDiffPage(props: any) {
                 <DiffLinks
                   shapeDiffs={shapeDiffs.results}
                   setSelectedDiffHash={(hash: string) => {
-                    setSelectedDiffHash(hash);
+                    const hashIndex = shapeDiffs.results.findIndex(
+                      (i) => i.diffDescription?.diffHash === hash
+                    );
+                    // findIndex possibly returns -1
+                    setCurrentIndex(Math.max(hashIndex, 0));
                     setShowToc(false);
                   }}
                 />
@@ -168,7 +151,7 @@ export function ReviewEndpointDiffPage(props: any) {
             <IconButton
               size="small"
               color="primary"
-              onClick={() => setSelectedDiffHash(previousHash)}
+              onClick={() => setCurrentIndex((prevIndex) => prevIndex - 1)}
               disabled={currentIndex === 0}
             >
               <ArrowLeft />
@@ -179,7 +162,7 @@ export function ReviewEndpointDiffPage(props: any) {
             <IconButton
               size="small"
               color="primary"
-              onClick={() => setSelectedDiffHash(nextHash)}
+              onClick={() => setCurrentIndex((prevIndex) => prevIndex + 1)}
               disabled={shapeDiffs.results.length - 1 === currentIndex}
             >
               <ArrowRight />

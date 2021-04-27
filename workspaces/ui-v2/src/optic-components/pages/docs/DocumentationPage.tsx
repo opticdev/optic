@@ -10,13 +10,16 @@ import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, Typography } from '@material-ui/core';
 import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
+import {
+  ContributionEditingStore,
+  useContributionEditing,
+} from '../../hooks/edit/Contributions';
 import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../../documentation/TwoColumn';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { PathParametersViewEdit } from '../../documentation/PathParameters';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
@@ -26,6 +29,7 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
+import { PromptNavigateAway } from '../../PromptNavigateAway';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
@@ -75,9 +79,11 @@ export function DocumentationPages(props: any) {
 
 export function DocsPageAccessoryNavigation(props: any) {
   const appConfig = useAppConfig();
+  const { isEditing, pendingCount } = useContributionEditing();
 
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
+      <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
       {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
       {appConfig.documentation.allowDescriptionEditing && (
         <EditContributionsButton />
@@ -118,7 +124,7 @@ export function DocumentationRootPage(props: {
                 return (
                   <EndpointRow
                     key={index}
-                    onClick={() =>
+                    onClick={() => 
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
                     fullPath={endpoint.fullPath}
@@ -128,6 +134,7 @@ export function DocumentationRootPage(props: {
                       method: endpoint.method,
                       pathId: endpoint.pathId,
                     })}
+                    purpose={endpoint.purpose}
                   />
                 );
               })}
@@ -167,6 +174,7 @@ export function EndpointRootPage(props: any) {
         id={endpointId}
         contributionKey="purpose"
         defaultText="What does this endpoint do?"
+        initialValue={thisEndpoint.purpose}
       />
       <EndpointName
         fontSize={19}
@@ -181,6 +189,7 @@ export function EndpointRootPage(props: any) {
             id={endpointId}
             contributionKey={'description'}
             defaultText={'Describe this endpoint'}
+            initialValue={thisEndpoint.description}
           />
         }
         right={
@@ -218,6 +227,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body Parameters'}
+            description={i.description}
           />
         );
       })}
@@ -228,6 +238,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}
+            description={i.description}
           />
         );
       })}

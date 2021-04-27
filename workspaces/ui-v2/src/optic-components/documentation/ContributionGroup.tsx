@@ -21,6 +21,7 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
               name={i.name}
               shapes={i.shapes}
               key={i.contributionId + i.name + index}
+              initialValue={i.description}
             />
           );
         })}
@@ -49,7 +50,7 @@ function createFlatList(
         contributions.push({
           name: field.name,
           depth,
-          description: field.description || '',
+          description: field.contributions.description || '',
           shapes: field.shapeChoices,
           contributionId: field.fieldId,
         });
@@ -58,7 +59,9 @@ function createFlatList(
       });
     }
     if (shape.asArray) {
-      contributions.push(...createFlatList(shape.asArray.shapeChoices, depth + 1));
+      contributions.push(
+        ...createFlatList(shape.asArray.shapeChoices, depth + 1)
+      );
     }
   });
 

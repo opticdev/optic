@@ -19,9 +19,9 @@ pub enum RfcEvent {
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ContributionAdded {
-  id: String,
-  key: String,
-  value: String,
+  pub id: String,
+  pub key: String,
+  pub value: String,
   event_context: Option<EventContext>,
 }
 

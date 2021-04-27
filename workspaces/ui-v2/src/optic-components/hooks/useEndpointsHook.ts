@@ -13,6 +13,7 @@ export const AllEndpointsQuery = `{
         isParameterized
       }
       method
+      pathContributions
     }
     }`;
 
@@ -81,6 +82,8 @@ export function endpointQueryResultsToJson(
         .substring(commonStart.length)
         .split('/')[0],
       pathParameters: [],
+      description: request.pathContributions.description || '',
+      purpose: request.pathContributions.purpose || '',
       changelog: {
         added: hasChangelog ? hasChangelog.change.category === 'added' : false,
         changed: hasChangelog
@@ -99,8 +102,8 @@ export function endpointQueryResultsToJson(
 export interface IEndpoint {
   pathId: string;
   method: string;
-  purpose?: string;
-  description?: string;
+  purpose: string;
+  description: string;
   fullPath: string;
   pathParameters: IPathParameter[];
   group: string;

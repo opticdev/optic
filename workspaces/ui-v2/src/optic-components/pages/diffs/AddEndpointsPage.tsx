@@ -177,6 +177,8 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       method: endpoint.method,
                       pathId: endpoint.id,
                     })}
+                    // @nic todo make pendingendpointrow component
+                    purpose=""
                   />
                 );
               }
@@ -211,6 +213,8 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       method: endpoint.method,
                       pathId: endpoint.pathId,
                     })}
+                    // @nic todo make pendingendpointrow component
+                    purpose=""
                   />
                 );
               })}

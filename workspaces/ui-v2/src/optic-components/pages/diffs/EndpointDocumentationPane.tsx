@@ -52,6 +52,8 @@ export function EndpointDocumentationPane({
         id={endpointId}
         contributionKey="purpose"
         defaultText="What does this endpoint do?"
+        // @nic todo
+        initialValue=""
       />
 
       <div style={{ height: 20 }} />

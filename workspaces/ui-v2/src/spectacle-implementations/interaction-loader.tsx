@@ -33,11 +33,15 @@ export const InMemoryInteractionLoaderStore = (props: {
 
 export function useInteraction(pointer: string): AsyncStatus<any> {
   const { loadInteraction } = useContext(InteractionLoaderContext);
-  const [result, setResult] = useState<AsyncStatus<any>>({ loading: true });
+  const [result, setResult] = useState<AsyncStatus<any>>({
+    loading: true,
+    error: false,
+    data: null,
+  });
 
   useEffect(() => {
     loadInteraction(pointer).then((i) => {
-      setResult({ loading: false, data: i });
+      setResult({ loading: false, error: false, data: i });
     });
   }, [pointer, loadInteraction]);
 

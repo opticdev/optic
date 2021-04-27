@@ -376,3 +376,12 @@ function getDeltaBatchCommits(
   });
   return deltaBatchCommits;
 }
+
+export type ContributionsProjection = Record<string, Record<string, string>>;
+
+export function getContributionsProjection(
+  spec: any,
+  opticEngine: any
+): ContributionsProjection {
+  return JSON.parse(opticEngine.get_contributions_projection(spec));
+}

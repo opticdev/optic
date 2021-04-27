@@ -1,4 +1,5 @@
 pub mod conflicts;
+pub mod contributions;
 pub mod endpoint;
 pub mod history;
 pub mod learners;
@@ -7,6 +8,7 @@ pub mod spec_events;
 pub mod spectacle;
 
 pub use conflicts::ConflictsProjection;
+pub use contributions::ContributionsProjection;
 pub use endpoint::EndpointProjection;
 pub use history::{CommitId, HistoryProjection};
 pub use learners::{
@@ -28,6 +30,7 @@ pub struct SpecProjection {
   shape: shape::ShapeProjection,
   conflicts: conflicts::ConflictsProjection,
   spectacle_endpoints: spectacle::endpoints::EndpointsProjection,
+  contributions: contributions::ContributionsProjection,
 }
 
 impl Default for SpecProjection {
@@ -38,6 +41,7 @@ impl Default for SpecProjection {
       shape: ShapeProjection::default(),
       conflicts: ConflictsProjection::default(),
       spectacle_endpoints: EndpointsProjection::default(),
+      contributions: ContributionsProjection::default(),
     }
   }
 }
@@ -56,6 +60,9 @@ impl SpecProjection {
   }
   pub fn conflicts(&self) -> &ConflictsProjection {
     &self.conflicts
+  }
+  pub fn contributions(&self) -> &ContributionsProjection {
+    &self.contributions
   }
   pub fn spectacle_endpoints(&self) -> &EndpointsProjection {
     &self.spectacle_endpoints
@@ -95,6 +102,7 @@ impl AggregateEvent<SpecProjection> for SpecEvent {
         projection.history.apply(event.clone());
         projection.shape.apply(event.clone());
         projection.spectacle_endpoints.apply(event.clone());
+        projection.contributions.apply(event.clone());
       }
     }
   }

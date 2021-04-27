@@ -13,6 +13,7 @@ const shapeQuery = `
           name
           fieldId
           shapeId
+          contributions
         }
       }
       asArray {
@@ -31,6 +32,7 @@ const changesSinceShapeQuery = `
           name
           fieldId
           shapeId
+          contributions
           changes(sinceBatchCommitId: $sinceBatchCommitId) {
             added
             changed
