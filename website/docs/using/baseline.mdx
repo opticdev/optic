@@ -51,3 +51,27 @@ Even when you update your specification using Optic, the descriptions will conti
 
 ### Repeat for new Endpoints
 Once your API is baselined, you can continue using Optic to document new endpoints as they get built. New URLs Optic observes will produce diffs in the UI and encourage you to add the new endpoint to your specification. Just like you use `git add <file>` to include new source code in your PR, you can use Optic to document any new endpoints you create for a) review by your team and b) to share with your consumers.
+
+![alt](../../static/img/big-diff.png)
+
+### Ignoring endpoints
+
+While baselining your API, you may run across some endpoints that aren't helpful to document. You can safely skip any endpoints that you don't want to document now, but may want to document at a later date. These endpoints will continue to show up as long as requests to them are observed. This is fine for endpoints you didn't mean to visit, or endpoints which you intend to document soon.
+
+For endpoints which you don't ever intend to document, or endpoints that won't be documented in the near future, a stricter option is to set up an **ignore rule**. Ignore rules allow you to specify a path or expression to ignore in this and future captures. The ignore rules are stored in a configuration file, and can be removed at any time should your requirements change. Ignoring only affects the review UI: other than omitting endpoints that match the ignore rules from the Optic review dashboard, there are no changes to your API documentation workflow.
+
+![The Add Ignore Rule field allows you to enter a pattern for ignoring an endpoint.](../../static/img/docs/using-ignore-rules.png)
+
+To ignore an endpoint, start typing part of the path of the endpoint in the **Add Ignore Rule** field. Optic will suggest endpoints that match.
+
+![Typing part of a path name will suggest endpoints. Click one to build an ignore rule.](../../static/img/docs/using-ignore-endpoint.png)
+
+Click on the desired path, and Optic will automatically generate an ignore rule. In this case, we're ignoring the `/api/show-me-everything/feed` GET endpoint. Clicking **Add Rule** will add this to the Optic ignore rule configuration. This removes the endpoint from the current list of unmatched URLs observed, and it will no longer show up in future review sessions. 
+
+![When the rule is added, the generated rule and matching paths are shown.](../../static/img/docs/using-ignore-endpoint-rule.png)
+
+Note the method at the start of the ignore rule string. Ignore rules start with a method, or if no method is present, the rule applies to all methods. You may also use `(.*)` as a wildcard character to match multiple paths. For example, to ignore any endpoints at `/api/show-me-everything` and under it, enter the ignore rule `/api/show-me-everything(.*)`. Optic will show which endpoints match the wildcard rule, giving you an opportunity to review it before adding the rule.
+
+![`(.*)` is a wildcard, and can be used to match whole sets of paths](../../static/img/docs/using-ignore-wildcard.png)
+
+Ignore rules are stored in `.optic/ignore`, where you can review them at any time. Please review the [ignore rule format](/docs/using/advanced-configuration#ignoring-api-paths) to learn more about the options available for ignore rules and how to manage the configuration file.
