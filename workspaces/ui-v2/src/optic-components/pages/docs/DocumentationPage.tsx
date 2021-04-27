@@ -118,6 +118,7 @@ export function DocumentationRootPage(props: {
                     }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}
+                    changelog={endpoint.changelog}
                     endpointId={getEndpointId({
                       method: endpoint.method,
                       pathId: endpoint.pathId,

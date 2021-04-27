@@ -11,7 +11,7 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
         change {
           category
         }
-        path
+        pathId
         method
       }
     }

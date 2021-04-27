@@ -1,5 +1,6 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 import { useEndpointsChangelog } from './useEndpointsChangelog';
+import { useEffect, useState } from 'react';
 
 export const AllEndpointsQuery = `{
     requests {
@@ -27,18 +28,22 @@ export function useEndpoints(
     variables: {},
   };
 
-  const { data, error } = useSpectacleQuery(queryInput);
+  const { data, loading, error } = useSpectacleQuery(queryInput);
 
   if (error) {
     console.error(error);
     debugger;
   }
 
-  if (data) {
-    return { endpoints: endpointQueryResultsToJson(data, endpointsChangelog) };
-  } else {
-    return { endpoints: [], loading: true };
-  }
+  const [result, setResult] = useState<IEndpoint[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      setResult(endpointQueryResultsToJson(data, endpointsChangelog));
+    }
+  }, [data, setResult, endpointsChangelog]);
+
+  return { endpoints: result, loading };
 }
 
 export function useEndpoint(
@@ -63,9 +68,11 @@ export function endpointQueryResultsToJson(
     data.requests.map((req: any) => req.absolutePathPattern)
   );
 
-  debugger;
-
   const endpoints = data.requests.map((request: any) => {
+    const hasChangelog = endpointsChangelog.find(
+      (i) => i.pathId === request.pathId && i.method === request.method
+    );
+
     return {
       pathId: request.pathId,
       method: request.method,
@@ -75,9 +82,13 @@ export function endpointQueryResultsToJson(
         .split('/')[0],
       pathParameters: [],
       changelog: {
-        added: false,
-        changed: false,
-        removed: false,
+        added: hasChangelog ? hasChangelog.change.category === 'added' : false,
+        changed: hasChangelog
+          ? hasChangelog.change.category === 'changed'
+          : false,
+        removed: hasChangelog
+          ? hasChangelog.change.category === 'removed'
+          : false,
       },
     } as IEndpoint;
   });

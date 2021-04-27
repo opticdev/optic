@@ -29,11 +29,11 @@ export function ChangelogPages(props: any) {
             const { match } = props;
             const { params } = match;
             const { batchId } = params;
-            const validBatchId = allBatchCommits.some(
+            const validBatchId = allBatchCommits.batchCommits.some(
               (i) => i.batchId === batchId
             );
 
-            if (validBatchId) {
+            if (validBatchId && !allBatchCommits.loading) {
               return (
                 <DocumentationRootPage
                   onEndpointClicked={(pathId, method) => {
@@ -44,8 +44,10 @@ export function ChangelogPages(props: any) {
                   changelogBatchId={batchId}
                 />
               );
-            } else {
+            } else if (!allBatchCommits.loading) {
               return <Redirect to={documentationPageLink.linkTo()} />;
+            } else {
+              return null;
             }
           }}
           AccessoryNavigation={ChangelogPageAccessoryNavigation}
