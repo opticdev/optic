@@ -5,7 +5,7 @@ import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
-import { Loading } from '../optic-components/navigation/Loading';
+import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
@@ -14,6 +14,24 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
 import { IOpticContext } from '@useoptic/spectacle';
 import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
+import {
+  AppConfigurationStore,
+  OpticAppConfig,
+} from '../optic-components/hooks/config/AppConfiguration';
+
+const appConfig: OpticAppConfig = {
+  featureFlags: {},
+  config: {
+    navigation: {
+      showChangelog: true,
+      showDiff: false,
+      showDocs: true,
+    },
+    documentation: {
+      allowDescriptionEditing: false,
+    },
+  },
+};
 
 export default function CloudViewer() {
   const match = useRouteMatch();
@@ -23,8 +41,8 @@ export default function CloudViewer() {
     const loadExample = async () => {
       let apiBase = process.env.REACT_APP_API_BASE;
 
-      if(!apiBase){
-        if(window.location.hostname.indexOf("useoptic.com")){
+      if (!apiBase) {
+        if (window.location.hostname.indexOf('useoptic.com')) {
           apiBase = process.env.REACT_APP_PROD_API_BASE;
         } else {
           apiBase = process.env.REACT_APP_STAGING_API_BASE;
@@ -40,12 +58,12 @@ export default function CloudViewer() {
       const responseJson = await response.json();
       let signedUrl = responseJson.read_url;
 
-      if(!signedUrl){
+      if (!signedUrl) {
         throw new Error(`No read url found: ${JSON.stringify(responseJson)}`);
       }
 
       let contentReq = await fetch(signedUrl);
-      if(!contentReq.ok){
+      if (!contentReq.ok) {
         throw new Error(`Unable to fetch spec ${specId}`);
       }
 
@@ -74,21 +92,25 @@ export default function CloudViewer() {
   }
 
   return (
-    <SpectacleStore spectacle={data}>
-      <CapturesServiceStore capturesService={data.opticContext.capturesService}>
-        <InMemoryInteractionLoaderStore samples={data.samples}>
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </InMemoryInteractionLoaderStore>
-      </CapturesServiceStore>
-    </SpectacleStore>
+    <AppConfigurationStore config={appConfig}>
+      <SpectacleStore spectacle={data}>
+        <CapturesServiceStore
+          capturesService={data.opticContext.capturesService}
+        >
+          <InMemoryInteractionLoaderStore samples={data.samples}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DiffReviewEnvironments />
+                  <DocumentationPages />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </InMemoryInteractionLoaderStore>
+        </CapturesServiceStore>
+      </SpectacleStore>
+    </AppConfigurationStore>
   );
 }
 
@@ -105,7 +127,7 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
   constructor(
     public readonly opticContext: IOpticContext,
-    public samples: any[],
+    public samples: any[]
   ) {
     this.spectaclePromise = makeSpectacle(opticContext);
   }
@@ -135,7 +157,7 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 }
 
 export function useInMemorySpectacle(
-  loadDependencies: InMemorySpectacleDependenciesLoader,
+  loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
   const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
 
@@ -149,11 +171,11 @@ export function useInMemorySpectacle(
         result.opticEngine,
         result.events,
         result.samples,
-        'example-session',
+        'example-session'
       );
       const inMemorySpectacle = new InMemorySpectacle(
         opticContext,
-        result.samples,
+        result.samples
       );
       setSpectacle(inMemorySpectacle);
     }
