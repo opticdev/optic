@@ -35,12 +35,12 @@ export const AppConfigurationStore = (props: {
 
 export function useFeatureFlags() {
   const value = useContext(AppConfigurationContext);
-  invariant(!value, 'useFeatureFlags could not find AppConfigurationContext');
+  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
   return value!.featureFlags;
 }
 
 export function useAppConfig() {
   const value = useContext(AppConfigurationContext);
-  invariant(!value, 'useFeatureFlags could not find AppConfigurationContext');
+  invariant(value, 'useFeatureFlags could not find AppConfigurationContext');
   return value!.config;
 }
