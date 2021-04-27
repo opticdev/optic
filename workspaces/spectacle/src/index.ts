@@ -255,16 +255,16 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().value.absolutePathPattern);
       },
+      absolutePathPatternWithParameterNames: (
+        parent: endpoints.RequestNodeWrapper
+      ) => {
+        return Promise.resolve(
+          parent.path().absolutePathPatternWithParameterNames
+        );
+      },
       pathComponents: (parent: endpoints.RequestNodeWrapper) => {
         let path = parent.path();
-        let parentPath = path.parentPath();
-        const components = [path.value];
-        while (parentPath !== null) {
-          components.push(parentPath.value);
-          path = parentPath;
-          parentPath = path.parentPath();
-        }
-        return Promise.resolve(components.reverse());
+        return Promise.resolve(path.components());
       },
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
