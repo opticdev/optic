@@ -264,7 +264,14 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       pathComponents: (parent: endpoints.RequestNodeWrapper) => {
         let path = parent.path();
-        return Promise.resolve(path.components());
+        let parentPath = path.parentPath();
+        const components = [path.value];
+        while (parentPath !== null) {
+          components.push(parentPath.value);
+          path = parentPath;
+          parentPath = path.parentPath();
+        }
+        return Promise.resolve(components.reverse());
       },
       method: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.value.httpMethod);
