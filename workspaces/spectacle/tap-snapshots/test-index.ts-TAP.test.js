@@ -193,6 +193,24 @@ Object {
 }
 `
 
+exports[`test/index.ts TAP spectacle changelog query add response as an array with object > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "method": "GET",
+          "path": "/items2",
+        },
+      ],
+    },
+  },
+}
+`
+
 exports[`test/index.ts TAP spectacle changelog query add response status code > must match snapshot 1`] = `
 Object {
   "data": Null Object {
@@ -663,6 +681,26 @@ Object {
         },
         "asObject": null,
         "id": "shape_Sn2bnZvvoM",
+        "jsonType": "Array",
+      },
+    ],
+  },
+}
+`
+
+exports[`test/index.ts TAP spectacle shapeChoices query add response as an array with object > must match snapshot 1`] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": Array [
+      Null Object {
+        "asArray": Null Object {
+          "changes": Null Object {
+            "added": true,
+            "changed": false,
+          },
+        },
+        "asObject": null,
+        "id": "shape_oCUwskX7xA",
         "jsonType": "Array",
       },
     ],

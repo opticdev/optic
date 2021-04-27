@@ -108,6 +108,11 @@ const specs = [
     { shapeId: 'shape_Sn2bnZvvoM' }
   ),
   fromPreviousBatchCommitId(
+    'add response as an array with object',
+    './test/specs/add-res-as-array-with-object.json',
+    { shapeId: 'shape_oCUwskX7xA' }
+  ),
+  fromPreviousBatchCommitId(
     'add request and response',
     './test/specs/add-req-and-res.json',
     { shapeId: shapeId2 }
