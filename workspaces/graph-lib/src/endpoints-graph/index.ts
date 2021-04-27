@@ -171,19 +171,6 @@ export class RequestNodeWrapper implements NodeWrapper {
     return neighbors.results[0] as PathNodeWrapper;
   }
 
-  // pathComponents(): PathNodeWrapper[] {
-  //   let pathNode = this.path();
-  //   let parentPath = pathNode.parentPath();
-  //   const components = [pathNode];
-  //   while (parentPath !== null) {
-  //     components.push(parentPath);
-  //     pathNode = parentPath;
-  //     parentPath = pathNode.parentPath();
-  //   }
-  //
-  //   return components.reverse();
-  // }
-
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,
@@ -209,19 +196,6 @@ export class ResponseNodeWrapper implements NodeWrapper {
     }
     return neighbors.results[0] as PathNodeWrapper;
   }
-
-  // pathComponents(): PathNodeWrapper[] {
-  //   let pathNode = this.path();
-  //   let parentPath = pathNode.parentPath();
-  //   const components = [pathNode];
-  //   while (parentPath !== null) {
-  //     components.push(parentPath);
-  //     pathNode = parentPath;
-  //     parentPath = pathNode.parentPath();
-  //   }
-  //
-  //   return components.reverse();
-  // }
 
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
