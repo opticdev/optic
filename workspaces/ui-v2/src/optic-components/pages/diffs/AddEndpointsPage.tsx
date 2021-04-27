@@ -12,6 +12,7 @@ import {
   Box,
   Divider,
   List,
+  ListItem,
   Switch,
   TextField,
   Typography,
@@ -27,7 +28,8 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { Loading } from '../../loaders/Loading';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
-import { EndpointRow } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
+import { DiffEndpointNameMiniContribution } from "../../diffs/DiffContributions";
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
 
@@ -163,23 +165,39 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
             {pendingEndpointsToRender.map(
               (endpoint: IPendingEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
-                    changelog={{ added: true }}
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
                     onClick={() =>
                       history.push(
                         diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
-                    fullPath={endpoint.pathPattern}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.id,
-                    })}
-                    // @nic todo make pendingendpointrow component
-                    purpose=""
-                  />
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.pathPattern}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DiffEndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.id,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                      />
+                    </div>
+                  </ListItem>
                 );
               }
             )}
@@ -197,8 +215,12 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
               </Typography>
               {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
                     onClick={() =>
                       history.push(
                         endpointPageLink.linkTo(
@@ -207,15 +229,28 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         )
                       )
                     }
-                    fullPath={endpoint.fullPath}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.pathId,
-                    })}
-                    // @nic todo make pendingendpointrow component
-                    purpose=""
-                  />
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DiffEndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.pathId,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                      />
+                    </div>
+                  </ListItem>
                 );
               })}
             </div>

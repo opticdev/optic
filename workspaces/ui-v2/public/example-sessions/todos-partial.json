@@ -637,19 +637,6 @@
       }
     },
     {
-      "ContributionAdded": {
-        "id": "path_xhUZ8irdJO.GET",
-        "key": "purpose",
-        "value": "get completed items on list",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "a72c2710-1a0d-46d2-9a3f-c6c85f03798e",
-          "clientCommandBatchId": "9b71c3b2-0c35-4bbc-87cd-0e7e1462f090",
-          "createdAt": "2020-10-20T20:52:08.312Z"
-        }
-      }
-    },
-    {
       "BatchCommitStarted": {
         "batchId": "55c5281d-a476-4acd-aa4c-b0d6be065253",
         "commitMessage": "\n\nChanges:\n- Added Request with 'application/json' Content-Type \n- Added '200' Response with 'application/json' Content-Type ",

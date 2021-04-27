@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useUndocumentedUrls } from '../hooks/diffs/useUndocumentedUrls';
 import { IUndocumentedUrl } from '../hooks/diffs/SharedDiffState';
-import { EndpointName } from '../documentation/EndpointName';
+import { EndpointName } from '../common';
 import { Button, Typography } from '@material-ui/core';
 import {
   IIgnoreRunnable,

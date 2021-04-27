@@ -8,8 +8,9 @@ import {
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { List, Typography } from '@material-ui/core';
-import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
+import { List, ListItem, Typography } from '@material-ui/core';
+import { EndpointName } from '../../common';
+import { EndpointNameMiniContribution } from '../../documentation/Contributions';
 import {
   ContributionEditingStore,
   useContributionEditing,
@@ -117,19 +118,38 @@ export function DocumentationRootPage(props: {
               </Typography>
               {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
-                    onClick={() => 
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
+                    onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    fullPath={endpoint.fullPath}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.pathId,
-                    })}
-                    purpose={endpoint.purpose}
-                  />
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <EndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.pathId,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                        initialValue={endpoint.purpose}
+                      />
+                    </div>
+                  </ListItem>
                 );
               })}
             </div>

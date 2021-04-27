@@ -22,7 +22,7 @@ import {
   useDiffForEndpointLink,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
 import AskForCommitMessage from '../../diffs/render/AskForCommitMessage';

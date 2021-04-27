@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { FC, useContext, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   newSharedDiffMachine,
@@ -54,10 +54,9 @@ type SharedDiffStoreProps = {
   diffs: any;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
   urls: IUnrecognizedUrl[];
-  children?: any;
 };
 
-export const SharedDiffStore = (props: SharedDiffStoreProps) => {
+export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,

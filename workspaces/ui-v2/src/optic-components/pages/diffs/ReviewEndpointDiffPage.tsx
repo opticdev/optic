@@ -27,7 +27,7 @@ import {
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
 import MenuIcon from '@material-ui/icons/Menu';
 import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandContext';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { useEndpoint } from '../../hooks/useEndpointsHook';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IForkableSpectacle } from '@useoptic/spectacle';

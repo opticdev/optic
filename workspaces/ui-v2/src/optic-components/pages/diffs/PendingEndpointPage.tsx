@@ -9,7 +9,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { Loader } from '../../loaders/FullPageLoader';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
