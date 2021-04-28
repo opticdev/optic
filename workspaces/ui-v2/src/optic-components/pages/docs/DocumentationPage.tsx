@@ -174,6 +174,7 @@ export function EndpointRootPage(props: any) {
   const { pathId, method } = match.params;
 
   const bodies = useEndpointBody(pathId, method);
+  console.log(endpoints)
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
