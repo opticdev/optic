@@ -30,6 +30,7 @@ export default function AskForCommitMessage(props: { hasChanges: boolean }) {
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
 
   const handleSave = () => {
+    // @nic todo
     //@todo decide if every endpoint (changes/pending) gets a batch commit id.
     const commands = context.simulatedCommands;
     debugger;

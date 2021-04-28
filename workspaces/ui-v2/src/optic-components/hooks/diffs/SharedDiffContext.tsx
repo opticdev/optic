@@ -45,7 +45,8 @@ type ISharedDiffContext = {
   reset: () => void;
   handledCount: [number, number];
   startedFinalizing: () => void;
-  setEndpointName: (id: string, command: any) => void
+  setEndpointName: (id: string, command: any) => void;
+  setPendingEndpointName: (id: string, name: string) => void;
 };
 
 type SharedDiffStoreProps = {
@@ -166,12 +167,25 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
-    setEndpointName: (id: string, command: any) => send({
-      type: 'SET_ENDPOINT_NAME', id, command
-    })
+    setEndpointName: (id: string, command: any) =>
+      send({
+        type: 'SET_ENDPOINT_NAME',
+        id,
+        command,
+      }),
+    setPendingEndpointName: (id: string, name) => {
+      const pendingEndpoint = context.pendingEndpoints.find((i) => i.id === id);
+      if (!pendingEndpoint) {
+        return console.error(`Could not find pending endpoint with id ${id}`);
+      }
+      pendingEndpoint.ref.send({ type: 'STAGED_ENDPOINT_NAME_UPDATED', name });
+      send({
+        type: 'UPDATE_PENDING_ENDPOINT_NAME',
+      });
+    },
   };
 
-  console.log(context)
+  console.log(context);
 
   return (
     <SharedDiffReactContext.Provider value={value}>

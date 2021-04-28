@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
@@ -28,11 +27,17 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { Loading } from '../../loaders/Loading';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
-import { EndpointName } from '../../common';
-import { DiffEndpointNameMiniContribution } from '../../diffs/DiffContributions';
+import {
+  EndpointName,
+  EditableTextField,
+  TextFieldVariant,
+} from '../../common';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
+import debounce from 'lodash.debounce';
+
+import { AddContribution } from '../../../lib/command-factory';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -135,6 +140,72 @@ export function DiffUrlsPage(props: any) {
   );
 }
 
+const PendingEndpointNameField: FC<{
+  endpoint: IPendingEndpoint;
+}> = ({ endpoint }) => {
+  const {
+    getPendingEndpointById,
+    setPendingEndpointName,
+  } = useSharedDiffContext();
+  const pendingEndpointFromStore = getPendingEndpointById(endpoint.id);
+  const [name, setName] = useState(
+    pendingEndpointFromStore?.ref.state.context.stagedEndpointName || ''
+  );
+  // @nic make helper here
+  const debouncedSetGlobalDiffEndpointName = useMemo(
+    () => debounce(setPendingEndpointName, 200),
+    [setPendingEndpointName]
+  );
+  const wrappedSetEndpointName = (newName: string) => {
+    setName(newName);
+    debouncedSetGlobalDiffEndpointName(endpoint.id, newName);
+  };
+
+  return (
+    <EditableTextField
+      isEditing={true}
+      setEditing={() => {}}
+      value={name}
+      setValue={wrappedSetEndpointName}
+      variant={TextFieldVariant.SMALL}
+    />
+  );
+};
+
+const ExistingEndpointNameField: FC<{
+  endpoint: IEndpoint;
+}> = ({ endpoint }) => {
+  const endpointId = getEndpointId({
+    method: endpoint.method,
+    pathId: endpoint.pathId,
+  });
+  const { setEndpointName: setGlobalDiffEndpointName } = useSharedDiffContext();
+
+  // @nic make helper here
+  const [name, setName] = useState(endpoint.purpose);
+  const debouncedSetGlobalDiffEndpointName = useMemo(
+    () => debounce(setGlobalDiffEndpointName, 200),
+    [setGlobalDiffEndpointName]
+  );
+  const wrappedSetEndpointName = (newName: string) => {
+    setName(newName);
+    debouncedSetGlobalDiffEndpointName(
+      endpointId,
+      AddContribution(endpointId, 'purpose', newName)
+    );
+  };
+
+  return (
+    <EditableTextField
+      isEditing={true}
+      setEditing={() => {}}
+      value={name}
+      setValue={wrappedSetEndpointName}
+      variant={TextFieldVariant.SMALL}
+    />
+  );
+};
+
 export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const { endpoints, loading } = useEndpoints();
 
@@ -191,14 +262,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       style={{ paddingRight: 15 }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <DiffEndpointNameMiniContribution
-                        id={getEndpointId({
-                          method: endpoint.method,
-                          pathId: endpoint.id,
-                        })}
-                        defaultText="name for this endpoint"
-                        contributionKey="purpose"
-                      />
+                      <PendingEndpointNameField endpoint={endpoint} />
                     </div>
                   </ListItem>
                 );
@@ -244,14 +308,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       style={{ paddingRight: 15 }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <DiffEndpointNameMiniContribution
-                        id={getEndpointId({
-                          method: endpoint.method,
-                          pathId: endpoint.pathId,
-                        })}
-                        defaultText="name for this endpoint"
-                        contributionKey="purpose"
-                      />
+                      <ExistingEndpointNameField endpoint={endpoint} />
                     </div>
                   </ListItem>
                 );

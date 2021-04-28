@@ -9,7 +9,7 @@ type EditableTextFieldProps = {
   value: string;
   setValue: (newValue: string) => void;
   helperText?: string;
-  defaultText: string;
+  defaultText?: string;
   variant: TextFieldVariant;
 };
 
@@ -65,7 +65,11 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
   ) : (
     <div onClick={() => setEditing(true)}>
       <Typography className={variants[variant].className}>
-        <span className={classes.defaultText}> + {defaultText}</span>
+        {
+          defaultText && (
+            <span className={classes.defaultText}> + {defaultText}</span>
+          )
+        }
       </Typography>
     </div>
   );

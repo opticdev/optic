@@ -175,7 +175,10 @@ export const newSharedDiffMachine = (
               assign({
                 pendingEndpoints: (ctx, event) => [],
                 browserDiffHashIgnoreRules: (ctx, event) => [],
-                choices: (ctx, event) => ({ approvedSuggestions: {}, existingEndpointNameContributions: {} }),
+                choices: (ctx, event) => ({
+                  approvedSuggestions: {},
+                  existingEndpointNameContributions: {},
+                }),
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
@@ -206,7 +209,7 @@ export const newSharedDiffMachine = (
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
                     ctx.choices.existingEndpointNameContributions
-                  )
+                  );
                 },
               }),
             ],
@@ -218,21 +221,34 @@ export const newSharedDiffMachine = (
                   ...ctx.choices,
                   existingEndpointNameContributions: {
                     ...ctx.choices.existingEndpointNameContributions,
-                    [event.id]: event.command
-                  }
-                })
+                    [event.id]: event.command,
+                  },
+                }),
               }),
               assign({
                 simulatedCommands: (ctx) => {
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions,
-                  )
+                    ctx.choices.existingEndpointNameContributions
+                  );
                 },
-              })
-            ]
-          }
+              }),
+            ],
+          },
+          UPDATE_PENDING_ENDPOINT_NAME: {
+            actions: [
+              assign({
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  );
+                },
+              }),
+            ],
+          },
         },
       },
     },
@@ -362,6 +378,9 @@ export type SharedDiffStateEvent =
       id: string;
       command: any;
     }
+  | {
+      type: 'UPDATE_PENDING_ENDPOINT_NAME';
+    };
 
 // The context (extended state) of the machine
 export interface SharedDiffStateContext {
@@ -378,7 +397,7 @@ export interface SharedDiffStateContext {
   };
   choices: {
     approvedSuggestions: { [key: string]: any[] };
-    existingEndpointNameContributions: {[id: string]: any };
+    existingEndpointNameContributions: { [id: string]: any };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];
