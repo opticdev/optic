@@ -1,1 +1,1 @@
-export * from './ReviewEndpointDiffPage';
+export * from './ReviewEndpointDiffPageContainer';

@@ -9,7 +9,6 @@ import {
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';

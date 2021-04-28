@@ -1,5 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
@@ -9,8 +8,6 @@ import { makeStyles } from '@material-ui/styles';
 import { AddContribution } from '../../../../lib/command-factory';
 
 import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
-import { useEndpointDiffs } from '../../../hooks/diffs/useEndpointDiffs';
-import { useShapeDiffInterpretations } from '../../../hooks/diffs/useDiffInterpretations';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
 import { Collapse, IconButton, Typography } from '@material-ui/core';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
@@ -21,8 +18,7 @@ import {
   EditableTextField,
   TextFieldVariant,
 } from '../../../common';
-import { IEndpoint, useEndpoint } from '../../../hooks/useEndpointsHook';
-import { SpectacleContext } from '../../../../spectacle-implementations/spectacle-provider';
+import { IEndpoint } from '../../../hooks/useEndpointsHook';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { useDiffReviewCapturePageLink } from '../../../navigation/Routes';
 import { getEndpointId } from '../../../utilities/endpoint-utilities';
@@ -45,45 +41,6 @@ const useRedirectForDiffCompleted = (shapeDiffs: IInterpretation[]) => {
   }, [shapeDiffs, diffReviewPage, history, isDiffHandled]);
 };
 
-export const ReviewEndpointDiffContainer: FC<
-  RouteComponentProps<{
-    method: string;
-    pathId: string;
-  }>
-> = ({ match }) => {
-  const { method, pathId } = match.params;
-
-  const spectacle = useContext(SpectacleContext)!;
-
-  // const lastBatchCommitId = useLastBatchCommitId();
-  const endpointDiffs = useEndpointDiffs(pathId, method);
-  const endpoint = useEndpoint(pathId, method);
-  const { context } = useSharedDiffContext();
-
-  const shapeDiffs = useShapeDiffInterpretations(
-    endpointDiffs.shapeDiffs,
-    context.results.trailValues
-  );
-
-  //
-  // const newBodyDiffs = useNewBodyDiffInterpretations(
-  //   endpointDiffs.newRegionDiffs,
-  // );
-
-  return !endpoint || shapeDiffs.loading ? (
-    // @nic todo add in this loading state
-    <div>TODO loading state</div>
-  ) : (
-    <ReviewEndpointDiffPage
-      endpoint={endpoint}
-      shapeDiffs={shapeDiffs.results}
-      spectacle={spectacle as IForkableSpectacle}
-      method={method}
-      pathId={pathId}
-    />
-  );
-};
-
 type ReviewEndpointDiffPageProps = {
   endpoint: IEndpoint;
   spectacle: IForkableSpectacle;
@@ -92,7 +49,7 @@ type ReviewEndpointDiffPageProps = {
   pathId: string;
 };
 
-const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
+export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   endpoint,
   spectacle,
   shapeDiffs,

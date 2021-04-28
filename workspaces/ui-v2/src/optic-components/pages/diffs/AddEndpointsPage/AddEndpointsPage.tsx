@@ -1,12 +1,12 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
-} from '../../navigation/Routes';
+} from '../../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
-import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../../diffs/DiffHeader';
+import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
+import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
   Box,
   Divider,
@@ -16,27 +16,24 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import { useUndocumentedUrls } from '../../hooks/diffs/useUndocumentedUrls';
-import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-import { AuthorIgnoreRules } from '../../diffs/AuthorIgnoreRule';
-import { useDebounce } from '../../hooks/ui/useDebounceHook';
+import { useUndocumentedUrls } from '../../../hooks/diffs/useUndocumentedUrls';
+import { UndocumentedUrl } from '../../../diffs/UndocumentedUrl';
+import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
+import { AuthorIgnoreRules } from '../../../diffs/AuthorIgnoreRule';
+import { useDebounce } from '../../../hooks/ui/useDebounceHook';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { Loading } from '../../loaders/Loading';
-import { CenteredColumn } from '../../layouts/CenteredColumn';
+import { IEndpoint, useEndpoints } from '../../../hooks/useEndpointsHook';
+import { Loading } from '../../../loaders/Loading';
+import { CenteredColumn } from '../../../layouts/CenteredColumn';
 import {
   EndpointName,
-  EditableTextField,
-  TextFieldVariant,
-} from '../../common';
-import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
-import { useChangelogStyles } from '../../changelog/ChangelogBackground';
-import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
-import { AddContribution } from '../../../lib/command-factory';
+} from '../../../common';
+import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
+import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
+
+import { ExistingEndpointNameField, PendingEndpointNameField } from './EndpointNameEditFields';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -138,61 +135,6 @@ export function DiffUrlsPage(props: any) {
     />
   );
 }
-
-const PendingEndpointNameField: FC<{
-  endpoint: IPendingEndpoint;
-}> = ({ endpoint }) => {
-  const {
-    getPendingEndpointById,
-    setPendingEndpointName,
-  } = useSharedDiffContext();
-  const pendingEndpointFromStore = getPendingEndpointById(endpoint.id);
-  const debouncedSet = useDebouncedFn(setPendingEndpointName, 200);
-
-  const { value, setValue } = useStateWithSideEffect({
-    initialValue:
-      pendingEndpointFromStore?.ref.state.context.stagedEndpointName || '',
-    sideEffect: (newName: string) => debouncedSet(endpoint.id, newName),
-  });
-
-  return (
-    <EditableTextField
-      isEditing={true}
-      setEditing={() => {}}
-      value={value}
-      setValue={setValue}
-      variant={TextFieldVariant.SMALL}
-    />
-  );
-};
-
-const ExistingEndpointNameField: FC<{
-  endpoint: IEndpoint;
-}> = ({ endpoint }) => {
-  const endpointId = getEndpointId({
-    method: endpoint.method,
-    pathId: endpoint.pathId,
-  });
-  const { setEndpointName: setGlobalDiffEndpointName } = useSharedDiffContext();
-
-  const debouncedSet = useDebouncedFn(setGlobalDiffEndpointName, 200);
-
-  const { value, setValue } = useStateWithSideEffect({
-    initialValue: endpoint.purpose,
-    sideEffect: (newName: string) =>
-      debouncedSet(endpointId, AddContribution(endpointId, 'purpose', newName)),
-  });
-
-  return (
-    <EditableTextField
-      isEditing={true}
-      setEditing={() => {}}
-      value={value}
-      setValue={setValue}
-      variant={TextFieldVariant.SMALL}
-    />
-  );
-};
 
 export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const { endpoints, loading } = useEndpoints();
