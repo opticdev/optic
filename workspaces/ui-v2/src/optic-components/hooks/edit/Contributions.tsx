@@ -100,7 +100,7 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
         const commands = pendingContributions.map((contribution) =>
           AddContribution(
             contribution.id,
-            contribution.contributionKey, // TODO figure out if this should be upper case commands
+            contribution.contributionKey,
             contribution.value
           )
         );

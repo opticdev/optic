@@ -33,6 +33,7 @@ export const newSharedDiffMachine = (
       simulatedCommands: [],
       choices: {
         approvedSuggestions: {},
+        existingEndpointNameContributions: {},
       },
       results: {
         undocumentedUrls: undocumentedUrls,
@@ -60,7 +61,8 @@ export const newSharedDiffMachine = (
                   console.log('flushing commands before saving');
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
                   );
                 },
               }),
@@ -119,7 +121,8 @@ export const newSharedDiffMachine = (
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
                   ),
               }),
             ],
@@ -138,7 +141,8 @@ export const newSharedDiffMachine = (
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
                   ),
               }),
             ],
@@ -171,14 +175,15 @@ export const newSharedDiffMachine = (
               assign({
                 pendingEndpoints: (ctx, event) => [],
                 browserDiffHashIgnoreRules: (ctx, event) => [],
-                choices: (ctx, event) => ({ approvedSuggestions: {} }),
+                choices: (ctx, event) => ({ approvedSuggestions: {}, existingEndpointNameContributions: {} }),
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
                 simulatedCommands: (ctx) =>
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
                   ),
               }),
             ],
@@ -196,14 +201,38 @@ export const newSharedDiffMachine = (
                 }),
               }),
               assign({
-                simulatedCommands: (ctx) =>
-                  AssembleCommands(
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
-                  ),
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  )
+                },
               }),
             ],
           },
+          SET_ENDPOINT_NAME: {
+            actions: [
+              assign({
+                choices: (ctx, event) => ({
+                  ...ctx.choices,
+                  existingEndpointNameContributions: {
+                    ...ctx.choices.existingEndpointNameContributions,
+                    [event.id]: event.command
+                  }
+                })
+              }),
+              assign({
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions,
+                  )
+                },
+              })
+            ]
+          }
         },
       },
     },
@@ -327,7 +356,12 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'USER_FINISHED_REVIEW';
-    };
+    }
+  | {
+      type: 'SET_ENDPOINT_NAME';
+      id: string;
+      command: any;
+    }
 
 // The context (extended state) of the machine
 export interface SharedDiffStateContext {
@@ -344,6 +378,7 @@ export interface SharedDiffStateContext {
   };
   choices: {
     approvedSuggestions: { [key: string]: any[] };
+    existingEndpointNameContributions: {[id: string]: any };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];

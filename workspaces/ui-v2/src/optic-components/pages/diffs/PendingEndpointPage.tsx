@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
-import debounce from "lodash.debounce";
+import debounce from 'lodash.debounce';
 import {
   ILearnedPendingEndpointStore,
   useLearnedPendingEndpointContext,
@@ -85,7 +85,10 @@ export function PendingEndpointPage(props: any) {
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
   // const lastBatchId = useLastBatchCommitId();
-  const debouncedChangeEndpointName = debounce(changeEndpointName, 200);
+  const debouncedChangeEndpointName = useMemo(
+    () => debounce(changeEndpointName, 200),
+    [changeEndpointName]
+  );
   const [name, setName] = useState(endpointName);
   const wrappedSetName = (newName: string) => {
     setName(newName);

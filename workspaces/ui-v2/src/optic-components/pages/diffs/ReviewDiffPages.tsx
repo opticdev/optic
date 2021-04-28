@@ -14,7 +14,7 @@ import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
+import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
@@ -77,7 +77,7 @@ export function DiffReviewPages(props: any) {
         />
         <NavigationRoute
           path={diffForEndpointLink.path}
-          Component={ReviewEndpointDiffPage}
+          Component={ReviewEndpointDiffContainer}
           AccessoryNavigation={() => <DiffAccessoryNavigation />}
         />
         <NavigationRoute

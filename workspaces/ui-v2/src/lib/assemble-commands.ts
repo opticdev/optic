@@ -2,7 +2,8 @@ import { IPendingEndpoint } from '../optic-components/hooks/diffs/SharedDiffStat
 
 export function AssembleCommands(
   approvedSuggestions: { [key: string]: any[] },
-  pendingEndpoints: IPendingEndpoint[]
+  pendingEndpoints: IPendingEndpoint[],
+  existingEndpointNameContributions: { [id: string]: string }
 ): any[] {
   const commands: any[] = [];
 
@@ -18,6 +19,10 @@ export function AssembleCommands(
       commands.push(...commandsForThisEndpoint);
     }
   });
+
+  Object.values(existingEndpointNameContributions).forEach((command) => {
+    commands.push(command);
+  })
 
   console.log(commands);
   return commands;

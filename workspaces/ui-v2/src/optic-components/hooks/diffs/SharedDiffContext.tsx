@@ -45,6 +45,7 @@ type ISharedDiffContext = {
   reset: () => void;
   handledCount: [number, number];
   startedFinalizing: () => void;
+  setEndpointName: (id: string, command: any) => void
 };
 
 type SharedDiffStoreProps = {
@@ -165,7 +166,12 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
+    setEndpointName: (id: string, command: any) => send({
+      type: 'SET_ENDPOINT_NAME', id, command
+    })
   };
+
+  console.log(context)
 
   return (
     <SharedDiffReactContext.Provider value={value}>

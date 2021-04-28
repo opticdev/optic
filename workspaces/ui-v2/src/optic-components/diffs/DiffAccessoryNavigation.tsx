@@ -23,7 +23,9 @@ export function DiffAccessoryNavigation({}: DiffAccessoryNavigationProps) {
   const [handled, total] = handledCount;
 
   const hasChanges =
-    handled > 0 || context.pendingEndpoints.filter((i) => i.staged).length > 0;
+    handled > 0 ||
+    context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
+    Object.keys(context.choices.existingEndpointNameContributions).length > 0;
 
   const numberOfUndocumented = context.results?.displayedUndocumentedUrls.filter(
     (i) => !i.hide
