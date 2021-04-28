@@ -20,7 +20,6 @@ export const ReviewEndpointDiffContainer: FC<
 
   const spectacle = useContext(SpectacleContext)!;
 
-  // const lastBatchCommitId = useLastBatchCommitId();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
   const { context } = useSharedDiffContext();
@@ -29,11 +28,6 @@ export const ReviewEndpointDiffContainer: FC<
     endpointDiffs.shapeDiffs,
     context.results.trailValues
   );
-
-  //
-  // const newBodyDiffs = useNewBodyDiffInterpretations(
-  //   endpointDiffs.newRegionDiffs,
-  // );
 
   return !endpoint || shapeDiffs.loading ? (
     // @nic todo add in this loading state

@@ -40,7 +40,7 @@ export function PathParametersViewEdit(props: PathParametersViewEditProps) {
             name={param.pathComponentName}
             shapes={[alwaysAString]}
             depth={0}
-            // TODO - implement when query params are added
+            // @nic TODO implement path params
             initialValue=""
           />
         );

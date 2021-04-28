@@ -132,7 +132,7 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
 
 // FOR EVERYTHING BELOW THIS
 // This is forked from /documentation/PathParameters as they require different contexts
-// TODO The intent here is to pull out shared presentational features and allow connections to
+// @nic TODO The intent here is to pull out shared presentational features and allow connections to
 // different contexts
 export type PathParametersViewEditProps = {
   parameters: IPathParameter[];
