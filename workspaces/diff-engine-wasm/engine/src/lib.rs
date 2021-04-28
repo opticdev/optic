@@ -9,7 +9,6 @@ use optic_diff_engine::{
   SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
 };
 use std::collections::HashMap;
-use std::iter::Map::from_iter;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
