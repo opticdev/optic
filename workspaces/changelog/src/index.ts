@@ -39,6 +39,7 @@ export async function generateEndpointChanges(
           change {
             category
           }
+          pathId
           path
           method
         }
@@ -51,6 +52,7 @@ export async function generateEndpointChanges(
           change {
             category
           }
+          pathId
           path
           method
         }
