@@ -9,7 +9,7 @@ import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, ListItem, Typography } from '@material-ui/core';
-import { EndpointName } from '../../common';
+import { EndpointName, PromptNavigateAway } from '../../common';
 import { EndpointNameMiniContribution } from '../../documentation/Contributions';
 import {
   ContributionEditingStore,
@@ -30,7 +30,6 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
-import { PromptNavigateAway } from '../../PromptNavigateAway';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';

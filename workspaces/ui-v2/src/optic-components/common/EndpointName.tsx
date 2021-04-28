@@ -3,7 +3,6 @@ import padLeft from 'pad-left';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { methodColorsDark } from '../theme';
 
-
 export type EndpointNameProps = {
   method: string;
   fullPath: string;
