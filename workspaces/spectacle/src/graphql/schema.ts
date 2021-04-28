@@ -35,6 +35,7 @@ type HttpRequest {
   id: ID
   pathComponents: [PathComponent]
   absolutePathPattern: String
+  absolutePathPatternWithParameterNames: String
   pathId: ID
   method: String
   bodies: [HttpBody]

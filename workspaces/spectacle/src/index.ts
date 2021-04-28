@@ -279,6 +279,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().value.absolutePathPattern);
       },
+      absolutePathPatternWithParameterNames: (
+        parent: endpoints.RequestNodeWrapper
+      ) => {
+        return Promise.resolve(
+          parent.path().absolutePathPatternWithParameterNames
+        );
+      },
       pathComponents: (parent: endpoints.RequestNodeWrapper) => {
         let path = parent.path();
         let parentPath = path.parentPath();
