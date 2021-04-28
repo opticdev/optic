@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import Analytics from '@segment/analytics.js-core/build/analytics';
+//@ts-ignore
 import SegmentIntegration from '@segment/analytics.js-integration-segmentio';
 import { OpticUIEvents } from '@useoptic/analytics/lib/optic-ui/OpticUIEvents';
 import invariant from 'invariant';
@@ -51,7 +52,7 @@ export function useClientAgent() {
   return userPromise;
 }
 
-export function AnalyticsContextStore({ children }: { children: ReactNode }) {
+export function AnalyticsStore({ children }: { children: ReactNode }) {
   const appConfig = useAppConfig();
   const userPromise = useClientAgent();
   const analytics = useRef(new Analytics());
