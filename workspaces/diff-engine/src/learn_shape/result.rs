@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug, Default)]
 pub struct TrailObservationsResult {
-  values_by_trail: HashMap<JsonTrail, TrailValues>,
+  pub values_by_trail: HashMap<JsonTrail, TrailValues>,
 }
 
 impl TrailObservationsResult {

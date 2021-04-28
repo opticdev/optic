@@ -2,15 +2,16 @@
 
 use chrono::Utc;
 use nanoid::nanoid;
-use uuid::Uuid;
-use wasm_bindgen::prelude::*;
-
 use optic_diff_engine::{
   analyze_undocumented_bodies, Aggregate, Body, BodyAnalysisResult, CommandContext,
-  EndpointQueries, HttpInteraction, InteractionDiffResult, LearnedShapeDiffAffordancesProjection,
-  LearnedUndocumentedBodiesProjection, SpecCommand, SpecEvent, SpecIdGenerator, SpecProjection,
-  TaggedInput,
+  EndpointQueries, HttpInteraction, InteractionDiffResult, JsonTrail,
+  LearnedShapeDiffAffordancesProjection, LearnedUndocumentedBodiesProjection, SpecCommand,
+  SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
 };
+use std::collections::HashMap;
+use std::iter::Map::from_iter;
+use uuid::Uuid;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(start)]
 pub fn init() {
@@ -89,6 +90,27 @@ pub fn try_apply_commands(
 
   serde_json::to_string(&new_events)
     .map_err(|err| JsValue::from(format!("new events could not be serialized: {:?}", err)))
+}
+
+#[wasm_bindgen]
+pub fn affordances_to_commands(
+  json_affordances_json: String,
+  json_trail_json: String,
+) -> Result<String, JsValue> {
+  let values_by_trail_vec: Vec<TrailValues> = serde_json::from_str(&json_affordances_json).unwrap();
+  let json_trail: JsonTrail = serde_json::from_str(&json_trail_json).unwrap();
+  let values_by_trail_map: HashMap<_, _> = values_by_trail_vec
+    .into_iter()
+    .map(|item| (item.trail.clone(), item))
+    .collect();
+  let trail_observation_results: TrailObservationsResult = TrailObservationsResult {
+    values_by_trail: values_by_trail_map,
+  };
+  let mut id_generator = SpecIdGenerator::default();
+  let (root_shape_id_option, commands_iter) = trail_observation_results.into_commands(id_generator);
+  let result = (root_shape_id_option.unwrap(), commands_iter.collect());
+  serde_json::to_string(&result)
+    .map_err(|err| JsValue::from(format!("new commands could not be serialized: {:?}", err)))
 }
 
 #[wasm_bindgen]
