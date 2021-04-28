@@ -11,9 +11,7 @@ import {
 } from '../navigation/Routes';
 import AskForCommitMessage from './render/AskForCommitMessage';
 
-type DiffAccessoryNavigationProps = {};
-
-export function DiffAccessoryNavigation({}: DiffAccessoryNavigationProps) {
+export function DiffAccessoryNavigation() {
   const classes = useStyles();
 
   const { context, handledCount } = useSharedDiffContext();

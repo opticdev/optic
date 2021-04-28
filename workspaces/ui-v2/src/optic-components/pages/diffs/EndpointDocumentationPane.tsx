@@ -12,7 +12,6 @@ import { Loading } from '../../loaders/Loading';
 import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
-import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
 
 import { IPathParameter } from '../../hooks/useEndpointsHook';
 import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';

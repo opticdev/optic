@@ -6,7 +6,6 @@ import {
   useLearnedPendingEndpointContext,
 } from '../../hooks/diffs/LearnedPendingEndpointContext';
 import { Redirect, useHistory } from 'react-router-dom';
-import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
 import { EndpointName } from '../../common';

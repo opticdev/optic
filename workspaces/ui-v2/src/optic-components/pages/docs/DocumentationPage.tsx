@@ -32,7 +32,6 @@ import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
-import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 
 export function DocumentationPages(props: any) {
