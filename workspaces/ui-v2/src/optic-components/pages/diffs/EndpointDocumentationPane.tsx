@@ -169,7 +169,6 @@ export function PathParametersViewEdit(props: PathParametersViewEditProps) {
             name={param.pathComponentName}
             shapes={[alwaysAString]}
             depth={0}
-            // @nic todo
             initialValue=""
           />
         );

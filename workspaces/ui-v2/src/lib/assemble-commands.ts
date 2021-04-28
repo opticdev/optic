@@ -22,8 +22,7 @@ export function AssembleCommands(
 
   Object.values(existingEndpointNameContributions).forEach((command) => {
     commands.push(command);
-  })
+  });
 
-  console.log(commands);
   return commands;
 }

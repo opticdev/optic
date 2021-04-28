@@ -185,8 +185,6 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     },
   };
 
-  console.log(context);
-
   return (
     <SharedDiffReactContext.Provider value={value}>
       {props.children}
