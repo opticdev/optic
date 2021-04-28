@@ -64,29 +64,27 @@ export function DiffReviewPages(props: any) {
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
     >
-      <ContributionEditingStore initialIsEditingState={true}>
-        <NavigationRoute
-          path={diffReviewCapturePageLink.path}
-          Component={() => <CapturePage showDiff={true} />}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffUndocumentedUrlsPageLink.path}
-          Component={DiffUrlsPage}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffForEndpointLink.path}
-          Component={ReviewEndpointDiffContainer}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffReviewPagePendingEndpoint.path}
-          Component={PendingEndpointPageSession}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <Redirect to={diffReviewCapturePageLink.linkTo()} />
-      </ContributionEditingStore>
+      <NavigationRoute
+        path={diffReviewCapturePageLink.path}
+        Component={() => <CapturePage showDiff={true} />}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffUndocumentedUrlsPageLink.path}
+        Component={DiffUrlsPage}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffForEndpointLink.path}
+        Component={ReviewEndpointDiffContainer}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffReviewPagePendingEndpoint.path}
+        Component={PendingEndpointPageSession}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <Redirect to={diffReviewCapturePageLink.linkTo()} />
     </SharedDiffStore>
   );
 }
