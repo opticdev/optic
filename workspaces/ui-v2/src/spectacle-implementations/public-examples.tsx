@@ -25,6 +25,10 @@ import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
 const appConfig: OpticAppConfig = {
   featureFlags: {},
   config: {
+    analytics: {
+      enabled: true,
+      segmentToken: process.env.REACT_APP_SEGMENT_TOKEN as string,
+    },
     navigation: {
       showChangelog: true,
       showDiff: true,

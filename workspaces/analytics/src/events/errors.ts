@@ -10,9 +10,7 @@ const RequirementForDiffsToHaveASuggestionFailedSchema = Joi.object({
 type RequirementForDiffsToHaveASuggestionFailedProperties = Joi.extractType<
   typeof RequirementForDiffsToHaveASuggestionFailedSchema
 >;
-export const RequirementForDiffsToHaveASuggestionFailed = DescribeEvent<
-  RequirementForDiffsToHaveASuggestionFailedProperties
->(
+export const RequirementForDiffsToHaveASuggestionFailed = DescribeEvent<RequirementForDiffsToHaveASuggestionFailedProperties>(
   Events.RequirementForDiffsToHaveASuggestionFailed,
   RequirementForDiffsToHaveASuggestionFailedSchema,
   (props) => `Suggestions should never be empty for diff: ${props.diff}`
@@ -26,9 +24,7 @@ const JavascriptErrorDetectedInFrontendSchema = Joi.object({
 type JavascriptErrorDetectedInFrontendProperties = Joi.extractType<
   typeof JavascriptErrorDetectedInFrontendSchema
 >;
-export const JavascriptErrorDetectedInFrontend = DescribeEvent<
-  JavascriptErrorDetectedInFrontendProperties
->(
+export const JavascriptErrorDetectedInFrontend = DescribeEvent<JavascriptErrorDetectedInFrontendProperties>(
   Events.JavascriptErrorDetectedInFrontend,
   JavascriptErrorDetectedInFrontendSchema,
   (props) => `Error on Frontend: ${props.message}`

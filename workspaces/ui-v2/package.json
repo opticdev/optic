@@ -25,6 +25,18 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "^4.11.3",
+<<<<<<< HEAD
+=======
+    "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
+    "@segment/analytics.js-core": "^4.1.11",
+    "@svgr/webpack": "5.5.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "@useoptic/analytics": "10.0.1",
+>>>>>>> 6694e01fe (analytics progress)
     "@useoptic/cli-config": "10.0.1",
     "@useoptic/cli-shared": "10.0.1",
     "@useoptic/diff-engine-wasm": "10.0.1",

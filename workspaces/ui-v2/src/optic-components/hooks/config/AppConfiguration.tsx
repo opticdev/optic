@@ -8,6 +8,10 @@ interface IAppConfigurations {
     showChangelog: boolean;
     showDiff: boolean;
   };
+  analytics: {
+    enabled: boolean;
+    segmentToken: string;
+  };
   documentation: {
     allowDescriptionEditing: boolean;
   };
