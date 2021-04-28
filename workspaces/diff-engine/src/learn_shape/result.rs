@@ -43,7 +43,11 @@ impl TrailObservationsResult {
   pub fn into_commands(
     mut self,
     id_generator: &mut impl SpecIdGenerator,
-  ) -> (Option<String>, impl Iterator<Item = SpecCommand>) {
+  ) -> (
+    Option<String>,
+    impl Iterator<Item = SpecCommand>,
+    Option<String>,
+  ) {
     let sorted_trails = {
       let mut trails = self
         .values_by_trail
@@ -56,12 +60,18 @@ impl TrailObservationsResult {
 
     let mut shape_prototypes_by_trail = HashMap::new();
     let mut shape_prototypes = Vec::with_capacity(sorted_trails.len());
+    let mut new_shape_id: Option<String> = None;
 
     for json_trail in sorted_trails.into_iter().rev() {
       let trail_values = self.values_by_trail.remove(&json_trail).unwrap();
 
       let shape_prototype =
         trail_values.into_shape_prototype(id_generator, &shape_prototypes_by_trail);
+
+      // collect the id of the first shape prototype we create
+      if new_shape_id.is_none() {
+        new_shape_id = Some(shape_prototype.id.clone());
+      }
 
       shape_prototypes_by_trail.insert(json_trail, shape_prototype.clone());
       shape_prototypes.push(shape_prototype);
@@ -74,7 +84,7 @@ impl TrailObservationsResult {
     let commands =
       shape_prototypes_to_commands(shape_prototypes).map(|command| SpecCommand::from(command));
 
-    (root_shape_id, commands)
+    (root_shape_id, commands, new_shape_id)
   }
 }
 
@@ -522,6 +532,7 @@ mod test {
       collect_commands(string_observations.into_commands(&mut test_id_generator));
     assert!(string_results.0.is_some());
     assert_eq!(string_results.1.len(), 1);
+    assert!(string_results.2.is_some());
     spec_projection
       .execute((&string_results.1[0]).clone())
       .expect("generated command should be valid");
@@ -534,6 +545,7 @@ mod test {
       collect_commands(number_observations.into_commands(&mut test_id_generator));
     assert!(number_results.0.is_some());
     assert_eq!(number_results.1.len(), 1);
+    assert!(number_results.2.is_some());
     spec_projection
       .execute((&number_results.1[0]).clone())
       .expect("generated command should be valid");
@@ -546,6 +558,7 @@ mod test {
       collect_commands(boolean_observations.into_commands(&mut test_id_generator));
     assert!(boolean_results.0.is_some());
     assert_eq!(boolean_results.1.len(), 1);
+    assert!(boolean_results.2.is_some());
     spec_projection
       .execute((&boolean_results.1[0]).clone())
       .expect("generated command should be valid");
@@ -570,6 +583,7 @@ mod test {
     let primitive_array_results =
       collect_commands(primitive_array_observations.into_commands(&mut test_id_generator));
     assert!(primitive_array_results.0.is_some());
+    assert!(primitive_array_results.2.is_some());
     assert_valid_commands(primitive_array_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_array_bodies__primitive_array_results",
@@ -579,6 +593,7 @@ mod test {
     let empty_array_results =
       collect_commands(empty_array_observations.into_commands(&mut test_id_generator));
     assert!(empty_array_results.0.is_some());
+    assert!(empty_array_results.2.is_some());
     assert_valid_commands(empty_array_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_array_bodies__empty_array_results",
@@ -619,6 +634,7 @@ mod test {
     let primitive_object_results =
       collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
     assert!(primitive_object_results.0.is_some());
+    assert!(primitive_object_results.2.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__primitive_object_results",
@@ -628,6 +644,7 @@ mod test {
     let empty_object_results =
       collect_commands(empty_object_observations.into_commands(&mut test_id_generator));
     assert!(empty_object_results.0.is_some());
+    assert!(empty_object_results.2.is_some());
     assert_valid_commands(empty_object_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__empty_object_results",
@@ -637,6 +654,7 @@ mod test {
     let nested_object_results =
       collect_commands(nested_object_observations.into_commands(&mut test_id_generator));
     assert!(nested_object_results.0.is_some());
+    assert!(nested_object_results.2.is_some());
     assert_valid_commands(nested_object_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_bodies__nested_object_results",
@@ -683,6 +701,7 @@ mod test {
     let primitive_object_results =
       collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
     assert!(primitive_object_results.0.is_some());
+    assert!(primitive_object_results.2.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_with_optional_fields__primitive_object_results",
@@ -692,6 +711,7 @@ mod test {
     let nested_optional_results =
       collect_commands(nested_optional_observations.into_commands(&mut test_id_generator));
     assert!(nested_optional_results.0.is_some());
+    assert!(nested_optional_results.2.is_some());
     assert_valid_commands(nested_optional_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_object_with_optional_fields__nested_optional_results",
@@ -745,6 +765,7 @@ mod test {
     let nullable_primitive_results =
       collect_commands(nullable_primitive_observations.into_commands(&mut test_id_generator));
     assert!(nullable_primitive_results.0.is_some());
+    assert!(nullable_primitive_results.0.is_some());
     assert_valid_commands(nullable_primitive_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_primitive_results",
@@ -753,6 +774,7 @@ mod test {
 
     let nullable_object_field_results =
       collect_commands(nullable_object_field_observations.into_commands(&mut test_id_generator));
+    assert!(nullable_object_field_results.0.is_some());
     assert!(nullable_object_field_results.0.is_some());
     assert_valid_commands(nullable_object_field_results.1.clone());
     assert_debug_snapshot!(
@@ -763,6 +785,7 @@ mod test {
     let nullable_array_item_results =
       collect_commands(nullable_array_item_observations.into_commands(&mut test_id_generator));
     assert!(nullable_array_item_results.0.is_some());
+    assert!(nullable_array_item_results.0.is_some());
     assert_valid_commands(nullable_array_item_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_array_item_results",
@@ -771,6 +794,7 @@ mod test {
 
     let nullable_one_off_results =
       collect_commands(nullable_one_off_observations.into_commands(&mut test_id_generator));
+    assert!(nullable_one_off_results.0.is_some());
     assert!(nullable_one_off_results.0.is_some());
     assert_valid_commands(nullable_one_off_results.1.clone());
     assert_debug_snapshot!(
@@ -782,6 +806,7 @@ mod test {
       collect_commands(only_null_observations.into_commands(&mut test_id_generator));
     assert!(only_null_results.0.is_some());
     assert_valid_commands(only_null_results.1.clone());
+    assert!(only_null_results.0.is_some());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__only_null_results",
       &only_null_results
@@ -819,6 +844,7 @@ mod test {
     let primitive_results =
       collect_commands(primitive_observations.into_commands(&mut test_id_generator));
     assert!(primitive_results.0.is_some());
+    assert!(primitive_results.0.is_some());
     assert_valid_commands(primitive_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_one_off_polymorphic_bodies__primitive_results",
@@ -828,6 +854,7 @@ mod test {
     let collections_results =
       collect_commands(collections_observations.into_commands(&mut test_id_generator));
     assert!(collections_results.0.is_some());
+    assert!(collections_results.0.is_some());
     assert_valid_commands(collections_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_one_off_polymorphic_bodies__collections_results",
@@ -836,9 +863,13 @@ mod test {
   }
 
   fn collect_commands(
-    (root_shape_id, commands): (Option<String>, impl Iterator<Item = SpecCommand>),
-  ) -> (Option<String>, Vec<SpecCommand>) {
-    (root_shape_id, commands.collect::<Vec<_>>())
+    (root_shape_id, commands, new_shape_id): (
+      Option<String>,
+      impl Iterator<Item = SpecCommand>,
+      Option<String>,
+    ),
+  ) -> (Option<String>, Vec<SpecCommand>, Option<String>) {
+    (root_shape_id, commands.collect::<Vec<_>>(), new_shape_id)
   }
 
   fn assert_valid_commands(commands: impl IntoIterator<Item = SpecCommand>) {
