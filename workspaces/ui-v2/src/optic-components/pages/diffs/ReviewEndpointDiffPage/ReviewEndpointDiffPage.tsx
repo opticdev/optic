@@ -1,8 +1,7 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import debounce from 'lodash.debounce';
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import { DiffCard } from '../../../diffs/render/DiffCard';
@@ -29,6 +28,7 @@ import { useDiffReviewCapturePageLink } from '../../../navigation/Routes';
 import { getEndpointId } from '../../../utilities/endpoint-utilities';
 import { DiffLinks } from './DiffLinks';
 import { IInterpretation } from '../../../../lib/Interfaces';
+import { useDebouncedFn, useStateWithSideEffect } from '../../../hooks/util';
 
 const useRedirectForDiffCompleted = (shapeDiffs: IInterpretation[]) => {
   const history = useHistory();
@@ -105,18 +105,18 @@ const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     setEndpointName: setGlobalDiffEndpointName,
   } = useSharedDiffContext();
 
-  const [endpointName, setEndpointName] = useState(endpoint.purpose);
-  const debouncedSetGlobalDiffEndpointName = useMemo(
-    () => debounce(setGlobalDiffEndpointName, 200),
-    [setGlobalDiffEndpointName]
-  );
-  const wrappedSetEndpointName = (newName: string) => {
-    setEndpointName(newName);
-    debouncedSetGlobalDiffEndpointName(
-      endpointId,
-      AddContribution(endpointId, 'purpose', newName)
-    );
-  };
+  const debouncedSetName = useDebouncedFn(setGlobalDiffEndpointName, 200);
+  const {
+    value: endpointName,
+    setValue: setEndpointName,
+  } = useStateWithSideEffect({
+    initialValue: endpoint.purpose,
+    sideEffect: (newName: string) =>
+      debouncedSetName(
+        endpointId,
+        AddContribution(endpointId, 'purpose', newName)
+      ),
+  });
   const endpointId = getEndpointId({ method, pathId });
 
   const filteredShapeDiffs = shapeDiffs.filter((i: any) => {
@@ -158,7 +158,7 @@ const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
                   isEditing={true}
                   setEditing={() => {}}
                   value={endpointName}
-                  setValue={wrappedSetEndpointName}
+                  setValue={setEndpointName}
                   helperText="Help consumers by naming this endpoint"
                   defaultText="What does this endpoint do?"
                   variant={TextFieldVariant.REGULAR}

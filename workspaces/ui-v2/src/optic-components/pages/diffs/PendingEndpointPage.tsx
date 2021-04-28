@@ -1,7 +1,6 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
-import debounce from 'lodash.debounce';
 import {
   ILearnedPendingEndpointStore,
   useLearnedPendingEndpointContext,
@@ -24,6 +23,7 @@ import { IForkableSpectacle } from '@useoptic/spectacle';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
+import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
@@ -85,15 +85,11 @@ export function PendingEndpointPage(props: any) {
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
   // const lastBatchId = useLastBatchCommitId();
-  const debouncedChangeEndpointName = useMemo(
-    () => debounce(changeEndpointName, 200),
-    [changeEndpointName]
-  );
-  const [name, setName] = useState(endpointName);
-  const wrappedSetName = (newName: string) => {
-    setName(newName);
-    debouncedChangeEndpointName(newName);
-  };
+  const debouncedSetName = useDebouncedFn(changeEndpointName, 200);
+  const { value: name, setValue: setName } = useStateWithSideEffect({
+    initialValue: endpointName,
+    sideEffect: debouncedSetName,
+  });
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
@@ -131,7 +127,7 @@ export function PendingEndpointPage(props: any) {
                 autoFocus
                 value={name}
                 onChange={(e: any) => {
-                  wrappedSetName(e.target.value);
+                  setName(e.target.value);
                 }}
               />
 

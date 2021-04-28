@@ -35,8 +35,7 @@ import {
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
-import debounce from 'lodash.debounce';
-
+import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 import { AddContribution } from '../../../lib/command-factory';
 
 export function DiffUrlsPage(props: any) {
@@ -148,25 +147,20 @@ const PendingEndpointNameField: FC<{
     setPendingEndpointName,
   } = useSharedDiffContext();
   const pendingEndpointFromStore = getPendingEndpointById(endpoint.id);
-  const [name, setName] = useState(
-    pendingEndpointFromStore?.ref.state.context.stagedEndpointName || ''
-  );
-  // @nic make helper here
-  const debouncedSetGlobalDiffEndpointName = useMemo(
-    () => debounce(setPendingEndpointName, 200),
-    [setPendingEndpointName]
-  );
-  const wrappedSetEndpointName = (newName: string) => {
-    setName(newName);
-    debouncedSetGlobalDiffEndpointName(endpoint.id, newName);
-  };
+  const debouncedSet = useDebouncedFn(setPendingEndpointName, 200);
+
+  const { value, setValue } = useStateWithSideEffect({
+    initialValue:
+      pendingEndpointFromStore?.ref.state.context.stagedEndpointName || '',
+    sideEffect: (newName: string) => debouncedSet(endpoint.id, newName),
+  });
 
   return (
     <EditableTextField
       isEditing={true}
       setEditing={() => {}}
-      value={name}
-      setValue={wrappedSetEndpointName}
+      value={value}
+      setValue={setValue}
       variant={TextFieldVariant.SMALL}
     />
   );
@@ -181,26 +175,20 @@ const ExistingEndpointNameField: FC<{
   });
   const { setEndpointName: setGlobalDiffEndpointName } = useSharedDiffContext();
 
-  // @nic make helper here
-  const [name, setName] = useState(endpoint.purpose);
-  const debouncedSetGlobalDiffEndpointName = useMemo(
-    () => debounce(setGlobalDiffEndpointName, 200),
-    [setGlobalDiffEndpointName]
-  );
-  const wrappedSetEndpointName = (newName: string) => {
-    setName(newName);
-    debouncedSetGlobalDiffEndpointName(
-      endpointId,
-      AddContribution(endpointId, 'purpose', newName)
-    );
-  };
+  const debouncedSet = useDebouncedFn(setGlobalDiffEndpointName, 200);
+
+  const { value, setValue } = useStateWithSideEffect({
+    initialValue: endpoint.purpose,
+    sideEffect: (newName: string) =>
+      debouncedSet(endpointId, AddContribution(endpointId, 'purpose', newName)),
+  });
 
   return (
     <EditableTextField
       isEditing={true}
       setEditing={() => {}}
-      value={name}
-      setValue={wrappedSetEndpointName}
+      value={value}
+      setValue={setValue}
       variant={TextFieldVariant.SMALL}
     />
   );
