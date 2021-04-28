@@ -32,6 +32,8 @@ import { useEndpoint } from '../../hooks/useEndpointsHook';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { useDiffReviewCapturePageLink } from '../../navigation/Routes';
+import { DiffEndpointNameContribution } from '../../diffs/DiffContributions';
+import { getEndpointId } from '../../utilities/endpoint-utilities';
 
 export function ReviewEndpointDiffPage(props: any) {
   const { match } = props;
@@ -82,6 +84,7 @@ export function ReviewEndpointDiffPage(props: any) {
   // If shapeDiffs.length is 0, the allDiffsHandled view will be rendered
   const renderedDiff = shapeDiffs.results[currentIndex];
   const allDiffsHandled = filteredShapeDiffs.length === 0;
+  const endpointId = getEndpointId({ method, pathId });
 
   if (allDiffsHandled) {
     return (
@@ -111,7 +114,18 @@ export function ReviewEndpointDiffPage(props: any) {
             spectacle={spectacle as IForkableSpectacle}
             previewCommands={previewCommands}
           >
-            <EndpointDocumentationPane method={method} pathId={pathId} />
+            <EndpointDocumentationPane
+              method={method}
+              pathId={pathId}
+              // @nic TODO implement context handling here
+              renderHeader={() => (
+                <DiffEndpointNameContribution
+                  id={endpointId}
+                  contributionKey="purpose"
+                  defaultText="What does this endpoint do?"
+                />
+              )}
+            />
           </SimulatedCommandStore>
         }
       />
@@ -206,6 +220,14 @@ export function ReviewEndpointDiffPage(props: any) {
             highlightedLocation={renderedDiff?.diffDescription?.location}
             method={method}
             pathId={pathId}
+            // @nic TODO implement context handling here
+            renderHeader={() => (
+              <DiffEndpointNameContribution
+                id={endpointId}
+                contributionKey="purpose"
+                defaultText="What does this endpoint do?"
+              />
+            )}
           />
         </SimulatedCommandStore>
       }

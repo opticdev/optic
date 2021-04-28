@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
+import debounce from "lodash.debounce";
 import {
   ILearnedPendingEndpointStore,
   useLearnedPendingEndpointContext,
@@ -22,7 +23,6 @@ import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandCont
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
-import { useDebounce } from '../../hooks/ui/useDebounceHook';
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 
 export function PendingEndpointPageSession(props: any) {
@@ -85,15 +85,12 @@ export function PendingEndpointPage(props: any) {
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
   // const lastBatchId = useLastBatchCommitId();
-
+  const debouncedChangeEndpointName = debounce(changeEndpointName, 200);
   const [name, setName] = useState(endpointName);
-  const debouncedName = useDebounce(name, 1000);
-  useEffect(() => {
-    if (typeof debouncedName !== 'undefined') {
-      changeEndpointName(debouncedName);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedName]);
+  const wrappedSetName = (newName: string) => {
+    setName(newName);
+    debouncedChangeEndpointName(newName);
+  };
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
@@ -131,7 +128,7 @@ export function PendingEndpointPage(props: any) {
                 autoFocus
                 value={name}
                 onChange={(e: any) => {
-                  setName(e.target.value);
+                  wrappedSetName(e.target.value);
                 }}
               />
 
@@ -217,6 +214,11 @@ export function PendingEndpointPage(props: any) {
             // lastBatchCommit={lastBatchId}
             method={stagedCommandsIds.method}
             pathId={stagedCommandsIds.pathId}
+            renderHeader={() => (
+              <Typography className={classes.nameDisplay}>
+                {name === '' ? 'Unnamed Endpoint' : name}
+              </Typography>
+            )}
           />
         </SimulatedCommandStore>
       }
@@ -280,5 +282,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
+  },
+  nameDisplay: {
+    fontSize: '1.25rem',
+    fontFamily: 'Ubuntu, Inter',
+    fontWeight: 500,
+    lineHeight: 1.6,
   },
 }));

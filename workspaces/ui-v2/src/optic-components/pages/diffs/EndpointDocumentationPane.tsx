@@ -1,33 +1,35 @@
-import * as React from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { FullWidth } from '../../layouts/FullWidth';
-import { EndpointNameContribution } from '../../documentation/Contributions';
 import { PathParametersViewEdit } from '../../documentation/PathParameters';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
-import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
 import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
 
-export function EndpointDocumentationPane({
+type EndpointDocumentationPaneProps = {
+  method: string;
+  pathId: string;
+  lastBatchCommit?: string;
+  highlightBodyChanges?: boolean;
+  highlightedLocation?: IParsedLocation;
+  renderHeader: () => ReactNode;
+};
+
+export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   method,
   pathId,
   lastBatchCommit,
   highlightedLocation,
   highlightBodyChanges,
-}: {
-  method: string;
-  pathId: string;
-  lastBatchCommit?: string;
-  highlightBodyChanges?: boolean;
-  highlightedLocation?: IParsedLocation | undefined;
-}) {
+  renderHeader,
+}) => {
   const { endpoints, loading } = useEndpoints();
   // const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
@@ -43,18 +45,10 @@ export function EndpointDocumentationPane({
     return <>no endpoint here</>;
   }
 
-  const endpointId = getEndpointId({ method, pathId });
-
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
       {/*<pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>*/}
-      <EndpointNameContribution
-        id={endpointId}
-        contributionKey="purpose"
-        defaultText="What does this endpoint do?"
-        // @nic todo
-        initialValue=""
-      />
+      {renderHeader()}
 
       <div style={{ height: 20 }} />
 
@@ -130,4 +124,4 @@ export function EndpointDocumentationPane({
       })}
     </FullWidth>
   );
-}
+};
