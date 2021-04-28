@@ -4,7 +4,7 @@ use crate::shapes::JsonTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::state::SpecIdGenerator;
 use crate::BodyDescriptor;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug, Default)]
@@ -242,7 +242,7 @@ impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
 
 pub type FieldSet = HashSet<String>;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TrailValues {
   pub trail: JsonTrail,

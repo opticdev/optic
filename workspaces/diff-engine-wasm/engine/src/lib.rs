@@ -9,7 +9,6 @@ use optic_diff_engine::{
   SpecEvent, SpecIdGenerator, SpecProjection, TaggedInput, TrailObservationsResult, TrailValues,
 };
 use std::collections::HashMap;
-use std::iter::Map::from_iter;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -106,9 +105,10 @@ pub fn affordances_to_commands(
   let trail_observation_results: TrailObservationsResult = TrailObservationsResult {
     values_by_trail: values_by_trail_map,
   };
-  let mut id_generator = SpecIdGenerator::default();
-  let (root_shape_id_option, commands_iter) = trail_observation_results.into_commands(id_generator);
-  let result = (root_shape_id_option.unwrap(), commands_iter.collect());
+  let mut id_generator = IdGenerator::default();
+  let (root_shape_id_option, commands_iter) =
+    trail_observation_results.into_commands(&mut id_generator);
+  let result: (String, Vec<SpecCommand>) = (root_shape_id_option.unwrap(), commands_iter.collect());
   serde_json::to_string(&result)
     .map_err(|err| JsValue::from(format!("new commands could not be serialized: {:?}", err)))
 }
