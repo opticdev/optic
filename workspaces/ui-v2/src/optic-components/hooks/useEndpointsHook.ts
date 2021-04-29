@@ -1,12 +1,13 @@
+import { useMemo } from 'react';
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 import { useEndpointsChangelog } from './useEndpointsChangelog';
-import { useEffect, useState } from 'react';
 
 export const AllEndpointsQuery = `{
     requests {
       id
       pathId
       absolutePathPattern
+      absolutePathPatternWithParameterNames
       pathComponents {
         id
         name
@@ -36,13 +37,11 @@ export function useEndpoints(
     debugger;
   }
 
-  const [result, setResult] = useState<IEndpoint[]>([]);
-
-  useEffect(() => {
-    if (data) {
-      setResult(endpointQueryResultsToJson(data, endpointsChangelog));
-    }
-  }, [data, setResult, endpointsChangelog]);
+  const result = useMemo(
+    () => (data ? endpointQueryResultsToJson(data, endpointsChangelog) : []),
+    [data, endpointsChangelog]
+  );
+  console.log(result);
 
   return { endpoints: result, loading };
 }
@@ -77,11 +76,11 @@ export function endpointQueryResultsToJson(
     return {
       pathId: request.pathId,
       method: request.method,
-      fullPath: request.absolutePathPattern,
+      fullPath: request.absolutePathPatternWithParameterNames,
       group: request.absolutePathPattern
         .substring(commonStart.length)
         .split('/')[0],
-      pathParameters: [],
+      pathParameters: request.pathComponents,
       description: request.pathContributions.description || '',
       purpose: request.pathContributions.purpose || '',
       changelog: {
