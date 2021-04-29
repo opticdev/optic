@@ -15,7 +15,7 @@ import {
   ContributionEditingStore,
   useContributionEditing,
 } from '../../hooks/edit/Contributions';
-import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
+import { EditContributionsButton } from './EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
@@ -132,7 +132,9 @@ export function DocumentationRootPage(props: {
                     onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    className={endpoint.changelog?.added ? changelogStyles.added : ""}
+                    className={
+                      endpoint.changelog?.added ? changelogStyles.added : ''
+                    }
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName

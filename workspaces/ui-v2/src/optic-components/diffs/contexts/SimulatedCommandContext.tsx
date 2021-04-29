@@ -28,13 +28,14 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
       await simulated.mutate({
         query: `
 mutation X($commands: [JSON]) {
-  applyCommands(commands: $commands) {
+  applyCommands(commands: $commands, commitMessage: $commitMessage) {
     batchCommitId
   }
 }
         `,
         variables: {
           commands: props.previewCommands,
+          commitMessage: '',
         },
       });
       //@ts-ignore

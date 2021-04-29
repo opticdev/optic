@@ -8,7 +8,7 @@ export const ContributionEditContext = React.createContext({});
 
 type ContributionEditContextValue = {
   isEditing: boolean;
-  save: () => void;
+  save: (commitMessage: string) => void;
   pendingCount: number;
   setEditing: (isEditing: boolean) => void;
   stagePendingContribution: (
@@ -93,7 +93,7 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
 
   const value: ContributionEditContextValue = {
     isEditing,
-    save: async () => {
+    save: async (commitMessage: string) => {
       if (pendingContributions.length > 0) {
         const commands = pendingContributions.map((contribution) =>
           AddContribution(
@@ -106,13 +106,14 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
         await spectacleMutator({
           query: `
           mutation X($commands: [JSON]) {
-            applyCommands(commands: $commands) {
+            applyCommands(commands: $commands, commitMessage: $commitMessage) {
               batchCommitId
             }
           }
           `,
           variables: {
             commands,
+            commitMessage,
           },
         });
 
