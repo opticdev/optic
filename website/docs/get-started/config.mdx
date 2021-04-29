@@ -32,9 +32,11 @@ From your API project, run:
 ```
 api init
 ```
-> You can use the guided setup flow that `api init` opens, or follow along below.
+This will start a guided setup flow. After a few brief questions about your API, the Optic dashboard will open in your browser on a setup page. From here, the dashboard will guide you through common integrations for your project:
 
-Task Aliases are configured in the `optic.yml` file:
+![API Init dashboard helps integrate your project with Optic](../../static/img/tutorial.png)
+
+The task aliases created in this process are stored in `optic.yml`. For example, a basic Node project might look like this:
 ```yaml
 name: "My API"
 tasks:
