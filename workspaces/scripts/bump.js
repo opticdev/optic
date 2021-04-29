@@ -14,7 +14,6 @@ const semverIncrements = [
 ];
 
 async function main(targetVersion, preId) {
-  const silentMode = JSON.parse(process.env.npm_config_argv).original.includes('--silent');
   const packageJson = await fs.readJson('./package.json');
   const { workspaces } = packageJson;
   if (!targetVersion || semverIncrements.includes(targetVersion)) {
@@ -115,7 +114,7 @@ async function incrementAllPackages(increment = "patch", preId, silentMode) {
             result.package.dependencies[packageName] = versions[packageName];
           }
         });
-        
+
         await fs.writeJson(
           `./${result.workspace}/package.json`,
           result.package,

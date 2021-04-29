@@ -19,9 +19,9 @@ pub enum RfcEvent {
 #[derive(Deserialize, Debug, PartialEq, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ContributionAdded {
-  id: String,
-  key: String,
-  value: String,
+  pub id: String,
+  pub key: String,
+  pub value: String,
   event_context: Option<EventContext>,
 }
 
@@ -45,7 +45,7 @@ pub struct GitStateSet {
 pub struct BatchCommitStarted {
   pub batch_id: String,
   pub commit_message: String,
-  event_context: Option<EventContext>,
+  pub(crate) event_context: Option<EventContext>,
 
   #[serde(skip_serializing_if = "Option::is_none")]
   pub parent_id: Option<String>,
@@ -173,7 +173,7 @@ impl From<rfc_commands::AddContribution> for ContributionAdded {
       id: command.id,
       key: command.key,
       value: command.value,
-      event_context: None
+      event_context: None,
     }
   }
 }

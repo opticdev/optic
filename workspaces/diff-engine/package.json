@@ -1,12 +1,12 @@
 {
   "name": "@useoptic/diff-engine",
-  "version": "9.0.20",
+  "version": "10.0.1",
   "scripts": {
     "postinstall": "node scripts/install",
     "preuninstall": "node scripts/uninstall",
     "test": "cd tests && tap ./lib",
     "ws:build-binaries": "scripts/build-binaries.sh",
-    "ws:clean": "rm -rf build/* && rm -rf target/*",
+    "ws:clean": "rm -rf build target",
     "ws:test": "scripts/test.sh"
   },
   "repository": {
@@ -18,7 +18,7 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@useoptic/diff-engine-wasm": "9.0.20",
+    "@useoptic/diff-engine-wasm": "10.0.1",
     "bent": "^7.3.12",
     "dotenv": "^8.2.0",
     "execa": "^4.0.3",

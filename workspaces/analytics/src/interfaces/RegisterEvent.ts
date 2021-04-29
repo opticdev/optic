@@ -1,6 +1,5 @@
 import { TrackingEventBase } from './TrackingEventBase';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 
 function RegisterEvent<T>(

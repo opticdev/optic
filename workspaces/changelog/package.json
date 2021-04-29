@@ -1,0 +1,32 @@
+{
+  "name": "@useoptic/changelog",
+  "version": "10.0.1",
+  "scripts": {
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build",
+    "ws:test": "tap",
+    "test": "echo 'no tests'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/changelog"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "/build",
+    "/.env"
+  ],
+  "dependencies": {
+    "@useoptic/diff-engine-wasm": "10.0.1",
+    "@useoptic/graph-lib": "10.0.1",
+    "@useoptic/spectacle": "10.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.6",
+    "@types/tap": "^14.10.1",
+    "tap": "^14.11.0",
+    "typescript": "3.9"
+  }
+}

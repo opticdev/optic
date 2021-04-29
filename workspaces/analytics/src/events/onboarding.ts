@@ -1,13 +1,13 @@
 import { DescribeEvent, RegisteredEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 import { CheckAssertionsResult } from '../interfaces/ApiCheck';
 
 // Sent whenever an API is created
 const ApiCreatedSchema = Joi.object({ apiName: Joi.string().required() });
 
+// @ts-ignore
 type ApiCreatedProperties = Joi.extractType<typeof ApiCreatedSchema>;
 export const ApiCreated = DescribeEvent<ApiCreatedProperties>(
   Events.ApiCreated,
@@ -18,6 +18,7 @@ export const ApiCreated = DescribeEvent<ApiCreatedProperties>(
 const UserLoggedInFromCLISchema = Joi.object({
   userId: Joi.string().required(),
 });
+// @ts-ignore
 type UserLoggedInFromCLIProperties = Joi.extractType<
   typeof UserLoggedInFromCLISchema
 >;
@@ -33,6 +34,7 @@ const ApiInitializedInProjectSchema = Joi.object({
   cwd: Joi.string().required(),
 });
 
+// @ts-ignore
 type ApiInitializedInProjectProperties = Joi.extractType<
   typeof ApiInitializedInProjectSchema
 >;

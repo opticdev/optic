@@ -1,9 +1,9 @@
 {
   "name": "@useoptic/cli-client",
-  "version": "9.0.20",
+  "version": "10.0.1",
   "scripts": {
-    "ws:build": "yarn run tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build",
     "ws:test": "echo cli-client"
   },
   "repository": {
@@ -14,13 +14,12 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/analytics": "9.0.20",
-    "@useoptic/cli-config": "9.0.20",
-    "@useoptic/client-utilities": "9.0.20",
+    "@useoptic/analytics": "10.0.1",
+    "@useoptic/cli-config": "10.0.1",
+    "@useoptic/client-utilities": "10.0.1",
     "bottleneck": "^2.19.5",
-    "cross-fetch": "3.0.6"
+    "cross-fetch": "^3.0.4"
   },
-  "devDependencies": {},
   "files": [
     "/build"
   ]

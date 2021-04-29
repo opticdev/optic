@@ -1,29 +1,32 @@
 {
   "name": "@useoptic/analytics",
-  "version": "9.0.20",
+  "version": "10.0.1",
   "scripts": {
     "ws:build": "tsc -b --verbose",
-    "ws:clean": "rm -rf build/*",
+    "ws:clean": "rm -rf lib",
     "ws:test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/useoptic/optic-package.git",
-    "directory": "workspaces/cli-client"
+    "directory": "workspaces/analytics"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@hapi/joi": "^17.1.1",
+    "joi": "^17.4.0",
     "joi-extract-type": "^15.0.8",
     "keymirror": "^0.1.1",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.9",
-    "@types/node": "^14.0.27",
+    "@types/joi": "^14.3.4",
+    "@types/node": "^14.14.31",
+    "@types/uuid": "^8.3.0",
     "jest": "^26.4.0",
-    "ts-jest": "^26.2.0"
+    "ts-jest": "^26.2.0",
+    "tslib": "^2.1.0"
   },
   "files": [
     "/lib"

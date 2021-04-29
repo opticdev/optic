@@ -1,0 +1,26 @@
+[
+  [
+    {
+      "UnmatchedRequestUrl": {
+        "interactionTrail": {
+          "path": [
+            {
+              "Url": {
+                "path": "/"
+              }
+            },
+            {
+              "Method": {
+                "method": "GET"
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecRoot": {}
+        }
+      }
+    },
+    "6005d492e893247f"
+  ]
+]
