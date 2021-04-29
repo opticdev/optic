@@ -222,5 +222,6 @@
     "@types/uuid": "^8",
     "fs-extra": "^9.1.0",
     "threads": "^1.6.3"
-  }
+  },
+  "proxy": "http://localhost:34444"
 }

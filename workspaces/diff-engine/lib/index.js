@@ -14,6 +14,7 @@ const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
 
+//@dev: this is actually diff. ideally accepts input stream and only returns outputstream (no separate error stream)
 function spawn({ specPath }) {
   const input = new PassThrough();
   const output = new PassThrough();
@@ -40,6 +41,30 @@ function spawn({ specPath }) {
     }
   );
   return { input, output, error, result };
+}
+
+function diffInteractions({ specPath, interactionsStream }) {
+  const input = Readable.from(HttpInteractions.intoJSONL(interactionsStream));
+  const output = new PassThrough();
+
+  const binPath = getBinPath();
+
+  const diffProcess = Execa(binPath, [specPath], {
+    input,
+    stdio: ['pipe', 'pipe', 'inherit'],
+  });
+
+  input.pipe(diffProcess.stdin);
+  diffProcess.stdout.pipe(output);
+
+  diffProcess.then(
+    () => {},
+    (childResult) => {
+      output.emit('error', new DiffEngineError(childResult));
+    }
+  );
+
+  return output;
 }
 
 function readSpec({ specDirPath }) {
@@ -116,6 +141,7 @@ function commit(
   return output;
 }
 
+//@dev: copy this for diffing
 function learnUndocumentedBodies(interactions, { specPath }) {
   if (!interactions || typeof interactions[Symbol.asyncIterator] !== 'function')
     throw new Error(
@@ -141,6 +167,7 @@ function learnUndocumentedBodies(interactions, { specPath }) {
   learnProcess.then(
     (childResult) => {},
     (childResult) => {
+      //@dev: errors should follow this pattern
       output.emit('error', new DiffEngineError(childResult));
     }
   );
@@ -290,10 +317,12 @@ async function install(options) {
       cleanup();
       resolve();
     }
+
     function onError(err) {
       cleanup();
       reject(err);
     }
+
     function cleanup() {
       extract.removeListener('finish', onFinish);
       extract.removeListener('error', onError);
@@ -328,6 +357,7 @@ function uninstall(options) {
 
 class DiffEngineError extends Error {
   constructor(childResult) {
+    console.error(childResult);
     const {
       exitCode,
       failed,
@@ -340,7 +370,7 @@ class DiffEngineError extends Error {
 
     let failureMode;
     if (failed) {
-      failureMode = `process failed with exit code ${exitCode}.`;
+      failureMode = `process failed with exit code ${exitCode} or signal ${signal} ${signalDescription}.`;
     } else if (timedOut) {
       failureMode = `process became unresponsive and timed out`;
     } else if (killed) {
@@ -359,6 +389,7 @@ class DiffEngineError extends Error {
   }
 }
 
+exports.diffInteractions = diffInteractions;
 exports.spawn = spawn;
 exports.readSpec = readSpec;
 exports.commit = commit;

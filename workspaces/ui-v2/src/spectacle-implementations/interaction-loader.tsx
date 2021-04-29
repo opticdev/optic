@@ -3,7 +3,7 @@ import { AsyncStatus } from './spectacle-provider';
 
 type InteractionLoader = {
   loadInteraction: (pointer: string) => Promise<any | undefined>;
-  // @todo remove -- temp until port complete
+  //@aidan @todo remove -- temp until port complete
   allSamples: any[];
 };
 

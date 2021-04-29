@@ -12,7 +12,7 @@ export function learnTrailsForParsedDiffs(
   parsedDiffs: ParsedDiff[],
   currentSpecContext: CurrentSpecContext,
   events: any[],
-  allInteractions: any[],
+  allInteractions: any[]
 ) {
   const diffSet = new DiffSet(parsedDiffs, currentSpecContext);
   const groupings = Object.values(diffSet.groupedByEndpoint());
@@ -32,7 +32,7 @@ export function learnTrailsForParsedDiffs(
             pathId,
             method,
             result,
-            allInteractions,
+            allInteractions
           ),
         };
       });
@@ -46,24 +46,25 @@ export function localTrailValuesLearner(
   pathId: string,
   method: string,
   diffs: { [key: string]: IDiff },
-  interactions: any[],
+  interactions: any[]
 ): IValueAffordanceSerializationWithCounterGroupedByDiffHash {
+  //@aidan this needs to be removed
   const learner = LearnJsonTrailAffordances.newLearner(
     pathId,
     method,
-    JSON.stringify(diffs),
+    JSON.stringify(diffs)
   );
 
   const { rfcState } = universeFromEvents(events);
 
   const undocumentedUrlHelpers = new opticEngine.com.useoptic.diff.helpers.UndocumentedUrlIncrementalHelpers(
-    rfcState,
+    rfcState
   );
 
   function filterByEndpoint(endpoint: { pathId: string; method: string }) {
     return function (interaction: any) {
       const pathId = ScalaJSHelpers.getOrUndefined(
-        undocumentedUrlHelpers.tryResolvePathId(interaction.request.path),
+        undocumentedUrlHelpers.tryResolvePathId(interaction.request.path)
       );
       return (
         endpoint.method === interaction.request.method &&
@@ -80,12 +81,12 @@ export function localTrailValuesLearner(
       // only learn if it matches the endpoint
       learner.learnBody(
         deserializedInteraction,
-        deserializedInteraction.uuid, // not what we use in live versions
+        deserializedInteraction.uuid // not what we use in live versions
       );
     }
   });
 
   return JsonHelper.toJs(
-    learner.serialize(),
+    learner.serialize()
   ) as IValueAffordanceSerializationWithCounterGroupedByDiffHash;
 }

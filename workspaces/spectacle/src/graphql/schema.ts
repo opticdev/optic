@@ -5,7 +5,7 @@ schema {
   mutation: Mutation
 }
 type Mutation {
-  applyCommands(commands: [JSON]): AppliedCommandsResult
+  applyCommands(commands: [JSON], batchCommitId: ID, commitMessage: String, clientId: ID, clientSessionId: ID): AppliedCommandsResult
   startDiff(diffId: ID, captureId: ID): StartDiffResult
 }
 type AppliedCommandsResult {

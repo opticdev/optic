@@ -16,7 +16,7 @@ export interface InitialBodiesWorkerConfig {
 }
 
 export { LearnedBodies };
-
+//@dev: this is the pa
 export class InitialBodiesWorkerRust {
   constructor(private config: InitialBodiesWorkerConfig) {}
 

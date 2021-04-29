@@ -30,6 +30,7 @@ import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { makeSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { graphqlHTTP } from 'express-graphql';
+import { LocalCliOpticContextBuilder } from '../spectacle';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -132,6 +133,9 @@ export class CapturesHelpers {
     return path.join(this.captureDirectory(captureId), captureStateFileName);
   }
 
+  baseDirectory(): string {
+    return this.basePath;
+  }
   captureDirectory(captureId: CaptureId): string {
     return path.join(this.basePath, captureId);
   }
@@ -264,25 +268,28 @@ export async function makeRouter(sessions: SessionsManager) {
     }
   });
 
-  // spectacle
-  //@jaap: here's where we need to use the LocalCliOpticContextBuilder.fromDirectory() or whatever we decide
-  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
-    OpticEngine,
-    await fs.readJson(
-      './workspaces/spectacle/test/specs/mark-req-nested-field-optional.json'
-    )
-  );
-  const spectacle = await makeSpectacle(opticContext);
-  router.use(
-    '/spectacle',
-    graphqlHTTP({
-      //@ts-ignore
-      schema: spectacle.executableSchema,
-      graphiql: true,
-      //@jaap: we need to figure out how to make sure the context is always valid
-      context: spectacle.graphqlContext,
-    })
-  );
+  const instances: Map<string, any> = new Map();
+  router.use('/spectacle', async (req, res) => {
+    let handler = instances.get(req.optic.session.id);
+    if (!handler) {
+      console.count('LocalCliOpticContextBuilder.fromDirectory');
+      const opticContext = await LocalCliOpticContextBuilder.fromDirectory(
+        req.optic.paths,
+        req.optic.capturesHelpers
+      );
+      const spectacle = await makeSpectacle(opticContext);
+      const instance = graphqlHTTP({
+        //@ts-ignore
+        schema: spectacle.executableSchema,
+        graphiql: true,
+        //@jaap: we need to figure out how to make sure the context is always valid
+        context: spectacle.graphqlContext,
+      });
+      instances.set(req.optic.session.id, instance);
+      handler = instance;
+    }
+    handler(req, res);
+  });
 
   // example requests router
   router.post(

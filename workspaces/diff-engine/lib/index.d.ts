@@ -3,14 +3,10 @@
 import { Duplex, Readable } from 'stream';
 import { Streams } from '@useoptic/diff-engine-wasm';
 
-export function spawn({
-  specPath: string,
-}): {
-  input: Duplex;
-  output: Duplex;
-  error: Duplex;
-  result: Promise<void>;
-};
+export function diffInteractions(input: {
+  specPath: string;
+  interactionsStream: AsyncIterable<Streams.HttpInteractions.HttpInteraction>;
+}): Readable;
 
 export function readSpec({ specDirPath: string }): Readable;
 
