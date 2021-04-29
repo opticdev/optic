@@ -60,12 +60,17 @@ export function builderInnerShapeFromChoices(
           JSON.stringify(filterToTarget),
 =======
       // make new shape
-      //???? re opticRustEngine and name of function
-      const { commands, rootShapeId } = JSON.parse(
-        opticRustEngine.affordances_to_commands(
+      const { rootShapeId, commands } = JsonHelper.toJs(
+        LearnJsonTrailAffordances.toCommandsJson(
           JSON.stringify(actual.learnedTrails.affordances),
+<<<<<<< HEAD
 >>>>>>> aa3b0dbe3 (integration)
           JSON.stringify(actual.jsonTrail)
+=======
+          JSON.stringify(actual.jsonTrail),
+          randomIds,
+          toOption(i)
+>>>>>>> e2d35af20 (sentry + segment integration)
         )
       );
 

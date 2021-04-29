@@ -30,6 +30,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "4.4.4",
+    "@sentry/react": "^6.3.4",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

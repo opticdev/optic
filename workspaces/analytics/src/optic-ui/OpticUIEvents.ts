@@ -1,7 +1,4 @@
-export interface IOpticAnalyticsEvent {
-  name: string;
-  properties: object;
-}
+import { IOpticAnalyticsEvent } from '../interfaces';
 
 type AnalyticsDispatcher = (event: IOpticAnalyticsEvent) => void;
 

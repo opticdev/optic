@@ -21,6 +21,9 @@ import {
 const appConfig: OpticAppConfig = {
   featureFlags: {},
   config: {
+    analytics: {
+      enabled: false,
+    },
     navigation: {
       showChangelog: true,
       showDiff: false,
@@ -152,6 +155,48 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
+<<<<<<< HEAD
   //@dev fill this in
   throw new Error('copy me from public-examples.tsx when ready');
+=======
+  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
+
+  useEffect(() => {
+    async function task() {
+      const result = await loadDependencies();
+      //@ts-ignore
+      //for debugging only. delete me
+      window.events = result.events;
+      const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+        result.opticEngine,
+        result.events,
+        result.samples,
+        'example-session'
+      );
+      const inMemorySpectacle = new InMemorySpectacle(
+        opticContext,
+        result.samples
+      );
+      setSpectacle(inMemorySpectacle);
+    }
+
+    task();
+    // should only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (spectacle) {
+    return {
+      loading: false,
+      data: spectacle,
+      error: false,
+    };
+  } else {
+    return {
+      loading: true,
+      data: null,
+      error: false,
+    };
+  }
+>>>>>>> e2d35af20 (sentry + segment integration)
 }

@@ -21,10 +21,14 @@ import {
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
 =======
 import { AnalyticsStore } from '../analytics/hook';
 >>>>>>> aa3b0dbe3 (integration)
+=======
+import { AnalyticsStore } from '../analytics';
+>>>>>>> e2d35af20 (sentry + segment integration)
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},

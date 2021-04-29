@@ -2,8 +2,8 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
-  useMemo,
   useRef,
+  useState,
 } from 'react';
 import Analytics from '@segment/analytics.js-core/build/analytics';
 //@ts-ignore
@@ -14,6 +14,8 @@ import invariant from 'invariant';
 import niceTry from 'nice-try';
 import { useAppConfig } from '../optic-components/hooks/config/AppConfiguration';
 import { Client } from '@useoptic/cli-client';
+import * as Sentry from '@sentry/react';
+
 const packageJson = require('../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
 
@@ -25,59 +27,62 @@ const AnalyticsContext = React.createContext<
 >(undefined);
 
 export function useClientAgent() {
-  const client = new Client('/api');
-  const opticAnalyticsEnabled = true;
-  const userPromise = useMemo(
-    () =>
-      new Promise(async (resolve) => {
-        const anonymousId = await niceTry(async () => {
-          const response = await client.getIdentity();
-          if (response.ok) {
-            const { user, anonymousId } = await response.json();
-            if (opticAnalyticsEnabled) {
-              // window.FS.identify(anonymousId, {
-              //   email: user && user.email,
-              // });
-              // window.analytics.identify(anonymousId);
-            }
-            return anonymousId;
-          }
-          return 'anon_id';
-        });
-
-        resolve(anonymousId);
-      }),
-    [opticAnalyticsEnabled]
-  );
-  return userPromise;
+  const [clientAgent, setClientAgent] = useState<string | null>(null);
+  useEffect(() => {
+    async function loadIdentity() {
+      await niceTry(async () => {
+        const client = new Client('/api');
+        const response = await client.getIdentity();
+        if (response.ok) {
+          const { anonymousId } = await response.json();
+          setClientAgent(anonymousId);
+        } else {
+          setClientAgent('anon_id');
+        }
+      });
+    }
+    loadIdentity();
+  }, [setClientAgent]);
+  return clientAgent;
 }
 
 export function AnalyticsStore({ children }: { children: ReactNode }) {
   const appConfig = useAppConfig();
-  const userPromise = useClientAgent();
+  //@ts-ignore
   const analytics = useRef(new Analytics());
-
+  const clientAgent = useClientAgent();
+  //initialize
   useEffect(() => {
-    if (analytics.current && appConfig.analytics.enabled) {
+    if (analytics.current && appConfig.analytics.enabled && clientAgent) {
+      //segment
       analytics.current.use(SegmentIntegration);
       const integrationSettings = {
         'Segment.io': {
-          apiKey: '<YOUR SEGMENT WRITE KEY>',
+          apiKey: appConfig.analytics.segmentToken!,
           retryQueue: true,
           addBundledMetadata: true,
         },
       };
       analytics.current.initialize(integrationSettings);
-      console.log('segment initialized');
+      analytics.current.identify(clientAgent);
+      //sentry
+      Sentry.init({
+        dsn: appConfig.analytics.sentryUrl!,
+        release: clientId,
+      });
+      Sentry.setUser({ id: clientAgent });
     }
-  }, [analytics]);
+  }, [
+    analytics,
+    clientAgent,
+    appConfig.analytics.enabled,
+    appConfig.analytics.sentryUrl,
+    appConfig.analytics.segmentToken,
+  ]);
 
   const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(
     new OpticUIEvents(async (event) => {
-      console.log('track event: ', JSON.stringify(event));
       if (appConfig.analytics.enabled) {
-        const clientAgent = await userPromise;
-        console.log(clientAgent);
         if (analytics.current) {
           analytics.current.track(event.name, { properties: event.properties });
         }

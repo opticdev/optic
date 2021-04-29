@@ -10,7 +10,8 @@ interface IAppConfigurations {
   };
   analytics: {
     enabled: boolean;
-    segmentToken: string;
+    segmentToken?: string;
+    sentryUrl?: string;
   };
   documentation: {
     allowDescriptionEditing: boolean;
