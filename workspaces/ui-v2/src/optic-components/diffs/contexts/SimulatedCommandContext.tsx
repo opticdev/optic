@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { SpectacleStore } from '../../../spectacle-implementations/spectacle-provider';
-
+import { v4 as uuidv4 } from 'uuid';
 type SimulatedCommandStoreProps = {
   spectacle: IForkableSpectacle;
   previewCommands: any[];
@@ -24,17 +24,22 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   );
   useEffect(() => {
     async function task() {
+      debugger;
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
-mutation X($commands: [JSON]) {
-  applyCommands(commands: $commands) {
+mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+  applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
     batchCommitId
   }
 }
         `,
         variables: {
           commands: props.previewCommands,
+          batchCommitId: uuidv4(),
+          commitMessage: 'proposed changes',
+          clientId: '', //@dev: fill this in
+          clientSessionId: '', //@dev: fill this in
         },
       });
       //@ts-ignore

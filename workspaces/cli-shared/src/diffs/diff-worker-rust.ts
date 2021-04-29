@@ -1,13 +1,11 @@
 import { parseIgnore } from '@useoptic/cli-config';
 import { IHttpInteraction } from '@useoptic/domain-types';
-import { spawn as spawnDiffEngine } from '@useoptic/diff-engine';
 import {
   CaptureInteractionIterator,
   LocalCaptureInteractionPointerConverter,
 } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
 import path from 'path';
-import _throttle from 'lodash.throttle';
 import Chain, { chain } from 'stream-chain';
 import { fork } from 'stream-fork';
 import { Readable, Writable } from 'stream';
@@ -151,34 +149,34 @@ export class DiffWorkerRust {
       diffsSink.once('finish', onFinish);
       diffsSink.once('error', onError);
     });
-
-    const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
-    Promise.all([diffEngine.result, writingDiffs]).then(
-      () => {
-        this.finish();
-      },
-      (err) => {
-        this.destroy(err);
-      }
-    );
-
-    const diffEngineLog = fs.createWriteStream(
-      path.join(diffOutputPaths.base, 'diff-engine-output.log')
-    );
-
-    let processStreams: Writable[] = [diffEngine.input];
-    if (process.env.OPTIC_DEVELOPMENT === 'yes') {
-      processStreams.push(
-        fs.createWriteStream(
-          path.join(diffOutputPaths.base, 'interactions.jsonl')
-        )
-      );
-    }
-
-    // connect it all together to form a pipeline
-    interactionsStream.pipe(fork(processStreams));
-    diffEngine.output.pipe(diffsSink);
-    diffEngine.error.pipe(diffEngineLog);
+    throw new Error('removed spawn');
+    // const diffEngine = spawnDiffEngine({ specPath: diffOutputPaths.events });
+    // Promise.all([diffEngine.result, writingDiffs]).then(
+    //   () => {
+    //     this.finish();
+    //   },
+    //   (err) => {
+    //     this.destroy(err);
+    //   }
+    // );
+    //
+    // const diffEngineLog = fs.createWriteStream(
+    //   path.join(diffOutputPaths.base, 'diff-engine-output.log')
+    // );
+    //
+    // let processStreams: Writable[] = [diffEngine.input];
+    // if (process.env.OPTIC_DEVELOPMENT === 'yes') {
+    //   processStreams.push(
+    //     fs.createWriteStream(
+    //       path.join(diffOutputPaths.base, 'interactions.jsonl')
+    //     )
+    //   );
+    // }
+    //
+    // // connect it all together to form a pipeline
+    // interactionsStream.pipe(fork(processStreams));
+    // diffEngine.output.pipe(diffsSink);
+    // diffEngine.error.pipe(diffEngineLog);
   }
 
   private destroy(err?: Error) {

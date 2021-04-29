@@ -41,9 +41,7 @@ export const buildRfcStateFromEvents: ITaskExecutor<
   EventsToRfcStateTaskOutput
 > = async function (task, dependencies) {
   const events = dependencies[eventsFromFileKey].events;
-  const spec = opticEngine.spec_from_events(
-    JSON.stringify(events)
-  );
+  const spec = opticEngine.spec_from_events(JSON.stringify(events));
   const shapesProjection = JSON.parse(opticEngine.get_shapes_projection(spec));
   return Promise.resolve({ shapesProjection });
 };

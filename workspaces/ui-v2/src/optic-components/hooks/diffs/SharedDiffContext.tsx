@@ -89,6 +89,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       props.urls.map((i) => ({ ...i })),
       trailsLearned, //props.diffTrails
       allSamples,
+      //@ts-ignore
       {
         listDiffs(): Promise<IListDiffsResponse> {
           return Promise.resolve({ diffs: [] });

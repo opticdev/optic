@@ -3,7 +3,6 @@ import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
 import GraphQLJSON from 'graphql-type-json';
-import { v4 as uuidv4 } from 'uuid';
 import {
   buildEndpointChanges,
   buildEndpointsGraph,
@@ -14,10 +13,17 @@ import {
   ContributionsProjection,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
+import { IOpticCommandContext } from './in-memory';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
+  //@dev: add command generation for shapeDiffAffordances
+
   try_apply_commands(
     commandsJson: string,
     eventsJson: string,
@@ -39,7 +45,12 @@ export interface IOpticSpecRepository {
 }
 
 export interface IOpticSpecReadWriteRepository extends IOpticSpecRepository {
-  appendEvents(events: any[]): Promise<void>;
+  applyCommands(
+    commands: any[],
+    batchCommitId: string,
+    commitMessage: string,
+    commandContext: IOpticCommandContext
+  ): Promise<void>;
 
   notifications: EventEmitter;
 }
@@ -52,7 +63,7 @@ export interface ICapture {
 }
 
 export interface StartDiffResult {
-  notifications: EventEmitter;
+  //notifications: EventEmitter;
   onComplete: Promise<IOpticDiffService>;
 }
 
@@ -81,6 +92,16 @@ export interface IOpticDiffService {
   listDiffs(): Promise<IListDiffsResponse>;
 
   listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse>;
+
+  learnUndocumentedBodies(
+    pathId: string,
+    method: string
+  ): Promise<ILearnedBodies>;
+
+  learnShapeDiffAffordances(
+    pathId: string,
+    method: string
+  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,21 +206,22 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   const resolvers = {
     JSON: GraphQLJSON,
     Mutation: {
+      //@jaap: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
       applyCommands: async (parent: any, args: any, context: any) => {
-        //@jaap we need to encapsulate this so it can work with the inmemory and localcli implementations
-        //@jaap: this mutation needs to be linearized/atomic so only one spec change executes at a time, against the latest spec.
-        const batchCommitId = uuidv4();
-        const events = await opticContext.specRepository.listEvents();
+        const {
+          batchCommitId,
+          commands,
+          commitMessage,
+          clientId,
+          clientSessionId,
+        } = args;
         try {
-          const newEventsString = opticContext.opticEngine.try_apply_commands(
-            JSON.stringify(args.commands),
-            JSON.stringify(events),
+          await opticContext.specRepository.applyCommands(
+            commands,
             batchCommitId,
-            'proposed changes' //@jaap this will need to come from the mutation args
+            commitMessage,
+            { clientId, clientSessionId }
           );
-          const newEvents = JSON.parse(newEventsString);
-
-          await context.opticContext.specRepository.appendEvents(newEvents);
         } catch (e) {
           console.error(e);
           debugger;
@@ -213,6 +235,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       startDiff: async (parent: any, args: any, context: any) => {
         const { diffId, captureId } = args;
+        debugger;
         await context.opticContext.capturesService.startDiff(
           diffId,
           captureId,
