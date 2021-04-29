@@ -18,8 +18,7 @@
     "publish": "OPTIC_PUBLISH_SCOPE=public node ./workspaces/scripts/publish.js",
     "bump": "node ./workspaces/scripts/bump.js",
     "bump-core": "node ./workspaces/scripts/bump-core.js",
-    "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js",
-    "postinstall": "husky install"
+    "bump-core-snapshot": "node ./workspaces/scripts/bump-core-local.js"
   },
   "workspaces": [
     "workspaces/diff-engine",

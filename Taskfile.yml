@@ -28,6 +28,7 @@ tasks:
       OPTIC_SKIP_PREBUILT_INSTALLS: "true"
     cmds:
       - yarn install
+      - yarn run husky install
     generates:
       - .yarn/**/*
       - yarn.lock
