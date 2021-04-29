@@ -185,8 +185,17 @@ export function useInMemorySpectacle(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
-    loading: !spectacle,
-    data: spectacle,
-  };
+  if(spectacle){
+    return {
+      loading: false,
+      data: spectacle,
+      error: false
+    }
+  } else {
+    return {
+      loading: true,
+      data: null,
+      error: false
+    }
+  }
 }
