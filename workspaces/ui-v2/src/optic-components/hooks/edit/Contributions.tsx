@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FC, useCallback, useContext, useState } from 'react';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { AddContribution } from '../../../lib/command-factory';
+import { useStateWithSideEffect } from '../util';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -35,18 +36,15 @@ export const useValueWithStagedContributions = (
 ) => {
   const { stagePendingContribution } = useContributionEditing();
 
-  const [value, setValue] = useState<string>(initialValue || '');
-  const setValueWithPendingContribution = useCallback(
-    (newValue: string) => {
-      setValue(newValue);
-      stagePendingContribution(id, contributionKey, newValue, initialValue);
-    },
-    [id, contributionKey, stagePendingContribution, initialValue]
-  );
+  const { value, setValue } = useStateWithSideEffect({
+    initialValue,
+    sideEffect: (newValue: string) =>
+      stagePendingContribution(id, contributionKey, newValue, initialValue),
+  });
 
   return {
     value,
-    setValue: setValueWithPendingContribution,
+    setValue,
   };
 };
 
@@ -100,7 +98,7 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
         const commands = pendingContributions.map((contribution) =>
           AddContribution(
             contribution.id,
-            contribution.contributionKey, // TODO figure out if this should be upper case commands
+            contribution.contributionKey,
             contribution.value
           )
         );

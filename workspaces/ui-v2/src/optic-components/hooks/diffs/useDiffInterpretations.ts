@@ -10,7 +10,7 @@ import { newRegionInterpreters } from '../../../lib/new-regions-interpreter';
 export function useShapeDiffInterpretations(
   diffs: BodyShapeDiff[],
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash
-): { loading: boolean; results: IInterpretation[] } {
+): { loading: false; results: IInterpretation[] } | { loading: true } {
   const spectacle = useContext(SpectacleContext)!;
   const { currentSpecContext } = useSharedDiffContext();
 
@@ -36,7 +36,7 @@ export function useShapeDiffInterpretations(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [diffs]);
 
-  return { results, loading };
+  return loading ? { loading } : { loading, results };
 }
 
 ////////////////////////////////////////////////////////////////////////

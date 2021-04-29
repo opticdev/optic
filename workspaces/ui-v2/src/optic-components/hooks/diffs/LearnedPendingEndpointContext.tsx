@@ -1,13 +1,15 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { IPendingEndpoint } from './SharedDiffState';
 import { useActor } from '@xstate/react';
 import equals from 'lodash.isequal';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IIgnoreBody, InitialBodiesContext } from './LearnInitialBodiesMachine';
 
-export const LearnedPendingEndpointContext = React.createContext({});
+export const LearnedPendingEndpointContext = React.createContext<ILearnedPendingEndpointContextValue | null>(
+  null
+);
 
-type ILearnedPendingEndpointContext = {
+type ILearnedPendingEndpointContextValue = {
   endpoint: IPendingEndpoint;
   isLoading: boolean;
   isReady: boolean;
@@ -27,24 +29,23 @@ type ILearnedPendingEndpointContext = {
   isIgnored: (ignore: IIgnoreBody) => boolean;
 };
 
-export const ILearnedPendingEndpointStore = ({
+export const ILearnedPendingEndpointStore: FC<{
+  endpointMachine: any;
+  endpoint: IPendingEndpoint;
+  onEndpointStaged: () => void;
+  onEndpointDiscarded: () => void;
+}> = ({
   endpoint,
   endpointMachine,
   children,
   onEndpointStaged,
   onEndpointDiscarded,
-}: {
-  children: any;
-  endpointMachine: any;
-  endpoint: IPendingEndpoint;
-  onEndpointStaged: () => void;
-  onEndpointDiscarded: () => void;
 }) => {
   const [state, send]: any = useActor(endpoint.ref);
 
   const context: InitialBodiesContext = state.context;
 
-  const value: ILearnedPendingEndpointContext = {
+  const value: ILearnedPendingEndpointContextValue = {
     endpoint,
     isLoading: !state.matches('ready'),
     isReady: state.matches('ready'),
@@ -78,8 +79,10 @@ export const ILearnedPendingEndpointStore = ({
   );
 };
 
-export function useLearnedPendingEndpointContext() {
-  return useContext(
-    LearnedPendingEndpointContext
-  ) as ILearnedPendingEndpointContext;
+export function useLearnedPendingEndpointContext(): ILearnedPendingEndpointContextValue {
+  const value = useContext(LearnedPendingEndpointContext);
+  if (!value) {
+    throw new Error('Could not find LearnedPendingEndpointContext');
+  }
+  return value;
 }

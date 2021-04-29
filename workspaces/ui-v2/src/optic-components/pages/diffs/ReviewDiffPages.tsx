@@ -9,12 +9,11 @@ import {
   useDiffReviewPagePendingEndpoint,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
 import { SharedDiffStore } from '../../hooks/diffs/SharedDiffContext';
 import { PendingEndpointPageSession } from './PendingEndpointPage';
 import { DiffUrlsPage } from './AddEndpointsPage';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
+import { ReviewEndpointDiffContainer } from './ReviewEndpointDiffPage';
 import { DiffAccessoryNavigation } from '../../diffs/DiffAccessoryNavigation';
 import { useDiffsForCapture } from '../../hooks/useDiffForCapture';
 import { v4 as uuidv4 } from 'uuid';
@@ -64,29 +63,27 @@ export function DiffReviewPages(props: any) {
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
     >
-      <ContributionEditingStore initialIsEditingState={true}>
-        <NavigationRoute
-          path={diffReviewCapturePageLink.path}
-          Component={() => <CapturePage showDiff={true} />}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffUndocumentedUrlsPageLink.path}
-          Component={DiffUrlsPage}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffForEndpointLink.path}
-          Component={ReviewEndpointDiffPage}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <NavigationRoute
-          path={diffReviewPagePendingEndpoint.path}
-          Component={PendingEndpointPageSession}
-          AccessoryNavigation={() => <DiffAccessoryNavigation />}
-        />
-        <Redirect to={diffReviewCapturePageLink.linkTo()} />
-      </ContributionEditingStore>
+      <NavigationRoute
+        path={diffReviewCapturePageLink.path}
+        Component={() => <CapturePage showDiff={true} />}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffUndocumentedUrlsPageLink.path}
+        Component={DiffUrlsPage}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffForEndpointLink.path}
+        Component={ReviewEndpointDiffContainer}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <NavigationRoute
+        path={diffReviewPagePendingEndpoint.path}
+        Component={PendingEndpointPageSession}
+        AccessoryNavigation={() => <DiffAccessoryNavigation />}
+      />
+      <Redirect to={diffReviewCapturePageLink.linkTo()} />
     </SharedDiffStore>
   );
 }

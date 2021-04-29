@@ -33,6 +33,9 @@ export default function ApproveAll(props: { disabled?: boolean }) {
   };
 
   const handleSave = () => {
+    if (shapeDiffs.loading) {
+      return
+    }
     shapeDiffs.results.forEach((i) => {
       approveCommandsForDiff(
         i.diffDescription?.diffHash!,

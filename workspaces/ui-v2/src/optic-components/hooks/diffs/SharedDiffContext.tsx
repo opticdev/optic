@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { FC, useContext, useMemo, useState } from 'react';
 import {
   IPendingEndpoint,
   newSharedDiffMachine,
@@ -45,6 +45,8 @@ type ISharedDiffContext = {
   reset: () => void;
   handledCount: [number, number];
   startedFinalizing: () => void;
+  setEndpointName: (id: string, command: any) => void;
+  setPendingEndpointName: (id: string, name: string) => void;
 };
 
 type SharedDiffStoreProps = {
@@ -54,10 +56,9 @@ type SharedDiffStoreProps = {
   diffs: any;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
   urls: IUnrecognizedUrl[];
-  children?: any;
 };
 
-export const SharedDiffStore = (props: SharedDiffStoreProps) => {
+export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -166,6 +167,22 @@ export const SharedDiffStore = (props: SharedDiffStoreProps) => {
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
+    setEndpointName: (id: string, command: any) =>
+      send({
+        type: 'SET_ENDPOINT_NAME',
+        id,
+        command,
+      }),
+    setPendingEndpointName: (id: string, name) => {
+      const pendingEndpoint = context.pendingEndpoints.find((i) => i.id === id);
+      if (!pendingEndpoint) {
+        return console.error(`Could not find pending endpoint with id ${id}`);
+      }
+      pendingEndpoint.ref.send({ type: 'STAGED_ENDPOINT_NAME_UPDATED', name });
+      send({
+        type: 'UPDATE_PENDING_ENDPOINT_NAME',
+      });
+    },
   };
 
   return (

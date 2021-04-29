@@ -166,7 +166,7 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
     commands.push(
       AddContribution(
         getEndpointId({ method: ctx.method, pathId: ctx.pathId }),
-        'PURPOSE',
+        'purpose',
         ctx.stagedEndpointName
       )
     );
