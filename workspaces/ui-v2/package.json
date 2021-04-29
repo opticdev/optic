@@ -13,7 +13,9 @@
   ],
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build:local": "env OPTIC_WEBPACK_ENTRYPOINT=local node scripts/build.js",
+    "build:cloud": "env OPTIC_WEBPACK_ENTRYPOINT=cloud node scripts/build.js",
+    "build": "build:local",
     "test": "node scripts/test.js",
     "ws:clean": "echo 'cleaning' ",
     "ws:build": "echo 'build'"
