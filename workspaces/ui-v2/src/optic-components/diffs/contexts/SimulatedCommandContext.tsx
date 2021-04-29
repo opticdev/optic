@@ -27,7 +27,7 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
-mutation X($commands: [JSON]) {
+mutation X($commands: [JSON], $commitMessage: String) {
   applyCommands(commands: $commands, commitMessage: $commitMessage) {
     batchCommitId
   }

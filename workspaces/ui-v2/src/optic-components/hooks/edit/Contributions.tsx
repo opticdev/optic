@@ -105,7 +105,7 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
 
         await spectacleMutator({
           query: `
-          mutation X($commands: [JSON]) {
+          mutation X($commands: [JSON], $commitMessage: String) {
             applyCommands(commands: $commands, commitMessage: $commitMessage) {
               batchCommitId
             }

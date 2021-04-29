@@ -57,6 +57,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           Cancel
         </Button>
         <Button
+          disabled={commitMessage.length === 0}
           onClick={() => {
             onSave(commitMessage);
             onClose();
