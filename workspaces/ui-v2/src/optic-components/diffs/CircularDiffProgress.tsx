@@ -23,7 +23,7 @@ export function CircularDiffProgress(props: any) {
     <Box position="relative" display="inline-flex">
       <Grow in={!allHandled}>
         <CircularProgress
-          variant="static"
+          variant="determinate"
           value={value}
           size={total < 50 ? 40 : 55}
           style={{ color: UpdatedBlueBackground }}
@@ -74,7 +74,7 @@ export function CircularDiffLoaderProgress(props: any) {
   return (
     <Box position="relative" display="inline-flex">
       <CircularProgress
-        variant={handled === 0 ? 'indeterminate' : 'static'}
+        variant={handled === 0 ? 'indeterminate' : 'determinate'}
         value={handled === 0 ? undefined : value}
         size={90}
         style={{ color: UpdatedBlueBackground }}

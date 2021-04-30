@@ -57,9 +57,6 @@ export function CaptureSelectDropdown(props: any) {
       <ToggleButton
         value="check"
         selected={false}
-        // onClick={() => {
-        //   isEditing ? save() : setEditing(true);
-        // }}
         size="small"
         className={classes.button}
         onClick={handleClick}
@@ -76,47 +73,41 @@ export function CaptureSelectDropdown(props: any) {
         onClose={handleClose}
         style={{ marginTop: 20 }}
       >
-        {captures.captures.map((i, index) => (
-          <CaptureMenuItem
-            capture={i}
-            key={index}
+        {captures.captures.map((capture) => (
+          <MenuItem
+            key={capture.captureId}
             onClick={() => {
               history.push(
-                diffEnvironmentsRoot.linkTo('local', i.captureId) + '/review'
+                diffEnvironmentsRoot.linkTo('local', capture.captureId) +
+                  '/review'
               );
             }}
-          />
+          >
+            <CaptureMenuItem capture={capture} />
+          </MenuItem>
         ))}
       </Menu>
     </>
   );
 }
 
-function CaptureMenuItem({
-  capture,
-  onClick,
-}: {
-  capture: ICapture;
-  onClick: () => void;
-}) {
+function CaptureMenuItem({ capture }: { capture: ICapture }) {
   return (
-    <MenuItem onClick={onClick}>
-      <Box display="flex" flexDirection="column">
-        <Typography
-          component="span"
-          variant="subtitle1"
-          style={{
-            fontFamily: 'Ubuntu Mono',
-            fontSize: 12,
-            marginTop: -7,
-            color: OpticBlueReadable,
-          }}
-        >
-          Local Capture:{' '}
-          {capture.startedAt && timeAgo.format(new Date(capture.startedAt))}
-        </Typography>
-      </Box>
-    </MenuItem>
+    <Box display="flex" flexDirection="column">
+      <Typography
+        component="span"
+        variant="subtitle1"
+        style={{
+          fontFamily: 'Ubuntu Mono',
+          fontSize: 12,
+          marginTop: -7,
+          color: OpticBlueReadable,
+        }}
+      >
+        Local Capture:{' '}
+        {capture.startedAt && timeAgo.format(new Date(capture.startedAt))}
+      </Typography>
+    </Box>
   );
 }
 
