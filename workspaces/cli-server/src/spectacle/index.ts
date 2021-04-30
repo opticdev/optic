@@ -201,10 +201,7 @@ interface LocalCLiDiffServiceDependencies {
 export class LocalCliDiffService implements IOpticDiffService {
   constructor(private dependencies: LocalCLiDiffServiceDependencies) {}
 
-  learnShapeDiffAffordances(
-    pathId: string,
-    method: string
-  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     return Promise.reject('implement me');
   }
 

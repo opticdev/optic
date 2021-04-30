@@ -221,8 +221,21 @@ export class InMemoryDiffService implements IOpticDiffService {
         interactionsJsonl
       )
     );
+    const learnedBodiesForPathIdAndMethod = learnedBodies.find(
+      (x: ILearnedBodies) => {
+        return x.pathId === pathId && x.method === method;
+      }
+    );
     debugger;
-    return learnedBodies;
+    if (!learnedBodiesForPathIdAndMethod) {
+      return {
+        pathId,
+        method,
+        requests: [],
+        responses: [],
+      };
+    }
+    return learnedBodiesForPathIdAndMethod;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {

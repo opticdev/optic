@@ -110,15 +110,19 @@ interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
   spectacle: IBaseSpectacle;
 }
+interface LocalCliDiffServiceDependencies {
+  baseUrl: string;
+  spectacle: IBaseSpectacle;
+  diffId: string;
+  captureId: string;
+}
 class LocalCliCapturesService implements IOpticCapturesService {
   constructor(private dependencies: LocalCliCapturesServiceDependencies) {}
   async listCaptures(): Promise<ICapture[]> {
     const response = await JsonHttpClient.getJson(
       `${this.dependencies.baseUrl}/captures`
     );
-    return response.captures.map((x: any) => {
-      return { ...x, startedAt: new Date().toISOString() };
-    });
+    return response.captures;
   }
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
@@ -134,7 +138,7 @@ class LocalCliCapturesService implements IOpticCapturesService {
       },
     });
     const onComplete = Promise.resolve(
-      new LocalCliDiffService(this.dependencies, diffId)
+      new LocalCliDiffService({ ...this.dependencies, diffId, captureId })
     );
     return {
       onComplete,
@@ -142,20 +146,32 @@ class LocalCliCapturesService implements IOpticCapturesService {
   }
 }
 class LocalCliDiffService implements IOpticDiffService {
-  constructor(
-    private dependencies: LocalCliCapturesServiceDependencies,
-    private diffId: string
-  ) {}
+  constructor(private dependencies: LocalCliDiffServiceDependencies) {}
 
-  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
-    return Promise.reject(new Error('unimplemented'));
+  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+    const result = await JsonHttpClient.postJson(
+      `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/trail-values`,
+      {
+        pathId: 'pppp',
+        method: 'mmmm',
+        diffId: this.dependencies.diffId,
+      }
+    );
+    debugger;
+    //@aidan fixme
+    return result;
   }
 
-  learnUndocumentedBodies(
+  async learnUndocumentedBodies(
     pathId: string,
     method: string
   ): Promise<ILearnedBodies> {
-    return Promise.reject(new Error('unimplemented'));
+    const result = await JsonHttpClient.postJson(
+      `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
+      { pathId, method }
+    );
+    debugger;
+    return result;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
@@ -166,7 +182,7 @@ class LocalCliDiffService implements IOpticDiffService {
         }
       }`,
       variables: {
-        diffId: this.diffId,
+        diffId: this.dependencies.diffId,
       },
     });
     console.log(result.data.diff.diffs);
@@ -181,7 +197,7 @@ class LocalCliDiffService implements IOpticDiffService {
         }
       }`,
       variables: {
-        diffId: this.diffId,
+        diffId: this.dependencies.diffId,
       },
     });
     console.log(result.data.diff.unrecognizedUrls);

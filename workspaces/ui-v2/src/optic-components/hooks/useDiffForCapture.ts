@@ -71,8 +71,8 @@ export function useDiffsForCapture(
     capturesService,
     captureId,
     diffId,
-    allEndpointsOfBaseSpec,
-    allRequestsAndResponsesOfBaseSpec,
+    allEndpointsOfBaseSpec.loading,
+    allRequestsAndResponsesOfBaseSpec.loading,
   ]);
   return diffState;
 }

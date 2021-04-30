@@ -15,6 +15,7 @@ import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
 
 import { IPathParameter } from '../../hooks/useEndpointsHook';
 import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
+import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
 
 type EndpointDocumentationPaneProps = {
   method: string;
@@ -34,7 +35,7 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   renderHeader,
 }) => {
   const { endpoints, loading } = useEndpoints();
-  // const previewCommands = useSimulatedCommands();
+  const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
@@ -50,7 +51,7 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
-      {/*<pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>*/}
+      <pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>
       {renderHeader()}
 
       <div style={{ height: 20 }} />

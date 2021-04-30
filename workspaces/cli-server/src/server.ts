@@ -37,6 +37,7 @@ export interface IOpticExpressRequestAdditions {
   ignoreHelper: IgnoreFileHelper;
   exampleRequestsHelpers: ExampleRequestsHelpers;
   session: Session;
+  specLoader(): Promise<any[]>;
 }
 
 declare global {

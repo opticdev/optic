@@ -3,7 +3,6 @@ import {
   IOpticTaskRunnerConfig,
   parseRule,
   readApiConfig,
-  readTestingConfig,
 } from '@useoptic/cli-config';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -20,15 +19,11 @@ import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
-import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
-import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
-import * as OpticEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 import { makeSpectacle } from '@useoptic/spectacle';
-import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { graphqlHTTP } from 'express-graphql';
 import { LocalCliOpticContextBuilder } from '../spectacle';
 
@@ -136,6 +131,7 @@ export class CapturesHelpers {
   baseDirectory(): string {
     return this.basePath;
   }
+
   captureDirectory(captureId: CaptureId): string {
     return path.join(this.basePath, captureId);
   }
@@ -201,6 +197,11 @@ export async function makeRouter(sessions: SessionsManager) {
       const exampleRequestsHelpers = new ExampleRequestsHelpers(
         exampleRequestsPath
       );
+
+      async function specLoader(): Promise<any[]> {
+        const events = await getSpecEventsFrom(paths.specStorePath);
+        return events;
+      }
       req.optic = {
         config,
         paths,
@@ -208,6 +209,7 @@ export async function makeRouter(sessions: SessionsManager) {
         capturesHelpers,
         exampleRequestsHelpers,
         session,
+        specLoader,
       };
       next();
     } catch (e) {
@@ -220,49 +222,11 @@ export async function makeRouter(sessions: SessionsManager) {
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
 
-  if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-    router.post(
-      '/commands/batches',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const payload = req.body;
-        if (!payload || typeof payload.commitMessage !== 'string') {
-          return res.status(400).json({
-            message: 'commit message required to append batch of commands',
-          });
-        }
-        if (!payload || !Array.isArray(payload.commands)) {
-          return res.status(400).json({
-            message: 'commands array required to append batch of commands',
-          });
-        }
-
-        const commands = AT.from<Streams.Commands.Command>(payload.commands);
-        const events = DiffEngine.commit(commands, {
-          specDirPath: req.optic.paths.specDirPath,
-          commitMessage: payload.commitMessage,
-          clientSessionId: payload.clientSessionId || 'unknown-session',
-          clientId: await getOrCreateAnonId(),
-          appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
-        });
-
-        events.pipe(res).type('application/json');
-      }
-    );
-  }
-
   // events router
   router.get('/events', async (req, res) => {
     try {
-      if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-        const events = DiffEngine.readSpec({
-          specDirPath: req.optic.paths.specDirPath,
-        });
-        events.pipe(res).type('application/json');
-      } else {
-        const events = await getSpecEventsFrom(req.optic.paths.specStorePath);
-        res.json(events);
-      }
+      const events = await req.optic.specLoader();
+      res.json(events);
     } catch (e) {
       res.json([]);
     }
@@ -291,30 +255,6 @@ export async function makeRouter(sessions: SessionsManager) {
     handler(req, res);
   });
 
-  // example requests router
-  router.post(
-    '/example-requests/:requestId',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const { requestId } = req.params;
-      await req.optic.exampleRequestsHelpers.saveExampleRequest(
-        requestId,
-        req.body
-      );
-      res.sendStatus(204);
-    }
-  );
-
-  router.get('/example-requests/:requestId', async (req, res) => {
-    const { requestId } = req.params;
-    const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(
-      requestId
-    );
-    res.json({
-      examples: currentFileContents,
-    });
-  });
-
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
     const captures = await req.optic.capturesHelpers.listCapturesState();
@@ -326,6 +266,7 @@ export async function makeRouter(sessions: SessionsManager) {
         .reverse()
         .map((i) => ({
           captureId: i.captureId,
+          startedAt: i.metadata.startedAt,
           status: i.status,
           lastUpdate: i.metadata.lastInteraction
             ? i.metadata.lastInteraction.observedAt
@@ -413,24 +354,6 @@ export async function makeRouter(sessions: SessionsManager) {
   });
 
   router.use('/captures/:captureId', captureRouter);
-
-  router.get('/testing-credentials', async (req, res) => {
-    const { paths } = req.optic;
-    if (!(await fs.pathExists(paths.testingConfigPath))) {
-      return res.sendStatus(404);
-    }
-
-    try {
-      const testingConfig = await readTestingConfig(paths.testingConfigPath);
-
-      return res.json({
-        authToken: testingConfig.authToken,
-      });
-    } catch (e) {
-      console.error(e);
-      return res.sendStatus(500);
-    }
-  });
 
   return router;
 }
