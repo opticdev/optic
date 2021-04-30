@@ -48,6 +48,7 @@ type PathComponent {
   id: ID
   name: String
   isParameterized: Boolean
+  contributions: JSON
 }
 type HttpResponse {
   id: ID
