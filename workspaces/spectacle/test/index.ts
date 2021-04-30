@@ -142,6 +142,10 @@ const specs = [
     './test/specs/mark-req-nested-field-optional.json',
     { shapeId: shapeId2 }
   ),
+  fromPreviousBatchCommitId(
+    'add contributions',
+    './test/specs/add-endpoint-contributions.json'
+  ),
 ];
 
 Tap.test('spectacle batchCommits query', async (test) => {
@@ -177,6 +181,8 @@ specs.forEach(async (spec) => {
           change {
             category
           }
+          contributions
+          pathId
           path
           method
         }
@@ -186,32 +192,33 @@ specs.forEach(async (spec) => {
     const results = await spectacle({ query, variables: {} });
     test.matchSnapshot(results);
   });
-
-  Tap.test(`spectacle shapeChoices query ${spec.name}`, async (test) => {
-    const query = `{
-      shapeChoices(shapeId: "${spec.shapeId}") {
-        id
-        jsonType
-        asArray {
-          changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
-            added
-            changed
-          }
-        }
-        asObject {
-          fields {
-            shapeId
-            fieldId
-            name
+  if (spec.shapeId) {
+    Tap.test(`spectacle shapeChoices query ${spec.name}`, async (test) => {
+      const query = `{
+        shapeChoices(shapeId: "${spec.shapeId}") {
+          id
+          jsonType
+          asArray {
             changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
               added
               changed
             }
           }
+          asObject {
+            fields {
+              shapeId
+              fieldId
+              name
+              changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
+                added
+                changed
+              }
+            }
+          }
         }
-      }
-    }`;
-    const results = await spectacle({ query, variables: {} });
-    test.matchSnapshot(results);
-  });
+      }`;
+      const results = await spectacle({ query, variables: {} });
+      test.matchSnapshot(results);
+    });
+  }
 });

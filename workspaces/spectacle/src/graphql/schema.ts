@@ -94,6 +94,7 @@ type EndpointChange {
   pathId: String
   path: String
   method: String
+  contributions: JSON
 }
 type EndpointChangeMetadata {
   category: String

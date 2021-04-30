@@ -4,16 +4,20 @@
  * Re-generate by setting TAP_SNAPSHOT=1 and running tests.
  * Make sure to inspect the output below.  Do not ignore changes!
  */
-'use strict'
-exports[`test/index.ts TAP spectacle batchCommits query > must match snapshot 1`] = `
+'use strict';
+exports[
+  `test/index.ts TAP spectacle batchCommits query > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "batchCommits": Array [],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add endpoint to existing spec > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add contributions > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -22,34 +26,33 @@ Object {
           "change": Null Object {
             "category": "added",
           },
-          "method": "POST",
-          "path": "/user",
+          "contributions": Object {
+            "purpose": "Get your account details",
+          },
+          "method": "GET",
+          "path": "/api/account",
+          "pathId": "path_UGayMWEUve",
         },
-      ],
-    },
-  },
-}
-`
-
-exports[`test/index.ts TAP spectacle changelog query add nested response field > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "endpointChanges": Null Object {
-      "endpoints": Array [
         Null Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {
+            "purpose": "Get information about a specific spec",
+          },
           "method": "GET",
-          "path": "/user",
+          "path": "/api/specs/{specId}",
+          "pathId": "path_td6dXtR2C5",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add new endpoint > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add endpoint to existing spec > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -58,16 +61,20 @@ Object {
           "change": Null Object {
             "category": "added",
           },
-          "method": "GET",
+          "contributions": Object {},
+          "method": "POST",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add optional response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add nested response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -76,16 +83,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add request and response > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add new endpoint > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -94,70 +105,20 @@ Object {
           "change": Null Object {
             "category": "added",
           },
-          "method": "POST",
-          "path": "/user",
-        },
-      ],
-    },
-  },
-}
-`
-
-exports[`test/index.ts TAP spectacle changelog query add request field > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "endpointChanges": Null Object {
-      "endpoints": Array [
-        Null Object {
-          "change": Null Object {
-            "category": "updated",
-          },
-          "method": "POST",
-          "path": "/user",
-        },
-      ],
-    },
-  },
-}
-`
-
-exports[`test/index.ts TAP spectacle changelog query add request nested field > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "endpointChanges": Null Object {
-      "endpoints": Array [
-        Null Object {
-          "change": Null Object {
-            "category": "updated",
-          },
-          "method": "POST",
-          "path": "/user",
-        },
-      ],
-    },
-  },
-}
-`
-
-exports[`test/index.ts TAP spectacle changelog query add required response field > must match snapshot 1`] = `
-Object {
-  "data": Null Object {
-    "endpointChanges": Null Object {
-      "endpoints": Array [
-        Null Object {
-          "change": Null Object {
-            "category": "updated",
-          },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add response array field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add optional response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -166,16 +127,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add response as an array > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add request and response > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -184,16 +149,130 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
+          "method": "POST",
+          "path": "/user",
+          "pathId": "path_jhNaeRecHD",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle changelog query add request field > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "contributions": Object {},
+          "method": "POST",
+          "path": "/user",
+          "pathId": "path_jhNaeRecHD",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle changelog query add request nested field > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "contributions": Object {},
+          "method": "POST",
+          "path": "/user",
+          "pathId": "path_jhNaeRecHD",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle changelog query add required response field > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "contributions": Object {},
+          "method": "GET",
+          "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle changelog query add response array field > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "contributions": Object {},
+          "method": "GET",
+          "path": "/user",
+          "pathId": "path_jhNaeRecHD",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle changelog query add response as an array > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items",
+          "pathId": "path_H8I4tQ9R0s",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add response as an array with object > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add response as an array with object > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -202,16 +281,20 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items2",
+          "pathId": "path_cvQ3CMEF5h",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query add response status code > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query add response status code > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -220,16 +303,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query complex changes > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query complex changes > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -238,23 +325,29 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/test2",
+          "pathId": "path_UTBFhSCjRy",
         },
         Null Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/test1/{id}",
+          "pathId": "path_NbM6PpK4t8",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query mark request field optional > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query mark request field optional > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -263,16 +356,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query mark request nested field optional > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query mark request nested field optional > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -281,16 +378,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query no changes > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query no changes > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -298,9 +399,11 @@ Object {
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query update nested response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query update nested response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -309,16 +412,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query update optional response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query update optional response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -327,16 +434,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query update request field type > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query update request field type > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -345,16 +456,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle changelog query updated response as an array > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle changelog query updated response as an array > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "endpointChanges": Null Object {
@@ -363,16 +478,20 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items",
+          "pathId": "path_H8I4tQ9R0s",
         },
       ],
     },
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add endpoint to existing spec > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add endpoint to existing spec > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -406,9 +525,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add nested response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add nested response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -433,9 +554,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add new endpoint > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add new endpoint > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -450,9 +573,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add optional response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add optional response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -486,9 +611,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add request and response > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add request and response > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -513,9 +640,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add request field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add request field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -549,9 +678,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add request nested field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add request nested field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -594,9 +725,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add required response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add required response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -621,9 +754,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add response array field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add response array field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -666,9 +801,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add response as an array > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add response as an array > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -686,9 +823,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add response as an array with object > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add response as an array with object > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -706,9 +845,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query add response status code > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add response status code > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -742,9 +883,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query complex changes > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query complex changes > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -778,9 +921,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query mark request field optional > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query mark request field optional > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -814,9 +959,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query mark request nested field optional > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query mark request nested field optional > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -859,9 +1006,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query no changes > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query no changes > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -895,9 +1044,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query update nested response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query update nested response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -922,9 +1073,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query update optional response field > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query update optional response field > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -958,9 +1111,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query update request field type > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query update request field type > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -994,9 +1149,11 @@ Object {
     ],
   },
 }
-`
+`;
 
-exports[`test/index.ts TAP spectacle shapeChoices query updated response as an array > must match snapshot 1`] = `
+exports[
+  `test/index.ts TAP spectacle shapeChoices query updated response as an array > must match snapshot 1`
+] = `
 Object {
   "data": Null Object {
     "shapeChoices": Array [
@@ -1014,4 +1171,4 @@ Object {
     ],
   },
 }
-`
+`;
