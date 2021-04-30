@@ -71,12 +71,12 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   });
   const endpointId = getEndpointId({ method, pathId });
 
-  const filteredShapeDiffs = shapeDiffs.filter((i: any) => {
-    return !isDiffHandled(i.diffDescription.diffHash);
-  });
-
-  const allDiffsHandled = filteredShapeDiffs.length === 0;
-
+  const allDiffsHandled = shapeDiffs.every(
+    (shapeDiff) =>
+      shapeDiff?.diffDescription?.diffHash &&
+      isDiffHandled(shapeDiff.diffDescription.diffHash)
+  );
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
 
   return (
@@ -90,6 +90,8 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             shapeDiffs={shapeDiffs}
             previewCommands={previewCommands}
             setPreviewCommands={setPreviewCommands}
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
           />
         )
       }
@@ -101,6 +103,11 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
           <EndpointDocumentationPane
             method={method}
             pathId={pathId}
+            highlightedLocation={
+              allDiffsHandled
+                ? undefined
+                : shapeDiffs[currentIndex].diffDescription?.location
+            }
             renderHeader={() => (
               <>
                 <Helmet>
@@ -152,11 +159,19 @@ const AllDiffsHandled: FC<{
 const ReviewableDiffs: FC<{
   endpoint: ReviewEndpointDiffPageProps['endpoint'];
   shapeDiffs: ReviewEndpointDiffPageProps['shapeDiffs'];
+  currentIndex: number;
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   previewCommands: any;
   setPreviewCommands: (commands: any) => void;
-}> = ({ endpoint, shapeDiffs, previewCommands, setPreviewCommands }) => {
+}> = ({
+  endpoint,
+  shapeDiffs,
+  previewCommands,
+  setPreviewCommands,
+  currentIndex,
+  setCurrentIndex,
+}) => {
   const [showToc, setShowToc] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const { approveCommandsForDiff, isDiffHandled } = useSharedDiffContext();
 
   // If shapeDiffs.length is 0, the allDiffsHandled view will be rendered
