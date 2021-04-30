@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import {
+  AsyncStatus,
   IBaseSpectacle,
   IForkableSpectacle,
   IOpticContext,
@@ -10,7 +11,7 @@ import {
   SpectacleInput,
 } from '@useoptic/spectacle';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
@@ -142,7 +143,9 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
-  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle | null>(null);
+  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle | null>(
+    null
+  );
 
   useEffect(() => {
     async function task() {

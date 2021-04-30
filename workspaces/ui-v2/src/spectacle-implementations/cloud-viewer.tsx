@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { makeSpectacle } from '@useoptic/spectacle';
+import { AsyncStatus, makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
@@ -185,17 +185,17 @@ export function useInMemorySpectacle(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if(spectacle){
+  if (spectacle) {
     return {
       loading: false,
       data: spectacle,
-      error: false
-    }
+      error: false,
+    };
   } else {
     return {
       loading: true,
       data: null,
-      error: false
-    }
+      error: false,
+    };
   }
 }

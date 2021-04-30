@@ -1,18 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
-
-export type AsyncStatus<T> =
-  | {
-      loading: true;
-      error: false;
-      data: null;
-    }
-  | {
-      loading: false;
-      error: true;
-      data: null;
-    }
-  | { loading: false; error: false; data: T };
+import {
+  AsyncStatus,
+  SpectacleInput,
+  IBaseSpectacle,
+} from '@useoptic/spectacle';
 
 export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
   null
@@ -57,7 +48,9 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 
-export function useSpectacleCommand(): (input: SpectacleInput) => Promise<AsyncStatus<any>> {
+export function useSpectacleCommand(): (
+  input: SpectacleInput
+) => Promise<AsyncStatus<any>> {
   const spectacle = useContext(SpectacleContext)!;
 
   return useCallback(

@@ -117,15 +117,15 @@ export interface IOpticContext {
 export type AsyncStatus<T> =
   | {
       loading: true;
-      error: false;
-      data: null;
+      error?: undefined;
+      data?: undefined;
     }
   | {
       loading: false;
-      error: true;
-      data: null;
+      error: Error;
+      data?: undefined;
     }
-  | { loading: false; error: false; data: T };
+  | { loading: false; error?: undefined; data: T };
 
 export interface IBaseSpectacle {
   query(options: SpectacleInput): Promise<any>;

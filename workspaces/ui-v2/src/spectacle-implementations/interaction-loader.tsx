@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AsyncStatus } from './spectacle-provider';
+import { AsyncStatus } from '@useoptic/spectacle';
 
 type InteractionLoader = {
   loadInteraction: (pointer: string) => Promise<any | undefined>;
