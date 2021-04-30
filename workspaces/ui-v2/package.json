@@ -18,7 +18,8 @@
     "build": "build:local",
     "test": "node scripts/test.js",
     "ws:clean": "echo 'cleaning' ",
-    "ws:build": "echo 'build'"
+    "ws:build": "echo 'build'",
+    "prepare": "CI='' yarn run build:local"
   },
   "dependencies": {
     "@babel/core": "7.12.3",
