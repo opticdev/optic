@@ -255,6 +255,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "niclim",
+      "name": "Nicholas Lim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18374483?v=4",
+      "profile": "https://github.com/niclim",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
