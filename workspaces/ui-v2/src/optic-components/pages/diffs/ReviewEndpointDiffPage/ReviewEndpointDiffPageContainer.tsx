@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 
-import { useEndpointDiffs } from '../../../hooks/diffs/useEndpointDiffs';
+import { useEndpointDiffs } from '<src>/optic-components/hooks/diffs/useEndpointDiffs';
 import { useShapeDiffInterpretations } from '../../../hooks/diffs/useDiffInterpretations';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
 import { useEndpoint } from '../../../hooks/useEndpointsHook';
