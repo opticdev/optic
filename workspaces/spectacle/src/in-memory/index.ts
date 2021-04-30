@@ -175,6 +175,7 @@ export class InMemoryDiffService implements IOpticDiffService {
     );
 
     const diffs = await this.listDiffs();
+    //@jaap @TODO: use asynctools intoJSONL ?
     const taggedInteractions = this.dependencies.interactions
       .map((x: HttpInteraction) => {
         console.log({ x });
@@ -196,7 +197,7 @@ export class InMemoryDiffService implements IOpticDiffService {
       },
       {}
     );
-    //@TOOD: use asynctools affordancesByFingerprint ?
+    //@jaap @TODO: use asynctools affordancesByFingerprint ?
     return affordancesByFingerprint;
   }
 
