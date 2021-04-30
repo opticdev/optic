@@ -10,6 +10,9 @@ env:
 includes:
   diff-engine:
     taskfile: workspaces/diff-engine/Taskfile.yml
+  ui-v2:
+    taskfile: workspaces/ui-v2/Taskfile.yml
+    dir: workspaces/ui-v2
   regression:
     taskfile: taskfiles/regression-tests/Taskfile.yml
   release:
@@ -76,14 +79,6 @@ tasks:
     desc: Remove previous build artifacts
     cmds:
       - yarn wsrun --report --fast-exit --exclude-missing ws:clean
-
-  spec:build:
-    dir: workspaces/ui
-    env:
-      PUBLIC_URL: "https://apidocs.o3c.info"
-      CI: "false"
-    cmds:
-      - yarn build-spec
 
   npm:publish:
     deps:

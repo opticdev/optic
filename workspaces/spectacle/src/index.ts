@@ -419,6 +419,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       method: (parent: any) => {
         return Promise.resolve(parent.method);
       },
+      contributions: (parent: any, args: any, context: any) => {
+        const pathId = parent.pathId;
+        const method = parent.method;
+        return Promise.resolve(
+          context.contributionsProjection[`${pathId}.${method}`] || {}
+        );
+      },
     },
     EndpointChangeMetadata: {
       category: (parent: any) => {

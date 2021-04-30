@@ -1,0 +1,23 @@
+---
+title: NGINX
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic integrates with NGINX as a Lua filter. You need to have the OpenResty [lua-nginx-module](https://github.com/openresty/lua-nginx-module) module installed. If you are using a OpenResty NGINX distribution, `lua-nginx` is already installed.
+
+1. Download the Optic Lua code from [github](https://github.com/opticdev/optic-nginx/releases) or install it with
+
+    `luarocks install --server=http://luarocks.org/manifests/optic optic-nginx`
+
+2. Edit your `nginx.conf` to include optic-nginx in the servers and locations where you want Optic to observe your traffic.
+
+    Be sure to include the correct package path in `lua_package_path` for the optic plugin. This is normally `/usr/share/lua/5.1` when installing with `luarocks`.
+
+3. Reload the NGINX config with `nginx -s reload`
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />
