@@ -78,15 +78,19 @@ async function createEndpointFilter(
   pathId: string,
   method: string
 ): Promise<EndpointInteractionFilter> {
-  let spec = DiffEngine.spec_from_events(JSON.stringify(events));
-
-  return function (interaction: HttpInteraction) {
-    const interactionPathId = DiffEngine.spec_resolve_path_id(
-      spec,
-      interaction.request.path
-    );
-    return (
-      method === interaction.request.method && pathId === interactionPathId
-    );
+  return function () {
+    return true;
   };
+  //@jaap if we need this back, then uncomment below
+  // let spec = DiffEngine.spec_from_events(JSON.stringify(events));
+  //
+  // return function (interaction: HttpInteraction) {
+  //   const interactionPathId = DiffEngine.spec_resolve_path_id(
+  //     spec,
+  //     interaction.request.path
+  //   );
+  //   return (
+  //     method === interaction.request.method && pathId === interactionPathId
+  //   );
+  // };
 }
