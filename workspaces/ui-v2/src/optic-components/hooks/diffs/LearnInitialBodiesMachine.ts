@@ -18,7 +18,6 @@ export const newInitialBodiesMachine = (
   pathPattern: string,
   method: string,
   onCommandsChanged: (commands: any[]) => void,
-  allSamples: any[],
   diffService: IOpticDiffService
 ) => {
   return Machine<InitialBodiesContext, InitialBodiesSchema, InitialBodiesEvent>(
@@ -92,15 +91,9 @@ export const newInitialBodiesMachine = (
                 currentSpecContext
               );
 
-              ///diffService.learnBody...
-
-              const learner = await localInitialBodyLearner(
-                //@ts-ignore
-                window.events!,
-                commands,
+              const learner = await diffService.learnUndocumentedBodies(
                 pathId,
-                method,
-                allSamples
+                method
               );
 
               return new Promise((resolve) => {

@@ -16,7 +16,6 @@ export const newSharedDiffMachine = (
   parsedDiffs: ParsedDiff[],
   undocumentedUrls: IUndocumentedUrl[],
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-  allSamples: any[],
   diffService: IOpticDiffService
 ) => {
   return Machine<
@@ -88,7 +87,6 @@ export const newSharedDiffMachine = (
                           event.pattern,
                           event.method,
                           () => {},
-                          allSamples,
                           diffService
                         )
                       ),

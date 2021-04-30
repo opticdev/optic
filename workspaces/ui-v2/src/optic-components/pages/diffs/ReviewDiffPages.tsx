@@ -20,7 +20,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndResponses';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { CapturePage } from './CapturePage';
-import { useDiffTrailValues } from '../../hooks/diffs/useDiffTrailValues';
 import { LoadingPage } from '../../loaders/Loading';
 import { LoadingReview } from '../../diffs/LoadingDiff';
 
@@ -38,11 +37,9 @@ export function DiffReviewPages(props: any) {
   const diffReviewCapturePageLink = useDiffReviewCapturePageLink();
   const diffForEndpointLink = useDiffForEndpointLink();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
-  const diffTrails = useDiffTrailValues();
 
   const isLoading =
     diff.loading ||
-    diffTrails.loading ||
     allEndpointsOfBaseSpec.loading ||
     allRequestsAndResponsesOfBaseSpec.loading;
 
@@ -56,9 +53,10 @@ export function DiffReviewPages(props: any) {
 
   return (
     <SharedDiffStore
-      diffs={diff.diffs}
-      diffTrails={diffTrails.trails!}
-      urls={diff.urls}
+      diffService={diff.data!.diffService}
+      diffs={diff.data!.diffs}
+      diffTrails={diff.data!.trails}
+      urls={diff.data!.urls}
       endpoints={allEndpointsOfBaseSpec.endpoints}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}
