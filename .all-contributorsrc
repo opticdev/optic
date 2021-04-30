@@ -265,6 +265,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "smizell",
+      "name": "Stephen Mizell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/130959?v=4",
+      "profile": "http://smizell.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
