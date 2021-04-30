@@ -15,7 +15,7 @@ import {
   ContributionEditingStore,
   useContributionEditing,
 } from '../../hooks/edit/Contributions';
-import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
+import { EditContributionsButton } from './EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';

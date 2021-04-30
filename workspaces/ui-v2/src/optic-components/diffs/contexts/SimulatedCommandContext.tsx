@@ -27,14 +27,15 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
-mutation X($commands: [JSON]) {
-  applyCommands(commands: $commands) {
+mutation X($commands: [JSON], $commitMessage: String) {
+  applyCommands(commands: $commands, commitMessage: $commitMessage) {
     batchCommitId
   }
 }
         `,
         variables: {
           commands: props.previewCommands,
+          commitMessage: '',
         },
       });
       //@ts-ignore
