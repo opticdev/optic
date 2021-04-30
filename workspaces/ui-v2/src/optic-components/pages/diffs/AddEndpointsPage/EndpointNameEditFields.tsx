@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 
 import { getEndpointId } from '../../../utilities/endpoint-utilities';
-import { AddContribution } from '../../../../lib/command-factory';
 import { useDebouncedFn, useStateWithSideEffect } from '../../../hooks/util';
 import { IEndpoint } from '../../../hooks/useEndpointsHook';
 import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
@@ -48,8 +47,7 @@ export const ExistingEndpointNameField: FC<{
 
   const { value, setValue } = useStateWithSideEffect({
     initialValue: endpoint.purpose,
-    sideEffect: (newName: string) =>
-      debouncedSet(endpointId, AddContribution(endpointId, 'purpose', newName)),
+    sideEffect: (newName: string) => debouncedSet(endpointId, newName),
   });
 
   return (

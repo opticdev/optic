@@ -23,7 +23,8 @@ export function DiffAccessoryNavigation() {
   const hasChanges =
     handled > 0 ||
     context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
-    Object.keys(context.choices.existingEndpointNameContributions).length > 0;
+    Object.keys(context.choices.existingEndpointNameContributions).length > 0 ||
+    Object.keys(context.choices.existingEndpointPathContributions).length > 0;
 
   const numberOfUndocumented = context.results?.displayedUndocumentedUrls.filter(
     (i) => !i.hide

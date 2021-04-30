@@ -34,6 +34,7 @@ export const newSharedDiffMachine = (
       choices: {
         approvedSuggestions: {},
         existingEndpointNameContributions: {},
+        existingEndpointPathContributions: {},
       },
       results: {
         undocumentedUrls: undocumentedUrls,
@@ -62,7 +63,8 @@ export const newSharedDiffMachine = (
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   );
                 },
               }),
@@ -122,7 +124,8 @@ export const newSharedDiffMachine = (
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   ),
               }),
             ],
@@ -142,7 +145,8 @@ export const newSharedDiffMachine = (
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   ),
               }),
             ],
@@ -178,6 +182,7 @@ export const newSharedDiffMachine = (
                 choices: (ctx, event) => ({
                   approvedSuggestions: {},
                   existingEndpointNameContributions: {},
+                  existingEndpointPathContributions: {},
                 }),
               }),
               assign({
@@ -186,7 +191,8 @@ export const newSharedDiffMachine = (
                   AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   ),
               }),
             ],
@@ -208,7 +214,8 @@ export const newSharedDiffMachine = (
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   );
                 },
               }),
@@ -230,7 +237,31 @@ export const newSharedDiffMachine = (
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
+                  );
+                },
+              }),
+            ],
+          },
+          SET_PATH_DESCRIPTION: {
+            actions: [
+              assign({
+                choices: (ctx, event) => ({
+                  ...ctx.choices,
+                  existingEndpointPathContributions: {
+                    ...ctx.choices.existingEndpointPathContributions,
+                    [event.id]: event.command,
+                  },
+                }),
+              }),
+              assign({
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   );
                 },
               }),
@@ -243,7 +274,8 @@ export const newSharedDiffMachine = (
                   return AssembleCommands(
                     ctx.choices.approvedSuggestions,
                     ctx.pendingEndpoints,
-                    ctx.choices.existingEndpointNameContributions
+                    ctx.choices.existingEndpointNameContributions,
+                    ctx.choices.existingEndpointPathContributions
                   );
                 },
               }),
@@ -380,6 +412,11 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'UPDATE_PENDING_ENDPOINT_NAME';
+    }
+  | {
+      type: 'SET_PATH_DESCRIPTION';
+      id: string;
+      command: any;
     };
 
 // The context (extended state) of the machine
@@ -398,6 +435,7 @@ export interface SharedDiffStateContext {
   choices: {
     approvedSuggestions: { [key: string]: any[] };
     existingEndpointNameContributions: { [id: string]: any };
+    existingEndpointPathContributions: { [id: string]: any };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];

@@ -1,16 +1,17 @@
-import * as React from 'react';
-import { ChangeEvent } from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
-import { TextField } from '@material-ui/core';
+import React from 'react';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import Helmet from 'react-helmet';
 import {
   useContributionEditing,
   useValueWithStagedContributions,
 } from '../hooks/edit/Contributions';
-import { EditableTextField, TextFieldVariant } from '../common';
+import {
+  EditableTextField,
+  TextFieldVariant,
+  FieldOrParameter,
+} from '../common';
 
-export type FieldOrParameterContributionProps = {
+export type DocsFieldOrParameterContributionProps = {
   shapes: IShapeRenderer[];
   id: string;
   name: string;
@@ -18,14 +19,13 @@ export type FieldOrParameterContributionProps = {
   initialValue: string;
 };
 
-export function FieldOrParameterContribution({
+export function DocsFieldOrParameterContribution({
   name,
   id,
   shapes,
   depth,
   initialValue,
-}: FieldOrParameterContributionProps) {
-  const classes = useStyles();
+}: DocsFieldOrParameterContributionProps) {
   const contributionKey = 'description';
   const { isEditing } = useContributionEditing();
 
@@ -36,26 +36,14 @@ export function FieldOrParameterContribution({
   );
 
   return (
-    <div className={classes.container} style={{ paddingLeft: depth * 14 }}>
-      <div className={classes.topRow}>
-        <div className={classes.keyName}>{name}</div>
-        <div className={classes.shape}>{summarizeTypes(shapes)}</div>
-      </div>
-      {isEditing ? (
-        <TextField
-          inputProps={{ className: classes.description }}
-          fullWidth
-          placeholder={`What is ${name}? How is it used?`}
-          multiline
-          value={value}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setValue(e.target.value);
-          }}
-        />
-      ) : (
-        <div className={classes.description}>{value}</div>
-      )}
-    </div>
+    <FieldOrParameter
+      name={name}
+      shapes={shapes}
+      depth={depth}
+      value={value}
+      setValue={setValue}
+      isEditing={isEditing}
+    />
   );
 }
 
@@ -123,52 +111,3 @@ export function EndpointNameMiniContribution({
     />
   );
 }
-
-function summarizeTypes(shapes: IShapeRenderer[]) {
-  if (shapes.length === 1) {
-    return shapes[0].jsonType.toString().toLowerCase();
-  } else {
-    const allShapes = shapes.map((i) => i.jsonType.toString().toLowerCase());
-    const last = allShapes.pop();
-    return allShapes.join(', ') + ' or ' + last;
-  }
-}
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginBottom: 9,
-    paddingLeft: 3,
-    borderTop: '1px solid #e4e8ed',
-  },
-  keyName: {
-    color: '#3c4257',
-    fontWeight: 600,
-    fontSize: 13,
-    fontFamily: 'Ubuntu',
-  },
-  description: {
-    fontFamily: 'Ubuntu',
-    fontWeight: 200,
-    fontSize: 14,
-    lineHeight: 1.8,
-    color: '#4f566b',
-  },
-  shape: {
-    marginLeft: 6,
-    fontFamily: 'Ubuntu Mono',
-    fontSize: 12,
-    fontWeight: 400,
-    color: '#8792a2',
-    height: 18,
-    marginTop: 2,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topRow: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingTop: 9,
-    paddingBottom: 6,
-  },
-}));

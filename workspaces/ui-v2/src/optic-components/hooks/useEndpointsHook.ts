@@ -12,6 +12,7 @@ export const AllEndpointsQuery = `{
         id
         name
         isParameterized
+        contributions
       }
       method
       pathContributions
@@ -21,8 +22,6 @@ export const AllEndpointsQuery = `{
 export function useEndpoints(
   renderChangesSince?: string
 ): { endpoints: IEndpoint[]; loading?: boolean } {
-  //@TODO
-
   const endpointsChangelog = useEndpointsChangelog(renderChangesSince);
 
   const queryInput = {
@@ -41,7 +40,6 @@ export function useEndpoints(
     () => (data ? endpointQueryResultsToJson(data, endpointsChangelog) : []),
     [data, endpointsChangelog]
   );
-  console.log(result);
 
   return { endpoints: result, loading };
 }
@@ -80,7 +78,14 @@ export function endpointQueryResultsToJson(
       group: request.absolutePathPattern
         .substring(commonStart.length)
         .split('/')[0],
-      pathParameters: request.pathComponents,
+      pathParameters: request.pathComponents.map((path: any) => {
+        return {
+          id: path.id,
+          name: path.name,
+          isParameterized: path.isParameterized,
+          description: path.contributions.description || '',
+        };
+      }),
       description: request.pathContributions.description || '',
       purpose: request.pathContributions.purpose || '',
       changelog: {
@@ -114,8 +119,10 @@ export interface IEndpoint {
 }
 
 export interface IPathParameter {
-  pathComponentId: string;
-  pathComponentName: string;
+  id: string;
+  name: string;
+  isParameterized: boolean;
+  description: string;
 }
 
 function sharedStart(array: string[]): string {

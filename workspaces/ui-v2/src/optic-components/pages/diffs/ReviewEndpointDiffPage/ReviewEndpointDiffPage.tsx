@@ -5,7 +5,6 @@ import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import { DiffCard } from '../../../diffs/render/DiffCard';
 import { makeStyles } from '@material-ui/styles';
-import { AddContribution } from '../../../../lib/command-factory';
 
 import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
 import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
@@ -68,11 +67,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     setValue: setEndpointName,
   } = useStateWithSideEffect({
     initialValue: endpoint.purpose,
-    sideEffect: (newName: string) =>
-      debouncedSetName(
-        endpointId,
-        AddContribution(endpointId, 'purpose', newName)
-      ),
+    sideEffect: (newName: string) => debouncedSetName(endpointId, newName),
   });
   const endpointId = getEndpointId({ method, pathId });
 

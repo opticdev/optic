@@ -1,21 +1,23 @@
-import * as React from 'react';
+import React, { FC, ReactNode } from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { IPathParameter } from '../hooks/useEndpointsHook';
 import { Divider, Typography } from '@material-ui/core';
-import { FieldOrParameterContribution } from './Contributions';
-import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 
-export type PathParametersViewEditProps = {
+export type PathParametersProps = {
   parameters: IPathParameter[];
+  renderField: (pathParam: IPathParameter, index: number) => ReactNode;
 };
 
-export function PathParametersViewEdit(props: PathParametersViewEditProps) {
+export const PathParameters: FC<PathParametersProps> = ({
+  parameters,
+  renderField,
+}) => {
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
       <Typography className={classes.h6}>Path Parameters</Typography>
-      {props.parameters.length === 0 && (
+      {parameters.length === 0 && (
         <>
           <Divider
             style={{
@@ -26,28 +28,10 @@ export function PathParametersViewEdit(props: PathParametersViewEditProps) {
           <Typography className={classes.none}>No path parameters.</Typography>
         </>
       )}
-
-      {props.parameters.map((param, index) => {
-        const alwaysAString: IShapeRenderer = {
-          shapeId: param.pathComponentId + 'shape',
-          jsonType: JsonLike.STRING,
-          value: undefined,
-        };
-        return (
-          <FieldOrParameterContribution
-            key={index}
-            id={param.pathComponentId}
-            name={param.pathComponentName}
-            shapes={[alwaysAString]}
-            depth={0}
-            // @nic TODO implement path params
-            initialValue=""
-          />
-        );
-      })}
+      {parameters.map(renderField)}
     </div>
   );
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   container: {
