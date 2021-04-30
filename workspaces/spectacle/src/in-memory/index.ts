@@ -19,6 +19,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -174,16 +175,29 @@ export class InMemoryDiffService implements IOpticDiffService {
     );
 
     const diffs = await this.listDiffs();
-
+    const taggedInteractions = this.dependencies.interactions
+      .map((x: HttpInteraction) => {
+        console.log({ x });
+        return JSON.stringify([x, [x.uuid]]);
+      })
+      .join('\n');
     const allAffordances = JSON.parse(
       this.dependencies.opticEngine.learn_shape_diff_affordances(
         spec,
-        JSON.stringify(diffs.diffs),
-        JSON.stringify(this.dependencies.interactions)
+        JSON.stringify(diffs.diffs.map((x) => x[0])),
+        taggedInteractions
       )
     );
-
-    return allAffordances;
+    const affordancesByFingerprint = allAffordances.reduce(
+      (acc: any, item: any) => {
+        const [key, value] = item;
+        acc[key] = value;
+        return acc;
+      },
+      {}
+    );
+    //@TOOD: use asynctools affordancesByFingerprint ?
+    return affordancesByFingerprint;
   }
 
   learnUndocumentedBodies(
