@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import { TwoColumn } from './TwoColumn';
 import { BodyRender } from './BodyRender';
@@ -8,7 +8,7 @@ import { useShapeDescriptor } from '../hooks/useShapeDescriptor';
 import { IChanges } from '../changelog/IChanges';
 import { ChangeLogBG } from '../changelog/ChangeLogBG';
 
-export type TwoColumnBodyProps = {
+type SharedProps = {
   location: string;
   changes?: IChanges;
   changesSinceBatchCommitId?: string;
@@ -16,10 +16,16 @@ export type TwoColumnBodyProps = {
   rootShapeId: string;
 };
 
+type OneColumnBodyProps = SharedProps;
+
+export type TwoColumnBodyProps = SharedProps & {
+  description: string;
+};
+
 export function TwoColumnBody(props: TwoColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,
-    props.changesSinceBatchCommitId,
+    props.changesSinceBatchCommitId
   );
   return (
     <TwoColumn
@@ -33,6 +39,7 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
               id={props.bodyId}
               contributionKey={'description'}
               defaultText={'Add a description'}
+              initialValue={props.description}
             />
           </div>
           <ContributionGroup rootShape={shapeChoices} />
@@ -49,10 +56,10 @@ export function TwoColumnBody(props: TwoColumnBodyProps) {
   );
 }
 
-export function OneColumnBody(props: TwoColumnBodyProps) {
+export function OneColumnBody(props: OneColumnBodyProps) {
   const shapeChoices = useShapeDescriptor(
     props.rootShapeId,
-    props.changesSinceBatchCommitId,
+    props.changesSinceBatchCommitId
   );
 
   return (

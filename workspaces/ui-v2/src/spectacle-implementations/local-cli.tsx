@@ -3,7 +3,6 @@ import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
-import { Loading } from '../optic-components/navigation/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import {
@@ -24,7 +23,25 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { Loading } from '../optic-components/loaders/Loading';
+import {
+  AppConfigurationStore,
+  OpticAppConfig,
+} from '../optic-components/hooks/config/AppConfiguration';
 
+const appConfig: OpticAppConfig = {
+  featureFlags: {},
+  config: {
+    navigation: {
+      showChangelog: true,
+      showDiff: true,
+      showDocs: true,
+    },
+    documentation: {
+      allowDescriptionEditing: true,
+    },
+  },
+};
 export default function LocalCli() {
   const match = useRouteMatch();
   const params = useParams<{ specId: string }>();
@@ -41,21 +58,23 @@ export default function LocalCli() {
   }
 
   return (
-    <SpectacleStore spectacle={data.spectacle}>
-      <CapturesServiceStore capturesService={data.capturesService}>
-        <InMemoryInteractionLoaderStore samples={[]}>
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </InMemoryInteractionLoaderStore>
-      </CapturesServiceStore>
-    </SpectacleStore>
+    <AppConfigurationStore config={appConfig}>
+      <SpectacleStore spectacle={data.spectacle}>
+        <CapturesServiceStore capturesService={data.capturesService}>
+          <InMemoryInteractionLoaderStore samples={[]}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DiffReviewEnvironments />
+                  <DocumentationPages />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </InMemoryInteractionLoaderStore>
+        </CapturesServiceStore>
+      </SpectacleStore>
+    </AppConfigurationStore>
   );
 }
 
@@ -184,6 +203,7 @@ export function useLocalCliServices(
   });
   return {
     loading: false,
+    error: false,
     data: { spectacle, capturesService },
   };
 }

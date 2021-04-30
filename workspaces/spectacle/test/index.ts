@@ -83,6 +83,36 @@ const specs = [
     shapeId: shapeId1,
   }),
   fromPreviousBatchCommitId(
+    'add nested response field',
+    './test/specs/add-res-nested-field.json',
+    { shapeId: 'shape_JMawGfOvqm' }
+  ),
+  fromPreviousBatchCommitId(
+    'update nested response field',
+    './test/specs/update-res-nested-field.json',
+    { shapeId: 'shape_JMawGfOvqm' }
+  ),
+  fromPreviousBatchCommitId(
+    'add response array field',
+    './test/specs/add-res-array-field.json',
+    { shapeId: 'shape_Fp2ke8xB9K' }
+  ),
+  fromPreviousBatchCommitId(
+    'add response as an array',
+    './test/specs/add-res-as-array.json',
+    { shapeId: 'shape_Sn2bnZvvoM' }
+  ),
+  fromPreviousBatchCommitId(
+    'updated response as an array',
+    './test/specs/update-res-as-array.json',
+    { shapeId: 'shape_Sn2bnZvvoM' }
+  ),
+  fromPreviousBatchCommitId(
+    'add response as an array with object',
+    './test/specs/add-res-as-array-with-object.json',
+    { shapeId: 'shape_oCUwskX7xA' }
+  ),
+  fromPreviousBatchCommitId(
     'add request and response',
     './test/specs/add-req-and-res.json',
     { shapeId: shapeId2 }

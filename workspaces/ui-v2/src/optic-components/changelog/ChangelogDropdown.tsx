@@ -26,6 +26,7 @@ export function ChangesSinceDropdown(props: any) {
   const changelogPageRoute = useChangelogPages();
   const documentationPageLink = useDocumentationPageLink();
   const batchCommits = useBatchCommits();
+  const allBatchCommits = batchCommits.batchCommits;
   const { batchId } = useParams<{ batchId?: string }>();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -39,7 +40,7 @@ export function ChangesSinceDropdown(props: any) {
   };
 
   const selectedBatchId =
-    batchId && batchCommits.find((i) => i.batchId.startsWith(batchId));
+    batchId && allBatchCommits.find((i) => i.batchId.startsWith(batchId));
 
   const content =
     batchId && selectedBatchId ? (
@@ -77,7 +78,7 @@ export function ChangesSinceDropdown(props: any) {
         onClose={handleClose}
         style={{ marginTop: 20 }}
       >
-        {batchCommits.map((i, index) => (
+        {allBatchCommits.map((i, index) => (
           <BatchCommitMenuItem
             batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
             key={index}
@@ -118,7 +119,7 @@ function BatchCommitMenuItem({
             color: OpticBlue,
           }}
         >
-          {name}
+          {name || 'Changes from'}
         </Typography>
         <Typography
           component="span"

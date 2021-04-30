@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { useContext, useState } from 'react';
+import { FC, useCallback, useContext, useState } from 'react';
+import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
+import { AddContribution } from '../../../lib/command-factory';
+import { useStateWithSideEffect } from '../util';
 
 export const ContributionEditContext = React.createContext({});
 
@@ -11,12 +14,9 @@ type ContributionEditContextValue = {
   stagePendingContribution: (
     id: string,
     contributionKey: string,
-    value: string
+    value: string,
+    initialValue: string
   ) => void;
-  lookupContribution: (
-    id: string,
-    contributionKey: string
-  ) => string | undefined;
 };
 
 interface IContribution {
@@ -27,58 +27,102 @@ interface IContribution {
 
 type ContributionEditingStoreProps = {
   initialIsEditingState?: boolean;
-  children?: any;
 };
 
-export const ContributionEditingStore = (
-  props: ContributionEditingStoreProps
+export const useValueWithStagedContributions = (
+  id: string,
+  contributionKey: string,
+  initialValue: string
 ) => {
-  //@TODO: replace with spectacle
-  /////////////////////////////////////////
+  const { stagePendingContribution } = useContributionEditing();
 
+  const { value, setValue } = useStateWithSideEffect({
+    initialValue,
+    sideEffect: (newValue: string) =>
+      stagePendingContribution(id, contributionKey, newValue, initialValue),
+  });
+
+  return {
+    value,
+    setValue,
+  };
+};
+
+export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
+  props
+) => {
+  const spectacleMutator = useSpectacleCommand();
   const [isEditing, setIsEditing] = useState(
     props.initialIsEditingState || false
   );
-  const [pendingContributions, setPendingContributions]: [
-    IContribution[],
-    any
-  ] = useState([]);
 
-  const stagePendingContribution = (
-    id: string,
-    contributionKey: string,
-    value: string
-  ) => {
-    setPendingContributions((current: IContribution[]) => {
-      const items = [...current];
-      // remove previous changes for same id/key
-      return [
-        ...items.filter(
-          (previous) =>
-            previous.id !== id && previous.contributionKey !== contributionKey
-        ),
-        {
-          id,
-          contributionKey,
-          value,
-        },
-      ];
-    });
-  };
+  const [pendingContributions, setPendingContributions] = useState<
+    IContribution[]
+  >([]);
+
+  const stagePendingContribution = useCallback(
+    (
+      newId: string,
+      newContributionKey: string,
+      newValue: string,
+      initialValue: string
+    ) => {
+      const newContribution =
+        newValue !== initialValue
+          ? [
+              {
+                id: newId,
+                contributionKey: newContributionKey,
+                value: newValue,
+              },
+            ]
+          : [];
+
+      setPendingContributions((previousState) => [
+        ...previousState.filter((previousItem) => {
+          const isCurrentContribution =
+            previousItem.id === newId &&
+            previousItem.contributionKey === newContributionKey;
+          return !isCurrentContribution;
+        }),
+        ...newContribution,
+      ]);
+    },
+    []
+  );
 
   const value: ContributionEditContextValue = {
     isEditing,
-    save: () => {
+    save: async () => {
+      if (pendingContributions.length > 0) {
+        const commands = pendingContributions.map((contribution) =>
+          AddContribution(
+            contribution.id,
+            contribution.contributionKey,
+            contribution.value
+          )
+        );
+
+        await spectacleMutator({
+          query: `
+          mutation X($commands: [JSON]) {
+            applyCommands(commands: $commands) {
+              batchCommitId
+            }
+          }
+          `,
+          variables: {
+            commands,
+          },
+        });
+
+        setPendingContributions([]);
+      }
       setIsEditing(false);
-      alert(JSON.stringify(pendingContributions));
-      setPendingContributions(() => []);
     },
     pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),
     stagePendingContribution,
-    lookupContribution: (id, contributionKey) => {
-      return undefined;
-    },
   };
 
   return (

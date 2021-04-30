@@ -4,7 +4,7 @@ import { IChanges } from '../changelog/IChanges';
 export function useEndpointBody(
   pathId: string,
   method: string,
-  renderChangesSince?: string,
+  renderChangesSince?: string
 ): { requests: IRequestBody[]; responses: IResponseBody[] } {
   const spectacleInput =
     typeof renderChangesSince === 'undefined'
@@ -14,6 +14,7 @@ export function useEndpointBody(
       id
       pathId
       method
+      requestContributions
       bodies {
         contentType
         rootShapeId
@@ -21,6 +22,7 @@ export function useEndpointBody(
       responses {
         id
         statusCode
+        contributions
         bodies {
           contentType
           rootShapeId
@@ -36,6 +38,7 @@ export function useEndpointBody(
       id
       pathId
       method
+      requestContributions
       changes(sinceBatchCommitId: $sinceBatchCommitId) {
         added
         changed
@@ -47,6 +50,7 @@ export function useEndpointBody(
       responses {
         id
         statusCode
+        contributions
         changes(sinceBatchCommitId: $sinceBatchCommitId) {
           added
           changed
@@ -72,7 +76,7 @@ export function useEndpointBody(
     return { requests: [], responses: [] };
   } else {
     const request = data.requests.find(
-      (i: any) => i.pathId === pathId && i.method === method,
+      (i: any) => i.pathId === pathId && i.method === method
     );
     if (!request) {
       return { requests: [], responses: [] };
@@ -85,6 +89,7 @@ export function useEndpointBody(
         pathId: request.pathId,
         method: request.method,
         changes: request.changes,
+        description: request.requestContributions.description || '',
       };
     });
     const responses: IResponseBody[] = request.responses.flatMap(
@@ -98,9 +103,10 @@ export function useEndpointBody(
             pathId: request.pathId,
             method: request.method,
             changes: response.changes,
+            description: request.requestContributions.description || '',
           };
         });
-      },
+      }
     );
 
     return { requests, responses };
@@ -113,6 +119,7 @@ export interface IRequestBody {
   rootShapeId: string;
   pathId: string;
   method: string;
+  description: string;
   changes?: IChanges;
 }
 
@@ -123,5 +130,6 @@ export interface IResponseBody {
   rootShapeId: string;
   pathId: string;
   method: string;
+  description: string;
   changes?: IChanges;
 }

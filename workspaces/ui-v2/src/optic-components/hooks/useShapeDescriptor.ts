@@ -1,6 +1,7 @@
 import { IShapeRenderer, JsonLike } from '../shapes/ShapeRenderInterfaces';
 import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
+import sortBy from 'lodash.sortby';
 
 const shapeQuery = `
   query X($shapeId: ID) {
@@ -12,6 +13,7 @@ const shapeQuery = `
           name
           fieldId
           shapeId
+          contributions
         }
       }
       asArray {
@@ -30,6 +32,7 @@ const changesSinceShapeQuery = `
           name
           fieldId
           shapeId
+          contributions
           changes(sinceBatchCommitId: $sinceBatchCommitId) {
             added
             changed
@@ -48,7 +51,7 @@ const changesSinceShapeQuery = `
 
 export function useShapeDescriptor(
   rootShapeId: string,
-  renderChangesSinceBatchCommitId: string | undefined,
+  renderChangesSinceBatchCommitId: string | undefined
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
 
@@ -87,13 +90,18 @@ export function useShapeDescriptor(
               choice.asObject.fields.map(async (field: any) => {
                 const shapeChoices = await accumulateShapes(field.shapeId);
                 field.required = !shapeChoices.some(
-                  (i: any) => i.jsonType === JsonLike.UNDEFINED,
+                  (i: any) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
                 field.shapeChoices = shapeChoices
                   .filter((i: any) => i.jsonType !== JsonLike.UNDEFINED)
                   .map((i: any) => ({ ...i, shapeId: i.id })); // don't include optional
+
+                field.shapeChoices = sortBy(
+                  field.shapeChoices,
+                  (e) => e.jsonType === JsonLike.NULL
+                );
                 return field;
-              }),
+              })
             );
             choice.asObject.fields = newFields;
             return choice;
@@ -106,7 +114,7 @@ export function useShapeDescriptor(
           default:
             return choice;
         }
-      }),
+      })
     );
   }
 

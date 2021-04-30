@@ -33,6 +33,7 @@ export const newSharedDiffMachine = (
       simulatedCommands: [],
       choices: {
         approvedSuggestions: {},
+        existingEndpointNameContributions: {},
       },
       results: {
         undocumentedUrls: undocumentedUrls,
@@ -50,10 +51,23 @@ export const newSharedDiffMachine = (
     },
     initial: 'ready',
     states: {
-      loadingDiffs: {},
       error: {},
       ready: {
         on: {
+          USER_FINISHED_REVIEW: {
+            actions: [
+              assign({
+                simulatedCommands: (ctx) => {
+                  console.log('flushing commands before saving');
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  );
+                },
+              }),
+            ],
+          },
           DOCUMENT_ENDPOINT: {
             actions: [
               assign({
@@ -104,6 +118,12 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  ),
               }),
             ],
           },
@@ -118,6 +138,12 @@ export const newSharedDiffMachine = (
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  ),
               }),
             ],
           },
@@ -149,10 +175,19 @@ export const newSharedDiffMachine = (
               assign({
                 pendingEndpoints: (ctx, event) => [],
                 browserDiffHashIgnoreRules: (ctx, event) => [],
-                choices: (ctx, event) => ({ approvedSuggestions: {} }),
+                choices: (ctx, event) => ({
+                  approvedSuggestions: {},
+                  existingEndpointNameContributions: {},
+                }),
               }),
               assign({
                 results: (ctx) => updateUrlResults(ctx),
+                simulatedCommands: (ctx) =>
+                  AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  ),
               }),
             ],
           },
@@ -169,11 +204,48 @@ export const newSharedDiffMachine = (
                 }),
               }),
               assign({
-                simulatedCommands: (ctx) =>
-                  AssembleCommands(
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
                     ctx.choices.approvedSuggestions,
-                    ctx.pendingEndpoints
-                  ),
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  );
+                },
+              }),
+            ],
+          },
+          SET_ENDPOINT_NAME: {
+            actions: [
+              assign({
+                choices: (ctx, event) => ({
+                  ...ctx.choices,
+                  existingEndpointNameContributions: {
+                    ...ctx.choices.existingEndpointNameContributions,
+                    [event.id]: event.command,
+                  },
+                }),
+              }),
+              assign({
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  );
+                },
+              }),
+            ],
+          },
+          UPDATE_PENDING_ENDPOINT_NAME: {
+            actions: [
+              assign({
+                simulatedCommands: (ctx) => {
+                  return AssembleCommands(
+                    ctx.choices.approvedSuggestions,
+                    ctx.pendingEndpoints,
+                    ctx.choices.existingEndpointNameContributions
+                  );
+                },
               }),
             ],
           },
@@ -261,7 +333,6 @@ function filterDisplayedUndocumentedUrls(
 ////////////////////////////////Machine Types
 export interface SharedDiffStateSchema {
   states: {
-    loadingDiffs: {};
     error: {};
     ready: {};
   };
@@ -298,6 +369,17 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'RESET';
+    }
+  | {
+      type: 'USER_FINISHED_REVIEW';
+    }
+  | {
+      type: 'SET_ENDPOINT_NAME';
+      id: string;
+      command: any;
+    }
+  | {
+      type: 'UPDATE_PENDING_ENDPOINT_NAME';
     };
 
 // The context (extended state) of the machine
@@ -315,6 +397,7 @@ export interface SharedDiffStateContext {
   };
   choices: {
     approvedSuggestions: { [key: string]: any[] };
+    existingEndpointNameContributions: { [id: string]: any };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];

@@ -19,6 +19,16 @@ module.exports = {
       'using/troubleshooting',
       'using/cli-commands',
     ],
+    'Optic in Real Environments': [
+      'deploy/live',
+      'deploy/azure-app-gateway',
+      'deploy/azure-api-management',
+      'deploy/envoy-proxy',
+      'deploy/nginx',
+      'deploy/cloudflare-worker',
+      'deploy/kubernetes',
+      'deploy/aws-api-gateway',
+    ],
     'API Ops': ['apiops/pull-requests', 'apiops/openapi', 'apiops/scripts'],
     Integrations: [
       'integrations/integrations',
@@ -49,14 +59,15 @@ module.exports = {
       {
         type: 'category',
         label: 'IDEs',
-        items: [
-          'integrations/ides/intellij',
-        ],
+        items: ['integrations/ides/intellij'],
       },
       {
         type: 'category',
         label: 'CI/CD Pipelines',
-        items: [ 'integrations/cicd/circleci', 'integrations/cicd/github-actions' ],
+        items: [
+          'integrations/cicd/circleci',
+          'integrations/cicd/github-actions',
+        ],
       },
     ],
   },

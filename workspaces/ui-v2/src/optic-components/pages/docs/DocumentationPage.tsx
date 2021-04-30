@@ -8,9 +8,13 @@ import {
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { List, Typography } from '@material-ui/core';
-import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
-import { ContributionEditingStore } from '../../hooks/edit/Contributions';
+import { List, ListItem, Typography } from '@material-ui/core';
+import { EndpointName, PromptNavigateAway } from '../../common';
+import { EndpointNameMiniContribution } from '../../documentation/Contributions';
+import {
+  ContributionEditingStore,
+  useContributionEditing,
+} from '../../hooks/edit/Contributions';
 import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
@@ -24,19 +28,43 @@ import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
 import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { Loading } from '../../navigation/Loading';
+import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
+import { useBaseUrl } from '../../hooks/useBaseUrl';
+import { useAppConfig } from '../../hooks/config/AppConfiguration';
+import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
   const endpointPageLink = useEndpointPageLink();
+  const history = useHistory();
+  const baseUrl = useBaseUrl();
+
+  const onEndpointClicked = (pathId: string, method: string) => {
+    history.push(endpointPageLink.linkTo(pathId, method));
+  };
 
   return (
     <ContributionEditingStore>
       <>
         <NavigationRoute
+          path={baseUrl}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={onEndpointClicked}
+            />
+          )}
+          AccessoryNavigation={DocsPageAccessoryNavigation}
+        />
+        <NavigationRoute
           path={documentationPageLink.path}
-          Component={DocumentationRootPage}
+          Component={(props: any) => (
+            <DocumentationRootPage
+              {...props}
+              onEndpointClicked={onEndpointClicked}
+            />
+          )}
           AccessoryNavigation={DocsPageAccessoryNavigation}
         />
         <NavigationRoute
@@ -50,22 +78,32 @@ export function DocumentationPages(props: any) {
 }
 
 export function DocsPageAccessoryNavigation(props: any) {
+  const appConfig = useAppConfig();
+  const { isEditing, pendingCount } = useContributionEditing();
+
   return (
     <div style={{ paddingRight: 10, display: 'flex', flexDirection: 'row' }}>
-      <ChangesSinceDropdown />
-      <EditContributionsButton />
+      <PromptNavigateAway shouldPrompt={isEditing && pendingCount > 0} />
+      {appConfig.navigation.showChangelog && <ChangesSinceDropdown />}
+      {appConfig.documentation.allowDescriptionEditing && (
+        <EditContributionsButton />
+      )}
     </div>
   );
 }
 
-export function DocumentationRootPage(props: { changelogBatchId?: string }) {
+export function DocumentationRootPage(props: {
+  onEndpointClicked: (pathId: string, method: string) => void;
+  changelogBatchId?: string;
+}) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+  const changelogStyles = useChangelogStyles();
 
-  const history = useHistory();
-  const endpointPageLink = useEndpointPageLink();
+  // const history = useHistory();
+  // const endpointPageLink = useEndpointPageLink();
 
   if (loading) {
     return <Loading />;
@@ -85,23 +123,41 @@ export function DocumentationRootPage(props: { changelogBatchId?: string }) {
               </Typography>
               {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
                     onClick={() =>
-                      history.push(
-                        endpointPageLink.linkTo(
-                          endpoint.pathId,
-                          endpoint.method,
-                        ),
-                      )
+                      props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    fullPath={endpoint.fullPath}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.pathId,
-                    })}
-                  />
+                    className={
+                      endpoint.changelog?.added ? changelogStyles.added : ''
+                    }
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <EndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.pathId,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                        initialValue={endpoint.purpose}
+                      />
+                    </div>
+                  </ListItem>
                 );
               })}
             </div>
@@ -122,7 +178,7 @@ export function EndpointRootPage(props: any) {
 
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
-    [pathId, method, endpoints],
+    [pathId, method, endpoints]
   );
 
   if (loading) {
@@ -140,6 +196,7 @@ export function EndpointRootPage(props: any) {
         id={endpointId}
         contributionKey="purpose"
         defaultText="What does this endpoint do?"
+        initialValue={thisEndpoint.purpose}
       />
       <EndpointName
         fontSize={19}
@@ -154,6 +211,7 @@ export function EndpointRootPage(props: any) {
             id={endpointId}
             contributionKey={'description'}
             defaultText={'Describe this endpoint'}
+            initialValue={thisEndpoint.description}
           />
         }
         right={
@@ -191,6 +249,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body Parameters'}
+            description={i.description}
           />
         );
       })}
@@ -201,6 +260,7 @@ export function EndpointRootPage(props: any) {
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}
+            description={i.description}
           />
         );
       })}

@@ -7,7 +7,7 @@ const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
@@ -39,7 +39,7 @@ const moduleFileExtensions = [
 
 // Resolve file paths in the same order as webpack
 const resolveModule = (resolveFn, filePath) => {
-  const extension = moduleFileExtensions.find(extension =>
+  const extension = moduleFileExtensions.find((extension) =>
     fs.existsSync(resolveFn(`${filePath}.${extension}`))
   );
 
@@ -50,6 +50,11 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+let entrypoints = {
+  cloud: 'src/entry-points/cloud/index',
+  local: 'src/entry-points/local/index',
+};
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
@@ -57,7 +62,10 @@ module.exports = {
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/entry-points/local/index'), //@TODO: parameterize this
+  appIndexJs: resolveModule(
+    resolveApp,
+    entrypoints[process.env.OPTIC_WEBPACK_ENTRYPOINT || 'local']
+  ),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),
@@ -69,7 +77,5 @@ module.exports = {
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
 };
-
-
 
 module.exports.moduleFileExtensions = moduleFileExtensions;

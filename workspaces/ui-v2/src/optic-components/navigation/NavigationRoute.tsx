@@ -31,6 +31,17 @@ export function NavigationRoute(props: NavigationRouteProps) {
   );
 }
 
+export function NavigationWithChild(props: { children: any }) {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <TopNavigation AccessoryNavigation={() => null} />
+      <div className={classes.scroll}>{props.children}</div>
+    </div>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',

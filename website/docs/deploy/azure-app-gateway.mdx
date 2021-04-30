@@ -1,0 +1,27 @@
+---
+title: Azure Application Gateway
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic has limited integration with Azure Application Gateway as an Azure EventHub consumer. Currently, Application Gateway does not log request and response bodies and these will not be seen by Optic.
+
+1. **Create a EventHub namespace**
+
+1. **Enable logging for Application Gateway**
+    1. In the Azure Portal, navigate to your gateway instance and select "Diagnostic Settings" under the "Monitoring" section.
+    1. Click on the "Turn on diagnostics" link to enable collecting logs.
+
+1. **Configure streaming the Access Log to EventHub**
+
+    Select the "Stream to an event hub" checkbox and click to configure an event hub. Ensure that the "ApplicationGatewayAccessLog" checkbox, under the "Log" section, is selected.
+
+1. **Give Optic Access to EventHub** 
+
+    In your Optic UI, navigate to "Add Connector" and select Azure. Generate and enter an EventHub connection string for Optic to use.
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />

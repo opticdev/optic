@@ -9,6 +9,8 @@ import {
   buildShapesGraph,
   getFieldChanges,
   getArrayChanges,
+  getContributionsProjection,
+  ContributionsProjection,
 } from './helpers';
 import { endpoints, shapes } from '@useoptic/graph-lib';
 import { IOpticCommandContext } from './in-memory';
@@ -30,6 +32,8 @@ export interface IOpticEngine {
   ): any;
 
   get_shape_viewer_projection(spec: any): string;
+
+  get_contributions_projection(spec: any): string;
 
   spec_from_events(eventsJson: string): any;
 }
@@ -131,6 +135,19 @@ export interface IOpticContext {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+export type AsyncStatus<T> =
+  | {
+      loading: true;
+      error: false;
+      data: null;
+    }
+  | {
+      loading: false;
+      error: true;
+      data: null;
+    }
+  | { loading: false; error: false; data: T };
+
 export interface IBaseSpectacle {
   query(options: SpectacleInput): Promise<any>;
 
@@ -154,6 +171,10 @@ async function buildProjections(opticContext: IOpticContext) {
   const shapeViewerProjection = JSON.parse(
     opticContext.opticEngine.get_shape_viewer_projection(spec)
   );
+  const contributionsProjection = getContributionsProjection(
+    spec,
+    opticContext.opticEngine
+  );
 
   return {
     events,
@@ -161,19 +182,22 @@ async function buildProjections(opticContext: IOpticContext) {
     endpointsQueries,
     shapesQueries,
     shapeViewerProjection,
+    contributionsProjection,
   };
 }
 
 export async function makeSpectacle(opticContext: IOpticContext) {
   let endpointsQueries: endpoints.GraphQueries,
     shapeQueries: shapes.GraphQueries,
-    shapeViewerProjection: any;
+    shapeViewerProjection: any,
+    contributionsProjection: ContributionsProjection;
 
   async function reload(opticContext: IOpticContext) {
     const projections = await buildProjections(opticContext);
     endpointsQueries = projections.endpointsQueries;
     shapeQueries = projections.shapesQueries;
     shapeViewerProjection = projections.shapeViewerProjection;
+    contributionsProjection = projections.contributionsProjection;
     return projections;
   }
 
@@ -280,6 +304,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       absolutePathPattern: (parent: endpoints.RequestNodeWrapper) => {
         return Promise.resolve(parent.path().value.absolutePathPattern);
       },
+      absolutePathPatternWithParameterNames: (
+        parent: endpoints.RequestNodeWrapper
+      ) => {
+        return Promise.resolve(
+          parent.path().absolutePathPatternWithParameterNames
+        );
+      },
       pathComponents: (parent: endpoints.RequestNodeWrapper) => {
         let path = parent.path();
         let parentPath = path.parentPath();
@@ -298,7 +329,19 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.bodies().results);
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().responses().results);
+        return Promise.resolve(parent.responses());
+      },
+      pathContributions: (parent: any, args: any, context: any) => {
+        const pathId = parent.path().value.pathId;
+        const method = parent.value.httpMethod;
+        return Promise.resolve(
+          context.contributionsProjection[`${pathId}.${method}`] || {}
+        );
+      },
+      requestContributions: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.value.requestId] || {}
+        );
       },
     },
     HttpResponse: {
@@ -310,6 +353,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       bodies: (parent: any) => {
         return Promise.resolve(parent.bodies().results);
+      },
+      contributions: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.result.data.responseId] || {}
+        );
       },
     },
     PathComponent: {
@@ -368,6 +416,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
           )
         );
       },
+      contributions: (parent: any, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.fieldId] || {}
+        );
+      },
     },
     EndpointChanges: {
       opticUrl: (parent: any) => {
@@ -384,6 +437,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       path: (parent: any) => {
         return Promise.resolve(parent.path);
+      },
+      pathId: (parent: any) => {
+        return Promise.resolve(parent.pathId);
       },
       method: (parent: any) => {
         return Promise.resolve(parent.method);
@@ -418,6 +474,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     // @ts-ignore
     shapeQueries,
     shapeViewerProjection,
+    // @ts-ignore
+    contributionsProjection,
   };
   const queryWrapper = function (input: SpectacleInput) {
     return graphql({

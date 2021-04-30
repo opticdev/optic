@@ -166,11 +166,10 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
     commands.push(
       AddContribution(
         getEndpointId({ method: ctx.method, pathId: ctx.pathId }),
-        'PURPOSE',
+        'purpose',
         ctx.stagedEndpointName
       )
     );
-    debugger;
   }
 
   return commands;
@@ -209,13 +208,6 @@ export interface InitialBodiesContext {
   method: string;
   stagedEndpointName: string;
 }
-
-export type IIgnoreBody = {
-  statusCode?: number;
-  contentType: string;
-  isRequest?: boolean;
-  isResponse?: boolean;
-};
 
 function pathToCommands(
   pathPattern: string,
@@ -272,3 +264,10 @@ export function trimTrailingEmptyPath(components: any) {
   }
   return components;
 }
+
+export type IIgnoreBody = {
+  statusCode?: number;
+  contentType: string;
+  isRequest?: boolean;
+  isResponse?: boolean;
+};

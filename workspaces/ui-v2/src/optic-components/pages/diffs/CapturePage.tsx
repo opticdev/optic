@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { makeStyles } from '@material-ui/styles';
 
@@ -18,17 +18,119 @@ import { AddedDarkGreen, OpticBlue, OpticBlueReadable } from '../../theme';
 import { CaptureSelectDropdown } from '../../diffs/contexts/CaptureSelectDropdown';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import {
+  useDiffEnvironmentsRoot,
   useDiffForEndpointLink,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
-import AskForCommitMessage from '../../diffs/render/AskForCommitMessage';
+import { useCaptures } from '../../hooks/useCapturesHook';
 
-export function CapturePage() {
+export function CapturePage(props: { showDiff?: boolean }) {
+  const capturesState = useCaptures();
+  const history = useHistory();
+  const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
+
+  const noCaptures =
+    !capturesState.loading && capturesState.captures.length === 0;
+
+  useEffect(() => {
+    if (
+      !capturesState.loading &&
+      !props.showDiff &&
+      capturesState.captures[0]
+    ) {
+      history.push(
+        diffEnvironmentsRoot.linkTo(
+          'local',
+          capturesState.captures[0].captureId
+        )
+      );
+    }
+  }, [capturesState, history, props.showDiff, diffEnvironmentsRoot]);
+
+  return (
+    <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>
+      {noCaptures && (
+        <Typography variant="h6">
+          No Captured Traffic to Diff. Learn how to collect traffic below.
+        </Typography>
+      )}
+
+      {props.showDiff && <DiffCaptureResults />}
+
+      <Divider style={{ marginTop: 200, marginBottom: 20 }} />
+
+      <Typography variant="h6" style={{ fontSize: 18 }}>
+        Capture Traffic From Local Environments
+      </Typography>
+
+      <Typography variant="body2">
+        links to all the options....tasks, sdks, etc
+      </Typography>
+
+      <Divider style={{ marginTop: 30, marginBottom: 20 }} />
+
+      <Typography variant="h6" style={{ fontSize: 18 }}>
+        Real Environments [Beta]
+      </Typography>
+
+      <Typography variant="body2">
+        Optic can securely monitor your API in real environments. Once deployed,
+        Optic verifies your API meets its contract, alert you when it behaves
+        unexpectedly, and help you understand what parts of your API each
+        consumer relies upon.
+      </Typography>
+
+      <Grid container spacing={3} style={{ marginTop: 5 }}>
+        <Grid xs={4} item style={{ opacity: 0.4 }}>
+          <RealEnvColumn
+            name={'development'}
+            examples={[
+              { buildN: 19, diffs: '1 diff', requests: '1.1k' },
+              { buildN: 18, diffs: '4 diffs', requests: '6.1k' },
+            ]}
+          />
+        </Grid>
+        <Grid xs={4} item style={{ opacity: 0.4 }}>
+          <RealEnvColumn
+            name={'staging'}
+            examples={[
+              { buildN: 13, diffs: '3 diffs', requests: '12.2k' },
+              { buildN: 12, diffs: '12 diffs', requests: '7.2k' },
+            ]}
+          />
+        </Grid>
+        <Grid
+          xs={4}
+          item
+          justifyContent="center"
+          display="flex"
+          flexDirection="column"
+          component={Box}
+        >
+          <Typography
+            variant="body2"
+            style={{
+              fontFamily: 'Ubuntu Mono',
+              marginBottom: 5,
+              marginTop: -15,
+            }}
+          >
+            Ready to put Optic into a real environment?
+          </Typography>
+          <Button color="secondary" variant="contained">
+            Join Beta
+          </Button>
+        </Grid>
+      </Grid>
+    </CenteredColumn>
+  );
+}
+
+function DiffCaptureResults() {
   const classes = useStyles();
-
   const {
     context,
     isDiffHandled,
@@ -52,33 +154,25 @@ export function CapturePage() {
     history.push(diffUndocumentedUrlsPageLink.linkTo());
   };
 
-  return (
-    <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>
-      {Boolean(handled === total) && (
-        <div
-          style={{
-            marginBottom: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="h5">
-            All diffs handled. Ready to save changes and review changelog?
-          </Typography>
-          <div style={{ paddingTop: 4, marginLeft: 10 }}>
-            <AskForCommitMessage hasChanges={true} />
-          </div>
-        </div>
-      )}
+  const canApplyAll =
+    handled < total && context.results.diffsGroupedByEndpoint.length > 0;
 
+  const canReset = handled > 0 || context.pendingEndpoints.length > 0;
+
+  return (
+    <>
       <div className={classes.leading}>
         <CaptureSelectDropdown />
         <div style={{ flex: 1 }} />
-        <Button size="small" color="primary" onClick={reset}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={reset}
+          disabled={!canReset}
+        >
           Reset
         </Button>
-        <ApproveAll />
+        <ApproveAll disabled={!canApplyAll} />
       </div>
 
       <Paper elevation={1}>
@@ -165,63 +259,7 @@ export function CapturePage() {
           )}
         </List>
       </Paper>
-
-      <Divider style={{ marginTop: 200, marginBottom: 20 }} />
-
-      <Typography variant="h6" style={{ fontSize: 18 }}>
-        Real Environments [Beta]
-      </Typography>
-
-      <Typography variant="body2">
-        Optic can securely monitor your API in real environments. Once deployed,
-        Optic verifies your API meets its contract, alert you when it behaves
-        unexpectedly, and help you understand what parts of your API each
-        consumer relies upon.
-      </Typography>
-
-      <Grid container spacing={3} style={{ marginTop: 5 }}>
-        <Grid xs={4} item style={{ opacity: 0.4 }}>
-          <RealEnvColumn
-            name={'development'}
-            examples={[
-              { buildN: 19, diffs: '1 diff', requests: '1.1k' },
-              { buildN: 18, diffs: '4 diffs', requests: '6.1k' },
-            ]}
-          />
-        </Grid>
-        <Grid xs={4} item style={{ opacity: 0.4 }}>
-          <RealEnvColumn
-            name={'staging'}
-            examples={[
-              { buildN: 13, diffs: '3 diffs', requests: '12.2k' },
-              { buildN: 12, diffs: '12 diffs', requests: '7.2k' },
-            ]}
-          />
-        </Grid>
-        <Grid
-          xs={4}
-          item
-          justifyContent="center"
-          display="flex"
-          flexDirection="column"
-          component={Box}
-        >
-          <Typography
-            variant="body2"
-            style={{
-              fontFamily: 'Ubuntu Mono',
-              marginBottom: 5,
-              marginTop: -15,
-            }}
-          >
-            Ready to put Optic into a real environment?
-          </Typography>
-          <Button color="secondary" variant="contained">
-            Join Beta
-          </Button>
-        </Grid>
-      </Grid>
-    </CenteredColumn>
+    </>
   );
 }
 

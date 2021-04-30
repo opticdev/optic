@@ -1,0 +1,39 @@
+---
+title: AWS API Gateway
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic integrates with AWS services such as API Gateway by consuming from an S3 bucket.
+
+1. **Enable Access Logging to CloudWatch**
+
+    Follow the [official documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html) to enable Access Logging on your gateway instance. Note that you must opt-in to log request and response bodies. Optic will still function without them but with reduced capabilities.
+
+    :::info
+    Optic only supports the JSON logging format
+    :::
+
+2. **Create an S3 bucket for the logs**
+
+    You will need to give Optic this bucket name and configure it in an export task later, so keep the name handy.
+
+3. **Create an IAM user with access to the S3 bucket**
+
+    :::caution Authorize Optic to view logs
+    This is an external user used by Optic. It should not be the identity used in the next step.
+    :::
+
+4. **Create an Export Task to S3**
+
+    Follow the [official documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html) to configure a new export task for the logs. Be sure to use the same S3 bucket as step (2).
+
+5. **Give Optic access to the S3 bucket**
+
+    In your Optic UI, navigate to "Add Connector" and select AWS. Use the provided [external ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html) and account information when creating permissions for Optic. You will also need to provide the S3 bucket name from step (2).
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />

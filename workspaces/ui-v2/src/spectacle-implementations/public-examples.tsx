@@ -1,19 +1,40 @@
 import * as React from 'react';
-import { useRouteMatch, useParams, Switch } from 'react-router-dom';
-import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { makeSpectacle } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
+import { Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
+import {
+  IBaseSpectacle,
+  IForkableSpectacle,
+  IOpticContext,
+  makeSpectacle,
+  SpectacleInput,
+} from '@useoptic/spectacle';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
-import { Loading } from '../optic-components/navigation/Loading';
+import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryInteractionLoaderStore } from './interaction-loader';
-import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
-import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
-import { IOpticContext } from '@useoptic/spectacle';
 import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
+import {
+  AppConfigurationStore,
+  OpticAppConfig,
+} from '../optic-components/hooks/config/AppConfiguration';
+
+const appConfig: OpticAppConfig = {
+  featureFlags: {},
+  config: {
+    navigation: {
+      showChangelog: true,
+      showDiff: true,
+      showDocs: true,
+    },
+    documentation: {
+      allowDescriptionEditing: true,
+    },
+  },
+};
 
 export default function PublicExamples() {
   const match = useRouteMatch();
@@ -52,21 +73,25 @@ export default function PublicExamples() {
   }
 
   return (
-    <SpectacleStore spectacle={data}>
-      <CapturesServiceStore capturesService={data.opticContext.capturesService}>
-        <InMemoryInteractionLoaderStore samples={data.samples}>
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </InMemoryInteractionLoaderStore>
-      </CapturesServiceStore>
-    </SpectacleStore>
+    <AppConfigurationStore config={appConfig}>
+      <SpectacleStore spectacle={data}>
+        <CapturesServiceStore
+          capturesService={data.opticContext.capturesService}
+        >
+          <InMemoryInteractionLoaderStore samples={data.samples}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DocumentationPages />
+                  <DiffReviewEnvironments />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </InMemoryInteractionLoaderStore>
+        </CapturesServiceStore>
+      </SpectacleStore>
+    </AppConfigurationStore>
   );
 }
 
@@ -117,7 +142,9 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
-  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
+  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle | null>(
+    null
+  );
 
   useEffect(() => {
     async function task() {
@@ -146,5 +173,6 @@ export function useInMemorySpectacle(
   return {
     loading: !spectacle,
     data: spectacle,
-  };
+    error: false,
+  } as AsyncStatus<InMemoryBaseSpectacle>;
 }

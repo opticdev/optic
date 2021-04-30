@@ -1,4 +1,6 @@
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
+import { useEndpointsChangelog } from './useEndpointsChangelog';
+import { useEffect, useState } from 'react';
 
 export const AllEndpointsQuery = `{
     requests {
@@ -11,59 +13,38 @@ export const AllEndpointsQuery = `{
         isParameterized
       }
       method
+      pathContributions
     }
     }`;
-
-export const AllEndpointsQueryWithChanges = `
-  query X($sinceBatchCommitId: String) {
-    requests {
-      id
-      pathId
-      absolutePathPattern
-      pathComponents {
-        id
-        name
-        isParameterized
-      }
-      changes(sinceBatchCommitId: $sinceBatchCommitId) {
-        added
-        changed
-      }
-      method
-    }
-  }`;
 
 export function useEndpoints(
   renderChangesSince?: string
 ): { endpoints: IEndpoint[]; loading?: boolean } {
   //@TODO
 
-  const queryInput =
-    //renderChangesSince
-    // ? {
-    //     query: AllEndpointsQueryWithChanges,
-    //     variables: {
-    //       sinceBatchCommitId: renderChangesSince,
-    //     },
-    //   }
-    // : {
-    {
-      query: AllEndpointsQuery,
-      variables: {},
-    };
+  const endpointsChangelog = useEndpointsChangelog(renderChangesSince);
 
-  const { data, error } = useSpectacleQuery(queryInput);
+  const queryInput = {
+    query: AllEndpointsQuery,
+    variables: {},
+  };
+
+  const { data, loading, error } = useSpectacleQuery(queryInput);
 
   if (error) {
     console.error(error);
     debugger;
   }
 
-  if (data) {
-    return { endpoints: endpointQueryResultsToJson(data) };
-  } else {
-    return { endpoints: [], loading: true };
-  }
+  const [result, setResult] = useState<IEndpoint[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      setResult(endpointQueryResultsToJson(data, endpointsChangelog));
+    }
+  }, [data, setResult, endpointsChangelog]);
+
+  return { endpoints: result, loading };
 }
 
 export function useEndpoint(
@@ -80,12 +61,19 @@ export function useEndpoint(
   }
 }
 
-export function endpointQueryResultsToJson(data: any): IEndpoint[] {
+export function endpointQueryResultsToJson(
+  data: any,
+  endpointsChangelog: any[] = []
+): IEndpoint[] {
   const commonStart = sharedStart(
     data.requests.map((req: any) => req.absolutePathPattern)
   );
 
   const endpoints = data.requests.map((request: any) => {
+    const hasChangelog = endpointsChangelog.find(
+      (i) => i.pathId === request.pathId && i.method === request.method
+    );
+
     return {
       pathId: request.pathId,
       method: request.method,
@@ -94,6 +82,17 @@ export function endpointQueryResultsToJson(data: any): IEndpoint[] {
         .substring(commonStart.length)
         .split('/')[0],
       pathParameters: [],
+      description: request.pathContributions.description || '',
+      purpose: request.pathContributions.purpose || '',
+      changelog: {
+        added: hasChangelog ? hasChangelog.change.category === 'added' : false,
+        changed: hasChangelog
+          ? hasChangelog.change.category === 'changed'
+          : false,
+        removed: hasChangelog
+          ? hasChangelog.change.category === 'removed'
+          : false,
+      },
     } as IEndpoint;
   });
 
@@ -103,8 +102,8 @@ export function endpointQueryResultsToJson(data: any): IEndpoint[] {
 export interface IEndpoint {
   pathId: string;
   method: string;
-  purpose?: string;
-  description?: string;
+  purpose: string;
+  description: string;
   fullPath: string;
   pathParameters: IPathParameter[];
   group: string;

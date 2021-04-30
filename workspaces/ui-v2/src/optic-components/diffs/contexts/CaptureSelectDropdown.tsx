@@ -11,9 +11,10 @@ import TimeAgo from 'javascript-time-ago';
 // @ts-ignore
 import en from 'javascript-time-ago/locale/en';
 import { ICapture } from '@useoptic/spectacle';
-
+import { useHistory } from 'react-router-dom';
 import { useCaptures } from '../../hooks/useCapturesHook';
 import { OpticBlueReadable } from '../../theme';
+import { useDiffEnvironmentsRoot } from '../../navigation/Routes';
 
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
@@ -21,8 +22,9 @@ const timeAgo = new TimeAgo('en-US');
 export function CaptureSelectDropdown(props: any) {
   const classes = useStyles();
   const captures = useCaptures();
-
+  const history = useHistory();
   const { boundaryId } = useParams<{ boundaryId?: string }>();
+  const diffEnvironmentsRoot = useDiffEnvironmentsRoot();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -35,7 +37,7 @@ export function CaptureSelectDropdown(props: any) {
   };
 
   const selectedCapture = captures.captures?.find(
-    (i) => i.captureId === boundaryId,
+    (i) => i.captureId === boundaryId
   );
 
   const content = selectedCapture ? (
@@ -79,11 +81,9 @@ export function CaptureSelectDropdown(props: any) {
             capture={i}
             key={index}
             onClick={() => {
-              // if (index === 0) {
-              //   history.push(documentationPageLink.linkTo());
-              // } else {
-              //   history.push(changelogPageRoute.linkTo(i.batchId));
-              // }
+              history.push(
+                diffEnvironmentsRoot.linkTo('local', i.captureId) + '/review'
+              );
             }}
           />
         ))}

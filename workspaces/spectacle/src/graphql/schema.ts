@@ -35,11 +35,14 @@ type HttpRequest {
   id: ID
   pathComponents: [PathComponent]
   absolutePathPattern: String
+  absolutePathPatternWithParameterNames: String
   pathId: ID
   method: String
   bodies: [HttpBody]
   responses: [HttpResponse]
   changes(sinceBatchCommitId: String): ChangesResult
+  pathContributions: JSON
+  requestContributions: JSON
 }
 type PathComponent {
   id: ID
@@ -51,6 +54,7 @@ type HttpResponse {
   statusCode: Int
   bodies: [HttpBody]
   changes(sinceBatchCommitId: String): ChangesResult
+  contributions: JSON
 }
 type ObjectFieldMetadata {
   name: String
@@ -58,6 +62,7 @@ type ObjectFieldMetadata {
   # query shapeChoices(shapeId) to recurse
   changes(sinceBatchCommitId: String): ChangesResult
   shapeId: ID
+  contributions: JSON
 }
 type ObjectMetadata {
   fields: [ObjectFieldMetadata]
@@ -85,6 +90,7 @@ type EndpointChanges {
 }
 type EndpointChange {
   change: EndpointChangeMetadata
+  pathId: String
   path: String
   method: String
 }

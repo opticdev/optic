@@ -5,25 +5,29 @@ import { useHistory } from 'react-router-dom';
 import { OpticBlueReadable } from '../theme';
 import { Button, LinearProgress, Typography } from '@material-ui/core';
 import { useSharedDiffContext } from '../hooks/diffs/SharedDiffContext';
-import { useDiffReviewCapturePageLink } from '../navigation/Routes';
+import {
+  useDiffReviewCapturePageLink,
+  useDiffUndocumentedUrlsPageLink,
+} from '../navigation/Routes';
 import AskForCommitMessage from './render/AskForCommitMessage';
 
-type DiffAccessoryNavigationProps = {
-  onUrlsPage?: boolean;
-};
-
-export function DiffAccessoryNavigation({
-  onUrlsPage = false,
-}: DiffAccessoryNavigationProps) {
+export function DiffAccessoryNavigation() {
   const classes = useStyles();
 
   const { context, handledCount } = useSharedDiffContext();
   const diffReviewCapturePage = useDiffReviewCapturePageLink();
+  const undocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const history = useHistory();
   const [handled, total] = handledCount;
 
   const hasChanges =
-    handled > 0 || context.pendingEndpoints.filter((i) => i.staged).length > 0;
+    handled > 0 ||
+    context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
+    Object.keys(context.choices.existingEndpointNameContributions).length > 0;
+
+  const numberOfUndocumented = context.results?.displayedUndocumentedUrls.filter(
+    (i) => !i.hide
+  ).length;
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -45,6 +49,7 @@ export function DiffAccessoryNavigation({
         <div className={classes.counter} style={{ marginRight: 10 }}>
           <Button
             size="small"
+            disableRipple
             color="primary"
             onClick={() => {
               history.push(diffReviewCapturePage.linkTo());
@@ -52,6 +57,18 @@ export function DiffAccessoryNavigation({
           >
             {' '}
             Show Remaining Diffs ({total - handled})
+          </Button>
+
+          <Button
+            size="small"
+            disableRipple
+            color="primary"
+            onClick={() => {
+              history.push(undocumentedUrlsPageLink.linkTo());
+            }}
+          >
+            {' '}
+            Show Undocumented URLs ({numberOfUndocumented})
           </Button>
         </div>
       </div>
