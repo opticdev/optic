@@ -75,7 +75,6 @@ export default function AskForCommitMessageDiffPage(props: {
     });
     // If there are no batch commits (first commit) - link to the just created commit
     history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
-    // @nic TODO we need to trigger a new full page refresh - or trigger a refetch of data through out queries
   };
 
   return (
