@@ -35,6 +35,12 @@ export interface IOpticEngine {
 
   get_contributions_projection(spec: any): string;
 
+  learn_shape_diff_affordances(
+    spec: any,
+    diff_results_json: string,
+    tagged_interactions_json: string
+  ): string;
+
   spec_from_events(eventsJson: string): any;
 }
 
@@ -98,10 +104,7 @@ export interface IOpticDiffService {
     method: string
   ): Promise<ILearnedBodies>;
 
-  learnShapeDiffAffordances(
-    pathId: string,
-    method: string
-  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
+  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -147,10 +147,7 @@ class LocalCliDiffService implements IOpticDiffService {
     private diffId: string
   ) {}
 
-  learnShapeDiffAffordances(
-    pathId: string,
-    method: string
-  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+  learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     return Promise.reject(new Error('unimplemented'));
   }
 

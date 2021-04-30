@@ -122,6 +122,7 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     const notifications = new EventEmitter();
 
     const events = await this.dependencies.specRepository.listEvents();
+    const interactions = await this.listCapturedInteractions(captureId);
 
     const diff = new InMemoryDiff({
       opticEngine: this.dependencies.opticEngine,
@@ -130,9 +131,11 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     });
     const diffService = new InMemoryDiffService({
       diff,
+      opticEngine: this.dependencies.opticEngine,
+      specRepository: this.dependencies.specRepository,
+      interactions,
     });
 
-    const interactions = await this.listCapturedInteractions(captureId);
     const onComplete = new Promise<IOpticDiffService>((resolve, reject) => {
       notifications.once('complete', () => resolve(diffService));
     });
@@ -156,17 +159,31 @@ export class InMemoryConfigRepository implements IOpticConfigRepository {
 
 interface InMemoryDiffServiceDependencies {
   diff: InMemoryDiff;
+  opticEngine: IOpticEngine;
+  specRepository: IOpticSpecRepository;
+  interactions: any[];
 }
 
 //@jaap: we need to make sure this and InMemoryDiff are up-to-date relative to the latest changes
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
+  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+    const events = await this.dependencies.specRepository.listEvents();
+    const spec = this.dependencies.opticEngine.spec_from_events(
+      JSON.stringify(events)
+    );
 
-  learnShapeDiffAffordances(
-    pathId: string,
-    method: string
-  ): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
-    return Promise.reject('implement me');
+    const diffs = await this.listDiffs();
+
+    const allAffordances = JSON.parse(
+      this.dependencies.opticEngine.learn_shape_diff_affordances(
+        spec,
+        JSON.stringify(diffs.diffs),
+        JSON.stringify(this.dependencies.interactions)
+      )
+    );
+
+    return allAffordances;
   }
 
   learnUndocumentedBodies(
