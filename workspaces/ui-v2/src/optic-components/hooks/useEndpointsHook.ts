@@ -66,39 +66,46 @@ export function endpointQueryResultsToJson(
     data.requests.map((req: any) => req.absolutePathPattern)
   );
 
-  const endpoints = data.requests.map((request: any) => {
-    const hasChangelog = endpointsChangelog.find(
-      (i) => i.pathId === request.pathId && i.method === request.method
-    );
+  const endpoints = data.requests.map(
+    (request: any): IEndpoint => {
+      const hasChangelog = endpointsChangelog.find(
+        (i) => i.pathId === request.pathId && i.method === request.method
+      );
 
-    return {
-      pathId: request.pathId,
-      method: request.method,
-      fullPath: request.absolutePathPatternWithParameterNames,
-      group: request.absolutePathPattern
-        .substring(commonStart.length)
-        .split('/')[0],
-      pathParameters: request.pathComponents.map((path: any) => {
-        return {
-          id: path.id,
-          name: path.name,
-          isParameterized: path.isParameterized,
-          description: path.contributions.description || '',
-        };
-      }),
-      description: request.pathContributions.description || '',
-      purpose: request.pathContributions.purpose || '',
-      changelog: {
-        added: hasChangelog ? hasChangelog.change.category === 'added' : false,
-        changed: hasChangelog
-          ? hasChangelog.change.category === 'changed'
-          : false,
-        removed: hasChangelog
-          ? hasChangelog.change.category === 'removed'
-          : false,
-      },
-    } as IEndpoint;
-  });
+      return {
+        pathId: request.pathId,
+        method: request.method,
+        fullPath: request.absolutePathPatternWithParameterNames,
+        group: request.absolutePathPattern
+          .substring(commonStart.length)
+          .split('/')[0],
+        pathParameters: request.pathComponents.map(
+          (path: any): IPathParameter => {
+            return {
+              id: path.id,
+              name: path.name,
+              isParameterized: path.isParameterized,
+              description: path.contributions.description || '',
+              endpointId: `${request.pathId}.${request.method}`,
+            };
+          }
+        ),
+        description: request.pathContributions.description || '',
+        purpose: request.pathContributions.purpose || '',
+        changelog: {
+          added: hasChangelog
+            ? hasChangelog.change.category === 'added'
+            : false,
+          changed: hasChangelog
+            ? hasChangelog.change.category === 'changed'
+            : false,
+          removed: hasChangelog
+            ? hasChangelog.change.category === 'removed'
+            : false,
+        },
+      };
+    }
+  );
 
   return endpoints;
 }
@@ -123,6 +130,7 @@ export interface IPathParameter {
   name: string;
   isParameterized: boolean;
   description: string;
+  endpointId: string;
 }
 
 function sharedStart(array: string[]): string {

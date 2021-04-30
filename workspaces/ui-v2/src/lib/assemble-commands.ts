@@ -4,7 +4,12 @@ export function AssembleCommands(
   approvedSuggestions: { [key: string]: any[] },
   pendingEndpoints: IPendingEndpoint[],
   existingEndpointNameContributions: { [id: string]: string },
-  existingEndpointPathContributions: { [id: string]: string }
+  existingEndpointPathContributions: {
+    [id: string]: {
+      command: any;
+      endpointId: string;
+    };
+  }
 ): any[] {
   const commands: any[] = [];
 
@@ -25,7 +30,7 @@ export function AssembleCommands(
     commands.push(command);
   });
 
-  Object.values(existingEndpointPathContributions).forEach((command) => {
+  Object.values(existingEndpointPathContributions).forEach(({ command }) => {
     commands.push(command);
   });
 

@@ -14,6 +14,7 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { IPathParameter } from '../../hooks/useEndpointsHook';
 import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
+import { getEndpointId } from '../../utilities/endpoint-utilities';
 
 type EndpointDocumentationPaneProps = {
   method: string;
@@ -48,6 +49,10 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   const parameterizedPathParts = thisEndpoint.pathParameters.filter(
     (path) => path.isParameterized
   );
+  const endpointId = getEndpointId({
+    pathId: thisEndpoint.pathId,
+    method: thisEndpoint.method,
+  });
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
@@ -66,7 +71,13 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
         <PathParameters
           parameters={parameterizedPathParts}
           renderField={(param) => {
-            return <DiffPathParamField key={param.id} pathParameter={param} />;
+            return (
+              <DiffPathParamField
+                key={param.id}
+                pathParameter={param}
+                endpointId={endpointId}
+              />
+            );
           }}
         />
         <div
@@ -132,7 +143,8 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
 
 const DiffPathParamField: FC<{
   pathParameter: IPathParameter;
-}> = ({ pathParameter }) => {
+  endpointId: string;
+}> = ({ pathParameter, endpointId }) => {
   const alwaysAString: IShapeRenderer = {
     shapeId: pathParameter.id + 'shape',
     jsonType: JsonLike.STRING,
@@ -145,7 +157,7 @@ const DiffPathParamField: FC<{
   const { value, setValue } = useStateWithSideEffect({
     initialValue: pathParameter.description,
     sideEffect: (description: string) =>
-      debouncedAddContribution(pathParameter.id, description),
+      debouncedAddContribution(pathParameter.id, description, endpointId),
   });
 
   return (

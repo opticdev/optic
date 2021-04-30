@@ -251,7 +251,10 @@ export const newSharedDiffMachine = (
                   ...ctx.choices,
                   existingEndpointPathContributions: {
                     ...ctx.choices.existingEndpointPathContributions,
-                    [event.id]: event.command,
+                    [event.id]: {
+                      command: event.command,
+                      endpointId: event.endpointId,
+                    },
                   },
                 }),
               }),
@@ -417,6 +420,7 @@ export type SharedDiffStateEvent =
       type: 'SET_PATH_DESCRIPTION';
       id: string;
       command: any;
+      endpointId: string;
     };
 
 // The context (extended state) of the machine
@@ -435,7 +439,12 @@ export interface SharedDiffStateContext {
   choices: {
     approvedSuggestions: { [key: string]: any[] };
     existingEndpointNameContributions: { [id: string]: any };
-    existingEndpointPathContributions: { [id: string]: any };
+    existingEndpointPathContributions: {
+      [id: string]: {
+        command: any;
+        endpointId: string;
+      };
+    };
   };
   simulatedCommands: any[];
   pendingEndpoints: IPendingEndpoint[];

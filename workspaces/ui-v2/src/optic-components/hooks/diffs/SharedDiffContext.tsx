@@ -47,7 +47,11 @@ type ISharedDiffContext = {
   handledCount: [number, number];
   startedFinalizing: () => void;
   setEndpointName: (id: string, name: string) => void;
-  setPathDescription: (pathId: string, description: string) => void;
+  setPathDescription: (
+    pathId: string,
+    description: string,
+    endpointId: string
+  ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
 };
 
@@ -185,11 +189,16 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
         type: 'UPDATE_PENDING_ENDPOINT_NAME',
       });
     },
-    setPathDescription: (pathId: string, description: string) => {
+    setPathDescription: (
+      pathId: string,
+      description: string,
+      endpointId: string
+    ) => {
       send({
         type: 'SET_PATH_DESCRIPTION',
         pathId,
         command: AddContribution(pathId, 'description', description),
+        endpointId,
       });
     },
   };
