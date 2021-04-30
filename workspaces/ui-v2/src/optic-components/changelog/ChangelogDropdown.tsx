@@ -58,9 +58,6 @@ export function ChangesSinceDropdown(props: any) {
       <ToggleButton
         value="check"
         selected={false}
-        // onClick={() => {
-        //   isEditing ? save() : setEditing(true);
-        // }}
         size="small"
         className={classes.button}
         onClick={handleClick}
@@ -79,9 +76,8 @@ export function ChangesSinceDropdown(props: any) {
         style={{ marginTop: 20 }}
       >
         {allBatchCommits.map((i, index) => (
-          <BatchCommitMenuItem
-            batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
-            key={index}
+          <MenuItem
+            key={i.batchId}
             onClick={() => {
               if (index === 0) {
                 history.push(documentationPageLink.linkTo());
@@ -89,52 +85,48 @@ export function ChangesSinceDropdown(props: any) {
                 history.push(changelogPageRoute.linkTo(i.batchId));
               }
             }}
-          />
+          >
+            <BatchCommitMenuItem
+              batch={index === 0 ? { ...i, commitMessage: 'Latest' } : i}
+            />
+          </MenuItem>
         ))}
       </Menu>
     </>
   );
 }
 
-function BatchCommitMenuItem({
-  batch,
-  onClick,
-}: {
-  batch: BatchCommit;
-  onClick: () => void;
-}) {
+function BatchCommitMenuItem({ batch }: { batch: BatchCommit }) {
   const name =
     batch.commitMessage &&
     (batch.commitMessage.split('\n')[0] ||
       `API  ${batch.commitMessage.split('\n').length}  changes`);
   return (
-    <MenuItem onClick={onClick}>
-      <Box display="flex" flexDirection="column">
-        <Typography
-          component="span"
-          variant="subtitle1"
-          style={{
-            fontFamily: 'Ubuntu Mono',
-            fontSize: 16,
-            color: OpticBlue,
-          }}
-        >
-          {name || 'Changes from'}
-        </Typography>
-        <Typography
-          component="span"
-          variant="subtitle1"
-          style={{
-            fontFamily: 'Ubuntu Mono',
-            fontSize: 12,
-            marginTop: -7,
-            color: OpticBlueReadable,
-          }}
-        >
-          {batch.createdAt && timeAgo.format(new Date(batch.createdAt))}
-        </Typography>
-      </Box>
-    </MenuItem>
+    <Box display="flex" flexDirection="column">
+      <Typography
+        component="span"
+        variant="subtitle1"
+        style={{
+          fontFamily: 'Ubuntu Mono',
+          fontSize: 16,
+          color: OpticBlue,
+        }}
+      >
+        {name || 'Changes from'}
+      </Typography>
+      <Typography
+        component="span"
+        variant="subtitle1"
+        style={{
+          fontFamily: 'Ubuntu Mono',
+          fontSize: 12,
+          marginTop: -7,
+          color: OpticBlueReadable,
+        }}
+      >
+        {batch.createdAt && timeAgo.format(new Date(batch.createdAt))}
+      </Typography>
+    </Box>
   );
 }
 
