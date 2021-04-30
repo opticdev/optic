@@ -22,8 +22,6 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
-  //@dev: add command generation for shapeDiffAffordances
-
   try_apply_commands(
     commandsJson: string,
     eventsJson: string,
@@ -38,8 +36,10 @@ export interface IOpticEngine {
   learn_shape_diff_affordances(
     spec: any,
     diff_results_json: string,
-    tagged_interactions_json: string
+    tagged_interactions_jsonl: string
   ): string;
+
+  learn_undocumented_bodies(spec: any, interactions_jsonl: string): string;
 
   spec_from_events(eventsJson: string): any;
 }
