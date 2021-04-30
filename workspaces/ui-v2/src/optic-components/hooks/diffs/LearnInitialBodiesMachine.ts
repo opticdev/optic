@@ -4,7 +4,6 @@ import {
   ILearnedBodies,
   ILearnedBody,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { localInitialBodyLearner } from '../../../lib/__scala_kill_me/browser-initial-body-dep';
 import {
   AddContribution,
   AddPathComponent,
