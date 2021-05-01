@@ -42,12 +42,11 @@ export function useDiffsForCapture(
       const diffs = await diffsService.listDiffs();
 
       const parsedDiffs = diffs.diffs.map(
-        (i) => new ParsedDiff(i[0], i[1], i[2])
+        (i: any) => new ParsedDiff(i[0], i[1], i[2])
       );
 
-      //@aidan remove this now this it is no longer used
-      // decide if we'll load all up-front or with each endpoint page
       const learnedTrailsForEndpoints = await diffsService.learnShapeDiffAffordances();
+      debugger;
 
       const urls = await diffsService.listUnrecognizedUrls();
       setDiffState({

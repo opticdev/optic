@@ -92,7 +92,8 @@ export const newInitialBodiesMachine = (
 
               const learner = await diffService.learnUndocumentedBodies(
                 pathId,
-                method
+                method,
+                commands
               );
 
               return new Promise((resolve) => {

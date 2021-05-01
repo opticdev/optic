@@ -203,22 +203,29 @@ export function PendingEndpointPage(props: any) {
         </>
       }
       right={
-        <SimulatedCommandStore
-          key={JSON.stringify(newEndpointCommands)}
-          spectacle={spectacle as IForkableSpectacle}
-          previewCommands={newEndpointCommands}
-        >
-          <EndpointDocumentationPane
-            // lastBatchCommit={lastBatchId}
-            method={stagedCommandsIds.method}
-            pathId={stagedCommandsIds.pathId}
-            renderHeader={() => (
-              <Typography className={classes.nameDisplay}>
-                {name === '' ? 'Unnamed Endpoint' : name}
-              </Typography>
-            )}
-          />
-        </SimulatedCommandStore>
+        <>
+          <pre style={{ paddingTop: 60 }}>
+            {JSON.stringify(newEndpointCommands)}
+            <br />
+            {JSON.stringify(stagedCommandsIds)}
+          </pre>
+          <SimulatedCommandStore
+            key={JSON.stringify(newEndpointCommands)}
+            spectacle={spectacle as IForkableSpectacle}
+            previewCommands={newEndpointCommands}
+          >
+            <EndpointDocumentationPane
+              // lastBatchCommit={lastBatchId}
+              method={stagedCommandsIds.method}
+              pathId={stagedCommandsIds.pathId}
+              renderHeader={() => (
+                <Typography className={classes.nameDisplay}>
+                  {name === '' ? 'Unnamed Endpoint' : name}
+                </Typography>
+              )}
+            />
+          </SimulatedCommandStore>
+        </>
       }
     />
   );
