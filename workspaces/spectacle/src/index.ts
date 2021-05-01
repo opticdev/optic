@@ -18,7 +18,6 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
@@ -101,7 +100,8 @@ export interface IOpticDiffService {
 
   learnUndocumentedBodies(
     pathId: string,
-    method: string
+    method: string,
+    newPathCommands: any[]
   ): Promise<ILearnedBodies>;
 
   learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash>;

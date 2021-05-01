@@ -1,24 +1,19 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { IdGenerator, isEnvTrue } from '@useoptic/cli-shared';
+import { IdGenerator } from '@useoptic/cli-shared';
 import { CaptureId } from '@useoptic/saas-types';
 import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { chain, final } from 'stream-chain';
+import { chain } from 'stream-chain';
 import { stringer as jsonStringer } from 'stream-json/Stringer';
 import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
-import {
-  ILearnedBodies,
-  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { replace as jsonReplace } from 'stream-json/filters/Replace';
 import { Duplex, Readable } from 'stream';
-import { OnDemandInitialBody } from '../tasks/on-demand-initial-body';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
 import { Diff } from '../diffs';
-import { OnDemandTrailValues } from '../tasks/on-demand-trail-values';
 import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
 
 export interface ICaptureRouterDependencies {
@@ -116,7 +111,7 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
-      const { pathId, method, diffId } = req.body;
+      const { diffId } = req.body;
       const events = await req.optic.specLoader();
 
       const onDemandTrailValues = new OnDemandShapeDiffAffordancesRust({
@@ -124,8 +119,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         diffId,
         events: events,
         captureId,
-        pathId,
-        method,
       });
 
       const result = onDemandTrailValues.run();

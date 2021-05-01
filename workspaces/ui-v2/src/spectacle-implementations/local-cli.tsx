@@ -152,8 +152,6 @@ class LocalCliDiffService implements IOpticDiffService {
     const result = await JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/trail-values`,
       {
-        pathId: 'pppp',
-        method: 'mmmm',
         diffId: this.dependencies.diffId,
       }
     );

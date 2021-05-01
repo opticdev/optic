@@ -203,11 +203,20 @@ export class InMemoryDiffService implements IOpticDiffService {
 
   async learnUndocumentedBodies(
     pathId: string,
-    method: string
+    method: string,
+    newPathCommands: any[]
   ): Promise<ILearnedBodies> {
     const events = await this.dependencies.specRepository.listEvents();
+
+    const newEventsString = this.dependencies.opticEngine.try_apply_commands(
+      JSON.stringify(newPathCommands),
+      JSON.stringify(events),
+      'simulated',
+      'simulated-batch'
+    );
+
     const spec = this.dependencies.opticEngine.spec_from_events(
-      JSON.stringify(events)
+      newEventsString
     );
     //@aidan if you need to filter by method*pathId you can do it here
     const interactionsJsonl = this.dependencies.interactions
