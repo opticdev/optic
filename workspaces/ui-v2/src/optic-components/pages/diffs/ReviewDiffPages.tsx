@@ -46,7 +46,7 @@ export function DiffReviewPages(props: any) {
   if (isLoading) {
     return (
       <LoadingPage>
-        <LoadingDiffReview cursor={19} total={100} />
+        <LoadingDiffReview />
       </LoadingPage>
     );
   }

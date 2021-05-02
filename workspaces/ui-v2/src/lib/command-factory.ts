@@ -13,9 +13,17 @@ RemoveField,
 export function AddShape(
   shapeId: string,
   baseShapeId: string,
-  name: string = '',
+  name: string = ''
 ) {
   return { AddShape: { shapeId, baseShapeId, name } };
+}
+
+export function AddRequest(
+  httpMethod: string,
+  pathId: string,
+  requestId: string
+) {
+  return { AddRequest: { httpMethod, pathId, requestId } };
 }
 
 //helper
@@ -25,7 +33,7 @@ type FieldFromShapeType = {
 
 export function FieldShapeFromShape(
   fieldId: string,
-  shapeId: string,
+  shapeId: string
 ): FieldFromShapeType {
   return { FieldShapeFromShape: { fieldId, shapeId } };
 }
@@ -34,7 +42,7 @@ export function AddField(
   fieldId: string,
   shapeId: string,
   name: string,
-  shapeDescriptor: FieldFromShapeType,
+  shapeDescriptor: FieldFromShapeType
 ) {
   return { AddField: { fieldId, shapeId, name, shapeDescriptor } };
 }
@@ -46,7 +54,7 @@ export function ShapeProvider(shapeId: string) {
 export function ProviderInShape(
   shapeId: string,
   providerDescriptor: any,
-  consumingParameterId: string,
+  consumingParameterId: string
 ) {
   return {
     ProviderInShape: { shapeId, providerDescriptor, consumingParameterId },
@@ -63,7 +71,7 @@ export function SetFieldShape(shapeDescriptor: FieldFromShapeType) {
 export function AddShapeParameter(
   shapeParameterId: string,
   shapeId: string,
-  name: string,
+  name: string
 ) {
   return { AddShapeParameter: { shapeParameterId, shapeId, name } };
 }
@@ -75,7 +83,7 @@ export function RemoveField(fieldId: string) {
 export function AddPathParameter(
   pathId: string,
   parentPathId: string,
-  name: string,
+  name: string
 ) {
   return {
     AddPathParameter: {
@@ -89,7 +97,7 @@ export function AddPathParameter(
 export function AddPathComponent(
   pathId: string,
   parentPathId: string,
-  name: string,
+  name: string
 ) {
   return {
     AddPathComponent: {
@@ -113,7 +121,7 @@ export function AddContribution(id: string, key: string, value: string) {
 export function ShapedBodyDescriptor(
   httpContentType: string,
   shapeId: string,
-  isRemoved: boolean = false,
+  isRemoved: boolean = false
 ) {
   return {
     ShapedBodyDescriptor: {

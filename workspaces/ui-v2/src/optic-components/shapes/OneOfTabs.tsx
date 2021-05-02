@@ -17,8 +17,9 @@ export function OneOfTabs(oneOfTabsProps: OneOfTabsProps) {
 
   return (
     <div className={classes.tabs}>
-      {oneOfTabsProps.choices.map((i) => (
+      {oneOfTabsProps.choices.map((i, index) => (
         <Choice
+          key={index}
           {...i}
           active={current === i.id}
           setActive={() => {
