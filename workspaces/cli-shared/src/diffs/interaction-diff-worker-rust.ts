@@ -6,7 +6,9 @@ import { Streams } from '@useoptic/diff-engine-wasm';
 import { diffInteractions } from '@useoptic/diff-engine';
 import fs from 'fs-extra';
 import { getDiffOutputPaths } from './diff-worker-rust';
+import { fork } from 'stream-fork';
 import { DiffResult } from '@useoptic/diff-engine-wasm/lib/streams/diff-results';
+import { PassThrough, Readable } from 'stream';
 interface WorkerResult {
   results: AsyncIterable<DiffResult>;
 }
@@ -52,6 +54,7 @@ export class InteractionDiffWorkerRust {
       interactionIterator,
       interactionPointerConverter,
       specFilePath: diffOutputPaths.events,
+      diffsJsonlPath: diffOutputPaths.diffsStream,
     };
   }
   async run(): Promise<WorkerResult> {
@@ -59,6 +62,7 @@ export class InteractionDiffWorkerRust {
       interactionPointerConverter,
       interactionIterator,
       specFilePath,
+      diffsJsonlPath,
     } = await this.setup();
 
     const interactions = (async function* (interactionItems) {
@@ -83,8 +87,10 @@ export class InteractionDiffWorkerRust {
       specPath: specFilePath,
       interactionsStream: interactions,
     });
-    const results = Streams.DiffResults.fromJSONL()(workerProcessOutput);
-
+    const inMemorySink = new PassThrough();
+    const results = Streams.DiffResults.fromJSONL()(inMemorySink);
+    const fsSink = fs.createWriteStream(diffsJsonlPath);
+    workerProcessOutput.pipe(fork([inMemorySink, fsSink]));
     return {
       results,
     };

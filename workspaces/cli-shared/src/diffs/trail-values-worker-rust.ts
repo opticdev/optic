@@ -1,12 +1,8 @@
-import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
-import Path from 'path';
-import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
 import { learnShapeDiffAffordances } from '@useoptic/diff-engine';
 import { Streams } from '@useoptic/diff-engine-wasm';
 import { ShapeDiffAffordances } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/shape-diff-affordances';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { getDiffOutputPaths } from './diff-worker-rust';
 import path from 'path';
 
