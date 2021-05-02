@@ -192,7 +192,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             JSON.stringify(args.commands),
             JSON.stringify(events),
             batchCommitId,
-            'proposed changes'
+            args.commitMessage
           );
           const newEvents = JSON.parse(newEventsString);
 
