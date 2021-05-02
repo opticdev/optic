@@ -96,15 +96,11 @@ export const newInitialBodiesMachine = (
                 commands
               );
 
-              return new Promise((resolve) => {
-                setTimeout(() => {
-                  resolve({
-                    learnedBodies: learner as ILearnedBodies,
-                    pathCommands: commands,
-                    pathId,
-                  });
-                }, 1500); //@aidan what is this about?
-              });
+              return {
+                learnedBodies: learner as ILearnedBodies,
+                pathCommands: commands,
+                pathId,
+              };
             },
             onDone: {
               actions: [

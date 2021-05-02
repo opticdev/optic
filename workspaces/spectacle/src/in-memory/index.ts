@@ -176,7 +176,6 @@ export class InMemoryDiffService implements IOpticDiffService {
 
     const diffs = await this.listDiffs();
     //@jaap @TODO: use asynctools intoJSONL ?
-    //@aidan if you need to filter by method*pathId you can do it here
     const taggedInteractionsJsonl = this.dependencies.interactions
       .map((x: HttpInteraction) => {
         return JSON.stringify([x, [x.uuid]]);
