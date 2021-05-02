@@ -34,6 +34,7 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   renderHeader,
 }) => {
   const { endpoints, loading } = useEndpoints();
+  // const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
@@ -96,14 +97,13 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
       <div style={{ height: 50 }} />
       {bodies.requests.map((i, index) => {
         return (
-          <>
+          <React.Fragment key={i.requestId}>
             <HighlightedLocation
               targetLocation={highlightedLocation}
               contentType={i.contentType}
               inRequest={true}
             >
               <OneColumnBody
-                key={index}
                 changes={highlightBodyChanges ? i.changes : undefined}
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
@@ -112,12 +112,12 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />
-          </>
+          </React.Fragment>
         );
       })}
       {bodies.responses.map((i, index) => {
         return (
-          <>
+          <React.Fragment key={i.responseId}>
             <HighlightedLocation
               targetLocation={highlightedLocation}
               contentType={i.contentType}
@@ -125,7 +125,6 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
               inResponse={true}
             >
               <OneColumnBody
-                key={index}
                 changes={highlightBodyChanges ? i.changes : undefined}
                 changesSinceBatchCommitId={lastBatchCommit}
                 rootShapeId={i.rootShapeId}
@@ -134,7 +133,7 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
               />
             </HighlightedLocation>
             <div style={{ height: 50 }} />
-          </>
+          </React.Fragment>
         );
       })}
     </FullWidth>

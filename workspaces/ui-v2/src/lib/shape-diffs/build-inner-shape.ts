@@ -5,7 +5,6 @@ import {
   IPatchChoices,
 } from '../Interfaces';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
-import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
 import {
   AddShape,
   AddShapeParameter,
@@ -13,8 +12,7 @@ import {
   SetParameterShape,
   ShapeProvider,
 } from '../command-factory';
-
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
+import { newRandomIdGenerator } from '../domain-id-generator';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
@@ -22,7 +20,7 @@ export function builderInnerShapeFromChoices(
   actual: Actual,
   currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
-  const randomIds = opticEngine.com.useoptic.OpticIdsJsHelper().random;
+  const randomIds = newRandomIdGenerator();
 
   const targetKinds = new Set([
     ...choices.shapes.filter((i) => i.isValid).map((i) => i.coreShapeKind),
@@ -43,21 +41,25 @@ export function builderInnerShapeFromChoices(
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
-      //@aidan remove this after using the proper trail learners from Rust
-      const affordances = actual.trailAffordances.map((i) => ({
-        ...i,
-        wasEmptyArray: false,
-      }));
-      debugger;
-      // make new shape
+      const filterToTarget = actual.trailAffordances.map((affordance) => {
+        return {
+          ...affordance,
+          wasString: i === ICoreShapeKinds.StringKind,
+          wasNumber: i === ICoreShapeKinds.NumberKind,
+          wasBoolean: i === ICoreShapeKinds.BooleanKind,
+          wasNull: i === ICoreShapeKinds.NullableKind,
+          wasArray: i === ICoreShapeKinds.ListKind,
+          wasObject: i === ICoreShapeKinds.ObjectKind,
+          fieldSet: i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
+        };
+      });
+
       const [commands, newShapeId] = JSON.parse(
         currentSpecContext.opticEngine.affordances_to_commands(
-          JSON.stringify(affordances),
+          JSON.stringify(filterToTarget),
           JSON.stringify(actual.jsonTrail)
         )
       );
-
-      debugger;
 
       newCommands.push(...commands);
       return newShapeId;

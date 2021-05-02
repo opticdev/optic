@@ -11,16 +11,10 @@ import { PathComponentAuthoring } from '../../diffs/UndocumentedUrl';
 import { IEndpoint } from '../useEndpointsHook';
 import { IRequestBody, IResponseBody } from '../useEndpointBodyHook';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
-import {
-  IListDiffsResponse,
-  IListUnrecognizedUrlsResponse,
-  IUnrecognizedUrl,
-} from '@useoptic/spectacle';
+import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
-import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
 import { AddContribution } from '../../../lib/command-factory';
-import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
 
@@ -54,19 +48,22 @@ type ISharedDiffContext = {
     endpointId: string
   ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
+  captureId: string;
 };
 
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
+  captureId: string;
   requests: IRequestBody[];
   responses: IResponseBody[];
-  diffs: any;
+  diffs: ParsedDiff[];
+  diffService: IOpticDiffService;
   diffTrails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
   urls: IUnrecognizedUrl[];
 };
 
-
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
+  const opticEngine = useOpticEngine();
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -75,37 +72,13 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     opticEngine,
   };
 
-  const parsedDiffs = useMemo(
-    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1], i[2])),
-    [props.diffs]
-  );
-
-  const { allSamples } = useContext(InteractionLoaderContext);
-
-  const trailsLearned = learnTrailsForParsedDiffs(
-    parsedDiffs,
-    currentSpecContext,
-    //@ts-ignore
-    window.events,
-    allSamples
-  );
-
-  //@dev here is where the diff output needs to go
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
       currentSpecContext,
-      parsedDiffs,
-      props.urls.map((i) => ({ ...i })),
-      trailsLearned, //props.diffTrails
-      allSamples,
-      {
-        listDiffs(): Promise<IListDiffsResponse> {
-          return Promise.resolve({ diffs: [] });
-        },
-        listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-          return Promise.resolve({ urls: [] });
-        },
-      }
+      props.diffs,
+      props.urls,
+      props.diffTrails,
+      props.diffService
     )
   );
 
@@ -204,6 +177,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
         endpointId,
       });
     },
+    captureId: props.captureId,
   };
 
   return (

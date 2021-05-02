@@ -149,7 +149,10 @@ export class Actual {
 
   fieldKey(): string | undefined {
     const jsonTrailLast = this.jsonTrail.path[this.jsonTrail.path.length - 1];
-    const last = (jsonTrailLast as IJsonObjectKey).JsonObjectKey;
+    const last =
+      jsonTrailLast && jsonTrailLast.hasOwnProperty('JsonObjectKey')
+        ? (jsonTrailLast as IJsonObjectKey).JsonObjectKey
+        : undefined;
     if (last) {
       return last.key;
     }

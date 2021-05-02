@@ -1,6 +1,4 @@
-import {
-  SpectacleContext,
-} from '../../spectacle-implementations/spectacle-provider';
+import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
 import { useContext, useEffect, useState } from 'react';
 
 //@todo not working as expected -- never any changes

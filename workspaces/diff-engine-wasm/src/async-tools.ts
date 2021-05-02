@@ -4,7 +4,6 @@ import { parser as jsonlParser } from 'stream-json/jsonl/Parser';
 import StreamObject from 'stream-json/streamers/StreamObject';
 import { reduce } from 'axax/esnext/reduce';
 export { reduce };
-import { Subject } from 'axax/esnext';
 import { Readable } from 'stream';
 
 export function lastBy<T>(

@@ -7,6 +7,7 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 import { useChangelogPages } from '../../navigation/Routes';
+import { v4 as uuidv4 } from 'uuid';
 
 const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
@@ -62,19 +63,22 @@ export default function AskForCommitMessageDiffPage(props: {
       },
     } = await spectacleMutator({
       query: `
-      mutation X($commands: [JSON], $commitMessage: String) {
-        applyCommands(commands: $commands, commitMessage: $commitMessage) {
-          batchCommitId
-        }
-      }
-      `,
+      mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+  applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
+    batchCommitId
+  }
+}`,
       variables: {
         commands,
-        commitMessage,
+        batchCommitId: uuidv4(),
+        commitMessage: commitMessage,
+        clientId: uuidv4(), //@dev: fill this in
+        clientSessionId: uuidv4(), //@dev: fill this in
       },
     });
     // If there are no batch commits (first commit) - link to the just created commit
     history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
+    // @nic TODO we need to trigger a new full page refresh - or trigger a refetch of data through out queries
   };
 
   return (

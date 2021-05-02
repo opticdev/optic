@@ -13,7 +13,6 @@ import { DocumentationPages } from '../optic-components/pages/docs/Documentation
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
 import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
@@ -73,24 +72,25 @@ export default function PublicExamples() {
     return <div>something went wrong</div>;
   }
 
+  //@ts-ignore
+  data.isOG = true;
+
   return (
     <AppConfigurationStore config={appConfig}>
-      <OpticEngineStore opticEngine={data.opticContext.opticEngine}>
+      <OpticEngineStore>
         <SpectacleStore spectacle={data}>
           <CapturesServiceStore
             capturesService={data.opticContext.capturesService}
           >
-            <InMemoryInteractionLoaderStore samples={data.samples}>
-              <BaseUrlProvider value={{ url: match.url }}>
-                <Switch>
-                  <>
-                    <DocumentationPages />
-                    <DiffReviewEnvironments />
-                    <ChangelogPages />
-                  </>
-                </Switch>
-              </BaseUrlProvider>
-            </InMemoryInteractionLoaderStore>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DocumentationPages />
+                  <DiffReviewEnvironments />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
           </CapturesServiceStore>
         </SpectacleStore>
       </OpticEngineStore>
@@ -106,7 +106,8 @@ export interface InMemorySpectacleDependencies {
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
-class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
+export class InMemorySpectacle
+  implements IForkableSpectacle, InMemoryBaseSpectacle {
   private spectaclePromise: Promise<any>;
 
   constructor(
@@ -128,12 +129,12 @@ class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
 
   async mutate(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 
   async query(options: SpectacleInput): Promise<any> {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper(options);
   }
 }
 

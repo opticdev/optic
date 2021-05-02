@@ -6,19 +6,19 @@ import { CircularDiffLoaderProgress } from './CircularDiffProgress';
 const pJson = require('../../../package.json');
 
 type LoadingReviewProps = {
-  cursor: number;
-  total: number;
+  // cursor: number;
+  // total: number;
 };
 
-export function LoadingReview({ cursor, total }: LoadingReviewProps) {
+export function LoadingDiffReview(props: LoadingReviewProps) {
   const classes = useStyles();
 
   return (
     <div className={classes.loading}>
       <CircularDiffLoaderProgress
         startBlue
-        handled={cursor}
-        total={total}
+        // handled={cursor}
+        // total={total}
         symbol=""
       />
 
