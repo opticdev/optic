@@ -57,6 +57,7 @@ export function DiffReviewPages(props: any) {
       diffs={diff.data!.diffs}
       diffTrails={diff.data!.trails}
       urls={diff.data!.urls}
+      captureId={boundaryId}
       endpoints={allEndpointsOfBaseSpec.endpoints}
       requests={allRequestsAndResponsesOfBaseSpec.data?.requests!}
       responses={allRequestsAndResponsesOfBaseSpec.data?.responses!}

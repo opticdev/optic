@@ -48,10 +48,12 @@ type ISharedDiffContext = {
     endpointId: string
   ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
+  captureId: string;
 };
 
 type SharedDiffStoreProps = {
   endpoints: IEndpoint[];
+  captureId: string;
   requests: IRequestBody[];
   responses: IResponseBody[];
   diffs: ParsedDiff[];
@@ -175,6 +177,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
         endpointId,
       });
     },
+    captureId: props.captureId,
   };
 
   return (

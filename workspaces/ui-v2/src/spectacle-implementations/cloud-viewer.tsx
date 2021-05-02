@@ -7,7 +7,6 @@ import { DocumentationPages } from '../optic-components/pages/docs/Documentation
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
@@ -93,17 +92,15 @@ export default function CloudViewer() {
         <CapturesServiceStore
           capturesService={data.opticContext.capturesService}
         >
-          <InMemoryInteractionLoaderStore samples={data.samples}>
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DiffReviewEnvironments />
-                  <DocumentationPages />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </InMemoryInteractionLoaderStore>
+          <BaseUrlProvider value={{ url: match.url }}>
+            <Switch>
+              <>
+                <DiffReviewEnvironments />
+                <DocumentationPages />
+                <ChangelogPages />
+              </>
+            </Switch>
+          </BaseUrlProvider>
         </CapturesServiceStore>
       </SpectacleStore>
     </AppConfigurationStore>

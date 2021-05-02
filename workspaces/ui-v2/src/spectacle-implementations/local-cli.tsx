@@ -4,7 +4,6 @@ import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUr
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { InMemoryInteractionLoaderStore } from './interaction-loader';
 import {
   IBaseSpectacle,
   ICapture,
@@ -31,7 +30,8 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { InMemorySpectacle } from './public-examples';
-import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
+import { useEffect, useState } from 'react';
+import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -64,8 +64,8 @@ export default function LocalCli() {
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data.spectacle}>
-        <CapturesServiceStore capturesService={data.capturesService}>
-          <InMemoryInteractionLoaderStore samples={[]}>
+        <OpticEngineStore>
+          <CapturesServiceStore capturesService={data.capturesService}>
             <BaseUrlProvider value={{ url: match.url }}>
               <Switch>
                 <>
@@ -75,8 +75,8 @@ export default function LocalCli() {
                 </>
               </Switch>
             </BaseUrlProvider>
-          </InMemoryInteractionLoaderStore>
-        </CapturesServiceStore>
+          </CapturesServiceStore>
+        </OpticEngineStore>
       </SpectacleStore>
     </AppConfigurationStore>
   );
@@ -127,6 +127,18 @@ class LocalCliCapturesService implements IOpticCapturesService {
       `${this.dependencies.baseUrl}/captures`
     );
     return response.captures;
+  }
+
+  async loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<any | undefined> {
+    const response = await JsonHttpClient.getJson(
+      `${this.dependencies.baseUrl}/captures/${captureId}/interactions/${pointer}`
+    );
+    if (response.interaction) {
+      return response.interaction;
+    }
   }
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
@@ -212,7 +224,23 @@ class LocalCliDiffService implements IOpticDiffService {
 export function useLocalCliServices(
   specId: string
 ): AsyncStatus<LocalCliServices> {
-  const opticEngine = useOpticEngine();
+  const [opticEngine, setOpticEngine] = useState<IOpticEngine | null>(null);
+  useEffect(() => {
+    async function task() {
+      const _opticEngine = await import(
+        '@useoptic/diff-engine-wasm/engine/browser'
+      );
+      setOpticEngine(_opticEngine);
+    }
+    task();
+  }, [specId]);
+  if (!opticEngine) {
+    return {
+      loading: true,
+      error: false,
+      data: null,
+    };
+  }
   const apiBaseUrl = `/api/specs/${specId}`;
   const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
   const capturesService = new LocalCliCapturesService({

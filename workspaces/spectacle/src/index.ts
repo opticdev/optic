@@ -80,7 +80,7 @@ export interface StartDiffResult {
 
 export interface IOpticCapturesService {
   listCaptures(): Promise<ICapture[]>;
-
+  loadInteraction(captureId: string, pointer: string): Promise<any | undefined>;
   startDiff(diffId: string, captureId: string): Promise<StartDiffResult>;
 }
 

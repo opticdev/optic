@@ -111,6 +111,16 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     private captures: ICapture[]
   ) {}
 
+  async loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<any | undefined> {
+    const interactions = await this.dependencies.interactionsRepository.listById(
+      captureId
+    );
+    return interactions.find((i) => i.uuid === pointer);
+  }
+
   async listCaptures(): Promise<ICapture[]> {
     return this.captures;
   }
