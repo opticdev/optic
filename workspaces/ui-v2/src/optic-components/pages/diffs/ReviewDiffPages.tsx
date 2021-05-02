@@ -21,7 +21,7 @@ import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndR
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { CapturePage } from './CapturePage';
 import { LoadingPage } from '../../loaders/Loading';
-import { LoadingDiffReview } from '../../diffs/LoadingDiff';
+import { LoadingDiffReview } from '../../diffs/LoadingDiffReview';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
