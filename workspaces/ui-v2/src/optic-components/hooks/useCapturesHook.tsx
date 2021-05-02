@@ -8,30 +8,38 @@ export function useCaptures(): {
   error?: any;
 } {
   const capturesService = useContext(CapturesServiceContext)!;
-  const [captures, setCaptures] = useState<ICapture[] | null>(null)
+  const [captures, setCaptures] = useState<ICapture[] | null>(null);
   useEffect(() => {
+    let shouldCancel = false;
     async function task() {
-      const captures = await capturesService.listCaptures()
-      setCaptures(captures)
+      const captures = await capturesService.listCaptures();
+      if (!shouldCancel) {
+        setCaptures(captures);
+      }
     }
 
-    task()
-  }, [capturesService])
+    task();
+    return () => {
+      shouldCancel = true;
+    };
+  }, [capturesService]);
   if (captures === null) {
     return { captures: [], loading: true };
   }
   return {
     captures,
-    loading: false
-  }
+    loading: false,
+  };
 }
 
 interface CapturesServiceStoreProps {
-  capturesService: IOpticCapturesService,
-  children: any
+  capturesService: IOpticCapturesService;
+  children: any;
 }
 
-export const CapturesServiceContext = React.createContext<IOpticCapturesService | null>(null);
+export const CapturesServiceContext = React.createContext<IOpticCapturesService | null>(
+  null
+);
 
 export function CapturesServiceStore(props: CapturesServiceStoreProps) {
   return (

@@ -197,7 +197,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             JSON.stringify(args.commands),
             JSON.stringify(events),
             batchCommitId,
-            'proposed changes'
+            args.commitMessage
           );
           const newEvents = JSON.parse(newEventsString);
 
@@ -309,7 +309,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
         return Promise.resolve(parent.bodies().results);
       },
       responses: (parent: endpoints.RequestNodeWrapper) => {
-        return Promise.resolve(parent.path().responses().results);
+        return Promise.resolve(parent.responses());
       },
       pathContributions: (parent: any, args: any, context: any) => {
         const pathId = parent.path().value.pathId;
@@ -341,8 +341,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     PathComponent: {
-      id(parent: endpoints.PathNode) {
+      id: (parent: endpoints.PathNode) => {
         return Promise.resolve(parent.pathId);
+      },
+      contributions: (parent: endpoints.PathNode, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.pathId] || {}
+        );
       },
     },
     HttpBody: {
@@ -423,6 +428,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       method: (parent: any) => {
         return Promise.resolve(parent.method);
+      },
+      contributions: (parent: any, args: any, context: any) => {
+        const pathId = parent.pathId;
+        const method = parent.method;
+        return Promise.resolve(
+          context.contributionsProjection[`${pathId}.${method}`] || {}
+        );
       },
     },
     EndpointChangeMetadata: {

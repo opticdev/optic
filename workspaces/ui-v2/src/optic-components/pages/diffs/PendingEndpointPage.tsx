@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../diffs/DiffHeader';
 import {
@@ -6,10 +6,9 @@ import {
   useLearnedPendingEndpointContext,
 } from '../../hooks/diffs/LearnedPendingEndpointContext';
 import { Redirect, useHistory } from 'react-router-dom';
-import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 
 import { Box, Button, Divider, TextField, Typography } from '@material-ui/core';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { Loader } from '../../loaders/FullPageLoader';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -22,8 +21,8 @@ import { SimulatedCommandStore } from '../../diffs/contexts/SimulatedCommandCont
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
-import { useDebounce } from '../../hooks/ui/useDebounceHook';
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
+import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
@@ -85,15 +84,11 @@ export function PendingEndpointPage(props: any) {
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
   // const lastBatchId = useLastBatchCommitId();
-
-  const [name, setName] = useState(endpointName);
-  const debouncedName = useDebounce(name, 1000);
-  useEffect(() => {
-    if (typeof debouncedName !== 'undefined') {
-      changeEndpointName(debouncedName);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedName]);
+  const debouncedSetName = useDebouncedFn(changeEndpointName, 200);
+  const { value: name, setValue: setName } = useStateWithSideEffect({
+    initialValue: endpointName,
+    sideEffect: debouncedSetName,
+  });
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
@@ -217,6 +212,11 @@ export function PendingEndpointPage(props: any) {
             // lastBatchCommit={lastBatchId}
             method={stagedCommandsIds.method}
             pathId={stagedCommandsIds.pathId}
+            renderHeader={() => (
+              <Typography className={classes.nameDisplay}>
+                {name === '' ? 'Unnamed Endpoint' : name}
+              </Typography>
+            )}
           />
         </SimulatedCommandStore>
       }
@@ -280,5 +280,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
+  },
+  nameDisplay: {
+    fontSize: '1.25rem',
+    fontFamily: 'Ubuntu, Inter',
+    fontWeight: 500,
+    lineHeight: 1.6,
   },
 }));

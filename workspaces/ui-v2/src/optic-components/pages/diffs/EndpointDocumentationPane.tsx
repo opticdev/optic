@@ -1,35 +1,39 @@
-import * as React from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useEndpoints } from '../../hooks/useEndpointsHook';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName, PathParameters, FieldOrParameter } from '../../common';
 import { FullWidth } from '../../layouts/FullWidth';
-import { EndpointNameContribution } from '../../documentation/Contributions';
-import { PathParametersViewEdit } from '../../documentation/PathParameters';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../theme';
-import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { OneColumnBody } from '../../documentation/RenderBody';
 import { IParsedLocation } from '../../../lib/Interfaces';
 import { HighlightedLocation } from '../../diffs/render/HighlightedLocation';
-import { useSimulatedCommands } from '../../diffs/contexts/SimulatedCommandContext';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
+import { IPathParameter } from '../../hooks/useEndpointsHook';
+import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
+import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
+import { getEndpointId } from '../../utilities/endpoint-utilities';
 
-export function EndpointDocumentationPane({
+type EndpointDocumentationPaneProps = {
+  method: string;
+  pathId: string;
+  lastBatchCommit?: string;
+  highlightBodyChanges?: boolean;
+  highlightedLocation?: IParsedLocation;
+  renderHeader: () => ReactNode;
+};
+
+export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   method,
   pathId,
   lastBatchCommit,
   highlightedLocation,
   highlightBodyChanges,
-}: {
-  method: string;
-  pathId: string;
-  lastBatchCommit?: string;
-  highlightBodyChanges?: boolean;
-  highlightedLocation?: IParsedLocation | undefined;
-}) {
+  renderHeader,
+}) => {
   const { endpoints, loading } = useEndpoints();
-  // const previewCommands = useSimulatedCommands();
   const bodies = useEndpointBody(pathId, method, lastBatchCommit);
 
   const thisEndpoint = endpoints.find(
@@ -42,22 +46,18 @@ export function EndpointDocumentationPane({
   if (!thisEndpoint) {
     return <>no endpoint here</>;
   }
-
-  const endpointId = getEndpointId({ method, pathId });
+  const parameterizedPathParts = thisEndpoint.pathParameters.filter(
+    (path) => path.isParameterized
+  );
+  const endpointId = getEndpointId({
+    pathId: thisEndpoint.pathId,
+    method: thisEndpoint.method,
+  });
 
   return (
     <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
-      {/*<pre>{'simulated ' + JSON.stringify([...previewCommands], null, 2)}</pre>*/}
-      <EndpointNameContribution
-        id={endpointId}
-        contributionKey="purpose"
-        defaultText="What does this endpoint do?"
-        // @nic todo
-        initialValue=""
-      />
-
+      {renderHeader()}
       <div style={{ height: 20 }} />
-
       <CodeBlock
         header={
           <EndpointName
@@ -68,7 +68,18 @@ export function EndpointDocumentationPane({
           />
         }
       >
-        <PathParametersViewEdit parameters={thisEndpoint.pathParameters} />
+        <PathParameters
+          parameters={parameterizedPathParts}
+          renderField={(param) => {
+            return (
+              <DiffPathParamField
+                key={param.id}
+                pathParameter={param}
+                endpointId={endpointId}
+              />
+            );
+          }}
+        />
         <div
           style={{
             marginTop: 10,
@@ -82,9 +93,7 @@ export function EndpointDocumentationPane({
           />
         </div>
       </CodeBlock>
-
       <div style={{ height: 50 }} />
-
       {bodies.requests.map((i, index) => {
         return (
           <>
@@ -130,4 +139,35 @@ export function EndpointDocumentationPane({
       })}
     </FullWidth>
   );
-}
+};
+
+const DiffPathParamField: FC<{
+  pathParameter: IPathParameter;
+  endpointId: string;
+}> = ({ pathParameter, endpointId }) => {
+  const alwaysAString: IShapeRenderer = {
+    shapeId: pathParameter.id + 'shape',
+    jsonType: JsonLike.STRING,
+    value: undefined,
+  };
+
+  const { setPathDescription } = useSharedDiffContext();
+
+  const debouncedAddContribution = useDebouncedFn(setPathDescription, 200);
+  const { value, setValue } = useStateWithSideEffect({
+    initialValue: pathParameter.description,
+    sideEffect: (description: string) =>
+      debouncedAddContribution(pathParameter.id, description, endpointId),
+  });
+
+  return (
+    <FieldOrParameter
+      isEditing={true}
+      shapes={[alwaysAString]}
+      depth={0}
+      name={pathParameter.name}
+      value={value}
+      setValue={setValue}
+    />
+  );
+};

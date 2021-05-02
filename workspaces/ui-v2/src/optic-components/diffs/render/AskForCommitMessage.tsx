@@ -1,88 +1,106 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import { CommitMessageModal } from '../../common';
+
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
+import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
+import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
+import { useChangelogPages } from '../../navigation/Routes';
 
-export default function AskForCommitMessage(props: { hasChanges: boolean }) {
-  const [open, setOpen] = React.useState(false);
-
-  const {
-    pendingEndpoints,
-    context,
-    startedFinalizing,
-  } = useSharedDiffContext();
-
-  const [commitMessage, setCommitMessage] = useState<string | null>('');
-  const handleClickOpen = () => {
-    setOpen(true);
-    startedFinalizing();
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+const useStagedChangesCount = () => {
+  const { pendingEndpoints, context } = useSharedDiffContext();
 
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
+  const diffHashToEndpoint = context.results.diffsGroupedByEndpoint.reduce(
+    (acc: { [diffHash: string]: string }, endpoint) => {
+      const endpointId = `${endpoint.pathId}.${endpoint.method}`;
+      endpoint.shapeDiffs.forEach((shapeDiff) => {
+        acc[shapeDiff.diffHash()] = endpointId;
+      });
+      return acc;
+    },
+    {}
+  );
+  const changedEndpointsCount = new Set([
+    ...Object.keys(context.choices.approvedSuggestions).map(
+      (diffHash) => diffHashToEndpoint[diffHash]
+    ),
+    ...Object.keys(context.choices.existingEndpointNameContributions),
+    ...Object.values(context.choices.existingEndpointPathContributions).map(
+      (pathContribution) => pathContribution.endpointId
+    ),
+  ]).size;
 
-  const handleSave = () => {
-    //@todo decide if every endpoint (changes/pending) gets a batch commit id.
+  return {
+    pendingEndpointsCount,
+    changedEndpointsCount,
+  };
+};
+
+export default function AskForCommitMessageDiffPage(props: {
+  hasChanges: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const spectacleMutator = useSpectacleCommand();
+  const history = useHistory();
+  const lastBatchCommitId = useLastBatchCommitId();
+  const changelogPageRoute = useChangelogPages();
+
+  const { context, startedFinalizing } = useSharedDiffContext();
+
+  const {
+    pendingEndpointsCount,
+    changedEndpointsCount,
+  } = useStagedChangesCount();
+
+  const handleSave = async (commitMessage: string) => {
     const commands = context.simulatedCommands;
-    debugger;
-    console.log(commands);
-    //@todo save them with spectacle
-    // saveChanges(commitMessage!);
-    //@todo redirect to /changes-since/{batchCommitId-whenDiffWasRun}
+    const {
+      data: {
+        applyCommands: { batchCommitId },
+      },
+    } = await spectacleMutator({
+      query: `
+      mutation X($commands: [JSON], $commitMessage: String) {
+        applyCommands(commands: $commands, commitMessage: $commitMessage) {
+          batchCommitId
+        }
+      }
+      `,
+      variables: {
+        commands,
+        commitMessage,
+      },
+    });
+    // If there are no batch commits (first commit) - link to the just created commit
+    history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
   };
 
   return (
     <>
       <Button
         disabled={!props.hasChanges}
-        onClick={handleClickOpen}
+        onClick={() => {
+          setOpen(true);
+          startedFinalizing();
+        }}
         size="small"
         variant="contained"
         color="primary"
       >
         Save Changes
       </Button>
-      <Dialog
+      <CommitMessageModal
         open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">
-          Save Changes to Specification
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You have added {pendingEndpointsCount} new endpoint
-            {pendingEndpointsCount === 1 ? '' : 's'} and updated 6 existing
-            endpoints.
-          </DialogContentText>
-          <TextField
-            value={commitMessage}
-            onChange={(e: any) => setCommitMessage(e.target.value)}
-            placeholder="what changes have you made? why?"
-            autoFocus
-            margin="dense"
-            label="Message"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="default">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={() => setOpen(false)}
+        onSave={handleSave}
+        dialogText={`You have added ${pendingEndpointsCount} new ${
+          pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+        } and updated ${changedEndpointsCount} existing ${
+          changedEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+        }.`}
+      />
     </>
   );
 }

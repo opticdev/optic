@@ -5,7 +5,7 @@ schema {
   mutation: Mutation
 }
 type Mutation {
-  applyCommands(commands: [JSON]): AppliedCommandsResult
+  applyCommands(commands: [JSON], commitMessage: String): AppliedCommandsResult
   startDiff(diffId: ID, captureId: ID): StartDiffResult
 }
 type AppliedCommandsResult {
@@ -48,6 +48,7 @@ type PathComponent {
   id: ID
   name: String
   isParameterized: Boolean
+  contributions: JSON
 }
 type HttpResponse {
   id: ID
@@ -93,6 +94,7 @@ type EndpointChange {
   pathId: String
   path: String
   method: String
+  contributions: JSON
 }
 type EndpointChangeMetadata {
   category: String

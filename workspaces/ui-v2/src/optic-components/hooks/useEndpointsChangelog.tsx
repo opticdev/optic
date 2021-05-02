@@ -1,8 +1,7 @@
 import {
   SpectacleContext,
-  useSpectacleQuery,
 } from '../../spectacle-implementations/spectacle-provider';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 //@todo not working as expected -- never any changes
 export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {

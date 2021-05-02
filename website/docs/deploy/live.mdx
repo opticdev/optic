@@ -1,0 +1,51 @@
+---
+title: Monitor Live APIs with Optic
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic provides simple connectors to monitor your APIs as they are running in staging, development and even production environments.
+
+API Logging has always been a hard problem, how do you send enough data to detect errant API behavior or security issues to your APM + logging tools without sharing PII or sensitive information?
+  - Optic created a special open source logging format for APIs [`shape-hash`](https://github.com/opticdev/shape-hash) that logs the schema/shape of your API bodies, but not the actual user data. If you have sent the contributors a [Debug Capture](/docs/using/troubleshooting) you have already used shape-hash.
+  - We're working with a team of Cloud Provider/APM/Logging veterans to develop the next version of shape-hash. A much more powerful and secure API logging format we hope the entire industry will adopt as a standard. More on this effort coming soon.
+
+### Why run Optic in real environments?
+
+**1. Easy approach to documenting existing APIs**
+Want to rapidly document an existing API with Optic in a few hours? How about every API at your company? Putting Optic into real environments will help you establish an accurate API specification for each service, and start understanding your how all your services depend on one another.
+
+**2. Live Contract Testing**
+
+When Optic runs in Staging + QA environments, it provides a diff report for every single deployment -- essentially using all the traffic from these environments as API contract tests. Everything your team already does in these environments help test your API: manual tests, automated tests, integration tests, and even developers using the service while developing.
+
+The result is a report of unexpected API behavior, a list of any undocumented endpoints, and a [coverage report](/blog/api-spec-coverage) to help you understand what parts of your API have been tested.
+
+If you see 100% Coverage and No Diffs -- congrats your API is working as expected!
+
+**3. Build the dependency graph, understand usage patterns**
+By watching how all your services interact, Optic can learn the dependency graph between them. This is invaluable when trying to understand the impact of any API change or planning sunsets / deprecations.
+  - Will anyone be affected by changing an endpoint? Who?
+  - Which APIs are longer used? Safe to delete?
+  - What request parameters do users send? What request parameters are no longer used?
+
+
+## Supported Integrations
+- Azure
+  - [Azure Application Gateway + Azure API Management](azure-app-gateway)
+  - [Azure API Management](azure-api-management)
+- [Envoy Proxy](envoy-proxy)
+- [nginx](nginx)
+- [Cloudflare Worker](cloudflare-worker)
+- [Kubernetes](kubernetes)
+- [AWS API Gateway](aws-api-gateway)
+
+### Request or Sponsor an Integration
+
+Need us to support another Gateway, Load Balancer, Service Mesh or Cloud provider? Reach out to aidan@useoptic.com to talk about sponsoring an integration and sharing it back to the Optic community.
+
+
+import BetaFooter from './Beta-Footer.mdx'
+<BetaFooter />

@@ -171,6 +171,12 @@ export class RequestNodeWrapper implements NodeWrapper {
     return neighbors.results[0] as PathNodeWrapper;
   }
 
+  responses(): ResponseNodeWrapper[] {
+    return (this.path().responses() as any).results.filter(
+      (response: any) => response.value.httpMethod === this.value.httpMethod
+    );
+  }
+
   bodies(): NodeListWrapper {
     return this.queries.listIncomingNeighborsByType(
       this.result.id,

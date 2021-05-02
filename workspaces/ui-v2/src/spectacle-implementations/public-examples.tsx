@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Switch, useParams, useRouteMatch, Redirect } from 'react-router-dom';
+import { Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import {
   IBaseSpectacle,

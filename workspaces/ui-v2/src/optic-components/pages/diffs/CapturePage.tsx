@@ -22,10 +22,9 @@ import {
   useDiffForEndpointLink,
   useDiffUndocumentedUrlsPageLink,
 } from '../../navigation/Routes';
-import { EndpointName } from '../../documentation/EndpointName';
+import { EndpointName } from '../../common';
 import { useHistory } from 'react-router-dom';
 import ApproveAll from '../../diffs/render/ApproveAll';
-import AskForCommitMessage from '../../diffs/render/AskForCommitMessage';
 import { useCaptures } from '../../hooks/useCapturesHook';
 
 export function CapturePage(props: { showDiff?: boolean }) {
@@ -49,7 +48,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
         )
       );
     }
-  }, [capturesState, history, props.showDiff]);
+  }, [capturesState, history, props.showDiff, diffEnvironmentsRoot]);
 
   return (
     <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, ListItem } from '@material-ui/core';
 import { methodColorsDark, primary } from '../theme';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import AddIcon from '@material-ui/icons/Add';
 import padLeft from 'pad-left';
 import { LightTooltip } from '../navigation/LightToolTip';

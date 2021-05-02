@@ -8,19 +8,20 @@ import {
 import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { List, Typography } from '@material-ui/core';
-import { EndpointName, EndpointRow } from '../../documentation/EndpointName';
+import { List, ListItem, Typography } from '@material-ui/core';
+import { EndpointName, PromptNavigateAway, PathParameters } from '../../common';
+import { EndpointNameMiniContribution } from '../../documentation/Contributions';
 import {
   ContributionEditingStore,
   useContributionEditing,
 } from '../../hooks/edit/Contributions';
-import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
+import { EditContributionsButton } from './EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../../documentation/TwoColumn';
 import { useHistory } from 'react-router-dom';
-import { PathParametersViewEdit } from '../../documentation/PathParameters';
+import { DocsFieldOrParameterContribution } from '../../documentation/Contributions';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../../documentation/BodyRender';
@@ -29,10 +30,10 @@ import { TwoColumnBody } from '../../documentation/RenderBody';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { Loading } from '../../loaders/Loading';
 import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
-import { PromptNavigateAway } from '../../PromptNavigateAway';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
-import { useEndpointsChangelog } from '../../hooks/useEndpointsChangelog';
+import { useChangelogStyles } from '../../changelog/ChangelogBackground';
+import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -100,6 +101,7 @@ export function DocumentationRootPage(props: {
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+  const changelogStyles = useChangelogStyles();
 
   // const history = useHistory();
   // const endpointPageLink = useEndpointPageLink();
@@ -122,20 +124,41 @@ export function DocumentationRootPage(props: {
               </Typography>
               {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
-                    onClick={() => 
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
+                    onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    fullPath={endpoint.fullPath}
-                    method={endpoint.method}
-                    changelog={endpoint.changelog}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.pathId,
-                    })}
-                    purpose={endpoint.purpose}
-                  />
+                    className={
+                      endpoint.changelog?.added ? changelogStyles.added : ''
+                    }
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <EndpointNameMiniContribution
+                        id={getEndpointId({
+                          method: endpoint.method,
+                          pathId: endpoint.pathId,
+                        })}
+                        defaultText="name for this endpoint"
+                        contributionKey="purpose"
+                        initialValue={endpoint.purpose}
+                      />
+                    </div>
+                  </ListItem>
                 );
               })}
             </div>
@@ -167,6 +190,9 @@ export function EndpointRootPage(props: any) {
     return <>no endpoint here</>;
   }
   const endpointId = getEndpointId({ method, pathId });
+  const parameterizedPathParts = thisEndpoint.pathParameters.filter(
+    (path) => path.isParameterized
+  );
 
   return (
     <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
@@ -203,7 +229,26 @@ export function EndpointRootPage(props: any) {
               />
             }
           >
-            <PathParametersViewEdit parameters={thisEndpoint.pathParameters} />
+            <PathParameters
+              parameters={parameterizedPathParts}
+              renderField={(param, index) => {
+                const alwaysAString: IShapeRenderer = {
+                  shapeId: param.id + 'shape',
+                  jsonType: JsonLike.STRING,
+                  value: undefined,
+                };
+                return (
+                  <DocsFieldOrParameterContribution
+                    key={param.id}
+                    id={param.id}
+                    name={param.name}
+                    shapes={[alwaysAString]}
+                    depth={0}
+                    initialValue={param.description}
+                  />
+                );
+              }}
+            />
             <div
               style={{
                 marginTop: 10,

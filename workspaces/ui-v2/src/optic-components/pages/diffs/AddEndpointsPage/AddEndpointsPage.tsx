@@ -1,35 +1,39 @@
-import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   useDiffReviewPagePendingEndpoint,
   useEndpointPageLink,
-} from '../../navigation/Routes';
+} from '../../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
-import { TwoColumnFullWidth } from '../../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../../diffs/DiffHeader';
+import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
+import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
   Box,
   Divider,
   List,
+  ListItem,
   Switch,
   TextField,
   Typography,
 } from '@material-ui/core';
-import { useUndocumentedUrls } from '../../hooks/diffs/useUndocumentedUrls';
-import { UndocumentedUrl } from '../../diffs/UndocumentedUrl';
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-import { AuthorIgnoreRules } from '../../diffs/AuthorIgnoreRule';
-import { useDebounce } from '../../hooks/ui/useDebounceHook';
+import { useUndocumentedUrls } from '../../../hooks/diffs/useUndocumentedUrls';
+import { UndocumentedUrl } from '../../../diffs/UndocumentedUrl';
+import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
+import { AuthorIgnoreRules } from '../../../diffs/AuthorIgnoreRule';
+import { useDebounce } from '../../../hooks/ui/useDebounceHook';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 // @ts-ignore
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
-import { Loading } from '../../loaders/Loading';
-import { CenteredColumn } from '../../layouts/CenteredColumn';
-import { EndpointRow } from '../../documentation/EndpointName';
-import { getEndpointId } from '../../utilities/endpoint-utilities';
-import { IPendingEndpoint } from '../../hooks/diffs/SharedDiffState';
+import { IEndpoint, useEndpoints } from '../../../hooks/useEndpointsHook';
+import { Loading } from '../../../loaders/Loading';
+import { CenteredColumn } from '../../../layouts/CenteredColumn';
+import {
+  EndpointName,
+} from '../../../common';
+import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
+import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
+
+import { ExistingEndpointNameField, PendingEndpointNameField } from './EndpointNameEditFields';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -141,6 +145,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+  const changelogStyles = useChangelogStyles();
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
@@ -163,23 +168,33 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
             {pendingEndpointsToRender.map(
               (endpoint: IPendingEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
-                    changelog={{ added: true }}
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
                     onClick={() =>
                       history.push(
                         diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
-                    fullPath={endpoint.pathPattern}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.id,
-                    })}
-                    // @nic todo make pendingendpointrow component
-                    purpose=""
-                  />
+                    className={changelogStyles.added}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.pathPattern}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <PendingEndpointNameField endpoint={endpoint} />
+                    </div>
+                  </ListItem>
                 );
               }
             )}
@@ -197,8 +212,12 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
               </Typography>
               {grouped[tocKey].map((endpoint: IEndpoint, index: number) => {
                 return (
-                  <EndpointRow
+                  <ListItem
                     key={index}
+                    button
+                    disableRipple
+                    disableGutters
+                    style={{ display: 'flex' }}
                     onClick={() =>
                       history.push(
                         endpointPageLink.linkTo(
@@ -207,15 +226,21 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         )
                       )
                     }
-                    fullPath={endpoint.fullPath}
-                    method={endpoint.method}
-                    endpointId={getEndpointId({
-                      method: endpoint.method,
-                      pathId: endpoint.pathId,
-                    })}
-                    // @nic todo make pendingendpointrow component
-                    purpose=""
-                  />
+                  >
+                    <div style={{ flex: 1 }}>
+                      <EndpointName
+                        method={endpoint.method}
+                        fullPath={endpoint.fullPath}
+                        leftPad={6}
+                      />
+                    </div>
+                    <div
+                      style={{ paddingRight: 15 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExistingEndpointNameField endpoint={endpoint} />
+                    </div>
+                  </ListItem>
                 );
               })}
             </div>

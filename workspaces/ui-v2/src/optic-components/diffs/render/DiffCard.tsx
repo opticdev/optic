@@ -16,7 +16,6 @@ import { Tab, Tabs, Typography, withStyles } from '@material-ui/core';
 import InteractionBodyViewerAllJS from './IDiffExampleViewer';
 import {
   BodyPreview,
-  IChangeType,
   IDiffDescription,
   IInteractionPreviewTab,
   IPatchChoices,

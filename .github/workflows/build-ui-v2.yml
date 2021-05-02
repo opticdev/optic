@@ -1,10 +1,11 @@
-name: Build UI projects
+name: Build UI V2 projects
 
 on:
   push:
     branches:
       - release
       - develop
+      - feature/cloud_spec_viewer
     paths-ignore:
       - website/**
       - .github/**
@@ -25,14 +26,6 @@ jobs:
             echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
           else
             echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          fi
-      - run: |
-          if [ "$BRANCH" = "release" ]; then
-            echo "BUCKET=optic-demo-website-production" >> $GITHUB_ENV
-            echo "CLOUDFRONT_DIST=E1OKG70IUZ446Q" >> $GITHUB_ENV
-          else
-            echo "BUCKET=optic-demo-website-staging" >> $GITHUB_ENV
-            echo "CLOUDFRONT_DIST=E937BFTMG9NX3" >> $GITHUB_ENV
           fi
       - name: Install Task
         uses: Arduino/actions/setup-taskfile@9d04a51fc17daddb0eb127933aaa950af1e3ff97 # they dont give us any tags :\
@@ -56,6 +49,8 @@ jobs:
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
-      - run: task ui:ci
+      - run: task ui-v2:ci
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
+          REACT_APP_PROD_API_BASE: https://api.useoptic.com
+          REACT_APP_STAGING_API_BASE: https://api.o3c.info

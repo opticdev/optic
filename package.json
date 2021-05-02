@@ -1,13 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "build-workspace": "node ./workspaces/scripts/build/build.js",
-    "build-domain": "cd ./core && ./scripts/package.sh",
-    "build-domain-optimized": "cd ./core && ./scripts/package-optimized.sh",
-    "copy-domain": "echo copied",
-    "build-ui": "cd workspaces/ui && yarn run build-local",
-    "build-demo": "cd workspaces/ui && yarn run build-demo",
-    "build-spec": "cd workspaces/ui && yarn run build-spec",
     "postpull": "printf 'Run these commands:\n$ source sourceme.sh\n$ optic_build\n'",
     "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
     "registry:start": "cd docker/private-npm-registry && docker-compose up &",
@@ -43,6 +36,8 @@
     "@types/fs-extra": "^9.0.8",
     "all-contributors-cli": "^6.20.0",
     "fs-extra": "^9.1.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
     "prettier": "^2.0.4",
     "semver": "^7.3.2",
     "typescript": "3.9",
@@ -51,5 +46,13 @@
   },
   "dependencies": {
     "debug": "^4.1.1"
+  },
+  "lint-staged": {
+    "**/*.+(js|jsx|ts|tsx|json|css)": [
+      "yarn prettier --write"
+    ],
+    "**/*.rs": [
+      "rustfmt"
+    ]
   }
 }

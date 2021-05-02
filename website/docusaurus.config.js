@@ -10,20 +10,12 @@ module.exports = {
   projectName: 'optic', // Usually your repo name.
   themeConfig: {
     googleAnalytics: {
-      trackingID: 'G-Y7T04R4QF5',
+      trackingID: 'UA-137236875-1',
     },
     hideableSidebar: true,
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true,
-    },
-    announcementBar: {
-      id: 'optic9', // Any value that will identify this message.
-      content:
-        '<b>🚀 Optic 9 released! </b> Rust Diff engine is 1000x faster, redesigned UI makes working with large APIs easy.  <a rel="noopener noreferrer" href="/docs">Try it today</a>',
-      backgroundColor: '#091E42', // Defaults to `#fff`.
-      textColor: '#fff', // Defaults to `#000`.
-      isCloseable: true, // Defaults to `true`.
     },
     navbar: {
       title: 'Optic',
@@ -96,6 +88,9 @@ module.exports = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Optic Labs`,
+    },
+    prism: {
+      additionalLanguages: ['csharp'],
     },
   },
   presets: [
