@@ -10,7 +10,7 @@ type LoadingReviewProps = {
   total: number;
 };
 
-export function LoadingReview({ cursor, total }: LoadingReviewProps) {
+export function LoadingDiffReview({ cursor, total }: LoadingReviewProps) {
   const classes = useStyles();
 
   return (

@@ -21,7 +21,7 @@ import { useAllRequestsAndResponses } from '../../hooks/diffs/useAllRequestsAndR
 import { useEndpoints } from '../../hooks/useEndpointsHook';
 import { CapturePage } from './CapturePage';
 import { LoadingPage } from '../../loaders/Loading';
-import { LoadingReview } from '../../diffs/LoadingDiff';
+import { LoadingDiffReview } from '../../diffs/LoadingDiff';
 
 export function DiffReviewPages(props: any) {
   const { match } = props;
@@ -46,7 +46,7 @@ export function DiffReviewPages(props: any) {
   if (isLoading) {
     return (
       <LoadingPage>
-        <LoadingReview cursor={19} total={100} />
+        <LoadingDiffReview cursor={19} total={100} />
       </LoadingPage>
     );
   }
