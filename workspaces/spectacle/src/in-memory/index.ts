@@ -229,9 +229,12 @@ export class InMemoryDiffService implements IOpticDiffService {
         'simulated-batch'
       );
 
+      //@aidan check if this returns all events or just the new events
+
       const spec = this.dependencies.opticEngine.spec_from_events(
-        newEventsString
+        JSON.stringify([...events, ...JSON.parse(newEventsString)])
       );
+
       //@aidan if you need to filter by method*pathId you can do it here
       const interactionsJsonl = this.dependencies.interactions
         .map((x: HttpInteraction) => {

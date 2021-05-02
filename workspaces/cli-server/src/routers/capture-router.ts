@@ -15,6 +15,7 @@ import { Duplex, Readable } from 'stream';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
 import { Diff } from '../diffs';
 import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
+import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export interface ICaptureRouterDependencies {
   idGenerator: IdGenerator<string>;
@@ -79,13 +80,21 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     async (req, res) => {
       const { captureId } = req.params;
       //@aidan: here you need to receive the additional commands
-      const { pathId, method } = req.body;
-      const events = await req.optic.specLoader();
-      //@aidan: here you need to apply the additional commands
+      const { pathId, method, additionalCommands } = req.body;
 
+      const events = await req.optic.specLoader();
+
+      const newEventsString = opticEngine.try_apply_commands(
+        JSON.stringify(additionalCommands),
+        JSON.stringify(events),
+        'simulated',
+        'simulated-batch'
+      );
+
+      //@aidan: here you need to apply the additional commands
       const initialBodyGenerator = new OnDemandInitialBodyRust({
         captureBaseDirectory: req.optic.paths.capturesPath,
-        events: events,
+        events: [...events, ...JSON.parse(newEventsString)],
         captureId,
         pathId,
         method,

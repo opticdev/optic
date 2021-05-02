@@ -82,7 +82,6 @@ export class LocalCliSpecRepository implements IOpticSpecReadWriteRepository {
       );
     } else {
       const events = await getSpecEventsFrom(this.dependencies.specStorePath);
-      debugger;
       return events;
     }
   }
@@ -102,19 +101,6 @@ interface LocalCliCapturesServiceDependencies {
 
 export class LocalCliCapturesService implements IOpticCapturesService {
   constructor(private dependencies: LocalCliCapturesServiceDependencies) {}
-
-  async listCaptures(): Promise<ICapture[]> {
-    const captures = await this.dependencies.capturesHelpers.listCapturesState();
-    const validCaptures: ValidCaptureState[] = captures.filter((x) =>
-      isValidCaptureState(x)
-    ) as ValidCaptureState[];
-    return validCaptures.map((c) => {
-      return {
-        captureId: c.captureId,
-        startedAt: c.metadata.startedAt,
-      };
-    });
-  }
 
   async startDiff(diffId: string, captureId: string): Promise<StartDiffResult> {
     const notifications = new EventEmitter();
@@ -140,6 +126,14 @@ export class LocalCliCapturesService implements IOpticCapturesService {
     return {
       onComplete,
     };
+  }
+
+  loadInteraction(captureId: string, pointer: string): Promise<any> {
+    return Promise.reject(new Error('I should never be called'));
+  }
+
+  async listCaptures(): Promise<ICapture[]> {
+    return Promise.reject(new Error('I should never be called'));
   }
 }
 

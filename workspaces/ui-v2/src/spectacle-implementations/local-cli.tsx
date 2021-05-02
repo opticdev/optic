@@ -86,7 +86,6 @@ class LocalCliSpectacle implements IForkableSpectacle {
   constructor(private baseUrl: string, private opticEngine: IOpticEngine) {}
   async fork(): Promise<IBaseSpectacle> {
     const events = await JsonHttpClient.getJson(`${this.baseUrl}/events`);
-    debugger;
     const opticContext = await InMemoryOpticContextBuilder.fromEvents(
       this.opticEngine,
       events
@@ -180,11 +179,12 @@ class LocalCliDiffService implements IOpticDiffService {
 
   async learnUndocumentedBodies(
     pathId: string,
-    method: string
+    method: string,
+    newPathCommands: any[]
   ): Promise<ILearnedBodies> {
     const result = await JsonHttpClient.postJson(
       `${this.dependencies.baseUrl}/captures/${this.dependencies.captureId}/initial-bodies`,
-      { pathId, method }
+      { pathId, method, additionalCommands: newPathCommands }
     );
     debugger;
     return result;
