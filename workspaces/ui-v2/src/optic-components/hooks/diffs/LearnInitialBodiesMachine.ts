@@ -103,7 +103,7 @@ export const newInitialBodiesMachine = (
                     pathCommands: commands,
                     pathId,
                   });
-                }, 1500);
+                }, 1500); //@aidan what is this about?
               });
             },
             onDone: {

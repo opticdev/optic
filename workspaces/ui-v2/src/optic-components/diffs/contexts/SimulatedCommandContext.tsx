@@ -24,7 +24,6 @@ export function SimulatedCommandStore(props: SimulatedCommandStoreProps) {
   );
   useEffect(() => {
     async function task() {
-      debugger;
       const simulated = await props.spectacle.fork();
       await simulated.mutate({
         query: `
@@ -38,14 +37,16 @@ mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clien
           commands: props.previewCommands,
           batchCommitId: uuidv4(),
           commitMessage: 'proposed changes',
-          clientId: '', //@dev: fill this in
-          clientSessionId: '', //@dev: fill this in
+          clientId: 'dev', //@dev: fill this in
+          clientSessionId: 'ccc', //@dev: fill this in
         },
       });
       //@ts-ignore
       simulated.thiscontext = 'simulated';
-      setIsProcessing(false);
+      //@ts-ignore
+      simulated.instanceId = uuidv4();
       setSimulated(simulated as IForkableSpectacle);
+      setIsProcessing(false);
     }
 
     task();
