@@ -14,9 +14,7 @@ import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
-import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
 import { AddContribution } from '../../../lib/command-factory';
-import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
 

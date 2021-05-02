@@ -5,7 +5,6 @@ import {
   IPatchChoices,
 } from '../Interfaces';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
-import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
 import {
   AddShape,
   AddShapeParameter,
@@ -13,8 +12,7 @@ import {
   SetParameterShape,
   ShapeProvider,
 } from '../command-factory';
-
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
+import { newRandomIdGenerator } from '../domain-id-generator';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
@@ -22,7 +20,7 @@ export function builderInnerShapeFromChoices(
   actual: Actual,
   currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
-  const randomIds = opticEngine.com.useoptic.OpticIdsJsHelper().random;
+  const randomIds = newRandomIdGenerator();
 
   const targetKinds = new Set([
     ...choices.shapes.filter((i) => i.isValid).map((i) => i.coreShapeKind),
