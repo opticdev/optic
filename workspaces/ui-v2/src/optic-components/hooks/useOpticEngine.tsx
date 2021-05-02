@@ -1,16 +1,28 @@
-import React, { ReactNode, useContext } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { IOpticEngine } from '@useoptic/spectacle';
 import invariant from 'invariant';
 const OpticEngineContext = React.createContext<IOpticEngine | null>(null);
 
-export function OpticEngineStore(props: {
-  children: ReactNode;
-  opticEngine: IOpticEngine;
-}) {
+export function OpticEngineStore(props: { children: ReactNode }) {
+  const [opticEngine, setOpticEngine] = useState<IOpticEngine | null>(null);
+  useEffect(() => {
+    async function task() {
+      const opticEngine = await import(
+        '@useoptic/diff-engine-wasm/engine/browser'
+      );
+      setOpticEngine(opticEngine);
+    }
+
+    task();
+  }, []);
+  if (!opticEngine) {
+    //@aidan todo
+    return <div>loading...</div>;
+  }
   return (
     <OpticEngineContext.Provider
       children={props.children}
-      value={props.opticEngine}
+      value={opticEngine}
     />
   );
 }

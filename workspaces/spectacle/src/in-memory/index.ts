@@ -197,9 +197,7 @@ export class InMemoryDiffService implements IOpticDiffService {
       {}
     );
     if (Object.keys(affordancesByFingerprint).length === 0) {
-      console.log(
-        '@aidan this should never happen in practice, if things are working, right?'
-      );
+      //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
       debugger;
     }
     //@jaap @TODO: use asynctools affordancesByFingerprint ?
