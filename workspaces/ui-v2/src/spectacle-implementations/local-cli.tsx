@@ -62,21 +62,23 @@ export default function LocalCli() {
   }
 
   return (
-    <SpectacleStore spectacle={data.spectacle}>
-      <CapturesServiceStore capturesService={data.capturesService}>
-        <InMemoryInteractionLoaderStore samples={[]}>
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DiffReviewEnvironments />
-                <DocumentationPages />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </InMemoryInteractionLoaderStore>
-      </CapturesServiceStore>
-    </SpectacleStore>
+    <AppConfigurationStore config={appConfig}>
+      <SpectacleStore spectacle={data.spectacle}>
+        <CapturesServiceStore capturesService={data.capturesService}>
+          <InMemoryInteractionLoaderStore samples={[]}>
+            <BaseUrlProvider value={{ url: match.url }}>
+              <Switch>
+                <>
+                  <DocumentationPages />
+                  <DiffReviewEnvironments />
+                  <ChangelogPages />
+                </>
+              </Switch>
+            </BaseUrlProvider>
+          </InMemoryInteractionLoaderStore>
+        </CapturesServiceStore>
+      </SpectacleStore>
+    </AppConfigurationStore>
   );
 }
 

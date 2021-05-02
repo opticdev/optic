@@ -146,7 +146,9 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
-  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle | null>(null);
+  const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle | null>(
+    null
+  );
 
   useEffect(() => {
     async function task() {

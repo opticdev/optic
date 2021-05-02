@@ -65,11 +65,9 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
   ) : (
     <div onClick={() => setEditing(true)}>
       <Typography className={variants[variant].className}>
-        {
-          defaultText && (
-            <span className={classes.defaultText}> + {defaultText}</span>
-          )
-        }
+        {defaultText && (
+          <span className={classes.defaultText}> + {defaultText}</span>
+        )}
       </Typography>
     </div>
   );

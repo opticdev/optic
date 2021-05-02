@@ -27,13 +27,14 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { IEndpoint, useEndpoints } from '../../../hooks/useEndpointsHook';
 import { Loading } from '../../../loaders/Loading';
 import { CenteredColumn } from '../../../layouts/CenteredColumn';
-import {
-  EndpointName,
-} from '../../../common';
+import { EndpointName } from '../../../common';
 import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
 
-import { ExistingEndpointNameField, PendingEndpointNameField } from './EndpointNameEditFields';
+import {
+  ExistingEndpointNameField,
+  PendingEndpointNameField,
+} from './EndpointNameEditFields';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();

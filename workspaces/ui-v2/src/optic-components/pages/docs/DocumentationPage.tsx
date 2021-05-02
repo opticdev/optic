@@ -132,7 +132,9 @@ export function DocumentationRootPage(props: {
                     onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    className={endpoint.changelog?.added ? changelogStyles.added : ""}
+                    className={
+                      endpoint.changelog?.added ? changelogStyles.added : ''
+                    }
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName
