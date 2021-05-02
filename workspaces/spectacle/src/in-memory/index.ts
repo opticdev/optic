@@ -197,6 +197,12 @@ export class InMemoryDiffService implements IOpticDiffService {
       },
       {}
     );
+    if (Object.keys(affordancesByFingerprint).length === 0) {
+      console.log(
+        '@aidan this should never happen in practice, if things are working, right?'
+      );
+      debugger;
+    }
     //@jaap @TODO: use asynctools affordancesByFingerprint ?
     return affordancesByFingerprint;
   }
@@ -206,45 +212,51 @@ export class InMemoryDiffService implements IOpticDiffService {
     method: string,
     newPathCommands: any[]
   ): Promise<ILearnedBodies> {
-    const events = await this.dependencies.specRepository.listEvents();
+    try {
+      const events = await this.dependencies.specRepository.listEvents();
 
-    const newEventsString = this.dependencies.opticEngine.try_apply_commands(
-      JSON.stringify(newPathCommands),
-      JSON.stringify(events),
-      'simulated',
-      'simulated-batch'
-    );
+      const newEventsString = this.dependencies.opticEngine.try_apply_commands(
+        JSON.stringify(newPathCommands),
+        JSON.stringify(events),
+        'simulated',
+        'simulated-batch'
+      );
 
-    const spec = this.dependencies.opticEngine.spec_from_events(
-      newEventsString
-    );
-    //@aidan if you need to filter by method*pathId you can do it here
-    const interactionsJsonl = this.dependencies.interactions
-      .map((x: HttpInteraction) => {
-        return JSON.stringify(x);
-      })
-      .join('\n');
-    const learnedBodies = JSON.parse(
-      this.dependencies.opticEngine.learn_undocumented_bodies(
-        spec,
-        interactionsJsonl
-      )
-    );
-    const learnedBodiesForPathIdAndMethod = learnedBodies.find(
-      (x: ILearnedBodies) => {
-        return x.pathId === pathId && x.method === method;
+      const spec = this.dependencies.opticEngine.spec_from_events(
+        newEventsString
+      );
+      //@aidan if you need to filter by method*pathId you can do it here
+      const interactionsJsonl = this.dependencies.interactions
+        .map((x: HttpInteraction) => {
+          return JSON.stringify(x);
+        })
+        .join('\n');
+      const learnedBodies = JSON.parse(
+        this.dependencies.opticEngine.learn_undocumented_bodies(
+          spec,
+          interactionsJsonl
+        )
+      );
+      const learnedBodiesForPathIdAndMethod = learnedBodies.find(
+        (x: ILearnedBodies) => {
+          return x.pathId === pathId && x.method === method;
+        }
+      );
+      debugger;
+      if (!learnedBodiesForPathIdAndMethod) {
+        return {
+          pathId,
+          method,
+          requests: [],
+          responses: [],
+        };
       }
-    );
-    debugger;
-    if (!learnedBodiesForPathIdAndMethod) {
-      return {
-        pathId,
-        method,
-        requests: [],
-        responses: [],
-      };
+      return learnedBodiesForPathIdAndMethod;
+    } catch (e) {
+      console.error(e);
+      debugger;
+      throw e;
     }
-    return learnedBodiesForPathIdAndMethod;
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {

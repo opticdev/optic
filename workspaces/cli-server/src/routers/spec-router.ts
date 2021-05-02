@@ -247,7 +247,7 @@ export async function makeRouter(sessions: SessionsManager) {
         schema: spectacle.executableSchema,
         graphiql: true,
         //@jaap: we need to figure out how to make sure the context is always valid
-        context: spectacle.graphqlContext,
+        context: spectacle.graphqlContext(),
       });
       instances.set(req.optic.session.id, instance);
       handler = instance;

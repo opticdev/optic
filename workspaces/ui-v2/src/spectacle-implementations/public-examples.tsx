@@ -72,6 +72,9 @@ export default function PublicExamples() {
     return <div>something went wrong</div>;
   }
 
+  //@ts-ignore
+  data.isOG = true;
+
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data}>
@@ -103,7 +106,8 @@ export interface InMemorySpectacleDependencies {
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
-class InMemorySpectacle implements IForkableSpectacle, InMemoryBaseSpectacle {
+export class InMemorySpectacle
+  implements IForkableSpectacle, InMemoryBaseSpectacle {
   private spectaclePromise: Promise<any>;
 
   constructor(

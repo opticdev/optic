@@ -78,8 +78,10 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
+      //@aidan: here you need to receive the additional commands
       const { pathId, method } = req.body;
       const events = await req.optic.specLoader();
+      //@aidan: here you need to apply the additional commands
 
       const initialBodyGenerator = new OnDemandInitialBodyRust({
         captureBaseDirectory: req.optic.paths.capturesPath,

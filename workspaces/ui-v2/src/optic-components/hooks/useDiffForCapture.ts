@@ -2,10 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import { CapturesServiceContext } from './useCapturesHook';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { ParsedDiff } from '../../lib/parse-diff';
-import { useAllRequestsAndResponses } from './diffs/useAllRequestsAndResponses';
-import { useEndpoints } from './useEndpointsHook';
-import { CurrentSpecContext } from '../../lib/Interfaces';
-import { DiffSet } from '../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 
 interface DiffState {
@@ -25,9 +21,6 @@ export function useDiffsForCapture(
 ): DiffState {
   const capturesService = useContext(CapturesServiceContext)!;
 
-  const allRequestsAndResponsesOfBaseSpec = useAllRequestsAndResponses();
-  const allEndpointsOfBaseSpec = useEndpoints();
-
   const [diffState, setDiffState] = useState<DiffState>({
     loading: true,
   });
@@ -46,7 +39,6 @@ export function useDiffsForCapture(
       );
 
       const learnedTrailsForEndpoints = await diffsService.learnShapeDiffAffordances();
-      debugger;
 
       const urls = await diffsService.listUnrecognizedUrls();
       setDiffState({
@@ -60,18 +52,7 @@ export function useDiffsForCapture(
       });
     }
 
-    if (
-      !allEndpointsOfBaseSpec.loading &&
-      !allRequestsAndResponsesOfBaseSpec.loading
-    ) {
-      task();
-    }
-  }, [
-    capturesService,
-    captureId,
-    diffId,
-    allEndpointsOfBaseSpec.loading,
-    allRequestsAndResponsesOfBaseSpec.loading,
-  ]);
+    task();
+  }, [capturesService, captureId, diffId]);
   return diffState;
 }

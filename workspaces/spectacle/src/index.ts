@@ -18,6 +18,7 @@ import {
   ILearnedBodies,
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IOpticEngine {
@@ -257,8 +258,8 @@ export async function makeSpectacle(opticContext: IOpticContext) {
             .results
         );
       },
-      shapeChoices: (parent: any, args: any, context: any, info: any) => {
-        return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
+      shapeChoices: async (parent: any, args: any, context: any, info: any) => {
+        return context.shapeViewerProjection[args.shapeId];
       },
       endpointChanges: (
         parent: any,
@@ -477,13 +478,17 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     typeDefs: schema,
     resolvers,
   });
-  const graphqlContext = {
-    opticContext,
-    // @ts-ignore
-    endpointsQueries,
-    // @ts-ignore
-    shapeQueries,
-    shapeViewerProjection,
+  const graphqlContext = () => {
+    return {
+      opticContext,
+      // @ts-ignore
+      endpointsQueries,
+      // @ts-ignore
+      shapeQueries,
+      shapeViewerProjection,
+      // @ts-ignore
+      contributionsProjection,
+    };
   };
   const queryWrapper = function (input: SpectacleInput) {
     return graphql({
@@ -491,20 +496,14 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       source: input.query,
       variableValues: input.variables,
       operationName: input.operationName,
-      contextValue: {
-        opticContext,
-        endpointsQueries,
-        shapeQueries,
-        shapeViewerProjection,
-        contributionsProjection,
-      },
+      contextValue: graphqlContext(),
     });
   };
   return {
     executableSchema,
-    graphqlContext,
     queryWrapper,
     reload,
+    graphqlContext,
   };
 }
 
