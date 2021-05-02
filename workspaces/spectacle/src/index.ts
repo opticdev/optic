@@ -336,8 +336,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     PathComponent: {
-      id(parent: endpoints.PathNode) {
+      id: (parent: endpoints.PathNode) => {
         return Promise.resolve(parent.pathId);
+      },
+      contributions: (parent: endpoints.PathNode, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.pathId] || {}
+        );
       },
     },
     HttpBody: {

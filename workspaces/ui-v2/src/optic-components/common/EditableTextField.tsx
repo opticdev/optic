@@ -5,7 +5,7 @@ import { OpticBlueReadable } from '../theme';
 
 type EditableTextFieldProps = {
   isEditing: boolean;
-  setEditing: (isEditing: boolean) => void;
+  setEditing?: (isEditing: boolean) => void;
   value: string;
   setValue: (newValue: string) => void;
   helperText?: string;
@@ -16,6 +16,7 @@ type EditableTextFieldProps = {
 export enum TextFieldVariant {
   SMALL,
   REGULAR,
+  FIELDORPARAM,
 }
 
 export const EditableTextField: FC<EditableTextFieldProps> = ({
@@ -36,11 +37,23 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
       },
       className: classes.smallField,
       textFieldStyle: { width: 300 },
+      textFieldProps: {},
     },
     [TextFieldVariant.REGULAR]: {
       inputProps: {},
       className: classes.regularField,
       textFieldStyle: {},
+      textFieldProps: {},
+    },
+    [TextFieldVariant.FIELDORPARAM]: {
+      inputProps: {
+        className: classes.fieldOrParam,
+      },
+      className: '',
+      textFieldStyle: {},
+      textFieldProps: {
+        multiline: true,
+      },
     },
   };
 
@@ -60,16 +73,14 @@ export const EditableTextField: FC<EditableTextFieldProps> = ({
         setValue(e.target.value);
       }}
     />
-  ) : value ? (
+  ) : !setEditing || value ? (
     <Typography className={variants[variant].className}>{value}</Typography>
   ) : (
-    <div onClick={() => setEditing(true)}>
+    <div onClick={() => setEditing && setEditing(true)}>
       <Typography className={variants[variant].className}>
-        {
-          defaultText && (
-            <span className={classes.defaultText}> + {defaultText}</span>
-          )
-        }
+        {defaultText && (
+          <span className={classes.defaultText}> + {defaultText}</span>
+        )}
       </Typography>
     </div>
   );
@@ -92,5 +103,12 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu',
     pointerEvents: 'none',
     color: '#2a2f45',
+  },
+  fieldOrParam: {
+    fontFamily: 'Ubuntu',
+    fontWeight: 200,
+    fontSize: 14,
+    lineHeight: 1.8,
+    color: '#4f566b',
   },
 }));

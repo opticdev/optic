@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { CommitMessageModal } from '../../common';
@@ -12,9 +12,7 @@ const useStagedChangesCount = () => {
   const { pendingEndpoints, context } = useSharedDiffContext();
 
   const pendingEndpointsCount = pendingEndpoints.filter((i) => i.staged).length;
-  const diffHashToEndpoint: {
-    [diffHash: string]: string;
-  } = context.results.diffsGroupedByEndpoint.reduce(
+  const diffHashToEndpoint = context.results.diffsGroupedByEndpoint.reduce(
     (acc: { [diffHash: string]: string }, endpoint) => {
       const endpointId = `${endpoint.pathId}.${endpoint.method}`;
       endpoint.shapeDiffs.forEach((shapeDiff) => {
@@ -29,6 +27,9 @@ const useStagedChangesCount = () => {
       (diffHash) => diffHashToEndpoint[diffHash]
     ),
     ...Object.keys(context.choices.existingEndpointNameContributions),
+    ...Object.values(context.choices.existingEndpointPathContributions).map(
+      (pathContribution) => pathContribution.endpointId
+    ),
   ]).size;
 
   return {
@@ -40,7 +41,7 @@ const useStagedChangesCount = () => {
 export default function AskForCommitMessageDiffPage(props: {
   hasChanges: boolean;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
   const lastBatchCommitId = useLastBatchCommitId();
@@ -74,7 +75,6 @@ export default function AskForCommitMessageDiffPage(props: {
     });
     // If there are no batch commits (first commit) - link to the just created commit
     history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
-    // @nic TODO we need to trigger a new full page refresh - or trigger a refetch of data through out queries
   };
 
   return (
