@@ -9,19 +9,19 @@ import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, ListItem, Typography } from '@material-ui/core';
-import { EndpointName, PromptNavigateAway } from '../../common';
+import { EndpointName, PromptNavigateAway, PathParameters } from '../../common';
 import { EndpointNameMiniContribution } from '../../documentation/Contributions';
 import {
   ContributionEditingStore,
   useContributionEditing,
 } from '../../hooks/edit/Contributions';
-import { EditContributionsButton } from '../../hooks/edit/EditContributionsButton';
+import { EditContributionsButton } from './EditContributionsButton';
 import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../../documentation/TwoColumn';
 import { useHistory } from 'react-router-dom';
-import { PathParametersViewEdit } from '../../documentation/PathParameters';
+import { DocsFieldOrParameterContribution } from '../../documentation/Contributions';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../../documentation/BodyRender';
@@ -33,6 +33,7 @@ import { ChangesSinceDropdown } from '../../changelog/ChangelogDropdown';
 import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
+import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -189,6 +190,9 @@ export function EndpointRootPage(props: any) {
     return <>no endpoint here</>;
   }
   const endpointId = getEndpointId({ method, pathId });
+  const parameterizedPathParts = thisEndpoint.pathParameters.filter(
+    (path) => path.isParameterized
+  );
 
   return (
     <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
@@ -225,7 +229,26 @@ export function EndpointRootPage(props: any) {
               />
             }
           >
-            <PathParametersViewEdit parameters={thisEndpoint.pathParameters} />
+            <PathParameters
+              parameters={parameterizedPathParts}
+              renderField={(param, index) => {
+                const alwaysAString: IShapeRenderer = {
+                  shapeId: param.id + 'shape',
+                  jsonType: JsonLike.STRING,
+                  value: undefined,
+                };
+                return (
+                  <DocsFieldOrParameterContribution
+                    key={param.id}
+                    id={param.id}
+                    name={param.name}
+                    shapes={[alwaysAString]}
+                    depth={0}
+                    initialValue={param.description}
+                  />
+                );
+              }}
+            />
             <div
               style={{
                 marginTop: 10,

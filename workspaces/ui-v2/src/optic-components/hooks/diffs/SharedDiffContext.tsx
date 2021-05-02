@@ -14,7 +14,11 @@ import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
+import { InteractionLoaderContext } from '../../../spectacle-implementations/interaction-loader';
+import { AddContribution } from '../../../lib/command-factory';
+import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { useOpticEngine } from '../useOpticEngine';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -39,7 +43,12 @@ type ISharedDiffContext = {
   reset: () => void;
   handledCount: [number, number];
   startedFinalizing: () => void;
-  setEndpointName: (id: string, command: any) => void;
+  setEndpointName: (id: string, name: string) => void;
+  setPathDescription: (
+    pathId: string,
+    description: string,
+    endpointId: string
+  ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
 };
 
@@ -54,11 +63,13 @@ type SharedDiffStoreProps = {
 };
 
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
+  const opticEngine = useOpticEngine();
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
+    opticEngine,
   };
 
   const [state, send]: any = useMachine(() =>
@@ -138,11 +149,11 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
-    setEndpointName: (id: string, command: any) =>
+    setEndpointName: (id: string, name: string) =>
       send({
         type: 'SET_ENDPOINT_NAME',
         id,
-        command,
+        command: AddContribution(id, 'purpose', name),
       }),
     setPendingEndpointName: (id: string, name) => {
       const pendingEndpoint = context.pendingEndpoints.find((i) => i.id === id);
@@ -152,6 +163,18 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       pendingEndpoint.ref.send({ type: 'STAGED_ENDPOINT_NAME_UPDATED', name });
       send({
         type: 'UPDATE_PENDING_ENDPOINT_NAME',
+      });
+    },
+    setPathDescription: (
+      pathId: string,
+      description: string,
+      endpointId: string
+    ) => {
+      send({
+        type: 'SET_PATH_DESCRIPTION',
+        pathId,
+        command: AddContribution(pathId, 'description', description),
+        endpointId,
       });
     },
   };

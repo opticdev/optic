@@ -130,7 +130,7 @@ export class Expectation {
 }
 
 export class Actual {
-  private trailAffordances: IValueAffordanceSerialization[];
+  public trailAffordances: IValueAffordanceSerialization[];
 
   constructor(
     public learnedTrails: IValueAffordanceSerializationWithCounter,

@@ -29,6 +29,11 @@ export interface IOpticEngine {
     commitMessage: string
   ): any;
 
+  affordances_to_commands(
+    json_affordances_json: string,
+    json_trail_json: string
+  ): string;
+
   get_shape_viewer_projection(spec: any): string;
 
   get_contributions_projection(spec: any): string;
@@ -239,7 +244,6 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
       startDiff: async (parent: any, args: any, context: any) => {
         const { diffId, captureId } = args;
-        debugger;
         await context.opticContext.capturesService.startDiff(
           diffId,
           captureId,
@@ -365,8 +369,13 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     },
     PathComponent: {
-      id(parent: endpoints.PathNode) {
+      id: (parent: endpoints.PathNode) => {
         return Promise.resolve(parent.pathId);
+      },
+      contributions: (parent: endpoints.PathNode, args: any, context: any) => {
+        return Promise.resolve(
+          context.contributionsProjection[parent.pathId] || {}
+        );
       },
     },
     HttpBody: {
