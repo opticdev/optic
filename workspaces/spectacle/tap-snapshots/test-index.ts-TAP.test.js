@@ -16,6 +16,41 @@ Object {
 `;
 
 exports[
+  `test/index.ts TAP spectacle changelog query add contributions > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "endpointChanges": Null Object {
+      "endpoints": Array [
+        Null Object {
+          "change": Null Object {
+            "category": "added",
+          },
+          "contributions": Object {
+            "purpose": "Get your account details",
+          },
+          "method": "GET",
+          "path": "/api/account",
+          "pathId": "path_UGayMWEUve",
+        },
+        Null Object {
+          "change": Null Object {
+            "category": "updated",
+          },
+          "contributions": Object {
+            "purpose": "Get information about a specific spec",
+          },
+          "method": "GET",
+          "path": "/api/specs/{specId}",
+          "pathId": "path_td6dXtR2C5",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[
   `test/index.ts TAP spectacle changelog query add endpoint to existing spec > must match snapshot 1`
 ] = `
 Object {
@@ -26,8 +61,10 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -46,8 +83,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -66,8 +105,10 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -86,8 +127,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -106,8 +149,10 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -126,8 +171,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -146,8 +193,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -166,8 +215,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -186,8 +237,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -206,8 +259,10 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items",
+          "pathId": "path_H8I4tQ9R0s",
         },
       ],
     },
@@ -226,8 +281,10 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items2",
+          "pathId": "path_cvQ3CMEF5h",
         },
       ],
     },
@@ -246,8 +303,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -266,15 +325,19 @@ Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/test2",
+          "pathId": "path_UTBFhSCjRy",
         },
         Null Object {
           "change": Null Object {
             "category": "added",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/test1/{id}",
+          "pathId": "path_NbM6PpK4t8",
         },
       ],
     },
@@ -293,8 +356,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -313,8 +378,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -345,8 +412,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -365,8 +434,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/user",
+          "pathId": "path_Rbkw7kMyjT",
         },
       ],
     },
@@ -385,8 +456,10 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "POST",
           "path": "/user",
+          "pathId": "path_jhNaeRecHD",
         },
       ],
     },
@@ -405,11 +478,23 @@ Object {
           "change": Null Object {
             "category": "updated",
           },
+          "contributions": Object {},
           "method": "GET",
           "path": "/items",
+          "pathId": "path_H8I4tQ9R0s",
         },
       ],
     },
+  },
+}
+`;
+
+exports[
+  `test/index.ts TAP spectacle shapeChoices query add contributions > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": null,
   },
 }
 `;

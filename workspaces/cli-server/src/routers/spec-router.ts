@@ -246,11 +246,16 @@ export async function makeRouter(sessions: SessionsManager) {
         //@ts-ignore
         schema: spectacle.executableSchema,
         graphiql: true,
-        //@jaap: we need to figure out how to make sure the context is always valid
-        context: spectacle.graphqlContext(),
+        context: {
+          spectacleContext: spectacle.graphqlContext,
+        },
       });
-      instances.set(req.optic.session.id, instance);
-      handler = instance;
+      //@GOTCHA see if someone sneaky updated it while we weren't looking
+      handler = instances.get(req.optic.session.id);
+      if (!handler) {
+        instances.set(req.optic.session.id, instance);
+        handler = instance;
+      }
     }
     handler(req, res);
   });
