@@ -20,7 +20,7 @@ export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
   expected: Expectation,
   actual: Actual,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
   const randomIds = opticEngine.com.useoptic.OpticIdsJsHelper().random;
 
@@ -37,24 +37,30 @@ export function builderInnerShapeFromChoices(
 
   const innerShapeIds = Array.from(targetKinds).map((i) => {
     const foundShapeId = Object.entries(allowedKindsById).find(
-      ([key, shape]) => shape === i,
+      ([key, shape]) => shape === i
     );
 
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
+      //@aidan remove this after using the proper trail learners from Rust
+      const affordances = actual.trailAffordances.map((i) => ({
+        ...i,
+        wasEmptyArray: false,
+      }));
+      debugger;
       // make new shape
-      const { rootShapeId, commands } = JsonHelper.toJs(
-        LearnJsonTrailAffordances.toCommandsJson(
-          JSON.stringify(actual.learnedTrails.affordances),
-          JSON.stringify(actual.jsonTrail),
-          randomIds,
-          toOption(i),
-        ),
+      const [commands, newShapeId] = JSON.parse(
+        currentSpecContext.opticEngine.affordances_to_commands(
+          JSON.stringify(affordances),
+          JSON.stringify(actual.jsonTrail)
+        )
       );
 
+      debugger;
+
       newCommands.push(...commands);
-      return rootShapeId;
+      return newShapeId;
     }
   });
 
@@ -68,7 +74,7 @@ export function builderInnerShapeFromChoices(
     } else {
       const oneOfWrapperShape = randomIds.newShapeId();
       newCommands.push(
-        AddShape(oneOfWrapperShape, ICoreShapeKinds.OneOfKind.toString(), ''),
+        AddShape(oneOfWrapperShape, ICoreShapeKinds.OneOfKind.toString(), '')
       );
       innerShapeIds.forEach((i) => {
         const newParamId = randomIds.newShapeParameterId();
@@ -76,9 +82,9 @@ export function builderInnerShapeFromChoices(
           ...[
             AddShapeParameter(newParamId, oneOfWrapperShape, ''),
             SetParameterShape(
-              ProviderInShape(oneOfWrapperShape, ShapeProvider(i), newParamId),
+              ProviderInShape(oneOfWrapperShape, ShapeProvider(i), newParamId)
             ),
-          ],
+          ]
         );
       });
 
@@ -88,8 +94,8 @@ export function builderInnerShapeFromChoices(
 
   const shouldMakeNullable = Boolean(
     choices.shapes.find(
-      (i) => i.coreShapeKind === ICoreShapeKinds.NullableKind && i.isValid,
-    ),
+      (i) => i.coreShapeKind === ICoreShapeKinds.NullableKind && i.isValid
+    )
   );
 
   if (shouldMakeNullable) {
@@ -102,10 +108,10 @@ export function builderInnerShapeFromChoices(
           ProviderInShape(
             wrapperShapeId,
             ShapeProvider(rootShapeId),
-            ICoreShapeInnerParameterNames.NullableInner,
-          ),
+            ICoreShapeInnerParameterNames.NullableInner
+          )
         ),
-      ],
+      ]
     );
 
     rootShapeId = wrapperShapeId;
@@ -119,10 +125,10 @@ export function builderInnerShapeFromChoices(
           ProviderInShape(
             wrapperShapeId,
             ShapeProvider(rootShapeId),
-            ICoreShapeInnerParameterNames.OptionalInner,
-          ),
+            ICoreShapeInnerParameterNames.OptionalInner
+          )
         ),
-      ],
+      ]
     );
 
     rootShapeId = wrapperShapeId;

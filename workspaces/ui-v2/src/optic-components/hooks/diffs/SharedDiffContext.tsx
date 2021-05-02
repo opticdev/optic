@@ -22,6 +22,7 @@ import { InteractionLoaderContext } from '../../../spectacle-implementations/int
 import { AddContribution } from '../../../lib/command-factory';
 import { learnTrailsForParsedDiffs } from '../../../lib/__scala_kill_me/browser-trail-learners-dep';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
+import { useOpticEngine } from '../useOpticEngine';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -64,12 +65,14 @@ type SharedDiffStoreProps = {
   urls: IUnrecognizedUrl[];
 };
 
+
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
     currentSpecResponses: props.responses,
     domainIds: newRandomIdGenerator(),
+    opticEngine,
   };
 
   const parsedDiffs = useMemo(

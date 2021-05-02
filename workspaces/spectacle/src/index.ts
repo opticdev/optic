@@ -25,6 +25,11 @@ export interface IOpticEngine {
     commitMessage: string
   ): any;
 
+  affordances_to_commands(
+    json_affordances_json: string,
+    json_trail_json: string
+  ): string;
+
   get_shape_viewer_projection(spec: any): string;
 
   get_contributions_projection(spec: any): string;
