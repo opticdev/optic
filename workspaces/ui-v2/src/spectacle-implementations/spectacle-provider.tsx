@@ -57,7 +57,9 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 
-export function useSpectacleCommand(): (input: SpectacleInput) => Promise<AsyncStatus<any>> {
+export function useSpectacleCommand(): (
+  input: SpectacleInput
+) => Promise<AsyncStatus<any>> {
   const spectacle = useContext(SpectacleContext)!;
 
   return useCallback(

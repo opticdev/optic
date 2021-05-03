@@ -1,17 +1,12 @@
-import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
-import Path from 'path';
-import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
 import { learnShapeDiffAffordances } from '@useoptic/diff-engine';
 import { Streams } from '@useoptic/diff-engine-wasm';
 import { ShapeDiffAffordances } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/shape-diff-affordances';
-import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { getDiffOutputPaths } from './diff-worker-rust';
+import path from 'path';
 
 export interface ShapeDiffAffordancesConfig {
-  pathId: string;
-  method: string;
   captureId: string;
   diffId: string;
   events: any;
@@ -20,30 +15,37 @@ export interface ShapeDiffAffordancesConfig {
 
 export { ShapeDiffAffordances };
 
+export function getTrailLearnersOutputPaths(values: {
+  captureBaseDirectory: string;
+  captureId: string;
+}) {
+  const { captureBaseDirectory, captureId } = values;
+  const base = path.join(captureBaseDirectory, captureId, 'trails-learned');
+  const events = path.join(base, 'events.json');
+
+  return {
+    base,
+    events,
+  };
+}
+
 export class ShapeDiffAffordancesWorker {
   constructor(private config: ShapeDiffAffordancesConfig) {}
 
   async run(): Promise<{ [fingerprint: string]: ShapeDiffAffordances }> {
-    const outputPaths = getInitialBodiesOutputPaths(this.config);
+    const outputPaths = getTrailLearnersOutputPaths(this.config);
     await fs.ensureDir(outputPaths.base);
     await fs.writeJson(outputPaths.events, this.config.events);
 
     // diffs
     const diffResultsPath = getDiffOutputPaths(this.config).diffsStream;
 
-    // interactions
-    const interactionFilter = await createEndpointFilter(
-      this.config.events,
-      this.config.pathId,
-      this.config.method
-    );
-
     const interactionIterator = CaptureInteractionIterator(
       {
         captureId: this.config.captureId,
         captureBaseDirectory: this.config.captureBaseDirectory,
       },
-      interactionFilter
+      (a) => true
     );
 
     const taggedInteractions = (async function* (interactionItems) {
@@ -67,26 +69,4 @@ export class ShapeDiffAffordancesWorker {
       learningResults
     );
   }
-}
-
-interface EndpointInteractionFilter {
-  (interaction: HttpInteraction): boolean;
-}
-
-async function createEndpointFilter(
-  events: any[],
-  pathId: string,
-  method: string
-): Promise<EndpointInteractionFilter> {
-  let spec = DiffEngine.spec_from_events(JSON.stringify(events));
-
-  return function (interaction: HttpInteraction) {
-    const interactionPathId = DiffEngine.spec_resolve_path_id(
-      spec,
-      interaction.request.path
-    );
-    return (
-      method === interaction.request.method && pathId === interactionPathId
-    );
-  };
 }

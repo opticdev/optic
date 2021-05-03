@@ -4,21 +4,21 @@ import {
   ILearnedBodies,
   ILearnedBody,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { localInitialBodyLearner } from '../../../lib/__scala_kill_me/browser-initial-body-dep';
 import {
   AddContribution,
   AddPathComponent,
   AddPathParameter,
+  AddRequest,
 } from '../../../lib/command-factory';
 import { getEndpointId } from '../../utilities/endpoint-utilities';
 import { IOpticDiffService } from '@useoptic/spectacle';
+import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 
 export const newInitialBodiesMachine = (
   currentSpecContext: CurrentSpecContext,
   pathPattern: string,
   method: string,
   onCommandsChanged: (commands: any[]) => void,
-  allSamples: any[],
   diffService: IOpticDiffService
 ) => {
   return Machine<InitialBodiesContext, InitialBodiesSchema, InitialBodiesEvent>(
@@ -92,26 +92,17 @@ export const newInitialBodiesMachine = (
                 currentSpecContext
               );
 
-              ///diffService.learnBody...
-
-              const learner = await localInitialBodyLearner(
-                //@ts-ignore
-                window.events!,
-                commands,
+              const learner = await diffService.learnUndocumentedBodies(
                 pathId,
                 method,
-                allSamples
+                commands
               );
 
-              return new Promise((resolve) => {
-                setTimeout(() => {
-                  resolve({
-                    learnedBodies: learner as ILearnedBodies,
-                    pathCommands: commands,
-                    pathId,
-                  });
-                }, 1500);
-              });
+              return {
+                learnedBodies: learner as ILearnedBodies,
+                pathCommands: commands,
+                pathId,
+              };
             },
             onDone: {
               actions: [
@@ -135,6 +126,7 @@ export const newInitialBodiesMachine = (
 
 export function recomputeCommands(ctx: InitialBodiesContext): any[] {
   const commands = [...ctx.pathCommands];
+  const ids = newRandomIdGenerator();
 
   function isIgnored(body: ILearnedBody, isRequest: boolean) {
     return Boolean(
@@ -155,6 +147,15 @@ export function recomputeCommands(ctx: InitialBodiesContext): any[] {
         commands.push(...i.commands);
       }
     });
+
+    const allRequestBodiesIgnored = ctx.learnedBodies.requests.every((i) =>
+      isIgnored(i, true)
+    );
+
+    if (allRequestBodiesIgnored && ctx.learnedBodies.responses.length > 0) {
+      commands.push(AddRequest(ctx.method, ctx.pathId, ids.newRequestId()));
+    }
+
     ctx.learnedBodies.responses.forEach((i) => {
       if (!isIgnored(i, false)) {
         commands.push(...i.commands);

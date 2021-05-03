@@ -68,14 +68,13 @@ export function CircularDiffProgress(props: any) {
 }
 
 export function CircularDiffLoaderProgress(props: any) {
-  const { total, handled } = props;
-  const classes = useStyles();
-  const value = (handled / total) * 100;
+  // const { total, handled } = props;
+  // const classes = useStyles();
+  // const value = (handled / total) * 100;
   return (
     <Box position="relative" display="inline-flex">
       <CircularProgress
-        variant={handled === 0 ? 'indeterminate' : 'determinate'}
-        value={handled === 0 ? undefined : value}
+        variant={'indeterminate'}
         size={90}
         style={{ color: UpdatedBlueBackground }}
       />
@@ -89,13 +88,13 @@ export function CircularDiffLoaderProgress(props: any) {
         alignItems="center"
         justifyContent="center"
       >
-        <Typography
-          className={classes.labelCounting}
-          style={{ padding: 5 }}
-          variant="caption"
-          component="div"
-          color="textSecondary"
-        >{`${handled}${total > -1 ? '/' + total : ''}`}</Typography>
+        {/*<Typography*/}
+        {/*  className={classes.labelCounting}*/}
+        {/*  style={{ padding: 5 }}*/}
+        {/*  variant="caption"*/}
+        {/*  component="div"*/}
+        {/*  color="textSecondary"*/}
+        {/*>{`${handled}${total > -1 ? '/' + total : ''}`}</Typography>*/}
       </Box>
     </Box>
   );

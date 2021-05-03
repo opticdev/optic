@@ -7,6 +7,7 @@ import { useShapeDiffInterpretations } from '<src>/optic-components/hooks/diffs/
 import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
 import { useEndpoint } from '<src>/optic-components/hooks/useEndpointsHook';
 import { SpectacleContext } from '<src>/spectacle-implementations/spectacle-provider';
+import { Loading } from '<src>/optic-components/loaders/Loading';
 
 import { ReviewEndpointDiffPage } from './ReviewEndpointDiffPage';
 
@@ -30,8 +31,7 @@ export const ReviewEndpointDiffContainer: FC<
   );
 
   return !endpoint || shapeDiffs.loading ? (
-    // @nic todo add in this loading state
-    <div>TODO loading state</div>
+    <Loading />
   ) : (
     <ReviewEndpointDiffPage
       endpoint={endpoint}

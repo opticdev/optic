@@ -27,6 +27,7 @@ export interface IDiffProjectionEmitterConfig {
   captureId: string;
 }
 
+//@TODO: cleanup
 export function getDiffOutputPaths(values: {
   captureBaseDirectory: string;
   captureId: string;

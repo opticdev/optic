@@ -155,7 +155,7 @@ Tap.test('spectacle batchCommits query', async (test) => {
   );
   const spectacle = await makeSpectacle(opticContext);
 
-  const results = await spectacle({
+  const results = await spectacle.queryWrapper({
     query: `{
         batchCommits {
           createdAt
@@ -189,36 +189,35 @@ specs.forEach(async (spec) => {
       }
     }`;
 
-    const results = await spectacle({ query, variables: {} });
+    const results = await spectacle.queryWrapper({ query, variables: {} });
     test.matchSnapshot(results);
   });
-  if (spec.shapeId) {
-    Tap.test(`spectacle shapeChoices query ${spec.name}`, async (test) => {
-      const query = `{
-        shapeChoices(shapeId: "${spec.shapeId}") {
-          id
-          jsonType
-          asArray {
+
+  Tap.test(`spectacle shapeChoices query ${spec.name}`, async (test) => {
+    const query = `{
+      shapeChoices(shapeId: "${spec.shapeId}") {
+        id
+        jsonType
+        asArray {
+          changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
+            added
+            changed
+          }
+        }
+        asObject {
+          fields {
+            shapeId
+            fieldId
+            name
             changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
               added
               changed
             }
           }
-          asObject {
-            fields {
-              shapeId
-              fieldId
-              name
-              changes(sinceBatchCommitId: "${spec.sinceBatchCommitId || ''}") {
-                added
-                changed
-              }
-            }
-          }
         }
-      }`;
-      const results = await spectacle({ query, variables: {} });
-      test.matchSnapshot(results);
-    });
-  }
+      }
+    }`;
+    const results = await spectacle.queryWrapper({ query, variables: {} });
+    test.matchSnapshot(results);
+  });
 });

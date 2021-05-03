@@ -125,9 +125,9 @@ export function BuildSpecPatch({
               >
                 Ignore Diff
               </Button>
-              <Button size="small" style={{ color: OpticBlueReadable }}>
-                Create Bug Report
-              </Button>
+              {/*<Button size="small" style={{ color: OpticBlueReadable }}>*/}
+              {/*  Create Bug Report*/}
+              {/*</Button>*/}
               <div style={{ flex: 1 }} />
               <Button
                 variant="contained"

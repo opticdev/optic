@@ -5,7 +5,6 @@ import {
   IPatchChoices,
 } from '../Interfaces';
 import { Actual, Expectation } from '../shape-diff-dsl-rust';
-import { JsonHelper, opticEngine, toOption } from '@useoptic/domain';
 import {
   AddShape,
   AddShapeParameter,
@@ -13,16 +12,15 @@ import {
   SetParameterShape,
   ShapeProvider,
 } from '../command-factory';
-
-const LearnJsonTrailAffordances = opticEngine.com.useoptic.diff.interactions.interpreters.distribution_aware.LearnJsonTrailAffordances();
+import { newRandomIdGenerator } from '../domain-id-generator';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
   expected: Expectation,
   actual: Actual,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
-  const randomIds = opticEngine.com.useoptic.OpticIdsJsHelper().random;
+  const randomIds = newRandomIdGenerator();
 
   const targetKinds = new Set([
     ...choices.shapes.filter((i) => i.isValid).map((i) => i.coreShapeKind),
@@ -37,24 +35,34 @@ export function builderInnerShapeFromChoices(
 
   const innerShapeIds = Array.from(targetKinds).map((i) => {
     const foundShapeId = Object.entries(allowedKindsById).find(
-      ([key, shape]) => shape === i,
+      ([key, shape]) => shape === i
     );
 
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
-      // make new shape
-      const { rootShapeId, commands } = JsonHelper.toJs(
-        LearnJsonTrailAffordances.toCommandsJson(
-          JSON.stringify(actual.learnedTrails.affordances),
-          JSON.stringify(actual.jsonTrail),
-          randomIds,
-          toOption(i),
-        ),
+      const filterToTarget = actual.trailAffordances.map((affordance) => {
+        return {
+          ...affordance,
+          wasString: i === ICoreShapeKinds.StringKind,
+          wasNumber: i === ICoreShapeKinds.NumberKind,
+          wasBoolean: i === ICoreShapeKinds.BooleanKind,
+          wasNull: i === ICoreShapeKinds.NullableKind,
+          wasArray: i === ICoreShapeKinds.ListKind,
+          wasObject: i === ICoreShapeKinds.ObjectKind,
+          fieldSet: i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
+        };
+      });
+
+      const [commands, newShapeId] = JSON.parse(
+        currentSpecContext.opticEngine.affordances_to_commands(
+          JSON.stringify(filterToTarget),
+          JSON.stringify(actual.jsonTrail)
+        )
       );
 
       newCommands.push(...commands);
-      return rootShapeId;
+      return newShapeId;
     }
   });
 
@@ -68,7 +76,7 @@ export function builderInnerShapeFromChoices(
     } else {
       const oneOfWrapperShape = randomIds.newShapeId();
       newCommands.push(
-        AddShape(oneOfWrapperShape, ICoreShapeKinds.OneOfKind.toString(), ''),
+        AddShape(oneOfWrapperShape, ICoreShapeKinds.OneOfKind.toString(), '')
       );
       innerShapeIds.forEach((i) => {
         const newParamId = randomIds.newShapeParameterId();
@@ -76,9 +84,9 @@ export function builderInnerShapeFromChoices(
           ...[
             AddShapeParameter(newParamId, oneOfWrapperShape, ''),
             SetParameterShape(
-              ProviderInShape(oneOfWrapperShape, ShapeProvider(i), newParamId),
+              ProviderInShape(oneOfWrapperShape, ShapeProvider(i), newParamId)
             ),
-          ],
+          ]
         );
       });
 
@@ -88,8 +96,8 @@ export function builderInnerShapeFromChoices(
 
   const shouldMakeNullable = Boolean(
     choices.shapes.find(
-      (i) => i.coreShapeKind === ICoreShapeKinds.NullableKind && i.isValid,
-    ),
+      (i) => i.coreShapeKind === ICoreShapeKinds.NullableKind && i.isValid
+    )
   );
 
   if (shouldMakeNullable) {
@@ -102,10 +110,10 @@ export function builderInnerShapeFromChoices(
           ProviderInShape(
             wrapperShapeId,
             ShapeProvider(rootShapeId),
-            ICoreShapeInnerParameterNames.NullableInner,
-          ),
+            ICoreShapeInnerParameterNames.NullableInner
+          )
         ),
-      ],
+      ]
     );
 
     rootShapeId = wrapperShapeId;
@@ -119,10 +127,10 @@ export function builderInnerShapeFromChoices(
           ProviderInShape(
             wrapperShapeId,
             ShapeProvider(rootShapeId),
-            ICoreShapeInnerParameterNames.OptionalInner,
-          ),
+            ICoreShapeInnerParameterNames.OptionalInner
+          )
         ),
-      ],
+      ]
     );
 
     rootShapeId = wrapperShapeId;
