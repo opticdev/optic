@@ -103,21 +103,26 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
           )
         );
 
-        await spectacleMutator({
-          query: `
-          mutation X($commands: [JSON], $commitMessage: String) {
-            applyCommands(commands: $commands, commitMessage: $commitMessage) {
-              batchCommitId
+        try {
+          await spectacleMutator({
+            query: `
+            mutation X($commands: [JSON], $commitMessage: String) {
+              applyCommands(commands: $commands, commitMessage: $commitMessage) {
+                batchCommitId
+              }
             }
-          }
-          `,
-          variables: {
-            commands,
-            commitMessage,
-          },
-        });
+            `,
+            variables: {
+              commands,
+              commitMessage,
+            },
+          });
 
-        setPendingContributions([]);
+          setPendingContributions([]);
+        } catch (e) {
+          console.error(e);
+          debugger;
+        }
       }
       setIsEditing(false);
     },

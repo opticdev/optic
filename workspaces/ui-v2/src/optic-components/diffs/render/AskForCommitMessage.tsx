@@ -57,25 +57,32 @@ export default function AskForCommitMessageDiffPage(props: {
 
   const handleSave = async (commitMessage: string) => {
     const commands = context.simulatedCommands;
-    const {
-      applyCommands: { batchCommitId },
-    } = await spectacleMutator<any, any>({
-      query: `
-      mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
-  applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
-    batchCommitId
-  }
-}`,
-      variables: {
-        commands,
-        batchCommitId: uuidv4(),
-        commitMessage: commitMessage,
-        clientId: uuidv4(), //@dev: fill this in
-        clientSessionId: uuidv4(), //@dev: fill this in
-      },
-    });
-    // If there are no batch commits (first commit) - link to the just created commit
-    history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
+    try {
+      const {
+        applyCommands: { batchCommitId },
+      } = await spectacleMutator<any, any>({
+        query: `
+        mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+    applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
+      batchCommitId
+    }
+  }`,
+        variables: {
+          commands,
+          batchCommitId: uuidv4(),
+          commitMessage: commitMessage,
+          clientId: uuidv4(), //@dev: fill this in
+          clientSessionId: uuidv4(), //@dev: fill this in
+        },
+      });
+      // If there are no batch commits (first commit) - link to the just created commit
+      history.push(
+        changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId)
+      );
+    } catch (e) {
+      console.error(e);
+      debugger;
+    }
   };
 
   return (
