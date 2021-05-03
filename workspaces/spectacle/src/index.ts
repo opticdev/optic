@@ -145,11 +145,11 @@ export interface IOpticContext {
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface IBaseSpectacle {
-  query<Result extends { [key: string]: any }, Input>(
+  query<Result, Input = {}>(
     options: SpectacleInput<Input>
   ): Promise<ExecutionResult<Result>>;
 
-  mutate<Result extends { [key: string]: any }, Input>(
+  mutate<Result, Input = {}>(
     options: SpectacleInput<Input>
   ): Promise<ExecutionResult<Result>>;
 }
@@ -510,7 +510,9 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       contributionsProjection,
     };
   };
-  const queryWrapper = function <Result, Input>(input: SpectacleInput<Input>) {
+  const queryWrapper = function <Result, Input = {}>(
+    input: SpectacleInput<Input>
+  ) {
     return graphql<Result>({
       schema: executableSchema,
       source: input.query,

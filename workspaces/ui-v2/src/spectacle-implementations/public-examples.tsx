@@ -128,12 +128,12 @@ export class InMemorySpectacle
     return new InMemorySpectacle(opticContext, [...this.samples]);
   }
 
-  async mutate<Result, Input>(options: SpectacleInput<Input>) {
+  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
     return spectacle.queryWrapper<Result, Input>(options);
   }
 
-  async query<Result, Input>(options: SpectacleInput<Input>) {
+  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
     return spectacle.queryWrapper<Result, Input>(options);
   }

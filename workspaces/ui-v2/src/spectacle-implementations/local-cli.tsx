@@ -94,12 +94,16 @@ class LocalCliSpectacle implements IForkableSpectacle {
     return new InMemorySpectacle(opticContext, []);
   }
 
-  async mutate<Result, Input>(options: SpectacleInput<Input>): Promise<Result> {
+  async mutate<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
 
-  async query<Result, Input>(options: SpectacleInput<Input>): Promise<Result> {
+  async query<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
