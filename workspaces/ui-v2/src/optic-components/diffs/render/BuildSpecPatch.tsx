@@ -16,13 +16,13 @@ import {
 import { OpticBlueReadable, SubtleBlueBackground } from '../../theme';
 import { namerForOptions } from '../../../lib/quick-namer';
 import { ArrowRight } from '@material-ui/icons';
-import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 type IBuildSpecPatch = {
   patchChoices?: IPatchChoices;
   diffHash: string;
   onPathChoicesUpdated: (pathChoices?: IPatchChoices) => void;
   approved: () => void;
+  ignore: () => void;
 };
 
 export function BuildSpecPatch({
@@ -30,10 +30,9 @@ export function BuildSpecPatch({
   onPathChoicesUpdated,
   diffHash,
   approved,
+  ignore,
 }: IBuildSpecPatch) {
   const classes = useStyles();
-  const { addDiffHashIgnore } = useSharedDiffContext();
-
   const [selectedChoices, setSelectedChoices] = useState(
     deepCopy(patchChoices)
   );
@@ -119,9 +118,7 @@ export function BuildSpecPatch({
               <Button
                 size="small"
                 style={{ color: OpticBlueReadable }}
-                onClick={() => {
-                  addDiffHashIgnore(diffHash);
-                }}
+                onClick={ignore}
               >
                 Ignore Diff
               </Button>

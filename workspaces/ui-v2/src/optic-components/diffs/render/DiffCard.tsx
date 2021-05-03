@@ -29,6 +29,7 @@ type IDiffCardProps = {
   previewTabs: IInteractionPreviewTab[];
   diffDescription: IDiffDescription;
   approve: () => void;
+  ignore: () => void;
   handled: boolean;
   specChoices?: IPatchChoices;
   updatedSpecChoices: (choices?: IPatchChoices) => void;
@@ -38,6 +39,7 @@ export function DiffCard({
   previewTabs,
   diffDescription,
   approve,
+  ignore,
   specChoices,
   updatedSpecChoices,
 }: IDiffCardProps) {
@@ -137,6 +139,7 @@ export function DiffCard({
           diffHash={diffDescription.diffHash}
           patchChoices={specChoices}
           onPathChoicesUpdated={updatedSpecChoices}
+          ignore={ignore}
         />
       </div>
     </>

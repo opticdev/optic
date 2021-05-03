@@ -191,7 +191,12 @@ function DiffCaptureResults() {
                 disableRipple
                 button
                 key={index}
-                onClick={handleChangeToEndpointPage(i.pathId, i.method)}
+                onClick={() =>
+                  !done && handleChangeToEndpointPage(i.pathId, i.method)
+                }
+                style={{
+                  cursor: done ? 'default' : 'pointer',
+                }}
               >
                 <EndpointName
                   leftPad={3}
