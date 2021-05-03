@@ -2,7 +2,7 @@ import * as React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import { DepthStore } from '../shapes/DepthContext';
-import { FieldOrParameterContribution } from './Contributions';
+import { DocsFieldOrParameterContribution } from './Contributions';
 
 type ContributionGroupProps = { rootShape: IShapeRenderer[] };
 
@@ -15,7 +15,7 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
       <div className={classes.container}>
         {contributions.map((i, index) => {
           return (
-            <FieldOrParameterContribution
+            <DocsFieldOrParameterContribution
               depth={i.depth}
               id={i.contributionId}
               name={i.name}

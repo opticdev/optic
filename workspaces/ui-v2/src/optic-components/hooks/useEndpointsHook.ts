@@ -1,16 +1,18 @@
+import { useMemo } from 'react';
 import { useSpectacleQuery } from '../../spectacle-implementations/spectacle-provider';
 import { useEndpointsChangelog } from './useEndpointsChangelog';
-import { useEffect, useState } from 'react';
 
 export const AllEndpointsQuery = `{
     requests {
       id
       pathId
       absolutePathPattern
+      absolutePathPatternWithParameterNames
       pathComponents {
         id
         name
         isParameterized
+        contributions
       }
       method
       pathContributions
@@ -20,8 +22,6 @@ export const AllEndpointsQuery = `{
 export function useEndpoints(
   renderChangesSince?: string
 ): { endpoints: IEndpoint[]; loading?: boolean } {
-  //@TODO
-
   const endpointsChangelog = useEndpointsChangelog(renderChangesSince);
 
   const queryInput = {
@@ -36,13 +36,10 @@ export function useEndpoints(
     debugger;
   }
 
-  const [result, setResult] = useState<IEndpoint[]>([]);
-
-  useEffect(() => {
-    if (data) {
-      setResult(endpointQueryResultsToJson(data, endpointsChangelog));
-    }
-  }, [data, setResult, endpointsChangelog]);
+  const result = useMemo(
+    () => (data ? endpointQueryResultsToJson(data, endpointsChangelog) : []),
+    [data, endpointsChangelog]
+  );
 
   return { endpoints: result, loading };
 }
@@ -69,32 +66,46 @@ export function endpointQueryResultsToJson(
     data.requests.map((req: any) => req.absolutePathPattern)
   );
 
-  const endpoints = data.requests.map((request: any) => {
-    const hasChangelog = endpointsChangelog.find(
-      (i) => i.pathId === request.pathId && i.method === request.method
-    );
+  const endpoints = data.requests.map(
+    (request: any): IEndpoint => {
+      const hasChangelog = endpointsChangelog.find(
+        (i) => i.pathId === request.pathId && i.method === request.method
+      );
 
-    return {
-      pathId: request.pathId,
-      method: request.method,
-      fullPath: request.absolutePathPattern,
-      group: request.absolutePathPattern
-        .substring(commonStart.length)
-        .split('/')[0],
-      pathParameters: [],
-      description: request.pathContributions.description || '',
-      purpose: request.pathContributions.purpose || '',
-      changelog: {
-        added: hasChangelog ? hasChangelog.change.category === 'added' : false,
-        changed: hasChangelog
-          ? hasChangelog.change.category === 'changed'
-          : false,
-        removed: hasChangelog
-          ? hasChangelog.change.category === 'removed'
-          : false,
-      },
-    } as IEndpoint;
-  });
+      return {
+        pathId: request.pathId,
+        method: request.method,
+        fullPath: request.absolutePathPatternWithParameterNames,
+        group: request.absolutePathPattern
+          .substring(commonStart.length)
+          .split('/')[0],
+        pathParameters: request.pathComponents.map(
+          (path: any): IPathParameter => {
+            return {
+              id: path.id,
+              name: path.name,
+              isParameterized: path.isParameterized,
+              description: path.contributions.description || '',
+              endpointId: `${request.pathId}.${request.method}`,
+            };
+          }
+        ),
+        description: request.pathContributions.description || '',
+        purpose: request.pathContributions.purpose || '',
+        changelog: {
+          added: hasChangelog
+            ? hasChangelog.change.category === 'added'
+            : false,
+          changed: hasChangelog
+            ? hasChangelog.change.category === 'changed'
+            : false,
+          removed: hasChangelog
+            ? hasChangelog.change.category === 'removed'
+            : false,
+        },
+      };
+    }
+  );
 
   return endpoints;
 }
@@ -115,8 +126,11 @@ export interface IEndpoint {
 }
 
 export interface IPathParameter {
-  pathComponentId: string;
-  pathComponentName: string;
+  id: string;
+  name: string;
+  isParameterized: boolean;
+  description: string;
+  endpointId: string;
 }
 
 function sharedStart(array: string[]): string {

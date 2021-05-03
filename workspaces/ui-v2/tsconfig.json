@@ -4,6 +4,10 @@
     "jsx": "react",
     "outDir": "build",
     "resolveJsonModule": true,
-    "rootDir": "src"
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "<src>/*": ["./src/*"]
+    }
   }
 }

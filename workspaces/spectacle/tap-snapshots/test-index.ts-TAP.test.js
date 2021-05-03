@@ -490,6 +490,16 @@ Object {
 `;
 
 exports[
+  `test/index.ts TAP spectacle shapeChoices query add contributions > must match snapshot 1`
+] = `
+Object {
+  "data": Null Object {
+    "shapeChoices": null,
+  },
+}
+`;
+
+exports[
   `test/index.ts TAP spectacle shapeChoices query add endpoint to existing spec > must match snapshot 1`
 ] = `
 Object {

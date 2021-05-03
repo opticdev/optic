@@ -16,7 +16,7 @@ export async function generateEndpointChanges(
     );
     const initialSpectacle = await makeSpectacle(initialOpticContext);
 
-    const batchCommitResults = await initialSpectacle({
+    const batchCommitResults = await initialSpectacle.queryWrapper({
       query: `{
         batchCommits {
           createdAt
@@ -68,7 +68,7 @@ export async function generateEndpointChanges(
   );
   const currentSpectacle = await makeSpectacle(currentOpticContext);
 
-  return await currentSpectacle({
+  return await currentSpectacle.queryWrapper({
     query,
     variables: {},
   });

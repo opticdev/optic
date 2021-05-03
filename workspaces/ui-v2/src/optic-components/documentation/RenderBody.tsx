@@ -14,7 +14,7 @@ type SharedProps = {
   changesSinceBatchCommitId?: string;
   bodyId: string; //@aidan make sure this name/value makes sense
   rootShapeId: string;
-}
+};
 
 type OneColumnBodyProps = SharedProps;
 

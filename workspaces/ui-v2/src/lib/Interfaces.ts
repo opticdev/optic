@@ -7,6 +7,7 @@ import {
 import { IJsonTrail } from '../../../cli-shared/build/diffs/json-trail';
 import { IgnoreRule } from './ignore-rule';
 import { DomainIdGenerator } from './domain-id-generator';
+import { IOpticEngine } from '@useoptic/spectacle/src/index';
 
 export interface IInterpretation {
   previewTabs: IInteractionPreviewTab[];
@@ -203,4 +204,5 @@ export type CurrentSpecContext = {
   currentSpecRequests: IRequestBody[];
   currentSpecResponses: IResponseBody[];
   domainIds: DomainIdGenerator;
+  opticEngine: IOpticEngine;
 };

@@ -15,6 +15,18 @@ import {
   StartDiffResult,
 } from '../index';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
+import {
+  ILearnedBodies,
+  IValueAffordanceSerializationWithCounterGroupedByDiffHash,
+} from '@useoptic/cli-shared/build/diffs/initial-types';
+import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface IOpticCommandContext {
+  clientId: string;
+  clientSessionId: string;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,15 +35,19 @@ export interface InMemorySpecState {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+export interface InMemorySpecRepositoryDependencies {
+  notifications: EventEmitter;
+  initialState: InMemorySpecState;
+  opticEngine: IOpticEngine;
+}
 
 export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
   private events: any[] = [];
+  public notifications: EventEmitter;
 
-  constructor(
-    public notifications: EventEmitter,
-    private initialState: InMemorySpecState
-  ) {
-    this.events.push(...initialState.events);
+  constructor(private dependencies: InMemorySpecRepositoryDependencies) {
+    this.notifications = dependencies.notifications;
+    this.events.push(...dependencies.initialState.events);
   }
 
   async appendEvents(events: any[]): Promise<void> {
@@ -41,6 +57,23 @@ export class InMemorySpecRepository implements IOpticSpecReadWriteRepository {
 
   async listEvents(): Promise<any[]> {
     return this.events;
+  }
+
+  async applyCommands(
+    commands: any[],
+    batchCommitId: string,
+    commitMessage: string,
+    commandContext: IOpticCommandContext
+  ): Promise<void> {
+    const newEventsString = this.dependencies.opticEngine.try_apply_commands(
+      JSON.stringify(commands),
+      JSON.stringify(this.events),
+      batchCommitId,
+      commitMessage
+    );
+    const newEvents = JSON.parse(newEventsString);
+    this.events.push(...newEvents);
+    this.notifications.emit('change');
   }
 }
 
@@ -78,11 +111,21 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     private captures: ICapture[]
   ) {}
 
+  async loadInteraction(
+    captureId: string,
+    pointer: string
+  ): Promise<any | undefined> {
+    const interactions = await this.dependencies.interactionsRepository.listById(
+      captureId
+    );
+    return interactions.find((i) => i.uuid === pointer);
+  }
+
   async listCaptures(): Promise<ICapture[]> {
     return this.captures;
   }
 
-  async listCapturedInteractions(captureId: string): Promise<any[]> {
+  private async listCapturedInteractions(captureId: string): Promise<any[]> {
     return this.dependencies.interactionsRepository.listById(captureId);
   }
 
@@ -90,6 +133,7 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     const notifications = new EventEmitter();
 
     const events = await this.dependencies.specRepository.listEvents();
+    const interactions = await this.listCapturedInteractions(captureId);
 
     const diff = new InMemoryDiff({
       opticEngine: this.dependencies.opticEngine,
@@ -98,18 +142,19 @@ export class InMemoryCapturesService implements IOpticCapturesService {
     });
     const diffService = new InMemoryDiffService({
       diff,
+      opticEngine: this.dependencies.opticEngine,
+      specRepository: this.dependencies.specRepository,
+      interactions,
     });
 
-    const interactions = await this.listCapturedInteractions(captureId);
     const onComplete = new Promise<IOpticDiffService>((resolve, reject) => {
-      notifications.on('complete', () => resolve(diffService));
+      notifications.once('complete', () => resolve(diffService));
     });
     await diff.start(events, interactions);
 
     await this.dependencies.diffRepository.add(diffId, diffService);
 
     return {
-      notifications,
       onComplete,
     };
   }
@@ -125,10 +170,104 @@ export class InMemoryConfigRepository implements IOpticConfigRepository {
 
 interface InMemoryDiffServiceDependencies {
   diff: InMemoryDiff;
+  opticEngine: IOpticEngine;
+  specRepository: IOpticSpecRepository;
+  interactions: any[];
 }
 
+//@jaap: we need to make sure this and InMemoryDiff are up-to-date relative to the latest changes
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
+  async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
+    const events = await this.dependencies.specRepository.listEvents();
+    const spec = this.dependencies.opticEngine.spec_from_events(
+      JSON.stringify(events)
+    );
+
+    const diffs = await this.listDiffs();
+    //@jaap @TODO: use asynctools intoJSONL ?
+    const taggedInteractionsJsonl = this.dependencies.interactions
+      .map((x: HttpInteraction) => {
+        return JSON.stringify([x, [x.uuid]]);
+      })
+      .join('\n');
+    const allAffordances = JSON.parse(
+      this.dependencies.opticEngine.learn_shape_diff_affordances(
+        spec,
+        JSON.stringify(diffs.diffs.map((x) => x[0])),
+        taggedInteractionsJsonl
+      )
+    );
+    const affordancesByFingerprint = allAffordances.reduce(
+      (acc: any, item: any) => {
+        const [key, value] = item;
+        acc[key] = value;
+        return acc;
+      },
+      {}
+    );
+    if (Object.keys(affordancesByFingerprint).length === 0) {
+      //@GOTCHA: this should only ever be empty if there are no Shape Diffs. use invariant?
+      debugger;
+    }
+    //@jaap @TODO: use asynctools affordancesByFingerprint ?
+    return affordancesByFingerprint;
+  }
+
+  async learnUndocumentedBodies(
+    pathId: string,
+    method: string,
+    newPathCommands: any[]
+  ): Promise<ILearnedBodies> {
+    try {
+      const events = await this.dependencies.specRepository.listEvents();
+
+      const newEventsString = this.dependencies.opticEngine.try_apply_commands(
+        JSON.stringify(newPathCommands),
+        JSON.stringify(events),
+        'simulated',
+        'simulated-batch'
+      );
+
+      //@aidan check if this returns all events or just the new events
+
+      const spec = this.dependencies.opticEngine.spec_from_events(
+        JSON.stringify([...events, ...JSON.parse(newEventsString)])
+      );
+
+      //@aidan if you need to filter by method*pathId you can do it here
+      const interactionsJsonl = this.dependencies.interactions
+        .map((x: HttpInteraction) => {
+          return JSON.stringify(x);
+        })
+        .join('\n');
+      const learnedBodies = JSON.parse(
+        this.dependencies.opticEngine.learn_undocumented_bodies(
+          spec,
+          interactionsJsonl
+        )
+      );
+      const learnedBodiesForPathIdAndMethod = learnedBodies.find(
+        (x: ILearnedBodies) => {
+          return x.pathId === pathId && x.method === method;
+        }
+      );
+      debugger;
+      if (!learnedBodiesForPathIdAndMethod) {
+        return {
+          pathId,
+          method,
+          requests: [],
+          responses: [],
+        };
+      }
+      return learnedBodiesForPathIdAndMethod;
+    } catch (e) {
+      console.error(e);
+      debugger;
+      throw e;
+    }
+  }
 
   async listDiffs(): Promise<IListDiffsResponse> {
     const diffs = (await this.dependencies.diff.getNormalizedDiffs()).map(
@@ -224,6 +363,8 @@ export class InMemoryDiff {
 
     return AsyncTools.toArray(lastUnique);
   }
+
+  //@dev here is where to use learn_undocumented_bodies and learn_shape_diff_affordances from opticEngine consuming diff results
 }
 
 export class InMemoryDiffRepository implements IOpticDiffRepository {
@@ -251,8 +392,12 @@ export class InMemoryOpticContextBuilder {
     const diffRepository = new InMemoryDiffRepository();
     const interactionsRepository = new InMemoryInteractionsRepository();
     const configRepository = new InMemoryConfigRepository();
-    const specRepository = new InMemorySpecRepository(notifications, {
-      events,
+    const specRepository = new InMemorySpecRepository({
+      notifications,
+      initialState: {
+        events,
+      },
+      opticEngine,
     });
     return {
       opticEngine,
@@ -283,8 +428,12 @@ export class InMemoryOpticContextBuilder {
     const interactionsRepository = new InMemoryInteractionsRepository();
     await interactionsRepository.set(captureId, interactions);
     const configRepository = new InMemoryConfigRepository();
-    const specRepository = new InMemorySpecRepository(notifications, {
-      events,
+    const specRepository = new InMemorySpecRepository({
+      notifications,
+      initialState: {
+        events,
+      },
+      opticEngine,
     });
     return {
       opticEngine,

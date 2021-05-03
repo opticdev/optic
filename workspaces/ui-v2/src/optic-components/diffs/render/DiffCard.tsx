@@ -21,8 +21,9 @@ import {
   IPatchChoices,
 } from '../../../lib/Interfaces';
 import { IJsonTrail } from '../../../../../cli-shared/build/diffs/json-trail';
-import { useInteraction } from '../../../spectacle-implementations/interaction-loader';
 import { BuildSpecPatch } from './BuildSpecPatch';
+import { useInteraction } from '../../hooks/useInteraction';
+import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 
 type IDiffCardProps = {
   previewTabs: IInteractionPreviewTab[];
@@ -157,7 +158,8 @@ function RenderExampleBody({
   description: any;
   assertion: any;
 }) {
-  const { data } = useInteraction(interactionPointer);
+  const { captureId } = useSharedDiffContext();
+  const { data } = useInteraction(captureId, interactionPointer);
   const actualBody = useMemo<any | undefined>(() => {
     if (data) {
       return getJsonBodyToPreview(data);

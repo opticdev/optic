@@ -7,7 +7,7 @@ import TopLevelRoutes from './TopLevelRoutes';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App topLevelRoutes={TopLevelRoutes}/>
+    <App topLevelRoutes={TopLevelRoutes} />
   </React.StrictMode>,
   document.getElementById('root')
 );
