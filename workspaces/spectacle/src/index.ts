@@ -530,7 +530,11 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   };
 }
 
-export interface SpectacleInput<T = {}> {
+export interface SpectacleInput<
+  T extends {
+    [key: string]: any;
+  }
+> {
   query: string;
   variables: T;
   operationName?: string;

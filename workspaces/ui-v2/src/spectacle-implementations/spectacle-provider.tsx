@@ -18,7 +18,7 @@ export const SpectacleStore = (props: {
   );
 };
 
-export function useSpectacleQuery<Result, Input>(
+export function useSpectacleQuery<Result, Input = {}>(
   input: SpectacleInput<Input>
 ): AsyncStatus<Result> {
   const spectacle = useContext(SpectacleContext)!;
@@ -52,7 +52,7 @@ export function useSpectacleQuery<Result, Input>(
   return result;
 }
 
-export function useSpectacleCommand(): <Result, Input>(
+export function useSpectacleCommand(): <Result, Input = {}>(
   input: SpectacleInput<Input>
 ) => Promise<Result> {
   const spectacle = useContext(SpectacleContext)!;
