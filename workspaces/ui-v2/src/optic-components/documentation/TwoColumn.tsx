@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    overflow: 'auto',
     width: '100%',
   },
   left: {
