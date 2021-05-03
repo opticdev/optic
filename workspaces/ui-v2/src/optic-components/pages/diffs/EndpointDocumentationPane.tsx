@@ -150,11 +150,16 @@ const DiffPathParamField: FC<{
     value: undefined,
   };
 
-  const { setPathDescription } = useSharedDiffContext();
+  const {
+    setPathDescription,
+    getContributedPathDescription,
+  } = useSharedDiffContext();
 
   const debouncedAddContribution = useDebouncedFn(setPathDescription, 200);
   const { value, setValue } = useStateWithSideEffect({
-    initialValue: pathParameter.description,
+    initialValue:
+      getContributedPathDescription(pathParameter.id) ||
+      pathParameter.description,
     sideEffect: (description: string) =>
       debouncedAddContribution(pathParameter.id, description, endpointId),
   });

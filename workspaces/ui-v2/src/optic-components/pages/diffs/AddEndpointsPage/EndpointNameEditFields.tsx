@@ -41,12 +41,13 @@ export const ExistingEndpointNameField: FC<{
     method: endpoint.method,
     pathId: endpoint.pathId,
   });
-  const { setEndpointName: setGlobalDiffEndpointName } = useSharedDiffContext();
-
+  const {
+    setEndpointName: setGlobalDiffEndpointName,
+    getContributedEndpointName,
+  } = useSharedDiffContext();
   const debouncedSet = useDebouncedFn(setGlobalDiffEndpointName, 200);
-
   const { value, setValue } = useStateWithSideEffect({
-    initialValue: endpoint.purpose,
+    initialValue: getContributedEndpointName(endpointId) || endpoint.purpose,
     sideEffect: (newName: string) => debouncedSet(endpointId, newName),
   });
 
