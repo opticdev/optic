@@ -757,7 +757,6 @@ mod test {
       nullable_primitive_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
     assert!(nullable_primitive_results.0.is_some());
-    assert!(nullable_primitive_results.0.is_some());
     assert_valid_commands(nullable_primitive_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_primitive_results",
@@ -767,7 +766,6 @@ mod test {
     let nullable_object_field_results = collect_commands(
       nullable_object_field_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
-    assert!(nullable_object_field_results.0.is_some());
     assert!(nullable_object_field_results.0.is_some());
     assert_valid_commands(nullable_object_field_results.1.clone());
     assert_debug_snapshot!(
@@ -779,7 +777,6 @@ mod test {
       nullable_array_item_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
     assert!(nullable_array_item_results.0.is_some());
-    assert!(nullable_array_item_results.0.is_some());
     assert_valid_commands(nullable_array_item_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__nullable_array_item_results",
@@ -789,7 +786,6 @@ mod test {
     let nullable_one_off_results = collect_commands(
       nullable_one_off_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
     );
-    assert!(nullable_one_off_results.0.is_some());
     assert!(nullable_one_off_results.0.is_some());
     assert_valid_commands(nullable_one_off_results.1.clone());
     assert_debug_snapshot!(
@@ -802,7 +798,6 @@ mod test {
     );
     assert!(only_null_results.0.is_some());
     assert_valid_commands(only_null_results.1.clone());
-    assert!(only_null_results.0.is_some());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_nullable_bodies__only_null_results",
       &only_null_results
