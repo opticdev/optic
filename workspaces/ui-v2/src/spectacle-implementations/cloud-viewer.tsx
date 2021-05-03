@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { AsyncStatus, makeSpectacle } from '@useoptic/spectacle';
+import { makeSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
+import { IBaseSpectacle } from '@useoptic/spectacle';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
@@ -17,6 +17,7 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
+import { AsyncStatus } from '<src>/types';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -116,7 +117,7 @@ export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemo
 
 class CloudInMemorySpectacle
   implements IForkableSpectacle, InMemoryBaseSpectacle {
-  private spectaclePromise: Promise<any>;
+  private spectaclePromise: ReturnType<typeof makeSpectacle>;
 
   constructor(
     public readonly opticContext: IOpticContext,
@@ -133,14 +134,14 @@ class CloudInMemorySpectacle
     return new CloudInMemorySpectacle(opticContext, [...this.samples]);
   }
 
-  async mutate(options: SpectacleInput): Promise<any> {
+  async mutate<Result, Input>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 
-  async query(options: SpectacleInput): Promise<any> {
+  async query<Result, Input>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 }
 

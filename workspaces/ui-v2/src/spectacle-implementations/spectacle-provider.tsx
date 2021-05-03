@@ -1,9 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import {
-  AsyncStatus,
-  SpectacleInput,
-  IBaseSpectacle,
-} from '@useoptic/spectacle';
+import { SpectacleInput, IBaseSpectacle } from '@useoptic/spectacle';
+
+import { AsyncStatus } from '<src>/types';
 
 export const SpectacleContext = React.createContext<IBaseSpectacle | null>(
   null
@@ -20,13 +18,13 @@ export const SpectacleStore = (props: {
   );
 };
 
-export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
+export function useSpectacleQuery<Result, Input>(
+  input: SpectacleInput<Input>
+): AsyncStatus<Result> {
   const spectacle = useContext(SpectacleContext)!;
 
   const [result, setResult] = useState<AsyncStatus<any>>({
     loading: true,
-    error: false,
-    data: null,
   });
 
   const stringInput = JSON.stringify(input);
@@ -36,9 +34,17 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
       if (result.errors) {
         console.error(result.errors);
         debugger;
-        result.error = new Error(result.errors);
+        setResult({
+          loading: false,
+          error: new Error(result.errors as any),
+        });
+      } else {
+        setResult({
+          loading: false,
+          // We've explicitly checked that there are no errors
+          data: result.data!,
+        });
       }
-      setResult(result);
     }
 
     task();
@@ -48,21 +54,22 @@ export function useSpectacleQuery(input: SpectacleInput): AsyncStatus<any> {
   return result;
 }
 
-export function useSpectacleCommand(): (
-  input: SpectacleInput
-) => Promise<AsyncStatus<any>> {
+export function useSpectacleCommand(): <Result, Input>(
+  input: SpectacleInput<Input>
+) => Promise<Result> {
   const spectacle = useContext(SpectacleContext)!;
 
   return useCallback(
-    async (input: SpectacleInput) => {
-      const result = await spectacle.mutate(input);
+    async <Result, Input>(input: SpectacleInput<Input>): Promise<Result> => {
+      const result = await spectacle.mutate<Result, Input>(input);
       if (result.errors) {
         console.error(result.errors);
         debugger;
-        result.error = new Error(result.errors);
+        throw new Error('Error using spectacle command!');
       }
 
-      return result;
+      // We've explicitly checked that there are no errors
+      return result.data!;
     },
     [spectacle]
   );

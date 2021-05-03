@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
+import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import {
   IBaseSpectacle,
@@ -93,12 +94,12 @@ class LocalCliSpectacle implements IForkableSpectacle {
     return new InMemorySpectacle(opticContext, []);
   }
 
-  async mutate(options: SpectacleInput): Promise<any> {
+  async mutate<Result, Input>(options: SpectacleInput<Input>): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
 
-  async query(options: SpectacleInput): Promise<any> {
+  async query<Result, Input>(options: SpectacleInput<Input>): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
@@ -201,8 +202,8 @@ class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data.diff.diffs);
-    return result.data.diff.diffs;
+    console.log(result.data!.diff.diffs);
+    return result.data!.diff.diffs;
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
@@ -216,8 +217,8 @@ class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data.diff.unrecognizedUrls);
-    return result.data.diff.unrecognizedUrls;
+    console.log(result.data!.diff.unrecognizedUrls);
+    return result.data!.diff.unrecognizedUrls;
   }
 }
 
@@ -237,8 +238,6 @@ export function useLocalCliServices(
   if (!opticEngine) {
     return {
       loading: true,
-      error: false,
-      data: null,
     };
   }
   const apiBaseUrl = `/api/specs/${specId}`;
@@ -249,7 +248,6 @@ export function useLocalCliServices(
   });
   return {
     loading: false,
-    error: false,
     data: { spectacle, capturesService, opticEngine },
   };
 }
