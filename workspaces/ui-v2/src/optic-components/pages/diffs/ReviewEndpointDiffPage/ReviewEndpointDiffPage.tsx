@@ -73,26 +73,21 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     sideEffect: (newName: string) => debouncedSetName(endpointId, newName),
   });
   const endpointId = getEndpointId({ method, pathId });
-  const getNextIncompleteDiff = (index: number) => {
-    let currentIndex = index;
+  const getNextIncompleteDiff = (): number =>
+    Math.max(
+      0,
+      // findIndex possibly returns -1 if all diffs are handled,
+      // in which case useRedirectForDiffCompleted should redirect back
+      shapeDiffs.findIndex(
+        (shapeDiff) =>
+          !(
+            shapeDiff.diffDescription?.diffHash &&
+            isDiffHandled(shapeDiff.diffDescription.diffHash)
+          )
+      )
+    );
 
-    while (currentIndex < shapeDiffs.length) {
-      const shapeDiff = shapeDiffs[currentIndex];
-      if (
-        shapeDiff.diffDescription?.diffHash &&
-        isDiffHandled(shapeDiff.diffDescription.diffHash)
-      ) {
-        currentIndex++;
-      } else {
-        return currentIndex;
-      }
-    }
-
-    // If this is the last completed diff, we should stick on the last rendered diff
-    return currentIndex - 1;
-  };
-
-  const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff(0));
+  const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff());
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
   const renderedDiff = shapeDiffs[currentIndex];
 
@@ -120,15 +115,11 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
                 renderedDiff.diffDescription!.diffHash,
                 previewCommands
               );
-              setCurrentIndex((previousIndex) =>
-                getNextIncompleteDiff(previousIndex + 1)
-              );
+              setCurrentIndex(getNextIncompleteDiff());
             }}
             ignore={() => {
               addDiffHashIgnore(renderedDiff.diffDescription!.diffHash);
-              setCurrentIndex((previousIndex) =>
-                getNextIncompleteDiff(previousIndex + 1)
-              );
+              setCurrentIndex(getNextIncompleteDiff());
             }}
           />
         </>

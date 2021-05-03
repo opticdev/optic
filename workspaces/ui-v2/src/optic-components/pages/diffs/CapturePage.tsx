@@ -145,9 +145,8 @@ function DiffCaptureResults() {
 
   const [handled, total] = handledCount;
 
-  // const history = useHistory();
-
-  const handleChangeToEndpointPage = (pathId: string, method: string) => () => {
+  const handleChangeToEndpointPage = (pathId: string, method: string) => {
+    console.log(diffForEndpointLink.linkTo(pathId, method));
     history.push(diffForEndpointLink.linkTo(pathId, method));
   };
   const handleChangeToUndocumentedUrlPage = () => {
