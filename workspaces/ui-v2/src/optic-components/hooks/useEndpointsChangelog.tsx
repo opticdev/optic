@@ -13,9 +13,11 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
     }
 }`;
 
+type Endpoints = any[];
+
 type EndpointChangeQueryResults = {
   endpointChanges: {
-    endpoints: any;
+    endpoints: Endpoints;
   };
 };
 
@@ -23,11 +25,9 @@ type EndpointChangeQueryInput = {
   sinceBatchCommitId?: string;
 };
 
-export function useEndpointsChangelog(
-  sinceBatchCommitId?: string
-): EndpointChangeQueryResults[] {
+export function useEndpointsChangelog(sinceBatchCommitId?: string): Endpoints {
   const queryResults = useSpectacleQuery<
-    EndpointChangeQueryResults[],
+    EndpointChangeQueryResults,
     EndpointChangeQueryInput
   >({
     query: endpointChangeQuery,
@@ -36,5 +36,5 @@ export function useEndpointsChangelog(
     },
   });
 
-  return queryResults.data || [];
+  return queryResults.data?.endpointChanges.endpoints || [];
 }

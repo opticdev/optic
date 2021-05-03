@@ -58,9 +58,7 @@ export default function AskForCommitMessageDiffPage(props: {
   const handleSave = async (commitMessage: string) => {
     const commands = context.simulatedCommands;
     const {
-      data: {
-        applyCommands: { batchCommitId },
-      },
+      applyCommands: { batchCommitId },
     } = await spectacleMutator<any, any>({
       query: `
       mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
@@ -78,7 +76,6 @@ export default function AskForCommitMessageDiffPage(props: {
     });
     // If there are no batch commits (first commit) - link to the just created commit
     history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
-    // @nic TODO we need to trigger a new full page refresh - or trigger a refetch of data through out queries
   };
 
   return (

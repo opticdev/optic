@@ -27,7 +27,6 @@ export function useSpectacleQuery<Result, Input>(
     loading: true,
   });
 
-  const stringInput = JSON.stringify(input);
   useEffect(() => {
     async function task() {
       const result = await spectacle.query(input);
@@ -48,8 +47,7 @@ export function useSpectacleQuery<Result, Input>(
     }
 
     task();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stringInput, spectacle]);
+  }, [input, spectacle]);
 
   return result;
 }
