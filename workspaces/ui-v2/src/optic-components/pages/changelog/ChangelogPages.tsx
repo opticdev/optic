@@ -21,6 +21,7 @@ export function ChangelogPages(props: any) {
   const allBatchCommits = useBatchCommits();
   const history = useHistory();
   return (
+    // TODO fork changelog from documentation page and remove contribution editing store
     <ContributionEditingStore initialIsEditingState={false}>
       <>
         <NavigationRoute
@@ -54,7 +55,9 @@ export function ChangelogPages(props: any) {
         />
         <NavigationRoute
           path={changelogPagesEndpointLink.path}
-          Component={EndpointRootPage}
+          Component={(props: any) => (
+            <EndpointRootPage {...props} isChangelogPage={true} />
+          )}
           AccessoryNavigation={ChangelogPageAccessoryNavigation}
         />
       </>
