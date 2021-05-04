@@ -6,14 +6,8 @@ import {
   IInteractionPointerConverter,
   LocalCaptureInteractionContext,
 } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
-import { chain } from 'stream-chain';
-import { stringer as jsonStringer } from 'stream-json/Stringer';
-import { disassembler as jsonDisassembler } from 'stream-json/Disassembler';
 import { ILearnedBodies } from '@useoptic/cli-shared/build/diffs/initial-types';
-import { replace as jsonReplace } from 'stream-json/filters/Replace';
-import { Duplex, Readable } from 'stream';
 import { OnDemandInitialBodyRust } from '../tasks/on-demand-initial-body-rust';
-import { Diff } from '../diffs';
 import { OnDemandShapeDiffAffordancesRust } from '../tasks/on-demand-trail-values-rust';
 import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 
@@ -23,11 +17,6 @@ export interface ICaptureRouterDependencies {
     captureId: CaptureId;
     captureBaseDirectory: string;
   }) => IInteractionPointerConverter<LocalCaptureInteractionContext>;
-}
-
-export interface ICaptureDiffMetadata {
-  id: string;
-  manager: Diff;
 }
 
 export function makeRouter(dependencies: ICaptureRouterDependencies) {
@@ -79,7 +68,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     bodyParser.json({ limit: '100mb' }),
     async (req, res) => {
       const { captureId } = req.params;
-      //@aidan: here you need to receive the additional commands
       const { pathId, method, additionalCommands } = req.body;
 
       const events = await req.optic.specLoader();
@@ -91,7 +79,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
         'simulated-batch'
       );
 
-      //@aidan: here you need to apply the additional commands
       const initialBodyGenerator = new OnDemandInitialBodyRust({
         captureBaseDirectory: req.optic.paths.capturesPath,
         events: [...events, ...JSON.parse(newEventsString)],
@@ -166,55 +153,4 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
   ////////////////////////////////////////////////////////////////////////////////
 
   return router;
-}
-
-function toJSONArray(
-  itemsStream: Readable,
-  wrap?: {
-    base: { [key: string]: any };
-    path: string;
-  }
-): Duplex {
-  let tokenStream = chain([itemsStream, jsonDisassembler()]);
-  if (!wrap) return tokenStream.pipe(jsonStringer({ makeArray: true }));
-
-  let ARRAY_ITEM_MARKER = { name: 'array_insert_marker ' };
-  let objectTokenStream = chain([
-    Readable.from([wrap.base]),
-    jsonDisassembler(),
-    jsonReplace({
-      filter: wrap.path,
-      once: true,
-      allowEmptyReplacement: false,
-      replacement: () => [
-        { name: 'startArray' },
-        ARRAY_ITEM_MARKER,
-        { name: 'endArray' },
-      ],
-    }),
-  ]);
-
-  let outputGenerator = async function* (
-    wrapTokenStream: Readable,
-    arrayTokenStream: Readable,
-    marker: any
-  ) {
-    for await (let wrapToken of wrapTokenStream) {
-      if (wrapToken === marker) {
-        for await (let arrayToken of arrayTokenStream) {
-          yield arrayToken;
-        }
-      } else {
-        yield wrapToken;
-      }
-    }
-  };
-
-  return Readable.from(
-    outputGenerator(objectTokenStream, tokenStream, ARRAY_ITEM_MARKER)
-  ).pipe(jsonStringer());
-}
-
-function toJSONObject(): Duplex {
-  return chain([jsonDisassembler(), jsonStringer({ makeArray: true })]);
 }

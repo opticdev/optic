@@ -25,15 +25,12 @@ import {
   readApiConfig,
 } from '@useoptic/cli-config';
 import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
-import fs from 'fs-extra';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
-import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
+import { getUser, trackUserEvent } from '../shared/analytics';
 import { cli } from 'cli-ux';
-import { makeDiffRfcBaseStateFromEvents } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
-import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
 import sortBy from 'lodash.sortby';
@@ -45,7 +42,7 @@ import {
 import openBrowser from 'react-dev-utils/openBrowser';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
 import * as uuid from 'uuid';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -81,38 +78,7 @@ export default class Status extends Command {
       this.printStatus([], [], []);
     });
     diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
-      const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
-      const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
-
-      const locations = diffsRaw
-        .map((i) => {
-          return locationForTrails(
-            extractRequestsTrail(i),
-            extractInteractionTrail(i),
-            rfcBaseState
-          )!;
-        })
-        .filter(Boolean);
-
-      const diffsGroupedByPathAndMethod = groupBy(
-        locations,
-        (i: any) => `${i.method}.${i.pathId}`
-      );
-
-      const endpointsWithDiffs = getSpecEndpoints(
-        rfcBaseState.queries
-      ).filter((i) =>
-        locations.find(
-          (withDiff) =>
-            withDiff.pathId === i.pathId && withDiff.method === i.method
-        )
-      );
-
-      this.printStatus(
-        endpointsWithDiffs,
-        diffsGroupedByPathAndMethod,
-        undocumentedUrls
-      );
+      //@aidan fixme
 
       diffFound = diffs.length > 0 || undocumentedUrls.length > 0;
 
@@ -202,7 +168,7 @@ export default class Status extends Command {
       paths.configPath
     );
     const ignoreRules = (await ignoreHelper.getCurrentIgnoreRules()).allRules;
-    const events = await getSpecEventsFrom(paths.specStorePath)
+    const events = await getSpecEventsFrom(paths.specStorePath);
 
     const startDiffUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs`;
 

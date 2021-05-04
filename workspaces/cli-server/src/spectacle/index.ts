@@ -224,8 +224,6 @@ export class LocalCliDiffService implements IOpticDiffService {
     );
     return { urls };
   }
-
-  //@dev follow usage from capture-router for OnDemandInitialBodyRust and OnDemandShapeDiffAffordancesRust (and upgrade diff worker rust)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
