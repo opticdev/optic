@@ -19,6 +19,7 @@ import {
 } from '@useoptic/cli-shared';
 import { getUser } from '../shared/analytics';
 import { Config } from '../config';
+import { linkToDocumentation } from '../shared/ui-links';
 export default class Spec extends Command {
   static description = 'open your current API specification';
 
@@ -56,8 +57,7 @@ export default class Spec extends Command {
     const cliSession = await cliClient.findSession(basePath, null, null);
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/dashboard`;
-    openBrowser(uiUrl);
+    openBrowser(linkToDocumentation(uiBaseUrl, cliSession.session.id));
     cleanupAndExit();
   }
 }
