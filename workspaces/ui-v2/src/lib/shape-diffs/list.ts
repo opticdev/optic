@@ -73,7 +73,7 @@ export function listItemShapeDiffInterpreter(
       if (isUnmatched) {
         const { commands, rootShapeId } = builderInnerShapeFromChoices(
           choices,
-          expected,
+          expected.allowedCoreShapeKindsByShapeId(),
           actual,
           currentSpecContext
         );

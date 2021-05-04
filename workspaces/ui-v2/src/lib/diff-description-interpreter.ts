@@ -54,7 +54,7 @@ const { toJsonExample } = require('shape-hash');
 export async function descriptionForShapeDiff(
   asShapeDiff: BodyShapeDiff,
   query: any,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): Promise<IDiffDescription> {
   const location = asShapeDiff.location;
 
@@ -96,7 +96,7 @@ export async function descriptionForShapeDiff(
   const expected = await getExpectationsForShapeTrail(
     asShapeDiff.shapeTrail,
     query,
-    currentSpecContext,
+    currentSpecContext
   );
 
   //root handler
