@@ -14,8 +14,12 @@ export const useRunOnKeypress = <T extends (...args: any) => any>(
       const upperCaseTags =
         inputTagNames &&
         new Set([...inputTagNames].map((tag) => tag.toUpperCase()));
+      const upperCaseKeys =
+        keys && new Set([...keys].map((key) => key.toUpperCase()));
 
-      const keyPressValid = keys ? keys.has(e.key) : true;
+      const keyPressValid = upperCaseKeys
+        ? upperCaseKeys.has(e.key.toUpperCase())
+        : true;
       const elementTagValid = upperCaseTags
         ? e.target instanceof Element
           ? upperCaseTags.has(e.target.tagName.toUpperCase())
