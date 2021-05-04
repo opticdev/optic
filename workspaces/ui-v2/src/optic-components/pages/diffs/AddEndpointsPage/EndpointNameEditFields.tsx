@@ -30,6 +30,7 @@ export const PendingEndpointNameField: FC<{
       value={value}
       setValue={setValue}
       variant={TextFieldVariant.SMALL}
+      defaultText="name for this endpoint"
     />
   );
 };
@@ -58,6 +59,7 @@ export const ExistingEndpointNameField: FC<{
       value={value}
       setValue={setValue}
       variant={TextFieldVariant.SMALL}
+      defaultText="name for this endpoint"
     />
   );
 };
