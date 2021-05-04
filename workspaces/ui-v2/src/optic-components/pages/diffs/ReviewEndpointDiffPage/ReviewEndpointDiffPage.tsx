@@ -19,6 +19,7 @@ import {
 import { useDiffReviewCapturePageLink } from '<src>/optic-components/navigation/Routes';
 import { IInterpretation } from '<src>/lib/Interfaces';
 import { getEndpointId } from '<src>/optic-components/utilities/endpoint-utilities';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 import {
   RenderedDiffHeaderProps,
@@ -62,6 +63,8 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     isDiffHandled,
     setEndpointName: setGlobalDiffEndpointName,
     addDiffHashIgnore,
+    setCommitModalOpen,
+    hasDiffChanges,
   } = useSharedDiffContext();
 
   const debouncedSetName = useDebouncedFn(setGlobalDiffEndpointName, 200);
@@ -97,6 +100,17 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff());
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
   const renderedDiff = shapeDiffs[currentIndex];
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (hasDiffChanges()) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   return (
     <TwoColumnFullWidth
@@ -162,6 +176,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
                 />
               </>
             )}
+            onKeyPress={onKeyPress}
           />
         </SimulatedCommandStore>
       }
