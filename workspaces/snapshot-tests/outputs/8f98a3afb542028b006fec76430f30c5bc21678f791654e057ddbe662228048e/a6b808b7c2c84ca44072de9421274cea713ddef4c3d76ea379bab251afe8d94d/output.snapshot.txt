@@ -1,0 +1,35 @@
+[
+  [
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_ruRhRU7VwB"
+          }
+        },
+        "shapeDiffResult": {
+          "UnmatchedShape": {
+            "jsonTrail": {
+              "path": []
+            },
+            "shapeTrail": {
+              "rootShapeId": "JR1dZS_0",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    "36dbcc722ef5624c"
+  ]
+]

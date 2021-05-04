@@ -10,24 +10,21 @@ import {
   InteractionsFileToJsTaskOutput,
   InteractionsFileToJsTaskSpecification,
 } from '../InteractionsFileToJs';
-import {
-  EventsToRfcStateTaskOutput,
-  EventsToRfcStateTaskSpecification,
-} from '../EventsToRfcState';
-import { diffFromRfcStateAndInteractions } from '@useoptic/domain-utilities';
+import { EventsFileToJsTaskOutput, EventsFileToJsTaskSpecification } from '../EventsFileToJsTaskSpecification';
+import * as opticEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 export const interactionsFromFileKey = 'interactionsFromFile';
-export const rfcStateFromEventsKey = 'rfcStateFromEvents';
+export const eventsFromFileKey = 'eventsFromFile';
 export interface RfcStateAndInteractionsToDiffsTaskDependencies
   extends ITaskExecutorDependencies {
   [interactionsFromFileKey]: InteractionsFileToJsTaskOutput;
-  [rfcStateFromEventsKey]: EventsToRfcStateTaskOutput;
+  [eventsFromFileKey]: EventsFileToJsTaskOutput;
 }
 
 export interface RfcStateAndInteractionsToDiffsTaskInputs
   extends ITaskSpecificationInputs {
   [interactionsFromFileKey]: InteractionsFileToJsTaskSpecification;
-  [rfcStateFromEventsKey]: EventsToRfcStateTaskSpecification;
+  [eventsFromFileKey]: EventsFileToJsTaskSpecification;
 }
 
 export interface IHttpInteractionsGroupedByDiff {}
@@ -47,16 +44,19 @@ export const buildDiffsFromRfcStateAndInteractions: ITaskExecutor<
   RfcStateAndInteractionsToDiffsTaskSpecification,
   RfcStateAndInteractionsToDiffsTaskDependencies,
   RfcStateAndInteractionsToDiffsTaskOutput
-> = function (taskSpecification, dependencies) {
+> = async function (taskSpecification, dependencies) {
   debugger;
-  const rfcState = dependencies[rfcStateFromEventsKey].rfcState;
+  const rfcState = dependencies[eventsFromFileKey].events;
   const interactions = dependencies[interactionsFromFileKey].interactions;
-  // TODO: fix me: missing shapeResolves as first argument
-  // const diffs = diffFromRfcStateAndInteractions(rfcState, interactions);
-  debugger;
-
-  return Promise.resolve({
-    // diffs,
-    diffs: [], // TODO: remove me when def of diffs is fixed above
+  const events = dependencies[eventsFromFileKey].events;
+  const spec = opticEngine.spec_from_events(
+    JSON.stringify(events)
+  );
+  const diffs = interactions.flatMap(interaction => {
+    const interactionDiffs = opticEngine.diff_interaction(JSON.stringify(interaction), spec);
+    return JSON.parse(interactionDiffs);
   });
+  return {
+    diffs
+  }
 };

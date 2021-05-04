@@ -1,0 +1,21 @@
+{
+  "name": "@useoptic/graph-lib",
+  "version": "10.0.1",
+  "scripts": {
+    "ws:build": "tsc -b --verbose",
+    "ws:clean": "rm -rf build",
+    "ws:test": "echo graph-lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/useoptic/optic-package.git",
+    "directory": "workspaces/graph-lib"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "/build",
+    "/.env"
+  ],
+  "dependencies": {}
+}

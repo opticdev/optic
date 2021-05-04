@@ -1,0 +1,13 @@
+{
+  "extends": "../config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "outDir": "build",
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "<src>/*": ["./src/*"]
+    }
+  }
+}

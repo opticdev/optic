@@ -45,7 +45,8 @@ import {
 import openBrowser from 'react-dev-utils/openBrowser';
 import { StatusRun } from '@useoptic/analytics/lib/events/status';
 import * as uuid from 'uuid';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+import { linkToCapture } from '../shared/ui-links';
 
 export default class Status extends Command {
   static description = 'lists API diffs observed since your last git commit';
@@ -202,7 +203,7 @@ export default class Status extends Command {
       paths.configPath
     );
     const ignoreRules = (await ignoreHelper.getCurrentIgnoreRules()).allRules;
-    const events = await getSpecEventsFrom(paths.specStorePath)
+    const events = await getSpecEventsFrom(paths.specStorePath);
 
     const startDiffUrl = `${apiBaseUrl}/specs/${cliSession.session.id}/captures/${captureId}/diffs`;
 
@@ -334,7 +335,7 @@ export default class Status extends Command {
     developerDebugLogger({ cliSession });
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-    openBrowser(uiUrl);
+    openBrowser(linkToCapture(uiBaseUrl, cliSession.session.id, captureId));
     cleanupAndExit();
   }
 }

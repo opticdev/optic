@@ -6,7 +6,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 import { fromOptic } from '@useoptic/cli-shared';
-import * as DiffEngine from '@useoptic/diff-engine';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 
 export default class GenerateOas extends Command {
@@ -73,6 +72,7 @@ export async function emit(
   await fs.ensureDir(outputPath);
   if (shouldOutputYaml) {
     const outputFile = path.join(outputPath, 'openapi.yaml');
+    //@ts-ignore
     await fs.writeFile(outputFile, yaml.safeDump(parsedOas, { indent: 1 }));
     yamlPath = outputFile;
   }

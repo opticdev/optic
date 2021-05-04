@@ -15,7 +15,7 @@ import {
   ExampleRequestsHelpers,
   makeRouter,
 } from './routers/spec-router';
-import { basePath } from '@useoptic/ui';
+import { basePath } from '@useoptic/ui-v2';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { TrackingEventBase } from '@useoptic/analytics/lib/interfaces/TrackingEventBase';
 import { analyticsEvents, trackWithApiName } from './analytics';
@@ -37,6 +37,7 @@ export interface IOpticExpressRequestAdditions {
   ignoreHelper: IgnoreFileHelper;
   exampleRequestsHelpers: ExampleRequestsHelpers;
   session: Session;
+  specLoader(): Promise<any[]>;
 }
 
 declare global {
@@ -202,21 +203,8 @@ class CliServer {
     );
 
     // specRouter
-    const specRouter = makeRouter(sessions);
+    const specRouter = await makeRouter(sessions);
     app.use('/api/specs/:specId', specRouter);
-
-    // testing service proxy
-    app.use(
-      '/api/testing',
-      createProxyMiddleware({
-        changeOrigin: true,
-        followRedirects: true,
-        target: this.config.cloudApiBaseUrl,
-        pathRewrite(input, req) {
-          return input.substring(req.baseUrl.length);
-        },
-      })
-    );
 
     // ui
     this.addUiServer(app);

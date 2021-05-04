@@ -4,12 +4,12 @@ use crate::shapes::JsonTrail;
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeKindDescriptor};
 use crate::state::SpecIdGenerator;
 use crate::BodyDescriptor;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug, Default)]
 pub struct TrailObservationsResult {
-  values_by_trail: HashMap<JsonTrail, TrailValues>,
+  pub values_by_trail: HashMap<JsonTrail, TrailValues>,
 }
 
 impl TrailObservationsResult {
@@ -43,6 +43,7 @@ impl TrailObservationsResult {
   pub fn into_commands(
     mut self,
     id_generator: &mut impl SpecIdGenerator,
+    root_trail: &JsonTrail,
   ) -> (Option<String>, impl Iterator<Item = SpecCommand>) {
     let sorted_trails = {
       let mut trails = self
@@ -68,7 +69,7 @@ impl TrailObservationsResult {
     }
 
     let root_shape_id = shape_prototypes_by_trail
-      .get(&JsonTrail::empty())
+      .get(root_trail)
       .map(|root_shape_prototype| root_shape_prototype.id.clone());
 
     let commands =
@@ -242,7 +243,7 @@ impl From<HashMap<JsonTrail, TrailValues>> for TrailObservationsResult {
 
 pub type FieldSet = HashSet<String>;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TrailValues {
   pub trail: JsonTrail,
@@ -518,8 +519,9 @@ mod test {
     let mut test_id_generator = TestIdGenerator::default();
     let spec_projection = SpecProjection::default();
 
-    let string_results =
-      collect_commands(string_observations.into_commands(&mut test_id_generator));
+    let string_results = collect_commands(
+      string_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(string_results.0.is_some());
     assert_eq!(string_results.1.len(), 1);
     spec_projection
@@ -530,8 +532,9 @@ mod test {
       &string_results
     );
 
-    let number_results =
-      collect_commands(number_observations.into_commands(&mut test_id_generator));
+    let number_results = collect_commands(
+      number_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(number_results.0.is_some());
     assert_eq!(number_results.1.len(), 1);
     spec_projection
@@ -542,8 +545,9 @@ mod test {
       number_results
     );
 
-    let boolean_results =
-      collect_commands(boolean_observations.into_commands(&mut test_id_generator));
+    let boolean_results = collect_commands(
+      boolean_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(boolean_results.0.is_some());
     assert_eq!(boolean_results.1.len(), 1);
     spec_projection
@@ -567,8 +571,9 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let primitive_array_results =
-      collect_commands(primitive_array_observations.into_commands(&mut test_id_generator));
+    let primitive_array_results = collect_commands(
+      primitive_array_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(primitive_array_results.0.is_some());
     assert_valid_commands(primitive_array_results.1.clone());
     assert_debug_snapshot!(
@@ -576,8 +581,9 @@ mod test {
       &primitive_array_results
     );
 
-    let empty_array_results =
-      collect_commands(empty_array_observations.into_commands(&mut test_id_generator));
+    let empty_array_results = collect_commands(
+      empty_array_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(empty_array_results.0.is_some());
     assert_valid_commands(empty_array_results.1.clone());
     assert_debug_snapshot!(
@@ -585,8 +591,9 @@ mod test {
       &empty_array_results
     );
 
-    let polymorphic_array_results =
-      collect_commands(polymorphic_array_observations.into_commands(&mut test_id_generator));
+    let polymorphic_array_results = collect_commands(
+      polymorphic_array_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(polymorphic_array_results.0.is_some());
     assert_valid_commands(polymorphic_array_results.1.clone());
     assert_debug_snapshot!(
@@ -594,7 +601,6 @@ mod test {
       &polymorphic_array_results
     );
   }
-
   #[test]
   fn trail_observations_can_generate_commands_for_object_bodies() {
     let primitive_object_body = BodyDescriptor::from(json!({
@@ -616,8 +622,9 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let primitive_object_results =
-      collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
+    let primitive_object_results = collect_commands(
+      primitive_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(primitive_object_results.0.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
@@ -625,8 +632,9 @@ mod test {
       &primitive_object_results
     );
 
-    let empty_object_results =
-      collect_commands(empty_object_observations.into_commands(&mut test_id_generator));
+    let empty_object_results = collect_commands(
+      empty_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(empty_object_results.0.is_some());
     assert_valid_commands(empty_object_results.1.clone());
     assert_debug_snapshot!(
@@ -634,8 +642,9 @@ mod test {
       &empty_object_results
     );
 
-    let nested_object_results =
-      collect_commands(nested_object_observations.into_commands(&mut test_id_generator));
+    let nested_object_results = collect_commands(
+      nested_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nested_object_results.0.is_some());
     assert_valid_commands(nested_object_results.1.clone());
     assert_debug_snapshot!(
@@ -680,8 +689,9 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let primitive_object_results =
-      collect_commands(primitive_object_observations.into_commands(&mut test_id_generator));
+    let primitive_object_results = collect_commands(
+      primitive_object_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(primitive_object_results.0.is_some());
     assert_valid_commands(primitive_object_results.1.clone());
     assert_debug_snapshot!(
@@ -689,8 +699,9 @@ mod test {
       &primitive_object_results
     );
 
-    let nested_optional_results =
-      collect_commands(nested_optional_observations.into_commands(&mut test_id_generator));
+    let nested_optional_results = collect_commands(
+      nested_optional_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nested_optional_results.0.is_some());
     assert_valid_commands(nested_optional_results.1.clone());
     assert_debug_snapshot!(
@@ -742,8 +753,9 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let nullable_primitive_results =
-      collect_commands(nullable_primitive_observations.into_commands(&mut test_id_generator));
+    let nullable_primitive_results = collect_commands(
+      nullable_primitive_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nullable_primitive_results.0.is_some());
     assert_valid_commands(nullable_primitive_results.1.clone());
     assert_debug_snapshot!(
@@ -751,8 +763,9 @@ mod test {
       &nullable_primitive_results
     );
 
-    let nullable_object_field_results =
-      collect_commands(nullable_object_field_observations.into_commands(&mut test_id_generator));
+    let nullable_object_field_results = collect_commands(
+      nullable_object_field_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nullable_object_field_results.0.is_some());
     assert_valid_commands(nullable_object_field_results.1.clone());
     assert_debug_snapshot!(
@@ -760,8 +773,9 @@ mod test {
       &nullable_object_field_results
     );
 
-    let nullable_array_item_results =
-      collect_commands(nullable_array_item_observations.into_commands(&mut test_id_generator));
+    let nullable_array_item_results = collect_commands(
+      nullable_array_item_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nullable_array_item_results.0.is_some());
     assert_valid_commands(nullable_array_item_results.1.clone());
     assert_debug_snapshot!(
@@ -769,8 +783,9 @@ mod test {
       &nullable_array_item_results
     );
 
-    let nullable_one_off_results =
-      collect_commands(nullable_one_off_observations.into_commands(&mut test_id_generator));
+    let nullable_one_off_results = collect_commands(
+      nullable_one_off_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(nullable_one_off_results.0.is_some());
     assert_valid_commands(nullable_one_off_results.1.clone());
     assert_debug_snapshot!(
@@ -778,8 +793,9 @@ mod test {
       &nullable_one_off_results
     );
 
-    let only_null_results =
-      collect_commands(only_null_observations.into_commands(&mut test_id_generator));
+    let only_null_results = collect_commands(
+      only_null_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(only_null_results.0.is_some());
     assert_valid_commands(only_null_results.1.clone());
     assert_debug_snapshot!(
@@ -816,8 +832,9 @@ mod test {
 
     let mut test_id_generator = TestIdGenerator::default();
 
-    let primitive_results =
-      collect_commands(primitive_observations.into_commands(&mut test_id_generator));
+    let primitive_results = collect_commands(
+      primitive_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(primitive_results.0.is_some());
     assert_valid_commands(primitive_results.1.clone());
     assert_debug_snapshot!(
@@ -825,12 +842,48 @@ mod test {
       &primitive_results
     );
 
-    let collections_results =
-      collect_commands(collections_observations.into_commands(&mut test_id_generator));
+    let collections_results = collect_commands(
+      collections_observations.into_commands(&mut test_id_generator, &JsonTrail::empty()),
+    );
     assert!(collections_results.0.is_some());
     assert_valid_commands(collections_results.1.clone());
     assert_debug_snapshot!(
       "trail_observations_can_generate_commands_for_one_off_polymorphic_bodies__collections_results",
+      &collections_results
+    );
+  }
+
+  #[test]
+  fn trail_observations_can_generate_for_non_root_json_trails() {
+    let complete_nested_object_body = BodyDescriptor::from(json!({
+      "nested": {
+        "nested-object": {
+          "key1": true,
+          "key2": 123,
+          "key3": [1,2,3]
+        }
+      },
+      "other-field": true
+    }));
+
+    let json_trail = JsonTrail::empty()
+      .with_object_key(String::from("nested"))
+      .with_object_key(String::from("nested-object"));
+
+    let collections_observations = {
+      let mut observations = TrailObservationsResult::default();
+      observations.union(observe_body_trails(complete_nested_object_body));
+      observations
+    };
+
+    let mut test_id_generator = TestIdGenerator::default();
+
+    let collections_results =
+      collect_commands(collections_observations.into_commands(&mut test_id_generator, &json_trail));
+    assert!(collections_results.0.is_some());
+    assert_valid_commands(collections_results.1.clone());
+    assert_debug_snapshot!(
+      "trail_observations_can_generate_for_non_root_json_trails__collection_results",
       &collections_results
     );
   }

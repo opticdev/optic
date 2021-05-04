@@ -1,5 +1,6 @@
 #![recursion_limit = "2560"]
 use insta::assert_debug_snapshot;
+use insta::assert_json_snapshot;
 use optic_diff_engine::{diff_interaction, HttpInteraction, SpecEvent, SpecProjection};
 use petgraph::dot::Dot;
 use serde_json::json;
@@ -461,7 +462,7 @@ fn scenario_1() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -514,6 +515,14 @@ fn scenario_1() {
   assert_debug_snapshot!(
     "scenario_1__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_1__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_1__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -839,7 +848,7 @@ fn scenario_2() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -892,6 +901,14 @@ fn scenario_2() {
   assert_debug_snapshot!(
     "scenario_2__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_2__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_2__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -1120,6 +1137,14 @@ fn scenario_3() {
   assert_debug_snapshot!(
     "scenario_3__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_3__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_3__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -1561,7 +1586,7 @@ fn scenario_4() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -1614,6 +1639,14 @@ fn scenario_4() {
   assert_debug_snapshot!(
     "scenario_4__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_4__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_4__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -1981,7 +2014,7 @@ fn scenario_5() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -2034,6 +2067,14 @@ fn scenario_5() {
   assert_debug_snapshot!(
     "scenario_5__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_5__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_5__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -2359,7 +2400,7 @@ fn scenario_6() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -2412,6 +2453,14 @@ fn scenario_6() {
   assert_debug_snapshot!(
     "scenario_6__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_6__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_6__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -2700,7 +2749,7 @@ fn scenario_7() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -2753,6 +2802,14 @@ fn scenario_7() {
   assert_debug_snapshot!(
     "scenario_7__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_7__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_7__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -3131,6 +3188,14 @@ fn scenario_8() {
   assert_debug_snapshot!(
     "scenario_8__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_8__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_8__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -3572,7 +3637,7 @@ fn scenario_9() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -3625,6 +3690,14 @@ fn scenario_9() {
   assert_debug_snapshot!(
     "scenario_9__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_9__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_9__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -4090,7 +4163,7 @@ fn scenario_10() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -4143,6 +4216,14 @@ fn scenario_10() {
   assert_debug_snapshot!(
     "scenario_10__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_10__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_10__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -4510,7 +4591,7 @@ fn scenario_11() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -4563,6 +4644,14 @@ fn scenario_11() {
   assert_debug_snapshot!(
     "scenario_11__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_11__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_11__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -4941,6 +5030,14 @@ fn scenario_12() {
   assert_debug_snapshot!(
     "scenario_12__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_12__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_12__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -5382,7 +5479,7 @@ fn scenario_13() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -5435,6 +5532,14 @@ fn scenario_13() {
   assert_debug_snapshot!(
     "scenario_13__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_13__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_13__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -5663,6 +5768,14 @@ fn scenario_14() {
   assert_debug_snapshot!(
     "scenario_14__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_14__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_14__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -6030,7 +6143,7 @@ fn scenario_15() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -6083,6 +6196,14 @@ fn scenario_15() {
   assert_debug_snapshot!(
     "scenario_15__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_15__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_15__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -6524,7 +6645,7 @@ fn scenario_16() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -6577,6 +6698,14 @@ fn scenario_16() {
   assert_debug_snapshot!(
     "scenario_16__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_16__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_16__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -7018,7 +7147,7 @@ fn scenario_17() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -7071,6 +7200,14 @@ fn scenario_17() {
   assert_debug_snapshot!(
     "scenario_17__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_17__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_17__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -7438,7 +7575,7 @@ fn scenario_18() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -7491,6 +7628,14 @@ fn scenario_18() {
   assert_debug_snapshot!(
     "scenario_18__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_18__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_18__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -7719,6 +7864,14 @@ fn scenario_19() {
   assert_debug_snapshot!(
     "scenario_19__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_19__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_19__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -8160,7 +8313,7 @@ fn scenario_20() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -8213,6 +8366,14 @@ fn scenario_20() {
   assert_debug_snapshot!(
     "scenario_20__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_20__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_20__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -8580,7 +8741,7 @@ fn scenario_21() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -8633,6 +8794,14 @@ fn scenario_21() {
   assert_debug_snapshot!(
     "scenario_21__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_21__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_21__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -9000,7 +9169,7 @@ fn scenario_22() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -9053,6 +9222,14 @@ fn scenario_22() {
   assert_debug_snapshot!(
     "scenario_22__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_22__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_22__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -9518,7 +9695,7 @@ fn scenario_23() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -9571,6 +9748,14 @@ fn scenario_23() {
   assert_debug_snapshot!(
     "scenario_23__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_23__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_23__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -10036,7 +10221,7 @@ fn scenario_24() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -10089,6 +10274,14 @@ fn scenario_24() {
   assert_debug_snapshot!(
     "scenario_24__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_24__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_24__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -10554,7 +10747,7 @@ fn scenario_25() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -10608,6 +10801,14 @@ fn scenario_25() {
     "scenario_25__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
   );
+  assert_debug_snapshot!(
+    "scenario_25__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_25__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
+  );
 
   interactions.into_iter().for_each(|interaction| {
     let results = diff_interaction(&spec_projection, interaction);
@@ -10618,7 +10819,7 @@ fn scenario_25() {
 #[test]
 fn scenario_26() {
   let events: Vec<SpecEvent> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "PathComponentAdded": {
       "pathId": "path_blfLlMamQG",
@@ -13141,7 +13342,7 @@ fn scenario_26() {
   }
 ])).expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -13194,6 +13395,14 @@ fn scenario_26() {
   assert_debug_snapshot!(
     "scenario_26__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_26__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_26__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -13659,7 +13868,7 @@ fn scenario_27() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -13712,6 +13921,14 @@ fn scenario_27() {
   assert_debug_snapshot!(
     "scenario_27__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_27__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_27__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -14090,6 +14307,14 @@ fn scenario_28() {
   assert_debug_snapshot!(
     "scenario_28__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_28__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_28__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -14555,7 +14780,7 @@ fn scenario_29() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -14608,6 +14833,14 @@ fn scenario_29() {
   assert_debug_snapshot!(
     "scenario_29__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_29__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_29__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -14975,7 +15208,7 @@ fn scenario_30() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -15028,6 +15261,14 @@ fn scenario_30() {
   assert_debug_snapshot!(
     "scenario_30__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_30__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_30__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {
@@ -15469,7 +15710,7 @@ fn scenario_31() {
   ]))
   .expect("should be able to deserialize events");
   let interactions: Vec<HttpInteraction> =
-        serde_json::from_value(json!([
+      serde_json::from_value(json!([
   {
     "uuid": "id",
     "request": {
@@ -15522,6 +15763,14 @@ fn scenario_31() {
   assert_debug_snapshot!(
     "scenario_31__endpoints_graph",
     Dot::with_config(&spec_projection.endpoint().graph, &[])
+  );
+  assert_debug_snapshot!(
+    "scenario_31__shape_choice_mapping",
+    &spec_projection.shape().to_choice_mapping()
+  );
+  assert_json_snapshot!(
+    "scenario_31__shape_choice_mapping_json",
+    &spec_projection.shape().to_choice_mapping()
   );
 
   interactions.into_iter().for_each(|interaction| {

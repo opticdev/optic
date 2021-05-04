@@ -1,7 +1,6 @@
 import { DescribeEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 
 // Sent whenever an API is created
@@ -10,6 +9,7 @@ const UserChangedCaptureOverviewTabSchema = Joi.object({
   diffCount: Joi.number().required(),
   undocumentedUrlCount: Joi.number().required(),
 });
+// @ts-ignore
 type UserChangedCaptureOverviewTabProperties = Joi.extractType<
   typeof UserChangedCaptureOverviewTabSchema
 >;
@@ -27,6 +27,7 @@ const NewBodyDiffRenderedSchema = Joi.object({
   responseCount: Joi.number().required(),
   regions: Joi.array().required().items(Joi.string()),
 });
+// @ts-ignore
 type NewBodyDiffRenderedProperties = Joi.extractType<
   typeof NewBodyDiffRenderedSchema
 >;
@@ -40,6 +41,7 @@ const InferPolymorphismEnabledSchema = Joi.object({
   captureId: Joi.string().required(),
   endpointId: Joi.string().required(),
 });
+// @ts-ignore
 type InferPolymorphismEnabledProperties = Joi.extractType<
   typeof InferPolymorphismEnabledSchema
 >;
@@ -58,6 +60,7 @@ const UserBeganAddingNewUrlSchema = Joi.object({
   path: Joi.string().required(),
   knownPathId: Joi.string().optional(),
 });
+// @ts-ignore
 type UserBeganAddingNewUrlProperties = Joi.extractType<
   typeof UserBeganAddingNewUrlSchema
 >;
@@ -76,6 +79,7 @@ const UserFinishedAddingNewUrlSchema = Joi.object({
   method: Joi.string().required(),
   pathExpression: Joi.string().optional(),
 });
+// @ts-ignore
 type UserFinishedAddingNewUrlProperties = Joi.extractType<
   typeof UserFinishedAddingNewUrlSchema
 >;
@@ -91,6 +95,7 @@ export const UserFinishedAddingNewUrl = DescribeEvent<
 const SuggestionDisplayedSchema = Joi.object({
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type SuggestionDisplayedProperties = Joi.extractType<
   typeof SuggestionDisplayedSchema
 >;
@@ -104,6 +109,7 @@ const SuggestionAcceptedSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type SuggestionAcceptedProperties = Joi.extractType<
   typeof SuggestionAcceptedSchema
 >;
@@ -121,6 +127,7 @@ const UserPreviewedSuggestionSchema = Joi.object({
   diffAssertion: Joi.string().required(),
   suggestion: Joi.string().required(),
 });
+// @ts-ignore
 type UserPreviewedSuggestionProperties = Joi.extractType<
   typeof UserPreviewedSuggestionSchema
 >;
@@ -134,6 +141,7 @@ export const UserPreviewedSuggestion = DescribeEvent<
 );
 
 const UserResetDiffSchema = Joi.object({});
+// @ts-ignore
 type UserResetDiffProperties = Joi.extractType<typeof UserResetDiffSchema>;
 export const UserResetDiff = DescribeEvent<UserResetDiffProperties>(
   Events.UserResetDiff,
@@ -146,6 +154,7 @@ const ShowCommitCardSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
+// @ts-ignore
 type ShowCommitCardProperties = Joi.extractType<typeof ShowCommitCardSchema>;
 export const ShowCommitCard = DescribeEvent<ShowCommitCardProperties>(
   Events.ShowCommitCard,
@@ -158,6 +167,7 @@ const UserCommittedChangesSchema = Joi.object({
   captureId: Joi.string().required(),
   suggestions: Joi.number().required(),
 });
+// @ts-ignore
 type UserCommittedChangesProperties = Joi.extractType<
   typeof UserCommittedChangesSchema
 >;
@@ -173,6 +183,7 @@ const AddUrlModalNamingSchema = Joi.object({
   method: Joi.string().required(),
   path: Joi.string().required(),
 });
+// @ts-ignore
 type AddUrlModalNamingProperties = Joi.extractType<
   typeof AddUrlModalNamingSchema
 >;
@@ -186,6 +197,7 @@ const AddUrlModalIdentifyingPathComponentsSchema = Joi.object({
   method: Joi.string().required(),
   path: Joi.string().required(),
 });
+// @ts-ignore
 type AddUrlModalIdentifyingPathComponentsProperties = Joi.extractType<
   typeof AddUrlModalIdentifyingPathComponentsSchema
 >;
@@ -199,6 +211,7 @@ export const AddUrlModalIdentifyingPathComponents = DescribeEvent<
 );
 
 const ShowInitialDocumentingViewSchema = Joi.object({});
+// @ts-ignore
 type ShowInitialDocumentingViewProperties = Joi.extractType<
   typeof ShowInitialDocumentingViewSchema
 >;
@@ -215,6 +228,7 @@ const UpdateContributionSchema = Joi.object({
   purpose: Joi.string().required(),
   value: Joi.string().required(),
 });
+// @ts-ignore
 type UpdateContributionProperties = Joi.extractType<
   typeof UpdateContributionSchema
 >;

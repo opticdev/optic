@@ -1,33 +1,31 @@
 import {
   getPathsRelativeToCwd,
   IOpticTaskRunnerConfig,
-  parseIgnore,
   parseRule,
   readApiConfig,
-  readTestingConfig,
 } from '@useoptic/cli-config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import fs from 'fs-extra';
-import { ICliServerSession } from '../server';
+
 import sortBy from 'lodash.sortby';
 import {
   DefaultIdGenerator,
   developerDebugLogger,
-  FileSystemAvroCaptureLoader,
-  ICaptureLoader,
   isEnvTrue,
 } from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
-import { getOrCreateAnonId } from '@useoptic/cli-config/build/opticrc/optic-rc';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
 import * as DiffEngine from '@useoptic/diff-engine';
-import { AsyncTools as AT, Streams } from '@useoptic/diff-engine-wasm';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+
+import { makeSpectacle } from '@useoptic/spectacle';
+import { graphqlHTTP } from 'express-graphql';
+import { LocalCliOpticContextBuilder } from '../spectacle';
 
 type CaptureId = string;
 type Iso8601Timestamp = string;
@@ -130,6 +128,10 @@ export class CapturesHelpers {
     return path.join(this.captureDirectory(captureId), captureStateFileName);
   }
 
+  baseDirectory(): string {
+    return this.basePath;
+  }
+
   captureDirectory(captureId: CaptureId): string {
     return path.join(this.basePath, captureId);
   }
@@ -168,13 +170,7 @@ export class ExampleRequestsHelpers {
   }
 }
 
-export function makeRouter(sessions: SessionsManager) {
-  function prepareEvents(events: any): string {
-    return `[
-${events.map((x: any) => JSON.stringify(x)).join('\n,')}
-]`;
-  }
-
+export async function makeRouter(sessions: SessionsManager) {
   async function ensureValidSpecId(
     req: express.Request,
     res: express.Response,
@@ -201,6 +197,11 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       const exampleRequestsHelpers = new ExampleRequestsHelpers(
         exampleRequestsPath
       );
+
+      async function specLoader(): Promise<any[]> {
+        const events = await getSpecEventsFrom(paths.specStorePath);
+        return events;
+      }
       req.optic = {
         config,
         paths,
@@ -208,6 +209,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         capturesHelpers,
         exampleRequestsHelpers,
         session,
+        specLoader,
       };
       next();
     } catch (e) {
@@ -220,85 +222,42 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   const router = express.Router({ mergeParams: true });
   router.use(ensureValidSpecId);
 
-  if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-    router.post(
-      '/commands/batches',
-      bodyParser.json({ limit: '100mb' }),
-      async (req, res) => {
-        const payload = req.body;
-        if (!payload || typeof payload.commitMessage !== 'string') {
-          return res.status(400).json({
-            message: 'commit message required to append batch of commands',
-          });
-        }
-        if (!payload || !Array.isArray(payload.commands)) {
-          return res.status(400).json({
-            message: 'commands array required to append batch of commands',
-          });
-        }
-
-        const commands = AT.from<Streams.Commands.Command>(payload.commands);
-        const events = DiffEngine.commit(commands, {
-          specDirPath: req.optic.paths.specDirPath,
-          commitMessage: payload.commitMessage,
-          clientSessionId: payload.clientSessionId || 'unknown-session',
-          clientId: await getOrCreateAnonId(),
-          appendToRoot: !isEnvTrue(process.env.OPTIC_SPLIT_SPEC_EVENTS),
-        });
-
-        events.pipe(res).type('application/json');
-      }
-    );
-  }
-
   // events router
   router.get('/events', async (req, res) => {
     try {
-      if (isEnvTrue(process.env.OPTIC_ASSEMBLED_SPEC_EVENTS)) {
-        const events = DiffEngine.readSpec({
-          specDirPath: req.optic.paths.specDirPath,
-        });
-        events.pipe(res).type('application/json');
-      } else {
-        const events = await getSpecEventsFrom(req.optic.paths.specStorePath);
-        res.json(events);
-      }
+      const events = await req.optic.specLoader();
+      res.json(events);
     } catch (e) {
       res.json([]);
     }
   });
-  router.put(
-    '/events',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const events = req.body;
-      await fs.writeFile(req.optic.paths.specStorePath, prepareEvents(events));
-      res.sendStatus(204);
-    }
-  );
 
-  // example requests router
-  router.post(
-    '/example-requests/:requestId',
-    bodyParser.json({ limit: '100mb' }),
-    async (req, res) => {
-      const { requestId } = req.params;
-      await req.optic.exampleRequestsHelpers.saveExampleRequest(
-        requestId,
-        req.body
+  const instances: Map<string, any> = new Map();
+  router.use('/spectacle', async (req, res) => {
+    let handler = instances.get(req.optic.session.id);
+    if (!handler) {
+      console.count('LocalCliOpticContextBuilder.fromDirectory');
+      const opticContext = await LocalCliOpticContextBuilder.fromDirectory(
+        req.optic.paths,
+        req.optic.capturesHelpers
       );
-      res.sendStatus(204);
+      const spectacle = await makeSpectacle(opticContext);
+      const instance = graphqlHTTP({
+        //@ts-ignore
+        schema: spectacle.executableSchema,
+        graphiql: true,
+        context: {
+          spectacleContext: spectacle.graphqlContext,
+        },
+      });
+      //@GOTCHA see if someone sneaky updated it while we weren't looking
+      handler = instances.get(req.optic.session.id);
+      if (!handler) {
+        instances.set(req.optic.session.id, instance);
+        handler = instance;
+      }
     }
-  );
-
-  router.get('/example-requests/:requestId', async (req, res) => {
-    const { requestId } = req.params;
-    const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(
-      requestId
-    );
-    res.json({
-      examples: currentFileContents,
-    });
+    handler(req, res);
   });
 
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
@@ -312,15 +271,12 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         .reverse()
         .map((i) => ({
           captureId: i.captureId,
+          startedAt: i.metadata.startedAt,
           status: i.status,
           lastUpdate: i.metadata.lastInteraction
             ? i.metadata.lastInteraction.observedAt
             : i.metadata.startedAt,
           links: [
-            {
-              rel: 'samples',
-              href: `${req.baseUrl}/captures/${i.captureId}/samples`,
-            },
             {
               rel: 'status',
               href: `${req.baseUrl}/captures/${i.captureId}/status`,
@@ -401,46 +357,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       captureBaseDirectory: string;
     }) => new LocalCaptureInteractionPointerConverter(config),
   });
+
   router.use('/captures/:captureId', captureRouter);
-
-  router.get('/captures/:captureId/samples', async (req, res) => {
-    const { captureId } = req.params;
-
-    const loader: ICaptureLoader = new FileSystemAvroCaptureLoader({
-      captureId,
-      captureBaseDirectory: req.optic.paths.capturesPath,
-    });
-    try {
-      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
-      const capture = await loader.loadWithFilter(filter);
-      res.json({
-        metadata: {},
-        samples: capture.samples,
-        links: [{ rel: 'next', href: '' }],
-      });
-    } catch (e) {
-      console.error(e);
-      res.sendStatus(500);
-    }
-  });
-
-  router.get('/testing-credentials', async (req, res) => {
-    const { paths } = req.optic;
-    if (!(await fs.pathExists(paths.testingConfigPath))) {
-      return res.sendStatus(404);
-    }
-
-    try {
-      const testingConfig = await readTestingConfig(paths.testingConfigPath);
-
-      return res.json({
-        authToken: testingConfig.authToken,
-      });
-    } catch (e) {
-      console.error(e);
-      return res.sendStatus(500);
-    }
-  });
 
   return router;
 }

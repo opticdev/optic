@@ -1,12 +1,12 @@
 import { DescribeEvent, RegisteredEvent } from '../interfaces/RegisterEvent';
 import { Events } from '../interfaces/Events';
-// @ts-ignore
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import 'joi-extract-type';
 
 const RequirementForDiffsToHaveASuggestionFailedSchema = Joi.object({
   diff: Joi.string().required(),
 });
+// @ts-ignore
 type RequirementForDiffsToHaveASuggestionFailedProperties = Joi.extractType<
   typeof RequirementForDiffsToHaveASuggestionFailedSchema
 >;
@@ -22,6 +22,7 @@ const JavascriptErrorDetectedInFrontendSchema = Joi.object({
   message: Joi.string().required(),
   stack: Joi.string().required(),
 });
+// @ts-ignore
 type JavascriptErrorDetectedInFrontendProperties = Joi.extractType<
   typeof JavascriptErrorDetectedInFrontendSchema
 >;

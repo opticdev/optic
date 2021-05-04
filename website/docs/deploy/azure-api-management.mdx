@@ -1,0 +1,92 @@
+---
+title: Azure API Management
+---
+
+import Beta from './Beta.mdx'
+
+<Beta />
+
+Optic integrates with APIM as an Azure EventHub consumer.
+
+1. **Add Logging Policy**
+
+    The following policy will begin forwarding API data to EventHub. Add it to APIM instance for APIs you want Optic to process.
+
+    ```csharp
+    <policies>
+        <inbound>
+            <set-variable name="optic-token" value="Your Optic API Token" />
+            <set-variable name="optic-source-id" value="A unique identifier for this API" />
+            <set-variable name="optic-source-tags" value="A comma separated list of other labels to send to Optic" />
+
+            <set-variable name="message-id" value="@(Guid.NewGuid())" />
+            <log-to-eventhub logger-id="optic-inbound-log-to-event-hub">
+                @{
+                    var maxEHBodyLength = 131072; // 128kB to allow headroom in the message for other fields
+
+                    var headers =  context.Request.Headers
+                                                .Select(h => string.Format("{0}: {1}", h.Key, String.Join(",", h.Value)))
+                                                .ToArray<string>();
+                    var encodedHeaders = (headers.Any()) ? string.Join(";", headers) : string.Empty;
+
+                    var rawBody =  context.Request.Body.As<string>(preserveContent: true);
+                    var encodedBody = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(body));
+                    if (encodedBody.length > maxEHBodyLength) {
+                    encodedBody = encodedBody.Remove(maxEHBodyLength);
+                    }
+
+                    return JsonConvert.SerializeObject(new {
+                        opticToken = context.Variables["optic-token"],
+                        opticSourceID = context.Variables["optic-source-id"],
+                        opticSourceTags = context.Variables["optic-source-tags"],
+
+                        messageID = context.Variables["message-id"],
+                        type = "request",
+                        headers = encodedHeaders,
+                        body = encodedBody
+                    });
+                }
+            </log-to-eventhub>
+        </inbound>
+        <backend>
+            <forward-request follow-redirects="true" />
+        </backend>
+        <outbound>
+            <log-to-eventhub logger-id="optic-outbound-log-to-event-hub">
+                @{
+                    var maxEHBodyLength = 131072; // 128kB to allow headroom in the message for other fields
+
+                    var headers =  context.Request.Headers
+                                                .Select(h => string.Format("{0}: {1}", h.Key, String.Join(",", h.Value)))
+                                                .ToArray<string>();
+                    var encodedHeaders = (headers.Any()) ? string.Join(";", headers) : string.Empty;
+
+                    var rawBody =  context.Request.Body.As<string>(preserveContent: true);
+                    var encodedBody = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(body));
+                    if (encodedBody.length > maxEHBodyLength) {
+                    encodedBody = encodedBody.Remove(maxEHBodyLength);
+                    }
+
+                    return JsonConvert.SerializeObject(new {
+                        opticToken = context.Variables["optic-token"],
+                        opticSourceID = context.Variables["optic-source-id"],
+                        opticSourceTags = context.Variables["optic-source-tags"],
+
+                        messageID = context.Variables["message-id"],
+                        type = "response",
+                        headers = encodedHeaders,
+                        body = encodedBody
+                    });
+                }
+            </log-to-eventhub>
+        </outbound>
+    </policies>
+    ```
+
+1. **Give Optic Access to EventHub**
+
+    In your Optic UI, navigate to "Add Connector" and select Azure. Generate and enter an EventHub connection string for Optic to use.
+
+import BetaFooter from './Beta-Footer.mdx'
+
+<BetaFooter />
