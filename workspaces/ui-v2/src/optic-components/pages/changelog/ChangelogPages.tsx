@@ -21,7 +21,7 @@ export function ChangelogPages(props: any) {
   const allBatchCommits = useBatchCommits();
   const history = useHistory();
   return (
-    // TODO fork changelog from documentation page and remove contribution editing store
+    // @nic TODO fork changelog from documentation page and remove contribution editing store
     <ContributionEditingStore initialIsEditingState={false}>
       <>
         <NavigationRoute
