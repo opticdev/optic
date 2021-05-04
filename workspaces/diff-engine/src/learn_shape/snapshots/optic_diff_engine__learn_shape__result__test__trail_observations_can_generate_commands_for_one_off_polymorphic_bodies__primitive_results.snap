@@ -122,7 +122,4 @@ expression: "&primitive_results"
             ),
         ),
     ],
-    Some(
-        "test-id-0",
-    ),
 )
