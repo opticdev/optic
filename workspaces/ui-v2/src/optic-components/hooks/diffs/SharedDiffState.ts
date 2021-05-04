@@ -249,7 +249,7 @@ export const newSharedDiffMachine = (
                   ...ctx.choices,
                   existingEndpointPathContributions: {
                     ...ctx.choices.existingEndpointPathContributions,
-                    [event.id]: {
+                    [event.pathId]: {
                       command: event.command,
                       endpointId: event.endpointId,
                     },
@@ -416,7 +416,7 @@ export type SharedDiffStateEvent =
     }
   | {
       type: 'SET_PATH_DESCRIPTION';
-      id: string;
+      pathId: string;
       command: any;
       endpointId: string;
     };
