@@ -41,7 +41,6 @@ export function builderInnerShapeFromChoices(
     if (foundShapeId) {
       return foundShapeId[0];
     } else {
-<<<<<<< HEAD
       const filterToTarget = actual.trailAffordances.map((affordance) => {
         return {
           ...affordance,
@@ -58,19 +57,7 @@ export function builderInnerShapeFromChoices(
       const [commands, newShapeId] = JSON.parse(
         currentSpecContext.opticEngine.affordances_to_commands(
           JSON.stringify(filterToTarget),
-=======
-      // make new shape
-      const { rootShapeId, commands } = JsonHelper.toJs(
-        LearnJsonTrailAffordances.toCommandsJson(
-          JSON.stringify(actual.learnedTrails.affordances),
-<<<<<<< HEAD
->>>>>>> aa3b0dbe3 (integration)
           JSON.stringify(actual.jsonTrail)
-=======
-          JSON.stringify(actual.jsonTrail),
-          randomIds,
-          toOption(i)
->>>>>>> e2d35af20 (sentry + segment integration)
         )
       );
 

@@ -35,15 +35,10 @@ import {
   ExistingEndpointNameField,
   PendingEndpointNameField,
 } from './EndpointNameEditFields';
-<<<<<<< HEAD
-=======
-import { useAnalytics } from '../../../../analytics';
->>>>>>> 7fbccaf63 (added basic analytics to frontend)
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
   const history = useHistory();
-  const analytics = useAnalytics();
   const {
     documentEndpoint,
     stageEndpoint,
@@ -73,7 +68,6 @@ export function DiffUrlsPage(props: any) {
         key={data.method + data.path}
         onFinish={(pattern, method, autolearn) => {
           const pendingId = documentEndpoint(pattern, method);
-          analytics.userDocumentedEndpoint(autolearn);
           if (autolearn) {
             stageEndpoint(pendingId);
             setBulkMode(bulkMode);

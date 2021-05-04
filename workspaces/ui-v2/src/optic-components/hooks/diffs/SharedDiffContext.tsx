@@ -16,11 +16,7 @@ import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
 import { AddContribution } from '../../../lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
-<<<<<<< HEAD
 import { useOpticEngine } from '../useOpticEngine';
-=======
-import { useAnalytics } from '../../../analytics';
->>>>>>> 7fbccaf63 (added basic analytics to frontend)
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -76,27 +72,6 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     opticEngine,
   };
 
-<<<<<<< HEAD
-=======
-  const analytics = useAnalytics();
-
-  const parsedDiffs = useMemo(
-    () => props.diffs.map((i: any) => new ParsedDiff(i[0], i[1], i[2])),
-    [props.diffs]
-  );
-
-  const { allSamples } = useContext(InteractionLoaderContext);
-
-  const trailsLearned = learnTrailsForParsedDiffs(
-    parsedDiffs,
-    currentSpecContext,
-    //@ts-ignore
-    window.events,
-    allSamples
-  );
-
-  //@dev here is where the diff output needs to go
->>>>>>> 7fbccaf63 (added basic analytics to frontend)
   const [state, send]: any = useMachine(() =>
     newSharedDiffMachine(
       currentSpecContext,
@@ -171,10 +146,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       })),
     wipPatterns,
     currentSpecContext,
-    reset: () => {
-      analytics.userResetDiff(handled, total);
-      send({ type: 'RESET' });
-    },
+    reset: () => send({ type: 'RESET' }),
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
     setEndpointName: (id: string, name: string) =>

@@ -20,22 +20,14 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
-=======
-import { AnalyticsStore } from '../analytics/hook';
->>>>>>> aa3b0dbe3 (integration)
-=======
-import { AnalyticsStore } from '../analytics';
->>>>>>> e2d35af20 (sentry + segment integration)
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
   config: {
     analytics: {
-      enabled: true,
-      segmentToken: process.env.REACT_APP_SEGMENT_TOKEN as string,
+      enabled: false,
     },
     navigation: {
       showChangelog: true,
@@ -89,30 +81,12 @@ export default function PublicExamples() {
 
   return (
     <AppConfigurationStore config={appConfig}>
-<<<<<<< HEAD
-      <OpticEngineStore>
-=======
       <AnalyticsStore>
->>>>>>> aa3b0dbe3 (integration)
-        <SpectacleStore spectacle={data}>
-          <CapturesServiceStore
-            capturesService={data.opticContext.capturesService}
-          >
-<<<<<<< HEAD
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </SpectacleStore>
-      </OpticEngineStore>
-=======
-            <InMemoryInteractionLoaderStore samples={data.samples}>
+        <OpticEngineStore>
+          <SpectacleStore spectacle={data}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
               <BaseUrlProvider value={{ url: match.url }}>
                 <Switch>
                   <>
@@ -122,11 +96,10 @@ export default function PublicExamples() {
                   </>
                 </Switch>
               </BaseUrlProvider>
-            </InMemoryInteractionLoaderStore>
-          </CapturesServiceStore>
-        </SpectacleStore>
+            </CapturesServiceStore>
+          </SpectacleStore>
+        </OpticEngineStore>
       </AnalyticsStore>
->>>>>>> aa3b0dbe3 (integration)
     </AppConfigurationStore>
   );
 }

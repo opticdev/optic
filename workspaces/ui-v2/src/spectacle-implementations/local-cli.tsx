@@ -36,6 +36,9 @@ import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
 const appConfig: OpticAppConfig = {
   featureFlags: {},
   config: {
+    analytics: {
+      enabled: false,
+    },
     navigation: {
       showChangelog: true,
       showDiff: true,

@@ -21,17 +21,12 @@
     "ws:build": "echo 'build'"
   },
   "dependencies": {
-<<<<<<< HEAD
-=======
     "@babel/core": "7.12.3",
     "@fullstory/browser": "^1.4.9",
->>>>>>> 7fbccaf63 (added basic analytics to frontend)
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/styles": "^4.11.3",
-<<<<<<< HEAD
-=======
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "4.4.4",
@@ -43,7 +38,6 @@
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
     "@useoptic/analytics": "10.0.1",
->>>>>>> 6694e01fe (analytics progress)
     "@useoptic/cli-config": "10.0.1",
     "@useoptic/cli-shared": "10.0.1",
     "@useoptic/diff-engine-wasm": "10.0.1",

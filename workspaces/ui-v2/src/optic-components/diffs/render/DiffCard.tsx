@@ -20,16 +20,10 @@ import {
   IInteractionPreviewTab,
   IPatchChoices,
 } from '../../../lib/Interfaces';
-<<<<<<< HEAD
 import { IJsonTrail } from '../../../../../cli-shared/build/diffs/json-trail';
 import { BuildSpecPatch } from './BuildSpecPatch';
 import { useInteraction } from '../../hooks/useInteraction';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
-=======
-import { useInteraction } from '../../../spectacle-implementations/interaction-loader';
-import { BuildSpecPatch } from './BuildSpecPatch';
-import { IJsonTrail } from '@useoptic/cli-shared/build/diffs/json-trail';
->>>>>>> e2d35af20 (sentry + segment integration)
 
 type IDiffCardProps = {
   previewTabs: IInteractionPreviewTab[];
