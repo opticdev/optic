@@ -17,7 +17,4 @@ expression: "&string_results"
             ),
         ),
     ],
-    Some(
-        "test-id-0",
-    ),
 )

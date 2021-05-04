@@ -6,6 +6,7 @@ use crate::commands::{EndpointCommand, SpecCommand};
 use crate::interactions::{BodyAnalysisLocation, BodyAnalysisResult};
 use crate::learn_shape::TrailObservationsResult;
 use crate::state::SpecIdGenerator;
+use crate::JsonTrail;
 
 #[derive(Default, Debug)]
 pub struct LearnedUndocumentedBodiesProjection {
@@ -28,7 +29,8 @@ impl LearnedUndocumentedBodiesProjection {
   ) -> impl Iterator<Item = EndpointBodies> {
     let mut endpoints_by_endpoint = HashMap::new();
     for (body_location, observations) in self.observations_by_body_location {
-      let (root_shape_id, body_commands, new_shape_id) = observations.into_commands(id_generator);
+      let (root_shape_id, body_commands) =
+        observations.into_commands(id_generator, &JsonTrail::empty());
       let endpoint_body =
         EndpointBody::new(&body_location, root_shape_id, body_commands, id_generator);
 
