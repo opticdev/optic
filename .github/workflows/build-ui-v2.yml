@@ -53,7 +53,9 @@ jobs:
           task ui-v2:ci
           if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
           then
-            docker tag "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" 513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
+            docker tag \
+              "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
+              513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
             TAG=latest task ui-v2:cloud-spec-viewer:docker:push
           fi
         env:
