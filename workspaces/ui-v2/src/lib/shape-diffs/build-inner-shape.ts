@@ -4,7 +4,7 @@ import {
   ICoreShapeKinds,
   IPatchChoices,
 } from '../Interfaces';
-import { Actual, Expectation } from '../shape-diff-dsl-rust';
+import { Actual } from '../shape-diff-dsl-rust';
 import {
   AddShape,
   AddShapeParameter,
@@ -16,7 +16,7 @@ import { newRandomIdGenerator } from '../domain-id-generator';
 
 export function builderInnerShapeFromChoices(
   choices: IPatchChoices,
-  expected: Expectation,
+  allowedCoreShapeKindsByShapeId: { [key: string]: ICoreShapeKinds },
   actual: Actual,
   currentSpecContext: CurrentSpecContext
 ): { rootShapeId: string; commands: any[] } {
@@ -29,12 +29,10 @@ export function builderInnerShapeFromChoices(
   targetKinds.delete(ICoreShapeKinds.OptionalKind);
   targetKinds.delete(ICoreShapeKinds.NullableKind);
 
-  const allowedKindsById = expected.allowedCoreShapeKindsByShapeId();
-
   const newCommands = [];
 
   const innerShapeIds = Array.from(targetKinds).map((i) => {
-    const foundShapeId = Object.entries(allowedKindsById).find(
+    const foundShapeId = Object.entries(allowedCoreShapeKindsByShapeId).find(
       ([key, shape]) => shape === i
     );
 
