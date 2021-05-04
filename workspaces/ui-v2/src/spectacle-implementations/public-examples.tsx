@@ -10,7 +10,7 @@ import {
   SpectacleInput,
 } from '@useoptic/spectacle';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
@@ -21,6 +21,7 @@ import {
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
 import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
+import { AsyncStatus } from '../types';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -108,7 +109,7 @@ export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacl
 
 export class InMemorySpectacle
   implements IForkableSpectacle, InMemoryBaseSpectacle {
-  private spectaclePromise: Promise<any>;
+  private spectaclePromise: ReturnType<typeof makeSpectacle>;
 
   constructor(
     public readonly opticContext: IOpticContext,
@@ -127,14 +128,14 @@ export class InMemorySpectacle
     return new InMemorySpectacle(opticContext, [...this.samples]);
   }
 
-  async mutate(options: SpectacleInput): Promise<any> {
+  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 
-  async query(options: SpectacleInput): Promise<any> {
+  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 }
 
@@ -174,9 +175,12 @@ export function useInMemorySpectacle(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
-    loading: !spectacle,
-    data: spectacle,
-    error: false,
-  } as AsyncStatus<InMemoryBaseSpectacle>;
+  return !spectacle
+    ? {
+        loading: true,
+      }
+    : {
+        loading: false,
+        data: spectacle,
+      };
 }

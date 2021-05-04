@@ -1,4 +1,4 @@
-import { graphql } from 'graphql';
+import { graphql, ExecutionResult } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { EventEmitter } from 'events';
@@ -144,23 +144,14 @@ export interface IOpticContext {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export type AsyncStatus<T> =
-  | {
-      loading: true;
-      error: false;
-      data: null;
-    }
-  | {
-      loading: false;
-      error: true;
-      data: null;
-    }
-  | { loading: false; error: false; data: T };
-
 export interface IBaseSpectacle {
-  query(options: SpectacleInput): Promise<any>;
+  query<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<ExecutionResult<Result>>;
 
-  mutate(options: SpectacleInput): Promise<any>;
+  mutate<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<ExecutionResult<Result>>;
 }
 
 export interface IForkableSpectacle extends IBaseSpectacle {
@@ -506,6 +497,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
     typeDefs: schema,
     resolvers,
   });
+
   const graphqlContext = () => {
     return {
       opticContext,
@@ -518,8 +510,10 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       contributionsProjection,
     };
   };
-  const queryWrapper = function (input: SpectacleInput) {
-    return graphql({
+  const queryWrapper = function <Result, Input = {}>(
+    input: SpectacleInput<Input>
+  ) {
+    return graphql<Result>({
       schema: executableSchema,
       source: input.query,
       variableValues: input.variables,
@@ -529,6 +523,7 @@ export async function makeSpectacle(opticContext: IOpticContext) {
       },
     });
   };
+
   return {
     executableSchema,
     queryWrapper,
@@ -537,10 +532,12 @@ export async function makeSpectacle(opticContext: IOpticContext) {
   };
 }
 
-export interface SpectacleInput {
-  query: string;
-  variables: {
+export interface SpectacleInput<
+  T extends {
     [key: string]: any;
-  };
+  }
+> {
+  query: string;
+  variables: T;
   operationName?: string;
 }

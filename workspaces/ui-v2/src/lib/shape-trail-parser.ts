@@ -183,7 +183,6 @@ async function getChoices(
       jsonType
     }
 }`;
-
   const result = await spectacle.query({
     variables: {
       shapeId: shapeId,

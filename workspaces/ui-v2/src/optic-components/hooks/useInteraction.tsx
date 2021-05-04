@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { AsyncStatus } from '../../spectacle-implementations/spectacle-provider';
+import { AsyncStatus } from '<src>/types';
 import { CapturesServiceContext } from './useCapturesHook';
 
 export function useInteraction(
@@ -10,8 +10,6 @@ export function useInteraction(
 
   const [result, setResult] = useState<AsyncStatus<any>>({
     loading: true,
-    error: false,
-    data: null,
   });
 
   useEffect(() => {
@@ -20,10 +18,10 @@ export function useInteraction(
         .loadInteraction(captureId, pointer)
         .then((i: any | undefined) => {
           //@aidan handle undefined interactions as the rror state
-          setResult({ loading: false, error: false, data: i });
+          setResult({ loading: false, data: i });
         });
     } else {
-      setResult({ loading: false, error: true, data: null });
+      setResult({ loading: false, error: new Error() });
     }
   }, [pointer, captureId, capturesService]);
 

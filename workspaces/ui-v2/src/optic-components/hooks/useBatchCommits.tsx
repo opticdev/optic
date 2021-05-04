@@ -13,7 +13,7 @@ export function useBatchCommits(): {
   loading: boolean;
   batchCommits: BatchCommit[];
 } {
-  const { data, loading, error } = useSpectacleQuery({
+  const { data, loading, error } = useSpectacleQuery<any, any>({
     query: BatchCommitsQuery,
     variables: {},
   });

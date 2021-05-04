@@ -67,7 +67,7 @@ export function useEndpointBody(
           },
         };
 
-  const { data, error } = useSpectacleQuery(spectacleInput);
+  const { data, error } = useSpectacleQuery<any, any>(spectacleInput);
   if (error) {
     console.error(error);
     debugger;
