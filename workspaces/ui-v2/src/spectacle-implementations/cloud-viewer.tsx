@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import { makeSpectacle } from '@useoptic/spectacle';
-import { useEffect, useState } from 'react';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
 import { AsyncStatus, SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
@@ -114,6 +113,7 @@ export interface CloudInMemorySpectacleDependencies {
 
 export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
 
+// eslint-disable-next-line
 class CloudInMemorySpectacle
   implements IForkableSpectacle, InMemoryBaseSpectacle {
   private spectaclePromise: Promise<any>;
