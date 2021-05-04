@@ -73,19 +73,26 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
     sideEffect: (newName: string) => debouncedSetName(endpointId, newName),
   });
   const endpointId = getEndpointId({ method, pathId });
-  const getNextIncompleteDiff = (): number =>
-    Math.max(
-      0,
-      // findIndex possibly returns -1 if all diffs are handled,
-      // in which case useRedirectForDiffCompleted should redirect back
-      shapeDiffs.findIndex(
-        (shapeDiff) =>
-          !(
-            shapeDiff.diffDescription?.diffHash &&
-            isDiffHandled(shapeDiff.diffDescription.diffHash)
-          )
-      )
-    );
+
+  const getNextIncompleteDiff = (recentlyCompletedDiff?: string): number => {
+    for (let i = 0; i < shapeDiffs.length; i++) {
+      const shapeDiff = shapeDiffs[i];
+      if (!shapeDiff.diffDescription) {
+        continue;
+      }
+
+      const isRecentlyCompletedDiff =
+        !!recentlyCompletedDiff &&
+        recentlyCompletedDiff === shapeDiff.diffDescription.diffHash;
+      const diffHandled = isDiffHandled(shapeDiff.diffDescription.diffHash);
+      if (!(isRecentlyCompletedDiff || diffHandled)) {
+        return i;
+      }
+    }
+
+    // If all diffs are complete we should stick on the last rendered diff
+    return shapeDiffs.length - 1;
+  };
 
   const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff());
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
@@ -115,11 +122,15 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
                 renderedDiff.diffDescription!.diffHash,
                 previewCommands
               );
-              setCurrentIndex(getNextIncompleteDiff());
+              setCurrentIndex(
+                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+              );
             }}
             ignore={() => {
               addDiffHashIgnore(renderedDiff.diffDescription!.diffHash);
-              setCurrentIndex(getNextIncompleteDiff());
+              setCurrentIndex(
+                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+              );
             }}
           />
         </>

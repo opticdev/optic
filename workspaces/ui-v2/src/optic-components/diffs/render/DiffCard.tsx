@@ -40,6 +40,8 @@ export function DiffCard({
   diffDescription,
   approve,
   ignore,
+  // @nic todo add in handled
+  handled,
   specChoices,
   updatedSpecChoices,
 }: IDiffCardProps) {
