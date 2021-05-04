@@ -12,6 +12,7 @@ interface IAppConfigurations {
     enabled: boolean;
     segmentToken?: string;
     sentryUrl?: string;
+    fullStoryOrgId?: string;
   };
   documentation: {
     allowDescriptionEditing: boolean;

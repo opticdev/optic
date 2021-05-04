@@ -7,6 +7,7 @@ import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 import { useChangelogPages } from '../../navigation/Routes';
+<<<<<<< HEAD
 import { v4 as uuidv4 } from 'uuid';
 
 const useStagedChangesCount = () => {
@@ -38,6 +39,9 @@ const useStagedChangesCount = () => {
     changedEndpointsCount,
   };
 };
+=======
+import { useAnalytics } from '../../../analytics';
+>>>>>>> 7fbccaf63 (added basic analytics to frontend)
 
 export default function AskForCommitMessageDiffPage(props: {
   hasChanges: boolean;
@@ -47,6 +51,7 @@ export default function AskForCommitMessageDiffPage(props: {
   const history = useHistory();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
+  const analytics = useAnalytics();
 
   const { context, startedFinalizing } = useSharedDiffContext();
 
@@ -55,7 +60,21 @@ export default function AskForCommitMessageDiffPage(props: {
     changedEndpointsCount,
   } = useStagedChangesCount();
 
+<<<<<<< HEAD
   const handleSave = async (commitMessage: string) => {
+=======
+  const handleSave = async () => {
+    analytics.userSavedChanges(
+      pendingEndpointsCount,
+      Object.keys(context.choices.approvedSuggestions).length,
+      Object.keys(context.choices.existingEndpointNameContributions).length +
+        pendingEndpoints.filter(
+          (i) => i.staged && i.ref.context.stagedEndpointName
+        ).length
+    );
+
+    // TODO figure out how to attach a commit message to match id
+>>>>>>> 7fbccaf63 (added basic analytics to frontend)
     const commands = context.simulatedCommands;
     const {
       data: {

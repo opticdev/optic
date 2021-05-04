@@ -14,44 +14,69 @@ export class OpticUIEvents {
   }
 
   // proposed
-  reviewPageLoaded(diffsPerEndpoint: number[], undocumentedUrls: number, 
-    diffEngineDurationSeconds: number, totalObservations: number, endpointsInSpec: number) {
-    
+  reviewPageLoaded(
+    diffsPerEndpoint: number[],
+    undocumentedUrls: number,
+    diffEngineDurationSeconds: number,
+    totalObservations: number,
+    endpointsInSpec: number
+  ) {
     this.dispatch({
       name: 'review_page_loaded',
-      properties: { diffsPerEndpoint, undocumentedUrls, diffEngineDurationSeconds, totalObservations, endpointsInSpec },
+      properties: {
+        diffsPerEndpoint,
+        undocumentedUrls,
+        diffEngineDurationSeconds,
+        totalObservations,
+        endpointsInSpec,
+      },
     });
-  } 
+  }
 
-  userApprovedAll(diffsPerEndpoint: number[], durationSeconds: number) {
-    
+  userApprovedAll(shapeDiffs: number, newBodyDiffs: number) {
     this.dispatch({
       name: 'user_approved_all',
-      properties: { diffsPerEndpoint, durationSeconds },
+      properties: { shapeDiffs, newBodyDiffs },
     });
-  } 
+  }
 
-  userDocumentedEndpoint(bodies: [], isBulkMode: boolean, isDiscarded: boolean) {
-    
+  userDocumentedEndpoint(isBulkMode: boolean) {
     this.dispatch({
       name: 'user_documented_endpoint',
-      properties: { bodies, isBulkMode, isDiscarded },
+      properties: { isBulkMode },
     });
-  } 
+  }
 
-  userDocumentedDiff(valuesPresented: [], isIgnored: boolean, bugReportCreated: boolean) {
-    
+  userDiscardedEndpoint() {
     this.dispatch({
-      name: 'user_documented_diff',
-      properties: { valuesPresented, isIgnored, bugReportCreated },
+      name: 'user_discarded_endpoint',
+      properties: {},
     });
-  } 
+  }
 
-  userSavedChanges(undocumentedUrls: number, diffsPerEndpoint: number[] ) {
+  // userDocumentedDiff(
+  //   valuesPresented: [],
+  //   isIgnored: boolean,
+  //   bugReportCreated: boolean
+  // ) {
+  //   this.dispatch({
+  //     name: 'user_documented_diff',
+  //     properties: { valuesPresented, isIgnored, bugReportCreated },
+  //   });
+  // }
 
+  userSavedChanges(
+    undocumentedUrls: number,
+    approvedEndpointDiffs: number,
+    contributionsChanged: number
+  ) {
     this.dispatch({
       name: 'user_saved_changes',
-      properties: { undocumentedUrls, diffsPerEndpoint }
+      properties: {
+        undocumentedUrls,
+        approvedEndpointDiffs,
+        contributionsChanged,
+      },
     });
   }
 

@@ -21,6 +21,11 @@
     "ws:build": "echo 'build'"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@babel/core": "7.12.3",
+    "@fullstory/browser": "^1.4.9",
+>>>>>>> 7fbccaf63 (added basic analytics to frontend)
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",

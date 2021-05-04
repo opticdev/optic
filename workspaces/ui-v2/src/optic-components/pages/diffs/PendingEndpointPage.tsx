@@ -23,11 +23,13 @@ import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
+import { useAnalytics } from '../../../analytics';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
   const { endpointId } = match.params;
 
+  const analytics = useAnalytics();
   const history = useHistory();
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
@@ -55,6 +57,7 @@ export function PendingEndpointPageSession(props: any) {
         goToDiffPage();
       }}
       onEndpointDiscarded={() => {
+        analytics.userDiscardedEndpoint();
         discardEndpoint(endpoint.id);
         goToDiffPage();
       }}

@@ -15,7 +15,7 @@ import niceTry from 'nice-try';
 import { useAppConfig } from '../optic-components/hooks/config/AppConfiguration';
 import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
-
+import * as FullStory from '@fullstory/browser';
 const packageJson = require('../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
 
@@ -55,22 +55,31 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (analytics.current && appConfig.analytics.enabled && clientAgent) {
       //segment
-      analytics.current.use(SegmentIntegration);
-      const integrationSettings = {
-        'Segment.io': {
-          apiKey: appConfig.analytics.segmentToken!,
-          retryQueue: true,
-          addBundledMetadata: true,
-        },
-      };
-      analytics.current.initialize(integrationSettings);
-      analytics.current.identify(clientAgent);
+      if (appConfig.analytics.segmentToken) {
+        analytics.current.use(SegmentIntegration);
+        const integrationSettings = {
+          'Segment.io': {
+            apiKey: appConfig.analytics.segmentToken!,
+            retryQueue: true,
+            addBundledMetadata: true,
+          },
+        };
+
+        analytics.current.initialize(integrationSettings);
+        analytics.current.identify(clientAgent);
+      }
+      //fullstory
+      if (appConfig.analytics.fullStoryOrgId) {
+        FullStory.init({ orgId: appConfig.analytics.fullStoryOrgId! });
+      }
       //sentry
-      Sentry.init({
-        dsn: appConfig.analytics.sentryUrl!,
-        release: clientId,
-      });
-      Sentry.setUser({ id: clientAgent });
+      if (appConfig.analytics.segmentToken) {
+        Sentry.init({
+          dsn: appConfig.analytics.sentryUrl!,
+          release: clientId,
+        });
+        Sentry.setUser({ id: clientAgent });
+      }
     }
   }, [
     analytics,
@@ -78,13 +87,16 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
     appConfig.analytics.enabled,
     appConfig.analytics.sentryUrl,
     appConfig.analytics.segmentToken,
+    appConfig.analytics.fullStoryOrgId,
   ]);
 
   const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(
     new OpticUIEvents(async (event) => {
+      console.log('event', JSON.stringify(event));
       if (appConfig.analytics.enabled) {
         if (analytics.current) {
           analytics.current.track(event.name, { properties: event.properties });
+          FullStory.event(event.name, event.properties);
         }
       }
     })
