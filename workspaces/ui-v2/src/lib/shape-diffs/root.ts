@@ -80,7 +80,7 @@ export function rootShapeDiffInterpreter(
       }
       const { commands, rootShapeId } = builderInnerShapeFromChoices(
         choices,
-        expected,
+        expected.allowedCoreShapeKindsByShapeId(),
         actual,
         currentSpecContext
       );
