@@ -43,7 +43,4 @@ expression: "&empty_array_results"
             ),
         ),
     ],
-    Some(
-        "test-id-3",
-    ),
 )

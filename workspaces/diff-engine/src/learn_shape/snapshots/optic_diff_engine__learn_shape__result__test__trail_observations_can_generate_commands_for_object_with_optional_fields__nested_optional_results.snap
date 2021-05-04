@@ -115,7 +115,4 @@ expression: "&nested_optional_results"
             ),
         ),
     ],
-    Some(
-        "test-id-8",
-    ),
 )

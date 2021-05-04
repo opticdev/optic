@@ -46,10 +46,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
   },
   scroll: {
-    overflow: 'scroll',
     paddingTop: 40,
     flex: 1,
   },
