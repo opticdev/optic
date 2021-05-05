@@ -4,7 +4,8 @@ title: "Writing Design Guides for API Changes"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"
 author_image_url: "/img/team/smizell.jpg"
-image: "/img/blog-content/check-graphic.png"
+description: "I've worked on two different products that provided API design guide tooling. The idea for both was the same—provide a tool that helps companies design consistent APIs and helps communicate good design patterns to all of their developers"
+image: "https://useoptic.com/img/blog-content/check-graphic.png"
 category: Community
 ---
 
@@ -68,7 +69,7 @@ We're working on the design guide tools and services right now that give people 
 * **Starting conversations**. We want to loop people into the conversation based on the change. If someone wants to join discussions when people add new endpoints, Optic can make sure they get notified.
 * **Writing guidelines around change**. We want to enable people to write guidelines focused on change. Whether it's looking at a new status code, an updated field in a response body, or a whole new endpoint, we want to enable people to write rules that have not been possible before.
 
-We believe our approach lends itself well to these workflows. Optic helps teams keep their API specification up-to-date by observing API traffic and making it easy to update the API specification when they change the API. Our GitBot adds an API Changelog to every PR that updates the API, creating the context for these kinds of conversations, and for automated, actionable feedback from tooling. 
+We believe our approach lends itself well to these workflows. Optic helps teams keep their API specification up-to-date by observing API traffic and making it easy to update the API specification when they change the API. Our GitBot adds an API Changelog to every PR that updates the API, creating the context for these kinds of conversations, and for automated, actionable feedback from tooling.
 
 ## Sharing your stories
 
