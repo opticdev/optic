@@ -5,6 +5,8 @@ import {
 } from '../../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/styles';
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
@@ -142,6 +144,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
 
   const { pendingEndpoints } = useSharedDiffContext();
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
+  const classes = useStyles();
 
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
@@ -180,9 +183,12 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
-                    className={changelogStyles.added}
+                    className={classNames(
+                      changelogStyles.added,
+                      classes.endpointRow
+                    )}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div className={classes.endpointNameContainer}>
                       <EndpointName
                         method={endpoint.method}
                         fullPath={endpoint.pathPattern}
@@ -190,7 +196,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       />
                     </div>
                     <div
-                      style={{ paddingRight: 15 }}
+                      className={classes.endpointContributionContainer}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <PendingEndpointNameField endpoint={endpoint} />
@@ -227,8 +233,9 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         )
                       )
                     }
+                    className={classes.endpointRow}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div className={classes.endpointNameContainer}>
                       <EndpointName
                         method={endpoint.method}
                         fullPath={endpoint.fullPath}
@@ -236,7 +243,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       />
                     </div>
                     <div
-                      style={{ paddingRight: 15 }}
+                      className={classes.endpointContributionContainer}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExistingEndpointNameField endpoint={endpoint} />
@@ -281,3 +288,23 @@ function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
     />
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  endpointRow: {
+    display: 'flex',
+    '@media (max-width: 1250px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+  },
+  endpointNameContainer: {
+    overflowX: 'scroll',
+    flexGrow: 1,
+  },
+  endpointContributionContainer: {
+    paddingRight: 15,
+    '@media (max-width: 1250px)': {
+      paddingLeft: 20,
+    },
+  },
+}));
