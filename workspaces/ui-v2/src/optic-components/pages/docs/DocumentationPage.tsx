@@ -34,6 +34,7 @@ import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -101,10 +102,27 @@ export function DocumentationRootPage(props: {
   //@nic TODO fork changelog from documentation page
   const isChangelogPage = props.changelogBatchId !== undefined;
 
+  const {
+    isEditing,
+    pendingCount,
+    setCommitModalOpen,
+  } = useContributionEditing();
+
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
   const changelogStyles = useChangelogStyles();
   const styles = useStyles();
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (isEditing && pendingCount > 0) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   if (loading) {
     return <Loading />;
@@ -112,7 +130,7 @@ export function DocumentationRootPage(props: {
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
-      <List dense>
+      <List dense onKeyPress={onKeyPress}>
         {tocKeys.map((tocKey) => {
           return (
             <div key={tocKey}>
@@ -193,6 +211,23 @@ export const EndpointRootPage: FC<
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
     [pathId, method, endpoints]
   );
+  const {
+    isEditing,
+    pendingCount,
+    setCommitModalOpen,
+  } = useContributionEditing();
+
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (isEditing && pendingCount > 0) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   if (loading) {
     return <Loading />;
@@ -207,7 +242,10 @@ export const EndpointRootPage: FC<
   );
 
   return (
-    <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
+    <FullWidth
+      style={{ paddingTop: 30, paddingBottom: 400 }}
+      onKeyPress={onKeyPress}
+    >
       {/* @nic TODO fork documentation page from changelog page */}
       {isChangelogPage ? (
         <Typography className={styles.regularField}>

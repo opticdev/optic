@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ToggleButton } from '@material-ui/lab';
 import { Typography, makeStyles } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -8,13 +8,14 @@ import { CommitMessageModal } from '../../common';
 
 export function EditContributionsButton() {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
 
   const {
     isEditing,
     save,
     pendingCount,
     setEditing,
+    commitModalOpen,
+    setCommitModalOpen,
   } = useContributionEditing();
 
   const contents = !isEditing ? (
@@ -40,7 +41,7 @@ export function EditContributionsButton() {
         onClick={() => {
           isEditing
             ? pendingCount > 0
-              ? setOpen(true)
+              ? setCommitModalOpen(true)
               : setEditing(false)
             : setEditing(true);
         }}
@@ -50,8 +51,8 @@ export function EditContributionsButton() {
         {contents}
       </ToggleButton>
       <CommitMessageModal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={commitModalOpen}
+        onClose={() => setCommitModalOpen(false)}
         onSave={save}
         dialogText={`You have ${pendingCount} ${
           pendingCount === 1 ? 'change' : 'changes'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { CommitMessageModal } from '../../common';
@@ -42,13 +42,17 @@ const useStagedChangesCount = () => {
 export default function AskForCommitMessageDiffPage(props: {
   hasChanges: boolean;
 }) {
-  const [open, setOpen] = useState(false);
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
 
-  const { context, startedFinalizing } = useSharedDiffContext();
+  const {
+    context,
+    startedFinalizing,
+    commitModalOpen,
+    setCommitModalOpen,
+  } = useSharedDiffContext();
 
   const {
     pendingEndpointsCount,
@@ -90,7 +94,7 @@ export default function AskForCommitMessageDiffPage(props: {
       <Button
         disabled={!props.hasChanges}
         onClick={() => {
-          setOpen(true);
+          setCommitModalOpen(true);
           startedFinalizing();
         }}
         size="small"
@@ -100,8 +104,8 @@ export default function AskForCommitMessageDiffPage(props: {
         Save Changes
       </Button>
       <CommitMessageModal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={commitModalOpen}
+        onClose={() => setCommitModalOpen(false)}
         onSave={handleSave}
         dialogText={`You have added ${pendingEndpointsCount} new ${
           pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
