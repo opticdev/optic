@@ -93,10 +93,15 @@ async function jsonSchemaFromShapeChoice(
       )) as any;
 
       let isRequired = true;
-      const fieldShape = await queryForShape(spectacle, field.shapeId);
 
+      // We look down into the field shape choices to see if Undefined shows up
+      // anywhere. If we find one, we don't mark the field as required.
+      const fieldShape = await queryForShape(spectacle, field.shapeId);
       for (const shapeChoice of (fieldShape as any).data.shapeChoices) {
-        if (shapeChoice.jsonType === 'Undefined') isRequired = false;
+        if (shapeChoice.jsonType === 'Undefined') {
+          isRequired = false;
+          break;
+        }
       }
 
       if (isRequired) result.required.push(field.name);
@@ -106,7 +111,6 @@ async function jsonSchemaFromShapeChoice(
   }
 
   if (shapeChoice.jsonType === 'Array') {
-    // console.log(JSON.stringify(shapeChoice, null, 2));
     const itemSchema = await jsonSchemaFromShapeId(
       spectacle,
       shapeChoice.asArray.shapeId
