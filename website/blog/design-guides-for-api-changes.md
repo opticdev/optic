@@ -34,7 +34,7 @@ I’ve wanted something in the past to address these nagging feelings but was li
 
 When we design an API, one thing we’re doing is designing how the API will change over time. The way we design change influences the way we design other aspects of the API, such as the behavior or the technical details.
 
-For instance, when we talk about versioning an API, we're talking about how we intend to treat breaking changes. When we decide to always use a JSON object with their API responses, we're making room for that response to grow over time. When we give guidance to not add a required field to an existing endpoint, we're making a promise to others using the API that we won't introduce certain kinds of change.
+For instance, when we talk about versioning an API, we're talking about how we intend to treat breaking changes. When we decide to always use a JSON object with our API responses, we're making room for that response to grow over time. When we say we won't add a required field to an existing endpoint, we're making a promise to people using the API that we won't introduce certain kinds of change.
 
 There are best practices for dealing with change and evolving APIs, but they require a human to know them and spot any issues. They have to decide on their own if a change will cause something to break. This takes a lot of time—for many it's a full time job.
 
@@ -42,19 +42,19 @@ With some of the new tools at Optic, we want to empower developers to make good 
 
 ## Dealing with the noise
 
-Most of our design guide tools are too noisy to be useful.
+Most of the existing design guide tools are too noisy to be useful.
 
-Linting tools for instance run sets of rules against an entire OpenAPI document and give feedback to what didn't pass a rule. This is helpful for new API designs. It gives the team a list of issues it can correct before releasing the API to the public.
+Linting tools for instance run sets of rules against an entire OpenAPI document and give feedback when something doesn't pass a rule. This is helpful for new API designs. It gives the team a list of issues it can correct before releasing the API to the public.
 
 But for existing APIs, this feedback can be overwhelming. Running a linter on an API that has never had linting could produce dozens of errors and warnings that the team may be unable to fix. Over time, this turns into noise that the team ignores—a list of 100 linting errors is just as helpful as zero. Would someone notice if it found error 101? Would the team be able to fix all 101 errors without breaking your consumers?
 
-Focusing the feedback on the latest API changes helps limit the feedback to what’s important now, not feedback on the entire API definition. For instance, a tool like Optic can provide feedback in a Pull Request based on what's changed along with any recommendations for improvement. This makes the recommendations more actionable in the moment.
+Focusing the feedback on the latest API changes helps limit the feedback to what’s important now, not feedback on the entire API definition. For instance, a tool like Optic can provide feedback in a Pull Request (PR) based on what's changed along with any recommendations for improvement. This makes the recommendations more actionable in the moment.
 
 ## Starting discussions
 
 Giving recommendations is one thing. Getting teams to talk about those recommendations is another. This is important to help teams build consistent APIs.
 
-Many companies have shifted away from strict API governance to focusing on creating a culture around API excellence. Adding tools is easy, but changing culture and garnering adoption requires time, effort, and a commitment to a longer term process.
+Many companies have shifted away from strict API governance to focusing on creating a culture around API excellence. Adding tools is easy, but changing culture and garnering adoption requires time, effort, and a commitment to a long-term process.
 
 The goal is to focus on the culture around collaboration, knowledge sharing, training, and discussions. It's about creating a space where people can have autonomy while getting expert guidance on their work.
 
@@ -62,13 +62,13 @@ We're trying to line up with this approach. We want to help start conversations.
 
 ## Making it a reality
 
-We're working on the design guide tools and services right now. We want to share with you our focus and what we're thinking.
+We're working on the design guide tools and services right now that give people visibility over how things change. We want to share with you our focus and what we're thinking.
 
-* **Dealing with the noise**. We want to give insights to what is changing in a Pull Request. An API may have 20 endpoints, but we'll only focus on what’s changing in the PR. 
+* **Dealing with the noise**. We want to give insights to what is changing in a PR. An API may have 20 endpoints, but we'll only focus on what’s changing in the PR. This allows the design guides work on existing APIs.
 * **Starting conversations**. We want to loop people into the conversation based on the change. If someone wants to join discussions when people add new endpoints, Optic can make sure they get notified.
 * **Writing guidelines around change**. We want to enable people to write guidelines focused on change. Whether it's looking at a new status code, an updated field in a response body, or a whole new endpoint, we want to enable people to write rules that have not been possible before.
 
-We believe our approach lends itself well to these workflows. Optic helps teams keep their API specification up-to-date by observing API traffic and making it easy to update the API specification when they change the API. Our GitBot adds an API Changelog to every Pull Request that updates the API, creating the context for these kinds of conversations, and for automated, actionable feedback from tooling. 
+We believe our approach lends itself well to these workflows. Optic helps teams keep their API specification up-to-date by observing API traffic and making it easy to update the API specification when they change the API. Our GitBot adds an API Changelog to every PR that updates the API, creating the context for these kinds of conversations, and for automated, actionable feedback from tooling. 
 
 ## Sharing your stories
 
