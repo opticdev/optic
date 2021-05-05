@@ -1,0 +1,72 @@
+---
+date: "5/5/2021"
+title: "Writing Design Guides for API Changes"
+author: Stephen Mizell
+author_url: "https://github.com/smizell"
+author_image_url: "/img/team/smizell.jpg"
+category: Community
+---
+
+I've worked on two different products that provided API design guide tooling. The idea for both was the same—provide a tool that helps companies design consistent APIs and helps communicate good design patterns to all of their developers.
+
+It's common for a company to take inventory of their APIs and see lots of inconsistency. One API uses camel case while another uses snake case. One puts the version in the URL, another doesn't. These companies try to address this by putting together their own set of API guidelines and adopting tools that help them apply these guidelines to their APIs during the development process. This is where our design guide tooling came in.
+
+Design guide tooling—which goes by names like style guide, standardization, governance, and linting—allows people to express guidelines in code and apply those guidelines to an OpenAPI document. Imagine a rule that makes sure every API endpoint requires authentication and returns a 403 when not provided. When a rule like this fails, the tools can prevent the teams from merging the code until they resolve the issue. It’s a big win for scaling an API strategy across many teams.
+
+But there's always been a nagging feeling something is missing.
+
+## Seeing through the lens of Optic
+
+For one, over time you start to see that a diff of an OpenAPI file is not the same as an API changelog. This isn’t apparent when first designing an API, but it starts to show as you evolve an API over time.
+
+For example, when someone opens a PR with a change to an OpenAPI file, the Git diff shows which lines in the file were affected. It’s up to the reviewer to decipher what it meant when the author removed line 20. If it meant a field was removed, what sections of the API are affected? Is it a breaking change? Does it only affect a single response or does it affect several API endpoints? Traditional design guide tooling can’t give this insight and understanding because it lacks the history of how the API has changed. An OpenAPI diff is not a changelog.
+
+Second, over time you start to wish you could write guidelines around how APIs change, not just around the correctness of an OpenAPI document. It only takes one time pushing a change to production with unintended consequences to feel this.
+
+For instance, if someone adds a required field to an existing API endpoint, it would be helpful to get immediate and automatic feedback that the change might break API clients. But traditional design guide tooling isn’t tracking how an API is changing, so people can’t write guidelines that give insights and feedback about API changes. The tooling can only look at a snapshot in time.
+
+I’ve wanted something in the past to address these nagging feelings but was limited by the traditional tooling and approaches. Since viewing API development through the lens of Optic, though, I’ve been able to see how it can address these issues. Optic records the entire history of an API as people evolve it over time, similar to how Git records all of the changes to your code. And with this detailed history, Optic can provide insights into API changes and give people the ability to write guidelines around changes that go beyond OpenAPI diffs.
+
+## Designing how APIs change
+
+When we design an API, one thing we’re doing is designing how the API will change over time. The way we design change influences the way we design other aspects of the API, such as the behavior or the technical details.
+
+For instance, when we talk about versioning an API, we're talking about how we intend to treat breaking changes. When we decide to always use a JSON object with their API responses, we're making room for that response to grow over time. When we give guidance to not add a required field to an existing endpoint, we're making a promise to others using the API that we won't introduce certain kinds of change.
+
+There are best practices for dealing with change and evolving APIs, but they require a human to know them and spot any issues. They have to decide on their own if a change will cause something to break. This takes a lot of time—for many it's a full time job.
+
+With some of the new tools at Optic, we want to empower developers to make good decisions that have a positive impact on their API consumers. We want to give them insights into how their API is changing so it’s easier to do the right thing than it is to do the wrong one.
+
+## Dealing with the noise
+
+Most of our design guide tools are too noisy to be useful.
+
+Linting tools for instance run sets of rules against an entire OpenAPI document and give feedback to what didn't pass a rule. This is helpful for new API designs. It gives the team a list of issues it can correct before releasing the API to the public.
+
+But for existing APIs, this feedback can be overwhelming. Running a linter on an API that has never had linting could produce dozens of errors and warnings that the team may be unable to fix. Over time, this turns into noise that the team ignores—a list of 100 linting errors is just as helpful as zero. Would someone notice if it found error 101? Would the team be able to fix all 101 errors without breaking your consumers?
+
+Focusing the feedback on the latest API changes helps limit the feedback to what’s important now, not feedback on the entire API definition. For instance, a tool like Optic can provide feedback in a Pull Request based on what's changed along with any recommendations for improvement. This makes the recommendations more actionable in the moment.
+
+## Starting discussions
+
+Giving recommendations is one thing. Getting teams to talk about those recommendations is another. This is important to help teams build consistent APIs.
+
+Many companies have shifted away from strict API governance to focusing on creating a culture around API excellence. Adding tools is easy, but changing culture and garnering adoption requires time, effort, and a commitment to a longer term process.
+
+The goal is to focus on the culture around collaboration, knowledge sharing, training, and discussions. It's about creating a space where people can have autonomy while getting expert guidance on their work.
+
+We're trying to line up with this approach. We want to help start conversations. We want guidelines that are less about pointing out what's wrong with an OpenAPI document and more about getting people talking about the way an API is evolving. We know from experience that this approach works.
+
+## Making it a reality
+
+We're working on the design guide tools and services right now. We want to share with you our focus and what we're thinking.
+
+* **Dealing with the noise**. We want to give insights to what is changing in a Pull Request. An API may have 20 endpoints, but we'll only focus on what’s changing in the PR. 
+* **Starting conversations**. We want to loop people into the conversation based on the change. If someone wants to join discussions when people add new endpoints, Optic can make sure they get notified.
+* **Writing guidelines around change**. We want to enable people to write guidelines focused on change. Whether it's looking at a new status code, an updated field in a response body, or a whole new endpoint, we want to enable people to write rules that have not been possible before.
+
+We believe our approach lends itself well to these workflows. Optic helps teams keep their API specification up-to-date by observing API traffic and making it easy to update the API specification when they change the API. Our GitBot adds an API Changelog to every Pull Request that updates the API, creating the context for these kinds of conversations, and for automated, actionable feedback from tooling. 
+
+## Sharing your stories
+
+We want to hear about your experiences changing APIs. What were the struggles? Fill out the survey below and we’ll help you write some of the first Optic powered design guides over the next several weeks.
