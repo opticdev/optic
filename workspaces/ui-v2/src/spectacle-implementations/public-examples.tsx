@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, useParams, useRouteMatch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import {
@@ -41,7 +40,7 @@ export default function PublicExamples() {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
   const { exampleId } = params;
-  const task: InMemorySpectacleDependenciesLoader = async () => {
+  const task: InMemorySpectacleDependenciesLoader = useCallback(async () => {
     const loadExample = async () => {
       const response = await fetch(`/example-sessions/${exampleId}.json`, {
         headers: { accept: 'application/json' },
@@ -58,7 +57,8 @@ export default function PublicExamples() {
       events: example.events,
       samples: example.session.samples,
     };
-  };
+  }, [exampleId]);
+
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
     return <Loading />;
