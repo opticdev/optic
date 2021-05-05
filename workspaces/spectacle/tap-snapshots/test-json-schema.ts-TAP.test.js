@@ -6,6 +6,43 @@
  */
 'use strict';
 exports[
+  `test/json-schema.ts TAP generate JSON schemas for arrays > must match snapshot 1`
+] = `
+Object {
+  "items": Array [
+    Object {
+      "properties": Object {
+        "arrayWithObject": Object {
+          "type": "boolean",
+        },
+      },
+      "required": Array [
+        "arrayWithObject",
+      ],
+      "type": "object",
+    },
+  ],
+  "type": "array",
+}
+`;
+
+exports[
+  `test/json-schema.ts TAP generate JSON schemas for arrays with multiple types > must match snapshot 1`
+] = `
+Object {
+  "items": Array [
+    Object {
+      "type": "string",
+    },
+    Object {
+      "type": "number",
+    },
+  ],
+  "type": "array",
+}
+`;
+
+exports[
   `test/json-schema.ts TAP generate JSON schemas for objects > must match snapshot 1`
 ] = `
 Object {

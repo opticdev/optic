@@ -22,6 +22,33 @@ Tap.test('generate JSON schemas for objects', async (test) => {
   test.matchSnapshot(results);
 });
 
+Tap.test('generate JSON schemas for arrays', async (test) => {
+  const events = loadEvents('./test/specs/add-res-as-array-with-object.json');
+  const shapeId = 'shape_oCUwskX7xA';
+  const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+    OpticEngine,
+    events
+  );
+  const spectacle = await makeSpectacle(opticContext);
+  const results = await jsonSchemaFromShapeId(spectacle, shapeId);
+  test.matchSnapshot(results);
+});
+
+Tap.test(
+  'generate JSON schemas for arrays with multiple types',
+  async (test) => {
+    const events = loadEvents('./test/specs/update-res-as-array.json');
+    const shapeId = 'shape_Sn2bnZvvoM';
+    const opticContext = await InMemoryOpticContextBuilder.fromEvents(
+      OpticEngine,
+      events
+    );
+    const spectacle = await makeSpectacle(opticContext);
+    const results = await jsonSchemaFromShapeId(spectacle, shapeId);
+    test.matchSnapshot(results);
+  }
+);
+
 //-----------------------------
 
 async function jsonSchemaFromShapeId(
@@ -78,6 +105,26 @@ async function jsonSchemaFromShapeChoice(
     return result;
   }
 
+  if (shapeChoice.jsonType === 'Array') {
+    // console.log(JSON.stringify(shapeChoice, null, 2));
+    const itemSchema = await jsonSchemaFromShapeId(
+      spectacle,
+      shapeChoice.asArray.shapeId
+    );
+
+    let items;
+
+    if ('oneOf' in itemSchema) {
+      items = itemSchema.oneOf;
+    } else {
+      items = [itemSchema];
+    }
+    return {
+      type: 'array',
+      items,
+    };
+  }
+
   if (shapeChoice.jsonType === 'String') {
     return { type: 'string' };
   }
@@ -98,6 +145,9 @@ async function queryForShape(spectacle: any, shapeId: string) {
     query: `query GetShape($shapeId: ID!) {
       shapeChoices(shapeId: $shapeId) {
         jsonType
+        asArray {
+          shapeId
+        }
         asObject {
           fields {
             shapeId
@@ -110,7 +160,11 @@ async function queryForShape(spectacle: any, shapeId: string) {
   });
 }
 
-type JsonSchema = JsonSchemaObject | JsonSchemaValue | JsonSchemaOneOf;
+type JsonSchema =
+  | JsonSchemaObject
+  | JsonSchemaArray
+  | JsonSchemaValue
+  | JsonSchemaOneOf;
 
 type JsonSchemaObject = {
   type: 'object';
@@ -118,6 +172,11 @@ type JsonSchemaObject = {
     [property: string]: JsonSchema;
   };
   required: string[];
+};
+
+type JsonSchemaArray = {
+  type: 'array';
+  items: JsonSchema[];
 };
 
 type JsonSchemaValue =
