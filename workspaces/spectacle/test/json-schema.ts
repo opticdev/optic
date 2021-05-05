@@ -71,7 +71,7 @@ async function jsonSchemaFromShapeId(
   if (results.length === 1) return results[0];
 
   // In some cases, it might be nicer to do { type: [string, number] }, but this
-  // isn't supported in OpenAPI. Leave it as oneOf for now.
+  // isn't supported in OpenAPI. Leaving it as oneOf for now.
   return { oneOf: results };
 }
 
