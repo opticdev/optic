@@ -10,17 +10,12 @@ import path from 'path';
 import fs from 'fs-extra';
 
 import sortBy from 'lodash.sortby';
-import {
-  DefaultIdGenerator,
-  developerDebugLogger,
-  isEnvTrue,
-} from '@useoptic/cli-shared';
+import { DefaultIdGenerator, developerDebugLogger } from '@useoptic/cli-shared';
 import { makeRouter as makeCaptureRouter } from './capture-router';
 import { LocalCaptureInteractionPointerConverter } from '@useoptic/cli-shared/build/captures/avro/file-system/interaction-iterator';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { SessionsManager } from '../sessions';
 import { patchInitialTaskOpticYaml } from '@useoptic/cli-config/build/helpers/patch-optic-config';
-import * as DiffEngine from '@useoptic/diff-engine';
 import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
 
 import { makeSpectacle } from '@useoptic/spectacle';

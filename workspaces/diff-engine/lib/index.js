@@ -14,35 +14,6 @@ const Config = require('./config');
 
 const fetchBinary = Bent(Config.prebuilt.baseUrl, 'GET', 200, 404);
 
-//@dev: this is actually diff. ideally accepts input stream and only returns outputstream (no separate error stream)
-function spawn({ specPath }) {
-  const input = new PassThrough();
-  const output = new PassThrough();
-  const error = new PassThrough();
-
-  const binPath = getBinPath();
-
-  const diffProcess = Execa(binPath, [specPath], {
-    input,
-    stdio: 'pipe',
-  });
-
-  if (!diffProcess.stdout || !diffProcess.stderr)
-    throw new Error('diff process should have stdout and stderr streams');
-
-  diffProcess.stdout.pipe(output);
-  diffProcess.stderr.pipe(error);
-
-  // get a clean result promise, so we stay in control of the exact API we're exposing
-  const result = diffProcess.then(
-    (childResult) => {},
-    (childResult) => {
-      throw new DiffEngineError(childResult);
-    }
-  );
-  return { input, output, error, result };
-}
-
 function diffInteractions({ specPath, interactionsStream }) {
   const input = Readable.from(HttpInteractions.intoJSONL(interactionsStream));
   const output = new PassThrough();
@@ -141,7 +112,6 @@ function commit(
   return output;
 }
 
-//@dev: copy this for diffing
 function learnUndocumentedBodies(interactions, { specPath }) {
   if (!interactions || typeof interactions[Symbol.asyncIterator] !== 'function')
     throw new Error(
@@ -167,7 +137,6 @@ function learnUndocumentedBodies(interactions, { specPath }) {
   learnProcess.then(
     (childResult) => {},
     (childResult) => {
-      //@dev: errors should follow this pattern
       output.emit('error', new DiffEngineError(childResult));
     }
   );

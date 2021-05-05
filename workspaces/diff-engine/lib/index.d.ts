@@ -1,6 +1,7 @@
 /// <reference types="node" />
 
-import { Duplex, Readable } from 'stream';
+import { Readable } from 'stream';
+//@jaap this is a sign that streams and async tools should be in a different module. diff-engine should not depend on diff-engine-wasm
 import { Streams } from '@useoptic/diff-engine-wasm';
 
 export function diffInteractions(input: {
