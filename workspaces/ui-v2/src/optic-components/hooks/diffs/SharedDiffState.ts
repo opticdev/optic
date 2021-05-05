@@ -9,14 +9,15 @@ import { DiffSet } from '../../../lib/diff-set';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { AssembleCommands } from '../../../lib/assemble-commands';
 import { newInitialBodiesMachine } from './LearnInitialBodiesMachine';
-import { IOpticDiffService } from '@useoptic/spectacle';
+import { IOpticConfigRepository, IOpticDiffService } from '@useoptic/spectacle';
 
 export const newSharedDiffMachine = (
   currentSpecContext: CurrentSpecContext,
   parsedDiffs: ParsedDiff[],
   undocumentedUrls: IUndocumentedUrl[],
   trailValues: IValueAffordanceSerializationWithCounterGroupedByDiffHash,
-  diffService: IOpticDiffService
+  diffService: IOpticDiffService,
+  configRepository: IOpticConfigRepository
 ) => {
   return Machine<
     SharedDiffStateContext,
@@ -160,6 +161,16 @@ export const newSharedDiffMachine = (
               assign({
                 results: (ctx) => updateUrlResults(ctx),
               }),
+              (ctx, event) => {
+                configRepository
+                  .addIgnoreRule(event.rule)
+                  .then((i) => {
+                    debugger;
+                  })
+                  .catch((i) => {
+                    debugger;
+                  });
+              },
             ],
           },
           ADD_DIFF_HASH_IGNORE: {

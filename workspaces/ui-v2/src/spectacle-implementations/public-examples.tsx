@@ -22,6 +22,7 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
 import { AsyncStatus } from '../types';
+import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -79,21 +80,23 @@ export default function PublicExamples() {
   return (
     <AppConfigurationStore config={appConfig}>
       <OpticEngineStore>
-        <SpectacleStore spectacle={data}>
-          <CapturesServiceStore
-            capturesService={data.opticContext.capturesService}
-          >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </SpectacleStore>
+        <ConfigRepositoryStore config={data.opticContext.configRepository}>
+          <SpectacleStore spectacle={data}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </SpectacleStore>
+        </ConfigRepositoryStore>
       </OpticEngineStore>
     </AppConfigurationStore>
   );

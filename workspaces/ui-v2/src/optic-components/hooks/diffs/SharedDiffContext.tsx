@@ -17,6 +17,7 @@ import { ParsedDiff } from '../../../lib/parse-diff';
 import { AddContribution } from '../../../lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
+import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -66,6 +67,9 @@ type SharedDiffStoreProps = {
 
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const opticEngine = useOpticEngine();
+
+  const { config } = useConfigRepository();
+
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -80,7 +84,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       props.diffs,
       props.urls,
       props.diffTrails,
-      props.diffService
+      props.diffService,
+      config
     )
   );
 

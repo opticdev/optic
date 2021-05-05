@@ -34,6 +34,7 @@ import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory
 import { InMemorySpectacle } from './public-examples';
 import { useEffect, useState } from 'react';
 import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
+import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -66,19 +67,21 @@ export default function LocalCli() {
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data.spectacle}>
-        <OpticEngineStore>
-          <CapturesServiceStore capturesService={data.capturesService}>
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </OpticEngineStore>
+        <ConfigRepositoryStore config={data.configRepository}>
+          <OpticEngineStore>
+            <CapturesServiceStore capturesService={data.capturesService}>
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </OpticEngineStore>
+        </ConfigRepositoryStore>
       </SpectacleStore>
     </AppConfigurationStore>
   );

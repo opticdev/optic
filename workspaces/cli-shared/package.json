@@ -40,7 +40,7 @@
     "ora": "^4.0.4",
     "proper-lockfile": "^4.1.1",
     "semver": "^7.3.4",
-    "shape-hash": "1.0.25",
+    "shape-hash": "1.0.6",
     "stream-chain": "^2.2.3",
     "stream-fork": "^1.0.3",
     "stream-json": "^1.7.1",

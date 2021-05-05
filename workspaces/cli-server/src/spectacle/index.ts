@@ -116,7 +116,7 @@ export class LocalCliCapturesService implements IOpticCapturesService {
       captureId,
       captureBaseDirectory,
       events,
-      ignoreRules,
+      ignoreRules: ignoreRules,
     });
     const diffService = new LocalCliDiffService({ diff });
     await this.dependencies.diffRepository.add(diffId, diffService);
@@ -252,7 +252,8 @@ export class LocalCliConfigRepository implements IOpticConfigRepository {
     return await this.ignoreFileHelper.appendRule(rule);
   }
   async listIgnoreRules(): Promise<string[]> {
-    return await this.listIgnoreRules();
+    const rules = await this.ignoreFileHelper.getCurrentIgnoreRules();
+    return rules.allRules;
   }
 }
 
