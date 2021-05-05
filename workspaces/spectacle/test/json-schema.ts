@@ -70,9 +70,9 @@ async function jsonSchemaFromShapeId(
 
   if (results.length === 1) return results[0];
 
-  return {
-    oneOf: results,
-  };
+  // In some cases, it might be nicer to do { type: [string, number] }, but this
+  // isn't supported in OpenAPI. Leave it as oneOf for now.
+  return { oneOf: results };
 }
 
 async function jsonSchemaFromShapeChoice(
@@ -114,11 +114,14 @@ async function jsonSchemaFromShapeChoice(
 
     let items;
 
+    // Instead of having a single oneOf in the items array, this flattens it to
+    // make it an array for each type in the oneOf.
     if ('oneOf' in itemSchema) {
       items = itemSchema.oneOf;
     } else {
       items = [itemSchema];
     }
+
     return {
       type: 'array',
       items,
