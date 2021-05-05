@@ -363,8 +363,6 @@ export class InMemoryDiff {
 
     return AsyncTools.toArray(lastUnique);
   }
-
-  //@dev here is where to use learn_undocumented_bodies and learn_shape_diff_affordances from opticEngine consuming diff results
 }
 
 export class InMemoryDiffRepository implements IOpticDiffRepository {

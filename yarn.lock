@@ -2324,16 +2324,7 @@
     "@types/tapable" "^1"
     "@types/webpack" "^4"
 
-"@types/http-proxy-middleware@^0.19.3":
-  version "0.19.3"
-  resolved "https://registry.npmjs.org/@types/http-proxy-middleware/-/http-proxy-middleware-0.19.3.tgz#b2eb96fbc0f9ac7250b5d9c4c53aade049497d03"
-  integrity sha512-lnBTx6HCOUeIJMLbI/LaL5EmdKLhczJY5oeXZpX/cXE4rRqb3RmV7VcMpiEfYkmTjipv3h7IAyIINe4plEv7cA==
-  dependencies:
-    "@types/connect" "*"
-    "@types/http-proxy" "*"
-    "@types/node" "*"
-
-"@types/http-proxy@*", "@types/http-proxy@^1.17.5":
+"@types/http-proxy@^1.17.5":
   version "1.17.5"
   resolved "https://registry.npmjs.org/@types/http-proxy/-/http-proxy-1.17.5.tgz#c203c5e6e9dc6820d27a40eb1e511c70a220423d"
   integrity sha512-GNkDE7bTv6Sf8JbV2GksknKOsk7OznNYHSdrtvPJXO0qJ9odZig6IZKUi5RFGi6d1bf6dgIAe4uXi3DBc7069Q==
@@ -8175,7 +8166,7 @@ http-proxy-middleware@0.19.1:
     lodash "^4.17.11"
     micromatch "^3.1.10"
 
-http-proxy-middleware@^1.0.0, http-proxy-middleware@^1.0.4:
+http-proxy-middleware@^1.0.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/http-proxy-middleware/-/http-proxy-middleware-1.2.0.tgz#87776ea3d4d8dda3dc2594a076787bbc6fe4d995"
   integrity sha512-vNw+AxT0+6VTM1rCJw1bpiIaUQ1Ww/vTyIEOUzdW9kNX4yuhhqV3jLSKDJo/Y/lqEIshaKCDujtvEqWiD9Dn6Q==
