@@ -237,7 +237,6 @@ interface ILocalCliConfigRepositoryDependencies {
   ignoreFilePath: string;
 }
 
-//@TODO: use IgnoreFileHelper (see on-demand.ts)
 export class LocalCliConfigRepository implements IOpticConfigRepository {
   ignoreFileHelper: IgnoreFileHelper;
 
