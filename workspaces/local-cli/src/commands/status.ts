@@ -25,12 +25,15 @@ import {
   readApiConfig,
 } from '@useoptic/cli-config';
 import { getCaptureId, isInRepo } from '../shared/git/git-context-capture';
+import fs from 'fs-extra';
 import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 import { JsonHttpClient } from '@useoptic/client-utilities';
 import colors from 'colors';
-import { getUser, trackUserEvent } from '../shared/analytics';
+import { getUser, opticTaskToProps, trackUserEvent } from '../shared/analytics';
 import { cli } from 'cli-ux';
+import { makeDiffRfcBaseStateFromEvents } from '@useoptic/cli-shared/build/diffs/diff-rfc-base-state';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
+import { locationForTrails } from '@useoptic/cli-shared/build/diffs/trail-parsers';
 import { IInteractionTrail } from '@useoptic/cli-shared/build/diffs/interaction-trail';
 import { IRequestSpecTrail } from '@useoptic/cli-shared/build/diffs/request-spec-trail';
 import sortBy from 'lodash.sortby';
@@ -78,7 +81,38 @@ export default class Status extends Command {
       this.printStatus([], [], []);
     });
     diffsPromise.then(async ({ diffs, undocumentedUrls, events }) => {
-      //@aidan fixme
+      const rfcBaseState = makeDiffRfcBaseStateFromEvents(events);
+      const diffsRaw: IDiff[] = diffs.map((i: any) => i[0]);
+
+      const locations = diffsRaw
+        .map((i) => {
+          return locationForTrails(
+            extractRequestsTrail(i),
+            extractInteractionTrail(i),
+            rfcBaseState
+          )!;
+        })
+        .filter(Boolean);
+
+      const diffsGroupedByPathAndMethod = groupBy(
+        locations,
+        (i: any) => `${i.method}.${i.pathId}`
+      );
+
+      const endpointsWithDiffs = getSpecEndpoints(
+        rfcBaseState.queries
+      ).filter((i) =>
+        locations.find(
+          (withDiff) =>
+            withDiff.pathId === i.pathId && withDiff.method === i.method
+        )
+      );
+
+      this.printStatus(
+        endpointsWithDiffs,
+        diffsGroupedByPathAndMethod,
+        undocumentedUrls
+      );
 
       diffFound = diffs.length > 0 || undocumentedUrls.length > 0;
 
