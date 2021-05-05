@@ -31,8 +31,7 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { InMemorySpectacle } from './public-examples';
-import { useEffect, useState } from 'react';
-import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
+import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -65,19 +64,17 @@ export default function LocalCli() {
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data.spectacle}>
-        <OpticEngineStore>
-          <CapturesServiceStore capturesService={data.capturesService}>
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </OpticEngineStore>
+        <CapturesServiceStore capturesService={data.capturesService}>
+          <BaseUrlProvider value={{ url: match.url }}>
+            <Switch>
+              <>
+                <DocumentationPages />
+                <DiffReviewEnvironments />
+                <ChangelogPages />
+              </>
+            </Switch>
+          </BaseUrlProvider>
+        </CapturesServiceStore>
       </SpectacleStore>
     </AppConfigurationStore>
   );
@@ -229,21 +226,7 @@ class LocalCliDiffService implements IOpticDiffService {
 export function useLocalCliServices(
   specId: string
 ): AsyncStatus<LocalCliServices> {
-  const [opticEngine, setOpticEngine] = useState<IOpticEngine | null>(null);
-  useEffect(() => {
-    async function task() {
-      const _opticEngine = await import(
-        '@useoptic/diff-engine-wasm/engine/browser'
-      );
-      setOpticEngine(_opticEngine);
-    }
-    task();
-  }, [specId]);
-  if (!opticEngine) {
-    return {
-      loading: true,
-    };
-  }
+  const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
   const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
   const capturesService = new LocalCliCapturesService({

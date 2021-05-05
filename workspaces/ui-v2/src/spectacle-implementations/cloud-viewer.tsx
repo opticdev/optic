@@ -17,6 +17,8 @@ import {
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
 import { AsyncStatus } from '<src>/types';
+import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
+import { useEffect, useState } from 'react';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -107,16 +109,8 @@ export default function CloudViewer() {
   );
 }
 
-export interface CloudInMemorySpectacleDependencies {
-  events: any[];
-  samples: any[];
-}
-
-export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
-
-// eslint-disable-next-line
 class CloudInMemorySpectacle
-  implements IForkableSpectacle, InMemoryBaseSpectacle {
+  implements IForkableSpectacle, CloudInMemoryBaseSpectacle {
   private spectaclePromise: ReturnType<typeof makeSpectacle>;
 
   constructor(
@@ -145,14 +139,78 @@ class CloudInMemorySpectacle
   }
 }
 
-export interface InMemoryBaseSpectacle extends IBaseSpectacle {
+export interface CloudInMemoryBaseSpectacle extends IBaseSpectacle {
   samples: any[];
   opticContext: IOpticContext;
 }
 
+export interface CloudInMemorySpectacleDependencies {
+  events: any[];
+  samples: any[];
+}
+
+export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
+
+//@SYNC: useInMemorySpectacle
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
-): AsyncStatus<InMemoryBaseSpectacle> {
-  //@dev fill this in
-  throw new Error('copy me from public-examples.tsx when ready');
+): AsyncStatus<CloudInMemoryBaseSpectacle> {
+  const opticEngine = useOpticEngine();
+  const [spectacle, setSpectacle] = useState<CloudInMemoryBaseSpectacle>();
+  const [inputs, setInputs] = useState<{
+    events: any[];
+    samples: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    async function task() {
+      const result = await loadDependencies();
+      setInputs({
+        events: result.events,
+        samples: result.samples,
+      });
+    }
+
+    task();
+  }, [loadDependencies]);
+
+  useEffect(() => {
+    async function task() {
+      if (inputs === null) {
+        return;
+      }
+      const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+        opticEngine,
+        inputs.events,
+        inputs.samples,
+        'example-session'
+      );
+      const inMemorySpectacle = new CloudInMemorySpectacle(
+        opticContext,
+        inputs.samples
+      );
+      inMemorySpectacle.opticContext.specRepository.notifications.on(
+        'change',
+        async () => {
+          const newEvents = await inMemorySpectacle.opticContext.specRepository.listEvents();
+          setInputs({ events: newEvents, samples: inputs.samples });
+        }
+      );
+      console.count('setSpectacle');
+      setSpectacle(inMemorySpectacle);
+    }
+
+    task();
+  }, [inputs, opticEngine]);
+
+  if (spectacle) {
+    return {
+      loading: false,
+      data: spectacle,
+    };
+  } else {
+    return {
+      loading: true,
+    };
+  }
 }
