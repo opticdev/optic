@@ -30,6 +30,7 @@ import { CenteredColumn } from '../../../layouts/CenteredColumn';
 import { EndpointName } from '../../../common';
 import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 import {
   ExistingEndpointNameField,
@@ -140,7 +141,11 @@ export function DiffUrlsPage(props: any) {
 export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const { endpoints, loading } = useEndpoints();
 
-  const { pendingEndpoints } = useSharedDiffContext();
+  const {
+    pendingEndpoints,
+    setCommitModalOpen,
+    hasDiffChanges,
+  } = useSharedDiffContext();
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
 
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
@@ -150,6 +155,17 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (hasDiffChanges()) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   if (loading) {
     return <Loading />;
@@ -157,7 +173,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
-      <List dense>
+      <List dense onKeyPress={onKeyPress}>
         {pendingEndpointsToRender.length > 0 && (
           <div style={{ paddingBottom: 25 }}>
             <Typography

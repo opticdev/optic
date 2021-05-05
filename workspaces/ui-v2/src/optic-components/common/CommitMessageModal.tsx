@@ -9,6 +9,7 @@ import {
   DialogTitle,
   makeStyles,
 } from '@material-ui/core';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 type CommitMessageModalProps = {
   open: boolean;
@@ -25,6 +26,19 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
 }) => {
   const [commitMessage, setCommitMessage] = useState('');
   const classes = useStyles();
+  const canSubmit = commitMessage.length > 0;
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (canSubmit) {
+        onSave(commitMessage);
+        onClose();
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   return (
     <Dialog
@@ -34,6 +48,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
       PaperProps={{
         className: classes.dialogContainer,
       }}
+      onKeyPress={onKeyPress}
     >
       <DialogTitle id="form-dialog-title">
         Save Changes to Specification
@@ -57,7 +72,7 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           Cancel
         </Button>
         <Button
-          disabled={commitMessage.length === 0}
+          disabled={!canSubmit}
           onClick={() => {
             onSave(commitMessage);
             onClose();

@@ -252,7 +252,6 @@ export class InMemoryDiffService implements IOpticDiffService {
           return x.pathId === pathId && x.method === method;
         }
       );
-      debugger;
       if (!learnedBodiesForPathIdAndMethod) {
         return {
           pathId,

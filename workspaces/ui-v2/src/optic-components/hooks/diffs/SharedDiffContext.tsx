@@ -51,6 +51,9 @@ type ISharedDiffContext = {
   getContributedEndpointName: (endpointId: string) => string | undefined;
   getContributedPathDescription: (pathId: string) => string | undefined;
   captureId: string;
+  commitModalOpen: boolean;
+  setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  hasDiffChanges: () => boolean;
 };
 
 type SharedDiffStoreProps = {
@@ -116,6 +119,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const [wipPatterns, setWIPPatterns] = useState<{
     [key: string]: PathComponentAuthoring[];
   }>({});
+
+  const [commitModalOpen, setCommitModalOpen] = useState(false);
 
   const value: ISharedDiffContext = {
     context,
@@ -192,6 +197,14 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       return context.choices.existingEndpointPathContributions[pathId]?.command
         .AddContribution.value;
     },
+    commitModalOpen,
+    setCommitModalOpen,
+    hasDiffChanges: () =>
+      handled > 0 ||
+      context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
+      Object.keys(context.choices.existingEndpointNameContributions).length >
+        0 ||
+      Object.keys(context.choices.existingEndpointPathContributions).length > 0,
   };
 
   return (
