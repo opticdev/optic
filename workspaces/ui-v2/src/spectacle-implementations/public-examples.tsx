@@ -137,16 +137,17 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
   samples: any[];
   opticContext: IOpticContext;
 }
-
+//@SYNC: useInMemorySpectacle
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
+  const opticEngine = useOpticEngine();
   const [spectacle, setSpectacle] = useState<InMemoryBaseSpectacle>();
   const [inputs, setInputs] = useState<{
     events: any[];
     samples: any[];
   } | null>(null);
-  const opticEngine = useOpticEngine();
+
   useEffect(() => {
     async function task() {
       const result = await loadDependencies();
@@ -157,7 +158,7 @@ export function useInMemorySpectacle(
     }
 
     task();
-  }, []);
+  }, [loadDependencies]);
 
   useEffect(() => {
     async function task() {
@@ -184,8 +185,9 @@ export function useInMemorySpectacle(
       console.count('setSpectacle');
       setSpectacle(inMemorySpectacle);
     }
+
     task();
-  }, [inputs]);
+  }, [inputs, opticEngine]);
 
   if (spectacle) {
     return {

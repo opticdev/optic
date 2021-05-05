@@ -31,11 +31,7 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { InMemorySpectacle } from './public-examples';
-import { useEffect, useState } from 'react';
-import {
-  OpticEngineStore,
-  useOpticEngine,
-} from '../optic-components/hooks/useOpticEngine';
+import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
