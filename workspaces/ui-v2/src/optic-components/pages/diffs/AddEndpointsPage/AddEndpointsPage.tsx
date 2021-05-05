@@ -5,6 +5,9 @@ import {
 } from '../../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
+import { makeStyles } from '@material-ui/styles';
+import { Check } from '@material-ui/icons';
+
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
@@ -45,6 +48,7 @@ export function DiffUrlsPage(props: any) {
     pendingEndpoints,
   } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+  const classes = useStyles();
 
   const [filteredUrls, setFilteredUrls] = useState(urls);
 
@@ -53,6 +57,7 @@ export function DiffUrlsPage(props: any) {
   }, [pendingEndpoints.length, urls]);
 
   const [bulkMode, setBulkMode] = useState<boolean>(false);
+  const unmatchedUrlLengths = urls.filter((i) => !i.hide).length;
 
   const shownUrls = filteredUrls.filter((i) => !i.hide);
 
@@ -80,7 +85,7 @@ export function DiffUrlsPage(props: any) {
     );
   }
 
-  const name = `${urls.filter((i) => !i.hide).length} unmatched URLs observed${
+  const name = `${unmatchedUrlLengths} unmatched URLs observed${
     shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
   }`;
 
@@ -116,18 +121,29 @@ export function DiffUrlsPage(props: any) {
           </DiffHeader>
 
           <div style={{ flex: 1 }}>
-            <AutoSizer>
-              {({ height, width }: any) => (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemSize={47}
-                  itemCount={shownUrls.length}
-                >
-                  {renderRow}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
+            {shownUrls.length > 0 ? (
+              <AutoSizer>
+                {({ height, width }: any) => (
+                  <FixedSizeList
+                    height={height}
+                    width={width}
+                    itemSize={47}
+                    itemCount={shownUrls.length}
+                  >
+                    {renderRow}
+                  </FixedSizeList>
+                )}
+              </AutoSizer>
+            ) : unmatchedUrlLengths === 0 ? (
+              <div className={classes.noResultsContainer}>
+                <Check fontSize="large" />
+                All observed endpoints have been documented
+              </div>
+            ) : (
+              <div className={classes.noResultsContainer}>
+                No urls match the current filter
+              </div>
+            )}
           </div>
           <AuthorIgnoreRules />
         </>
@@ -281,3 +297,13 @@ function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
     />
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  noResultsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    flexDirection: 'column',
+  },
+}));
