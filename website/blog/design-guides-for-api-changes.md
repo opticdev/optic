@@ -4,8 +4,11 @@ title: "Writing Design Guides for API Changes"
 author: Stephen Mizell
 author_url: "https://github.com/smizell"
 author_image_url: "/img/team/smizell.jpg"
+image: "/img/blog-content/check-graphic.png"
 category: Community
 ---
+
+![Optic changelog in GitHub](/img/blog-content/check-graphic.png)
 
 I've worked on two different products that provided API design guide tooling. The idea for both was the same—provide a tool that helps companies design consistent APIs and helps communicate good design patterns to all of their developers.
 
@@ -70,3 +73,6 @@ We believe our approach lends itself well to these workflows. Optic helps teams 
 ## Sharing your stories
 
 We want to hear about your experiences changing APIs. What were the struggles? Fill out the survey below and we’ll help you write some of the first Optic powered design guides over the next several weeks.
+
+import { Typeform } from "../src/components/Typeform";
+<Typeform formId="qTxsT9Dq" />
