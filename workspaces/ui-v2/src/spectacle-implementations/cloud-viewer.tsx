@@ -17,6 +17,7 @@ import {
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
 import { AsyncStatus } from '<src>/types';
+import { useInMemorySpectacle } from '<src>/spectacle-implementations/public-examples';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -114,7 +115,6 @@ export interface CloudInMemorySpectacleDependencies {
 
 export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
 
-// eslint-disable-next-line
 class CloudInMemorySpectacle
   implements IForkableSpectacle, InMemoryBaseSpectacle {
   private spectaclePromise: ReturnType<typeof makeSpectacle>;
@@ -153,6 +153,5 @@ export interface InMemoryBaseSpectacle extends IBaseSpectacle {
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
 ): AsyncStatus<InMemoryBaseSpectacle> {
-  //@dev fill this in
-  throw new Error('copy me from public-examples.tsx when ready');
+  return useInMemorySpectacle(loadDependencies);
 }
