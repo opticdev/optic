@@ -175,52 +175,63 @@ function DiffCaptureResults() {
 
       <Paper elevation={1}>
         <List dense>
-          {diffsGroupedByEndpoints.map((i, index) => {
-            const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
-            const diffCompletedCount = i.shapeDiffs.filter((i) =>
-              isDiffHandled(i.diffHash())
-            ).length;
+          {diffsGroupedByEndpoints.length > 0 ? (
+            diffsGroupedByEndpoints.map((i, index) => {
+              const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
+              const diffCompletedCount = i.shapeDiffs.filter((i) =>
+                isDiffHandled(i.diffHash())
+              ).length;
 
-            const remaining = diffCount - diffCompletedCount;
-            const done = remaining === 0;
+              const remaining = diffCount - diffCompletedCount;
+              const done = remaining === 0;
 
-            return (
-              <ListItem
-                disableRipple
-                button
-                key={index}
-                onClick={() =>
-                  !done && handleChangeToEndpointPage(i.pathId, i.method)
-                }
-                style={{
-                  cursor: done ? 'default' : 'pointer',
-                }}
-              >
-                <EndpointName
-                  leftPad={3}
-                  method={i.method}
-                  fullPath={i.fullPath}
-                  fontSize={14}
-                />
-                <ListItemSecondaryAction>
-                  <div>
-                    {done ? (
-                      <div
-                        className={classes.text}
-                        style={{ color: AddedDarkGreen }}
-                      >
-                        Done ✓
-                      </div>
-                    ) : (
-                      <div className={classes.text}>
-                        {diffCompletedCount}/{diffCount} reviewed
-                      </div>
-                    )}
-                  </div>
-                </ListItemSecondaryAction>
-              </ListItem>
-            );
-          })}
+              return (
+                <ListItem
+                  disableRipple
+                  button
+                  key={index}
+                  onClick={() =>
+                    !done && handleChangeToEndpointPage(i.pathId, i.method)
+                  }
+                  style={{
+                    cursor: done ? 'default' : 'pointer',
+                  }}
+                >
+                  <EndpointName
+                    leftPad={3}
+                    method={i.method}
+                    fullPath={i.fullPath}
+                    fontSize={14}
+                  />
+                  <ListItemSecondaryAction>
+                    <div>
+                      {done ? (
+                        <div
+                          className={classes.text}
+                          style={{ color: AddedDarkGreen }}
+                        >
+                          Done ✓
+                        </div>
+                      ) : (
+                        <div className={classes.text}>
+                          {diffCompletedCount}/{diffCount} reviewed
+                        </div>
+                      )}
+                    </div>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })
+          ) : (
+            <div
+              className={classes.text}
+              style={{
+                padding: '8px 16px',
+              }}
+            >
+              No diffs are left to review
+            </div>
+          )}
           {hasUndocumented && (
             <>
               {diffsGroupedByEndpoints.length > 0 && (
@@ -321,9 +332,6 @@ const useStyles = makeStyles((theme) => ({
   locationHeader: {
     fontSize: 10,
     height: 33,
-  },
-  centered: {
-    padding: 10,
   },
   leading: {
     display: 'flex',
