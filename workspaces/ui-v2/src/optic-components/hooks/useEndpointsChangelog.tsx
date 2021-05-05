@@ -1,5 +1,4 @@
-import { SpectacleContext } from '../../spectacle-implementations/spectacle-provider';
-import { useContext, useEffect, useState } from 'react';
+import { useSpectacleQuery } from '<src>/spectacle-implementations/spectacle-provider';
 
 //@todo not working as expected -- never any changes
 export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
@@ -14,38 +13,28 @@ export const endpointChangeQuery = `query X($sinceBatchCommitId: String) {
     }
 }`;
 
-export function useEndpointsChangelog(sinceBatchCommitId?: string): any[] {
-  const spectacle = useContext(SpectacleContext)!;
+type Endpoints = any[];
 
-  const [result, setResult] = useState<any[]>([]);
+type EndpointChangeQueryResults = {
+  endpointChanges: {
+    endpoints: Endpoints;
+  };
+};
 
-  useEffect(() => {
-    async function task() {
-      if (!sinceBatchCommitId) {
-        setResult([]);
-        return;
-      }
+type EndpointChangeQueryInput = {
+  sinceBatchCommitId?: string;
+};
 
-      const result = await spectacle.query({
-        query: endpointChangeQuery,
-        variables: {
-          sinceBatchCommitId,
-        },
-      });
+export function useEndpointsChangelog(sinceBatchCommitId?: string): Endpoints {
+  const queryResults = useSpectacleQuery<
+    EndpointChangeQueryResults,
+    EndpointChangeQueryInput
+  >({
+    query: endpointChangeQuery,
+    variables: {
+      sinceBatchCommitId,
+    },
+  });
 
-      if (result.data) {
-        setResult(result.data.endpointChanges.endpoints);
-      }
-
-      if (result.errors) {
-        console.error(result.errors);
-        result.error = new Error(result.errors);
-      }
-    }
-
-    task();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sinceBatchCommitId, spectacle]);
-
-  return result;
+  return queryResults.data?.endpointChanges.endpoints || [];
 }

@@ -5,6 +5,7 @@ import {
   IObjectFieldTrail,
   IObjectTrail,
   IOneOfItemTrail,
+  IOptionalTrail,
   IShapeTrail,
   IShapeTrailComponent,
 } from '@useoptic/cli-shared/build/diffs/shape-trail';
@@ -115,38 +116,26 @@ export async function shapeTrailParserLastId(
         ...choices,
       };
     }
-    //
-    // if (lastTrail.hasOwnProperty('OptionalItemTrail')) {
-    //   const shapeId = (lastTrail as IOptionalItemTrail).OptionalItemTrail
-    //     .shapeId;
-    //   const choices = await getChoices(shapeId, query);
-    //   return {
-    //     ...choices,
-    //   };
-    // }
-    //
-    // if (lastTrail.hasOwnProperty('NullableItemTrail')) {
-    //   const shapeId = (lastTrail as INullableItemTrail).NullableItemTrail
-    //     .innerShapeId;
-    //   const choices = await getChoices(shapeId, query);
-    // }
+    if (lastTrail.hasOwnProperty('OptionalTrail')) {
+      const shapeId = (lastTrail as IOptionalTrail).OptionalTrail.shapeId;
+      const choices = await getChoices(shapeId, spectacle);
+      const lastItems = await shapeTrailParserLastId(
+        {
+          ...shapeTrail,
+          path: [...shapeTrail.path.slice(0, shapeTrail.path.length - 1)],
+        },
+        spectacle
+      );
+      return {
+        lastObject: lastItems.lastObject,
+        lastField: lastItems.lastField,
+        lastFieldKey: lastItems.lastFieldKey,
+        lastFieldShapeId: lastItems.lastFieldShapeId,
+        ...choices,
+      };
+    }
 
-    //
-    // if (lastTrail['UnknownTrail']) {
-    //   const shapeId = (lastTrail as IUnknownTrail).UnknownTrail || 'unknown';
-    //   getChoices(shapeId, query);
-    // }
-    //
-    // if (lastTrail['OneOfTrail']) {
-    //   const shapeId = (lastTrail as IOneOfTrail).OneOfTrail.shapeId;
-    //   getChoices(shapeId, query);
-    // }
-    //
-    // if (lastTrail['OptionalTrail']) {
-    //   const shapeId = (lastTrail as IOptionalTrail).OptionalTrail.shapeId;
-    //   getChoices(shapeId, query);
-    // }
-    invariant(true, 'shape trail could not be parsed');
+    invariant(false, 'shape trail could not be parsed');
   } else {
     const choices = await getChoices(shapeTrail.rootShapeId, spectacle);
     const lastObject = Object.entries(
@@ -183,7 +172,6 @@ async function getChoices(
       jsonType
     }
 }`;
-
   const result = await spectacle.query({
     variables: {
       shapeId: shapeId,

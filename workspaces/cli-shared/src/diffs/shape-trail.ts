@@ -5,6 +5,7 @@ export type IShapeTrailComponent =
   | IListTrail
   | IListItemTrail
   | INullableTrail
+  | IOptionalTrail
   | IOptionalItemTrail
   | INullableItemTrail
   | IUnknownTrail;
@@ -76,13 +77,13 @@ export interface IUnknownTrail {
 }
 
 export interface IOneOfTrail {
-  IOneOfTrail: {
+  OneOfTrail: {
     shapeId: string;
   };
 }
 
 export interface IOptionalTrail {
-  IOptionalTrail: {
+  OptionalTrail: {
     shapeId: string;
   };
 }

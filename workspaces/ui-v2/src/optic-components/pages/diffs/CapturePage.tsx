@@ -145,9 +145,7 @@ function DiffCaptureResults() {
 
   const [handled, total] = handledCount;
 
-  // const history = useHistory();
-
-  const handleChangeToEndpointPage = (pathId: string, method: string) => () => {
+  const handleChangeToEndpointPage = (pathId: string, method: string) => {
     history.push(diffForEndpointLink.linkTo(pathId, method));
   };
   const handleChangeToUndocumentedUrlPage = () => {
@@ -191,7 +189,12 @@ function DiffCaptureResults() {
                 disableRipple
                 button
                 key={index}
-                onClick={handleChangeToEndpointPage(i.pathId, i.method)}
+                onClick={() =>
+                  !done && handleChangeToEndpointPage(i.pathId, i.method)
+                }
+                style={{
+                  cursor: done ? 'default' : 'pointer',
+                }}
               >
                 <EndpointName
                   leftPad={3}

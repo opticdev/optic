@@ -28,6 +28,7 @@ import { lockFilePath } from '../shared/paths';
 import { Config } from '../config';
 import { Client } from '@useoptic/cli-client';
 import openBrowser from 'react-dev-utils/openBrowser';
+import { linkToSetup } from '../shared/ui-links';
 
 export default class Init extends Command {
   static description = 'add Optic to your API';
@@ -107,9 +108,7 @@ export default class Init extends Command {
       const cliSession = await cliClient.findSession(paths.cwd, null, null);
       developerDebugLogger({ cliSession });
       const uiBaseUrl = makeUiBaseUrl(daemonState);
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/setup`;
-      cli.log(`Finish setting up your API start task here: ${uiUrl}`);
-      openBrowser(uiUrl);
+      openBrowser(linkToSetup(cliSession.session.id));
     }
 
     await startInitFlow();

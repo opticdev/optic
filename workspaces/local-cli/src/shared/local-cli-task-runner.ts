@@ -42,10 +42,11 @@ import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/
 import { EventEmitter } from 'events';
 import { Config } from '../config';
 import { printCoverage } from './coverage';
-import {spawnProcess, spawnProcessReturnExitCode} from './spawn-process';
+import { spawnProcess, spawnProcessReturnExitCode } from './spawn-process';
 import { command } from '@oclif/test';
 import { getCaptureId } from './git/git-context-capture';
-import {getSpecEventsFrom} from "@useoptic/cli-config/build/helpers/read-specification-json";
+import { getSpecEventsFrom } from '@useoptic/cli-config/build/helpers/read-specification-json';
+import { linkToCapture, linkToDiffs } from './ui-links';
 
 export const runCommandFlags = {
   'collect-coverage': flags.boolean({
@@ -61,7 +62,8 @@ export const runCommandFlags = {
   'exit-on-diff': flags.boolean({
     default: false,
     required: false,
-    description: "When a capture session ends, if a diff is detected Optic will exit with exit code 1. This takes priority over pass-exit-code."
+    description:
+      'When a capture session ends, if a diff is detected Optic will exit with exit code 1. This takes priority over pass-exit-code.',
   }),
   'transparent-proxy': flags.boolean({
     default: false,
@@ -70,7 +72,8 @@ export const runCommandFlags = {
   'pass-exit-code': flags.boolean({
     default: false,
     required: false,
-    description: "Passes through the exit code from your task (or dependent task). exit-on-diff overrides this when a diff is detected."
+    description:
+      'Passes through the exit code from your task (or dependent task). exit-on-diff overrides this when a diff is detected.',
   }),
 };
 interface LocalCliTaskFlags {
@@ -78,7 +81,7 @@ interface LocalCliTaskFlags {
   'collect-diffs'?: boolean;
   'exit-on-diff'?: boolean;
   'transparent-proxy'?: boolean;
-  'pass-exit-code'?: boolean
+  'pass-exit-code'?: boolean;
 }
 
 export async function LocalTaskSessionWrapper(
@@ -102,7 +105,7 @@ export async function LocalTaskSessionWrapper(
 
   const { paths, config } = await loadPathsAndConfig(cli);
 
-  await getSpecEventsFrom(paths.specStorePath)
+  await getSpecEventsFrom(paths.specStorePath);
 
   const captureId = usesTaskSpecificBoundary
     ? uuid.v4()
@@ -153,7 +156,9 @@ export async function LocalTaskSessionWrapper(
     return await cleanupAndExit(1);
   }
 
-  return await cleanupAndExit( flags['pass-exit-code'] !== false ? runner.exitWithCode : 0);
+  return await cleanupAndExit(
+    flags['pass-exit-code'] !== false ? runner.exitWithCode : 0
+  );
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {
@@ -234,7 +239,8 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     ////////////////////////////////////////////////////////////////////////////////
 
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review`;
+
+    const uiUrl = linkToDiffs(uiBaseUrl, cliSession.session.id);
     cli.log(fromOptic(`Review the API Diff at ${uiUrl}`));
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +270,6 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
       ? 'yes'
       : process.env.OPTIC_ENABLE_TRANSPARENT_PROXY;
 
-
     const testCommand = commandToRunWhenStarted
       ? async () => {
           console.log(
@@ -274,15 +279,18 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
             )
           );
 
-        const exitCodeOfTestProcess = await spawnProcessReturnExitCode(commandToRunWhenStarted!, {
-            OPTIC_PROXY_PORT: taskConfig.proxyConfig.port.toString(),
-            OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
-            OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
-          });
+          const exitCodeOfTestProcess = await spawnProcessReturnExitCode(
+            commandToRunWhenStarted!,
+            {
+              OPTIC_PROXY_PORT: taskConfig.proxyConfig.port.toString(),
+              OPTIC_PROXY_HOST: taskConfig.proxyConfig.host.toString(),
+              OPTIC_PROXY: `http://${taskConfig.proxyConfig.host.toString()}:${taskConfig.proxyConfig.port.toString()}`,
+            }
+          );
 
-        if (this.options.shouldPassThroughExitCode) {
-          this.exitWithCode = exitCodeOfTestProcess
-        }
+          if (this.options.shouldPassThroughExitCode) {
+            this.exitWithCode = exitCodeOfTestProcess;
+          }
         }
       : undefined;
 
@@ -294,7 +302,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     await sessionManager.run(persistenceManager);
 
     if (!commandToRunWhenStarted && this.options.shouldPassThroughExitCode) {
-      this.exitWithCode = sessionManager.getExitCodeOfProcess()
+      this.exitWithCode = sessionManager.getExitCodeOfProcess();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -313,7 +321,7 @@ ${blockers.map((x) => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     );
 
     if (hasDiff) {
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
+      const uiUrl = linkToCapture(uiBaseUrl, cliSession.session.id, captureId);
 
       const usesTaskSpecificCapture =
         this.options.shouldExitOnDiff || this.options.shouldCollectCoverage;

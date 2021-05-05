@@ -5,6 +5,7 @@ author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"
 author_image_url: "/img/team/aidan.jpg"
 category: Release
+image: /img/blog-content/lhc.jpg
 ---
 
 :::note **Beta Alert:**

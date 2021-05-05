@@ -30,6 +30,7 @@ export const PendingEndpointNameField: FC<{
       value={value}
       setValue={setValue}
       variant={TextFieldVariant.SMALL}
+      defaultText="name for this endpoint"
     />
   );
 };
@@ -41,12 +42,13 @@ export const ExistingEndpointNameField: FC<{
     method: endpoint.method,
     pathId: endpoint.pathId,
   });
-  const { setEndpointName: setGlobalDiffEndpointName } = useSharedDiffContext();
-
+  const {
+    setEndpointName: setGlobalDiffEndpointName,
+    getContributedEndpointName,
+  } = useSharedDiffContext();
   const debouncedSet = useDebouncedFn(setGlobalDiffEndpointName, 200);
-
   const { value, setValue } = useStateWithSideEffect({
-    initialValue: endpoint.purpose,
+    initialValue: getContributedEndpointName(endpointId) || endpoint.purpose,
     sideEffect: (newName: string) => debouncedSet(endpointId, newName),
   });
 
@@ -57,6 +59,7 @@ export const ExistingEndpointNameField: FC<{
       value={value}
       setValue={setValue}
       variant={TextFieldVariant.SMALL}
+      defaultText="name for this endpoint"
     />
   );
 };

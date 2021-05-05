@@ -14130,7 +14130,7 @@ sha.js@^2.4.0, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-shape-hash@1.0.25, shape-hash@^1.0.6:
+shape-hash@1.0.25:
   version "1.0.25"
   resolved "https://registry.npmjs.org/shape-hash/-/shape-hash-1.0.25.tgz#23a195167e588f55abd92f13f1f36ce0abc29b3e"
   integrity sha512-ScSwGlLQoqeE8CGXgrl21YUrXQwZxSstVR7nLLgwe21Ee1mvEpl2ns8jS0dOadcVgXuKwDs9iCIppysZElZ2Ag==

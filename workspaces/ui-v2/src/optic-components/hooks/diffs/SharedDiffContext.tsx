@@ -48,6 +48,8 @@ type ISharedDiffContext = {
     endpointId: string
   ) => void;
   setPendingEndpointName: (id: string, name: string) => void;
+  getContributedEndpointName: (endpointId: string) => string | undefined;
+  getContributedPathDescription: (pathId: string) => string | undefined;
   captureId: string;
 };
 
@@ -104,8 +106,12 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       },
       [0, 0]
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(Object.keys(state.context.choices.approvedSuggestions))]);
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [
+    JSON.stringify(Object.keys(state.context.choices.approvedSuggestions)),
+    JSON.stringify(state.context.browserDiffHashIgnoreRules),
+  ]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const [wipPatterns, setWIPPatterns] = useState<{
     [key: string]: PathComponentAuthoring[];
@@ -178,6 +184,14 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       });
     },
     captureId: props.captureId,
+    getContributedEndpointName: (endpointId: string): string | undefined => {
+      return context.choices.existingEndpointNameContributions[endpointId]
+        ?.AddContribution.value;
+    },
+    getContributedPathDescription: (pathId: string): string | undefined => {
+      return context.choices.existingEndpointPathContributions[pathId]?.command
+        .AddContribution.value;
+    },
   };
 
   return (

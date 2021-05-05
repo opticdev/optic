@@ -106,9 +106,9 @@ pub fn affordances_to_commands(
     values_by_trail: values_by_trail_map,
   };
   let mut id_generator = IdGenerator::default();
-  let (root_shape_id_option, commands_iter, new_shape_id) =
-    trail_observation_results.into_commands(&mut id_generator);
-  let result: (Vec<SpecCommand>, String) = (commands_iter.collect(), new_shape_id.unwrap());
+  let (root_shape_id_option, commands_iter) =
+    trail_observation_results.into_commands(&mut id_generator, &json_trail);
+  let result: (Vec<SpecCommand>, String) = (commands_iter.collect(), root_shape_id_option.unwrap());
   serde_json::to_string(&result)
     .map_err(|err| JsValue::from(format!("new commands could not be serialized: {:?}", err)))
 }
