@@ -11,6 +11,7 @@ import {
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   IOpticCapturesService,
+  IOpticConfigRepository,
   IOpticDiffService,
   IOpticEngine,
   SpectacleInput,
@@ -113,6 +114,7 @@ interface LocalCliServices {
   spectacle: IBaseSpectacle;
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
+  configRepository: IOpticConfigRepository;
 }
 interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
@@ -226,6 +228,25 @@ class LocalCliDiffService implements IOpticDiffService {
   }
 }
 
+interface LocalCliConfigRepositoryDependencies {
+  baseUrl: string;
+  spectacle: IBaseSpectacle;
+}
+
+class LocalCliConfigRepository implements IOpticConfigRepository {
+  constructor(private dependencies: LocalCliConfigRepositoryDependencies) {}
+
+  async addIgnoreRule(rule: string): Promise<void> {
+    await JsonHttpClient.patchJson(`${this.dependencies.baseUrl}/ignores`, {
+      rule,
+    });
+  }
+
+  async listIgnoreRules(): Promise<string[]> {
+    throw new Error('should never be called');
+  }
+}
+
 export function useLocalCliServices(
   specId: string
 ): AsyncStatus<LocalCliServices> {
@@ -250,8 +271,12 @@ export function useLocalCliServices(
     baseUrl: apiBaseUrl,
     spectacle,
   });
+  const configRepository = new LocalCliConfigRepository({
+    baseUrl: apiBaseUrl,
+    spectacle,
+  });
   return {
     loading: false,
-    data: { spectacle, capturesService, opticEngine },
+    data: { spectacle, capturesService, opticEngine, configRepository },
   };
 }

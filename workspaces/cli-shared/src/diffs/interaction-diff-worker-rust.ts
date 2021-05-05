@@ -9,6 +9,7 @@ import { getDiffOutputPaths } from './diff-worker-rust';
 import { fork } from 'stream-fork';
 import { DiffResult } from '@useoptic/diff-engine-wasm/lib/streams/diff-results';
 import { PassThrough, Readable } from 'stream';
+import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 interface WorkerResult {
   results: AsyncIterable<DiffResult>;
 }
@@ -24,12 +25,12 @@ interface WorkerConfig {
 export class InteractionDiffWorkerRust {
   constructor(private config: WorkerConfig) {}
   private async setup() {
-    //@todo: apply ignore rules
-    //@aidan @jaap I'm not sure what the contract is here regarding ignores.
+    const ignoreFilter = parseIgnore(this.config.ignoreRules);
 
     const interactionFilter = (i: any) => {
-      return true;
+      return ignoreFilter.shouldIgnore(i.request.path, i.request.method);
     };
+
     const interactionIterator = CaptureInteractionIterator(
       {
         captureId: this.config.captureId,
