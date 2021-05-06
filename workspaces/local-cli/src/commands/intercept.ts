@@ -4,9 +4,10 @@ import {
   CommandAndProxySessionManager,
   developerDebugLogger,
   fromOptic,
-  loadPathsAndConfig, makeUiBaseUrl,
+  loadPathsAndConfig,
+  makeUiBaseUrl,
 } from '@useoptic/cli-shared';
-import colors from 'colors'
+import colors from 'colors';
 import { getCaptureId } from '../shared/git/git-context-capture';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../shared/paths';
@@ -17,23 +18,25 @@ import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import getPort from 'get-port';
 import url from 'url';
 import { BrowserLaunchers } from '../shared/intercept/browser-launchers';
-import {cli} from "cli-ux";
-import {IHttpInteraction} from "@useoptic/domain-types";
-import openBrowser from "react-dev-utils/openBrowser";
+import { cli } from 'cli-ux';
+import { IHttpInteraction } from '@useoptic/domain-types';
+import openBrowser from 'react-dev-utils/openBrowser';
 
 export default class Intercept extends Command {
   static description =
     'intercept API traffic for a given hostname ie api.example.com';
 
   static flags = {
-    chrome: flags.boolean({}),
-    postman: flags.boolean({}),
+    chrome: flags.boolean({
+      description:
+        'collect traffic to your deployed environment using Chrome network tab',
+    }),
   };
 
   static args = [
     {
       name: 'environment',
-      required: false,
+      required: true,
     },
   ];
 
@@ -48,7 +51,7 @@ export default class Intercept extends Command {
     if (!environments[args.environment]) {
       return this.warn(
         `No environment ${args.environment} found in optic.yml.Set one up like this:\n${exampleenv}`
-      )
+      );
     }
 
     const envToTarget = environments[args.environment]!;
@@ -120,13 +123,20 @@ export default class Intercept extends Command {
       if (flags.chrome) browsers.chrome();
     };
 
-    let collected = 0
-    cli.action.start('Waiting for traffic...')
-    cli.action.type = "debug"
+    let collected = 0;
+    cli.action.start('Waiting for traffic...');
+    cli.action.type = 'debug';
     const onSample = (sample: IHttpInteraction) => {
-      collected++
-      cli.action.start(`Waiting for traffic...`, `${colors.gray(`${collected} requests collected`)}\n${sample.request.method} ${sample.request.host}${sample.request.path} | ${sample.response.statusCode}`)
-    }
+      collected++;
+      cli.action.start(
+        `Waiting for traffic...`,
+        `${colors.gray(`${collected} requests collected`)}\n${
+          sample.request.method
+        } ${sample.request.host}${sample.request.path} | ${
+          sample.response.statusCode
+        }`
+      );
+    };
 
     const sessionManager = new CommandAndProxySessionManager(
       {
@@ -150,16 +160,15 @@ export default class Intercept extends Command {
     }
     const uiBaseUrl = makeUiBaseUrl(daemonState);
     const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/review/${captureId}`;
-    openBrowser(uiUrl)
+    openBrowser(uiUrl);
 
     cleanupAndExit(0);
   }
 }
-
 
 const exampleenv = `
 environments:
   production:
     host: https://api.github.com # the hostname of the API we should record traffic from
     webUI: https://github.com # the url that should open when a browser flag is passed\`
-`
+`;
