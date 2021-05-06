@@ -15,10 +15,9 @@ export class OpticUIEvents {
 
   // proposed
   reviewPageLoaded(
-    diffsPerEndpoint: number[],
+    diffs: number,
     undocumentedUrls: number,
     diffEngineDurationSeconds: number,
-    totalObservations: number,
     endpointsInSpec: number
   ) {
     this.dispatch({
@@ -27,7 +26,6 @@ export class OpticUIEvents {
         diffsPerEndpoint,
         undocumentedUrls,
         diffEngineDurationSeconds,
-        totalObservations,
         endpointsInSpec,
       },
     });
@@ -65,17 +63,12 @@ export class OpticUIEvents {
   //   });
   // }
 
-  userSavedChanges(
-    undocumentedUrls: number,
-    approvedEndpointDiffs: number,
-    contributionsChanged: number
-  ) {
+  userSavedChanges(undocumentedUrls: number, endpointsChangedCount: number) {
     this.dispatch({
       name: 'user_saved_changes',
       properties: {
         undocumentedUrls,
-        approvedEndpointDiffs,
-        contributionsChanged,
+        endpointsChangedCount,
       },
     });
   }

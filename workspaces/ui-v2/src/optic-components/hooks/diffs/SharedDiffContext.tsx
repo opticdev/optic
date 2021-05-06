@@ -18,6 +18,7 @@ import { AddContribution } from '../../../lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
+import { useAnalytics } from '<src>/analytics';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -101,6 +102,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     );
   };
 
+  const analytics = useAnalytics();
+
   const [handled, total] = useMemo(() => {
     return context.results.diffsGroupedByEndpoint.reduce(
       (current, grouping) => {
@@ -162,7 +165,10 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       })),
     wipPatterns,
     currentSpecContext,
-    reset: () => send({ type: 'RESET' }),
+    reset: () => {
+      analytics.userResetDiff(handled, total);
+      send({ type: 'RESET' });
+    },
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
     setEndpointName: (id: string, name: string) =>
