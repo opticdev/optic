@@ -1,4 +1,4 @@
-import { toBytes } from '../json-to-shape-hash';
+import { toBytes, toJsonExample } from '../json-to-shape-hash';
 import { decodeShapeHash } from '../protobuf-support';
 
 const example = {
@@ -32,6 +32,11 @@ test('can shape hash a json object', async () => {
 
 test('can decode the hash', async () => {
   expect(decodeShapeHash(toBytes(example))).toMatchSnapshot();
+});
+
+test('can create a sanitized example from the hash', async () => {
+  const hash = toBytes(example).toString('base64');
+  expect(toJsonExample(hash)).toMatchSnapshot();
 });
 
 test('shape hashes of string are secure', async () => {

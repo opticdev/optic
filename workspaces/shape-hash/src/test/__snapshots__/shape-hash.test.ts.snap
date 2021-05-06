@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can create a sanitized example from the hash 1`] = `
+Object {
+  "glossary": Object {
+    "GlossDiv": Object {
+      "GlossList": Object {
+        "GlossEntry": Object {
+          "Abbrev": "string",
+          "Acronym": "string",
+          "GlossDef": Object {
+            "GlossSeeAlso": Array [
+              "string",
+              "string",
+            ],
+            "para": "string",
+          },
+          "GlossSee": "string",
+          "GlossTerm": "string",
+          "ID": null,
+          "SortAs": "string",
+        },
+      },
+      "title": "string",
+    },
+    "title": "string",
+  },
+}
+`;
+
 exports[`can decode the hash 1`] = `
 Object {
   "fields": Array [
