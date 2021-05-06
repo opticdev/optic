@@ -3,6 +3,7 @@ import { assign, Machine, spawn } from 'xstate';
 import * as niceTry from 'nice-try';
 import { pathToRegexp } from 'path-to-regexp';
 import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
+import { AddContributionType, CQRSCommand } from '<src>/lib/command-factory';
 import { BodyShapeDiff, ParsedDiff } from '../../../lib/parse-diff';
 import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { DiffSet } from '../../../lib/diff-set';
@@ -396,7 +397,7 @@ export type SharedDiffStateEvent =
   | {
       type: 'COMMANDS_APPROVED_FOR_DIFF';
       diffHash: string;
-      commands: any[];
+      commands: CQRSCommand[];
     }
   | {
       type: 'ADD_DIFF_HASH_IGNORE';
@@ -411,7 +412,7 @@ export type SharedDiffStateEvent =
   | {
       type: 'SET_ENDPOINT_NAME';
       id: string;
-      command: any;
+      command: AddContributionType;
     }
   | {
       type: 'UPDATE_PENDING_ENDPOINT_NAME';
@@ -419,7 +420,7 @@ export type SharedDiffStateEvent =
   | {
       type: 'SET_PATH_DESCRIPTION';
       pathId: string;
-      command: any;
+      command: AddContributionType;
       endpointId: string;
     };
 
@@ -437,16 +438,16 @@ export interface SharedDiffStateContext {
     diffsGroupedByEndpoint: EndpointDiffGrouping[];
   };
   choices: {
-    approvedSuggestions: { [key: string]: any[] };
-    existingEndpointNameContributions: { [id: string]: any };
+    approvedSuggestions: { [key: string]: CQRSCommand[] };
+    existingEndpointNameContributions: { [id: string]: AddContributionType };
     existingEndpointPathContributions: {
       [id: string]: {
-        command: any;
+        command: AddContributionType;
         endpointId: string;
       };
     };
   };
-  simulatedCommands: any[];
+  simulatedCommands: CQRSCommand[];
   pendingEndpoints: IPendingEndpoint[];
   browserAppliedIgnoreRules: string[];
   browserDiffHashIgnoreRules: string[];
