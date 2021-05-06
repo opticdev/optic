@@ -137,10 +137,7 @@ export class Actual {
     private shapeTrail: IShapeTrail,
     public jsonTrail: IJsonTrail
   ) {
-    this.trailAffordances = learnedTrails.affordances.filter((i) => {
-      const compared = equals(normalize(i.trail), normalize(jsonTrail));
-      return compared;
-    });
+    this.trailAffordances = learnedTrails.affordances;
   }
 
   isField(): boolean {

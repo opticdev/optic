@@ -5,6 +5,7 @@ import {
   IPatchChoices,
 } from '../Interfaces';
 import { Actual } from '../shape-diff-dsl-rust';
+import equals from 'lodash.isequal';
 import {
   AddShape,
   AddShapeParameter,
@@ -40,16 +41,21 @@ export function builderInnerShapeFromChoices(
       return foundShapeId[0];
     } else {
       const filterToTarget = actual.trailAffordances.map((affordance) => {
-        return {
-          ...affordance,
-          wasString: i === ICoreShapeKinds.StringKind,
-          wasNumber: i === ICoreShapeKinds.NumberKind,
-          wasBoolean: i === ICoreShapeKinds.BooleanKind,
-          wasNull: i === ICoreShapeKinds.NullableKind,
-          wasArray: i === ICoreShapeKinds.ListKind,
-          wasObject: i === ICoreShapeKinds.ObjectKind,
-          fieldSet: i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
-        };
+        if (equals(affordance.trail, actual.jsonTrail)) {
+          return {
+            ...affordance,
+            wasString: i === ICoreShapeKinds.StringKind,
+            wasNumber: i === ICoreShapeKinds.NumberKind,
+            wasBoolean: i === ICoreShapeKinds.BooleanKind,
+            wasNull: i === ICoreShapeKinds.NullableKind,
+            wasArray: i === ICoreShapeKinds.ListKind,
+            wasObject: i === ICoreShapeKinds.ObjectKind,
+            fieldSet:
+              i === ICoreShapeKinds.ObjectKind ? affordance.fieldSet : [],
+          };
+        } else {
+          return affordance;
+        }
       });
 
       const [commands, newShapeId] = JSON.parse(
