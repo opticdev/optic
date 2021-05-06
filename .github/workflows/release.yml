@@ -57,7 +57,7 @@ jobs:
       - name: Set prerelease_tag output
         id: prerelease_tag
         run: |
-          source sourceme.sh && optic_install_dependencies
+          task workspaces:build:ci
           PRERELEASE_TAG=$(node workspaces/scripts/prerelease-tag $OPTIC_VERSION)
           echo "::set-output name=prerelease_tag::$PRERELEASE_TAG"
       - name: Set should_publish output
@@ -217,6 +217,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish-binaries, release_logic]
     steps:
+    - name: Install Task
+      run: curl -sL https://taskfile.dev/install.sh | sudo bash -s -- -b /usr/local/bin/
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # https://github.com/actions/checkout/releases/tag/v2.3.3
       # with:
       #   ref: release
@@ -243,27 +245,7 @@ jobs:
         fi
 
         FLAGS_FILE=.env.$RELEASE_CHANNEL
-        if [[ -r $FLAGS_FILE ]]; then
-          echo "Feature flags found for $RELEASE_CHANNEL, staging for build and runtime."
-          cp $FLAGS_FILE .env
-          cp $FLAGS_FILE workspaces/agent-cli/.env
-          cp $FLAGS_FILE workspaces/ci-cli/.env
-          cp $FLAGS_FILE workspaces/local-cli/.env
-          cp $FLAGS_FILE workspaces/cli-server/.env
-          cp $FLAGS_FILE workspaces/cli-scripts/.env
-          cp $FLAGS_FILE workspaces/diff-engine/.env
-          cp $FLAGS_FILE workspaces/ui/.env.production.local
-        fi
-
-        if [[ -r .env ]]; then
-          echo "Feature flags staged:"
-          cat .env
-          echo ""
-        else
-          echo "No feature flags staged"
-        fi
-
-        source ./sourceme.sh && optic_build_for_release
+        task workspaces:build:ci
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.PUBLISH_NPM_OPTIC_BOT }}" > ~/.npmrc
     - run: node ./workspaces/scripts/publish.js
       env:
