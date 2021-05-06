@@ -53,7 +53,10 @@ export function EditContributionsButton() {
       <CommitMessageModal
         open={commitModalOpen}
         onClose={() => setCommitModalOpen(false)}
-        onSave={save}
+        onSave={(commitMessage: string) => {
+          save(commitMessage);
+          setCommitModalOpen(false);
+        }}
         dialogText={`You have ${pendingCount} ${
           pendingCount === 1 ? 'change' : 'changes'
         }.`}

@@ -75,7 +75,6 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           disabled={!canSubmit}
           onClick={() => {
             onSave(commitMessage);
-            onClose();
           }}
           color="primary"
         >
