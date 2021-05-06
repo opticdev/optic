@@ -23,7 +23,6 @@ export class OpticUIEvents {
     this.dispatch({
       name: 'review_page_loaded',
       properties: {
-        diffsPerEndpoint,
         undocumentedUrls,
         diffEngineDurationSeconds,
         endpointsInSpec,
