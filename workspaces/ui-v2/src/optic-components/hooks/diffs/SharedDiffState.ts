@@ -161,16 +161,7 @@ export const newSharedDiffMachine = (
               assign({
                 results: (ctx) => updateUrlResults(ctx),
               }),
-              (ctx, event) => {
-                configRepository
-                  .addIgnoreRule(event.rule)
-                  .then((i) => {
-                    debugger;
-                  })
-                  .catch((i) => {
-                    debugger;
-                  });
-              },
+              (ctx, event) => configRepository.addIgnoreRule(event.rule),
             ],
           },
           ADD_DIFF_HASH_IGNORE: {
