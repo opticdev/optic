@@ -88,15 +88,63 @@ impl TrailObservationsResult {
       shape_prototypes.push(shape_prototype);
     }
 
-    let root_shape_id = shape_prototypes_by_trail
-      .get(root_trail)
-      .map(|root_shape_prototype| root_shape_prototype.id.clone());
+    let root_shape = shape_prototypes_by_trail.get(root_trail);
+    let root_shape_id = root_shape.map(|root_shape_prototype| root_shape_prototype.id.clone());
+
+    let included_trails: HashSet<_> =
+      shape_prototypes_trails(root_shape, &shape_prototypes_by_trail).collect();
 
     let commands =
       shape_prototypes_to_commands(shape_prototypes).map(|command| SpecCommand::from(command));
 
     (root_shape_id, commands)
   }
+}
+
+fn shape_prototypes_trails<'a>(
+  shape_prototype: Option<&'a ShapePrototype>,
+  prototypes_by_trail: &'a HashMap<JsonTrail, ShapePrototype>,
+) -> impl Iterator<Item = JsonTrail> + 'a {
+  shape_prototype
+    .into_iter()
+    .flat_map(
+      move |shape_prototype| match shape_prototype.prototype_descriptor {
+        ShapePrototypeDescriptor::PrimitiveKind { .. } => {
+          vec![shape_prototype.trail.clone()]
+        }
+        ShapePrototypeDescriptor::NullableShape { ref shape } => {
+          shape_prototypes_trails(Some(shape), prototypes_by_trail).collect()
+        }
+        ShapePrototypeDescriptor::OneOfShape { ref branches, .. } => branches
+          .iter()
+          .flat_map(|branch_prototype| {
+            shape_prototypes_trails(Some(branch_prototype), prototypes_by_trail)
+          })
+          .collect(),
+        ShapePrototypeDescriptor::ListOfShape {
+          ref item_shape_id, ..
+        } => {
+          let item_prototype = prototypes_by_trail.get(&shape_prototype.trail.with_array_item(0));
+
+          shape_prototypes_trails(item_prototype, prototypes_by_trail).collect()
+        }
+        ShapePrototypeDescriptor::ObjectWithFields { ref fields } => fields
+          .iter()
+          .flat_map(|field_prototype_descriptor| {
+            let field_prototype = prototypes_by_trail.get(
+              &shape_prototype
+                .trail
+                .with_object_key(field_prototype_descriptor.key.clone()),
+            );
+
+            shape_prototypes_trails(field_prototype, prototypes_by_trail)
+          })
+          .collect(),
+        ShapePrototypeDescriptor::Unknown => {
+          vec![shape_prototype.trail.clone()]
+        }
+      },
+    )
 }
 
 fn shape_prototypes_to_commands(
