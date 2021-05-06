@@ -37,6 +37,7 @@ import {
   isValidCaptureState,
   ValidCaptureState,
 } from '../routers/spec-router';
+import { IgnoreFileHelper } from '@useoptic/cli-config/build/helpers/ignore-file-interface';
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface LocalCliSpecState {}
@@ -109,12 +110,13 @@ export class LocalCliCapturesService implements IOpticCapturesService {
     });
     const captureBaseDirectory = this.dependencies.capturesHelpers.baseDirectory();
     const events = await this.dependencies.specRepository.listEvents();
+    const ignoreRules = await this.dependencies.configRepository.listIgnoreRules();
     await diff.start({
       diffId,
       captureId,
       captureBaseDirectory,
       events,
-      ignoreRules: this.dependencies.configRepository.ignoreRequests,
+      ignoreRules: ignoreRules,
     });
     const diffService = new LocalCliDiffService({ diff });
     await this.dependencies.diffRepository.add(diffId, diffService);
@@ -228,9 +230,28 @@ export class LocalCliDiffService implements IOpticDiffService {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//@TODO: use IgnoreFileHelper (see on-demand.ts)
+interface ILocalCliConfigRepositoryDependencies {
+  opticYmlPath: string;
+  ignoreFilePath: string;
+}
+
 export class LocalCliConfigRepository implements IOpticConfigRepository {
-  ignoreRequests: string[] = [];
+  ignoreFileHelper: IgnoreFileHelper;
+
+  constructor(private dependencies: ILocalCliConfigRepositoryDependencies) {
+    this.ignoreFileHelper = new IgnoreFileHelper(
+      dependencies.ignoreFilePath,
+      dependencies.opticYmlPath
+    );
+  }
+
+  async addIgnoreRule(rule: string): Promise<void> {
+    return await this.ignoreFileHelper.appendRule(rule);
+  }
+  async listIgnoreRules(): Promise<string[]> {
+    const rules = await this.ignoreFileHelper.getCurrentIgnoreRules();
+    return rules.allRules;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -246,7 +267,10 @@ export class LocalCliOpticContextBuilder {
       specDirPath: paths.specDirPath,
       notifications,
     });
-    const configRepository = new LocalCliConfigRepository();
+    const configRepository = new LocalCliConfigRepository({
+      opticYmlPath: paths.configPath,
+      ignoreFilePath: paths.opticIgnorePath,
+    });
     const diffRepository = new InMemoryDiffRepository();
 
     const capturesService = new LocalCliCapturesService({
