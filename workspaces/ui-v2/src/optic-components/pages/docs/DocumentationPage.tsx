@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { NavigationRoute } from '../../navigation/NavigationRoute';
 import {
   useDocumentationPageLink,
@@ -9,6 +8,7 @@ import groupBy from 'lodash.groupby';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, ListItem, Typography } from '@material-ui/core';
+import makeStyles from '@material-ui/styles/makeStyles';
 import { EndpointName, PromptNavigateAway, PathParameters } from '../../common';
 import { EndpointNameMiniContribution } from '../../documentation/Contributions';
 import {
@@ -20,7 +20,7 @@ import { FullWidth } from '../../layouts/FullWidth';
 import { EndpointNameContribution } from '../../documentation/Contributions';
 import { MarkdownBodyContribution } from '../../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../../documentation/TwoColumn';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { DocsFieldOrParameterContribution } from '../../documentation/Contributions';
 import { EndpointTOC } from '../../documentation/EndpointTOC';
 import { useEndpointBody } from '../../hooks/useEndpointBodyHook';
@@ -34,6 +34,7 @@ import { useBaseUrl } from '../../hooks/useBaseUrl';
 import { useAppConfig } from '../../hooks/config/AppConfiguration';
 import { useChangelogStyles } from '../../changelog/ChangelogBackground';
 import { IShapeRenderer, JsonLike } from '../../shapes/ShapeRenderInterfaces';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 export function DocumentationPages(props: any) {
   const documentationPageLink = useDocumentationPageLink();
@@ -98,13 +99,30 @@ export function DocumentationRootPage(props: {
   changelogBatchId?: string;
 }) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
+  //@nic TODO fork changelog from documentation page
+  const isChangelogPage = props.changelogBatchId !== undefined;
+
+  const {
+    isEditing,
+    pendingCount,
+    setCommitModalOpen,
+  } = useContributionEditing();
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
   const changelogStyles = useChangelogStyles();
-
-  // const history = useHistory();
-  // const endpointPageLink = useEndpointPageLink();
+  const styles = useStyles();
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (isEditing && pendingCount > 0) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   if (loading) {
     return <Loading />;
@@ -112,7 +130,7 @@ export function DocumentationRootPage(props: {
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
-      <List dense>
+      <List dense onKeyPress={onKeyPress}>
         {tocKeys.map((tocKey) => {
           return (
             <div key={tocKey}>
@@ -148,15 +166,21 @@ export function DocumentationRootPage(props: {
                       style={{ paddingRight: 15 }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <EndpointNameMiniContribution
-                        id={getEndpointId({
-                          method: endpoint.method,
-                          pathId: endpoint.pathId,
-                        })}
-                        defaultText="name for this endpoint"
-                        contributionKey="purpose"
-                        initialValue={endpoint.purpose}
-                      />
+                      {isChangelogPage ? (
+                        <Typography className={styles.smallField}>
+                          {endpoint.purpose || 'Unnamed Endpoint'}
+                        </Typography>
+                      ) : (
+                        <EndpointNameMiniContribution
+                          id={getEndpointId({
+                            method: endpoint.method,
+                            pathId: endpoint.pathId,
+                          })}
+                          defaultText="name for this endpoint"
+                          contributionKey="purpose"
+                          initialValue={endpoint.purpose}
+                        />
+                      )}
                     </div>
                   </ListItem>
                 );
@@ -169,17 +193,40 @@ export function DocumentationRootPage(props: {
   );
 }
 
-export function EndpointRootPage(props: any) {
+export const EndpointRootPage: FC<
+  RouteComponentProps<{
+    pathId: string;
+    method: string;
+  }> & {
+    isChangelogPage?: boolean;
+  }
+> = ({ isChangelogPage, match }) => {
   const { endpoints, loading } = useEndpoints();
 
-  const { match } = props;
   const { pathId, method } = match.params;
 
   const bodies = useEndpointBody(pathId, method);
-
+  const styles = useStyles();
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
     [pathId, method, endpoints]
+  );
+  const {
+    isEditing,
+    pendingCount,
+    setCommitModalOpen,
+  } = useContributionEditing();
+
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (isEditing && pendingCount > 0) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
   );
 
   if (loading) {
@@ -195,13 +242,23 @@ export function EndpointRootPage(props: any) {
   );
 
   return (
-    <FullWidth style={{ paddingTop: 30, paddingBottom: 400 }}>
-      <EndpointNameContribution
-        id={endpointId}
-        contributionKey="purpose"
-        defaultText="What does this endpoint do?"
-        initialValue={thisEndpoint.purpose}
-      />
+    <FullWidth
+      style={{ paddingTop: 30, paddingBottom: 400 }}
+      onKeyPress={onKeyPress}
+    >
+      {/* @nic TODO fork documentation page from changelog page */}
+      {isChangelogPage ? (
+        <Typography className={styles.regularField}>
+          {thisEndpoint.purpose || 'Unnamed Endpoint'}
+        </Typography>
+      ) : (
+        <EndpointNameContribution
+          id={endpointId}
+          contributionKey="purpose"
+          defaultText="What does this endpoint do?"
+          initialValue={thisEndpoint.purpose}
+        />
+      )}
       <EndpointName
         fontSize={19}
         leftPad={0}
@@ -289,4 +346,20 @@ export function EndpointRootPage(props: any) {
       })}
     </FullWidth>
   );
-}
+};
+
+const useStyles = makeStyles((theme) => ({
+  smallField: {
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Ubuntu',
+    pointerEvents: 'none',
+    color: '#2a2f45',
+  },
+  regularField: {
+    fontSize: '1.25rem',
+    fontFamily: 'Ubuntu, Inter',
+    fontWeight: 500,
+    lineHeight: 1.6,
+  },
+}));

@@ -20,6 +20,7 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
+import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -163,7 +164,13 @@ export class InMemoryCapturesService implements IOpticCapturesService {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class InMemoryConfigRepository implements IOpticConfigRepository {
-  ignoreRequests: string[] = [];
+  addIgnoreRule(rule: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  listIgnoreRules(): Promise<string[]> {
+    return Promise.resolve(defaultIgnoreRules);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +259,6 @@ export class InMemoryDiffService implements IOpticDiffService {
           return x.pathId === pathId && x.method === method;
         }
       );
-      debugger;
       if (!learnedBodiesForPathIdAndMethod) {
         return {
           pathId,
@@ -363,8 +369,6 @@ export class InMemoryDiff {
 
     return AsyncTools.toArray(lastUnique);
   }
-
-  //@dev here is where to use learn_undocumented_bodies and learn_shape_diff_affordances from opticEngine consuming diff results
 }
 
 export class InMemoryDiffRepository implements IOpticDiffRepository {

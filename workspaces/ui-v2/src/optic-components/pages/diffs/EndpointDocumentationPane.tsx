@@ -25,13 +25,16 @@ type EndpointDocumentationPaneProps = {
   renderHeader: () => ReactNode;
 };
 
-export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
+export const EndpointDocumentationPane: FC<
+  EndpointDocumentationPaneProps & React.HtmlHTMLAttributes<HTMLDivElement>
+> = ({
   method,
   pathId,
   lastBatchCommit,
   highlightedLocation,
   highlightBodyChanges,
   renderHeader,
+  ...props
 }) => {
   const { endpoints, loading } = useEndpoints();
   // const previewCommands = useSimulatedCommands();
@@ -56,7 +59,10 @@ export const EndpointDocumentationPane: FC<EndpointDocumentationPaneProps> = ({
   });
 
   return (
-    <FullWidth style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}>
+    <FullWidth
+      style={{ padding: 30, paddingTop: 15, paddingBottom: 400 }}
+      {...props}
+    >
       {renderHeader()}
       <div style={{ height: 20 }} />
       <CodeBlock
@@ -150,11 +156,16 @@ const DiffPathParamField: FC<{
     value: undefined,
   };
 
-  const { setPathDescription } = useSharedDiffContext();
+  const {
+    setPathDescription,
+    getContributedPathDescription,
+  } = useSharedDiffContext();
 
   const debouncedAddContribution = useDebouncedFn(setPathDescription, 200);
   const { value, setValue } = useStateWithSideEffect({
-    initialValue: pathParameter.description,
+    initialValue:
+      getContributedPathDescription(pathParameter.id) ||
+      pathParameter.description,
     sideEffect: (description: string) =>
       debouncedAddContribution(pathParameter.id, description, endpointId),
   });

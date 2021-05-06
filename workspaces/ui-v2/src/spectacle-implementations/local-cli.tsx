@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
+import { AsyncStatus } from '<src>/types';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
 import {
   IBaseSpectacle,
@@ -10,6 +11,7 @@ import {
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   IOpticCapturesService,
+  IOpticConfigRepository,
   IOpticDiffService,
   IOpticEngine,
   SpectacleInput,
@@ -30,8 +32,8 @@ import {
 } from '../optic-components/hooks/config/AppConfiguration';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { InMemorySpectacle } from './public-examples';
-import { useEffect, useState } from 'react';
-import { OpticEngineStore } from '../optic-components/hooks/useOpticEngine';
+import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
+import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -67,7 +69,7 @@ export default function LocalCli() {
   return (
     <AppConfigurationStore config={appConfig}>
       <SpectacleStore spectacle={data.spectacle}>
-        <OpticEngineStore>
+        <ConfigRepositoryStore config={data.configRepository}>
           <CapturesServiceStore capturesService={data.capturesService}>
             <BaseUrlProvider value={{ url: match.url }}>
               <Switch>
@@ -79,7 +81,7 @@ export default function LocalCli() {
               </Switch>
             </BaseUrlProvider>
           </CapturesServiceStore>
-        </OpticEngineStore>
+        </ConfigRepositoryStore>
       </SpectacleStore>
     </AppConfigurationStore>
   );
@@ -96,12 +98,16 @@ class LocalCliSpectacle implements IForkableSpectacle {
     return new InMemorySpectacle(opticContext, []);
   }
 
-  async mutate(options: SpectacleInput): Promise<any> {
+  async mutate<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
 
-  async query(options: SpectacleInput): Promise<any> {
+  async query<Result, Input = {}>(
+    options: SpectacleInput<Input>
+  ): Promise<Result> {
     // send query to local cli-server
     return JsonHttpClient.postJson(`${this.baseUrl}/spectacle`, options);
   }
@@ -111,6 +117,7 @@ interface LocalCliServices {
   spectacle: IBaseSpectacle;
   capturesService: IOpticCapturesService;
   opticEngine: IOpticEngine;
+  configRepository: IOpticConfigRepository;
 }
 interface LocalCliCapturesServiceDependencies {
   baseUrl: string;
@@ -194,7 +201,7 @@ class LocalCliDiffService implements IOpticDiffService {
   }
 
   async listDiffs(): Promise<IListDiffsResponse> {
-    const result = await this.dependencies.spectacle.query({
+    const result = await this.dependencies.spectacle.query<any, any>({
       query: `query X($diffId: ID) {
         diff(diffId: $diffId) {
           diffs
@@ -204,12 +211,12 @@ class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data.diff.diffs);
-    return result.data.diff.diffs;
+    console.log(result.data!.diff.diffs);
+    return result.data!.diff.diffs;
   }
 
   async listUnrecognizedUrls(): Promise<IListUnrecognizedUrlsResponse> {
-    const result = await this.dependencies.spectacle.query({
+    const result = await this.dependencies.spectacle.query<any, any>({
       query: `query X($diffId: ID) {
         diff(diffId: $diffId) {
           unrecognizedUrls
@@ -219,40 +226,46 @@ class LocalCliDiffService implements IOpticDiffService {
         diffId: this.dependencies.diffId,
       },
     });
-    console.log(result.data.diff.unrecognizedUrls);
-    return result.data.diff.unrecognizedUrls;
+    console.log(result.data!.diff.unrecognizedUrls);
+    return result.data!.diff.unrecognizedUrls;
+  }
+}
+
+interface LocalCliConfigRepositoryDependencies {
+  baseUrl: string;
+  spectacle: IBaseSpectacle;
+}
+
+class LocalCliConfigRepository implements IOpticConfigRepository {
+  constructor(private dependencies: LocalCliConfigRepositoryDependencies) {}
+
+  async addIgnoreRule(rule: string): Promise<void> {
+    await JsonHttpClient.patchJson(`${this.dependencies.baseUrl}/ignores`, {
+      rule,
+    });
+  }
+
+  async listIgnoreRules(): Promise<string[]> {
+    throw new Error('should never be called');
   }
 }
 
 export function useLocalCliServices(
   specId: string
 ): AsyncStatus<LocalCliServices> {
-  const [opticEngine, setOpticEngine] = useState<IOpticEngine | null>(null);
-  useEffect(() => {
-    async function task() {
-      const _opticEngine = await import(
-        '@useoptic/diff-engine-wasm/engine/browser'
-      );
-      setOpticEngine(_opticEngine);
-    }
-    task();
-  }, [specId]);
-  if (!opticEngine) {
-    return {
-      loading: true,
-      error: false,
-      data: null,
-    };
-  }
+  const opticEngine = useOpticEngine();
   const apiBaseUrl = `/api/specs/${specId}`;
   const spectacle = new LocalCliSpectacle(apiBaseUrl, opticEngine);
   const capturesService = new LocalCliCapturesService({
     baseUrl: apiBaseUrl,
     spectacle,
   });
+  const configRepository = new LocalCliConfigRepository({
+    baseUrl: apiBaseUrl,
+    spectacle,
+  });
   return {
     loading: false,
-    error: false,
-    data: { spectacle, capturesService, opticEngine },
+    data: { spectacle, capturesService, opticEngine, configRepository },
   };
 }

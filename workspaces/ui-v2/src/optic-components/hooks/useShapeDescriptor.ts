@@ -72,7 +72,7 @@ export function useShapeDescriptor(
             },
           };
 
-    const result = await spectacle.query(input);
+    const result = await spectacle.query<any, any>(input);
 
     if (result.errors) {
       console.error(result.errors);

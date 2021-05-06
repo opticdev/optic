@@ -67,7 +67,4 @@ expression: "&nullable_object_field_results"
             ),
         ),
     ],
-    Some(
-        "test-id-3",
-    ),
 )

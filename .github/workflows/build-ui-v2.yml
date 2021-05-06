@@ -49,7 +49,15 @@ jobs:
           echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "TAG=${BRANCH}-b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "USER=${GITHUB_ACTOR}" >> $GITHUB_ENV
-      - run: task ui-v2:ci
+      - run: |
+          task ui-v2:ci
+          if [ "$BRANCH" = "develop" ] || [ "$BRANCH" = "master" ]
+          then
+            docker tag \
+              "513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:${TAG}" \
+              513974440343.dkr.ecr.us-east-1.amazonaws.com/cloud-spec-viewer:latest
+            TAG=latest task ui-v2:cloud-spec-viewer:docker:push
+          fi
         env:
           SLACK_WEBHOOK: ${{ secrets.BUILD_BOT_SLACK_WEBHOOK_URL }}
           REACT_APP_PROD_API_BASE: https://api.useoptic.com

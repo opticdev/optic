@@ -109,7 +109,7 @@ export function fieldShapeDiffInterpreter(
       if (isUnmatched) {
         const { commands, rootShapeId } = builderInnerShapeFromChoices(
           choices,
-          expected,
+          expected.allowedCoreShapeKindsByShapeId(),
           actual,
           currentSpecContext
         );
@@ -120,9 +120,10 @@ export function fieldShapeDiffInterpreter(
         ];
       } else if (isUnspecified) {
         const fieldId = currentSpecContext.domainIds.newFieldId();
+
         const { commands, rootShapeId } = builderInnerShapeFromChoices(
           choices,
-          expected,
+          {}, //always empty, unspecified
           actual,
           currentSpecContext
         );

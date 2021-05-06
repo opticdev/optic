@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { FC, useCallback, useContext, useState } from 'react';
-import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
-import { AddContribution } from '../../../lib/command-factory';
-import { useStateWithSideEffect } from '../util';
+import { v4 as uuidv4 } from 'uuid';
+import { useSpectacleCommand } from '<src>/spectacle-implementations/spectacle-provider';
+import { AddContribution } from '<src>/lib/command-factory';
+import { useStateWithSideEffect } from '<src>/optic-components/hooks/util';
 
 export const ContributionEditContext = React.createContext({});
 
 type ContributionEditContextValue = {
   isEditing: boolean;
+  setEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  commitModalOpen: boolean;
+  setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   save: (commitMessage: string) => void;
   pendingCount: number;
-  setEditing: (isEditing: boolean) => void;
   stagePendingContribution: (
     id: string,
     contributionKey: string,
@@ -52,6 +55,8 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
   props
 ) => {
   const spectacleMutator = useSpectacleCommand();
+  const [commitModalOpen, setCommitModalOpen] = useState(false);
+
   const [isEditing, setIsEditing] = useState(
     props.initialIsEditingState || false
   );
@@ -103,27 +108,49 @@ export const ContributionEditingStore: FC<ContributionEditingStoreProps> = (
           )
         );
 
-        await spectacleMutator({
-          query: `
-          mutation X($commands: [JSON], $commitMessage: String) {
-            applyCommands(commands: $commands, commitMessage: $commitMessage) {
-              batchCommitId
+        try {
+          await spectacleMutator({
+            query: `
+            mutation X(
+              $commands: [JSON],
+              $batchCommitId: ID,
+              $commitMessage: String,
+              $clientId: ID,
+              $clientSessionId: ID
+            ) {
+              applyCommands(
+                commands: $commands,
+                batchCommitId: $batchCommitId,
+                commitMessage: $commitMessage,
+                clientId: $clientId,
+                clientSessionId: $clientSessionId
+              ) {
+                batchCommitId
+              }
             }
-          }
-          `,
-          variables: {
-            commands,
-            commitMessage,
-          },
-        });
+            `,
+            variables: {
+              commands,
+              commitMessage,
+              batchCommitId: uuidv4(),
+              clientId: uuidv4(), //@dev: fill this in
+              clientSessionId: uuidv4(), //@dev: fill this in
+            },
+          });
 
-        setPendingContributions([]);
+          setPendingContributions([]);
+        } catch (e) {
+          console.error(e);
+          debugger;
+        }
       }
       setIsEditing(false);
     },
     pendingCount: pendingContributions.length,
     setEditing: (bool) => setIsEditing(bool),
     stagePendingContribution,
+    commitModalOpen,
+    setCommitModalOpen,
   };
 
   return (

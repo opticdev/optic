@@ -1,29 +1,31 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
-import { DiffHeader } from '../../../diffs/DiffHeader';
-import { DiffCard } from '../../../diffs/render/DiffCard';
-import { makeStyles } from '@material-ui/styles';
 
-import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
-import { useSharedDiffContext } from '../../../hooks/diffs/SharedDiffContext';
-import { Collapse, IconButton, Typography } from '@material-ui/core';
-import { ArrowLeft, ArrowRight } from '@material-ui/icons';
-import MenuIcon from '@material-ui/icons/Menu';
-import { SimulatedCommandStore } from '../../../diffs/contexts/SimulatedCommandContext';
+import { IForkableSpectacle } from '@useoptic/spectacle';
+
 import {
-  EndpointName,
   EditableTextField,
   TextFieldVariant,
-} from '../../../common';
-import { IEndpoint } from '../../../hooks/useEndpointsHook';
-import { IForkableSpectacle } from '@useoptic/spectacle';
-import { useDiffReviewCapturePageLink } from '../../../navigation/Routes';
-import { getEndpointId } from '../../../utilities/endpoint-utilities';
-import { DiffLinks } from './DiffLinks';
-import { IInterpretation } from '../../../../lib/Interfaces';
-import { useDebouncedFn, useStateWithSideEffect } from '../../../hooks/util';
+} from '<src>/optic-components/common';
+import { TwoColumnFullWidth } from '<src>/optic-components/layouts/TwoColumnFullWidth';
+import { DiffCard } from '<src>/optic-components/diffs/render/DiffCard';
+import { SimulatedCommandStore } from '<src>/optic-components/diffs/contexts/SimulatedCommandContext';
+import { useSharedDiffContext } from '<src>/optic-components/hooks/diffs/SharedDiffContext';
+import {
+  useDebouncedFn,
+  useStateWithSideEffect,
+} from '<src>/optic-components/hooks/util';
+import { useDiffReviewCapturePageLink } from '<src>/optic-components/navigation/Routes';
+import { IInterpretation } from '<src>/lib/Interfaces';
+import { getEndpointId } from '<src>/optic-components/utilities/endpoint-utilities';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+
+import {
+  RenderedDiffHeaderProps,
+  RenderedDiffHeader,
+} from './RenderedDiffHeader';
+import { EndpointDocumentationPane } from '../EndpointDocumentationPane';
 
 const useRedirectForDiffCompleted = (shapeDiffs: IInterpretation[]) => {
   const history = useHistory();
@@ -41,9 +43,9 @@ const useRedirectForDiffCompleted = (shapeDiffs: IInterpretation[]) => {
 };
 
 type ReviewEndpointDiffPageProps = {
-  endpoint: IEndpoint;
+  endpoint: RenderedDiffHeaderProps['endpoint'];
   spectacle: IForkableSpectacle;
-  shapeDiffs: IInterpretation[];
+  shapeDiffs: RenderedDiffHeaderProps['shapeDiffs'];
   method: string;
   pathId: string;
 };
@@ -57,8 +59,12 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
 }) => {
   useRedirectForDiffCompleted(shapeDiffs);
   const {
+    approveCommandsForDiff,
     isDiffHandled,
     setEndpointName: setGlobalDiffEndpointName,
+    addDiffHashIgnore,
+    setCommitModalOpen,
+    hasDiffChanges,
   } = useSharedDiffContext();
 
   const debouncedSetName = useDebouncedFn(setGlobalDiffEndpointName, 200);
@@ -71,29 +77,77 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
   });
   const endpointId = getEndpointId({ method, pathId });
 
-  const allDiffsHandled = shapeDiffs.every(
-    (shapeDiff) =>
-      shapeDiff?.diffDescription?.diffHash &&
-      isDiffHandled(shapeDiff.diffDescription.diffHash)
-  );
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const getNextIncompleteDiff = (recentlyCompletedDiff?: string): number => {
+    for (let i = 0; i < shapeDiffs.length; i++) {
+      const shapeDiff = shapeDiffs[i];
+      if (!shapeDiff.diffDescription) {
+        continue;
+      }
+
+      const isRecentlyCompletedDiff =
+        !!recentlyCompletedDiff &&
+        recentlyCompletedDiff === shapeDiff.diffDescription.diffHash;
+      const diffHandled = isDiffHandled(shapeDiff.diffDescription.diffHash);
+      if (!(isRecentlyCompletedDiff || diffHandled)) {
+        return i;
+      }
+    }
+
+    // If all diffs are complete we should stick on the last rendered diff
+    return shapeDiffs.length - 1;
+  };
+
+  const [currentIndex, setCurrentIndex] = useState(getNextIncompleteDiff());
   const [previewCommands, setPreviewCommands] = useState<any[]>([]);
+  const renderedDiff = shapeDiffs[currentIndex];
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (hasDiffChanges()) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   return (
     <TwoColumnFullWidth
       left={
-        allDiffsHandled ? (
-          <AllDiffsHandled endpoint={endpoint} />
-        ) : (
-          <ReviewableDiffs
+        <>
+          <RenderedDiffHeader
             endpoint={endpoint}
             shapeDiffs={shapeDiffs}
-            previewCommands={previewCommands}
-            setPreviewCommands={setPreviewCommands}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
           />
-        )
+          <DiffCard
+            key={renderedDiff.diffDescription?.diffHash}
+            updatedSpecChoices={(choices) => {
+              setPreviewCommands(renderedDiff.toCommands(choices));
+            }}
+            diffDescription={renderedDiff.diffDescription!}
+            handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
+            previewTabs={renderedDiff.previewTabs}
+            specChoices={renderedDiff.updateSpecChoices}
+            approve={() => {
+              approveCommandsForDiff(
+                renderedDiff.diffDescription!.diffHash,
+                previewCommands
+              );
+              setCurrentIndex(
+                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+              );
+            }}
+            ignore={() => {
+              addDiffHashIgnore(renderedDiff.diffDescription!.diffHash);
+              setCurrentIndex(
+                getNextIncompleteDiff(renderedDiff.diffDescription!.diffHash)
+              );
+            }}
+          />
+        </>
       }
       right={
         <SimulatedCommandStore
@@ -104,9 +158,7 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
             method={method}
             pathId={pathId}
             highlightedLocation={
-              allDiffsHandled
-                ? undefined
-                : shapeDiffs[currentIndex].diffDescription?.location
+              shapeDiffs[currentIndex].diffDescription?.location
             }
             renderHeader={() => (
               <>
@@ -124,136 +176,10 @@ export const ReviewEndpointDiffPage: FC<ReviewEndpointDiffPageProps> = ({
                 />
               </>
             )}
+            onKeyPress={onKeyPress}
           />
         </SimulatedCommandStore>
       }
     />
   );
 };
-
-const AllDiffsHandled: FC<{
-  endpoint: ReviewEndpointDiffPageProps['endpoint'];
-}> = ({ endpoint }) => {
-  const classes = useStyles();
-
-  return (
-    <>
-      <DiffHeader
-        name={
-          <EndpointName
-            method={endpoint.method}
-            fullPath={endpoint.fullPath}
-            leftPad={0}
-          />
-        }
-      />
-      <div className={classes.centered}>
-        <Typography variant="body2" color="primary">
-          All Diffs for this Endpoint have been reviewed.
-        </Typography>
-      </div>
-    </>
-  );
-};
-
-const ReviewableDiffs: FC<{
-  endpoint: ReviewEndpointDiffPageProps['endpoint'];
-  shapeDiffs: ReviewEndpointDiffPageProps['shapeDiffs'];
-  currentIndex: number;
-  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-  previewCommands: any;
-  setPreviewCommands: (commands: any) => void;
-}> = ({
-  endpoint,
-  shapeDiffs,
-  previewCommands,
-  setPreviewCommands,
-  currentIndex,
-  setCurrentIndex,
-}) => {
-  const [showToc, setShowToc] = useState(false);
-  const { approveCommandsForDiff, isDiffHandled } = useSharedDiffContext();
-
-  // If shapeDiffs.length is 0, the allDiffsHandled view will be rendered
-  const renderedDiff = shapeDiffs[currentIndex];
-
-  return (
-    <>
-      <DiffHeader
-        name={
-          <EndpointName
-            method={endpoint!.method}
-            fullPath={endpoint!.fullPath}
-            leftPad={0}
-          />
-        }
-        secondary={
-          <Collapse in={showToc}>
-            <DiffLinks
-              shapeDiffs={shapeDiffs}
-              setSelectedDiffHash={(hash: string) => {
-                const hashIndex = shapeDiffs.findIndex(
-                  (i) => i.diffDescription?.diffHash === hash
-                );
-                // findIndex possibly returns -1
-                setCurrentIndex(Math.max(hashIndex, 0));
-                setShowToc(false);
-              }}
-            />
-          </Collapse>
-        }
-      >
-        <IconButton
-          size="small"
-          color="primary"
-          onClick={() => setCurrentIndex((prevIndex) => prevIndex - 1)}
-          disabled={currentIndex === 0}
-        >
-          <ArrowLeft />
-        </IconButton>
-        <Typography variant="caption" color="textPrimary">
-          ({currentIndex + 1}/{shapeDiffs.length})
-        </Typography>
-        <IconButton
-          size="small"
-          color="primary"
-          onClick={() => setCurrentIndex((prevIndex) => prevIndex + 1)}
-          disabled={shapeDiffs.length - 1 === currentIndex}
-        >
-          <ArrowRight />
-        </IconButton>
-        <IconButton
-          size="small"
-          color="primary"
-          onClick={() => setShowToc(!showToc)}
-        >
-          <MenuIcon style={{ width: 20, height: 20 }} />
-        </IconButton>
-      </DiffHeader>
-      {renderedDiff && (
-        <DiffCard
-          key={renderedDiff.diffDescription?.diffHash}
-          updatedSpecChoices={(choices) => {
-            setPreviewCommands(renderedDiff?.toCommands(choices));
-          }}
-          diffDescription={renderedDiff.diffDescription!}
-          handled={isDiffHandled(renderedDiff.diffDescription!.diffHash)}
-          previewTabs={renderedDiff.previewTabs}
-          specChoices={renderedDiff.updateSpecChoices}
-          approve={() => {
-            approveCommandsForDiff(
-              renderedDiff!.diffDescription!.diffHash,
-              previewCommands
-            );
-          }}
-        />
-      )}
-    </>
-  );
-};
-
-const useStyles = makeStyles((theme) => ({
-  centered: {
-    padding: 10,
-  },
-}));

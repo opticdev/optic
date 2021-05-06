@@ -14,17 +14,11 @@ import AskForCommitMessage from './render/AskForCommitMessage';
 export function DiffAccessoryNavigation() {
   const classes = useStyles();
 
-  const { context, handledCount } = useSharedDiffContext();
+  const { context, handledCount, hasDiffChanges } = useSharedDiffContext();
   const diffReviewCapturePage = useDiffReviewCapturePageLink();
   const undocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
   const history = useHistory();
   const [handled, total] = handledCount;
-
-  const hasChanges =
-    handled > 0 ||
-    context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
-    Object.keys(context.choices.existingEndpointNameContributions).length > 0 ||
-    Object.keys(context.choices.existingEndpointPathContributions).length > 0;
 
   const numberOfUndocumented = context.results?.displayedUndocumentedUrls.filter(
     (i) => !i.hide
@@ -75,7 +69,7 @@ export function DiffAccessoryNavigation() {
       </div>
       <div className={classes.content}>
         <div className={classes.counter} style={{ marginRight: 10 }}>
-          <AskForCommitMessage hasChanges={hasChanges} />
+          <AskForCommitMessage hasChanges={hasDiffChanges()} />
         </div>
       </div>
     </div>

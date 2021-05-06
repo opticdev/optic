@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { CommitMessageModal } from '../../common';
@@ -42,13 +42,17 @@ const useStagedChangesCount = () => {
 export default function AskForCommitMessageDiffPage(props: {
   hasChanges: boolean;
 }) {
-  const [open, setOpen] = useState(false);
   const spectacleMutator = useSpectacleCommand();
   const history = useHistory();
   const lastBatchCommitId = useLastBatchCommitId();
   const changelogPageRoute = useChangelogPages();
 
-  const { context, startedFinalizing } = useSharedDiffContext();
+  const {
+    context,
+    startedFinalizing,
+    commitModalOpen,
+    setCommitModalOpen,
+  } = useSharedDiffContext();
 
   const {
     pendingEndpointsCount,
@@ -57,28 +61,32 @@ export default function AskForCommitMessageDiffPage(props: {
 
   const handleSave = async (commitMessage: string) => {
     const commands = context.simulatedCommands;
-    const {
-      data: {
+    try {
+      const {
         applyCommands: { batchCommitId },
-      },
-    } = await spectacleMutator({
-      query: `
-      mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
-  applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
-    batchCommitId
-  }
-}`,
-      variables: {
-        commands,
-        batchCommitId: uuidv4(),
-        commitMessage: commitMessage,
-        clientId: uuidv4(), //@dev: fill this in
-        clientSessionId: uuidv4(), //@dev: fill this in
-      },
-    });
-    // If there are no batch commits (first commit) - link to the just created commit
-    history.push(changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId));
-    // @nic TODO we need to trigger a new full page refresh - or trigger a refetch of data through out queries
+      } = await spectacleMutator<any, any>({
+        query: `
+        mutation X($commands: [JSON], $batchCommitId: ID, $commitMessage: String, $clientId: ID, $clientSessionId: ID) {
+    applyCommands(commands: $commands, batchCommitId: $batchCommitId, commitMessage: $commitMessage, clientId: $clientId, clientSessionId: $clientSessionId) {
+      batchCommitId
+    }
+  }`,
+        variables: {
+          commands,
+          batchCommitId: uuidv4(),
+          commitMessage: commitMessage,
+          clientId: uuidv4(), //@dev: fill this in
+          clientSessionId: uuidv4(), //@dev: fill this in
+        },
+      });
+      // If there are no batch commits (first commit) - link to the just created commit
+      history.push(
+        changelogPageRoute.linkTo(lastBatchCommitId || batchCommitId)
+      );
+    } catch (e) {
+      console.error(e);
+      debugger;
+    }
   };
 
   return (
@@ -86,7 +94,7 @@ export default function AskForCommitMessageDiffPage(props: {
       <Button
         disabled={!props.hasChanges}
         onClick={() => {
-          setOpen(true);
+          setCommitModalOpen(true);
           startedFinalizing();
         }}
         size="small"
@@ -96,8 +104,8 @@ export default function AskForCommitMessageDiffPage(props: {
         Save Changes
       </Button>
       <CommitMessageModal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={commitModalOpen}
+        onClose={() => setCommitModalOpen(false)}
         onSave={handleSave}
         dialogText={`You have added ${pendingEndpointsCount} new ${
           pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'

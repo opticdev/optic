@@ -23,13 +23,12 @@ import { EndpointDocumentationPane } from './EndpointDocumentationPane';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
-import { useAnalytics } from '../../../analytics';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
   const { endpointId } = match.params;
 
-  const analytics = useAnalytics();
   const history = useHistory();
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
@@ -57,7 +56,6 @@ export function PendingEndpointPageSession(props: any) {
         goToDiffPage();
       }}
       onEndpointDiscarded={() => {
-        analytics.userDiscardedEndpoint();
         discardEndpoint(endpoint.id);
         goToDiffPage();
       }}
@@ -86,7 +84,6 @@ export function PendingEndpointPage(props: any) {
 
   const classes = useStyles();
   const spectacle = useContext(SpectacleContext)!;
-  // const lastBatchId = useLastBatchCommitId();
   const debouncedSetName = useDebouncedFn(changeEndpointName, 200);
   const { value: name, setValue: setName } = useStateWithSideEffect({
     initialValue: endpointName,
@@ -95,6 +92,15 @@ export function PendingEndpointPage(props: any) {
 
   const requestCheckboxes = (learnedBodies?.requests || []).filter((i) =>
     Boolean(i.contentType)
+  );
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      stageEndpoint();
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
   );
 
   return (
@@ -131,6 +137,7 @@ export function PendingEndpointPage(props: any) {
                 onChange={(e: any) => {
                   setName(e.target.value);
                 }}
+                onKeyPress={onKeyPress}
               />
 
               <Typography
@@ -141,7 +148,7 @@ export function PendingEndpointPage(props: any) {
                 Document the bodies for this endpoint:
               </Typography>
 
-              <FormControl component="fieldset">
+              <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {requestCheckboxes.map((i, index) => {
                   if (!i.contentType) {
                     return null;
@@ -166,7 +173,7 @@ export function PendingEndpointPage(props: any) {
 
               {requestCheckboxes.length > 0 && <Divider />}
 
-              <FormControl component="fieldset">
+              <FormControl component="fieldset" onKeyPress={onKeyPress}>
                 {learnedBodies!.responses.map((i, index) => {
                   const body: IIgnoreBody = {
                     isResponse: true,
@@ -207,11 +214,6 @@ export function PendingEndpointPage(props: any) {
       }
       right={
         <>
-          <pre style={{ paddingTop: 60 }}>
-            {JSON.stringify(newEndpointCommands)}
-            <br />
-            {JSON.stringify(stagedCommandsIds)}
-          </pre>
           <SimulatedCommandStore
             key={JSON.stringify(newEndpointCommands)}
             spectacle={spectacle as IForkableSpectacle}

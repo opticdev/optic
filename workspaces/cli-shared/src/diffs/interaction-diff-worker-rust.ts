@@ -5,10 +5,11 @@ import {
 import { Streams } from '@useoptic/diff-engine-wasm';
 import { diffInteractions } from '@useoptic/diff-engine';
 import fs from 'fs-extra';
-import { getDiffOutputPaths } from './diff-worker-rust';
 import { fork } from 'stream-fork';
 import { DiffResult } from '@useoptic/diff-engine-wasm/lib/streams/diff-results';
-import { PassThrough, Readable } from 'stream';
+import path from 'path';
+import { PassThrough } from 'stream';
+import { parseIgnore } from '@useoptic/cli-config/build/helpers/ignore-parser';
 interface WorkerResult {
   results: AsyncIterable<DiffResult>;
 }
@@ -20,16 +21,43 @@ interface WorkerConfig {
   events: any[];
   ignoreRules: any[];
 }
+export function getDiffOutputPaths(values: {
+  captureBaseDirectory: string;
+  captureId: string;
+  diffId: string;
+}) {
+  const { captureBaseDirectory, captureId, diffId } = values;
+  const base = path.join(captureBaseDirectory, captureId, 'diffs', diffId);
+  const diffs = path.join(base, 'diffs.json');
+  const diffsStream = path.join(base, 'diffs.jsonl');
+  const stats = path.join(base, 'stats.json');
+  const undocumentedUrls = path.join(base, 'undocumentedUrls.json');
+  const events = path.join(base, 'events.json');
+  const ignoreRequests = path.join(base, 'ignoreRequests.json');
+  const filters = path.join(base, 'filters.json');
+  const additionalCommands = path.join(base, 'additionalCommands.json');
 
+  return {
+    base,
+    diffs,
+    diffsStream,
+    stats,
+    undocumentedUrls,
+    events,
+    ignoreRequests,
+    filters,
+    additionalCommands,
+  };
+}
 export class InteractionDiffWorkerRust {
   constructor(private config: WorkerConfig) {}
   private async setup() {
-    //@todo: apply ignore rules
-    //@aidan @jaap I'm not sure what the contract is here regarding ignores.
+    const ignoreFilter = parseIgnore(this.config.ignoreRules);
 
     const interactionFilter = (i: any) => {
-      return true;
+      return ignoreFilter.shouldIgnore(i.request.path, i.request.method);
     };
+
     const interactionIterator = CaptureInteractionIterator(
       {
         captureId: this.config.captureId,

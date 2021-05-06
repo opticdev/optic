@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useRouteMatch, useParams, Switch } from 'react-router-dom';
 import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import { makeSpectacle } from '@useoptic/spectacle';
-import { useEffect, useState } from 'react';
+import { makeSpectacle, SpectacleInput } from '@useoptic/spectacle';
 import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
-import { AsyncStatus, SpectacleStore } from './spectacle-provider';
+import { SpectacleStore } from './spectacle-provider';
 import { Loading } from '../optic-components/loaders/Loading';
 import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { IBaseSpectacle, SpectacleInput } from '@useoptic/spectacle';
+import { IBaseSpectacle } from '@useoptic/spectacle';
 import { IForkableSpectacle } from '@useoptic/spectacle';
 import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
 import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
@@ -17,6 +16,9 @@ import {
   AppConfigurationStore,
   OpticAppConfig,
 } from '../optic-components/hooks/config/AppConfiguration';
+import { AsyncStatus } from '<src>/types';
+import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
+import { useEffect, useState } from 'react';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -110,16 +112,9 @@ export default function CloudViewer() {
   );
 }
 
-export interface CloudInMemorySpectacleDependencies {
-  events: any[];
-  samples: any[];
-}
-
-export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
-
 class CloudInMemorySpectacle
-  implements IForkableSpectacle, InMemoryBaseSpectacle {
-  private spectaclePromise: Promise<any>;
+  implements IForkableSpectacle, CloudInMemoryBaseSpectacle {
+  private spectaclePromise: ReturnType<typeof makeSpectacle>;
 
   constructor(
     public readonly opticContext: IOpticContext,
@@ -136,25 +131,89 @@ class CloudInMemorySpectacle
     return new CloudInMemorySpectacle(opticContext, [...this.samples]);
   }
 
-  async mutate(options: SpectacleInput): Promise<any> {
+  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 
-  async query(options: SpectacleInput): Promise<any> {
+  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
     const spectacle = await this.spectaclePromise;
-    return spectacle(options);
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 }
 
-export interface InMemoryBaseSpectacle extends IBaseSpectacle {
+export interface CloudInMemoryBaseSpectacle extends IBaseSpectacle {
   samples: any[];
   opticContext: IOpticContext;
 }
 
+export interface CloudInMemorySpectacleDependencies {
+  events: any[];
+  samples: any[];
+}
+
+export type CloudInMemorySpectacleDependenciesLoader = () => Promise<CloudInMemorySpectacleDependencies>;
+
+//@SYNC: useInMemorySpectacle
 export function useCloudInMemorySpectacle(
   loadDependencies: CloudInMemorySpectacleDependenciesLoader
-): AsyncStatus<InMemoryBaseSpectacle> {
-  //@dev fill this in
-  throw new Error('copy me from public-examples.tsx when ready');
+): AsyncStatus<CloudInMemoryBaseSpectacle> {
+  const opticEngine = useOpticEngine();
+  const [spectacle, setSpectacle] = useState<CloudInMemoryBaseSpectacle>();
+  const [inputs, setInputs] = useState<{
+    events: any[];
+    samples: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    async function task() {
+      const result = await loadDependencies();
+      setInputs({
+        events: result.events,
+        samples: result.samples,
+      });
+    }
+
+    task();
+  }, [loadDependencies]);
+
+  useEffect(() => {
+    async function task() {
+      if (inputs === null) {
+        return;
+      }
+      const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+        opticEngine,
+        inputs.events,
+        inputs.samples,
+        'example-session'
+      );
+      const inMemorySpectacle = new CloudInMemorySpectacle(
+        opticContext,
+        inputs.samples
+      );
+      inMemorySpectacle.opticContext.specRepository.notifications.on(
+        'change',
+        async () => {
+          const newEvents = await inMemorySpectacle.opticContext.specRepository.listEvents();
+          setInputs({ events: newEvents, samples: inputs.samples });
+        }
+      );
+      console.count('setSpectacle');
+      setSpectacle(inMemorySpectacle);
+    }
+
+    task();
+  }, [inputs, opticEngine]);
+
+  if (spectacle) {
+    return {
+      loading: false,
+      data: spectacle,
+    };
+  } else {
+    return {
+      loading: true,
+    };
+  }
 }

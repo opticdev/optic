@@ -1,10 +1,11 @@
 ---
-date: "4/21/2023"
+date: "4/21/2021"
 title: "When Real Traffic Smashes into your API"
 author: Aidan Cunniffe
 author_url: "https://github.com/acunniffe"
 author_image_url: "/img/team/aidan.jpg"
 category: Release
+image: /img/blog-content/lhc.jpg
 ---
 
 :::note **Beta Alert:**

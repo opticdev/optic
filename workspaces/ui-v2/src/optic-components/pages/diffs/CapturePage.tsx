@@ -145,9 +145,7 @@ function DiffCaptureResults() {
 
   const [handled, total] = handledCount;
 
-  // const history = useHistory();
-
-  const handleChangeToEndpointPage = (pathId: string, method: string) => () => {
+  const handleChangeToEndpointPage = (pathId: string, method: string) => {
     history.push(diffForEndpointLink.linkTo(pathId, method));
   };
   const handleChangeToUndocumentedUrlPage = () => {
@@ -177,47 +175,63 @@ function DiffCaptureResults() {
 
       <Paper elevation={1}>
         <List dense>
-          {diffsGroupedByEndpoints.map((i, index) => {
-            const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
-            const diffCompletedCount = i.shapeDiffs.filter((i) =>
-              isDiffHandled(i.diffHash())
-            ).length;
+          {diffsGroupedByEndpoints.length > 0 ? (
+            diffsGroupedByEndpoints.map((i, index) => {
+              const diffCount = i.newRegionDiffs.length + i.shapeDiffs.length;
+              const diffCompletedCount = i.shapeDiffs.filter((i) =>
+                isDiffHandled(i.diffHash())
+              ).length;
 
-            const remaining = diffCount - diffCompletedCount;
-            const done = remaining === 0;
+              const remaining = diffCount - diffCompletedCount;
+              const done = remaining === 0;
 
-            return (
-              <ListItem
-                disableRipple
-                button
-                key={index}
-                onClick={handleChangeToEndpointPage(i.pathId, i.method)}
-              >
-                <EndpointName
-                  leftPad={3}
-                  method={i.method}
-                  fullPath={i.fullPath}
-                  fontSize={14}
-                />
-                <ListItemSecondaryAction>
-                  <div>
-                    {done ? (
-                      <div
-                        className={classes.text}
-                        style={{ color: AddedDarkGreen }}
-                      >
-                        Done ✓
-                      </div>
-                    ) : (
-                      <div className={classes.text}>
-                        {diffCompletedCount}/{diffCount} reviewed
-                      </div>
-                    )}
-                  </div>
-                </ListItemSecondaryAction>
-              </ListItem>
-            );
-          })}
+              return (
+                <ListItem
+                  disableRipple
+                  button
+                  key={index}
+                  onClick={() =>
+                    !done && handleChangeToEndpointPage(i.pathId, i.method)
+                  }
+                  style={{
+                    cursor: done ? 'default' : 'pointer',
+                  }}
+                >
+                  <EndpointName
+                    leftPad={3}
+                    method={i.method}
+                    fullPath={i.fullPath}
+                    fontSize={14}
+                  />
+                  <ListItemSecondaryAction>
+                    <div>
+                      {done ? (
+                        <div
+                          className={classes.text}
+                          style={{ color: AddedDarkGreen }}
+                        >
+                          Done ✓
+                        </div>
+                      ) : (
+                        <div className={classes.text}>
+                          {diffCompletedCount}/{diffCount} reviewed
+                        </div>
+                      )}
+                    </div>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })
+          ) : (
+            <div
+              className={classes.text}
+              style={{
+                padding: '8px 16px',
+              }}
+            >
+              No diffs are left to review
+            </div>
+          )}
           {hasUndocumented && (
             <>
               {diffsGroupedByEndpoints.length > 0 && (
@@ -262,63 +276,6 @@ function DiffCaptureResults() {
     </>
   );
 }
-
-/*
-<Typography variant="h6" style={{ fontSize: 18 }}>
-        Real Environments [Beta]
-      </Typography>
-
-      <Typography variant="body2">
-        Optic can securely monitor your API in real environments. Once deployed,
-        Optic verifies your API meets its contract, alert you when it behaves
-        unexpectedly, and help you understand what parts of your API each
-        consumer relies upon.
-      </Typography>
-
-      <Grid container spacing={3} style={{ marginTop: 5 }}>
-        <Grid xs={4} item style={{ opacity: 0.4 }}>
-          <RealEnvColumn
-            name={'development'}
-            examples={[
-              { buildN: 19, diffs: '1 diff', requests: '1.1k' },
-              { buildN: 18, diffs: '4 diffs', requests: '6.1k' },
-            ]}
-          />
-        </Grid>
-        <Grid xs={4} item style={{ opacity: 0.4 }}>
-          <RealEnvColumn
-            name={'staging'}
-            examples={[
-              { buildN: 13, diffs: '3 diffs', requests: '12.2k' },
-              { buildN: 12, diffs: '12 diffs', requests: '7.2k' },
-            ]}
-          />
-        </Grid>
-        <Grid
-          xs={4}
-          item
-          alignContent="center"
-          justifyContent="center"
-          display="flex"
-          flexDirection="column"
-          component={Box}
-        >
-          <Typography
-            variant="body2"
-            style={{
-              fontFamily: 'Ubuntu Mono',
-              marginBottom: 5,
-              marginTop: -15,
-            }}
-          >
-            Ready to put Optic into a real environment?
-          </Typography>
-          <Button color="secondary" variant="contained">
-            Join Beta
-          </Button>
-        </Grid>
-      </Grid>
- */
 
 export function RealEnvColumn({
   name,
@@ -375,9 +332,6 @@ const useStyles = makeStyles((theme) => ({
   locationHeader: {
     fontSize: 10,
     height: 33,
-  },
-  centered: {
-    padding: 10,
   },
   leading: {
     display: 'flex',

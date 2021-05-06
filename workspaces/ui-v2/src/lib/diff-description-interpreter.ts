@@ -8,7 +8,7 @@ import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, plain } from '../optic-components/diffs/render/ICopyRender';
 import { IJsonObjectKey } from '../../../cli-shared/build/diffs/json-trail';
 //@ts-ignore
-const { toJsonExample } = require('shape-hash');
+const { toJsonExample } = require('@useoptic/shape-hash');
 
 // function descriptionForNewRegions(
 //   diff: ParsedDiff,
@@ -54,7 +54,7 @@ const { toJsonExample } = require('shape-hash');
 export async function descriptionForShapeDiff(
   asShapeDiff: BodyShapeDiff,
   query: any,
-  currentSpecContext: CurrentSpecContext,
+  currentSpecContext: CurrentSpecContext
 ): Promise<IDiffDescription> {
   const location = asShapeDiff.location;
 
@@ -96,7 +96,7 @@ export async function descriptionForShapeDiff(
   const expected = await getExpectationsForShapeTrail(
     asShapeDiff.shapeTrail,
     query,
-    currentSpecContext,
+    currentSpecContext
   );
 
   //root handler
