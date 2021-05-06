@@ -1,9 +1,7 @@
 import {
   IJsonObjectKey,
   IJsonTrail,
-  normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
-import equals from 'lodash.isequal';
 import sortBy from 'lodash.sortby';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
