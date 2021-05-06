@@ -14,7 +14,7 @@ import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
-import { AddContribution } from '../../../lib/command-factory';
+import { AddContribution, CQRSCommand } from '<src>/lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
 import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
@@ -35,7 +35,7 @@ type ISharedDiffContext = {
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
-  approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => void;
   pendingEndpoints: IPendingEndpoint[];
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
@@ -146,7 +146,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     },
     pendingEndpoints: context.pendingEndpoints,
     isDiffHandled,
-    approveCommandsForDiff: (diffHash: string, commands: any[]) => {
+    approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
     addDiffHashIgnore: (diffHash: string) =>
