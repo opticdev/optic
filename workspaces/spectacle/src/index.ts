@@ -123,7 +123,8 @@ export interface IOpticDiffRepository {
 
 ////////////////////////////////////////////////////////////////////////////////
 export interface IOpticConfigRepository {
-  ignoreRequests: string[];
+  addIgnoreRule(rule: string): Promise<void>;
+  listIgnoreRules(): Promise<string[]>;
 }
 
 export interface IOpticInteractionsRepository {

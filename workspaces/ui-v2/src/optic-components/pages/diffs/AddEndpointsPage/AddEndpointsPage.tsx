@@ -5,6 +5,10 @@ import {
 } from '../../../navigation/Routes';
 import { useHistory } from 'react-router-dom';
 import groupBy from 'lodash.groupby';
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/styles';
+import { Check } from '@material-ui/icons';
+
 import { TwoColumnFullWidth } from '../../../layouts/TwoColumnFullWidth';
 import { DiffHeader } from '../../../diffs/DiffHeader';
 import {
@@ -30,6 +34,7 @@ import { CenteredColumn } from '../../../layouts/CenteredColumn';
 import { EndpointName } from '../../../common';
 import { IPendingEndpoint } from '../../../hooks/diffs/SharedDiffState';
 import { useChangelogStyles } from '../../../changelog/ChangelogBackground';
+import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
 
 import {
   ExistingEndpointNameField,
@@ -45,6 +50,7 @@ export function DiffUrlsPage(props: any) {
     pendingEndpoints,
   } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
+  const classes = useStyles();
 
   const [filteredUrls, setFilteredUrls] = useState(urls);
 
@@ -53,6 +59,7 @@ export function DiffUrlsPage(props: any) {
   }, [pendingEndpoints.length, urls]);
 
   const [bulkMode, setBulkMode] = useState<boolean>(false);
+  const unmatchedUrlLengths = urls.filter((i) => !i.hide).length;
 
   const shownUrls = filteredUrls.filter((i) => !i.hide);
 
@@ -80,7 +87,7 @@ export function DiffUrlsPage(props: any) {
     );
   }
 
-  const name = `${urls.filter((i) => !i.hide).length} unmatched URLs observed${
+  const name = `${unmatchedUrlLengths} unmatched URLs observed${
     shownUrls.length !== urls.length ? `. Showing ${shownUrls.length}` : ''
   }`;
 
@@ -116,18 +123,29 @@ export function DiffUrlsPage(props: any) {
           </DiffHeader>
 
           <div style={{ flex: 1 }}>
-            <AutoSizer>
-              {({ height, width }: any) => (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemSize={47}
-                  itemCount={shownUrls.length}
-                >
-                  {renderRow}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
+            {shownUrls.length > 0 ? (
+              <AutoSizer>
+                {({ height, width }: any) => (
+                  <FixedSizeList
+                    height={height}
+                    width={width}
+                    itemSize={47}
+                    itemCount={shownUrls.length}
+                  >
+                    {renderRow}
+                  </FixedSizeList>
+                )}
+              </AutoSizer>
+            ) : unmatchedUrlLengths === 0 ? (
+              <div className={classes.noResultsContainer}>
+                <Check fontSize="large" />
+                All observed endpoints have been documented
+              </div>
+            ) : (
+              <div className={classes.noResultsContainer}>
+                No urls match the current filter
+              </div>
+            )}
           </div>
           <AuthorIgnoreRules />
         </>
@@ -140,8 +158,13 @@ export function DiffUrlsPage(props: any) {
 export function DocumentationRootPageWithPendingEndpoints(props: any) {
   const { endpoints, loading } = useEndpoints();
 
-  const { pendingEndpoints } = useSharedDiffContext();
+  const {
+    pendingEndpoints,
+    setCommitModalOpen,
+    hasDiffChanges,
+  } = useSharedDiffContext();
   const pendingEndpointsToRender = pendingEndpoints.filter((i) => i.staged);
+  const classes = useStyles();
 
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
@@ -150,6 +173,17 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
 
   const history = useHistory();
   const endpointPageLink = useEndpointPageLink();
+  const onKeyPress = useRunOnKeypress(
+    () => {
+      if (hasDiffChanges()) {
+        setCommitModalOpen(true);
+      }
+    },
+    {
+      keys: new Set(['Enter']),
+      inputTagNames: new Set(['input']),
+    }
+  );
 
   if (loading) {
     return <Loading />;
@@ -157,7 +191,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
 
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
-      <List dense>
+      <List dense onKeyPress={onKeyPress}>
         {pendingEndpointsToRender.length > 0 && (
           <div style={{ paddingBottom: 25 }}>
             <Typography
@@ -180,9 +214,12 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         diffReviewPagePendingEndpoint.linkTo(endpoint.id)
                       )
                     }
-                    className={changelogStyles.added}
+                    className={classNames(
+                      changelogStyles.added,
+                      classes.endpointRow
+                    )}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div className={classes.endpointNameContainer}>
                       <EndpointName
                         method={endpoint.method}
                         fullPath={endpoint.pathPattern}
@@ -190,7 +227,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       />
                     </div>
                     <div
-                      style={{ paddingRight: 15 }}
+                      className={classes.endpointContributionContainer}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <PendingEndpointNameField endpoint={endpoint} />
@@ -227,8 +264,9 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                         )
                       )
                     }
+                    className={classes.endpointRow}
                   >
-                    <div style={{ flex: 1 }}>
+                    <div className={classes.endpointNameContainer}>
                       <EndpointName
                         method={endpoint.method}
                         fullPath={endpoint.fullPath}
@@ -236,7 +274,7 @@ export function DocumentationRootPageWithPendingEndpoints(props: any) {
                       />
                     </div>
                     <div
-                      style={{ paddingRight: 15 }}
+                      className={classes.endpointContributionContainer}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ExistingEndpointNameField endpoint={endpoint} />
@@ -281,3 +319,30 @@ function UrlFilterInput(props: { onDebouncedChange: (value: string) => void }) {
     />
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  endpointRow: {
+    display: 'flex',
+    '@media (max-width: 1250px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+  },
+  endpointNameContainer: {
+    overflowX: 'scroll',
+    flexGrow: 1,
+  },
+  endpointContributionContainer: {
+    paddingRight: 15,
+    '@media (max-width: 1250px)': {
+      paddingLeft: 20,
+    },
+  },
+  noResultsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    flexDirection: 'column',
+  },
+}));

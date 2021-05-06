@@ -8,7 +8,7 @@ import { getExpectationsForShapeTrail } from './shape-diff-dsl-rust';
 import { code, plain } from '../optic-components/diffs/render/ICopyRender';
 import { IJsonObjectKey } from '../../../cli-shared/build/diffs/json-trail';
 //@ts-ignore
-const { toJsonExample } = require('shape-hash');
+const { toJsonExample } = require('@useoptic/shape-hash');
 
 // function descriptionForNewRegions(
 //   diff: ParsedDiff,

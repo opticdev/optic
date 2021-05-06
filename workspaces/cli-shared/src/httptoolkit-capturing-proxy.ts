@@ -11,7 +11,7 @@ import {
   IHttpInteraction,
 } from '@useoptic/domain-types';
 //@ts-ignore
-import { toBytes } from 'shape-hash';
+import { toBytes } from '@useoptic/shape-hash';
 import { developerDebugLogger } from './index';
 import url from 'url';
 import { IQueryParser } from './query/query-parser-interfaces';
@@ -276,7 +276,7 @@ export class HttpToolkitCapturingProxy {
       const contentType = mime.parse(req.headers['content-type'] || '');
       const json = req.body.json || null;
 
-      developerDebugLogger(json && toBytes(json).toString('base64'))
+      developerDebugLogger(json && toBytes(json).toString('base64'));
 
       return {
         contentType: (req.body.text && contentType?.essence) || null,

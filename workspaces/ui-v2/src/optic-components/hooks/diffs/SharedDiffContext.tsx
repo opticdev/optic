@@ -17,6 +17,7 @@ import { ParsedDiff } from '../../../lib/parse-diff';
 import { AddContribution } from '../../../lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
+import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -51,6 +52,9 @@ type ISharedDiffContext = {
   getContributedEndpointName: (endpointId: string) => string | undefined;
   getContributedPathDescription: (pathId: string) => string | undefined;
   captureId: string;
+  commitModalOpen: boolean;
+  setCommitModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  hasDiffChanges: () => boolean;
 };
 
 type SharedDiffStoreProps = {
@@ -66,6 +70,9 @@ type SharedDiffStoreProps = {
 
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const opticEngine = useOpticEngine();
+
+  const { config } = useConfigRepository();
+
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -80,7 +87,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       props.diffs,
       props.urls,
       props.diffTrails,
-      props.diffService
+      props.diffService,
+      config
     )
   );
 
@@ -116,6 +124,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const [wipPatterns, setWIPPatterns] = useState<{
     [key: string]: PathComponentAuthoring[];
   }>({});
+
+  const [commitModalOpen, setCommitModalOpen] = useState(false);
 
   const value: ISharedDiffContext = {
     context,
@@ -192,6 +202,14 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       return context.choices.existingEndpointPathContributions[pathId]?.command
         .AddContribution.value;
     },
+    commitModalOpen,
+    setCommitModalOpen,
+    hasDiffChanges: () =>
+      handled > 0 ||
+      context.pendingEndpoints.filter((i) => i.staged).length > 0 ||
+      Object.keys(context.choices.existingEndpointNameContributions).length >
+        0 ||
+      Object.keys(context.choices.existingEndpointPathContributions).length > 0,
   };
 
   return (

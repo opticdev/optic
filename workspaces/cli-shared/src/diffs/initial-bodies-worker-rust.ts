@@ -1,11 +1,12 @@
 import { IHttpInteraction as HttpInteraction } from '@useoptic/domain-types';
 import { CaptureInteractionIterator } from '../captures/avro/file-system/interaction-iterator';
 import fs from 'fs-extra';
-import { getInitialBodiesOutputPaths } from './initial-bodies-worker';
+
 import { learnUndocumentedBodies } from '@useoptic/diff-engine';
 import { Streams } from '@useoptic/diff-engine-wasm';
 import { LearnedBodies } from '@useoptic/diff-engine-wasm/lib/streams/learning-results/undocumented-endpoint-bodies';
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
+import * as path from 'path';
 
 export interface InitialBodiesWorkerConfig {
   pathId: string;
@@ -14,9 +15,31 @@ export interface InitialBodiesWorkerConfig {
   events: any;
   captureBaseDirectory: string;
 }
+export function getInitialBodiesOutputPaths(values: {
+  captureBaseDirectory: string;
+  pathId: string;
+  method: string;
+  captureId: string;
+}) {
+  const { captureBaseDirectory, captureId, pathId, method } = values;
+  const base = path.join(
+    captureBaseDirectory,
+    captureId,
+    'initial-bodies',
+    pathId,
+    method
+  );
+  const events = path.join(base, 'events.json');
+  const initialBodies = path.join(base, 'bodies.json');
+
+  return {
+    base,
+    events,
+    initialBodies,
+  };
+}
 
 export { LearnedBodies };
-//@dev: this is the pa
 export class InitialBodiesWorkerRust {
   constructor(private config: InitialBodiesWorkerConfig) {}
 
