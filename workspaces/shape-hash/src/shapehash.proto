@@ -1,0 +1,22 @@
+syntax = "proto3";
+package optic_shape_hash;
+
+message FieldDescriptor {
+  string key = 1;
+  ShapeDescriptor hash = 2;
+}
+
+message ShapeDescriptor {
+  enum PrimitiveType {
+    OBJECT = 0;
+    ARRAY = 1;
+    STRING = 2;
+    NUMBER = 3;
+    BOOLEAN = 4;
+    NULL = 5;
+  }
+  PrimitiveType type = 1;
+  repeated FieldDescriptor fields = 2;
+  repeated ShapeDescriptor items = 3;
+  repeated string rules = 4;
+}

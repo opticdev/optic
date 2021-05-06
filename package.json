@@ -10,6 +10,7 @@
     "workspaces/diff-engine",
     "workspaces/diff-engine-wasm",
     "workspaces/analytics",
+    "workspaces/shape-hash",
     "workspaces/saas-types",
     "workspaces/graph-lib",
     "workspaces/spectacle",
