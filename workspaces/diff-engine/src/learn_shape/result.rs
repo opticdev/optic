@@ -1106,6 +1106,42 @@ mod test {
     );
   }
 
+  #[test]
+  fn trail_observations_does_not_generate_commands_for_orphaned_shapes() {
+    let mut observations = {
+      let object_body = BodyDescriptor::from(json!({
+        "a-field": 3,
+        "another-field": true,
+      }));
+      let string_body = BodyDescriptor::from(json!("a-string-body"));
+
+      let mut observations = TrailObservationsResult::default();
+      observations.union(observe_body_trails(object_body));
+      observations.union(observe_body_trails(string_body));
+      observations
+    };
+
+    let root_trail = JsonTrail::empty();
+    let root_affordances = observations
+      .values_by_trail
+      .get_mut(&root_trail)
+      .expect("should have observed values for the root");
+
+    // the UI can do this, by letting a user _choose_ which of the affordances they want to apply
+    root_affordances.was_object = false;
+
+    let mut test_id_generator = TestIdGenerator::default();
+
+    let results = collect_commands(observations.into_commands(&mut test_id_generator, &root_trail));
+    assert!(results.0.is_some());
+    assert_valid_commands(results.1.clone());
+    assert_eq!(results.1.len(), 1);
+    assert_debug_snapshot!(
+      "trail_observations_does_not_generate_commands_for_orphaned_shapes__results",
+      &results
+    );
+  }
+
   fn collect_commands(
     (root_shape_id, commands): (Option<String>, impl Iterator<Item = SpecCommand>),
   ) -> (Option<String>, Vec<SpecCommand>) {
