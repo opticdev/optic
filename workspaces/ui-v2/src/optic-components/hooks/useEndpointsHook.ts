@@ -35,7 +35,6 @@ export function useEndpoints(
     console.error(error);
     debugger;
   }
-  console.log(data);
 
   const result = useMemo(
     () => (data ? endpointQueryResultsToJson(data, endpointsChangelog) : []),
