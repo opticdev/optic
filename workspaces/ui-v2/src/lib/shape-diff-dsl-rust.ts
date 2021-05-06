@@ -1,9 +1,7 @@
 import {
   IJsonObjectKey,
   IJsonTrail,
-  normalize,
 } from '@useoptic/cli-shared/build/diffs/json-trail';
-import equals from 'lodash.isequal';
 import sortBy from 'lodash.sortby';
 import { IShapeTrail } from '@useoptic/cli-shared/build/diffs/shape-trail';
 import { CurrentSpecContext, ICoreShapeKinds } from './Interfaces';
@@ -137,10 +135,7 @@ export class Actual {
     private shapeTrail: IShapeTrail,
     public jsonTrail: IJsonTrail
   ) {
-    this.trailAffordances = learnedTrails.affordances.filter((i) => {
-      const compared = equals(normalize(i.trail), normalize(jsonTrail));
-      return compared;
-    });
+    this.trailAffordances = learnedTrails.affordances;
   }
 
   isField(): boolean {

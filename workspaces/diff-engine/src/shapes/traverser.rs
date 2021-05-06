@@ -342,6 +342,15 @@ impl JsonTrail {
         .collect(),
     }
   }
+
+  pub fn is_child_of(&self, parent_trail: &JsonTrail) -> bool {
+    self.path.len() > parent_trail.path.len()
+      && self
+        .path
+        .iter()
+        .take(parent_trail.path.len())
+        .eq(parent_trail.path.iter())
+  }
 }
 
 impl PartialEq for JsonTrail {
@@ -416,5 +425,31 @@ mod test {
     trails.sort();
 
     assert_json_snapshot!("json_trails_order_root_to_leaf__sorted", trails);
+  }
+
+  #[test]
+  pub fn json_trails_is_child_of() {
+    let root_trail = JsonTrail::empty().with_object_key(String::from("a"));
+    let child_trail = JsonTrail::empty()
+      .with_object_key(String::from("a"))
+      .with_object_key(String::from("aa"));
+    let other_child_trail = JsonTrail::empty()
+      .with_object_key(String::from("c"))
+      .with_object_key(String::from("aa"));
+
+    let array_trail = JsonTrail::empty().with_array_item(0);
+    let object_in_array_trail = JsonTrail::empty()
+      .with_array_item(0)
+      .with_object_key(String::from("a"));
+    let object_in_other_array_trail = JsonTrail::empty()
+      .with_array_item(1)
+      .with_object_key(String::from("a"));
+
+    assert!(child_trail.is_child_of(&root_trail));
+    assert!(!root_trail.is_child_of(&child_trail));
+    assert!(!root_trail.is_child_of(&root_trail));
+    assert!(!other_child_trail.is_child_of(&root_trail));
+    assert!(object_in_array_trail.is_child_of(&array_trail));
+    assert!(!object_in_other_array_trail.is_child_of(&array_trail));
   }
 }

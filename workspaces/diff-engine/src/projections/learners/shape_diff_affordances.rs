@@ -33,20 +33,29 @@ impl LearnedShapeDiffAffordancesProjection {
       .flat_map(|spec_id| diffs_by_spec_id.get(&spec_id).into_iter().flatten());
 
     for diff in diffs {
-      let json_trail = diff.json_trail().unwrap();
-      let trail_result = analysis
-        .trail_observations
-        .get(json_trail)
-        .cloned()
-        .unwrap_or_else(|| TrailValues::new(json_trail));
+      let diff_json_trail = diff.json_trail().unwrap();
+      let all_observations = &analysis.trail_observations;
+      let trail_results = all_observations
+        .trails()
+        .filter(|observed_trail| {
+          **observed_trail == *diff_json_trail || observed_trail.is_child_of(diff_json_trail)
+        })
+        .map(|relevant_trail| {
+          all_observations
+            .get(relevant_trail)
+            .cloned()
+            .unwrap_or_else(|| TrailValues::new(relevant_trail))
+        });
 
       let fingerprint = diff.fingerprint();
 
       let affordances = affordances_by_diff_fingerprint
         .entry(fingerprint)
-        .or_insert_with(|| ShapeDiffAffordances::default());
+        .or_insert_with(|| ShapeDiffAffordances::from(diff_json_trail.clone()));
 
-      affordances.push((trail_result, interaction_pointers.clone()));
+      for trail_result in trail_results {
+        affordances.push((trail_result, interaction_pointers.clone()));
+      }
     }
   }
 }
@@ -120,10 +129,13 @@ impl AggregateEvent<LearnedShapeDiffAffordancesProjection> for TaggedInput<BodyA
 // Output structs
 // ------------
 
-#[derive(Default, Debug, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct ShapeDiffAffordances {
   affordances: Vec<TrailValues>,
   interactions: InteractionsAffordances,
+
+  #[serde(skip)]
+  root_trail: JsonTrail,
 }
 pub type InteractionPointers = Tags;
 
@@ -146,16 +158,29 @@ pub struct InteractionsAffordances {
   was_missing_trails: HashMap<String, Vec<JsonTrail>>,
 }
 
+impl From<JsonTrail> for ShapeDiffAffordances {
+  fn from(root_trail: JsonTrail) -> Self {
+    Self {
+      affordances: vec![],
+      interactions: InteractionsAffordances::default(),
+      root_trail,
+    }
+  }
+}
+
 impl ShapeDiffAffordances {
   pub fn push(&mut self, (trail_values, pointers): (TrailValues, InteractionPointers)) {
-    self.interactions.push((&trail_values, pointers));
+    let new_trail = &trail_values.trail;
+    if *new_trail == self.root_trail {
+      // track the interaction pointers only by the root trail
+      self.interactions.push((&trail_values, pointers));
+    }
 
-    // TODO: find alternative way of serializing to an array of affordances, even though
-    // logic tells us there will only ever be one (supposed to be per JsonTrail, but
-    // both TrailValues en InteractionDiffResult use normalized trails, so would always
-    // just be one).
-    if self.affordances.len() > 0 {
-      let current_affordances = &mut self.affordances[0];
+    if let Some(current_affordances) = self
+      .affordances
+      .iter_mut()
+      .find(|trail_affordances| trail_affordances.trail == *new_trail)
+    {
       current_affordances.union(trail_values);
     } else {
       self.affordances.push(trail_values);
