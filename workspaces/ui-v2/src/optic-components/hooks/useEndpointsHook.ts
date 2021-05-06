@@ -76,7 +76,7 @@ export function endpointQueryResultsToJson(
         pathId: request.pathId,
         method: request.method,
         fullPath: request.absolutePathPatternWithParameterNames,
-        group: request.absolutePathPattern
+        group: request.absolutePathPatternWithParameterNames
           .substring(commonStart.length)
           .split('/')[0],
         pathParameters: request.pathComponents.map(
