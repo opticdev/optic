@@ -29,6 +29,19 @@ export function useDiffsForCapture(
     loading: true,
   });
 
+  const logAnalytics = (
+    diffs: number,
+    undocumented: number,
+    duration: number
+  ) => {
+    analytics.reviewPageLoaded(
+      diffs,
+      undocumented,
+      duration,
+      endpoint.endpoints.length
+    );
+  };
+
   useEffect(() => {
     async function task() {
       const startTime = Date.now();
@@ -51,12 +64,7 @@ export function useDiffsForCapture(
 
       const urls = await diffsService.listUnrecognizedUrls();
 
-      analytics.reviewPageLoaded(
-        diffs.diffs.length,
-        urls.urls.length,
-        endTime - startTime,
-        endpoint.endpoints.length
-      );
+      logAnalytics(diffs.diffs.length, urls.urls.length, endTime - startTime);
 
       setDiffState({
         loading: false,
@@ -70,6 +78,6 @@ export function useDiffsForCapture(
     }
 
     task();
-  }, [capturesService, captureId, diffId, analytics, endpoint.endpoints]);
+  }, [capturesService, captureId, diffId]);
   return diffState;
 }
