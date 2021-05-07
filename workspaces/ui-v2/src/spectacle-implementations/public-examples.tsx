@@ -19,6 +19,7 @@ import {
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { AsyncStatus } from '<src>/types';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -28,19 +29,23 @@ const appConfig: OpticAppConfig = {
       showDiff: true,
       showDocs: true,
     },
+    analytics: {
+      enabled: false,
+    },
     documentation: {
       allowDescriptionEditing: true,
     },
   },
 };
 
-export default function PublicExamples() {
+export default function PublicExamples(props: { lookupDir: string }) {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
+
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = useCallback(async () => {
     const loadExample = async () => {
-      const response = await fetch(`/example-sessions/${exampleId}.json`, {
+      const response = await fetch(`/${props.lookupDir}/${exampleId}.json`, {
         headers: { accept: 'application/json' },
       });
       if (!response.ok) {
@@ -55,7 +60,7 @@ export default function PublicExamples() {
       events: example.events,
       samples: example.session.samples,
     };
-  }, [exampleId]);
+  }, [exampleId, props.lookupDir]);
 
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
@@ -71,23 +76,25 @@ export default function PublicExamples() {
   //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data}>
-        <ConfigRepositoryStore config={data.opticContext.configRepository}>
-          <CapturesServiceStore
-            capturesService={data.opticContext.capturesService}
-          >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </ConfigRepositoryStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data}>
+          <ConfigRepositoryStore config={data.opticContext.configRepository}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </ConfigRepositoryStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }

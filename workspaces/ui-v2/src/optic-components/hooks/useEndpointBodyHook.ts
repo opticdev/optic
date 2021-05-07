@@ -94,22 +94,27 @@ export function useEndpointBody(
     });
     const responses: IResponseBody[] = request.responses.flatMap(
       (response: any) => {
-        return response.bodies.map((body: any) => {
-          return {
-            statusCode: response.statusCode,
-            responseId: response.id,
-            contentType: body.contentType,
-            rootShapeId: body.rootShapeId,
-            pathId: request.pathId,
-            method: request.method,
-            changes: response.changes,
-            description: request.requestContributions.description || '',
-          };
-        });
+        return response.bodies.map(
+          (body: any): IResponseBody => {
+            return {
+              statusCode: response.statusCode,
+              responseId: response.id,
+              contentType: body.contentType,
+              rootShapeId: body.rootShapeId,
+              pathId: request.pathId,
+              method: request.method,
+              changes: response.changes,
+              description: request.requestContributions.description || '',
+            };
+          }
+        );
       }
     );
+    const sortedResponses = [...responses].sort(
+      (a, b) => a.statusCode - b.statusCode
+    );
 
-    return { requests, responses };
+    return { requests, responses: sortedResponses };
   }
 }
 

@@ -20,6 +20,7 @@ import { AsyncStatus } from '<src>/types';
 import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
 import { useCallback, useEffect, useState } from 'react';
 import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -28,6 +29,12 @@ const appConfig: OpticAppConfig = {
       showChangelog: true,
       showDiff: false,
       showDocs: true,
+    },
+    analytics: {
+      enabled: Boolean(process.env.REACT_APP_ENABLE_ANALYTICS === 'yes'),
+      segmentToken: process.env.REACT_APP_SEGMENT_CLOUD_UI,
+      fullStoryOrgId: process.env.REACT_APP_FULLSTORY_ORG,
+      sentryUrl: process.env.REACT_APP_SENTRY_URL,
     },
     documentation: {
       allowDescriptionEditing: false,
@@ -94,23 +101,25 @@ export default function CloudViewer() {
   //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data}>
-        <ConfigRepositoryStore config={data.opticContext.configRepository}>
-          <CapturesServiceStore
-            capturesService={data.opticContext.capturesService}
-          >
-            <BaseUrlProvider value={{ url: match.url }}>
-              <Switch>
-                <>
-                  <DocumentationPages />
-                  <DiffReviewEnvironments />
-                  <ChangelogPages />
-                </>
-              </Switch>
-            </BaseUrlProvider>
-          </CapturesServiceStore>
-        </ConfigRepositoryStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data}>
+          <ConfigRepositoryStore config={data.opticContext.configRepository}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DiffReviewEnvironments />
+                    <DocumentationPages />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </ConfigRepositoryStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }

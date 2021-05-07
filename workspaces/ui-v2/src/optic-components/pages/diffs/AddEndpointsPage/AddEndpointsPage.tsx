@@ -40,6 +40,7 @@ import {
   ExistingEndpointNameField,
   PendingEndpointNameField,
 } from './EndpointNameEditFields';
+import { useAnalytics } from '<src>/analytics';
 
 export function DiffUrlsPage(props: any) {
   const urls = useUndocumentedUrls();
@@ -51,6 +52,7 @@ export function DiffUrlsPage(props: any) {
   } = useSharedDiffContext();
   const diffReviewPagePendingEndpoint = useDiffReviewPagePendingEndpoint();
   const classes = useStyles();
+  const analytics = useAnalytics();
 
   const [filteredUrls, setFilteredUrls] = useState(urls);
 
@@ -75,6 +77,7 @@ export function DiffUrlsPage(props: any) {
         key={data.method + data.path}
         onFinish={(pattern, method, autolearn) => {
           const pendingId = documentEndpoint(pattern, method);
+          analytics.userDocumentedEndpoint(autolearn);
           if (autolearn) {
             stageEndpoint(pendingId);
             setBulkMode(bulkMode);
