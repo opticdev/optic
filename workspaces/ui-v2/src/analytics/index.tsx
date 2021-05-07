@@ -75,7 +75,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
         FullStory.init({ orgId: appConfig.analytics.fullStoryOrgId! });
       }
       //sentry
-      if (appConfig.analytics.segmentToken) {
+      if (appConfig.analytics.sentryUrl) {
         Sentry.init({
           dsn: appConfig.analytics.sentryUrl!,
           release: clientId,
@@ -88,9 +88,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
     analytics,
     clientAgent,
     appConfig.analytics.enabled,
-    appConfig.analytics.sentryUrl,
-    appConfig.analytics.segmentToken,
-    appConfig.analytics.fullStoryOrgId,
+    appConfig.analytics,
   ]);
 
   const opticUITrackingEvents: React.MutableRefObject<OpticUIEvents> = useRef(

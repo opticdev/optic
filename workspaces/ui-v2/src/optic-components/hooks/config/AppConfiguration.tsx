@@ -8,12 +8,14 @@ interface IAppConfigurations {
     showChangelog: boolean;
     showDiff: boolean;
   };
-  analytics: {
-    enabled: boolean;
-    segmentToken?: string;
-    sentryUrl?: string;
-    fullStoryOrgId?: string;
-  };
+  analytics:
+    | { enabled: false }
+    | {
+        enabled: true;
+        segmentToken?: string;
+        sentryUrl?: string;
+        fullStoryOrgId?: string;
+      };
   documentation: {
     allowDescriptionEditing: boolean;
   };
