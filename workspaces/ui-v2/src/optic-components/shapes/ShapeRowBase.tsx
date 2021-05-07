@@ -37,7 +37,7 @@ export const ShapeRowBase = ({
           classes.row,
           { [sharedClasses.added]: changes && changes.added },
           // { [sharedClasses.removed]: changes && changes.removed },
-          { [sharedClasses.changed]: changes && changes.changed },
+          { [sharedClasses.changed]: changes && changes.changed }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -245,7 +245,7 @@ export const RenderFieldRowValues = ({
 
     return <></>;
   } else {
-    return <span>'invariant, one of'</span>;
+    return null;
   }
 };
 
