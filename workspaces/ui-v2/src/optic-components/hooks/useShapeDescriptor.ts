@@ -55,7 +55,16 @@ export function useShapeDescriptor(
 ): IShapeRenderer[] {
   const spectacle = useContext(SpectacleContext)!;
 
-  async function accumulateShapes(rootShapeId: string) {
+  async function accumulateShapes(rootShapeId: string, idLookups: string[]) {
+    //@todo figure out why some shapes loop recursively and remove those events / fix these specs
+    if (idLookups.includes(rootShapeId)) {
+      console.warn(
+        'trying to lookup shape w/ a circular reference ' + rootShapeId
+      );
+      return [];
+    } else {
+      idLookups.push(rootShapeId);
+    }
     const input =
       typeof renderChangesSinceBatchCommitId !== 'undefined'
         ? {
@@ -88,7 +97,10 @@ export function useShapeDescriptor(
           case 'Object':
             const newFields = await Promise.all(
               choice.asObject.fields.map(async (field: any) => {
-                const shapeChoices = await accumulateShapes(field.shapeId);
+                const shapeChoices = await accumulateShapes(
+                  field.shapeId,
+                  idLookups
+                );
                 field.required = !shapeChoices.some(
                   (i: any) => i.jsonType === JsonLike.UNDEFINED
                 ); // is required
@@ -107,7 +119,10 @@ export function useShapeDescriptor(
             return choice;
 
           case 'Array':
-            const results = await accumulateShapes(choice.asArray.shapeId);
+            const results = await accumulateShapes(
+              choice.asArray.shapeId,
+              idLookups
+            );
             const shapeChoices = await Promise.all(results);
             choice.asArray.shapeChoices = shapeChoices;
             return choice;
@@ -121,7 +136,8 @@ export function useShapeDescriptor(
   const [x, setX] = useState<any[]>([]);
   useEffect(() => {
     async function task() {
-      const result = await accumulateShapes(rootShapeId);
+      const idLookups: string[] = [];
+      const result = await accumulateShapes(rootShapeId, idLookups);
       setX(result);
     }
 
