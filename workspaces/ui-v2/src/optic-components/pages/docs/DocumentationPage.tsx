@@ -135,8 +135,8 @@ export function DocumentationRootPage(props: {
           return (
             <div key={tocKey}>
               <Typography
-                variant="h6"
-                style={{ fontFamily: 'Ubuntu Mono', fontWeight: 600 }}
+                variant="subtitle2"
+                style={{ fontFamily: 'Ubuntu Mono' }}
               >
                 {tocKey}
               </Typography>
