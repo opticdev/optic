@@ -19,7 +19,7 @@ export default function TopLevelRoutes() {
           strict
           //@TODO: centralize this path pattern
           path="/examples/:exampleId"
-          component={(props: any) => (
+          render={(props: any) => (
             <PublicExamples {...props} lookupDir={'example-sessions'} />
           )}
         />
@@ -27,7 +27,7 @@ export default function TopLevelRoutes() {
           strict
           //@TODO: centralize this path pattern
           path="/private-sessions/:exampleId"
-          component={(props: any) => (
+          render={(props: any) => (
             <PublicExamples {...props} lookupDir={'private-sessions'} />
           )}
         />
