@@ -7,10 +7,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { useShapeDiffInterpretations } from '../../hooks/diffs/useDiffInterpretations';
+import { useAnalytics } from '../../../analytics';
 
 export default function ApproveAll(props: { disabled?: boolean }) {
   const [open, setOpen] = React.useState(false);
 
+  const analytics = useAnalytics();
   const { context, approveCommandsForDiff } = useSharedDiffContext();
   const diffsGroupedByEndpoints = context.results.diffsGroupedByEndpoint;
 
@@ -36,6 +38,7 @@ export default function ApproveAll(props: { disabled?: boolean }) {
     if (shapeDiffs.loading) {
       return;
     }
+    analytics.userApprovedAll(shapeDiffs.results.length, 0);
     shapeDiffs.results.forEach((i) => {
       approveCommandsForDiff(
         i.diffDescription?.diffHash!,

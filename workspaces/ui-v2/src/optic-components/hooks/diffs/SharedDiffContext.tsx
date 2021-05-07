@@ -14,9 +14,11 @@ import { CurrentSpecContext } from '../../../lib/Interfaces';
 import { IOpticDiffService, IUnrecognizedUrl } from '@useoptic/spectacle';
 import { newRandomIdGenerator } from '../../../lib/domain-id-generator';
 import { ParsedDiff } from '../../../lib/parse-diff';
-import { AddContribution } from '../../../lib/command-factory';
+import { AddContribution, CQRSCommand } from '<src>/lib/command-factory';
 import { IValueAffordanceSerializationWithCounterGroupedByDiffHash } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { useOpticEngine } from '../useOpticEngine';
+import { useConfigRepository } from '<src>/optic-components/hooks/useConfigHook';
+import { useAnalytics } from '<src>/analytics';
 
 export const SharedDiffReactContext = React.createContext({});
 
@@ -34,7 +36,7 @@ type ISharedDiffContext = {
   wipPatterns: { [key: string]: PathComponentAuthoring[] };
   stageEndpoint: (id: string) => void;
   discardEndpoint: (id: string) => void;
-  approveCommandsForDiff: (diffHash: string, commands: any[]) => void;
+  approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => void;
   pendingEndpoints: IPendingEndpoint[];
   isDiffHandled: (diffHash: string) => boolean;
   currentSpecContext: CurrentSpecContext;
@@ -69,6 +71,9 @@ type SharedDiffStoreProps = {
 
 export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
   const opticEngine = useOpticEngine();
+
+  const { config } = useConfigRepository();
+
   const currentSpecContext: CurrentSpecContext = {
     currentSpecEndpoints: props.endpoints,
     currentSpecRequests: props.requests,
@@ -83,7 +88,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       props.diffs,
       props.urls,
       props.diffTrails,
-      props.diffService
+      props.diffService,
+      config
     )
   );
 
@@ -95,6 +101,8 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       context.browserDiffHashIgnoreRules.includes(diffHash)
     );
   };
+
+  const analytics = useAnalytics();
 
   const [handled, total] = useMemo(() => {
     return context.results.diffsGroupedByEndpoint.reduce(
@@ -141,7 +149,7 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
     },
     pendingEndpoints: context.pendingEndpoints,
     isDiffHandled,
-    approveCommandsForDiff: (diffHash: string, commands: any[]) => {
+    approveCommandsForDiff: (diffHash: string, commands: CQRSCommand[]) => {
       send({ type: 'COMMANDS_APPROVED_FOR_DIFF', diffHash, commands });
     },
     addDiffHashIgnore: (diffHash: string) =>
@@ -157,7 +165,10 @@ export const SharedDiffStore: FC<SharedDiffStoreProps> = (props) => {
       })),
     wipPatterns,
     currentSpecContext,
-    reset: () => send({ type: 'RESET' }),
+    reset: () => {
+      analytics.userResetDiff(handled, total);
+      send({ type: 'RESET' });
+    },
     handledCount: [handled, total],
     startedFinalizing: () => send({ type: 'USER_FINISHED_REVIEW' }),
     setEndpointName: (id: string, name: string) =>

@@ -1,17 +1,18 @@
+import { CQRSCommand } from '<src>/lib/command-factory';
 import { IPendingEndpoint } from '../optic-components/hooks/diffs/SharedDiffState';
 
 export function AssembleCommands(
-  approvedSuggestions: { [key: string]: any[] },
+  approvedSuggestions: { [key: string]: CQRSCommand[] },
   pendingEndpoints: IPendingEndpoint[],
-  existingEndpointNameContributions: { [id: string]: string },
+  existingEndpointNameContributions: { [id: string]: CQRSCommand },
   existingEndpointPathContributions: {
     [id: string]: {
-      command: any;
+      command: CQRSCommand;
       endpointId: string;
     };
   }
-): any[] {
-  const commands: any[] = [];
+): CQRSCommand[] {
+  const commands: CQRSCommand[] = [];
 
   Object.keys(approvedSuggestions)
     .sort()

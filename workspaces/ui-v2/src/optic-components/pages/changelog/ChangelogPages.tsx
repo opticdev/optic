@@ -33,7 +33,6 @@ export function ChangelogPages(props: any) {
             const validBatchId = allBatchCommits.batchCommits.some(
               (i) => i.batchId === batchId
             );
-
             if (validBatchId && !allBatchCommits.loading) {
               return (
                 <DocumentationRootPage
@@ -55,9 +54,26 @@ export function ChangelogPages(props: any) {
         />
         <NavigationRoute
           path={changelogPagesEndpointLink.path}
-          Component={(props: any) => (
-            <EndpointRootPage {...props} isChangelogPage={true} />
-          )}
+          Component={(props: any) => {
+            const { match } = props;
+            const { params } = match;
+            const { batchId } = params;
+            const validBatchId = allBatchCommits.batchCommits.some(
+              (i) => i.batchId === batchId
+            );
+
+            if (validBatchId && !allBatchCommits.loading) {
+              return (
+                <EndpointRootPage
+                  {...props}
+                  isChangelogPage={true}
+                  changelogBatchId={batchId}
+                />
+              );
+            } else {
+              return null;
+            }
+          }}
           AccessoryNavigation={ChangelogPageAccessoryNavigation}
         />
       </>

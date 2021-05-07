@@ -24,11 +24,13 @@ import { SpectacleContext } from '../../../spectacle-implementations/spectacle-p
 import { IIgnoreBody } from '../../hooks/diffs/LearnInitialBodiesMachine';
 import { useDebouncedFn, useStateWithSideEffect } from '../../hooks/util';
 import { useRunOnKeypress } from '<src>/optic-components/hooks/util';
+import { useAnalytics } from '<src>/analytics';
 
 export function PendingEndpointPageSession(props: any) {
   const { match } = props;
   const { endpointId } = match.params;
 
+  const analytics = useAnalytics();
   const history = useHistory();
   const diffUndocumentedUrlsPageLink = useDiffUndocumentedUrlsPageLink();
 
@@ -57,6 +59,7 @@ export function PendingEndpointPageSession(props: any) {
       }}
       onEndpointDiscarded={() => {
         discardEndpoint(endpoint.id);
+        analytics.userDiscardedEndpoint();
         goToDiffPage();
       }}
     >

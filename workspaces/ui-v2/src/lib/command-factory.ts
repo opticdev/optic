@@ -1,14 +1,42 @@
 /*
-Replace with Rust constructors eventually
+TODO Replace with Rust constructors eventually
+*/
 
-AddShape,
-SetParameterShape,
-ProviderInShape,
-ShapeProvider,
-SetFieldShape,
-FieldShapeFromShape,
-RemoveField,
- */
+// TODO fix any types in this file
+export type CQRSCommand =
+  | AddShapeType
+  | AddRequestType
+  | FieldFromShapeType
+  | AddFieldType
+  | ShapeProviderType
+  | ProviderInShapeType
+  | SetParameterShapeType
+  | SetFieldShapeType
+  | AddShapeParameterType
+  | RemoveFieldType
+  | AddPathParameterType
+  | AddPathComponentType
+  | AddContributionType
+  | ShapedBodyDescriptorType
+  | SetResponseBodyShapeType
+  | SetRequestBodyShapeType;
+
+export type AddShapeType = ReturnType<typeof AddShape>;
+export type AddRequestType = ReturnType<typeof AddRequest>;
+export type FieldFromShapeType = ReturnType<typeof FieldShapeFromShape>;
+export type AddFieldType = ReturnType<typeof AddField>;
+export type ShapeProviderType = ReturnType<typeof ShapeProvider>;
+export type ProviderInShapeType = ReturnType<typeof ProviderInShape>;
+export type SetParameterShapeType = ReturnType<typeof SetParameterShape>;
+export type SetFieldShapeType = ReturnType<typeof SetFieldShape>;
+export type AddShapeParameterType = ReturnType<typeof AddShapeParameter>;
+export type RemoveFieldType = ReturnType<typeof RemoveField>;
+export type AddPathParameterType = ReturnType<typeof AddPathParameter>;
+export type AddPathComponentType = ReturnType<typeof AddPathComponent>;
+export type AddContributionType = ReturnType<typeof AddContribution>;
+export type ShapedBodyDescriptorType = ReturnType<typeof ShapedBodyDescriptor>;
+export type SetResponseBodyShapeType = ReturnType<typeof SetResponseBodyShape>;
+export type SetRequestBodyShapeType = ReturnType<typeof SetRequestBodyShape>;
 
 export function AddShape(
   shapeId: string,
@@ -26,15 +54,7 @@ export function AddRequest(
   return { AddRequest: { httpMethod, pathId, requestId } };
 }
 
-//helper
-type FieldFromShapeType = {
-  FieldShapeFromShape: { fieldId: string; shapeId: string };
-};
-
-export function FieldShapeFromShape(
-  fieldId: string,
-  shapeId: string
-): FieldFromShapeType {
+export function FieldShapeFromShape(fieldId: string, shapeId: string) {
   return { FieldShapeFromShape: { fieldId, shapeId } };
 }
 

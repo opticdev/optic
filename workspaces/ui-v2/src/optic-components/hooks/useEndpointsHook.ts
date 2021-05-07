@@ -76,7 +76,7 @@ export function endpointQueryResultsToJson(
         pathId: request.pathId,
         method: request.method,
         fullPath: request.absolutePathPatternWithParameterNames,
-        group: request.absolutePathPattern
+        group: request.absolutePathPatternWithParameterNames
           .substring(commonStart.length)
           .split('/')[0],
         pathParameters: request.pathComponents.map(
@@ -97,7 +97,7 @@ export function endpointQueryResultsToJson(
             ? hasChangelog.change.category === 'added'
             : false,
           changed: hasChangelog
-            ? hasChangelog.change.category === 'changed'
+            ? hasChangelog.change.category === 'updated'
             : false,
           removed: hasChangelog
             ? hasChangelog.change.category === 'removed'

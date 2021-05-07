@@ -48,7 +48,7 @@ export function CapturePage(props: { showDiff?: boolean }) {
         )
       );
     }
-  }, [capturesState, history, props.showDiff, diffEnvironmentsRoot]);
+  }, [capturesState, history, diffEnvironmentsRoot, props.showDiff]);
 
   return (
     <CenteredColumn maxWidth="md" style={{ paddingTop: 50, paddingBottom: 50 }}>

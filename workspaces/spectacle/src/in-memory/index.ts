@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 import {
+  IBaseSpectacle,
   ICapture,
+  IForkableSpectacle,
   IListDiffsResponse,
   IListUnrecognizedUrlsResponse,
   IOpticCapturesService,
@@ -12,6 +14,8 @@ import {
   IOpticInteractionsRepository,
   IOpticSpecReadWriteRepository,
   IOpticSpecRepository,
+  makeSpectacle,
+  SpectacleInput,
   StartDiffResult,
 } from '../index';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
@@ -20,6 +24,7 @@ import {
   IValueAffordanceSerializationWithCounterGroupedByDiffHash,
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { HttpInteraction } from '@useoptic/diff-engine-wasm/lib/streams/http-interactions';
+import { defaultIgnoreRules } from '@useoptic/cli-config/build/helpers/default-ignore-rules';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -163,7 +168,13 @@ export class InMemoryCapturesService implements IOpticCapturesService {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class InMemoryConfigRepository implements IOpticConfigRepository {
-  ignoreRequests: string[] = [];
+  addIgnoreRule(rule: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  listIgnoreRules(): Promise<string[]> {
+    return Promise.resolve(defaultIgnoreRules);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,6 +189,7 @@ interface InMemoryDiffServiceDependencies {
 //@jaap: we need to make sure this and InMemoryDiff are up-to-date relative to the latest changes
 export class InMemoryDiffService implements IOpticDiffService {
   constructor(private dependencies: InMemoryDiffServiceDependencies) {}
+
   async learnShapeDiffAffordances(): Promise<IValueAffordanceSerializationWithCounterGroupedByDiffHash> {
     const events = await this.dependencies.specRepository.listEvents();
     const spec = this.dependencies.opticEngine.spec_from_events(
@@ -380,6 +392,8 @@ export class InMemoryDiffRepository implements IOpticDiffRepository {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 export class InMemoryOpticContextBuilder {
   static async fromEvents(
     opticEngine: IOpticEngine,
@@ -448,5 +462,44 @@ export class InMemoryOpticContextBuilder {
       configRepository,
       specRepository,
     };
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export interface InMemoryBaseSpectacle extends IBaseSpectacle {
+  samples: any[];
+  opticContext: IOpticContext;
+}
+
+export class InMemorySpectacle
+  implements IForkableSpectacle, InMemoryBaseSpectacle {
+  private spectaclePromise: ReturnType<typeof makeSpectacle>;
+
+  constructor(
+    public readonly opticContext: IOpticContext,
+    public samples: any[]
+  ) {
+    this.spectaclePromise = makeSpectacle(opticContext);
+  }
+
+  async fork(): Promise<IBaseSpectacle> {
+    const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
+      this.opticContext.opticEngine,
+      [...(await this.opticContext.specRepository.listEvents())],
+      this.samples,
+      'example-session'
+    );
+    return new InMemorySpectacle(opticContext, [...this.samples]);
+  }
+
+  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
+    const spectacle = await this.spectaclePromise;
+    return spectacle.queryWrapper<Result, Input>(options);
+  }
+
+  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
+    const spectacle = await this.spectaclePromise;
+    return spectacle.queryWrapper<Result, Input>(options);
   }
 }

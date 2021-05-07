@@ -5,6 +5,7 @@ import {
   useEndpointPageLink,
 } from '../../navigation/Routes';
 import groupBy from 'lodash.groupby';
+import classNames from 'classnames';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, ListItem, Typography } from '@material-ui/core';
@@ -135,8 +136,8 @@ export function DocumentationRootPage(props: {
           return (
             <div key={tocKey}>
               <Typography
-                variant="subtitle2"
-                style={{ fontFamily: 'Ubuntu Mono' }}
+                variant="h6"
+                style={{ fontFamily: 'Ubuntu Mono', fontWeight: 600 }}
               >
                 {tocKey}
               </Typography>
@@ -151,9 +152,12 @@ export function DocumentationRootPage(props: {
                     onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    className={
-                      endpoint.changelog?.added ? changelogStyles.added : ''
-                    }
+                    className={classNames({
+                      [changelogStyles.added]:
+                        isChangelogPage && endpoint.changelog?.added,
+                      [changelogStyles.updated]:
+                        isChangelogPage && endpoint.changelog?.changed,
+                    })}
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName
@@ -199,13 +203,14 @@ export const EndpointRootPage: FC<
     method: string;
   }> & {
     isChangelogPage?: boolean;
+    changelogBatchId: string | undefined;
   }
-> = ({ isChangelogPage, match }) => {
+> = ({ isChangelogPage, match, changelogBatchId }) => {
   const { endpoints, loading } = useEndpoints();
 
   const { pathId, method } = match.params;
 
-  const bodies = useEndpointBody(pathId, method);
+  const bodies = useEndpointBody(pathId, method, changelogBatchId);
   const styles = useStyles();
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
@@ -326,6 +331,7 @@ export const EndpointRootPage: FC<
         return (
           <TwoColumnBody
             key={index}
+            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body Parameters'}
@@ -337,6 +343,7 @@ export const EndpointRootPage: FC<
         return (
           <TwoColumnBody
             key={index}
+            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}

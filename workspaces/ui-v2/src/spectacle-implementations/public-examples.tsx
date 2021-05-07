@@ -1,26 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, useParams, useRouteMatch } from 'react-router-dom';
-import { Provider as BaseUrlProvider } from '../optic-components/hooks/useBaseUrl';
-import {
-  IBaseSpectacle,
-  IForkableSpectacle,
-  IOpticContext,
-  makeSpectacle,
-  SpectacleInput,
-} from '@useoptic/spectacle';
-import { DocumentationPages } from '../optic-components/pages/docs/DocumentationPage';
+import { Provider as BaseUrlProvider } from '<src>/optic-components/hooks/useBaseUrl';
+import { DocumentationPages } from '<src>/optic-components/pages/docs/DocumentationPage';
 import { SpectacleStore } from './spectacle-provider';
-import { Loading } from '../optic-components/loaders/Loading';
-import { DiffReviewEnvironments } from '../optic-components/pages/diffs/ReviewDiffPages';
-import { InMemoryOpticContextBuilder } from '@useoptic/spectacle/build/in-memory';
-import { CapturesServiceStore } from '../optic-components/hooks/useCapturesHook';
-import { ChangelogPages } from '../optic-components/pages/changelog/ChangelogPages';
+import { Loading } from '<src>/optic-components/loaders/Loading';
+import { DiffReviewEnvironments } from '<src>/optic-components/pages/diffs/ReviewDiffPages';
+import {
+  InMemoryOpticContextBuilder,
+  InMemorySpectacle,
+  InMemoryBaseSpectacle,
+} from '@useoptic/spectacle/build/in-memory';
+import { CapturesServiceStore } from '<src>/optic-components/hooks/useCapturesHook';
+import { ChangelogPages } from '<src>/optic-components/pages/changelog/ChangelogPages';
 import {
   AppConfigurationStore,
   OpticAppConfig,
-} from '../optic-components/hooks/config/AppConfiguration';
-import { useOpticEngine } from '../optic-components/hooks/useOpticEngine';
-import { AsyncStatus } from '../types';
+} from '<src>/optic-components/hooks/config/AppConfiguration';
+import { useOpticEngine } from '<src>/optic-components/hooks/useOpticEngine';
+import { AsyncStatus } from '<src>/types';
+import { ConfigRepositoryStore } from '<src>/optic-components/hooks/useConfigHook';
+import { AnalyticsStore } from '<src>/analytics';
 
 const appConfig: OpticAppConfig = {
   featureFlags: {},
@@ -30,19 +29,23 @@ const appConfig: OpticAppConfig = {
       showDiff: true,
       showDocs: true,
     },
+    analytics: {
+      enabled: false,
+    },
     documentation: {
       allowDescriptionEditing: true,
     },
   },
 };
 
-export default function PublicExamples() {
+export default function PublicExamples(props: { lookupDir: string }) {
   const match = useRouteMatch();
   const params = useParams<{ exampleId: string }>();
+
   const { exampleId } = params;
   const task: InMemorySpectacleDependenciesLoader = useCallback(async () => {
     const loadExample = async () => {
-      const response = await fetch(`/example-sessions/${exampleId}.json`, {
+      const response = await fetch(`/${props.lookupDir}/${exampleId}.json`, {
         headers: { accept: 'application/json' },
       });
       if (!response.ok) {
@@ -57,7 +60,7 @@ export default function PublicExamples() {
       events: example.events,
       samples: example.session.samples,
     };
-  }, [exampleId]);
+  }, [exampleId, props.lookupDir]);
 
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
@@ -70,26 +73,28 @@ export default function PublicExamples() {
     return <div>something went wrong</div>;
   }
 
-  //@ts-ignore
-  data.isOG = true;
-
+  //@SYNC public-examples.tsx cloud-viewer.tsx local-cli.tsx
   return (
     <AppConfigurationStore config={appConfig}>
-      <SpectacleStore spectacle={data}>
-        <CapturesServiceStore
-          capturesService={data.opticContext.capturesService}
-        >
-          <BaseUrlProvider value={{ url: match.url }}>
-            <Switch>
-              <>
-                <DocumentationPages />
-                <DiffReviewEnvironments />
-                <ChangelogPages />
-              </>
-            </Switch>
-          </BaseUrlProvider>
-        </CapturesServiceStore>
-      </SpectacleStore>
+      <AnalyticsStore>
+        <SpectacleStore spectacle={data}>
+          <ConfigRepositoryStore config={data.opticContext.configRepository}>
+            <CapturesServiceStore
+              capturesService={data.opticContext.capturesService}
+            >
+              <BaseUrlProvider value={{ url: match.url }}>
+                <Switch>
+                  <>
+                    <DocumentationPages />
+                    <DiffReviewEnvironments />
+                    <ChangelogPages />
+                  </>
+                </Switch>
+              </BaseUrlProvider>
+            </CapturesServiceStore>
+          </ConfigRepositoryStore>
+        </SpectacleStore>
+      </AnalyticsStore>
     </AppConfigurationStore>
   );
 }
@@ -101,42 +106,6 @@ export interface InMemorySpectacleDependencies {
 
 export type InMemorySpectacleDependenciesLoader = () => Promise<InMemorySpectacleDependencies>;
 
-export class InMemorySpectacle
-  implements IForkableSpectacle, InMemoryBaseSpectacle {
-  private spectaclePromise: ReturnType<typeof makeSpectacle>;
-
-  constructor(
-    public readonly opticContext: IOpticContext,
-    public samples: any[]
-  ) {
-    this.spectaclePromise = makeSpectacle(opticContext);
-  }
-
-  async fork(): Promise<IBaseSpectacle> {
-    const opticContext = await InMemoryOpticContextBuilder.fromEventsAndInteractions(
-      this.opticContext.opticEngine,
-      [...(await this.opticContext.specRepository.listEvents())],
-      this.samples,
-      'example-session'
-    );
-    return new InMemorySpectacle(opticContext, [...this.samples]);
-  }
-
-  async mutate<Result, Input = {}>(options: SpectacleInput<Input>) {
-    const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper<Result, Input>(options);
-  }
-
-  async query<Result, Input = {}>(options: SpectacleInput<Input>) {
-    const spectacle = await this.spectaclePromise;
-    return spectacle.queryWrapper<Result, Input>(options);
-  }
-}
-
-export interface InMemoryBaseSpectacle extends IBaseSpectacle {
-  samples: any[];
-  opticContext: IOpticContext;
-}
 //@SYNC: useInMemorySpectacle
 export function useInMemorySpectacle(
   loadDependencies: InMemorySpectacleDependenciesLoader
