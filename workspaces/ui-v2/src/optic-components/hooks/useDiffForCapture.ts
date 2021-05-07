@@ -8,6 +8,7 @@ import { useEndpoints } from '<src>/optic-components/hooks/useEndpointsHook';
 
 interface DiffState {
   data?: {
+    durationMillis: number;
     diffs: ParsedDiff[];
     urls: IUnrecognizedUrl[];
     trails: IValueAffordanceSerializationWithCounterGroupedByDiffHash;
@@ -28,19 +29,6 @@ export function useDiffsForCapture(
   const [diffState, setDiffState] = useState<DiffState>({
     loading: true,
   });
-
-  const logAnalytics = (
-    diffs: number,
-    undocumented: number,
-    duration: number
-  ) => {
-    analytics.reviewPageLoaded(
-      diffs,
-      undocumented,
-      duration,
-      endpoint.endpoints.length
-    );
-  };
 
   useEffect(() => {
     async function task() {
@@ -64,11 +52,10 @@ export function useDiffsForCapture(
 
       const urls = await diffsService.listUnrecognizedUrls();
 
-      logAnalytics(diffs.diffs.length, urls.urls.length, endTime - startTime);
-
       setDiffState({
         loading: false,
         data: {
+          durationMillis: endTime - startTime,
           diffs: parsedDiffs,
           urls: urls.urls,
           trails: learnedTrailsForEndpoints,
@@ -79,5 +66,17 @@ export function useDiffsForCapture(
 
     task();
   }, [capturesService, captureId, diffId]);
+
+  useEffect(() => {
+    if (diffState.data) {
+      analytics.reviewPageLoaded(
+        diffState.data.diffs.length,
+        diffState.data.urls.length,
+        diffState.data.durationMillis,
+        endpoint.endpoints.length
+      );
+    }
+  }, [diffState, endpoint.endpoints.length, analytics]);
+
   return diffState;
 }

@@ -16,6 +16,8 @@ import { useAppConfig } from '../optic-components/hooks/config/AppConfiguration'
 import { Client } from '@useoptic/cli-client';
 import * as Sentry from '@sentry/react';
 import * as FullStory from '@fullstory/browser';
+import { LogLevel } from '@sentry/types';
+
 const packageJson = require('../../package.json');
 const clientId = `local_cli_${packageJson.version}`;
 
@@ -77,6 +79,7 @@ export function AnalyticsStore({ children }: { children: ReactNode }) {
         Sentry.init({
           dsn: appConfig.analytics.sentryUrl!,
           release: clientId,
+          logLevel: LogLevel.Debug,
         });
         Sentry.setUser({ id: clientAgent });
       }
