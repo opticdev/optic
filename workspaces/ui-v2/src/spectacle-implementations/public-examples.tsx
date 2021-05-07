@@ -59,7 +59,7 @@ export default function PublicExamples(props: { lookupDir: string }) {
       events: example.events,
       samples: example.session.samples,
     };
-  }, [exampleId]);
+  }, [exampleId, props.lookupDir]);
 
   const { loading, error, data } = useInMemorySpectacle(task);
   if (loading) {
