@@ -78,7 +78,6 @@ export const CommitMessageModal: FC<CommitMessageModalProps> = ({
           onClick={async () => {
             setIsSaving(true);
             await onSave(commitMessage);
-            onClose();
           }}
           color="primary"
         >

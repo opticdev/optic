@@ -6,6 +6,15 @@ type PromptNavigateAwayProps = {
   shouldPrompt: boolean;
 };
 
+const isDiffsPage = (pathname: string) => /diffs/i.test(pathname);
+
+const isNavigatingToSamePage = (locationToNavigateTo: string) => {
+  const pageTesters = [isDiffsPage];
+  return pageTesters.some(
+    (fn) => fn(locationToNavigateTo) && fn(window.location.pathname)
+  );
+};
+
 /**
  * @gotcha Note that this includes a destructive useEffect for onbeforeunload which means
  * that this component can only be used once (on unmount / update useEffect, the mount/unmount will
@@ -30,7 +39,10 @@ export const PromptNavigateAway: FC<PromptNavigateAwayProps> = ({
   return (
     <Prompt
       when={shouldPrompt}
-      message="You have unsaved changes, are you sure you want to leave?"
+      message={(location) =>
+        isNavigatingToSamePage(location.pathname) ||
+        'You have unsaved changes, are you sure you want to leave?'
+      }
     />
   );
 };

@@ -1,13 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import { v4 as uuidv4 } from 'uuid';
 import { CommitMessageModal } from '../../common';
 
 import { useSharedDiffContext } from '../../hooks/diffs/SharedDiffContext';
 import { useSpectacleCommand } from '../../../spectacle-implementations/spectacle-provider';
 import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 import { useChangelogPages } from '../../navigation/Routes';
-import { v4 as uuidv4 } from 'uuid';
+import { PromptNavigateAway } from '<src>/optic-components/common';
 import { useAnalytics } from '<src>/analytics';
 
 const useStagedChangesCount = () => {
@@ -105,16 +106,20 @@ export default function AskForCommitMessageDiffPage(props: {
       >
         Save Changes
       </Button>
-      <CommitMessageModal
-        open={commitModalOpen}
-        onClose={() => setCommitModalOpen(false)}
-        onSave={handleSave}
-        dialogText={`You have added ${pendingEndpointsCount} new ${
-          pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
-        } and updated ${changedEndpointsCount} existing ${
-          changedEndpointsCount === 1 ? 'endpoint' : 'endpoints'
-        }.`}
-      />
+      {commitModalOpen ? (
+        <CommitMessageModal
+          open={commitModalOpen}
+          onClose={() => setCommitModalOpen(false)}
+          onSave={handleSave}
+          dialogText={`You have added ${pendingEndpointsCount} new ${
+            pendingEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+          } and updated ${changedEndpointsCount} existing ${
+            changedEndpointsCount === 1 ? 'endpoint' : 'endpoints'
+          }.`}
+        />
+      ) : (
+        <PromptNavigateAway shouldPrompt={props.hasChanges} />
+      )}
     </>
   );
 }
