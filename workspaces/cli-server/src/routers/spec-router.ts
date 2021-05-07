@@ -228,6 +228,7 @@ export async function makeRouter(sessions: SessionsManager) {
   });
 
   const instances: Map<string, any> = new Map();
+  router.use(bodyParser.json({ limit: '10mb' }));
   router.use('/spectacle', async (req, res) => {
     let handler = instances.get(req.optic.session.id);
     if (!handler) {

@@ -79,7 +79,7 @@ export async function descriptionForShapeDiff(
 
       if (shapeHashV1Base64) {
         return {
-          asJson: toJsonExample(new Buffer(shapeHashV1Base64, 'base64')),
+          asJson: toJsonExample(shapeHashV1Base64, 'base64'),
           asText: null,
           noBody: false,
         };

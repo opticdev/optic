@@ -22,12 +22,12 @@ cqrs-core = "0.2.2"
 futures = { version = "0.3.12", optional = true }
 num_cpus = "1.13.0"
 petgraph = "0.5.1"
-protobuf = "2.17.0"
+protobuf = "2.23.0"
 serde = { version = "1.0.106", features = ["derive"] }
 serde_json = "1.0.57"
 thiserror = "1.0.24"
 # all of tokio for now, until we figure out what we need exactly
-tokio = { version = "~1.1.1", features = ["full"], optional = true } 
+tokio = { version = "~1.1.1", features = ["full"], optional = true }
 tokio-util = { version = "0.6.3", features = ["codec"], optional = true }
 tokio-stream = { version= "0.1.2", features = ["fs", "io-util"], optional = true }
 uuid = { version = "0.8.2", features = ["v4", "wasm-bindgen"] }

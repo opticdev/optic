@@ -4,7 +4,7 @@ use crate::state::body::BodyDescriptor;
 use avro_rs;
 use base64;
 use cqrs_core::Event;
-use protobuf;
+use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io;
@@ -74,7 +74,7 @@ impl From<&ArbitraryData> for Option<serde_json::value::Value> {
     } else if let Some(shape_hash) = &data.shape_hash_v1_base64 {
       let decoded_hash = base64::decode(shape_hash)
         .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
-      let shape_descriptor: shapehash::ShapeDescriptor = protobuf::parse_from_bytes(&decoded_hash)
+      let shape_descriptor: shapehash::ShapeDescriptor = Message::parse_from_bytes(&decoded_hash)
         .expect("shape hash should be validly encoded shapehash proto");
       Some(serde_json::Value::from(shape_descriptor))
     } else {
@@ -89,7 +89,7 @@ impl From<&ArbitraryData> for Option<BodyDescriptor> {
       let decoded_hash = base64::decode(shape_hash)
         .expect("shape_hash_v1_base64 of ArbitraryData should always be valid base64");
       let shape_hash_descriptor: shapehash::ShapeDescriptor =
-        protobuf::parse_from_bytes(&decoded_hash)
+        Message::parse_from_bytes(&decoded_hash)
           .expect("shape hash should be validly encoded shapehash proto");
       Some(BodyDescriptor::from(shape_hash_descriptor))
     } else if let Some(json_string) = &data.as_json_string {

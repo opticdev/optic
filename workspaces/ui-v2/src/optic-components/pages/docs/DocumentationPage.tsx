@@ -5,6 +5,7 @@ import {
   useEndpointPageLink,
 } from '../../navigation/Routes';
 import groupBy from 'lodash.groupby';
+import classNames from 'classnames';
 import { CenteredColumn } from '../../layouts/CenteredColumn';
 import { IEndpoint, useEndpoints } from '../../hooks/useEndpointsHook';
 import { List, ListItem, Typography } from '@material-ui/core';
@@ -99,6 +100,7 @@ export function DocumentationRootPage(props: {
   changelogBatchId?: string;
 }) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
+  console.log(endpoints);
   //@nic TODO fork changelog from documentation page
   const isChangelogPage = props.changelogBatchId !== undefined;
 
@@ -151,9 +153,12 @@ export function DocumentationRootPage(props: {
                     onClick={() =>
                       props.onEndpointClicked(endpoint.pathId, endpoint.method)
                     }
-                    className={
-                      endpoint.changelog?.added ? changelogStyles.added : ''
-                    }
+                    className={classNames({
+                      [changelogStyles.added]:
+                        isChangelogPage && endpoint.changelog?.added,
+                      [changelogStyles.updated]:
+                        isChangelogPage && endpoint.changelog?.changed,
+                    })}
                   >
                     <div style={{ flex: 1 }}>
                       <EndpointName
@@ -199,13 +204,14 @@ export const EndpointRootPage: FC<
     method: string;
   }> & {
     isChangelogPage?: boolean;
+    changelogBatchId: string | undefined;
   }
-> = ({ isChangelogPage, match }) => {
+> = ({ isChangelogPage, match, changelogBatchId }) => {
   const { endpoints, loading } = useEndpoints();
 
   const { pathId, method } = match.params;
 
-  const bodies = useEndpointBody(pathId, method);
+  const bodies = useEndpointBody(pathId, method, changelogBatchId);
   const styles = useStyles();
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
@@ -326,6 +332,7 @@ export const EndpointRootPage: FC<
         return (
           <TwoColumnBody
             key={index}
+            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.requestId}
             location={'Request Body Parameters'}
@@ -337,6 +344,7 @@ export const EndpointRootPage: FC<
         return (
           <TwoColumnBody
             key={index}
+            changesSinceBatchCommitId={changelogBatchId}
             rootShapeId={i.rootShapeId}
             bodyId={i.responseId}
             location={`${i.statusCode} Response`}

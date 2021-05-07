@@ -359,7 +359,6 @@ class DiffEngineError extends Error {
 }
 
 exports.diffInteractions = diffInteractions;
-exports.spawn = spawn;
 exports.readSpec = readSpec;
 exports.commit = commit;
 exports.learnShapeDiffAffordances = learnShapeDiffAffordances;
