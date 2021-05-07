@@ -100,7 +100,6 @@ export function DocumentationRootPage(props: {
   changelogBatchId?: string;
 }) {
   const { endpoints, loading } = useEndpoints(props.changelogBatchId);
-  console.log(endpoints);
   //@nic TODO fork changelog from documentation page
   const isChangelogPage = props.changelogBatchId !== undefined;
 
